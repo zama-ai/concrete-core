@@ -339,6 +339,9 @@ pub use lwe_ciphertext_fusing_subtraction::*;
 mod lwe_ciphertext_discarding_decryption;
 pub use lwe_ciphertext_discarding_decryption::*;
 
+mod lwe_ciphertext_conversion;
+pub use lwe_ciphertext_conversion::*;
+
 mod lwe_ciphertext_plaintext_discarding_addition;
 pub use lwe_ciphertext_plaintext_discarding_addition::*;
 
@@ -369,6 +372,9 @@ pub use lwe_ciphertext_vector_discarding_addition::*;
 mod lwe_ciphertext_vector_fusing_subtraction;
 pub use lwe_ciphertext_vector_fusing_subtraction::*;
 
+mod lwe_ciphertext_vector_discarding_keyswitch;
+pub use lwe_ciphertext_vector_discarding_keyswitch::*;
+
 mod lwe_ciphertext_trivial_encryption;
 pub use lwe_ciphertext_trivial_encryption::*;
 
@@ -381,11 +387,17 @@ pub use lwe_ciphertext_discarding_bootstrap_1::*;
 mod lwe_ciphertext_discarding_bootstrap_2;
 pub use lwe_ciphertext_discarding_bootstrap_2::*;
 
+mod lwe_ciphertext_vector_discarding_bootstrap_1;
+pub use lwe_ciphertext_vector_discarding_bootstrap_1::*;
+
 mod lwe_ciphertext_discarding_extraction;
 pub use lwe_ciphertext_discarding_extraction::*;
 
 mod plaintext_creation;
 pub use plaintext_creation::*;
+
+mod lwe_ciphertext_vector_discarding_bootstrap_2;
+pub use lwe_ciphertext_vector_discarding_bootstrap_2::*;
 
 mod glwe_ciphertext_ggsw_ciphertext_discarding_external_product;
 pub use glwe_ciphertext_ggsw_ciphertext_discarding_external_product::*;

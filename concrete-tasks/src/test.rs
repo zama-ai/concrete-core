@@ -37,6 +37,14 @@ pub fn ffi() -> Result<(), Error> {
     cmd!(<ENV_TARGET_NATIVE> "./concrete-core-ffi/build-ffi-and-run-c-tests.sh")
 }
 
+pub fn cuda_test() -> Result<(), Error> {
+    cmd!(<ENV_TARGET_NATIVE> "cargo test --release --no-fail-fast --features=backend_cuda -p concrete-core-test -- --test-threads 1")
+}
+
+pub fn cuda_doc_test() -> Result<(), Error> {
+    cmd!(<ENV_TARGET_NATIVE> "cargo test --doc -p concrete-core --features=backend_cuda -- backends::cuda ")
+}
+
 pub fn crates() -> Result<(), Error> {
     commons()?;
     core()?;
@@ -44,6 +52,11 @@ pub fn crates() -> Result<(), Error> {
     csprng()?;
     npe()?;
     ffi()
+}
+
+pub fn cuda() -> Result<(), Error> {
+    cuda_test()?;
+    cuda_doc_test()
 }
 
 pub fn cov_crates() -> Result<(), Error> {
