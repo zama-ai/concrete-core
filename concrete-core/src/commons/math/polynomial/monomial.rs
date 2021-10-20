@@ -16,7 +16,7 @@ use concrete_commons::parameters::MonomialDegree;
 /// assert_eq!(*mono.get_coefficient(), 1u8);
 /// assert_eq!(mono.degree(), MonomialDegree(5));
 /// ```
-#[derive(PartialEq)]
+#[derive(PartialEq, Eq)]
 pub struct Monomial<Cont> {
     tensor: Tensor<Cont>,
     degree: MonomialDegree,

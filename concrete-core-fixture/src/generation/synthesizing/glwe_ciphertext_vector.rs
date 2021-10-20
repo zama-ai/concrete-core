@@ -69,3 +69,70 @@ mod backend_default {
         }
     }
 }
+
+#[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
+mod backend_cuda {
+    use crate::generation::prototypes::{
+        ProtoBinaryGlweCiphertextVector32, ProtoBinaryGlweCiphertextVector64,
+    };
+    use crate::generation::synthesizing::SynthesizesGlweCiphertextVector;
+    use crate::generation::{Maker, Precision32, Precision64};
+    use concrete_core::prelude::{
+        CudaGlweCiphertextVector32, CudaGlweCiphertextVector64, DestructionEngine,
+        GlweCiphertextVectorConversionEngine,
+    };
+
+    impl SynthesizesGlweCiphertextVector<Precision32, CudaGlweCiphertextVector32> for Maker {
+        fn synthesize_glwe_ciphertext_vector(
+            &mut self,
+            prototype: &Self::GlweCiphertextVectorProto,
+        ) -> CudaGlweCiphertextVector32 {
+            self.cuda_engine
+                .convert_glwe_ciphertext_vector(&prototype.0)
+                .unwrap()
+        }
+
+        fn unsynthesize_glwe_ciphertext_vector(
+            &mut self,
+            entity: CudaGlweCiphertextVector32,
+        ) -> Self::GlweCiphertextVectorProto {
+            let proto = self
+                .cuda_engine
+                .convert_glwe_ciphertext_vector(&entity)
+                .unwrap();
+            self.cuda_engine.destroy(entity).unwrap();
+            ProtoBinaryGlweCiphertextVector32(proto)
+        }
+
+        fn destroy_glwe_ciphertext_vector(&mut self, entity: CudaGlweCiphertextVector32) {
+            self.cuda_engine.destroy(entity).unwrap();
+        }
+    }
+
+    impl SynthesizesGlweCiphertextVector<Precision64, CudaGlweCiphertextVector64> for Maker {
+        fn synthesize_glwe_ciphertext_vector(
+            &mut self,
+            prototype: &Self::GlweCiphertextVectorProto,
+        ) -> CudaGlweCiphertextVector64 {
+            self.cuda_engine
+                .convert_glwe_ciphertext_vector(&prototype.0)
+                .unwrap()
+        }
+
+        fn unsynthesize_glwe_ciphertext_vector(
+            &mut self,
+            entity: CudaGlweCiphertextVector64,
+        ) -> Self::GlweCiphertextVectorProto {
+            let proto = self
+                .cuda_engine
+                .convert_glwe_ciphertext_vector(&entity)
+                .unwrap();
+            self.cuda_engine.destroy(entity).unwrap();
+            ProtoBinaryGlweCiphertextVector64(proto)
+        }
+
+        fn destroy_glwe_ciphertext_vector(&mut self, entity: CudaGlweCiphertextVector64) {
+            self.cuda_engine.destroy(entity).unwrap();
+        }
+    }
+}

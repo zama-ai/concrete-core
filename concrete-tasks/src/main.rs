@@ -86,6 +86,10 @@ fn main() -> Result<(), std::io::Error> {
             Command::new("test_and_cov_crates")
                 .about("Compute tests coverage of all crates in native mode"),
         )
+        .subcommand(
+            Command::new("test_cuda")
+                .about("Tests the `concrete-core` crate with the cuda backend"),
+        )
         .subcommand(Command::new("build_debug_crates").about("Build all the crates in debug mode"))
         .subcommand(
             Command::new("build_release_crates").about("Build all the crates in release mode"),
@@ -166,6 +170,9 @@ fn main() -> Result<(), std::io::Error> {
     }
     if matches.subcommand_matches("test_and_cov_crates").is_some() {
         test::cov_crates()?;
+    }
+    if matches.subcommand_matches("test_cuda").is_some() {
+        test::cuda()?;
     }
     if matches.subcommand_matches("build_debug_crates").is_some() {
         build::debug::crates()?;

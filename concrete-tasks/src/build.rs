@@ -42,7 +42,7 @@ pub mod debug {
     }
 
     pub fn benches() -> Result<(), Error> {
-        cmd!("cargo build --benches")
+        cmd!("cargo build --benches --workspace --exclude concrete-cuda")
     }
 
     pub fn tests() -> Result<(), Error> {
@@ -63,7 +63,7 @@ pub mod release {
     }
 
     pub fn benches() -> Result<(), Error> {
-        cmd!("cargo build --release --benches")
+        cmd!("cargo build --release --benches --workspace --exclude concrete-cuda")
     }
 
     pub fn tests() -> Result<(), Error> {
@@ -91,9 +91,9 @@ pub mod simd {
 
     pub fn benches() -> Result<(), Error> {
         if cfg!(target_os = "linux") {
-            cmd!(<ENV_TARGET_SIMD> "cargo build --release --benches")
+            cmd!(<ENV_TARGET_SIMD> "cargo build --release --benches --workspace --exclude concrete-cuda")
         } else if cfg!(target_os = "macos") {
-            cmd!(<ENV_TARGET_NATIVE> "cargo build --release --benches")
+            cmd!(<ENV_TARGET_NATIVE> "cargo build --release --benches --workspace --exclude concrete-cuda")
         } else {
             unreachable!()
         }

@@ -21,7 +21,7 @@ use concrete_commons::parameters::{MonomialDegree, PolynomialCount, PolynomialSi
 /// assert_eq!(list.polynomial_count(), PolynomialCount(4));
 /// assert_eq!(list.polynomial_size(), PolynomialSize(2));
 /// ```
-#[derive(PartialEq)]
+#[derive(PartialEq, Eq)]
 pub struct PolynomialList<Cont> {
     pub(crate) tensor: Tensor<Cont>,
     pub(crate) poly_size: PolynomialSize,

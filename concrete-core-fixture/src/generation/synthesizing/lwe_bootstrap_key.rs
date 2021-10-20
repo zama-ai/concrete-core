@@ -125,3 +125,63 @@ mod backend_fftw {
         }
     }
 }
+
+#[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
+mod backend_cuda {
+    use crate::generation::synthesizing::SynthesizesLweBootstrapKey;
+    use crate::generation::{Maker, Precision32, Precision64};
+    use concrete_core::prelude::{
+        CudaFourierLweBootstrapKey32, CudaFourierLweBootstrapKey64, DestructionEngine,
+        LweBootstrapKeyConversionEngine,
+    };
+
+    impl SynthesizesLweBootstrapKey<Precision32, CudaFourierLweBootstrapKey32> for Maker {
+        fn synthesize_lwe_bootstrap_key(
+            &mut self,
+            prototype: &Self::LweBootstrapKeyProto,
+        ) -> CudaFourierLweBootstrapKey32 {
+            self.cuda_engine
+                .convert_lwe_bootstrap_key(&prototype.0)
+                .unwrap()
+        }
+
+        fn unsynthesize_lwe_bootstrap_key(
+            &mut self,
+            _entity: CudaFourierLweBootstrapKey32,
+        ) -> Self::LweBootstrapKeyProto {
+            unimplemented!(
+                "The conversion of the Fourier bootstrap key from GPU to CPU is not \
+            implemented"
+            );
+        }
+
+        fn destroy_lwe_bootstrap_key(&mut self, entity: CudaFourierLweBootstrapKey32) {
+            self.cuda_engine.destroy(entity).unwrap();
+        }
+    }
+
+    impl SynthesizesLweBootstrapKey<Precision64, CudaFourierLweBootstrapKey64> for Maker {
+        fn synthesize_lwe_bootstrap_key(
+            &mut self,
+            prototype: &Self::LweBootstrapKeyProto,
+        ) -> CudaFourierLweBootstrapKey64 {
+            self.cuda_engine
+                .convert_lwe_bootstrap_key(&prototype.0)
+                .unwrap()
+        }
+
+        fn unsynthesize_lwe_bootstrap_key(
+            &mut self,
+            _entity: CudaFourierLweBootstrapKey64,
+        ) -> Self::LweBootstrapKeyProto {
+            unimplemented!(
+                "The conversion of the Fourier bootstrap key from GPU to CPU is not \
+            implemented"
+            );
+        }
+
+        fn destroy_lwe_bootstrap_key(&mut self, entity: CudaFourierLweBootstrapKey64) {
+            self.cuda_engine.destroy(entity).unwrap();
+        }
+    }
+}
