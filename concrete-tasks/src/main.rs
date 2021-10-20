@@ -86,6 +86,10 @@ fn main() -> Result<(), std::io::Error> {
             Command::new("test_and_cov_crates")
                 .about("Compute tests coverage of all crates in native mode"),
         )
+        .subcommand(
+            Command::new("test_cuda")
+                .about("Tests the `concrete-core` crate with the cuda backend"),
+        )
         .subcommand(Command::new("build_debug_crates").about("Build all the crates in debug mode"))
         .subcommand(
             Command::new("build_release_crates").about("Build all the crates in release mode"),
@@ -96,6 +100,10 @@ fn main() -> Result<(), std::io::Error> {
             Command::new("check_doc").about("Checks that the doc compiles without warnings"),
         )
         .subcommand(Command::new("check_clippy").about("Checks that clippy runs without warnings"))
+        .subcommand(
+            Command::new("check_clippy_cuda")
+                .about("Checks that clippy runs without warnings on the cuda backend"),
+        )
         .subcommand(Command::new("check_fmt").about("Checks that rustfmt runs without warnings"))
         .subcommand(Command::new("chore_format").about("Format the codebase with rustfmt"))
         .subcommand(
@@ -167,6 +175,9 @@ fn main() -> Result<(), std::io::Error> {
     if matches.subcommand_matches("test_and_cov_crates").is_some() {
         test::cov_crates()?;
     }
+    if matches.subcommand_matches("test_cuda").is_some() {
+        test::cuda()?;
+    }
     if matches.subcommand_matches("build_debug_crates").is_some() {
         build::debug::crates()?;
     }
@@ -184,6 +195,9 @@ fn main() -> Result<(), std::io::Error> {
     }
     if matches.subcommand_matches("check_clippy").is_some() {
         check::clippy()?;
+    }
+    if matches.subcommand_matches("check_clippy_cuda").is_some() {
+        check::cuda_clippy()?;
     }
     if matches.subcommand_matches("check_fmt").is_some() {
         check::fmt()?;

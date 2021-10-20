@@ -313,3 +313,62 @@ mod backend_fftw {
         }
     }
 }
+
+#[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
+mod backend_cuda {
+    use crate::generation::prototypes::{ProtoBinaryGlweCiphertext32, ProtoBinaryGlweCiphertext64};
+    use crate::generation::synthesizing::SynthesizesGlweCiphertext;
+    use crate::generation::{Maker, Precision32, Precision64};
+    use concrete_core::prelude::{
+        CudaGlweCiphertext32, CudaGlweCiphertext64, DestructionEngine,
+        GlweCiphertextConversionEngine,
+    };
+
+    impl SynthesizesGlweCiphertext<Precision32, CudaGlweCiphertext32> for Maker {
+        fn synthesize_glwe_ciphertext(
+            &mut self,
+            prototype: &Self::GlweCiphertextProto,
+        ) -> CudaGlweCiphertext32 {
+            self.cuda_engine
+                .convert_glwe_ciphertext(&prototype.0)
+                .unwrap()
+        }
+
+        fn unsynthesize_glwe_ciphertext(
+            &mut self,
+            entity: CudaGlweCiphertext32,
+        ) -> Self::GlweCiphertextProto {
+            let proto = self.cuda_engine.convert_glwe_ciphertext(&entity).unwrap();
+            self.cuda_engine.destroy(entity).unwrap();
+            ProtoBinaryGlweCiphertext32(proto)
+        }
+
+        fn destroy_glwe_ciphertext(&mut self, entity: CudaGlweCiphertext32) {
+            self.cuda_engine.destroy(entity).unwrap();
+        }
+    }
+
+    impl SynthesizesGlweCiphertext<Precision64, CudaGlweCiphertext64> for Maker {
+        fn synthesize_glwe_ciphertext(
+            &mut self,
+            prototype: &Self::GlweCiphertextProto,
+        ) -> CudaGlweCiphertext64 {
+            self.cuda_engine
+                .convert_glwe_ciphertext(&prototype.0)
+                .unwrap()
+        }
+
+        fn unsynthesize_glwe_ciphertext(
+            &mut self,
+            entity: CudaGlweCiphertext64,
+        ) -> Self::GlweCiphertextProto {
+            let proto = self.cuda_engine.convert_glwe_ciphertext(&entity).unwrap();
+            self.cuda_engine.destroy(entity).unwrap();
+            ProtoBinaryGlweCiphertext64(proto)
+        }
+
+        fn destroy_glwe_ciphertext(&mut self, entity: CudaGlweCiphertext64) {
+            self.cuda_engine.destroy(entity).unwrap();
+        }
+    }
+}

@@ -1,0 +1,22 @@
+[package]
+name = "concrete-cuda"
+version = "0.1.0"
+edition = "2021"
+authors = ["Joao Justi", "B. Barbakadze", "A. Leroy", "Zama team"]
+license = "BSD-3-Clause-Clear"
+description = "Cuda implementation for the concrete FHE library."
+homepage = "https://www.zama.ai/concrete-framework"
+documentation = "https://docs.zama.ai/concrete/lib"
+repository = "https://github.com/zama-ai/concrete-core"
+readme = "README.md"
+keywords = ["fully", "homomorphic", "encryption", "fhe", "cryptography"]
+
+[build-dependencies]
+cmake = { version = "0.1" }
+
+[dependencies]
+thiserror = "1.0"
+
+[features]
+# A feature to disable build on github runners for the CI
+_ci_do_not_compile = []

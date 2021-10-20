@@ -13,6 +13,9 @@ mod default;
 #[cfg(feature = "backend_fftw")]
 mod fftw;
 
+#[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
+mod cuda;
+
 // The main entry point. Uses criterion as benchmark harness.
 fn main() {
     // We instantiate the benchmarks for different backends depending on the feature flag activated.
@@ -22,6 +25,8 @@ fn main() {
     default::bench_parallel();
     #[cfg(feature = "backend_fftw")]
     fftw::bench();
+    #[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
+    cuda::bench();
 
     // We launch the benchmarks.
     criterion::Criterion::default()
