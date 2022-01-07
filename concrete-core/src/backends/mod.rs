@@ -8,3 +8,6 @@ pub mod fftw;
 
 #[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
 pub mod cuda;
+
+#[cfg(all(feature = "backend_optalysys", not(feature = "_ci_do_not_compile")))]
+pub mod optalysys;

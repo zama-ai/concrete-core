@@ -22,6 +22,12 @@ pub use super::backends::cuda::engines::*;
 #[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
 pub use super::backends::cuda::entities::*;
 
+// ------------------------------------------------------------------------------------ OPTALYSYS BACKEND
+#[cfg(feature = "backend_optalysys")]
+pub use super::backends::optalysys::engines::*;
+#[cfg(feature = "backend_optalysys")]
+pub use super::backends::optalysys::entities::*;
+
 // -------------------------------------------------------------------------------- COMMONS REEXPORT
 // Expose concrete_commons types in the prelude. This avoids having to add concrete-commons as a
 // dependency in crates built on top of concrete-core.
