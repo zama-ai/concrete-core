@@ -46,6 +46,9 @@ backend_fftw = [
     "concrete-fftw"
 ]
 
+# An accelerated backend, using the Optalysys hardware.
+backend_optalysys = []
+
 seeder_unix = ["concrete-csprng/seeder_unix"]
 seeder_x86_64_rdseed = ["concrete-csprng/seeder_x86_64_rdseed"]
 parallel = ["rayon", "concrete-csprng/parallel"]

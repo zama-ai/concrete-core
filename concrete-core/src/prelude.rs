@@ -18,6 +18,12 @@ pub use super::backends::fftw::engines::*;
 #[cfg(feature = "backend_fftw")]
 pub use super::backends::fftw::entities::*;
 
+// ------------------------------------------------------------------------------------ OPTALYSYS BACKEND
+#[cfg(feature = "backend_optalysys")]
+pub use super::backends::optalysys::engines::*;
+#[cfg(feature = "backend_optalysys")]
+pub use super::backends::optalysys::entities::*;
+
 // -------------------------------------------------------------------------------- COMMONS REEXPORT
 // Expose concrete_commons types in the prelude. This avoids having to add concrete-commons as a
 // dependency in crates built on top of concrete-core.
