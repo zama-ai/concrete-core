@@ -38,6 +38,23 @@ impl<EngineError: std::error::Error> GlweCiphertextDecryptionError<EngineError> 
 /// decryption of the `input` ciphertext, under the `key` secret key.
 ///
 /// # Formal Definition
+///
+/// ## GLWE Decryption
+/// ###### inputs:
+/// - $\mathsf{CT} = \left( \vec{A} , B \right) \in \mathsf{GLWE}\_{\vec{S}}( \mathsf{PT} )\subseteq
+///   \mathcal{R}\_q^{k+1}$: an GLWE ciphertext
+/// - $\vec{S} \in\mathcal{R}\_q^k$: a secret key
+///
+/// ###### outputs:
+/// - $\mathsf{PT}\in\mathcal{R}\_q$: a plaintext
+///
+/// ###### algorithm:
+///
+/// 1. compute $\mathsf{PT} = B - \left\langle \vec{A} , \vec{S} \right\rangle \in\mathcal{R}\_q$
+/// 3. output $\mathsf{PT}$
+///
+/// **Remark:** Observe that the decryption is followed by a decoding phase that will contain a
+/// rounding.
 pub trait GlweCiphertextDecryptionEngine<SecretKey, Ciphertext, PlaintextVector>:
     AbstractEngine
 where

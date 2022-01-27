@@ -16,6 +16,23 @@ engine_error! {
 /// encryption of the `input` plaintext under the `key` secret key.
 ///
 /// # Formal Definition
+///
+/// ## LWE Encryption
+/// ###### inputs:
+/// - $\mathsf{pt}\in\mathbb{Z}\_q$: a plaintext
+/// - $\vec{s}\in\mathbb{Z}\_q^n$: a secret key
+/// - $\mathcal{D\_{\sigma^2,\mu}}$: a normal distribution of variance $\sigma^2$ and a mean of
+///   $\mu$
+///
+/// ###### outputs:
+/// - $\mathsf{ct} = \left( \vec{a} , b\right) \in \mathsf{LWE}^n\_{\vec{s}}( \mathsf{pt} )\subseteq
+///   \mathbb{Z}\_q^{(n+1)}$: an LWE ciphertext
+///
+/// ###### algorithm:
+/// 1. uniformly sample a vector $\vec{a}\in\mathbb{Z}\_q^n$
+/// 2. sample an integer error term $e \hookleftarrow \mathcal{D\_{\sigma^2,\mu}}$
+/// 3. compute $b = \left\langle \vec{a} , \vec{s} \right\rangle + \mathsf{pt} + e \in\mathbb{Z}\_q$
+/// 4. output $\left( \vec{a} , b\right)$
 pub trait LweCiphertextEncryptionEngine<SecretKey, Plaintext, Ciphertext>: AbstractEngine
 where
     SecretKey: LweSecretKeyEntity,

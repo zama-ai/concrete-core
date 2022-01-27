@@ -34,6 +34,8 @@ impl<EngineError: std::error::Error> LweCiphertextVectorDecryptionError<EngineEr
 /// the element-wise decryption of the `input` LWE ciphertext vector under the `key` secret key.
 ///
 /// # Formal Definition
+///
+/// cf [`here`](`crate::specification::engines::LweCiphertextDecryptionEngine`)
 pub trait LweCiphertextVectorDecryptionEngine<SecretKey, CiphertextVector, PlaintextVector>:
     AbstractEngine
 where

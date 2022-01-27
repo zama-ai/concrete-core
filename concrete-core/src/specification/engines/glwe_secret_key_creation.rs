@@ -40,6 +40,8 @@ impl<EngineError: std::error::Error> GlweSecretKeyCreationError<EngineError> {
 /// This [pure](super#operation-semantics) operation creates a fresh GLWE secret key.
 ///
 /// # Formal Definition
+///
+/// cf [`here`](`crate::specification::entities::GlweSecretKeyEntity`)
 pub trait GlweSecretKeyCreationEngine<SecretKey>: AbstractEngine
 where
     SecretKey: GlweSecretKeyEntity,

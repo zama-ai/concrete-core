@@ -39,6 +39,8 @@ impl<EngineError: std::error::Error> GlweCiphertextVectorDecryptionError<EngineE
 /// the piece-wise decryptions of the `input` GLWE ciphertext vector, under the `key` secret key.
 ///
 /// # Formal Definition
+///
+/// cf [`here`](`crate::specification::engines::GlweCiphertextDecryptionEngine`)
 pub trait GlweCiphertextVectorDecryptionEngine<SecretKey, CiphertextVector, PlaintextVector>:
     AbstractEngine
 where

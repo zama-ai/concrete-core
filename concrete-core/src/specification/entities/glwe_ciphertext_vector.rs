@@ -8,10 +8,12 @@ use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, Polynomia
 /// [`KeyDistribution`](`GlweCiphertextVectorEntity::KeyDistribution`) type, which conveys the
 /// distribution of the secret key it was encrypted with.
 ///
+/// **Remark:** GLWE ciphertexts generalize LWE ciphertexts by definition, however in this library,
+/// GLWE ciphertext entities do not generalize LWE ciphertexts, i.e., polynomial size cannot be 1.
+///
 /// # Formal Definition
 ///
-/// GLWE ciphertexts generalize LWE ciphertexts by definition, however in this library, GLWE
-/// ciphertext entities do not generalize LWE ciphertexts, i.e., polynomial size cannot be 1.
+/// cf [`here`](`crate::specification::entities::GlweCiphertextEntity`)
 pub trait GlweCiphertextVectorEntity: AbstractEntity<Kind = GlweCiphertextVectorKind> {
     /// The distribution of the key the ciphertext was encrypted with.
     type KeyDistribution: KeyDistributionMarker;

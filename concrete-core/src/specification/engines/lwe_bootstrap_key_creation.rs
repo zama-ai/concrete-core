@@ -41,6 +41,8 @@ impl<EngineError: std::error::Error> LweBootstrapKeyCreationError<EngineError> {
 /// `input_key` LWE secret key, and the `output_key` GLWE secret key.
 ///
 /// # Formal Definition
+///
+/// cf [`here`](`crate::specification::entities::LweBootstrapKeyEntity`)
 pub trait LweBootstrapKeyCreationEngine<LweSecretKey, GlweSecretKey, BootstrapKey>:
     AbstractEngine
 where

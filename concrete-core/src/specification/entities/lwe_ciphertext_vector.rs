@@ -9,6 +9,8 @@ use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
 /// distribution of the secret key it was encrypted with.
 ///
 /// # Formal Definition
+///
+/// cf [`here`](`crate::specification::entities::LweCiphertextEntity`)
 pub trait LweCiphertextVectorEntity: AbstractEntity<Kind = LweCiphertextVectorKind> {
     /// The distribution of key the ciphertext was encrypted with.
     type KeyDistribution: KeyDistributionMarker;

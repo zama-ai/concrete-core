@@ -36,6 +36,23 @@ impl<EngineError: std::error::Error> GlweCiphertextEncryptionError<EngineError> 
 /// encryptions of the `input` plaintext vector, under the `key` secret key.
 ///
 /// # Formal Definition
+///
+/// ## GLWE Encryption
+/// ###### inputs:
+/// - $\mathsf{PT}\in\mathcal{R}\_q$: a plaintext
+/// - $\vec{S} \in\mathcal{R}\_q^k$: a secret key
+/// - $\mathcal{D\_{\sigma^2,\mu}}$: a normal distribution of variance $\sigma^2$ and a mean of
+///   $\mu$
+///
+/// ###### outputs:
+/// - $\mathsf{CT} = \left( \vec{A} , B \right) \in \mathsf{GLWE}\_{\vec{S}}( \mathsf{PT} )\subseteq
+///   \mathcal{R}\_q^{k+1}$: an GLWE ciphertext
+///
+/// ###### algorithm:
+/// 1. uniformly sample each coefficient of the polynomial vector $\vec{A}\in\mathcal{R}^k\_q$
+/// 2. sample each integer error coefficient of an error polynomial $E\in\mathcal{R}\_q$ from
+/// $\mathcal{D\_{\sigma^2,\mu}}$ 3. compute $B = \left\langle \vec{A} , \vec{S} \right\rangle +
+/// \mathsf{PT} + E \in\mathcal{R}\_q$ 4. output $\left( \vec{A} , B \right)$
 pub trait GlweCiphertextEncryptionEngine<SecretKey, PlaintextVector, Ciphertext>:
     AbstractEngine
 where

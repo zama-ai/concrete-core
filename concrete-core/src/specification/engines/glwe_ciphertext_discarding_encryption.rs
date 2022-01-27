@@ -46,6 +46,8 @@ impl<EngineError: std::error::Error> GlweCiphertextDiscardingEncryptionError<Eng
 /// the encryption of the `input` plaintext vector, under the `key` secret key.
 ///
 /// # Formal Definition
+///
+/// cf [`here`](`crate::specification::engines::GlweCiphertextEncryptionEngine`)
 pub trait GlweCiphertextDiscardingEncryptionEngine<SecretKey, PlaintextVector, Ciphertext>:
     AbstractEngine
 where
