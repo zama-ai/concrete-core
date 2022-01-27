@@ -15,6 +15,22 @@ engine_error! {
 /// decryption of the `input` LWE ciphertext, under the `key` secret key.
 ///
 /// # Formal Definition
+///
+/// ## LWE Decryption
+/// ###### inputs:
+/// - $\mathsf{ct} = \left( \vec{a} , b\right) \in \mathsf{LWE}^n\_{\vec{s}}( \mathsf{pt} )\subseteq
+///   \mathbb{Z}\_q^{(n+1)}$: an LWE ciphertext
+/// - $\vec{s}\in\mathbb{Z}\_q^n$: a secret key
+///
+/// ###### outputs:
+/// - $\mathsf{pt}\in\mathbb{Z}\_q$: a plaintext
+///
+/// ###### algorithm:
+/// 1. compute $\mathsf{pt} = b - \left\langle \vec{a} , \vec{s} \right\rangle \in\mathbb{Z}\_q$
+/// 3. output $\mathsf{pt}$
+///
+/// **Remark:** Observe that the decryption is followed by a decoding phase that will contain a
+/// rounding.
 pub trait LweCiphertextDecryptionEngine<SecretKey, Ciphertext, Plaintext>: AbstractEngine
 where
     SecretKey: LweSecretKeyEntity,

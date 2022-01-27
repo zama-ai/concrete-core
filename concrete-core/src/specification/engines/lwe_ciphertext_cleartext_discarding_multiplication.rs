@@ -34,6 +34,44 @@ impl<EngineError: std::error::Error>
 /// the multiplication of the `input_1` LWE ciphertext with the `input_2` cleartext.
 ///
 /// # Formal Definition
+///
+/// ## LWE product with plaintext
+///
+/// It is a specification of the GLWE product with a plaintext described below.
+///
+/// ## GLWE product with plaintext
+/// [`GLWE ciphertexts`](`crate::specification::entities::GlweCiphertextEntity`) are homomorphic
+/// with respect to the addition.
+/// By generalization of this property, they are also homomorphic with respect to the product with a
+/// plaintext.
+///
+/// Let s GLWE ciphertexts
+/// $$
+/// \mathsf{CT} = \left( \vec{A}, B\right) \in \mathsf{GLWE}\_{\vec{S}} \left( \mathsf{PT} \right)
+/// \subseteq \mathcal{R}\_q^{k+1} $$
+/// encrypted under the [`GLWE secret key`](`crate::specification::entities::GlweSecretKeyEntity`)
+/// $\vec{S} \in \mathcal{R}\_q^k$.
+/// Let a clear plaintext
+/// $$
+/// \mathsf{PT}' \in \mathcal{R}.
+/// $$
+///
+/// We can multiply them homomorhically and obtain as a result a new GLWE ciphertext encrypting the
+/// product of the two plaintexts $\mathsf{PT}' \cdot \mathsf{PT}$.
+///
+/// ###### inputs:
+/// - $\mathsf{CT} = \left( \vec{A}, B\right) \in \mathsf{GLWE}\_{\vec{S}} \left( \mathsf{PT}
+///   \right) \subseteq \mathcal{R}\_q^{k+1}$: a GLWE ciphertext
+/// - $\mathsf{PT}' \in \mathcal{R}$: a plaintext
+///
+/// ###### outputs:
+/// - $\mathsf{CT}' = \left( \vec{A}' , B' \right) \in \mathsf{GLWE}\_{\vec{S}}( \mathsf{PT}' \cdot
+///   \mathsf{PT} )\subseteq \mathcal{R}\_q^{k+1}$: an GLWE ciphertext
+///
+/// ###### algorithm:
+/// 1. Compute $\vec{A}' = \mathsf{PT}' \cdot \vec{A} \in\mathcal{R}^k\_q$
+/// 2. Compute $B' = \mathsf{PT}' \cdot B \in\mathcal{R}\_q$
+/// 3. Output $\left( \vec{A}' , B' \right)$
 pub trait LweCiphertextCleartextDiscardingMultiplicationEngine<
     InputCiphertext,
     Cleartext,

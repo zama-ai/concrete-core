@@ -8,6 +8,13 @@ use concrete_commons::parameters::LweDimension;
 /// [`KeyDistribution`](`LweSecretKeyEntity::KeyDistribution`) type, which conveys its distribution.
 ///
 /// # Formal Definition
+///
+/// ## LWE Secret Key
+///
+/// We consider a secret key:
+/// $$\vec{s} \in \mathbb{Z}^n$$
+/// This vector contains $n$ integers that have been sampled for some distribution which is either
+/// uniformly binary, uniformly ternary, gaussian or even uniform.
 pub trait LweSecretKeyEntity: AbstractEntity<Kind = LweSecretKeyKind> {
     /// The distribution of this key.
     type KeyDistribution: KeyDistributionMarker;

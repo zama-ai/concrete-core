@@ -12,6 +12,8 @@ use concrete_commons::parameters::{
 /// distribution of the secret key it was encrypted with.
 ///
 /// # Formal Definition
+///
+/// cf [`here`](`crate::specification::entities::GgswCiphertextEntity`)
 pub trait GgswCiphertextVectorEntity: AbstractEntity<Kind = GgswCiphertextVectorKind> {
     /// The distribution of the key the ciphertext was encrypted with.
     type KeyDistribution: KeyDistributionMarker;

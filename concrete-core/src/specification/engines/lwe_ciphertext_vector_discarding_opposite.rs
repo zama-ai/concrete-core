@@ -38,6 +38,8 @@ impl<EngineError: std::error::Error> LweCiphertextVectorDiscardingOppositeError<
 /// with the element-wise opposite of the `input` LWE ciphertext vector.
 ///
 /// # Formal Definition
+///
+/// cf [`here`](`crate::specification::engines::LweCiphertextDiscardingOppositeEngine`)
 pub trait LweCiphertextVectorDiscardingOppositeEngine<InputCiphertextVector, OutputCiphertextVector>:
     AbstractEngine
 where

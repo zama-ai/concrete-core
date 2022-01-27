@@ -38,6 +38,8 @@ impl<EngineError: std::error::Error> LweCiphertextVectorFusingAdditionError<Engi
 /// the `output` LWE ciphertext vector.
 ///
 /// # Formal Definition
+///
+/// cf [`here`](`crate::specification::engines::LweCiphertextDiscardingAdditionEngine`)
 pub trait LweCiphertextVectorFusingAdditionEngine<InputCiphertextVector, OutputCiphertextVector>:
     AbstractEngine
 where

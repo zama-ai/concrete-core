@@ -50,6 +50,8 @@ impl<EngineError: std::error::Error> GlweCiphertextVectorDiscardingEncryptionErr
 /// with the piece-wise encryptions of the `input` plaintext vector, under the `key` secret key.
 ///
 /// # Formal Definition
+///
+/// cf [`here`](`crate::specification::engines::GlweCiphertextEncryptionEngine`)
 pub trait GlweCiphertextVectorDiscardingEncryptionEngine<
     SecretKey,
     PlaintextVector,

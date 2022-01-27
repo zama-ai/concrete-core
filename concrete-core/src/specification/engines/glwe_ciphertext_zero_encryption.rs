@@ -15,6 +15,9 @@ engine_error! {
 /// encryption of zeros, under the `key` secret key.
 ///
 /// # Formal Definition
+///
+/// This generates a [`GLWE
+/// encryption`](`crate::specification::engines::GlweCiphertextEncryptionEngine`) of zero.
 pub trait GlweCiphertextZeroEncryptionEngine<SecretKey, Ciphertext>: AbstractEngine
 where
     SecretKey: GlweSecretKeyEntity,

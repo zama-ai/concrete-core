@@ -72,6 +72,8 @@ impl<EngineError: std::error::Error> LweCiphertextVectorDiscardingBootstrapError
 /// accumulator as lookup-table, and the `bsk` bootstrap key.
 ///
 /// # Formal Definition
+///
+/// cf [`here`](`crate::specification::engines::LweCiphertextDiscardingBootstrapEngine`)
 pub trait LweCiphertextVectorDiscardingBootstrapEngine<
     BootstrapKey,
     AccumulatorVector,

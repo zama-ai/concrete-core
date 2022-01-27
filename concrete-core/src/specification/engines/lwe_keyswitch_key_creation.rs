@@ -44,6 +44,8 @@ impl<EngineError: std::error::Error> LweKeyswitchKeyCreationError<EngineError> {
 /// switch from the `input_key` LWE secret key to the `output_key` LWE secret key.
 ///
 /// # Formal Definition
+///
+/// cf [`here`](`crate::specification::entities::LweKeyswitchKeyEntity`)
 pub trait LweKeyswitchKeyCreationEngine<InputSecretKey, OutputSecretKey, KeyswitchKey>:
     AbstractEngine
 where

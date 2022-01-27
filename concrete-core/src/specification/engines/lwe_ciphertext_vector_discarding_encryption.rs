@@ -43,6 +43,8 @@ impl<EngineError: std::error::Error> LweCiphertextVectorDiscardingEncryptionErro
 /// with the element-wise encryption of the `input` plaintext vector under the `key` LWE secret key.
 ///
 /// # Formal Definition
+///
+/// cf [`here`](`crate::specification::engines::LweCiphertextEncryptionEngine`)
 pub trait LweCiphertextVectorDiscardingEncryptionEngine<
     SecretKey,
     PlaintextVector,
