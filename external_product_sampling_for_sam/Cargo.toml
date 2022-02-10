@@ -1,0 +1,11 @@
+[package]
+name = "external_product_sampling_for_sam"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+concrete-core-fixture = {path="../concrete-core-fixture", features=["backend_core"]}
+concrete-core = {path="../concrete-core", features=["backend_core"]}
+concrete-commons = {path = "../concrete-commons"}

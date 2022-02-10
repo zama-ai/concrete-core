@@ -10,7 +10,8 @@ members = [
     "concrete-boolean",
     "concrete-core-bench",
     "concrete-core-fixture",
-    "concrete-core-test"
+    "concrete-core-test",
+    "external_product_sampling_for_sam"
 ]
 
 [patch.crates-io]
@@ -22,4 +23,7 @@ concrete-commons = {path="concrete-commons"}
 concrete-boolean = {path="concrete-boolean"}
 
 [profile.bench]
+lto = "fat"
+
+[profile.release]
 lto = "fat"
