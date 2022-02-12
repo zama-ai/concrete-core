@@ -27,9 +27,9 @@ fn minimal_variance_for_security_64(k: GlweDimension, size: PolynomialSize) -> f
     )
 }
 
-fn mean(data: &[i64]) -> Option<f64> {
+fn mean(data: &[f64]) -> Option<f64> {
     // adapted from https://rust-lang-nursery.github.io/rust-cookbook/science/mathematics/statistics.html
-    let sum = data.iter().sum::<i64>() as f64;
+    let sum = data.iter().sum::<f64>() as f64;
     let count = data.len();
 
     match count {
@@ -38,7 +38,7 @@ fn mean(data: &[i64]) -> Option<f64> {
     }
 }
 
-fn std_deviation(data: &[i64]) -> Option<f64> {
+fn std_deviation(data: &[f64]) -> Option<f64> {
     // from https://rust-lang-nursery.github.io/rust-cookbook/science/mathematics/statistics.html
     match (mean(data), data.len()) {
         (Some(data_mean), count) if count > 0 => {
@@ -58,14 +58,14 @@ fn std_deviation(data: &[i64]) -> Option<f64> {
     }
 }
 
-fn compute_error(output: &[u64], input: &[u64], bit: u64) -> Result<Vec<i64>, NotABit> {
+fn compute_error(output: &[u64], input: &[u64], bit: u64) -> Result<Vec<f64>, NotABit> {
     match bit {
         1 => Ok(output
             .iter()
             .zip(input.iter())
-            .map(|(out, inp)| (out.wrapping_sub(*inp)) as i64)
+            .map(|(out, inp)| (out.wrapping_sub(*inp)) as i64 as f64)
             .collect()),
-        0 => Ok(output.iter().map(|out| *out as i64).collect()),
+        0 => Ok(output.iter().map(|out| *out as i64 as f64).collect()),
         _ => Err(NotABit(bit)),
     }
 }
@@ -131,7 +131,7 @@ fn main() {
     //     })
     //     .collect();
 
-    let err: Vec<i64> = output
+    let err: Vec<f64> = output
         .iter()
         .map(|out| compute_error(out, &input_polynomial, raw_inputs.0).unwrap())
         .into_iter()
