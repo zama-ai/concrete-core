@@ -72,8 +72,8 @@ impl<Cont> FourierPolynomial<Cont> {
     /// assert_eq!(fourier_poly.polynomial_size(), PolynomialSize(128));
     /// ```
     pub fn polynomial_size(&self) -> PolynomialSize
-    where
-        Self: AsRefTensor,
+        where
+            Self: AsRefTensor,
     {
         PolynomialSize(self.as_tensor().len())
     }
@@ -95,9 +95,9 @@ impl<Cont> FourierPolynomial<Cont> {
     /// }
     /// assert_eq!(fourier_poly.coefficient_iter().count(), 128);
     /// ```
-    pub fn coefficient_iter(&self) -> impl Iterator<Item = &Complex64>
-    where
-        Self: AsRefTensor<Element = Complex64>,
+    pub fn coefficient_iter(&self) -> impl Iterator<Item=&Complex64>
+        where
+            Self: AsRefTensor<Element=Complex64>,
     {
         self.as_tensor().iter()
     }
@@ -124,9 +124,9 @@ impl<Cont> FourierPolynomial<Cont> {
     ///     .all(|a| *a == Complex64::new(1., 1.)));
     /// assert_eq!(fourier_poly.coefficient_iter_mut().count(), 128);
     /// ```
-    pub fn coefficient_iter_mut(&mut self) -> impl Iterator<Item = &mut Complex64>
-    where
-        Self: AsMutTensor<Element = Complex64>,
+    pub fn coefficient_iter_mut(&mut self) -> impl Iterator<Item=&mut Complex64>
+        where
+            Self: AsMutTensor<Element=Complex64>,
     {
         self.as_mut_tensor().iter_mut()
     }
@@ -162,15 +162,15 @@ impl<Cont> FourierPolynomial<Cont> {
         poly_1: &FourierPolynomial<PolyCont1>,
         poly_2: &FourierPolynomial<PolyCont2>,
     ) where
-        Self: AsMutTensor<Element = Complex64>,
-        FourierPolynomial<PolyCont1>: AsRefTensor<Element = Complex64>,
-        FourierPolynomial<PolyCont2>: AsRefTensor<Element = Complex64>,
+        Self: AsMutTensor<Element=Complex64>,
+        FourierPolynomial<PolyCont1>: AsRefTensor<Element=Complex64>,
+        FourierPolynomial<PolyCont2>: AsRefTensor<Element=Complex64>,
     {
         ck_dim_eq!(self.polynomial_size().0 => poly_1.polynomial_size().0, poly_2.polynomial_size().0);
         #[cfg(not(target_feature = "avx2"))]
-        regular_uhwap(self, poly_1, poly_2);
+            regular_uhwap(self, poly_1, poly_2);
         #[cfg(target_feature = "avx2")]
-        avx2_uhwap(self, poly_1, poly_2);
+            avx2_uhwap(self, poly_1, poly_2);
     }
     /// Adds the result of the element-wise product of `poly_1` with `poly_2`, and the result
     /// of the element-wise product of `poly_3` with `poly_4`, to $(self.len()/2)+2$ elements of
@@ -208,11 +208,11 @@ impl<Cont> FourierPolynomial<Cont> {
         poly_3: &FourierPolynomial<Cont3>,
         poly_4: &FourierPolynomial<Cont4>,
     ) where
-        Self: AsMutTensor<Element = Complex64>,
-        FourierPolynomial<Cont1>: AsRefTensor<Element = Complex64>,
-        FourierPolynomial<Cont2>: AsRefTensor<Element = Complex64>,
-        FourierPolynomial<Cont3>: AsRefTensor<Element = Complex64>,
-        FourierPolynomial<Cont4>: AsRefTensor<Element = Complex64>,
+        Self: AsMutTensor<Element=Complex64>,
+        FourierPolynomial<Cont1>: AsRefTensor<Element=Complex64>,
+        FourierPolynomial<Cont2>: AsRefTensor<Element=Complex64>,
+        FourierPolynomial<Cont3>: AsRefTensor<Element=Complex64>,
+        FourierPolynomial<Cont4>: AsRefTensor<Element=Complex64>,
     {
         ck_dim_eq!(self.polynomial_size().0 =>
             poly_1.polynomial_size().0,
@@ -221,9 +221,9 @@ impl<Cont> FourierPolynomial<Cont> {
             poly_4.polynomial_size().0
         );
         #[cfg(not(target_feature = "avx2"))]
-        regular_uhwatp(self, poly_1, poly_2, poly_3, poly_4);
+            regular_uhwatp(self, poly_1, poly_2, poly_3, poly_4);
         #[cfg(target_feature = "avx2")]
-        avx2_uhwatp(self, poly_1, poly_2, poly_3, poly_4);
+            avx2_uhwatp(self, poly_1, poly_2, poly_3, poly_4);
     }
 
     /// Updates two polynomials with the following operation:
@@ -292,14 +292,14 @@ impl<Cont> FourierPolynomial<Cont> {
         poly_c_2: &FourierPolynomial<C8>,
         poly_d: &FourierPolynomial<C6>,
     ) where
-        FourierPolynomial<Cont>: AsMutTensor<Element = Complex64>,
-        FourierPolynomial<C2>: AsMutTensor<Element = Complex64>,
-        FourierPolynomial<C3>: AsRefTensor<Element = Complex64>,
-        FourierPolynomial<C4>: AsRefTensor<Element = Complex64>,
-        FourierPolynomial<C5>: AsRefTensor<Element = Complex64>,
-        FourierPolynomial<C6>: AsRefTensor<Element = Complex64>,
-        FourierPolynomial<C7>: AsRefTensor<Element = Complex64>,
-        FourierPolynomial<C8>: AsRefTensor<Element = Complex64>,
+        FourierPolynomial<Cont>: AsMutTensor<Element=Complex64>,
+        FourierPolynomial<C2>: AsMutTensor<Element=Complex64>,
+        FourierPolynomial<C3>: AsRefTensor<Element=Complex64>,
+        FourierPolynomial<C4>: AsRefTensor<Element=Complex64>,
+        FourierPolynomial<C5>: AsRefTensor<Element=Complex64>,
+        FourierPolynomial<C6>: AsRefTensor<Element=Complex64>,
+        FourierPolynomial<C7>: AsRefTensor<Element=Complex64>,
+        FourierPolynomial<C8>: AsRefTensor<Element=Complex64>,
     {
         ck_dim_eq!(result_1.polynomial_size().0 =>
             result_2.polynomial_size().0,
@@ -311,13 +311,27 @@ impl<Cont> FourierPolynomial<Cont> {
             poly_c_2.polynomial_size().0
         );
         #[cfg(not(target_feature = "avx2"))]
-        regular_uthwatp(
+            regular_uthwatp(
             result_1, result_2, poly_a_1, poly_a_2, poly_b, poly_c_1, poly_c_2, poly_d,
         );
         #[cfg(target_feature = "avx2")]
-        avx2_uthwatp(
+            avx2_uthwatp(
             result_1, result_2, poly_a_1, poly_a_2, poly_b, poly_c_1, poly_c_2, poly_d,
         );
+    }
+
+    pub fn copy_polynomial_content<C1>(
+        &mut self,
+        input: &FourierPolynomial<C1>,
+    ) where
+        Self: AsMutTensor<Element=Complex64>,
+        FourierPolynomial<C1>: AsRefTensor<Element=Complex64>,
+        Cont: AsMutSlice,
+    {
+        for (output_coef, &input_coef) in self.coefficient_iter_mut().zip(input
+            .coefficient_iter()) {
+            * output_coef = input_coef;
+        }
     }
 }
 
