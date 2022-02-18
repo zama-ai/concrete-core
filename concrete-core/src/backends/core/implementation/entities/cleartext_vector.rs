@@ -26,3 +26,15 @@ impl CleartextVectorEntity for CleartextVector64 {
         self.0.count()
     }
 }
+
+/// A structure representing a vector floating point cleartext with 64 bits of precision.
+#[derive(Debug, Clone, PartialEq)]
+pub struct FloatCleartextVector64(pub(crate) ImplCleartextList<Vec<f64>>);
+impl AbstractEntity for FloatCleartextVector64 {
+    type Kind = CleartextVectorKind;
+}
+impl CleartextVectorEntity for FloatCleartextVector64 {
+    fn cleartext_count(&self) -> CleartextCount {
+        self.0.count()
+    }
+}

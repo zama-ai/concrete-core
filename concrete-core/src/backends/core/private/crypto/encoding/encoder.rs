@@ -3,6 +3,8 @@ use crate::backends::core::private::math::torus::{FromTorus, IntoTorus, Unsigned
 
 use super::{Cleartext, CleartextList, Plaintext, PlaintextList};
 use concrete_commons::numeric::{FloatingPoint, Numeric};
+use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
+use crate::backends::core::private::math::decomposition::SignedDecomposer;
 
 /// A trait for types that encode cleartext to plaintext.
 ///
@@ -122,5 +124,90 @@ where
     {
         raw.as_mut_tensor()
             .fill_with_one(encoded.as_tensor(), |e| self.decode(Plaintext(*e)).0);
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub struct CryptoApiEncoder{
+    pub o: f64,     // with margin between 1 and 0
+    pub delta: f64, // with margin between 1 and 0
+    pub nb_bit_precision: usize,
+    pub nb_bit_padding: usize,
+    pub round: bool,
+}
+
+impl<EncScalar> Encoder<EncScalar> for CryptoApiEncoder where
+    EncScalar: UnsignedTorus + FromTorus<f64> + IntoTorus<f64>,
+{
+    type Raw = f64;
+
+    fn encode(&self, raw: Cleartext<Self::Raw>) -> Plaintext<EncScalar> {
+        if raw.0 < self.o || raw.0 > self.o + self.delta {
+            panic!("Message outside interval error.");
+        }
+        if !(self.nb_bit_precision == 0 || self.delta <= 0.) {
+            panic!("Invalid encoder error.")
+        }
+        let mut res: EncScalar =
+            <EncScalar as FromTorus<f64>>::from_torus(
+                (raw.0 - self.o) / self.delta,
+            );
+        if self.round{
+            let decomposer = SignedDecomposer::<EncScalar>::new(
+                DecompositionBaseLog(self.nb_bit_precision),
+                DecompositionLevelCount(1),
+            );
+            res = decomposer.closest_representable(res);
+        }
+        if self.nb_bit_padding > 0 {
+            res >>= self.nb_bit_padding;
+        }
+        Plaintext(res)
+    }
+
+    fn decode(&self, encoded: Plaintext<EncScalar>) -> Cleartext<Self::Raw> {
+        if !(self.nb_bit_precision == 0 || self.delta <= 0.) {
+            panic!("Invalid encoder error.")
+        }
+        let mut tmp: EncScalar = if self.round {
+            let decomposer = SignedDecomposer::<EncScalar>::new(
+                DecompositionBaseLog(self.nb_bit_precision + self.nb_bit_padding),
+                DecompositionLevelCount(1),
+            );
+            decomposer.closest_representable(encoded.0)
+        } else {
+            encoded.0
+        };
+
+        // remove padding
+        if self.nb_bit_padding > 0 {
+            tmp <<= self.nb_bit_padding;
+        }
+
+        // round if round is set to false and if in the security margin
+        let starting_value_security_margin: EncScalar = ((EncScalar::ONE << (self.nb_bit_precision + 1)) - EncScalar::ONE)
+            << (<EncScalar as Numeric>::BITS - self.nb_bit_precision);
+        let decomposer = SignedDecomposer::<EncScalar>::new(
+            DecompositionBaseLog(self.nb_bit_precision),
+            DecompositionLevelCount(1),
+        );
+        tmp = if tmp > starting_value_security_margin {
+            decomposer.closest_representable(tmp)
+        } else {
+            tmp
+        };
+
+        let mut e: f64 = tmp.into_torus();
+        e *= self.delta;
+        e += self.o;
+        Cleartext(e)
+    }
+
+    fn encode_list<RawCont, EncCont>(&self, _encoded: &mut PlaintextList<EncCont>, _raw: &CleartextList<RawCont>) where CleartextList<RawCont>: AsRefTensor<Element=Self::Raw>, PlaintextList<EncCont>: AsMutTensor<Element=EncScalar> {
+        panic!()
+    }
+
+    fn decode_list<RawCont, EncCont>(&self, _raw: &mut CleartextList<RawCont>, _encoded: &PlaintextList<EncCont>) where CleartextList<RawCont>: AsMutTensor<Element=Self::Raw>, PlaintextList<EncCont>: AsRefTensor<Element=EncScalar> {
+        panic!()
     }
 }

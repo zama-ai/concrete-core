@@ -1,6 +1,8 @@
 //! A module containing all the [entities](crate::specification::entities) exposed by the core
 //! backend.
 
+mod encoder;
+mod encoder_vector;
 mod cleartext;
 mod cleartext_vector;
 mod ggsw_ciphertext;
@@ -16,6 +18,8 @@ mod lwe_secret_key;
 mod plaintext;
 mod plaintext_vector;
 
+pub use encoder::*;
+pub use encoder_vector::*;
 pub use cleartext::*;
 pub use cleartext_vector::*;
 pub use ggsw_ciphertext::*;

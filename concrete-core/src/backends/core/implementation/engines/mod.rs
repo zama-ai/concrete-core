@@ -89,6 +89,10 @@ impl AbstractEngine for CoreEngine {
     }
 }
 
+mod cleartext_encoding;
+mod cleartext_vector_encoding;
+mod plaintext_decoding;
+mod plaintext_vector_decoding;
 mod cleartext_creation;
 mod cleartext_discarding_retrieval;
 mod cleartext_retrieval;

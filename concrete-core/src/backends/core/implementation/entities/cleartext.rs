@@ -1,4 +1,4 @@
-use crate::backends::core::private::crypto::encoding::Cleartext as ImplCleartext;
+use crate::backends::core::private::crypto::encoding::{Cleartext as ImplCleartext};
 use crate::specification::entities::markers::CleartextKind;
 use crate::specification::entities::{AbstractEntity, CleartextEntity};
 
@@ -17,3 +17,12 @@ impl AbstractEntity for Cleartext64 {
     type Kind = CleartextKind;
 }
 impl CleartextEntity for Cleartext64 {}
+
+
+/// A structure representing a floating point cleartext with 64 bits of precision.
+#[derive(Debug, Clone, PartialEq)]
+pub struct FloatCleartext64(pub(crate) ImplCleartext<f64>);
+impl AbstractEntity for FloatCleartext64 {
+    type Kind = CleartextKind;
+}
+impl CleartextEntity for FloatCleartext64 {}
