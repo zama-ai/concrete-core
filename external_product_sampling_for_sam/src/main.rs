@@ -1,4 +1,6 @@
+use clap::Parser;
 use concrete_commons::dispersion::{DispersionParameter, StandardDev, Variance};
+use concrete_commons::key_kinds::BinaryKeyKind;
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
 };
@@ -26,32 +28,41 @@ fn write_to_file(
     input_stddev: StandardDev,
     output_stddev: StandardDev,
     pred_stddev: StandardDev,
+    proc_number: usize,
 ) {
-    let data = format!(
-        "{}, {}, {}, {}, {}, {},{}, {}, {}, {}\n",
+    let data_to_save = format!(
+        "{}, {}, {}, {}, {}, {}, {}\n",
+        params.poly_size.0,
+        params.glwe_dimension.0,
+        params.dec_level_count.0,
+        params.dec_base_log.0,
+        input_stddev.get_variance(),
+        output_stddev.get_variance(),
+        pred_stddev.get_variance()
+    );
+
+    let data_to_print = format!(
+        "{}, {}, {}, {}, {}, {},{}\n",
         params.poly_size.0,
         params.glwe_dimension.0,
         params.dec_level_count.0,
         params.dec_base_log.0,
         input_stddev.get_log_standard_dev(),
         output_stddev.get_log_standard_dev(),
-        pred_stddev.get_log_variance(),
-        input_stddev.get_variance(),
-        output_stddev.get_variance(),
-        pred_stddev.get_variance() // glwe_std.get_variance(),
-                                   // Variance::from_variance(output_variance).get_log_standard_dev()
+        pred_stddev.get_log_standard_dev(),
     );
     let mut file = match OpenOptions::new()
         .read(true)
         .write(true)
         .append(true)
         .create(true)
-        .open("test.acquisition_external_product.txt")
+        .open(format!("{}.acquisition_external_product_k=1", proc_number))
     {
         Err(why) => panic!("{}", why),
         Ok(file) => file,
     };
-    file.write(data.as_bytes());
+    file.write(data_to_save.as_bytes());
+    // println!("{}", data_to_print);
 }
 
 #[derive(Debug)]
@@ -80,12 +91,13 @@ fn mean(data: &[f64]) -> Option<f64> {
 
 fn std_deviation(data: &[f64]) -> Option<StandardDev> {
     // from https://rust-lang-nursery.github.io/rust-cookbook/science/mathematics/statistics.html
+    // replacing the mean by 0. as we theoretically know it
     match (mean(data), data.len()) {
         (Some(data_mean), count) if count > 0 => {
             let variance = data
                 .iter()
                 .map(|value| {
-                    let diff = data_mean - (*value as f64);
+                    let diff = 0. - (*value as f64);
 
                     diff * diff
                 })
@@ -111,27 +123,34 @@ fn compute_error(output: &[u64], input: &[u64], bit: u64) -> Result<Vec<f64>, No
         _ => Err(NotABit(bit)),
     }
 }
+#[derive(Parser, Debug)]
+#[clap(author, version, about, long_about = None)]
+struct Args {
+    /// Name of the person to greet
+    #[clap(short, long)]
+    poly_size: usize,
+}
 
 fn main() {
-    // TODO: faire plus de samples quand petits polynomes
-
+    let args = Args::parse();
+    let size = args.poly_size;
     // Fixture Init
     let mut maker = Maker::default();
     let mut engine = CoreEngine::new().unwrap();
     type Precision = Precision64;
 
     // Parameter Grid
-    let polynomial_sizes = vec![
-        1usize << 8,
-        1 << 9,
-        1 << 10,
-        1 << 11,
-        1 << 12,
-        1 << 13,
-        1 << 14,
-    ];
+    // let polynomial_sizes = vec![
+    //     1usize << 8,
+    //     1 << 9,
+    //     1 << 10,
+    //     1 << 11,
+    //     1 << 12,
+    //     1 << 13,
+    //     1 << 14,
+    // ];
     let max_polynomial_size = 1 << 14;
-    let glwe_dimensions = vec![1usize, 2, 3, 4, 5];
+    let glwe_dimensions = vec![1usize];
     let mut base_logs = vec![1usize; 64];
     for b in 1..65 {
         base_logs[b - 1] = b;
@@ -146,35 +165,54 @@ fn main() {
         for b in base_logs.iter() {
             if l * b <= 53 {
                 for k in glwe_dimensions.iter() {
-                    for size in polynomial_sizes.iter() {
-                        let sample_size = SampleSize(5 * max_polynomial_size / size);
-                        let glwe_dimension = GlweDimension(*k);
-                        let poly_size = PolynomialSize(*size);
-                        let dec_level_count = DecompositionLevelCount(*l);
-                        let dec_base_log = DecompositionBaseLog(*b);
-                        let ggsw_noise = Variance::from_variance(minimal_variance_for_security_64(
-                            glwe_dimension,
-                            poly_size,
-                        ));
-                        let glwe_noise = Variance::from_variance(minimal_variance_for_security_64(
-                            glwe_dimension,
-                            poly_size,
-                        ));
+                    let sample_size = SampleSize(1 * max_polynomial_size / size);
+                    let glwe_dimension = GlweDimension(*k);
+                    let poly_size = PolynomialSize(size);
+                    let dec_level_count = DecompositionLevelCount(*l);
+                    let dec_base_log = DecompositionBaseLog(*b);
+                    let ggsw_noise = Variance::from_variance(minimal_variance_for_security_64(
+                        glwe_dimension,
+                        poly_size,
+                    ));
+                    let glwe_noise = Variance::from_variance(minimal_variance_for_security_64(
+                        glwe_dimension,
+                        poly_size,
+                    ));
 
-                        let parameters = GlweCiphertextGgswCiphertextExternalProductParameters {
-                            ggsw_noise,
+                    let parameters = GlweCiphertextGgswCiphertextExternalProductParameters {
+                        ggsw_noise,
+                        glwe_noise,
+                        glwe_dimension,
+                        poly_size,
+                        dec_level_count,
+                        dec_base_log,
+                    };
+
+                    let noise_prediction =
+                        concrete_npe::estimate_external_product_noise_with_binary_ggsw::<
+                            u64,
+                            _,
+                            _,
+                            BinaryKeyKind,
+                        >(
+                            poly_size,
+                            glwe_dimension,
                             glwe_noise,
-                            glwe_dimension,
-                            poly_size,
-                            dec_level_count,
+                            glwe_noise,
                             dec_base_log,
-                        };
+                            dec_level_count,
+                        );
 
+                    // TODO remove /q2
+                    if noise_prediction.get_variance() < 1. / 12. {
                         let raw_inputs = (
                             1 as u64,
                             // <Precision as IntegerPrecision>::Raw::uniform(),
                             // ^ Sampling of the raw message put in the ggsw
-                            <Precision as IntegerPrecision>::Raw::uniform_n_msb_vec(3, poly_size.0),
+                            <Precision as IntegerPrecision>::Raw::uniform_n_msb_vec(
+                                *b,
+                                poly_size.0,
+                            ),
                             // ^ Sampling of the raw messages put in the glwe coefficients
                         );
 
@@ -207,30 +245,25 @@ fn main() {
 
                         let mean_err = mean(&err).unwrap();
                         let std_err = std_deviation(&err).unwrap();
-                        // println!(
-                        //     "-> Mean: {} \n-> Log2StdDev: {}",
-                        //     mean_err,
-                        //     std_err.get_log_standard_dev()
-                        // );
-                        let noise_prediction =
-                            concrete_npe::estimate_external_product_noise_with_binary_ggsw(
-                                poly_size,
-                                glwe_dimension,
-                                glwe_noise,
-                                glwe_noise,
-                                dec_base_log,
-                                dec_level_count,
-                            );
+
                         write_to_file(
                             &parameters,
                             variance_to_stddev(glwe_noise),
                             std_err,
                             variance_to_stddev(noise_prediction),
+                            size,
                         );
+                    } else {
+                        write_to_file(
+                            &parameters,
+                            variance_to_stddev(glwe_noise),
+                            variance_to_stddev(Variance::from_variance(1. / 12.)),
+                            variance_to_stddev(Variance::from_variance(1. / 12.)),
+                            size,
+                        )
                     }
                 }
             }
         }
     }
-    // You can now save the output the way you want
 }
