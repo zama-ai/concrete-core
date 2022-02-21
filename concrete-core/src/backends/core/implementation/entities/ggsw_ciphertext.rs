@@ -4,13 +4,16 @@ use crate::specification::entities::{AbstractEntity, GgswCiphertextEntity};
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
 };
+use serde::{Serialize, Deserialize};
 
 /// A structure representing a GGSW ciphertext with 32 bits of precision.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GgswCiphertext32(ImplGgswCiphertext<Vec<u32>>);
+
 impl AbstractEntity for GgswCiphertext32 {
     type Kind = GgswCiphertextKind;
 }
+
 impl GgswCiphertextEntity for GgswCiphertext32 {
     type KeyDistribution = BinaryKeyDistribution;
 
@@ -32,11 +35,13 @@ impl GgswCiphertextEntity for GgswCiphertext32 {
 }
 
 /// A structure representing a GGSW ciphertext with 64 bits of precision.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GgswCiphertext64(ImplGgswCiphertext<Vec<u64>>);
+
 impl AbstractEntity for GgswCiphertext64 {
     type Kind = GgswCiphertextKind;
 }
+
 impl GgswCiphertextEntity for GgswCiphertext64 {
     type KeyDistribution = BinaryKeyDistribution;
 

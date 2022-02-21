@@ -1,11 +1,11 @@
 use crate::backends::core::private::crypto::encoding::{Encoder, PlaintextList};
 use crate::prelude::{
     CleartextVectorEncodingEngine, CleartextVectorEncodingError, CoreEngine, CryptoEncoderVector,
-    FloatCleartext64, FloatCleartextVector64, PlaintextVector32, PlaintextVector64,
+    FloatCleartextVector64, PlaintextVector32, PlaintextVector64,
 };
 
 impl CleartextVectorEncodingEngine<CryptoEncoderVector, FloatCleartextVector64, PlaintextVector32>
-    for CoreEngine
+for CoreEngine
 {
     fn encode_cleartext_vector(
         &mut self,
@@ -33,7 +33,7 @@ impl CleartextVectorEncodingEngine<CryptoEncoderVector, FloatCleartextVector64, 
 }
 
 impl CleartextVectorEncodingEngine<CryptoEncoderVector, FloatCleartextVector64, PlaintextVector64>
-    for CoreEngine
+for CoreEngine
 {
     fn encode_cleartext_vector(
         &mut self,

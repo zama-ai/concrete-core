@@ -3,13 +3,14 @@ use crate::backends::core::private::math::tensor::{
 };
 use concrete_commons::numeric::Numeric;
 use concrete_commons::parameters::CleartextCount;
+use serde::{Serialize, Deserialize};
 
 /// A clear, non-encoded, value.
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Cleartext<T: Numeric>(pub T);
 
 /// A list of clear, non-encoded, values.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CleartextList<Cont> {
     tensor: Tensor<Cont>,
 }

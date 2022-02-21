@@ -2,13 +2,16 @@ use crate::backends::core::private::crypto::gsw::GswCiphertext as ImplGswCiphert
 use crate::specification::entities::markers::{BinaryKeyDistribution, GswCiphertextKind};
 use crate::specification::entities::{AbstractEntity, GswCiphertextEntity};
 use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
+use serde::{Serialize, Deserialize};
 
 /// A structure representing a GSW ciphertext with 32 bits of precision.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GswCiphertext32(ImplGswCiphertext<Vec<u32>, u32>);
+
 impl AbstractEntity for GswCiphertext32 {
     type Kind = GswCiphertextKind;
 }
+
 impl GswCiphertextEntity for GswCiphertext32 {
     type KeyDistribution = BinaryKeyDistribution;
 
@@ -26,11 +29,13 @@ impl GswCiphertextEntity for GswCiphertext32 {
 }
 
 /// A structure representing a GSW ciphertext with 64 bits of precision.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GswCiphertext64(ImplGswCiphertext<Vec<u64>, u64>);
+
 impl AbstractEntity for GswCiphertext64 {
     type Kind = GswCiphertextKind;
 }
+
 impl GswCiphertextEntity for GswCiphertext64 {
     type KeyDistribution = BinaryKeyDistribution;
 

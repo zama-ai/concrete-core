@@ -14,11 +14,12 @@ use concrete_commons::numeric::Numeric;
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
 };
+use serde::{Serialize, Deserialize};
 #[cfg(feature = "multithread")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
 
 /// A bootstrapping key represented in the standard domain.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct StandardBootstrapKey<Cont> {
     tensor: Tensor<Cont>,
     poly_size: PolynomialSize,

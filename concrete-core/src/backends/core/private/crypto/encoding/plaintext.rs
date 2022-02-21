@@ -4,14 +4,15 @@ use crate::backends::core::private::math::tensor::{
 };
 use concrete_commons::numeric::Numeric;
 use concrete_commons::parameters::PlaintextCount;
+use serde::{Serialize, Deserialize};
 
 /// An plaintext (encoded) value.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[repr(transparent)]
 pub struct Plaintext<T: Numeric>(pub T);
 
 /// A list of plaintexts
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PlaintextList<Cont> {
     pub(crate) tensor: Tensor<Cont>,
 }

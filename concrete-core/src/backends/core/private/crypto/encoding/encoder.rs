@@ -5,6 +5,7 @@ use super::{Cleartext, CleartextList, Plaintext, PlaintextList};
 use concrete_commons::numeric::{FloatingPoint, Numeric};
 use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
 use crate::backends::core::private::math::decomposition::SignedDecomposer;
+use serde::{Serialize, Deserialize};
 
 /// A trait for types that encode cleartext to plaintext.
 ///
@@ -119,18 +120,20 @@ where
         raw: &mut CleartextList<RawCont>,
         encoded: &PlaintextList<EncCont>,
     ) where
-        CleartextList<RawCont>: AsMutTensor<Element = RawScalar>,
-        PlaintextList<EncCont>: AsRefTensor<Element = EncScalar>,
+        CleartextList<RawCont>: AsMutTensor<Element=RawScalar>,
+        PlaintextList<EncCont>: AsRefTensor<Element=EncScalar>,
     {
         raw.as_mut_tensor()
             .fill_with_one(encoded.as_tensor(), |e| self.decode(Plaintext(*e)).0);
     }
 }
 
-#[derive(Debug, PartialEq)]
-pub struct CryptoApiEncoder{
-    pub o: f64,     // with margin between 1 and 0
-    pub delta: f64, // with margin between 1 and 0
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct CryptoApiEncoder {
+    pub o: f64,
+    // with margin between 1 and 0
+    pub delta: f64,
+    // with margin between 1 and 0
     pub nb_bit_precision: usize,
     pub nb_bit_padding: usize,
     pub round: bool,

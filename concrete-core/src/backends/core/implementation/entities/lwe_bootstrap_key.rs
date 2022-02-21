@@ -12,11 +12,13 @@ use concrete_fftw::array::AlignedVec;
 use serde::{Deserialize, Serialize};
 
 /// A structure representing an LWE bootstrap key with 32 bits of precision.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct LweBootstrapKey32(pub(crate) ImplStandardBootstrapKey<Vec<u32>>);
+
 impl AbstractEntity for LweBootstrapKey32 {
     type Kind = LweBootstrapKeyKind;
 }
+
 impl LweBootstrapKeyEntity for LweBootstrapKey32 {
     type InputKeyDistribution = BinaryKeyDistribution;
     type OutputKeyDistribution = BinaryKeyDistribution;
@@ -43,11 +45,13 @@ impl LweBootstrapKeyEntity for LweBootstrapKey32 {
 }
 
 /// A structure representing an LWE bootstrap key with 64 bits of precision.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct LweBootstrapKey64(pub(crate) ImplStandardBootstrapKey<Vec<u64>>);
+
 impl AbstractEntity for LweBootstrapKey64 {
     type Kind = LweBootstrapKeyKind;
 }
+
 impl LweBootstrapKeyEntity for LweBootstrapKey64 {
     type InputKeyDistribution = BinaryKeyDistribution;
     type OutputKeyDistribution = BinaryKeyDistribution;
@@ -76,9 +80,11 @@ impl LweBootstrapKeyEntity for LweBootstrapKey64 {
 /// A structure representing an LWE bootstrap key with 32 bits of precision, in the fourier domain.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct FourierLweBootstrapKey32(pub(crate) ImplFourierBootstrapKey<AlignedVec<Complex64>, u32>);
+
 impl AbstractEntity for FourierLweBootstrapKey32 {
     type Kind = LweBootstrapKeyKind;
 }
+
 impl LweBootstrapKeyEntity for FourierLweBootstrapKey32 {
     type InputKeyDistribution = BinaryKeyDistribution;
     type OutputKeyDistribution = BinaryKeyDistribution;
@@ -107,9 +113,11 @@ impl LweBootstrapKeyEntity for FourierLweBootstrapKey32 {
 /// A structure representing an LWE bootstrap key with 64 bits of precision, in the fourier domain.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct FourierLweBootstrapKey64(pub(crate) ImplFourierBootstrapKey<AlignedVec<Complex64>, u64>);
+
 impl AbstractEntity for FourierLweBootstrapKey64 {
     type Kind = LweBootstrapKeyKind;
 }
+
 impl LweBootstrapKeyEntity for FourierLweBootstrapKey64 {
     type InputKeyDistribution = BinaryKeyDistribution;
     type OutputKeyDistribution = BinaryKeyDistribution;

@@ -2,8 +2,8 @@ use crate::backends::core::private::crypto::glwe::GlweList;
 use crate::backends::core::private::math::tensor::{
     ck_dim_div, tensor_traits, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
-
 use super::GgswLevelMatrix;
+use serde::{Serialize, Deserialize};
 
 use crate::backends::core::private::math::decomposition::DecompositionLevel;
 use concrete_commons::parameters::{
@@ -13,7 +13,7 @@ use concrete_commons::parameters::{
 use rayon::{iter::IndexedParallelIterator, prelude::*};
 
 /// A GGSW ciphertext.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GgswCiphertext<Cont> {
     tensor: Tensor<Cont>,
     poly_size: PolynomialSize,

@@ -7,16 +7,16 @@ use crate::backends::core::private::math::tensor::{
 };
 use crate::backends::core::private::math::torus::UnsignedTorus;
 use crate::backends::core::private::utils::zip;
-
 use super::GswLevelMatrix;
-
 use concrete_commons::numeric::Numeric;
 use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
+use serde::{Serialize, Deserialize};
+
 #[cfg(feature = "multithread")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
 
 /// A GSW ciphertext.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GswCiphertext<Cont, Scalar> {
     tensor: Tensor<Cont>,
     lwe_size: LweSize,
