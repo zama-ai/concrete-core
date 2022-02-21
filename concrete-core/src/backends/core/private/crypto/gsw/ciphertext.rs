@@ -1,5 +1,4 @@
 use std::cell::RefCell;
-
 use crate::backends::core::private::crypto::lwe::{LweCiphertext, LweList};
 use crate::backends::core::private::math::decomposition::{DecompositionLevel, SignedDecomposer};
 use crate::backends::core::private::math::tensor::{
@@ -48,8 +47,8 @@ impl<Scalar> GswCiphertext<Vec<Scalar>, Scalar> {
         decomp_level: DecompositionLevelCount,
         decomp_base_log: DecompositionBaseLog,
     ) -> Self
-    where
-        Scalar: Numeric,
+        where
+            Scalar: Numeric,
     {
         GswCiphertext {
             tensor: Tensor::from_container(vec![value; decomp_level.0 * lwe_size.0 * lwe_size.0]),
@@ -82,9 +81,9 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
         lwe_size: LweSize,
         decomp_base_log: DecompositionBaseLog,
     ) -> Self
-    where
-        Cont: AsRefSlice<Element = Scalar>,
-        Scalar: Numeric,
+        where
+            Cont: AsRefSlice<Element=Scalar>,
+            Scalar: Numeric,
     {
         let tensor = Tensor::from_container(cont);
         ck_dim_div!(tensor.len() => lwe_size.0,lwe_size.0 * lwe_size.0);
@@ -131,8 +130,8 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     /// assert_eq!(gsw.decomposition_level_count(), DecompositionLevelCount(3));
     /// ```
     pub fn decomposition_level_count(&self) -> DecompositionLevelCount
-    where
-        Self: AsRefTensor,
+        where
+            Self: AsRefTensor,
     {
         ck_dim_div!(self.as_tensor().len() =>
             self.lwe_size.0,
@@ -161,8 +160,8 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     /// assert_eq!(list.count(), CiphertextCount(3 * 7));
     /// ```
     pub fn as_lwe_list(&self) -> LweList<&[Scalar]>
-    where
-        Self: AsRefTensor<Element = Scalar>,
+        where
+            Self: AsRefTensor<Element=Scalar>,
     {
         LweList::from_container(self.as_tensor().as_slice(), self.lwe_size)
     }
@@ -192,8 +191,8 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     /// gsw.as_tensor().iter().for_each(|a| assert_eq!(*a, 0));
     /// ```
     pub fn as_mut_lwe_list(&mut self) -> LweList<&mut [Scalar]>
-    where
-        Self: AsMutTensor<Element = Scalar>,
+        where
+            Self: AsMutTensor<Element=Scalar>,
     {
         let lwe_size = self.lwe_size;
         LweList::from_container(self.as_mut_tensor().as_mut_slice(), lwe_size)
@@ -246,9 +245,9 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     /// ```
     pub fn level_matrix_iter(
         &self,
-    ) -> impl DoubleEndedIterator<Item = GswLevelMatrix<&[<Self as AsRefTensor>::Element]>>
-    where
-        Self: AsRefTensor,
+    ) -> impl DoubleEndedIterator<Item=GswLevelMatrix<&[<Self as AsRefTensor>::Element]>>
+        where
+            Self: AsRefTensor,
     {
         let chunks_size = self.lwe_size.0 * self.lwe_size.0;
         let lwe_size = self.lwe_size;
@@ -293,9 +292,9 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     /// ```
     pub fn level_matrix_iter_mut(
         &mut self,
-    ) -> impl DoubleEndedIterator<Item = GswLevelMatrix<&mut [<Self as AsRefTensor>::Element]>>
-    where
-        Self: AsMutTensor,
+    ) -> impl DoubleEndedIterator<Item=GswLevelMatrix<&mut [<Self as AsRefTensor>::Element]>>
+        where
+            Self: AsMutTensor,
     {
         let chunks_size = self.lwe_size.0 * self.lwe_size.0;
         let lwe_size = self.lwe_size;
@@ -341,10 +340,10 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     #[cfg(feature = "multithread")]
     pub fn par_level_matrix_iter_mut(
         &mut self,
-    ) -> impl IndexedParallelIterator<Item = GswLevelMatrix<&mut [<Self as AsRefTensor>::Element]>>
-    where
-        Self: AsMutTensor,
-        <Self as AsMutTensor>::Element: Sync + Send,
+    ) -> impl IndexedParallelIterator<Item=GswLevelMatrix<&mut [<Self as AsRefTensor>::Element]>>
+        where
+            Self: AsMutTensor,
+            <Self as AsMutTensor>::Element: Sync + Send,
     {
         let chunks_size = self.lwe_size.0 * self.lwe_size.0;
         let lwe_size = self.lwe_size;
@@ -411,11 +410,11 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     /// gsw.external_product(&mut res, &ciphertext);
     /// ```
     pub fn external_product<C1, C2>(&self, output: &mut LweCiphertext<C1>, lwe: &LweCiphertext<C2>)
-    where
-        Self: AsRefTensor<Element = Scalar>,
-        LweCiphertext<C1>: AsMutTensor<Element = Scalar>,
-        LweCiphertext<C2>: AsRefTensor<Element = Scalar>,
-        Scalar: UnsignedTorus,
+        where
+            Self: AsRefTensor<Element=Scalar>,
+            LweCiphertext<C1>: AsMutTensor<Element=Scalar>,
+            LweCiphertext<C2>: AsRefTensor<Element=Scalar>,
+            Scalar: UnsignedTorus,
     {
         // We check that the lwe sizes match
         ck_dim_eq!(
@@ -534,11 +533,11 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
         ct0: &LweCiphertext<C0>,
         ct1: &LweCiphertext<C1>,
     ) where
-        LweCiphertext<C0>: AsRefTensor<Element = Scalar>,
-        LweCiphertext<C1>: AsRefTensor<Element = Scalar>,
-        LweCiphertext<Vec<Scalar>>: AsMutTensor<Element = Scalar>,
-        LweCiphertext<COut>: AsMutTensor<Element = Scalar>,
-        Self: AsRefTensor<Element = Scalar>,
+        LweCiphertext<C0>: AsRefTensor<Element=Scalar>,
+        LweCiphertext<C1>: AsRefTensor<Element=Scalar>,
+        LweCiphertext<Vec<Scalar>>: AsMutTensor<Element=Scalar>,
+        LweCiphertext<COut>: AsMutTensor<Element=Scalar>,
+        Self: AsRefTensor<Element=Scalar>,
         Scalar: UnsignedTorus,
     {
         let mut buffer = LweCiphertext::allocate(Scalar::ZERO, ct1.lwe_size());
@@ -558,9 +557,9 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
 }
 
 impl<Element, Cont, Scalar> AsRefTensor for GswCiphertext<Cont, Scalar>
-where
-    Cont: AsRefSlice<Element = Element>,
-    Scalar: Numeric,
+    where
+        Cont: AsRefSlice<Element=Element>,
+        Scalar: Numeric,
 {
     type Element = Element;
     type Container = Cont;
@@ -570,9 +569,9 @@ where
 }
 
 impl<Element, Cont, Scalar> AsMutTensor for GswCiphertext<Cont, Scalar>
-where
-    Cont: AsMutSlice<Element = Element>,
-    Scalar: Numeric,
+    where
+        Cont: AsMutSlice<Element=Element>,
+        Scalar: Numeric,
 {
     type Element = Element;
     type Container = Cont;
@@ -582,9 +581,9 @@ where
 }
 
 impl<Cont, Scalar> IntoTensor for GswCiphertext<Cont, Scalar>
-where
-    Cont: AsRefSlice,
-    Scalar: Numeric,
+    where
+        Cont: AsRefSlice,
+        Scalar: Numeric,
 {
     type Element = <Cont as AsRefSlice>::Element;
     type Container = Cont;

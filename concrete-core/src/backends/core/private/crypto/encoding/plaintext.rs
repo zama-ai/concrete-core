@@ -20,8 +20,8 @@ pub struct PlaintextList<Cont> {
 tensor_traits!(PlaintextList);
 
 impl<Scalar> PlaintextList<Vec<Scalar>>
-where
-    Scalar: Copy,
+    where
+        Scalar: Copy,
 {
     /// Allocates a new list of plaintexts.
     ///
@@ -70,8 +70,8 @@ impl<Cont> PlaintextList<Cont> {
     /// assert_eq!(plain_list.count(), PlaintextCount(100));
     /// ```
     pub fn count(&self) -> PlaintextCount
-    where
-        Self: AsRefTensor,
+        where
+            Self: AsRefTensor,
     {
         PlaintextCount(self.as_tensor().len())
     }
@@ -86,10 +86,10 @@ impl<Cont> PlaintextList<Cont> {
     /// plain_list.plaintext_iter().for_each(|a| assert_eq!(a.0, 1));
     /// assert_eq!(plain_list.plaintext_iter().count(), 100);
     /// ```
-    pub fn plaintext_iter(&self) -> impl Iterator<Item = &Plaintext<<Self as AsRefTensor>::Element>>
-    where
-        Self: AsRefTensor,
-        <Self as AsRefTensor>::Element: Numeric,
+    pub fn plaintext_iter(&self) -> impl Iterator<Item=&Plaintext<<Self as AsRefTensor>::Element>>
+        where
+            Self: AsRefTensor,
+            <Self as AsRefTensor>::Element: Numeric,
     {
         self.as_tensor().iter().map(|refe| unsafe {
             &*{
@@ -114,10 +114,10 @@ impl<Cont> PlaintextList<Cont> {
     /// ```
     pub fn plaintext_iter_mut(
         &mut self,
-    ) -> impl Iterator<Item = &mut Plaintext<<Self as AsMutTensor>::Element>>
-    where
-        Self: AsMutTensor,
-        <Self as AsMutTensor>::Element: Numeric,
+    ) -> impl Iterator<Item=&mut Plaintext<<Self as AsMutTensor>::Element>>
+        where
+            Self: AsMutTensor,
+            <Self as AsMutTensor>::Element: Numeric,
     {
         self.as_mut_tensor().iter_mut().map(|refe| unsafe {
             &mut *{
@@ -143,9 +143,9 @@ impl<Cont> PlaintextList<Cont> {
     pub fn sublist_iter(
         &self,
         count: PlaintextCount,
-    ) -> impl Iterator<Item = PlaintextList<&[<Self as AsRefTensor>::Element]>>
-    where
-        Self: AsRefTensor,
+    ) -> impl Iterator<Item=PlaintextList<&[<Self as AsRefTensor>::Element]>>
+        where
+            Self: AsRefTensor,
     {
         self.as_tensor()
             .subtensor_iter(count.0)
@@ -171,9 +171,9 @@ impl<Cont> PlaintextList<Cont> {
     pub fn sublist_iter_mut(
         &mut self,
         count: PlaintextCount,
-    ) -> impl Iterator<Item = PlaintextList<&mut [<Self as AsMutTensor>::Element]>>
-    where
-        Self: AsMutTensor,
+    ) -> impl Iterator<Item=PlaintextList<&mut [<Self as AsMutTensor>::Element]>>
+        where
+            Self: AsMutTensor,
     {
         ck_dim_div!(self.count().0 => count.0);
         self.as_mut_tensor()
@@ -193,8 +193,8 @@ impl<Cont> PlaintextList<Cont> {
     /// assert_eq!(plain_poly.polynomial_size(), PolynomialSize(100));
     /// ```
     pub fn as_polynomial(&self) -> Polynomial<&[<Self as AsRefTensor>::Element]>
-    where
-        Self: AsRefTensor,
+        where
+            Self: AsRefTensor,
     {
         Polynomial::from_container(self.as_tensor().as_slice())
     }
@@ -211,8 +211,8 @@ impl<Cont> PlaintextList<Cont> {
     /// assert_eq!(plain_poly.polynomial_size(), PolynomialSize(100));
     /// ```
     pub fn as_mut_polynomial(&mut self) -> Polynomial<&mut [<Self as AsRefTensor>::Element]>
-    where
-        Self: AsMutTensor,
+        where
+            Self: AsMutTensor,
     {
         Polynomial::from_container(self.as_mut_tensor().as_mut_slice())
     }

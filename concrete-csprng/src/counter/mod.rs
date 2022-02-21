@@ -1,4 +1,4 @@
-use crate::{aesni, software};
+use crate::{software};
 #[cfg(feature = "multithread")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
 use std::cmp::Ordering;
@@ -7,11 +7,11 @@ use std::cmp::Ordering;
 mod test;
 
 #[cfg(all(
-    test,
-    target_arch = "x86_64",
-    target_feature = "aes",
-    target_feature = "sse2",
-    target_feature = "rdseed"
+test,
+target_arch = "x86_64",
+target_feature = "aes",
+target_feature = "sse2",
+target_feature = "rdseed"
 ))]
 mod test_aes;
 
@@ -216,9 +216,6 @@ impl Default for State {
 /// A generator that uses the software implementation.
 pub type SoftAesCtrGenerator = AesCtrGenerator<software::Generator>;
 
-/// A generator that uses the hardware implementation.
-pub type HardAesCtrGenerator = AesCtrGenerator<aesni::Generator>;
-
 /// A csprng which operates in batch mode.
 #[derive(Clone)]
 pub struct AesCtrGenerator<G: AesBatchedGenerator> {
@@ -304,7 +301,7 @@ impl<G: AesBatchedGenerator> AesCtrGenerator<G> {
         &mut self,
         n_child: ChildCount,
         child_bytes: BytesPerChild,
-    ) -> Option<impl Iterator<Item = AesCtrGenerator<G>>> {
+    ) -> Option<impl Iterator<Item=AesCtrGenerator<G>>> {
         if !self.is_fork_in_bound(n_child, child_bytes) {
             return None;
         }
@@ -327,9 +324,9 @@ impl<G: AesBatchedGenerator> AesCtrGenerator<G> {
         &mut self,
         n_child: ChildCount,
         child_bytes: BytesPerChild,
-    ) -> Option<impl IndexedParallelIterator<Item = AesCtrGenerator<G>>>
-    where
-        G: Send + Sync,
+    ) -> Option<impl IndexedParallelIterator<Item=AesCtrGenerator<G>>>
+        where
+            G: Send + Sync,
     {
         if !self.is_fork_in_bound(n_child, child_bytes) {
             return None;

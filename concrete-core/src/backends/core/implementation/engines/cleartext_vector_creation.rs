@@ -1,6 +1,7 @@
 use crate::backends::core::implementation::engines::CoreEngine;
 use crate::backends::core::implementation::entities::{CleartextVector32, CleartextVector64};
 use crate::backends::core::private::crypto::encoding::CleartextList as ImplCleartextList;
+use crate::prelude::{FloatCleartextVector64};
 use crate::specification::engines::{CleartextVectorCreationEngine, CleartextVectorCreationError};
 
 /// # Description:
@@ -70,5 +71,20 @@ impl CleartextVectorCreationEngine<u64, CleartextVector64> for CoreEngine {
 
     unsafe fn create_cleartext_vector_unchecked(&mut self, input: &[u64]) -> CleartextVector64 {
         CleartextVector64(ImplCleartextList::from_container(input.to_vec()))
+    }
+}
+
+
+impl CleartextVectorCreationEngine<f64, FloatCleartextVector64> for CoreEngine {
+    fn create_cleartext_vector(
+        &mut self,
+        input: &[f64],
+    ) -> Result<FloatCleartextVector64, CleartextVectorCreationError<Self::EngineError>> {
+        CleartextVectorCreationError::perform_generic_checks(input)?;
+        Ok(unsafe { self.create_cleartext_vector_unchecked(input) })
+    }
+
+    unsafe fn create_cleartext_vector_unchecked(&mut self, input: &[f64]) -> FloatCleartextVector64 {
+        FloatCleartextVector64(ImplCleartextList::from_container(input.to_vec()))
     }
 }

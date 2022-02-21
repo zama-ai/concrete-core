@@ -1,6 +1,7 @@
 use crate::backends::core::implementation::engines::CoreEngine;
 use crate::backends::core::implementation::entities::{Cleartext32, Cleartext64};
 use crate::backends::core::private::crypto::encoding::Cleartext as ImplCleartext;
+use crate::prelude::FloatCleartext64;
 use crate::specification::engines::{CleartextCreationEngine, CleartextCreationError};
 
 /// # Description:
@@ -62,5 +63,21 @@ impl CleartextCreationEngine<u64, Cleartext64> for CoreEngine {
 
     unsafe fn create_cleartext_unchecked(&mut self, input: &u64) -> Cleartext64 {
         Cleartext64(ImplCleartext(*input))
+    }
+}
+
+/// # Description:
+/// Implementation of [`CleartextCreationEngine`] for [`CoreEngine`] that operates on 64 bits
+/// fp numbers.
+impl CleartextCreationEngine<f64, FloatCleartext64> for CoreEngine {
+    fn create_cleartext(
+        &mut self,
+        input: &f64,
+    ) -> Result<FloatCleartext64, CleartextCreationError<Self::EngineError>> {
+        Ok(unsafe { self.create_cleartext_unchecked(input) })
+    }
+
+    unsafe fn create_cleartext_unchecked(&mut self, input: &f64) -> FloatCleartext64 {
+        FloatCleartext64(ImplCleartext(*input))
     }
 }

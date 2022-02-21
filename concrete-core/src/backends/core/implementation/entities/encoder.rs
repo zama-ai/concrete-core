@@ -4,7 +4,7 @@ use crate::prelude::markers::EncoderKind;
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
-pub struct CryptoEncoder(pub(crate) CryptoApiEncoder);
+pub struct CryptoEncoder(pub CryptoApiEncoder);
 
 impl AbstractEntity for CryptoEncoder { type Kind = EncoderKind; }
 

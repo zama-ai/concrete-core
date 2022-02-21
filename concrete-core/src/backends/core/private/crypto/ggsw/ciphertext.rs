@@ -51,8 +51,8 @@ impl<Scalar> GgswCiphertext<Vec<Scalar>> {
         decomp_level: DecompositionLevelCount,
         decomp_base_log: DecompositionBaseLog,
     ) -> Self
-    where
-        Scalar: Copy,
+        where
+            Scalar: Copy,
     {
         GgswCiphertext {
             tensor: Tensor::from_container(vec![
@@ -95,8 +95,8 @@ impl<Cont> GgswCiphertext<Cont> {
         poly_size: PolynomialSize,
         decomp_base_log: DecompositionBaseLog,
     ) -> Self
-    where
-        Cont: AsRefSlice,
+        where
+            Cont: AsRefSlice,
     {
         let tensor = Tensor::from_container(cont);
         ck_dim_div!(tensor.len() => rlwe_size.0, poly_size.0, rlwe_size.0 * rlwe_size.0);
@@ -149,8 +149,8 @@ impl<Cont> GgswCiphertext<Cont> {
     /// assert_eq!(ggsw.decomposition_level_count(), DecompositionLevelCount(3));
     /// ```
     pub fn decomposition_level_count(&self) -> DecompositionLevelCount
-    where
-        Self: AsRefTensor,
+        where
+            Self: AsRefTensor,
     {
         ck_dim_div!(self.as_tensor().len() =>
             self.rlwe_size.0,
@@ -206,8 +206,8 @@ impl<Cont> GgswCiphertext<Cont> {
     /// assert_eq!(list.ciphertext_count(), CiphertextCount(3 * 7));
     /// ```
     pub fn as_glwe_list<Scalar>(&self) -> GlweList<&[Scalar]>
-    where
-        Self: AsRefTensor<Element = Scalar>,
+        where
+            Self: AsRefTensor<Element=Scalar>,
     {
         GlweList::from_container(
             self.as_tensor().as_slice(),
@@ -243,8 +243,8 @@ impl<Cont> GgswCiphertext<Cont> {
     /// ggsw.as_tensor().iter().for_each(|a| assert_eq!(*a, 0));
     /// ```
     pub fn as_mut_glwe_list<Scalar>(&mut self) -> GlweList<&mut [Scalar]>
-    where
-        Self: AsMutTensor<Element = Scalar>,
+        where
+            Self: AsMutTensor<Element=Scalar>,
     {
         let dimension = self.rlwe_size.to_glwe_dimension();
         let size = self.poly_size;
@@ -306,9 +306,9 @@ impl<Cont> GgswCiphertext<Cont> {
     /// ```
     pub fn level_matrix_iter(
         &self,
-    ) -> impl DoubleEndedIterator<Item = GgswLevelMatrix<&[<Self as AsRefTensor>::Element]>>
-    where
-        Self: AsRefTensor,
+    ) -> impl DoubleEndedIterator<Item=GgswLevelMatrix<&[<Self as AsRefTensor>::Element]>>
+        where
+            Self: AsRefTensor,
     {
         let chunks_size = self.poly_size.0 * self.rlwe_size.0 * self.rlwe_size.0;
         let poly_size = self.poly_size;
@@ -358,9 +358,9 @@ impl<Cont> GgswCiphertext<Cont> {
     /// ```
     pub fn level_matrix_iter_mut(
         &mut self,
-    ) -> impl DoubleEndedIterator<Item = GgswLevelMatrix<&mut [<Self as AsRefTensor>::Element]>>
-    where
-        Self: AsMutTensor,
+    ) -> impl DoubleEndedIterator<Item=GgswLevelMatrix<&mut [<Self as AsRefTensor>::Element]>>
+        where
+            Self: AsMutTensor,
     {
         let chunks_size = self.poly_size.0 * self.rlwe_size.0 * self.rlwe_size.0;
         let poly_size = self.poly_size;
@@ -412,10 +412,10 @@ impl<Cont> GgswCiphertext<Cont> {
     #[cfg(feature = "multithread")]
     pub fn par_level_matrix_iter_mut(
         &mut self,
-    ) -> impl IndexedParallelIterator<Item = GgswLevelMatrix<&mut [<Self as AsRefTensor>::Element]>>
-    where
-        Self: AsMutTensor,
-        <Self as AsMutTensor>::Element: Sync + Send,
+    ) -> impl IndexedParallelIterator<Item=GgswLevelMatrix<&mut [<Self as AsRefTensor>::Element]>>
+        where
+            Self: AsMutTensor,
+            <Self as AsMutTensor>::Element: Sync + Send,
     {
         let chunks_size = self.poly_size.0 * self.rlwe_size.0 * self.rlwe_size.0;
         let poly_size = self.poly_size;

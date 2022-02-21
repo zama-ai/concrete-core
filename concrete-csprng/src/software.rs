@@ -7,11 +7,12 @@ use std::cell::UnsafeCell;
 use std::io::Read;
 
 thread_local! {
-    static RDSEED_COUNTER: UnsafeCell<u128> = UnsafeCell::new(
-        std::time::UNIX_EPOCH
-            .elapsed()
-            .expect("Failed to initialized software rdseed counter.")
-            .as_nanos()
+    static RDSEED_COUNTER: UnsafeCell<u128> = UnsafeCell::new({
+        let mut buf = [0u8; 16];
+        getrandom::getrandom(&mut buf)
+            .expect("Failed to get random.");
+        u128::from_ne_bytes(buf)
+    }
     );
     static RDSEED_SECRET: UnsafeCell<u128> = UnsafeCell::new(0);
     static RDSEED_SEEDED: UnsafeCell<bool> = UnsafeCell::new(false);
@@ -89,11 +90,9 @@ impl AesBatchedGenerator for Generator {
 }
 
 pub fn dev_random() -> u128 {
-    let mut random = std::fs::File::open("/dev/random").expect("Failed to open /dev/random .");
     let mut buf = [0u8; 16];
-    random
-        .read_exact(&mut buf[..])
-        .expect("Failed to read from /dev/random .");
+    getrandom::getrandom(&mut buf)
+        .expect("Failed to get random .");
     u128::from_ne_bytes(buf)
 }
 

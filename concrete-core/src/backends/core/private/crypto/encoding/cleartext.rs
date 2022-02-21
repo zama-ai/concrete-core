@@ -18,8 +18,8 @@ pub struct CleartextList<Cont> {
 tensor_traits!(CleartextList);
 
 impl<Scalar> CleartextList<Vec<Scalar>>
-where
-    Scalar: Copy,
+    where
+        Scalar: Copy,
 {
     /// Allocates a new list of cleartexts.
     ///
@@ -64,8 +64,8 @@ impl<Cont> CleartextList<Cont> {
     /// assert_eq!(clear_list.count(), CleartextCount(100));
     /// ```
     pub fn count(&self) -> CleartextCount
-    where
-        Self: AsRefTensor,
+        where
+            Self: AsRefTensor,
     {
         CleartextCount(self.as_tensor().len())
     }
@@ -80,10 +80,10 @@ impl<Cont> CleartextList<Cont> {
     /// clear_list.cleartext_iter().for_each(|a| assert_eq!(a.0, 1));
     /// assert_eq!(clear_list.cleartext_iter().count(), 100);
     /// ```
-    pub fn cleartext_iter(&self) -> impl Iterator<Item = &Cleartext<<Self as AsRefTensor>::Element>>
-    where
-        Self: AsRefTensor,
-        <Self as AsRefTensor>::Element: Numeric,
+    pub fn cleartext_iter(&self) -> impl Iterator<Item=&Cleartext<<Self as AsRefTensor>::Element>>
+        where
+            Self: AsRefTensor,
+            <Self as AsRefTensor>::Element: Numeric,
     {
         self.as_tensor().iter().map(|refe| unsafe {
             &*{
@@ -108,10 +108,10 @@ impl<Cont> CleartextList<Cont> {
     /// ```
     pub fn cleartext_iter_mut(
         &mut self,
-    ) -> impl Iterator<Item = &mut Cleartext<<Self as AsMutTensor>::Element>>
-    where
-        Self: AsMutTensor,
-        <Self as AsMutTensor>::Element: Numeric,
+    ) -> impl Iterator<Item=&mut Cleartext<<Self as AsMutTensor>::Element>>
+        where
+            Self: AsMutTensor,
+            <Self as AsMutTensor>::Element: Numeric,
     {
         self.as_mut_tensor().iter_mut().map(|refe| unsafe {
             &mut *{
@@ -137,9 +137,9 @@ impl<Cont> CleartextList<Cont> {
     pub fn sublist_iter(
         &self,
         sub_len: CleartextCount,
-    ) -> impl Iterator<Item = CleartextList<&[<Self as AsRefTensor>::Element]>>
-    where
-        Self: AsRefTensor,
+    ) -> impl Iterator<Item=CleartextList<&[<Self as AsRefTensor>::Element]>>
+        where
+            Self: AsRefTensor,
     {
         ck_dim_div!(self.as_tensor().len() => sub_len.0);
         self.as_tensor()
@@ -166,9 +166,9 @@ impl<Cont> CleartextList<Cont> {
     pub fn sublist_iter_mut(
         &mut self,
         sub_len: CleartextCount,
-    ) -> impl Iterator<Item = CleartextList<&mut [<Self as AsRefTensor>::Element]>>
-    where
-        Self: AsMutTensor,
+    ) -> impl Iterator<Item=CleartextList<&mut [<Self as AsRefTensor>::Element]>>
+        where
+            Self: AsMutTensor,
     {
         ck_dim_div!(self.as_tensor().len() => sub_len.0);
         self.as_mut_tensor()

@@ -63,8 +63,8 @@ pub trait Encoder<Enc: Numeric> {
         encoded: &mut PlaintextList<EncCont>,
         raw: &CleartextList<RawCont>,
     ) where
-        CleartextList<RawCont>: AsRefTensor<Element = Self::Raw>,
-        PlaintextList<EncCont>: AsMutTensor<Element = Enc>;
+        CleartextList<RawCont>: AsRefTensor<Element=Self::Raw>,
+        PlaintextList<EncCont>: AsMutTensor<Element=Enc>;
 
     /// Decodes a list of plaintexts into a list of cleartexts.
     ///
@@ -74,8 +74,8 @@ pub trait Encoder<Enc: Numeric> {
         raw: &mut CleartextList<RawCont>,
         encoded: &PlaintextList<EncCont>,
     ) where
-        CleartextList<RawCont>: AsMutTensor<Element = Self::Raw>,
-        PlaintextList<EncCont>: AsRefTensor<Element = Enc>;
+        CleartextList<RawCont>: AsMutTensor<Element=Self::Raw>,
+        PlaintextList<EncCont>: AsRefTensor<Element=Enc>;
 }
 
 /// An encoder for real cleartexts
@@ -87,9 +87,9 @@ pub struct RealEncoder<T: FloatingPoint> {
 }
 
 impl<RawScalar, EncScalar> Encoder<EncScalar> for RealEncoder<RawScalar>
-where
-    EncScalar: UnsignedTorus + FromTorus<RawScalar> + IntoTorus<RawScalar>,
-    RawScalar: FloatingPoint,
+    where
+        EncScalar: UnsignedTorus + FromTorus<RawScalar> + IntoTorus<RawScalar>,
+        RawScalar: FloatingPoint,
 {
     type Raw = RawScalar;
     fn encode(&self, raw: Cleartext<RawScalar>) -> Plaintext<EncScalar> {
@@ -108,8 +108,8 @@ where
         encoded: &mut PlaintextList<EncCont>,
         raw: &CleartextList<RawCont>,
     ) where
-        CleartextList<RawCont>: AsRefTensor<Element = RawScalar>,
-        PlaintextList<EncCont>: AsMutTensor<Element = EncScalar>,
+        CleartextList<RawCont>: AsRefTensor<Element=RawScalar>,
+        PlaintextList<EncCont>: AsMutTensor<Element=EncScalar>,
     {
         encoded
             .as_mut_tensor()
@@ -128,7 +128,7 @@ where
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
 pub struct CryptoApiEncoder {
     pub o: f64,
     // with margin between 1 and 0
@@ -155,7 +155,7 @@ impl<EncScalar> Encoder<EncScalar> for CryptoApiEncoder where
             <EncScalar as FromTorus<f64>>::from_torus(
                 (raw.0 - self.o) / self.delta,
             );
-        if self.round{
+        if self.round {
             let decomposer = SignedDecomposer::<EncScalar>::new(
                 DecompositionBaseLog(self.nb_bit_precision),
                 DecompositionLevelCount(1),

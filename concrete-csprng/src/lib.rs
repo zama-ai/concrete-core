@@ -11,10 +11,10 @@
 use rayon::prelude::*;
 use std::fmt::{Debug, Display, Formatter, Result};
 
-mod aesni;
 mod counter;
 mod software;
-use crate::counter::{AesKey, BytesPerChild, ChildCount, HardAesCtrGenerator, SoftAesCtrGenerator};
+
+use crate::counter::{AesKey, BytesPerChild, ChildCount, SoftAesCtrGenerator};
 pub use software::set_soft_rdseed_secret;
 
 /// The pseudorandom number generator.
@@ -27,7 +27,7 @@ pub enum RandomGenerator {
     #[doc(hidden)]
     Software(SoftAesCtrGenerator),
     #[doc(hidden)]
-    Hardware(HardAesCtrGenerator),
+    Hardware(()),
 }
 
 impl RandomGenerator {
@@ -39,10 +39,7 @@ impl RandomGenerator {
     /// If using the `slow` feature, this function will return the non-accelerated variant, even
     /// though the right instructions are available.
     pub fn new(seed: Option<u128>) -> RandomGenerator {
-        if cfg!(feature = "slow") {
-            return RandomGenerator::new_software(seed);
-        }
-        RandomGenerator::new_hardware(seed).unwrap_or_else(|| RandomGenerator::new_software(seed))
+        RandomGenerator::new_software(seed)
     }
 
     /// Builds a new software random generator, optionally seeding it with a given value.
@@ -51,41 +48,31 @@ impl RandomGenerator {
     }
 
     /// Tries to build a new hardware random generator, optionally seeding it with a given value.
-    pub fn new_hardware(seed: Option<u128>) -> Option<RandomGenerator> {
-        if !is_x86_feature_detected!("aes")
-            || !is_x86_feature_detected!("rdseed")
-            || !is_x86_feature_detected!("sse2")
-        {
-            return None;
-        }
-        Some(RandomGenerator::Hardware(HardAesCtrGenerator::new(
-            seed.map(AesKey),
-            None,
-            None,
-        )))
+    pub fn new_hardware(_seed: Option<u128>) -> Option<RandomGenerator> {
+        None
     }
 
     /// Yields the next byte from the generator.
     pub fn generate_next(&mut self) -> u8 {
         match self {
-            Self::Hardware(ref mut rand) => rand.generate_next(),
             Self::Software(ref mut rand) => rand.generate_next(),
+            _ => panic!("hardware csprng was stripped")
         }
     }
 
     /// Returns whether the generator is bounded.
     pub fn is_bounded(&self) -> bool {
         match self {
-            Self::Hardware(rand) => rand.is_bounded(),
             Self::Software(rand) => rand.is_bounded(),
+            _ => panic!("hardware csprng was stripped"),
         }
     }
 
     /// Returns the number of remaining bytes, if the generator is bounded.
     pub fn remaining_bytes(&self) -> Option<usize> {
         match self {
-            Self::Hardware(rand) => rand.remaining_bytes(),
             Self::Software(rand) => rand.remaining_bytes(),
+            _ => panic!("hardware csprng was stripped"),
         }
     }
 
@@ -98,41 +85,36 @@ impl RandomGenerator {
         &mut self,
         n_child: usize,
         child_bytes: usize,
-    ) -> Option<impl Iterator<Item = RandomGenerator>> {
-        enum GeneratorChildIter<HardIter, SoftIter>
-        where
-            HardIter: Iterator<Item = HardAesCtrGenerator>,
-            SoftIter: Iterator<Item = SoftAesCtrGenerator>,
+    ) -> Option<impl Iterator<Item=RandomGenerator>> {
+        enum GeneratorChildIter<SoftIter>
+            where
+                SoftIter: Iterator<Item=SoftAesCtrGenerator>,
         {
-            Hardware(HardIter),
+            #[allow(dead_code)]
+            Hardware(()),
             Software(SoftIter),
         }
 
-        impl<HardIter, SoftIter> Iterator for GeneratorChildIter<HardIter, SoftIter>
-        where
-            HardIter: Iterator<Item = HardAesCtrGenerator>,
-            SoftIter: Iterator<Item = SoftAesCtrGenerator>,
+        impl<SoftIter> Iterator for GeneratorChildIter<SoftIter>
+            where
+                SoftIter: Iterator<Item=SoftAesCtrGenerator>,
         {
             type Item = RandomGenerator;
 
             fn next(&mut self) -> Option<Self::Item> {
                 match self {
-                    GeneratorChildIter::Hardware(ref mut iter) => {
-                        iter.next().map(RandomGenerator::Hardware)
-                    }
                     GeneratorChildIter::Software(ref mut iter) => {
                         iter.next().map(RandomGenerator::Software)
                     }
+                    _ => panic!("hardware csprng was stripped"),
                 }
             }
         }
         match self {
-            Self::Hardware(ref mut rand) => rand
-                .try_fork(ChildCount(n_child), BytesPerChild(child_bytes))
-                .map(GeneratorChildIter::Hardware),
             Self::Software(ref mut rand) => rand
                 .try_fork(ChildCount(n_child), BytesPerChild(child_bytes))
                 .map(GeneratorChildIter::Software),
+            _ => panic!("hardware csprng was stripped"),
         }
     }
 
@@ -150,25 +132,25 @@ impl RandomGenerator {
         &mut self,
         n_child: usize,
         child_bytes: usize,
-    ) -> Option<impl IndexedParallelIterator<Item = RandomGenerator>> {
+    ) -> Option<impl IndexedParallelIterator<Item=RandomGenerator>> {
         use rayon::iter::plumbing::{Consumer, ProducerCallback, UnindexedConsumer};
         enum GeneratorChildIter<HardIter, SoftIter>
-        where
-            HardIter: IndexedParallelIterator<Item = HardAesCtrGenerator> + Send + Sync,
-            SoftIter: IndexedParallelIterator<Item = SoftAesCtrGenerator> + Send + Sync,
+            where
+                HardIter: IndexedParallelIterator<Item=HardAesCtrGenerator> + Send + Sync,
+                SoftIter: IndexedParallelIterator<Item=SoftAesCtrGenerator> + Send + Sync,
         {
             Hardware(HardIter),
             Software(SoftIter),
         }
         impl<HardIter, SoftIter> ParallelIterator for GeneratorChildIter<HardIter, SoftIter>
-        where
-            HardIter: IndexedParallelIterator<Item = HardAesCtrGenerator> + Send + Sync,
-            SoftIter: IndexedParallelIterator<Item = SoftAesCtrGenerator> + Send + Sync,
+            where
+                HardIter: IndexedParallelIterator<Item=HardAesCtrGenerator> + Send + Sync,
+                SoftIter: IndexedParallelIterator<Item=SoftAesCtrGenerator> + Send + Sync,
         {
             type Item = RandomGenerator;
             fn drive_unindexed<C>(self, consumer: C) -> <C as Consumer<Self::Item>>::Result
-            where
-                C: UnindexedConsumer<Self::Item>,
+                where
+                    C: UnindexedConsumer<Self::Item>,
             {
                 match self {
                     Self::Hardware(iter) => iter
@@ -181,9 +163,9 @@ impl RandomGenerator {
             }
         }
         impl<HardIter, SoftIter> IndexedParallelIterator for GeneratorChildIter<HardIter, SoftIter>
-        where
-            HardIter: IndexedParallelIterator<Item = HardAesCtrGenerator> + Send + Sync,
-            SoftIter: IndexedParallelIterator<Item = SoftAesCtrGenerator> + Send + Sync,
+            where
+                HardIter: IndexedParallelIterator<Item=HardAesCtrGenerator> + Send + Sync,
+                SoftIter: IndexedParallelIterator<Item=SoftAesCtrGenerator> + Send + Sync,
         {
             fn len(&self) -> usize {
                 match self {

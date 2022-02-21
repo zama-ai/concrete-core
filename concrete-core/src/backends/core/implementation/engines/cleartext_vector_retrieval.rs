@@ -1,6 +1,7 @@
 use crate::backends::core::implementation::engines::CoreEngine;
 use crate::backends::core::implementation::entities::{CleartextVector32, CleartextVector64};
 use crate::backends::core::private::math::tensor::AsRefTensor;
+use crate::prelude::FloatCleartextVector64;
 use crate::specification::engines::{
     CleartextVectorRetrievalEngine, CleartextVectorRetrievalError,
 };
@@ -77,6 +78,23 @@ impl CleartextVectorRetrievalEngine<CleartextVector64, u64> for CoreEngine {
         &mut self,
         cleartext: &CleartextVector64,
     ) -> Vec<u64> {
+        cleartext.0.as_tensor().as_container().to_vec()
+    }
+}
+
+
+impl CleartextVectorRetrievalEngine<FloatCleartextVector64, f64> for CoreEngine {
+    fn retrieve_cleartext_vector(
+        &mut self,
+        cleartext: &FloatCleartextVector64,
+    ) -> Result<Vec<f64>, CleartextVectorRetrievalError<Self::EngineError>> {
+        Ok(unsafe { self.retrieve_cleartext_vector_unchecked(cleartext) })
+    }
+
+    unsafe fn retrieve_cleartext_vector_unchecked(
+        &mut self,
+        cleartext: &FloatCleartextVector64,
+    ) -> Vec<f64> {
         cleartext.0.as_tensor().as_container().to_vec()
     }
 }

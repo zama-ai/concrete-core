@@ -63,8 +63,8 @@ impl<Scalar> StandardBootstrapKey<Vec<Scalar>> {
         decomp_base_log: DecompositionBaseLog,
         key_size: LweDimension,
     ) -> StandardBootstrapKey<Vec<Scalar>>
-    where
-        Scalar: UnsignedTorus,
+        where
+            Scalar: UnsignedTorus,
     {
         StandardBootstrapKey {
             tensor: Tensor::from_container(vec![
@@ -114,9 +114,9 @@ impl<Cont> StandardBootstrapKey<Cont> {
         decomp_level: DecompositionLevelCount,
         decomp_base_log: DecompositionBaseLog,
     ) -> StandardBootstrapKey<Cont>
-    where
-        Cont: AsRefSlice<Element = Coef>,
-        Coef: UnsignedTorus,
+        where
+            Cont: AsRefSlice<Element=Coef>,
+            Coef: UnsignedTorus,
     {
         let tensor = Tensor::from_container(cont);
         ck_dim_div!(tensor.len() =>
@@ -177,9 +177,9 @@ impl<Cont> StandardBootstrapKey<Cont> {
         noise_parameters: impl DispersionParameter,
         generator: &mut EncryptionRandomGenerator,
     ) where
-        Self: AsMutTensor<Element = Scalar>,
-        LweSecretKey<BinaryKeyKind, LweCont>: AsRefTensor<Element = Scalar>,
-        GlweSecretKey<BinaryKeyKind, RlweCont>: AsRefTensor<Element = Scalar>,
+        Self: AsMutTensor<Element=Scalar>,
+        LweSecretKey<BinaryKeyKind, LweCont>: AsRefTensor<Element=Scalar>,
+        GlweSecretKey<BinaryKeyKind, RlweCont>: AsRefTensor<Element=Scalar>,
         Scalar: UnsignedTorus,
     {
         ck_dim_eq!(self.key_size().0 => lwe_secret_key.key_size().0);
@@ -259,9 +259,9 @@ impl<Cont> StandardBootstrapKey<Cont> {
         noise_parameters: impl DispersionParameter + Sync + Send,
         generator: &mut EncryptionRandomGenerator,
     ) where
-        Self: AsMutTensor<Element = Scalar>,
-        LweSecretKey<BinaryKeyKind, LweCont>: AsRefTensor<Element = Scalar>,
-        GlweSecretKey<BinaryKeyKind, RlweCont>: AsRefTensor<Element = Scalar>,
+        Self: AsMutTensor<Element=Scalar>,
+        LweSecretKey<BinaryKeyKind, LweCont>: AsRefTensor<Element=Scalar>,
+        GlweSecretKey<BinaryKeyKind, RlweCont>: AsRefTensor<Element=Scalar>,
         Scalar: UnsignedTorus + Sync + Send,
         RlweCont: Sync,
     {
@@ -334,9 +334,9 @@ impl<Cont> StandardBootstrapKey<Cont> {
         noise_parameters: impl DispersionParameter,
         generator: &mut EncryptionRandomGenerator,
     ) where
-        Self: AsMutTensor<Element = Scalar>,
-        LweSecretKey<BinaryKeyKind, LweCont>: AsRefTensor<Element = Scalar>,
-        GlweSecretKey<BinaryKeyKind, RlweCont>: AsRefTensor<Element = Scalar>,
+        Self: AsMutTensor<Element=Scalar>,
+        LweSecretKey<BinaryKeyKind, LweCont>: AsRefTensor<Element=Scalar>,
+        GlweSecretKey<BinaryKeyKind, RlweCont>: AsRefTensor<Element=Scalar>,
         Scalar: UnsignedTorus,
     {
         ck_dim_eq!(self.key_size().0 => lwe_secret_key.key_size().0);
@@ -463,8 +463,8 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// assert_eq!(bsk.key_size(), LweDimension(4));
     /// ```
     pub fn key_size(&self) -> LweDimension
-    where
-        Self: AsRefTensor,
+        where
+            Self: AsRefTensor,
     {
         ck_dim_div!(self.as_tensor().len() =>
             self.poly_size.0,
@@ -503,9 +503,9 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// ```
     pub fn ggsw_iter(
         &self,
-    ) -> impl Iterator<Item = GgswCiphertext<&[<Self as AsRefTensor>::Element]>>
-    where
-        Self: AsRefTensor,
+    ) -> impl Iterator<Item=GgswCiphertext<&[<Self as AsRefTensor>::Element]>>
+        where
+            Self: AsRefTensor,
     {
         let chunks_size =
             self.rlwe_size.0 * self.rlwe_size.0 * self.poly_size.0 * self.decomp_level.0;
@@ -557,10 +557,10 @@ impl<Cont> StandardBootstrapKey<Cont> {
     #[cfg(feature = "multithread")]
     pub fn par_ggsw_iter_mut(
         &mut self,
-    ) -> impl IndexedParallelIterator<Item = GgswCiphertext<&mut [<Self as AsRefTensor>::Element]>>
-    where
-        Self: AsMutTensor,
-        <Self as AsRefTensor>::Element: Sync + Send,
+    ) -> impl IndexedParallelIterator<Item=GgswCiphertext<&mut [<Self as AsRefTensor>::Element]>>
+        where
+            Self: AsMutTensor,
+            <Self as AsRefTensor>::Element: Sync + Send,
     {
         let chunks_size =
             self.rlwe_size.0 * self.rlwe_size.0 * self.poly_size.0 * self.decomp_level.0;
@@ -606,9 +606,9 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// ```
     pub fn ggsw_iter_mut(
         &mut self,
-    ) -> impl Iterator<Item = GgswCiphertext<&mut [<Self as AsRefTensor>::Element]>>
-    where
-        Self: AsMutTensor,
+    ) -> impl Iterator<Item=GgswCiphertext<&mut [<Self as AsRefTensor>::Element]>>
+        where
+            Self: AsMutTensor,
     {
         let chunks_size =
             self.rlwe_size.0 * self.rlwe_size.0 * self.poly_size.0 * self.decomp_level.0;
@@ -651,10 +651,10 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// }
     /// assert_eq!(bsk.poly_iter().count(), 7 * 7 * 3 * 4)
     /// ```
-    pub fn poly_iter(&self) -> impl Iterator<Item = Polynomial<&[<Self as AsRefTensor>::Element]>>
-    where
-        Self: AsRefTensor,
-        <Self as AsRefTensor>::Element: UnsignedTorus,
+    pub fn poly_iter(&self) -> impl Iterator<Item=Polynomial<&[<Self as AsRefTensor>::Element]>>
+        where
+            Self: AsRefTensor,
+            <Self as AsRefTensor>::Element: UnsignedTorus,
     {
         let poly_size = self.poly_size.0;
         self.as_tensor()
@@ -689,10 +689,10 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// ```
     pub fn poly_iter_mut(
         &mut self,
-    ) -> impl Iterator<Item = Polynomial<&mut [<Self as AsMutTensor>::Element]>>
-    where
-        Self: AsMutTensor,
-        <Self as AsMutTensor>::Element: UnsignedTorus,
+    ) -> impl Iterator<Item=Polynomial<&mut [<Self as AsMutTensor>::Element]>>
+        where
+            Self: AsMutTensor,
+            <Self as AsMutTensor>::Element: UnsignedTorus,
     {
         let poly_size = self.poly_size.0;
         self.as_mut_tensor()

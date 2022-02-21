@@ -1,5 +1,3 @@
-use concrete_fftw::array::AlignedVec;
-
 /// A trait allowing to extract a slice from a tensor.
 ///
 /// This trait is one of the two traits which allows to use [`Tensor`](super::Tensor) whith any data
@@ -69,19 +67,12 @@ impl<Element> AsRefSlice for &mut [Element] {
     }
 }
 
-impl<Element> AsRefSlice for AlignedVec<Element> {
-    type Element = Element;
-    fn as_slice(&self) -> &[Element] {
-        self.as_slice()
-    }
-}
-
 /// A trait allowing to extract a mutable slice from a tensor.
 ///
 /// The logic is the same as for the `AsRefTensor`, but here, it allows to access mutable slices
 /// instead. See the [`AsRefTensor`](super::AsRefTensor) documentation for a more detailed
 /// explanation of the logic.
-pub trait AsMutSlice: AsRefSlice<Element = <Self as AsMutSlice>::Element> {
+pub trait AsMutSlice: AsRefSlice<Element=<Self as AsMutSlice>::Element> {
     /// The type of the elements of the collection
     type Element;
     /// Returns a mutable slice from the container.
@@ -109,9 +100,3 @@ impl<Element> AsMutSlice for &mut [Element] {
     }
 }
 
-impl<Element> AsMutSlice for AlignedVec<Element> {
-    type Element = Element;
-    fn as_mut_slice(&mut self) -> &mut [Element] {
-        self.as_slice_mut()
-    }
-}

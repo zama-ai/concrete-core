@@ -1,5 +1,6 @@
 use crate::backends::core::implementation::engines::CoreEngine;
 use crate::backends::core::implementation::entities::{Cleartext32, Cleartext64};
+use crate::prelude::FloatCleartext64;
 use crate::specification::engines::{
     CleartextDiscardingRetrievalEngine, CleartextDiscardingRetrievalError,
 };
@@ -41,7 +42,7 @@ impl CleartextDiscardingRetrievalEngine<Cleartext32, u32> for CoreEngine {
         output: &mut u32,
         input: &Cleartext32,
     ) {
-        *output = input.0 .0;
+        *output = input.0.0;
     }
 }
 
@@ -82,6 +83,28 @@ impl CleartextDiscardingRetrievalEngine<Cleartext64, u64> for CoreEngine {
         output: &mut u64,
         input: &Cleartext64,
     ) {
-        *output = input.0 .0;
+        *output = input.0.0;
+    }
+}
+
+/// # Description:
+/// Implementation of [`CleartextDiscardingRetrievalEngine`] for [`CoreEngine`] that operates on 64
+/// bits fp numbers.
+impl CleartextDiscardingRetrievalEngine<FloatCleartext64, f64> for CoreEngine {
+    fn discard_retrieve_cleartext(
+        &mut self,
+        output: &mut f64,
+        input: &FloatCleartext64,
+    ) -> Result<(), CleartextDiscardingRetrievalError<Self::EngineError>> {
+        unsafe { self.discard_retrieve_cleartext_unchecked(output, input) };
+        Ok(())
+    }
+
+    unsafe fn discard_retrieve_cleartext_unchecked(
+        &mut self,
+        output: &mut f64,
+        input: &FloatCleartext64,
+    ) {
+        *output = input.0.0;
     }
 }

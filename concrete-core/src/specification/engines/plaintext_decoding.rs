@@ -15,10 +15,10 @@ engine_error! {
 ///
 /// # Formal Definition
 pub trait PlaintextDecodingEngine<Encoder, Plaintext, Cleartext>: AbstractEngine
-where
-    Plaintext: PlaintextEntity,
-    Cleartext: CleartextEntity,
-    Encoder: EncoderEntity,
+    where
+        Plaintext: PlaintextEntity,
+        Cleartext: CleartextEntity,
+        Encoder: EncoderEntity,
 {
     /// Decodes a plaintext.
     fn decode_plaintext(
@@ -35,7 +35,7 @@ where
     /// implementer safety section.
     unsafe fn decode_plaintext_unchecked(
         &mut self,
-        input: &Plaintext,
         encoder: &Encoder,
+        input: &Plaintext,
     ) -> Cleartext;
 }
