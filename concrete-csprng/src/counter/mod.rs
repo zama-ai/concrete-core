@@ -22,6 +22,8 @@ pub trait AesBatchedGenerator: Clone {
     fn new(key: Option<AesKey>) -> Self;
     /// Generates the batch corresponding to the given counter.
     fn generate_batch(&mut self, ctr: AesCtr) -> [u8; 128];
+    /// Generates a u128
+    fn generate_u128() -> u128;
 }
 
 /// Represents the counter used by the AES block cipher to generate a set of values.
@@ -293,6 +295,10 @@ impl<G: AesBatchedGenerator> AesCtrGenerator<G> {
             ShouldGenerateBatch::Wait => {}
         }
         output
+    }
+
+    pub fn generate_u128() -> u128 {
+        G::generate_u128()
     }
 
     /// Tries to fork the current generator into `n_child` generators each able to yield
