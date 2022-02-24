@@ -16,14 +16,14 @@ use crate::backends::core::private::crypto::secret::generators::{
 };
 use crate::backends::core::private::crypto::secret::LweSecretKey;
 use crate::backends::core::private::math::random::{RandomGenerable, RandomGenerator, UniformMsb};
-use crate::backends::core::private::math::tensor::{AsMutTensor, AsRefTensor, Tensor};
+use crate::backends::core::private::math::tensor::{AsMutTensor, AsRefSlice, AsRefTensor, Tensor};
 use crate::backends::core::private::math::torus::UnsignedTorus;
 use crate::backends::core::private::test_tools::{
     assert_delta_std_dev, assert_noise_distribution, random_ciphertext_count, random_lwe_dimension,
     random_uint_between,
 };
 
-use super::{LweSeededCiphertext, LweSeededList};
+use super::{LweSeededCiphertext, LweSeededKeyswitchKey, LweSeededList};
 
 fn test_keyswitch<T: UnsignedTorus + RandomGenerable<UniformMsb>>() {
     //! create a KSK and key switch some LWE samples
@@ -509,4 +509,59 @@ fn test_seeded_list_2_u32() {
 #[test]
 fn test_seeded_list_2_u64() {
     test_seeded_list_2::<u64>()
+}
+
+fn test_seeded_keyswitch_key<T>()
+where
+    T: UnsignedTorus,
+{
+    // settings
+    let nb_test = random_ciphertext_count(10);
+    let dimension_in = random_lwe_dimension(1000);
+    let dimension_out = random_lwe_dimension(1000);
+    let std_dev = LogStandardDev::from_log_standard_dev(-15.);
+    let decomp_level = DecompositionLevelCount(3);
+    let decomp_base_log = DecompositionBaseLog(7);
+
+    let mut secret_generator = SecretRandomGenerator::new(None);
+
+    for _ in 0..nb_test.0 {
+        // generate the secret keys
+        let sk_in = LweSecretKey::generate_binary(dimension_in, &mut secret_generator);
+        let sk_out = LweSecretKey::generate_binary(dimension_out, &mut secret_generator);
+
+        let mut seeded_ksk = LweSeededKeyswitchKey::allocate(
+            T::ZERO,
+            decomp_level,
+            decomp_base_log,
+            dimension_in,
+            dimension_out,
+        );
+
+        let mut encryption_generator = EncryptionRandomGenerator::new(Some(seeded_ksk.get_seed()));
+        let mut ksk = LweKeyswitchKey::allocate(
+            T::ZERO,
+            decomp_level,
+            decomp_base_log,
+            dimension_in,
+            dimension_out,
+        );
+
+        seeded_ksk.fill_with_seeded_keyswitch_key(&sk_in, &sk_out, std_dev);
+        ksk.fill_with_keyswitch_key(&sk_in, &sk_out, std_dev, &mut encryption_generator);
+        assert_eq!(
+            seeded_ksk.as_tensor().as_slice(),
+            ksk.as_tensor().as_slice()
+        );
+    }
+}
+
+#[test]
+fn test_seeded_keyswitch_key_u32() {
+    test_seeded_ciphertext::<u32>()
+}
+
+#[test]
+fn test_seeded_keyswitch_key_u64() {
+    test_seeded_ciphertext::<u64>()
 }
