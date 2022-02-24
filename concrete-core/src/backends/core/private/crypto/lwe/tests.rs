@@ -23,6 +23,8 @@ use crate::backends::core::private::test_tools::{
     random_uint_between,
 };
 
+use super::LweSeededCiphertext;
+
 fn test_keyswitch<T: UnsignedTorus + RandomGenerable<UniformMsb>>() {
     //! create a KSK and key switch some LWE samples
     //! warning: not a randomized test for the parameters
@@ -364,4 +366,53 @@ fn test_scalar_mul_random_u32() {
 #[test]
 fn test_scalar_mul_random_u64() {
     test_scalar_mul_random::<u64>()
+}
+
+fn test_seeded_ciphertext<T>()
+where
+    T: UnsignedTorus,
+{
+    // settings
+    let nb_ct = random_ciphertext_count(100);
+    let dimension = random_lwe_dimension(1000);
+    let std_dev = LogStandardDev::from_log_standard_dev(-15.);
+
+    // generate the secret key
+    let mut generator = SecretRandomGenerator::new(None);
+    let sk = LweSecretKey::generate_binary(dimension, &mut generator);
+
+    // generate random messages
+    let messages = PlaintextList::from_tensor(generator.random_uniform_tensor(nb_ct.0));
+    let mut decryptions = PlaintextList::allocate(T::ZERO, PlaintextCount(nb_ct.0));
+
+    for (decryption, message) in decryptions
+        .plaintext_iter_mut()
+        .zip(messages.plaintext_iter())
+    {
+        // encryption
+        let mut ciphertext = LweSeededCiphertext::allocate(T::ZERO, dimension);
+        sk.encrypt_seeded_lwe(&mut ciphertext, message, std_dev);
+
+        let mut expanded = LweCiphertext::allocate(T::ZERO, dimension.to_lwe_size());
+        ciphertext.expand_into(&mut expanded);
+
+        sk.decrypt_lwe(decryption, &expanded);
+    }
+
+    // make sure that after decryption we recover the original plaintext
+    if nb_ct.0 < 7 {
+        assert_delta_std_dev(&messages, &decryptions, std_dev);
+    } else {
+        assert_noise_distribution(&messages, &decryptions, std_dev);
+    }
+}
+
+#[test]
+fn test_seeded_ciphertext_u32() {
+    test_seeded_ciphertext::<u32>()
+}
+
+#[test]
+fn test_seeded_ciphertext_u64() {
+    test_seeded_ciphertext::<u64>()
 }
