@@ -10,6 +10,10 @@ use crate::backends::default::implementation::entities::{
     PackingKeyswitchKey64, Plaintext32, Plaintext64, PlaintextVector32, PlaintextVector64,
 };
 use crate::commons::math::tensor::AsMutTensor;
+use crate::prelude::{
+    GlweTensorProductCiphertext32, GlweTensorProductCiphertext64, GlweTensorProductSecretKey32,
+    GlweTensorProductSecretKey64,
+};
 use crate::specification::engines::{DestructionEngine, DestructionError};
 
 impl DestructionEngine<Cleartext32> for DefaultEngine {
@@ -228,6 +232,30 @@ impl DestructionEngine<GlweCiphertext64> for DefaultEngine {
     unsafe fn destroy_unchecked(&mut self, _entity: &mut GlweCiphertext64) {}
 }
 
+impl DestructionEngine<GlweTensorProductCiphertext32> for DefaultEngine {
+    fn destroy(
+        &mut self,
+        mut entity: GlweTensorProductCiphertext32,
+    ) -> Result<(), DestructionError<Self::EngineError>> {
+        unsafe { self.destroy_unchecked(&mut entity) };
+        Ok(())
+    }
+
+    unsafe fn destroy_unchecked(&mut self, _entity: &mut GlweTensorProductCiphertext32) {}
+}
+
+impl DestructionEngine<GlweTensorProductCiphertext64> for DefaultEngine {
+    fn destroy(
+        &mut self,
+        mut entity: GlweTensorProductCiphertext64,
+    ) -> Result<(), DestructionError<Self::EngineError>> {
+        unsafe { self.destroy_unchecked(&mut entity) };
+        Ok(())
+    }
+
+    unsafe fn destroy_unchecked(&mut self, _entity: &mut GlweTensorProductCiphertext64) {}
+}
+
 impl DestructionEngine<GlweCiphertextVector32> for DefaultEngine {
     fn destroy(
         &mut self,
@@ -424,6 +452,34 @@ impl DestructionEngine<GlweSecretKey64> for DefaultEngine {
     }
 
     unsafe fn destroy_unchecked(&mut self, entity: &mut GlweSecretKey64) {
+        entity.0.as_mut_tensor().fill_with_element(0u64);
+    }
+}
+
+impl DestructionEngine<GlweTensorProductSecretKey32> for DefaultEngine {
+    fn destroy(
+        &mut self,
+        mut entity: GlweTensorProductSecretKey32,
+    ) -> Result<(), DestructionError<Self::EngineError>> {
+        unsafe { self.destroy_unchecked(&mut entity) };
+        Ok(())
+    }
+
+    unsafe fn destroy_unchecked(&mut self, entity: &mut GlweTensorProductSecretKey32) {
+        entity.0.as_mut_tensor().fill_with_element(0u32);
+    }
+}
+
+impl DestructionEngine<GlweTensorProductSecretKey64> for DefaultEngine {
+    fn destroy(
+        &mut self,
+        mut entity: GlweTensorProductSecretKey64,
+    ) -> Result<(), DestructionError<Self::EngineError>> {
+        unsafe { self.destroy_unchecked(&mut entity) };
+        Ok(())
+    }
+
+    unsafe fn destroy_unchecked(&mut self, entity: &mut GlweTensorProductSecretKey64) {
         entity.0.as_mut_tensor().fill_with_element(0u64);
     }
 }
