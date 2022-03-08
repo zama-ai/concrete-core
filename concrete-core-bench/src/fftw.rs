@@ -42,5 +42,8 @@ bench! {
     (GlweCiphertextGgswCiphertextDiscardingExternalProductFixture, (GlweCiphertext, FftwFourierGgswCiphertext, GlweCiphertext)),
     (GlweCiphertextConversionFixture, (GlweCiphertext, FftwFourierGlweCiphertext)),
     (GlweCiphertextConversionFixture, (FftwFourierGlweCiphertext, GlweCiphertext)),
-    (GlweCiphertextsGgswCiphertextFusingCmuxFixture, (GlweCiphertext, GlweCiphertext, FftwFourierGgswCiphertext))
+    (GlweCiphertextsGgswCiphertextFusingCmuxFixture, (GlweCiphertext, GlweCiphertext, FftwFourierGgswCiphertext)),
+    (GlweCiphertextTensorProductSameKeyFixture, (FftwFourierGlweCiphertext,
+        FftwFourierGlweCiphertext, FftwFourierGlweTensorProductCiphertext,
+        GlweTensorProductSecretKey))
 }

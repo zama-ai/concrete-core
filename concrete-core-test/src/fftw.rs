@@ -41,5 +41,8 @@ test! {
     (GlweCiphertextConversionFixture, (GlweCiphertext, FftwFourierGlweCiphertext)),
     (GlweCiphertextConversionFixture, (FftwFourierGlweCiphertext, GlweCiphertext)),
     (GlweCiphertextsGgswCiphertextFusingCmuxFixture, (GlweCiphertext, GlweCiphertext,
-        FftwFourierGgswCiphertext))
+        FftwFourierGgswCiphertext)),
+    (GlweCiphertextTensorProductSameKeyFixture, (FftwFourierGlweCiphertext,
+        FftwFourierGlweCiphertext, FftwFourierGlweTensorProductCiphertext,
+        GlweTensorProductSecretKey))
 }

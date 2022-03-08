@@ -1,18 +1,21 @@
 use crate::generation::prototypes::{
     GlweCiphertextPrototype, ProtoBinaryGlweCiphertext32, ProtoBinaryGlweCiphertext64,
-    ProtoPlaintextVector32, ProtoPlaintextVector64,
+    ProtoPlaintextVector32, ProtoPlaintextVector64, ProtoTensorProductGlweCiphertext32,
+    ProtoTensorProductGlweCiphertext64,
 };
 use crate::generation::prototyping::glwe_secret_key::PrototypesGlweSecretKey;
 use crate::generation::prototyping::plaintext_vector::PrototypesPlaintextVector;
 use crate::generation::{IntegerPrecision, Maker, Precision32, Precision64};
 use concrete_commons::dispersion::Variance;
 use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-use concrete_core::prelude::markers::{BinaryKeyDistribution, KeyDistributionMarker};
+use concrete_core::prelude::markers::{
+    BinaryKeyDistribution, KeyDistributionMarker, TensorProductKeyDistribution,
+};
 use concrete_core::prelude::{
     GlweCiphertextConsumingRetrievalEngine, GlweCiphertextCreationEngine,
     GlweCiphertextDecryptionEngine, GlweCiphertextEncryptionEngine, GlweCiphertextEntity,
     GlweCiphertextTrivialDecryptionEngine, GlweCiphertextTrivialEncryptionEngine,
-    PlaintextVectorCreationEngine,
+    GlweSecretKeyEntity, PlaintextVectorCreationEngine,
 };
 
 /// A trait allowing to manipulate GLWE ciphertext prototypes.
@@ -253,5 +256,133 @@ impl PrototypesGlweCiphertext<Precision64, BinaryKeyDistribution> for Maker {
                 .unwrap(),
             polynomial_size,
         )
+    }
+}
+
+impl PrototypesGlweCiphertext<Precision32, TensorProductKeyDistribution> for Maker {
+    type GlweCiphertextProto = ProtoTensorProductGlweCiphertext32;
+
+    fn trivially_encrypt_zeros_to_glwe_ciphertext(
+        &mut self,
+        _glwe_dimension: GlweDimension,
+        _poly_size: PolynomialSize,
+    ) -> Self::GlweCiphertextProto {
+        unimplemented!()
+    }
+
+    fn trivially_encrypt_plaintext_vector_to_glwe_ciphertext(
+        &mut self,
+        _glwe_dimension: GlweDimension,
+        _plaintext_vector: &Self::PlaintextVectorProto,
+    ) -> Self::GlweCiphertextProto {
+        unimplemented!()
+    }
+
+    fn trivially_decrypt_glwe_ciphertext(
+        &mut self,
+        _ciphertext: &Self::GlweCiphertextProto,
+    ) -> Self::PlaintextVectorProto {
+        unimplemented!()
+    }
+
+    fn encrypt_plaintext_vector_to_glwe_ciphertext(
+        &mut self,
+        _secret_key: &Self::GlweSecretKeyProto,
+        _plaintext_vector: &Self::PlaintextVectorProto,
+        _noise: Variance,
+    ) -> Self::GlweCiphertextProto {
+        unimplemented!()
+    }
+
+    fn decrypt_glwe_ciphertext_to_plaintext_vector(
+        &mut self,
+        secret_key: &Self::GlweSecretKeyProto,
+        ciphertext: &Self::GlweCiphertextProto,
+    ) -> Self::PlaintextVectorProto {
+        println!("dim ciphertext: {}", ciphertext.0.glwe_dimension().0);
+        println!("dim key: {}", secret_key.0.glwe_dimension().0);
+        ProtoPlaintextVector32(
+            self.default_engine
+                .decrypt_glwe_ciphertext(&secret_key.0, &ciphertext.0)
+                .unwrap(),
+        )
+    }
+
+    fn transform_raw_vec_to_glwe_ciphertext(
+        &mut self,
+        _raw: &[u32],
+        _polynomial_size: PolynomialSize,
+    ) -> Self::GlweCiphertextProto {
+        unimplemented!()
+    }
+
+    fn transform_glwe_ciphertext_to_raw_vec(
+        &mut self,
+        _ciphertext: &Self::GlweCiphertextProto,
+    ) -> (Vec<u32>, PolynomialSize) {
+        unimplemented!()
+    }
+}
+
+impl PrototypesGlweCiphertext<Precision64, TensorProductKeyDistribution> for Maker {
+    type GlweCiphertextProto = ProtoTensorProductGlweCiphertext64;
+
+    fn trivially_encrypt_zeros_to_glwe_ciphertext(
+        &mut self,
+        _glwe_dimension: GlweDimension,
+        _poly_size: PolynomialSize,
+    ) -> Self::GlweCiphertextProto {
+        unimplemented!()
+    }
+
+    fn trivially_encrypt_plaintext_vector_to_glwe_ciphertext(
+        &mut self,
+        _glwe_dimension: GlweDimension,
+        _plaintext_vector: &Self::PlaintextVectorProto,
+    ) -> Self::GlweCiphertextProto {
+        unimplemented!()
+    }
+
+    fn trivially_decrypt_glwe_ciphertext(
+        &mut self,
+        _ciphertext: &Self::GlweCiphertextProto,
+    ) -> Self::PlaintextVectorProto {
+        unimplemented!()
+    }
+
+    fn encrypt_plaintext_vector_to_glwe_ciphertext(
+        &mut self,
+        _secret_key: &Self::GlweSecretKeyProto,
+        _plaintext_vector: &Self::PlaintextVectorProto,
+        _noise: Variance,
+    ) -> Self::GlweCiphertextProto {
+        unimplemented!()
+    }
+
+    fn decrypt_glwe_ciphertext_to_plaintext_vector(
+        &mut self,
+        secret_key: &Self::GlweSecretKeyProto,
+        ciphertext: &Self::GlweCiphertextProto,
+    ) -> Self::PlaintextVectorProto {
+        ProtoPlaintextVector64(
+            self.default_engine
+                .decrypt_glwe_ciphertext(&secret_key.0, &ciphertext.0)
+                .unwrap(),
+        )
+    }
+
+    fn transform_raw_vec_to_glwe_ciphertext(
+        &mut self,
+        _raw: &[u64],
+        _polynomial_size: PolynomialSize,
+    ) -> Self::GlweCiphertextProto {
+        unimplemented!()
+    }
+
+    fn transform_glwe_ciphertext_to_raw_vec(
+        &mut self,
+        _ciphertext: &Self::GlweCiphertextProto,
+    ) -> (Vec<u64>, PolynomialSize) {
+        unimplemented!()
     }
 }
