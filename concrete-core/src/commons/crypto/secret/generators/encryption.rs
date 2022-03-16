@@ -13,6 +13,7 @@ use concrete_commons::parameters::{
 use concrete_csprng::generators::ForkError;
 #[cfg(feature = "__commons_parallel")]
 use rayon::prelude::*;
+use crate::prelude::GlevCount;
 
 /// A random number generator which can be used to encrypt messages.
 pub struct EncryptionRandomGenerator<G: ByteRandomGenerator> {
@@ -53,35 +54,39 @@ impl<G: ByteRandomGenerator> EncryptionRandomGenerator<G> {
         glwe_size: GlweSize,
         polynomial_size: PolynomialSize,
     ) -> Result<impl Iterator<Item = EncryptionRandomGenerator<G>>, ForkError> {
-        let mask_bytes = mask_bytes_per_ggsw::<T>(level, glwe_size, polynomial_size);
-        let noise_bytes = noise_bytes_per_ggsw(level, glwe_size, polynomial_size);
+        let mask_bytes = mask_bytes_per_glev_list::<T>(level, glwe_size, GlevCount
+            (glwe_size.0), polynomial_size);
+        let noise_bytes = noise_bytes_per_glev_list(level, GlevCount(glwe_size.0), polynomial_size);
         self.try_fork(lwe_dimension.0, mask_bytes, noise_bytes)
     }
 
-    // Forks the generator, when splitting a ggsw into level matrices.
-    pub(crate) fn fork_ggsw_to_ggsw_levels<T: UnsignedInteger>(
+    // Forks the generator, when splitting a vector of Glevs into level matrices.
+    pub(crate) fn fork_glev_list_to_glev_list_levels<T: UnsignedInteger>(
         &mut self,
         level: DecompositionLevelCount,
         glwe_size: GlweSize,
+        glev_count: GlevCount,
         polynomial_size: PolynomialSize,
     ) -> Result<impl Iterator<Item = EncryptionRandomGenerator<G>>, ForkError> {
-        let mask_bytes = mask_bytes_per_ggsw_level::<T>(glwe_size, polynomial_size);
-        let noise_bytes = noise_bytes_per_ggsw_level(glwe_size, polynomial_size);
+        let mask_bytes = mask_bytes_per_glev_list_level::<T>(glwe_size, glev_count, 
+                                                             polynomial_size);
+        let noise_bytes = noise_bytes_per_glev_list_level(glev_count, polynomial_size);
         self.try_fork(level.0, mask_bytes, noise_bytes)
     }
 
-    // Forks the generator, when splitting a ggsw level matrix to glwe.
-    pub(crate) fn fork_ggsw_level_to_glwe<T: UnsignedInteger>(
+    // Forks the generator, when splitting a Glev list level matrix to GLWE.
+    pub(crate) fn fork_glev_list_level_to_glwe<T: UnsignedInteger>(
         &mut self,
         glwe_size: GlweSize,
+        glev_count: GlevCount,
         polynomial_size: PolynomialSize,
     ) -> Result<impl Iterator<Item = EncryptionRandomGenerator<G>>, ForkError> {
         let mask_bytes = mask_bytes_per_glwe::<T>(glwe_size.to_glwe_dimension(), polynomial_size);
         let noise_bytes = noise_bytes_per_glwe(polynomial_size);
-        self.try_fork(glwe_size.0, mask_bytes, noise_bytes)
+        self.try_fork(glev_count.0, mask_bytes, noise_bytes)
     }
 
-    // Forks the generator, when splitting a ggsw into level matrices.
+    // Forks the generator, when splitting a gsw into level matrices.
     pub(crate) fn fork_gsw_to_gsw_levels<T: UnsignedInteger>(
         &mut self,
         level: DecompositionLevelCount,
@@ -92,7 +97,7 @@ impl<G: ByteRandomGenerator> EncryptionRandomGenerator<G> {
         self.try_fork(level.0, mask_bytes, noise_bytes)
     }
 
-    // Forks the generator, when splitting a ggsw level matrix to glwe.
+    // Forks the generator, when splitting a gsw level matrix to lwe.
     pub(crate) fn fork_gsw_level_to_lwe<T: UnsignedInteger>(
         &mut self,
         lwe_size: LweSize,
@@ -168,33 +173,37 @@ impl<G: ParallelByteRandomGenerator> EncryptionRandomGenerator<G> {
         glwe_size: GlweSize,
         polynomial_size: PolynomialSize,
     ) -> Result<impl IndexedParallelIterator<Item = EncryptionRandomGenerator<G>>, ForkError> {
-        let mask_bytes = mask_bytes_per_ggsw::<T>(level, glwe_size, polynomial_size);
-        let noise_bytes = noise_bytes_per_ggsw(level, glwe_size, polynomial_size);
-        // panic!("{:?} {:?} {:?}", lwe_dimension.0, mask_bytes, noise_bytes);
+        let mask_bytes = mask_bytes_per_glev_list::<T>(level, glwe_size, GlevCount
+            (glwe_size.0), polynomial_size);
+        let noise_bytes = noise_bytes_per_glev_list(level, GlevCount(glwe_size.0), polynomial_size);
         self.par_try_fork(lwe_dimension.0, mask_bytes, noise_bytes)
     }
 
-    // Forks the generator into a parallel iterator, when splitting a ggsw into level matrices.
-    pub(crate) fn par_fork_ggsw_to_ggsw_levels<T: UnsignedInteger>(
+    // Forks the generator into a parallel iterator, when splitting a Glev list into level matrices.
+    pub(crate) fn par_fork_glev_list_to_glev_list_levels<T: UnsignedInteger>(
         &mut self,
         level: DecompositionLevelCount,
         glwe_size: GlweSize,
+        glev_count: GlevCount,
         polynomial_size: PolynomialSize,
     ) -> Result<impl IndexedParallelIterator<Item = EncryptionRandomGenerator<G>>, ForkError> {
-        let mask_bytes = mask_bytes_per_ggsw_level::<T>(glwe_size, polynomial_size);
-        let noise_bytes = noise_bytes_per_ggsw_level(glwe_size, polynomial_size);
+        let mask_bytes = mask_bytes_per_glev_list_level::<T>(glwe_size, glev_count, 
+                                                             polynomial_size);
+        let noise_bytes = noise_bytes_per_glev_list_level(glev_count, polynomial_size);
         self.par_try_fork(level.0, mask_bytes, noise_bytes)
     }
 
-    // Forks the generator into a parallel iterator, when splitting a ggsw level matrix to glwe.
-    pub(crate) fn par_fork_ggsw_level_to_glwe<T: UnsignedInteger>(
+    // Forks the generator into a parallel iterator, when splitting a Glev list level matrix to 
+    // GLWE.
+    pub(crate) fn par_fork_glev_list_level_to_glwe<T: UnsignedInteger>(
         &mut self,
         glwe_size: GlweSize,
+        glev_count: GlevCount,
         polynomial_size: PolynomialSize,
     ) -> Result<impl IndexedParallelIterator<Item = EncryptionRandomGenerator<G>>, ForkError> {
         let mask_bytes = mask_bytes_per_glwe::<T>(glwe_size.to_glwe_dimension(), polynomial_size);
         let noise_bytes = noise_bytes_per_glwe(polynomial_size);
-        self.par_try_fork(glwe_size.0, mask_bytes, noise_bytes)
+        self.par_try_fork(glev_count.0, mask_bytes, noise_bytes)
     }
 
     // Forks the generator into a parallel iterator, when splitting a ggsw into level matrices.
@@ -251,11 +260,12 @@ fn mask_bytes_per_glwe<T: UnsignedInteger>(
     glwe_dimension.0 * mask_bytes_per_polynomial::<T>(poly_size)
 }
 
-fn mask_bytes_per_ggsw_level<T: UnsignedInteger>(
+fn mask_bytes_per_glev_list_level<T: UnsignedInteger>(
     glwe_size: GlweSize,
+    glev_count: GlevCount,
     poly_size: PolynomialSize,
 ) -> usize {
-    glwe_size.0 * mask_bytes_per_glwe::<T>(glwe_size.to_glwe_dimension(), poly_size)
+    glev_count.0 * mask_bytes_per_glwe::<T>(glwe_size.to_glwe_dimension(), poly_size)
 }
 
 fn mask_bytes_per_lwe<T: UnsignedInteger>(lwe_dimension: LweDimension) -> usize {
@@ -266,17 +276,19 @@ fn mask_bytes_per_gsw_level<T: UnsignedInteger>(lwe_size: LweSize) -> usize {
     lwe_size.0 * mask_bytes_per_lwe::<T>(lwe_size.to_lwe_dimension())
 }
 
-fn mask_bytes_per_ggsw<T: UnsignedInteger>(
+fn mask_bytes_per_glev_list<T: UnsignedInteger>(
     level: DecompositionLevelCount,
     glwe_size: GlweSize,
+    glev_count: GlevCount,
     poly_size: PolynomialSize,
 ) -> usize {
-    level.0 * mask_bytes_per_ggsw_level::<T>(glwe_size, poly_size)
+    level.0 * mask_bytes_per_glev_list_level::<T>(glwe_size, glev_count, poly_size)
 }
 
 fn noise_bytes_per_coef() -> usize {
     // We use f64 to sample the noise for every precision, and we need 4/pi inputs to generate
     // such an output (here we take 32 to keep a safety margin).
+    // TODO: check this value
     8 * 32
 }
 fn noise_bytes_per_polynomial(poly_size: PolynomialSize) -> usize {
@@ -287,8 +299,9 @@ fn noise_bytes_per_glwe(poly_size: PolynomialSize) -> usize {
     noise_bytes_per_polynomial(poly_size)
 }
 
-fn noise_bytes_per_ggsw_level(glwe_size: GlweSize, poly_size: PolynomialSize) -> usize {
-    glwe_size.0 * noise_bytes_per_glwe(poly_size)
+fn noise_bytes_per_glev_list_level(glev_count: GlevCount, poly_size: PolynomialSize) -> 
+                                                                                           usize {
+    glev_count.0 * noise_bytes_per_glwe(poly_size)
 }
 
 fn noise_bytes_per_lwe() -> usize {
@@ -300,12 +313,12 @@ fn noise_bytes_per_gsw_level(lwe_size: LweSize) -> usize {
     lwe_size.0 * noise_bytes_per_lwe()
 }
 
-fn noise_bytes_per_ggsw(
+fn noise_bytes_per_glev_list(
     level: DecompositionLevelCount,
-    glwe_size: GlweSize,
+    glev_count: GlevCount,
     poly_size: PolynomialSize,
 ) -> usize {
-    level.0 * noise_bytes_per_ggsw_level(glwe_size, poly_size)
+    level.0 * noise_bytes_per_glev_list_level(glev_count, poly_size)
 }
 
 #[cfg(all(test, feature = "parallel"))]

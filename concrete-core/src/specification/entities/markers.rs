@@ -62,6 +62,8 @@ entity_kind_marker! {
             => "An empty type representing the GSW ciphertext vector kind in the type system.",
         LweSecretKeyKind
             => "An empty type representing the LWE secret key kind in the type system.",
+        GlweRelinearizationKeyKind
+            => "An empty type representing a GLWE relinearisation key kind in the type system",
         GlweSecretKeyKind
             => "An empty type representing the GLWE secret key kind in the type system.",
         LweKeyswitchKeyKind
@@ -107,7 +109,10 @@ macro_rules! key_distribution_marker {
 key_distribution_marker! {
     BinaryKeyDistribution => "An empty type encoding the binary key distribution in the type system.",
     TernaryKeyDistribution => "An empty type encoding the ternary key distribution in the type system.",
-    GaussianKeyDistribution => "An empty type encoding the gaussian key distribution in the type system."
+    GaussianKeyDistribution => "An empty type encoding the gaussian key distribution in the type \
+    system.",
+    TensorProductKeyDistribution => "An empty type encoding the distribution created \
+    by the tensor product of a key with itself in the type system."
 }
 
 pub(crate) mod seal {

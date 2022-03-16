@@ -27,7 +27,8 @@ use rayon::{iter::IndexedParallelIterator, prelude::*};
 use serde::{Deserialize, Serialize};
 use std::marker::PhantomData;
 use std::ops::Add;
-use crate::prelude::TensorProductKeyKind;
+use crate::backends::fftw::private::crypto::relinearize::StandardGlweRelinearizationKey;
+use crate::prelude::{GlevCount, TensorProductKeyKind};
 
 /// A GLWE secret key
 #[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
@@ -36,8 +37,8 @@ pub struct GlweSecretKey<Kind, Container>
 where
     Kind: KeyKind,
 {
-    tensor: Tensor<Container>,
-    poly_size: PolynomialSize,
+    pub(crate) tensor: Tensor<Container>,
+    pub(crate) poly_size: PolynomialSize,
     kind: PhantomData<Kind>,
 }
 
@@ -1084,9 +1085,10 @@ where
         ck_dim_eq!(self.polynomial_size() => encrypted.polynomial_size());
         ck_dim_eq!(self.key_size() => encrypted.glwe_size().to_glwe_dimension());
         let gen_iter = generator
-            .fork_ggsw_to_ggsw_levels::<Scalar>(
+            .fork_glev_list_to_glev_list_levels::<Scalar>(
                 encrypted.decomposition_level_count(),
                 self.key_size().to_glwe_size(),
+                GlevCount(self.key_size().to_glwe_size().0),
                 self.poly_size,
             )
             .expect("Failed to split generator into ggsw levels");
@@ -1098,7 +1100,8 @@ where
                         - (base_log.0 * (matrix.decomposition_level().0))),
             );
             let gen_iter = generator
-                .fork_ggsw_level_to_glwe::<Scalar>(self.key_size().to_glwe_size(), self.poly_size)
+                .fork_glev_list_level_to_glwe::<Scalar>(self.key_size().to_glwe_size(), GlevCount
+                    (self.key_size().to_glwe_size().0), self.poly_size)
                 .expect("Failed to split generator into rlwe");
             // We iterate over the rows of the level matrix
             for ((index, row), mut generator) in matrix.row_iter_mut().enumerate().zip(gen_iter) {
@@ -1116,6 +1119,66 @@ where
             }
         }
     }
+
+    /// This function encrypts a message vector to create a relinearization key
+    ///
+    pub fn create_relinearization_key<OutputCont, Scalar, Gen>(
+        &self,
+        rlk: &mut StandardGlweRelinearizationKey<OutputCont>,
+        encoded: &PlaintextList<Scalar>,
+        noise_parameters: impl DispersionParameter,
+        generator: &mut EncryptionRandomGenerator<Gen>,
+    ) where
+        Self: AsRefTensor<Element = Scalar>,
+        StandardGlweRelinearizationKey<OutputCont>: AsMutTensor<Element = Scalar>,
+        OutputCont: AsMutSlice<Element = Scalar>,
+        Scalar: UnsignedTorus,
+        Gen: ByteRandomGenerator,
+    {
+        ck_dim_eq!(self.polynomial_size() => rlk.polynomial_size());
+        ck_dim_eq!(self.polynomial_size().0 => encoded.plaintext_count().0);
+        ck_dim_eq!(self.key_size() => rlk.glwe_size().to_glwe_dimension());
+
+        // Fork the encryption generator over the relinerization key levels
+        let gen_iter = generator
+            .fork_glev_list_to_glev_list_levels::<Scalar>(
+                encrypted.decomposition_level_count(),
+                self.key_size().to_glwe_size(),
+                rlk.glev_count(),
+                self.poly_size,
+            )
+            .expect("Failed to split generator into relinearization key levels");
+
+        let base_log = rlk.decomposition_base_log();
+        for (mut matrix, mut generator) in rlk.level_matrix_iter_mut().zip(gen_iter) {
+            // Encode the full vector (S_0^2, S_1^2, S_0 * S_1, etc.) that's being encrypted
+            let mut decomposition = PlaintextList::allocate(Scalar::ZERO, PlaintextCount(rlk
+                .glev_count().0 * self.poly_size.0)); 
+            let encoded_iter = encoded.iter();
+            for mut decomposed in decomposition.plaintext_iter_mut() {
+                let encoded_val = encoded_iter().next().unwrap();
+                decomposed = encoded_val.0.wrapping_mul(
+                    Scalar::ONE
+                        << (<Scalar as Numeric>::BITS
+                        - (base_log.0 * (matrix.decomposition_level().0))),
+                );
+            }
+            let gen_iter = generator
+                .fork_glev_list_level_to_glwe::<Scalar>(rlk.glwe_size(), rlk.glev_count(), 
+                                                        rlk.polynomial_size())
+                .expect("Failed to split generator into glwe");
+            // Iterate over the GLWEs of the level matrix to encrypt the S_i * S_j products
+            for ((index, row), mut generator) in matrix.row_iter_mut().enumerate().zip(gen_iter) {
+                let mut glwe_ct = row.into_glwe();
+                // Issue GLWE encryptions of the S_i * S_j encoded products
+                let decomposed_chunk = decomposition.as_tensor().as_slice().chunks(rlk
+                    .polynomial_size().0);
+                self.encrypt_glwe(&mut glwe_ct, decomposed_chunk.next().unwrap(), noise_parameters, 
+                                  &mut generator);
+            }
+        }
+    }
+    // TODO write the parallel counterpart
 
     /// Factorized function to be able to encrypt a GGSW with a generator in a particular state i.e.
     /// not freshly instantiated. The caller is responsible for maintaining consistency.
@@ -1312,9 +1375,10 @@ where
         ck_dim_eq!(self.polynomial_size() => encrypted.polynomial_size());
         ck_dim_eq!(self.key_size() => encrypted.glwe_size().to_glwe_dimension());
         let generators = generator
-            .par_fork_ggsw_to_ggsw_levels::<Scalar>(
+            .par_fork_glev_list_to_glev_list_levels::<Scalar>(
                 encrypted.decomposition_level_count(),
                 self.key_size().to_glwe_size(),
+                GlevCount(self.key_size().to_glwe_size().0),
                 self.poly_size,
             )
             .expect("Failed to split generator into ggsw levels");

@@ -273,6 +273,14 @@ pub use glwe_ciphertexts_ggsw_ciphertext_fusing_cmux::*;
 mod lwe_ciphertext_vector_zero_encryption;
 pub use lwe_ciphertext_vector_zero_encryption::*;
 
+// The tensor product test is only compiled when the backend_fftw feature
+// is activated, because we create the tensor product key required to decrypt the result with the 
+// fftw backend.
+#[cfg(feature = "backend_fftw")]
+mod glwe_ciphertext_tensor_product_same_key;
+#[cfg(feature = "backend_fftw")]
+pub use glwe_ciphertext_tensor_product_same_key::*;
+
 mod lwe_ciphertext_encryption;
 pub use lwe_ciphertext_encryption::*;
 

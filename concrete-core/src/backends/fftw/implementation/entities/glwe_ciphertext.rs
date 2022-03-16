@@ -1,5 +1,6 @@
 use crate::backends::fftw::private::crypto::glwe::FourierGlweCiphertext;
 use crate::backends::fftw::private::math::fft::Complex64;
+use concrete_commons::parameters::{GlweDimension, PolynomialSize};
 use crate::specification::entities::markers::{BinaryKeyDistribution, GlweCiphertextKind};
 use crate::specification::entities::{AbstractEntity, GlweCiphertextEntity};
 use concrete_commons::parameters::{GlweDimension, PolynomialSize};

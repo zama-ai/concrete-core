@@ -185,6 +185,19 @@ impl<Cont> GlevListLevelMatrix<Cont> {
             })
     }
 
+    pub fn nth_row_iter(&self, index: usize) -> impl Iterator<Item = GlweCiphertext<&[<Self as 
+    AsRefTensor>::Element]>>
+        where
+            Self: AsRefTensor,
+    {
+        self.as_tensor()
+            .subtensor_iter(self.poly_size.0 * self.glwe_size.0)
+            .nth(index)
+            .map(move |tens| {
+                GlweCiphertext::from_container(tens.into_container(), self.poly_size)
+            })
+    }
+    
     /// Returns an iterator over the mutably borrowed rows of the matrix.
     ///
     /// # Example

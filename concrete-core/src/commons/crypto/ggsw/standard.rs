@@ -22,10 +22,10 @@ use crate::prelude::GlevCount;
 #[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct StandardGgswCiphertext<Cont> {
-    tensor: Tensor<Cont>,
-    poly_size: PolynomialSize,
-    rlwe_size: GlweSize,
-    decomp_base_log: DecompositionBaseLog,
+    pub(crate) tensor: Tensor<Cont>,
+    pub(crate) poly_size: PolynomialSize,
+    pub(crate) rlwe_size: GlweSize,
+    pub(crate) decomp_base_log: DecompositionBaseLog,
 }
 
 tensor_traits!(StandardGgswCiphertext);

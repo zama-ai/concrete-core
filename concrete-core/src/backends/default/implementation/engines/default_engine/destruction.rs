@@ -306,6 +306,30 @@ impl DestructionEngine<GlweCiphertext64> for DefaultEngine {
     unsafe fn destroy_unchecked(&mut self, _entity: &mut GlweCiphertext64) {}
 }
 
+impl DestructionEngine<GlweTensorProductCiphertext32> for DefaultEngine {
+    fn destroy(
+        &mut self,
+        mut entity: GlweTensorProductCiphertext32,
+    ) -> Result<(), DestructionError<Self::EngineError>> {
+        unsafe { self.destroy_unchecked(&mut entity) };
+        Ok(())
+    }
+
+    unsafe fn destroy_unchecked(&mut self, _entity: &mut GlweTensorProductCiphertext32) {}
+}
+
+impl DestructionEngine<GlweTensorProductCiphertext64> for DefaultEngine {
+    fn destroy(
+        &mut self,
+        mut entity: GlweTensorProductCiphertext64,
+    ) -> Result<(), DestructionError<Self::EngineError>> {
+        unsafe { self.destroy_unchecked(&mut entity) };
+        Ok(())
+    }
+
+    unsafe fn destroy_unchecked(&mut self, _entity: &mut GlweTensorProductCiphertext64) {}
+}
+
 impl DestructionEngine<GlweCiphertextVector32> for DefaultEngine {
     fn destroy(
         &mut self,

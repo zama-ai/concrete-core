@@ -1,7 +1,4 @@
-use crate::generation::prototypes::{
-    GlweSecretKeyPrototype, ProtoBinaryGlweSecretKey32, ProtoBinaryGlweSecretKey64,
-    ProtoBinaryLweSecretKey32, ProtoBinaryLweSecretKey64,
-};
+use crate::generation::prototypes::{GlweSecretKeyPrototype, ProtoBinaryGlweSecretKey32, ProtoBinaryGlweSecretKey64, ProtoBinaryLweSecretKey32, ProtoBinaryLweSecretKey64, ProtoTensorProductGlweSecretKey32, ProtoTensorProductGlweSecretKey64};
 use crate::generation::prototyping::PrototypesLweSecretKey;
 use crate::generation::{IntegerPrecision, Maker, Precision32, Precision64};
 use concrete_commons::parameters::{GlweDimension, PolynomialSize};
@@ -23,6 +20,7 @@ pub trait PrototypesGlweSecretKey<
         glwe_dimension: GlweDimension,
         polynomial_size: PolynomialSize,
     ) -> Self::GlweSecretKeyProto;
+    
 }
 
 impl PrototypesGlweSecretKey<Precision32, BinaryKeyDistribution> for Maker {
