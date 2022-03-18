@@ -129,7 +129,10 @@ where
         repetition_proto: &Self::RepetitionPrototypes,
     ) -> Self::SamplePrototypes {
         let (_, proto_secret_key, _) = repetition_proto;
-        let raw_plaintext_vector = Precision::Raw::uniform_vec(parameters.polynomial_size.0);
+        let raw_plaintext_vector = Precision::Raw::uniform_n_msb_vec(
+            parameters.decomposition_base_log.0,
+            parameters.polynomial_size.0,
+        );
         let proto_plaintext_vector =
             maker.transform_raw_vec_to_plaintext_vector(&raw_plaintext_vector);
         let proto_glwe_ciphertext = maker.encrypt_plaintext_vector_to_glwe_ciphertext(

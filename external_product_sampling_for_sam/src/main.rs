@@ -5,15 +5,21 @@ use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
 };
 use concrete_core::prelude::{
-    AbstractEngine, CoreEngine, GgswCiphertextComplex64, GlweCiphertext64,
+    AbstractEngine, CoreEngine, FourierGgswCiphertext64, GlweCiphertext64,
 };
 use concrete_core_fixture::fixture::{
     Fixture, GlweCiphertextGgswCiphertextExternalProductFixture,
     GlweCiphertextGgswCiphertextExternalProductParameters,
 };
-use concrete_core_fixture::generation::{IntegerPrecision, Maker, Precision64};
-use concrete_core_fixture::raw::generation::RawUnsignedIntegers;
-use concrete_core_fixture::SampleSize;
+use concrete_core_fixture::generation::{Maker, Precision64};
+use concrete_core_fixture::{Repetitions, SampleSize};
+
+/// The number of time a test is repeated for a single set of parameter.
+pub const REPETITIONS: Repetitions = Repetitions(10);
+
+///// The size of the sample used to perform statistical tests.
+//pub const SAMPLE_SIZE: SampleSize = SampleSize(100);
+
 use concrete_npe;
 use f64;
 use std::fs::OpenOptions;
@@ -32,21 +38,21 @@ fn write_to_file(
 ) {
     let data_to_save = format!(
         "{}, {}, {}, {}, {}, {}, {}\n",
-        params.poly_size.0,
+        params.polynomial_size.0,
         params.glwe_dimension.0,
-        params.dec_level_count.0,
-        params.dec_base_log.0,
+        params.decomposition_level_count.0,
+        params.decomposition_base_log.0,
         input_stddev.get_variance(),
         output_stddev.get_variance(),
         pred_stddev.get_variance()
     );
 
-    let data_to_print = format!(
+    let _data_to_print = format!(
         "{}, {}, {}, {}, {}, {},{}\n",
-        params.poly_size.0,
+        params.polynomial_size.0,
         params.glwe_dimension.0,
-        params.dec_level_count.0,
-        params.dec_base_log.0,
+        params.decomposition_level_count.0,
+        params.decomposition_base_log.0,
         input_stddev.get_log_standard_dev(),
         output_stddev.get_log_standard_dev(),
         pred_stddev.get_log_standard_dev(),
@@ -61,7 +67,7 @@ fn write_to_file(
         Err(why) => panic!("{}", why),
         Ok(file) => file,
     };
-    file.write(data_to_save.as_bytes());
+    file.write(data_to_save.as_bytes()).unwrap();
     // println!("{}", data_to_print);
 }
 
@@ -93,7 +99,7 @@ fn std_deviation(data: &[f64]) -> Option<StandardDev> {
     // from https://rust-lang-nursery.github.io/rust-cookbook/science/mathematics/statistics.html
     // replacing the mean by 0. as we theoretically know it
     match (mean(data), data.len()) {
-        (Some(data_mean), count) if count > 0 => {
+        (Some(_data_mean), count) if count > 0 => {
             let variance = data
                 .iter()
                 .map(|value| {
@@ -112,7 +118,7 @@ fn std_deviation(data: &[f64]) -> Option<StandardDev> {
     }
 }
 
-fn compute_error(output: &[u64], input: &[u64], bit: u64) -> Result<Vec<f64>, NotABit> {
+fn compute_error(output: Vec<u64>, input: Vec<u64>, bit: u64) -> Result<Vec<f64>, NotABit> {
     match bit {
         1 => Ok(output
             .iter()
@@ -123,6 +129,7 @@ fn compute_error(output: &[u64], input: &[u64], bit: u64) -> Result<Vec<f64>, No
         _ => Err(NotABit(bit)),
     }
 }
+
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
 struct Args {
@@ -183,9 +190,9 @@ fn main() {
                         ggsw_noise,
                         glwe_noise,
                         glwe_dimension,
-                        poly_size,
-                        dec_level_count,
-                        dec_base_log,
+                        polynomial_size: poly_size,
+                        decomposition_base_log: dec_base_log,
+                        decomposition_level_count: dec_level_count,
                     };
 
                     let noise_prediction =
@@ -205,54 +212,51 @@ fn main() {
 
                     // TODO remove /q2
                     if noise_prediction.get_variance() < 1. / 12. {
-                        let raw_inputs = (
-                            1 as u64,
-                            // <Precision as IntegerPrecision>::Raw::uniform(),
-                            // ^ Sampling of the raw message put in the ggsw
-                            <Precision as IntegerPrecision>::Raw::uniform_n_msb_vec(
-                                *b,
-                                poly_size.0,
-                            ),
-                            // ^ Sampling of the raw messages put in the glwe coefficients
-                        );
+                        for _ in 0..REPETITIONS.0 {
+                            let repetitions =
+                                <GlweCiphertextGgswCiphertextExternalProductFixture as Fixture<
+                                    Precision,
+                                    CoreEngine,
+                                    (GlweCiphertext64, FourierGgswCiphertext64, GlweCiphertext64),
+                                >>::generate_random_repetition_prototypes(
+                                    &parameters, &mut maker
+                                );
+                            let outputs =
+                                <GlweCiphertextGgswCiphertextExternalProductFixture as Fixture<
+                                    Precision,
+                                    CoreEngine,
+                                    (GlweCiphertext64, FourierGgswCiphertext64, GlweCiphertext64),
+                                >>::sample(
+                                    &mut maker,
+                                    &mut engine,
+                                    &parameters,
+                                    &repetitions,
+                                    sample_size,
+                                );
+                            let (raw_inputs, output): (Vec<_>, Vec<_>) =
+                                outputs.iter().cloned().unzip();
+                            let raw_input_plaintext_vector =
+                                raw_inputs.into_iter().flatten().collect::<Vec<_>>();
+                            let output_plaintext_vector =
+                                output.into_iter().flatten().collect::<Vec<_>>();
 
-                        // The output is a vec containing polynomials with integer coefficients (here u64).
-                        let output: Vec<Vec<_>> =
-                            <GlweCiphertextGgswCiphertextExternalProductFixture as Fixture<
-                                Precision,
-                                CoreEngine,
-                                (GlweCiphertext64, GgswCiphertextComplex64, GlweCiphertext64),
-                            >>::sample(
-                                &mut maker,
-                                &mut engine,
-                                &parameters,
-                                &raw_inputs,
-                                sample_size,
+                            let err: Vec<f64> = compute_error(
+                                output_plaintext_vector,
+                                raw_input_plaintext_vector,
+                                1 as u64,
                             )
-                            .into_iter()
-                            .map(|(v,)| v)
-                            .collect();
+                            .unwrap();
 
-                        let input_bit = raw_inputs.0;
-                        let input_polynomial = raw_inputs.1;
-
-                        let err: Vec<f64> = output
-                            .iter()
-                            .map(|out| compute_error(out, &input_polynomial, raw_inputs.0).unwrap())
-                            .into_iter()
-                            .flatten()
-                            .collect();
-
-                        let mean_err = mean(&err).unwrap();
-                        let std_err = std_deviation(&err).unwrap();
-
-                        write_to_file(
-                            &parameters,
-                            variance_to_stddev(glwe_noise),
-                            std_err,
-                            variance_to_stddev(noise_prediction),
-                            size,
-                        );
+                            let _mean_err = mean(&err).unwrap();
+                            let std_err = std_deviation(&err).unwrap();
+                            write_to_file(
+                                &parameters,
+                                variance_to_stddev(glwe_noise),
+                                std_err,
+                                variance_to_stddev(noise_prediction),
+                                size,
+                            );
+                        }
                     } else {
                         write_to_file(
                             &parameters,
