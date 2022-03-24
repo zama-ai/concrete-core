@@ -11,3 +11,5 @@ concrete-core = {path="../concrete-core", features=["backend_core"]}
 concrete-commons = {path = "../concrete-commons"}
 concrete-npe = {path="../concrete-npe"}
 clap = { version = "3.1", features = ["derive"] }
+itertools = "0.8.0"
+indicatif = "0.16.2"
