@@ -18,12 +18,12 @@ use itertools::iproduct;
 /// The number of time a test is repeated for a single set of parameter.
 ///
 /// Number of different keys
-pub const REPETITIONS: Repetitions = Repetitions(10);
+pub const REPETITIONS: Repetitions = Repetitions(15);
 
 pub const DEBUG: bool = false;
 
 ///// The size of the sample  per keys
-pub const POT: usize = 100;
+pub const POT: usize = 40;
 
 use concrete_npe;
 use f64;
