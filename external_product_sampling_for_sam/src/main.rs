@@ -13,8 +13,15 @@ use concrete_core_fixture::fixture::{
 };
 use concrete_core_fixture::generation::{Maker, Precision64};
 use concrete_core_fixture::{Repetitions, SampleSize};
+use concrete_npe;
+use f64;
 use indicatif::ProgressIterator;
 use itertools::iproduct;
+use rand::{seq::SliceRandom, SeedableRng};
+use rand_chacha::ChaChaRng;
+use std::fs::OpenOptions;
+use std::io::Write;
+
 /// The number of time a test is repeated for a single set of parameter.
 ///
 /// Number of different keys
@@ -24,11 +31,6 @@ pub const DEBUG: bool = false;
 
 ///// The size of the sample  per keys
 pub const POT: usize = 40;
-
-use concrete_npe;
-use f64;
-use std::fs::OpenOptions;
-use std::io::Write;
 
 fn variance_to_stddev(var: Variance) -> StandardDev {
     StandardDev::from_standard_dev(var.get_standard_dev())
@@ -67,7 +69,7 @@ fn write_to_file(
         .write(true)
         .append(true)
         .create(true)
-        .open(format!("{}.acquisition_external_product_k=1", id))
+        .open(format!("{}.acquisition_external_product", id))
     {
         Err(why) => panic!("{}", why),
         Ok(file) => file,
@@ -194,6 +196,69 @@ struct Args {
     id: usize,
 }
 
+#[derive(Debug)]
+enum Parameter {
+    Singleton(usize),
+    BaseLevel { base: usize, level: usize },
+}
+
+impl Clone for Parameter {
+    fn clone(&self) -> Self {
+        match self {
+            Parameter::Singleton(val) => Parameter::Singleton(*val),
+            Parameter::BaseLevel { base, level } => Parameter::BaseLevel {
+                base: *base,
+                level: *level,
+            },
+        }
+    }
+}
+
+impl Parameter {
+    pub fn get_singleton(&self) -> usize {
+        match self {
+            Parameter::Singleton(val) => *val,
+            Parameter::BaseLevel { base, level } => panic!(),
+        }
+    }
+
+    pub fn get_level(&self) -> usize {
+        match self {
+            Parameter::Singleton(val) => panic!(),
+            Parameter::BaseLevel { base, level } => *level,
+        }
+    }
+    pub fn get_base(&self) -> usize {
+        match self {
+            Parameter::Singleton(val) => panic!(),
+            Parameter::BaseLevel { base, level } => *base,
+        }
+    }
+}
+
+fn compute_nb_of_b_l(bases: &[usize], levels: &[usize]) -> usize {
+    let mut compt = 0;
+    for (b, l) in bases.iter().zip(levels.iter()) {
+        if b * l <= 53 {
+            compt += 1;
+        }
+    }
+    compt
+}
+
+fn filter_b_l(bases: &[usize], levels: &[usize]) -> Vec<Parameter> {
+    let mut bases_levels = vec![];
+    for (b, l) in iproduct!(bases, levels) {
+        if b * l <= 53 {
+            bases_levels.push(Parameter::BaseLevel {
+                base: *b,
+                level: *l,
+            });
+        }
+    }
+    bases_levels
+}
+
 fn main() {
     let args = Args::parse();
     let tot = args.tot;
@@ -206,16 +271,16 @@ fn main() {
 
     // Parameter Grid
     let polynomial_sizes = vec![
-        1usize << 8,
-        1 << 9,
-        1 << 10,
-        1 << 11,
-        1 << 12,
-        1 << 13,
-        1 << 14,
+        Parameter::Singleton(1 << 8),
+        Parameter::Singleton(1 << 9),
+        Parameter::Singleton(1 << 10),
+        Parameter::Singleton(1 << 11),
+        Parameter::Singleton(1 << 12),
+        Parameter::Singleton(1 << 13),
+        Parameter::Singleton(1 << 14),
     ];
     let max_polynomial_size = 1 << 14;
-    let glwe_dimensions = vec![1usize];
+    let glwe_dimensions = vec![Parameter::Singleton(1)];
 
     let mut base_logs = vec![1usize; 64];
     for b in 1..65 {
@@ -231,131 +296,121 @@ fn main() {
 
     // Xperiment
 
-    let hypercube = iproduct!(base_logs, glwe_dimensions, levels, polynomial_sizes);
+    let bases_levels = filter_b_l(&base_logs, &levels);
 
-    // for size in polynomial_sizes.iter() {
-    //     for l in levels.iter() {
-    //         for b in base_logs.iter() {
-    //             if l * b <= 53 {
-    //                 for k in glwe_dimensions.iter() {
+    // let hypercube = iproduct!(base_logs, glwe_dimensions, levels, polynomial_sizes);
+    let hypercube = iproduct!(glwe_dimensions, bases_levels, polynomial_sizes);
 
-    let hypercube: Vec<(usize, usize, usize, usize)> = hypercube.collect();
-
+    let mut hypercube: Vec<(Parameter, Parameter, Parameter)> = hypercube.collect();
+    // println!("{:?}", hypercube);
+    let seed = [0; 32];
+    let mut rng = ChaChaRng::from_seed(seed);
+    hypercube.shuffle(&mut rng);
     // only keeping part of the hypercube
     let chunk_size = hypercube.len() / tot;
-    // let hypercube = hypercube[id * chunk_size..(id + 1) * chunk_size];
-
-    // vec![(0usize, 0, 0, 0); polynomial_sizes.len() * levels.len() * base_logs.len() * glwe_dimensions.len()];
     println!(
         "-> Computing chunk [{}..{}]",
         id * chunk_size,
         (id + 1) * chunk_size
     );
-    for (b, k, l, size) in hypercube[id * chunk_size..(id + 1) * chunk_size]
-        .iter()
-        .progress()
-    {
-        if b * l <= 64 {
-            let sample_size = SampleSize(POT * max_polynomial_size / *size);
-            let glwe_dimension = GlweDimension(*k);
-            let poly_size = PolynomialSize(*size);
-            let dec_level_count = DecompositionLevelCount(*l);
-            let dec_base_log = DecompositionBaseLog(*b);
-            let ggsw_noise = Variance::from_variance(minimal_variance_for_security_64(
-                glwe_dimension,
-                poly_size,
-            ));
-            let glwe_noise = Variance::from_variance(minimal_variance_for_security_64(
-                glwe_dimension,
-                poly_size,
-            ));
+    for (k, b_l, size) in hypercube[id * chunk_size..(id + 1) * chunk_size].iter() {
+        let sample_size = SampleSize(POT * max_polynomial_size / size.get_singleton());
+        let glwe_dimension = GlweDimension(k.get_singleton());
+        let poly_size = PolynomialSize(size.get_singleton());
+        let dec_level_count = DecompositionLevelCount(b_l.get_level());
+        let dec_base_log = DecompositionBaseLog(b_l.get_base());
+        let ggsw_noise =
+            Variance::from_variance(minimal_variance_for_security_64(glwe_dimension, poly_size));
+        let glwe_noise =
+            Variance::from_variance(minimal_variance_for_security_64(glwe_dimension, poly_size));
 
-            let parameters = GlweCiphertextGgswCiphertextExternalProductParameters {
-                ggsw_noise,
-                glwe_noise,
-                glwe_dimension,
-                polynomial_size: poly_size,
-                decomposition_base_log: dec_base_log,
-                decomposition_level_count: dec_level_count,
-            };
+        let parameters = GlweCiphertextGgswCiphertextExternalProductParameters {
+            ggsw_noise,
+            glwe_noise,
+            glwe_dimension,
+            polynomial_size: poly_size,
+            decomposition_base_log: dec_base_log,
+            decomposition_level_count: dec_level_count,
+        };
 
-            let noise_prediction = concrete_npe::estimate_external_product_noise_with_binary_ggsw::<
-                u64,
-                _,
-                _,
-                BinaryKeyKind,
-            >(
-                poly_size,
-                glwe_dimension,
-                glwe_noise,
-                glwe_noise,
-                dec_base_log,
-                dec_level_count,
-            );
+        let noise_prediction = concrete_npe::estimate_external_product_noise_with_binary_ggsw::<
+            u64,
+            _,
+            _,
+            BinaryKeyKind,
+        >(
+            poly_size,
+            glwe_dimension,
+            glwe_noise,
+            glwe_noise,
+            dec_base_log,
+            dec_level_count,
+        );
 
-            let mut errors = vec![0.; sample_size.0 * *size * REPETITIONS.0];
+        let mut errors = vec![0.; sample_size.0 * size.get_singleton() * REPETITIONS.0];
 
-            if noise_prediction.get_variance() < 1. / 12. {
-                for (_, errs) in (0..REPETITIONS.0).zip(errors.chunks_mut(sample_size.0 * *size)) {
-                    let repetitions =
-                        <GlweCiphertextGgswCiphertextExternalProductFixture as Fixture<
-                            Precision,
-                            CoreEngine,
-                            (GlweCiphertext64, FourierGgswCiphertext64, GlweCiphertext64),
-                        >>::generate_random_repetition_prototypes(
-                            &parameters, &mut maker
-                        );
-                    let outputs = <GlweCiphertextGgswCiphertextExternalProductFixture as Fixture<
-                        Precision,
-                        CoreEngine,
-                        (GlweCiphertext64, FourierGgswCiphertext64, GlweCiphertext64),
-                    >>::sample(
-                        &mut maker,
-                        &mut engine,
-                        &parameters,
-                        &repetitions,
-                        sample_size,
-                    );
-                    let (raw_inputs, output): (Vec<_>, Vec<_>) = outputs.iter().cloned().unzip();
-                    let raw_input_plaintext_vector =
-                        raw_inputs.into_iter().flatten().collect::<Vec<_>>();
-                    let output_plaintext_vector = output.into_iter().flatten().collect::<Vec<_>>();
+        if noise_prediction.get_variance() < 1. / 12. {
+            for (_, errs) in
+                (0..REPETITIONS.0).zip(errors.chunks_mut(sample_size.0 * size.get_singleton()))
+            {
+                let repetitions = <GlweCiphertextGgswCiphertextExternalProductFixture as Fixture<
+                    Precision,
+                    CoreEngine,
+                    (GlweCiphertext64, FourierGgswCiphertext64, GlweCiphertext64),
+                >>::generate_random_repetition_prototypes(
+                    &parameters, &mut maker
+                );
+                let outputs = <GlweCiphertextGgswCiphertextExternalProductFixture as Fixture<
+                    Precision,
+                    CoreEngine,
+                    (GlweCiphertext64, FourierGgswCiphertext64, GlweCiphertext64),
+                >>::sample(
+                    &mut maker,
+                    &mut engine,
+                    &parameters,
+                    &repetitions,
+                    sample_size,
+                );
+                let (raw_inputs, output): (Vec<_>, Vec<_>) = outputs.iter().cloned().unzip();
+                let raw_input_plaintext_vector =
+                    raw_inputs.into_iter().flatten().collect::<Vec<_>>();
+                let output_plaintext_vector = output.into_iter().flatten().collect::<Vec<_>>();
 
-                    // errors[rep * sample_size.0 * *size..(rep + 1) * sample_size.0 * *size] =
-                    compute_error(
-                        errs,
-                        output_plaintext_vector,
-                        raw_input_plaintext_vector,
-                        1 as u64,
-                    );
-                }
-                let _mean_err = mean(&errors).unwrap();
-                let std_err = std_deviation(&errors).unwrap();
-                if DEBUG {
-                    write_to_file_debug(&parameters, &errors, id);
-                } else {
-                    write_to_file(
-                        &parameters,
-                        variance_to_stddev(glwe_noise),
-                        std_err,
-                        variance_to_stddev(noise_prediction),
-                        id,
-                    );
-                }
+                // errors[rep * sample_size.0 * *size..(rep + 1) * sample_size.0 * *size] =
+                compute_error(
+                    errs,
+                    output_plaintext_vector,
+                    raw_input_plaintext_vector,
+                    1 as u64,
+                );
+            }
+            let _mean_err = mean(&errors).unwrap();
+            let std_err = std_deviation(&errors).unwrap();
+            if DEBUG {
+                write_to_file_debug(&parameters, &errors, id);
             } else {
-                if DEBUG {
-                    write_to_file_debug(&parameters, &vec![], 0usize)
-                } else {
-                    write_to_file(
-                        &parameters,
-                        variance_to_stddev(glwe_noise),
-                        variance_to_stddev(Variance::from_variance(1. / 12.)),
-                        variance_to_stddev(Variance::from_variance(1. / 12.)),
-                        id,
-                    )
-                }
+                write_to_file(
+                    &parameters,
+                    variance_to_stddev(glwe_noise),
+                    std_err,
+                    variance_to_stddev(noise_prediction),
+                    id,
+                );
+            }
+        } else {
+            if DEBUG {
+                write_to_file_debug(&parameters, &vec![], 0usize)
+            } else {
+                write_to_file(
+                    &parameters,
+                    variance_to_stddev(glwe_noise),
+                    variance_to_stddev(Variance::from_variance(1. / 12.)),
+                    variance_to_stddev(Variance::from_variance(1. / 12.)),
+                    id,
+                )
             }
         }
+        // }
     }
 }
 //                     }
