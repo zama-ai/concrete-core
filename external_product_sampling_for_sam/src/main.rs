@@ -54,16 +54,6 @@ fn write_to_file(
         pred_stddev.get_variance()
     );
 
-    let _data_to_print = format!(
-        "{}, {}, {}, {}, {}, {},{}\n",
-        params.polynomial_size.0,
-        params.glwe_dimension.0,
-        params.decomposition_level_count.0,
-        params.decomposition_base_log.0,
-        input_stddev.get_log_standard_dev(),
-        output_stddev.get_log_standard_dev(),
-        pred_stddev.get_log_standard_dev(),
-    );
     let mut file = match OpenOptions::new()
         .read(true)
         .write(true)
@@ -218,20 +208,20 @@ impl Parameter {
     pub fn get_singleton(&self) -> usize {
         match self {
             Parameter::Singleton(val) => *val,
-            Parameter::BaseLevel { base, level } => panic!(),
+            Parameter::BaseLevel { base: _, level: _ } => panic!(),
         }
     }
 
     pub fn get_level(&self) -> usize {
         match self {
-            Parameter::Singleton(val) => panic!(),
-            Parameter::BaseLevel { base, level } => *level,
+            Parameter::Singleton(_) => panic!(),
+            Parameter::BaseLevel { base: _, level } => *level,
         }
     }
     pub fn get_base(&self) -> usize {
         match self {
             Parameter::Singleton(val) => panic!(),
-            Parameter::BaseLevel { base, level } => *base,
+            Parameter::BaseLevel { base, level: _ } => *base,
         }
     }
 }
