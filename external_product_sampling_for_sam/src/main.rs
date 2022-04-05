@@ -25,6 +25,7 @@ use std::io::Write;
 /// The number of time a test is repeated for a single set of parameter.
 ///
 /// Number of different keys
+/// At each repetition, we re-sample everything
 pub const REPETITIONS: Repetitions = Repetitions(15);
 
 pub const DEBUG: bool = false;
