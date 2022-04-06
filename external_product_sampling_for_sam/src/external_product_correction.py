@@ -1,81 +1,101 @@
-import math
+import argparse
+import concurrent.futures
+import dataclasses
+import datetime
+import pathlib
+import json
+import subprocess
+
 import numpy as np
-from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit
 from sklearn.ensemble import IsolationForest
-from sklearn.metrics import mean_tweedie_deviance
-from termcolor import colored
-
-from utils import var_to_bit
 
 
-# Log Extraction
+# Command used to run Rust program responsible to perform sampling on external product.
+BASH_COMMAND = "RUSTFLAGS=\"-C target-cpu=native\" cargo run --release -- --tot {} --id {}"
 
-def params_to_string(params):
-    return f"N = 2^{int(math.log2(params[0]))} ; k = {int(params[1])} ; level = {int(params[2])} ; baselog = {int(params[3])}"
+SECS_PER_HOUR = 3600
+SECS_PER_MINUTES = 60
 
-
-def extract_parameter(line):
-    # line : polynomial_size, glwe_dimension, decomposition_level_count, decomposition_base_log,
-    # input_variance, output_variance, predicted_variance
-    try:
-        return [float(x) for x in line.split(",")[:4]]
-    except IndexError:
-        return None
-    except ValueError:
-        return None
-
-
-def extract_input_variance(line):
-    # line : polynomial_size, glwe_dimension, decomposition_level_count, decomposition_base_log,
-    # input_variance, output_variance, predicted_variance
-    try:
-        # return 2. ** (128 + 2 * float(line.split(",")[5]))
-        return float(line.split(",")[4])
-
-    except IndexError:
-        return None
+parser = argparse.ArgumentParser(description='Compute coefficient correction for external product')
+parser.add_argument('chunks', type=int,
+                    help='Total number of chunks the parameter grid is divided into.'
+                         'Each chunk is run in a sub-process, to speed up processing make sure to'
+                         ' have at least this number of CPU cores to allocate for this task')
+parser.add_argument('--output-file', '-o', type=str, dest='output_filename',
+                    default='correction_coefficients.json',
+                    help='Output file containing correction coefficients, formatted as JSON'
+                         ' (default: correction_coefficients.json)')
+parser.add_argument('--file-pattern', '-f', type=str, dest='file_pattern',
+                    default='*.acquisition_external_product',
+                    help='File pattern used to store result files from chunked sampling'
+                         ' (default: "*.acquisition_external_product")')
 
 
-def extract_exp_output_variance(line):
-    # line : polynomial_size, glwe_dimension, decomposition_level_count, decomposition_base_log,
-    # input_variance, output_variance, predicted_variance
-    try:
-        # return 2. ** (128 + 2 * float(line.split(",")[5]))
-        return float(line.split(",")[5])
+@dataclasses.dataclass(init=False)
+class SamplingLine:
+    """
+    Extract output variance parameter from a sampling result string.
 
-    except IndexError:
-        return None
+    :param line: :class:`str` formatted as ``polynomial_size, glwe_dimension,
+        decomposition_level_count, decomposition_base_log, input_variance, output_variance,
+        predicted_variance``
+    """
+    parameters: list
+    input_variance: float
+    output_variance_exp: float
+    output_variance_th: float
+
+    def __init__(self, line: str):
+        split_line = line.strip().split(", ")
+        self.parameters = [float(x) for x in split_line[:4]]
+        self.input_variance = float(split_line[4])
+        self.output_variance_exp = float(split_line[5])
+        self.output_variance_th = float(split_line[6])
 
 
-def extract_th_output_variance(line):
-    # line : polynomial_size, glwe_dimension, decomposition_level_count, decomposition_base_log,
-    # input_variance, output_variance, predicted_variance
-    try:
-        # return 2. ** (128 + 2 * float(line.split(",")[6]))
-        return float(line.split(",")[6])
+def concatenate_result_files(pattern):
+    """
+    Concatenate result files into a single one. It uses a filename ``pattern`` to get all the files
+    in the current working directory.
 
-    except IndexError:
-        return None
+    :param pattern: filename pattern as :class:`str`
+    :return: concatenated filename as :class:`pathlib.Path`
+    """
+    results_filepath = pathlib.Path('concatenated_sampling_results')
+    with results_filepath.open('w') as results:
+        for file in sorted(pathlib.Path('.').glob(pattern)):
+            results.write(file.read_text())
+
+    return results_filepath
 
 
 def extract_from_acquisitions(filename):
-    with open(filename, "r") as f:
-        res = f.read()
+    """
+    Retrieve and parse data from sampling results.
 
-    res = res.split("\n")
+    :param filename: sampling results filename as :class:`pathlib.Path`
+    :return: :class:`tuple` of :class:`numpy.array`
+    """
     parameters = []
     exp_output_variance = []
     th_output_variance = []
     input_variance = []
-    for line in res:
-        params = extract_parameter(line)
-        exp_output_var = extract_exp_output_variance(line)
-        th_output_var = extract_th_output_variance(line)
-        input_var = extract_input_variance(line)
 
-        if not (
-                params is None or exp_output_var is None or th_output_var is None or input_var is None):
+    with filename.open() as f:
+        for line in f:
+            try:
+                sampled_line = SamplingLine(line)
+            except Exception as err:
+                # If an exception occurs when parsing a result line, we simply discard this one.
+                print(f"Exception while parsing line (error: {err}, line: {line})")
+                continue
+
+            params = sampled_line.parameters
+            exp_output_var = sampled_line.output_variance_exp
+            th_output_var = sampled_line.output_variance_th
+            input_var = sampled_line.input_variance
+
             if exp_output_var < 0.083:
                 # * 2**128 to convert the torus variance into a modular variance
                 params.append(th_output_var * 2 ** 128)
@@ -83,32 +103,42 @@ def extract_from_acquisitions(filename):
                 exp_output_variance.append(exp_output_var * 2 ** 128)
                 th_output_variance.append(th_output_var * 2 ** 128)
                 input_variance.append(input_var * 2 ** 128)
+
     print(f"There is {len(parameters)} samples ...")
-    return np.array(parameters), np.array(exp_output_variance), np.array(
-        th_output_variance), np.array(input_variance)
+
+    return (np.array(parameters), np.array(exp_output_variance),
+            np.array(th_output_variance), np.array(input_variance))
 
 
-def get_input(new_decomp=False):
-    if new_decomp:
-        filename = "new_decomp_all_acquisitions.txt"
-    else:
-        filename = "previous_decomp_all_acquisitions.txt"
-    parameters, exp_output_variance, th_output_variance, input_variance = extract_from_acquisitions(
-        filename)
-    y_values = np.maximum(0.,
-                          (exp_output_variance - input_variance))
+def get_input(filename):
+    """
+    :param filename: result filename as :class:`pathlib.Path`
+    :return: :class:`tuple` of X and Y values
+    """
+    (parameters,
+     exp_output_variance,
+     th_output_variance,
+     input_variance) = extract_from_acquisitions(filename)
+    y_values = np.maximum(0., (exp_output_variance - input_variance))
     x_values = parameters
     return x_values, y_values
 
 
-def get_input_without_outlier(new_decomp=False):
-    x_values, y_values = get_input(new_decomp)
-    return remove_outlier(x_values, y_values)
+def get_input_without_outlier(filename):
+    return remove_outlier(*get_input(filename))
 
 
 def remove_outlier(x_values, y_values):
+    """
+    Remove outliers from a dataset using an isolation forest algorithm.
+
+    :param x_values: values for the first dimension as :class:`list`
+    :param y_values: values for the second dimension as :class:`list`
+    :return: cleaned dataset as :class:`tuple` which element storing values a dimension in a
+        :class:`list`
+    """
     # identify outliers in the training dataset
-    iso = IsolationForest(contamination=0.1)
+    iso = IsolationForest(contamination=0.1)  # Contamination value obtained by experience
     yhat = iso.fit_predict(x_values)
 
     # select all rows that are not outliers
@@ -120,9 +150,10 @@ def remove_outlier(x_values, y_values):
     return x_values, y_values
 
 
-# Noise formula for FFTW
-
 def fft_noise(x, a, d):
+    """
+    Noise formula for FFTW.
+    """
     N = x[:, 0]
     k = x[:, 1]
     level = x[:, 2]
@@ -135,102 +166,70 @@ def log_fft_noise(x, a, d):
     return np.log2(fft_noise(x, a, d))
 
 
-def fitting(x_values, y_values):
-    popt, pcov = curve_fit(log_fft_noise, x_values, np.log2(y_values))
-    return popt
-
-
 def train(x_values, y_values):
-    weights = fitting(x_values, y_values)
+    weights, _ = curve_fit(log_fft_noise, x_values, np.log2(y_values))
     return weights
 
 
-def test(x_values, y_values, weights):
-    mse = 0.
-    mse_without_correction = 0.
-    for index in range(len(x_values)):
-        params = np.array([x_values[index, :]])
-        real_out = y_values[index]
-        pred_out = max(fft_noise(params, *list(weights))[0], 0.000001)
-        mse += (var_to_bit(real_out) - var_to_bit(pred_out)) ** 2
-        mse_without_correction += (var_to_bit(real_out) - var_to_bit(params[0, 4])) ** 2
-    mse /= len(x_values)
-    mse_without_correction /= len(x_values)
-    return mse, mse_without_correction
+def get_weights(filename):
+    """
+    Get weights from sampling results.
 
-
-def launch(new_decomp=False):
-    x_values, y_values = get_input_without_outlier(new_decomp)
+    :param filename: results filename as :class:`pathlib.Path`
+    :return: :class:`dict` of weights formatted as ``{"a": <float>, "d": <float>}``
+    """
+    x_values, y_values = get_input_without_outlier(filename)
     weights = train(x_values, y_values)
-    test(x_values, y_values, weights)
-    return weights
+    return {"a": weights[0], "d": weights[1]}
 
 
-def compare_with_previous_formula(new_decomp=False):
-    print(
-        f"\t\t{colored('Comparing new and old formula', attrs=['bold', 'underline'], color='green')}\n")
-    # computing new weights
-    x_values, y_values = get_input_without_outlier(new_decomp)
-    weights = train(x_values, y_values)
-    print(f"\t{colored('New formula', attrs=['bold', 'underline'], color='red')}\n")
-    mse, mse_without_correction = test(x_values, y_values, weights)
-    print(f"-> weights = {weights}")
-    print(f"-> mse = {mse}")
-    print(f"-> mse wo correction = {mse_without_correction}\n")
+def write_to_file(filename, obj):
+    """
+    Write the given ``obj``ect into a file formatted as JSON.
 
-    print(f"\t{colored('Old formula', attrs=['bold', 'underline'], color='red')}\n")
-
-    # testing old weights
-    previous_weights = (math.log2(0.016089458900501813), 2.188930746713708)
-    mse, mse_without_correction = test(x_values, y_values, previous_weights)
-    print(f"-> weights = {previous_weights}")
-    print(f"-> mse = {mse}")
-    print(f"-> mse wo correction = {mse_without_correction}\n")
+    :param filename: filename to write into as :class:`str`
+    :param obj: object to write as JSON
+    """
+    filepath = pathlib.Path(filename)
+    try:
+        json.dump(obj, filepath.open('w'))
+    except Exception as err:
+        print(f"Exception occurred while writing to {filename}: {err}")
+    else:
+        print(f"Results written to {filename}")
 
 
-def compare_decomposition():
-    print(
-        f"\t\t{colored('Comparing new and old decomposition', attrs=['bold', 'underline'], color='green')}\n")
+def run_sampling_chunk(total_chunks, identity):
+    """
+    Run an external product sampling on a chunk of data as a subprocess.
 
-    x_values, previous_decomp_y_values = get_input_without_outlier(False)
-    x_value_bis, new_decomp_y_values = get_input_without_outlier(True)
-    x_values = x_values[:, :4]
-    x_value_bis = x_value_bis[:, :4]
+    :param identity: chunk identifier as :class:`int`
+    """
+    cmd = BASH_COMMAND.format(total_chunks, identity)
+    start_time = datetime.datetime.now()
+    print(f"External product sampling chunk #{identity} starting")
 
-    previous_decom = {}
-    for x, y in zip(x_values, previous_decomp_y_values):
-        previous_decom[tuple(x)] = y
+    process = subprocess.popen(cmd, shell=True)
+    process.wait()
 
-    new_decom = {}
-    for x, y in zip(x_value_bis, new_decomp_y_values):
-        new_decom[tuple(x)] = y
-
-    diffs = {}
-    # print(new_decom.keys())
-    for key in previous_decom.keys():
-        if key in new_decom.keys():
-            if previous_decom[key] != new_decom[key]:
-                diffs[key] = 0.5 * math.log2(previous_decom[key]) - 0.5 * math.log2(new_decom[key])
-            # else:
-            #     diffs[key] = 0.
-            # diffs[key] = 0.5 * math.log2(previous_decom[key] - new_decom[key])
-        else:
-            print(f"Cannot find key {key} in new_decomp ... ")
-
-    diff = np.array(list(diffs.values()))
-    print(f"> Computing diff = log(previous_decomp_stddev) - log(new_decomp_stddev) ")
-    print(f"> diff mean  = {np.mean(diff)}")
-    print(f"> diff median  = {np.median(diff)}")
-
-    plt.figure()
-    plt.title("$\log_2(\sigma_{old}) - \log_2(\sigma_{new})$")
-    plt.hist(diff, bins=1000, density=True)
-    plt.tight_layout()
-    # plt.scatter(range(len(diff)), diff)
-    plt.show()
+    elapsed_time = (datetime.datetime.now() - start_time).total_seconds()
+    hours = int(elapsed_time // SECS_PER_HOUR)
+    minutes = int((elapsed_time % SECS_PER_HOUR) // SECS_PER_MINUTES)
+    seconds = int(elapsed_time % SECS_PER_HOUR % SECS_PER_MINUTES)
+    print(f"External product sampling chunk #{identity} done in {hours}:{minutes}:{seconds}")
 
 
 if __name__ == "__main__":
-    compare_decomposition()
-    # compare_with_previous_formula(False)
-    # compare_with_previous_formula(True)
+    args = parser.parse_args()
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=args.chunks) as executor:
+        futures = []
+        for n in range(args.chunks):
+            futures.append(executor.submit(run_sampling_chunk, args.chunks, n))
+
+        # Wait for all sampling chunks to be completed.
+        concurrent.futures.wait(futures)
+
+    result_file = concatenate_result_files(args.file_pattern)
+    # Extracting the weights and write it to a file
+    write_to_file(args.output_filename, get_weights(result_file))
