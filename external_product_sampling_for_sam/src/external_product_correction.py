@@ -30,6 +30,9 @@ parser.add_argument('--file-pattern', '-f', type=str, dest='file_pattern',
                     default='*.acquisition_external_product',
                     help='File pattern used to store result files from chunked sampling'
                          ' (default: "*.acquisition_external_product")')
+parser.add_argument('--analysis-only', '-A', action= 'store_true', dest='analysis_only',
+                    help='If this flag is set, no sampling will be done, it will only try to'
+                         ' analyze existing results')
 
 
 @dataclasses.dataclass(init=False)
@@ -222,13 +225,14 @@ def run_sampling_chunk(total_chunks, identity):
 if __name__ == "__main__":
     args = parser.parse_args()
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=args.chunks) as executor:
-        futures = []
-        for n in range(args.chunks):
-            futures.append(executor.submit(run_sampling_chunk, args.chunks, n))
+    if not args.analysis_only:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=args.chunks) as executor:
+            futures = []
+            for n in range(args.chunks):
+                futures.append(executor.submit(run_sampling_chunk, args.chunks, n))
 
-        # Wait for all sampling chunks to be completed.
-        concurrent.futures.wait(futures)
+            # Wait for all sampling chunks to be completed.
+            concurrent.futures.wait(futures)
 
     result_file = concatenate_result_files(args.file_pattern)
     # Extracting the weights and write it to a file
