@@ -12,7 +12,7 @@ from sklearn.ensemble import IsolationForest
 
 
 # Command used to run Rust program responsible to perform sampling on external product.
-BASH_COMMAND = "RUSTFLAGS=\"-C target-cpu=native\" cargo run --release -- --tot {} --id {}"
+BASH_COMMAND = "RUSTFLAGS=\"-C target-cpu=native -Awarnings\" cargo run --quiet --release -- --tot {} --id {} {}"
 
 SECS_PER_HOUR = 3600
 SECS_PER_MINUTES = 60
@@ -33,6 +33,9 @@ parser.add_argument('--file-pattern', '-f', type=str, dest='file_pattern',
 parser.add_argument('--analysis-only', '-A', action= 'store_true', dest='analysis_only',
                     help='If this flag is set, no sampling will be done, it will only try to'
                          ' analyze existing results')
+parser.add_argument('sampling_args', nargs=argparse.REMAINDER,
+                    help='Arguments directly passed to sampling program, to get an exhaustive list'
+                         ' of options run command: `cargo run -- --help`')
 
 
 @dataclasses.dataclass(init=False)
@@ -51,10 +54,10 @@ class SamplingLine:
 
     def __init__(self, line: str):
         split_line = line.strip().split(", ")
-        self.parameters = [float(x) for x in split_line[:4]]
-        self.input_variance = float(split_line[4])
-        self.output_variance_exp = float(split_line[5])
-        self.output_variance_th = float(split_line[6])
+        self.parameters = [float(x) for x in split_line[:5]]
+        self.input_variance = float(split_line[5])
+        self.output_variance_exp = float(split_line[6])
+        self.output_variance_th = float(split_line[7])
 
 
 def concatenate_result_files(pattern):
@@ -202,24 +205,35 @@ def write_to_file(filename, obj):
         print(f"Results written to {filename}")
 
 
-def run_sampling_chunk(total_chunks, identity):
+def run_sampling_chunk(total_chunks, identity, input_args):
     """
     Run an external product sampling on a chunk of data as a subprocess.
 
+    :param total_chunks: number of chunks the parameter is divided into
     :param identity: chunk identifier as :class:`int`
+    :param input_args: arguments passed to sampling program
     """
-    cmd = BASH_COMMAND.format(total_chunks, identity)
+    cmd = BASH_COMMAND.format(total_chunks, identity, input_args)
     start_time = datetime.datetime.now()
     print(f"External product sampling chunk #{identity} starting")
 
-    process = subprocess.popen(cmd, shell=True)
-    process.wait()
+    process = subprocess.run(cmd, shell=True, capture_output=True)
 
     elapsed_time = (datetime.datetime.now() - start_time).total_seconds()
     hours = int(elapsed_time // SECS_PER_HOUR)
     minutes = int((elapsed_time % SECS_PER_HOUR) // SECS_PER_MINUTES)
     seconds = int(elapsed_time % SECS_PER_HOUR % SECS_PER_MINUTES)
-    print(f"External product sampling chunk #{identity} done in {hours}:{minutes}:{seconds}")
+
+    if process.returncode == 0:
+        print(f"External product sampling chunk #{identity} successfully done in"
+              f" {hours}:{minutes}:{seconds}")
+    else:
+        stderr = process.stderr.decode()
+        stderr_formatted = f"STDERR: {stderr}" if stderr else ""
+        print(f"External product sampling chunk #{identity} failed after"
+              f" {hours}:{minutes}:{seconds}\n"
+              f"STDOUT: {process.stdout.decode()}"
+              f"{stderr_formatted}")
 
 
 if __name__ == "__main__":
@@ -229,7 +243,7 @@ if __name__ == "__main__":
         with concurrent.futures.ThreadPoolExecutor(max_workers=args.chunks) as executor:
             futures = []
             for n in range(args.chunks):
-                futures.append(executor.submit(run_sampling_chunk, args.chunks, n))
+                futures.append(executor.submit(run_sampling_chunk, args.chunks, n, " ".join(args.sampling_args)))
 
             # Wait for all sampling chunks to be completed.
             concurrent.futures.wait(futures)

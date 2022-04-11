@@ -13,25 +13,40 @@ use concrete_core_fixture::fixture::{
 };
 use concrete_core_fixture::generation::{Maker, Precision64};
 use concrete_core_fixture::{Repetitions, SampleSize};
-use concrete_npe;
-use f64;
-use indicatif::ProgressIterator;
 use itertools::iproduct;
-use rand::{seq::SliceRandom, SeedableRng};
+use rand::seq::SliceRandom;
+use rand::{Rng, SeedableRng};
 use rand_chacha::ChaChaRng;
 use std::fs::OpenOptions;
 use std::io::Write;
-
-/// The number of time a test is repeated for a single set of parameter.
-///
-/// Number of different keys
-/// At each repetition, we re-sample everything
-pub const REPETITIONS: Repetitions = Repetitions(15);
+use {concrete_npe, f64, rand};
 
 pub const DEBUG: bool = false;
 
-///// The size of the sample  per keys
-pub const POT: usize = 40;
+#[derive(Parser, Debug)]
+#[clap(author, version, about, long_about = None)]
+struct Args {
+    /// Total number of threads.
+    #[clap(long, short)]
+    tot: usize,
+    /// Current Thread ID
+    #[clap(long, short)]
+    id: usize,
+    /// Number of time a test is repeated for a single set of parameter.
+    /// This indicates the number of different keys since, at each repetition, we re-sample
+    /// everything
+    #[clap(long, short, default_value_t = 15)]
+    repetitions: usize,
+    /// The size of the sample per key
+    #[clap(long, short, default_value_t = 40)]
+    sample_size: usize,
+    /// Set value of the bit for GGSW
+    #[clap(long, short, default_value_t = 1)]
+    ggsw_value: usize,
+    /// Provide a random bit for GGSW on demand
+    #[clap(long, short = 'R', conflicts_with = "ggsw-value")]
+    random_ggsw: bool,
+}
 
 fn variance_to_stddev(var: Variance) -> StandardDev {
     StandardDev::from_standard_dev(var.get_standard_dev())
@@ -45,11 +60,12 @@ fn write_to_file(
     id: usize,
 ) {
     let data_to_save = format!(
-        "{}, {}, {}, {}, {}, {}, {}\n",
+        "{}, {}, {}, {}, {}, {}, {}, {}\n",
         params.polynomial_size.0,
         params.glwe_dimension.0,
         params.decomposition_level_count.0,
         params.decomposition_base_log.0,
+        params.ggsw_value_to_use.unwrap(),
         input_stddev.get_variance(),
         output_stddev.get_variance(),
         pred_stddev.get_variance()
@@ -176,17 +192,6 @@ fn compute_error(errs: &mut [f64], output: Vec<u64>, input: Vec<u64>, bit: u64) 
     }
 }
 
-#[derive(Parser, Debug)]
-#[clap(author, version, about, long_about = None)]
-struct Args {
-    /// Total number of thread
-    #[clap(long, short)]
-    tot: usize,
-    /// Current Thread ID
-    #[clap(long, short)]
-    id: usize,
-}
-
 #[derive(Debug)]
 enum Parameter {
     Singleton(usize),
@@ -250,11 +255,25 @@ fn filter_b_l(bases: &[usize], levels: &[usize]) -> Vec<Parameter> {
     bases_levels
 }
 
+fn ggsw_value_to_use(ggsw_value: Option<usize>) -> Option<usize> {
+    match ggsw_value {
+        Some(value) => Some(value),
+        // GGSW value is randomly generated here so that other functions can retrieve its value
+        None => Some(rand::thread_rng().gen_range(0, 2)),
+    }
+}
+
 fn main() {
     let args = Args::parse();
     let tot = args.tot;
     let id = args.id;
-    // let n_threads = args.n_threads;
+    let total_repetitions = Repetitions(args.repetitions);
+    let base_sample_size = args.sample_size;
+    let ggsw_value: Option<usize> = match args.random_ggsw {
+        true => None,
+        false => Some(args.ggsw_value),
+    };
+
     // Fixture Init
     let mut maker = Maker::default();
     let mut engine = CoreEngine::new().unwrap();
@@ -293,19 +312,20 @@ fn main() {
     let hypercube = iproduct!(glwe_dimensions, bases_levels, polynomial_sizes);
 
     let mut hypercube: Vec<(Parameter, Parameter, Parameter)> = hypercube.collect();
-    // println!("{:?}", hypercube);
     let seed = [0; 32];
     let mut rng = ChaChaRng::from_seed(seed);
     hypercube.shuffle(&mut rng);
     // only keeping part of the hypercube
     let chunk_size = hypercube.len() / tot;
     println!(
-        "-> Computing chunk [{}..{}]",
+        "-> Thread #{} computing chunk [{}..{}]",
+        id,
         id * chunk_size,
         (id + 1) * chunk_size
     );
+
     for (k, b_l, size) in hypercube[id * chunk_size..(id + 1) * chunk_size].iter() {
-        let sample_size = SampleSize(POT * max_polynomial_size / size.get_singleton());
+        let sample_size = SampleSize(base_sample_size * max_polynomial_size / size.get_singleton());
         let glwe_dimension = GlweDimension(k.get_singleton());
         let poly_size = PolynomialSize(size.get_singleton());
         let dec_level_count = DecompositionLevelCount(b_l.get_level());
@@ -315,10 +335,11 @@ fn main() {
         let glwe_noise =
             Variance::from_variance(minimal_variance_for_security_64(glwe_dimension, poly_size));
 
-        let parameters = GlweCiphertextGgswCiphertextExternalProductParameters {
+        let mut parameters = GlweCiphertextGgswCiphertextExternalProductParameters {
             ggsw_noise,
             glwe_noise,
             glwe_dimension,
+            ggsw_value_to_use: ggsw_value_to_use(ggsw_value),
             polynomial_size: poly_size,
             decomposition_base_log: dec_base_log,
             decomposition_level_count: dec_level_count,
@@ -338,12 +359,14 @@ fn main() {
             dec_level_count,
         );
 
-        let mut errors = vec![0.; sample_size.0 * size.get_singleton() * REPETITIONS.0];
+        let mut errors = vec![0.; sample_size.0 * size.get_singleton() * total_repetitions.0];
 
         if noise_prediction.get_variance() < 1. / 12. {
-            for (_, errs) in
-                (0..REPETITIONS.0).zip(errors.chunks_mut(sample_size.0 * size.get_singleton()))
+            for (_, errs) in (0..total_repetitions.0)
+                .zip(errors.chunks_mut(sample_size.0 * size.get_singleton()))
             {
+                parameters.ggsw_value_to_use = ggsw_value_to_use(ggsw_value);
+
                 let repetitions = <GlweCiphertextGgswCiphertextExternalProductFixture as Fixture<
                     Precision,
                     CoreEngine,
@@ -372,7 +395,7 @@ fn main() {
                     errs,
                     output_plaintext_vector,
                     raw_input_plaintext_vector,
-                    1 as u64,
+                    parameters.ggsw_value_to_use.unwrap() as u64,
                 );
             }
             let _mean_err = mean(&errors).unwrap();
@@ -404,9 +427,3 @@ fn main() {
         // }
     }
 }
-//                     }
-//                 }
-//             }
-//         }
-//     }
-// }
