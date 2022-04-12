@@ -76,6 +76,18 @@ fn main() -> Result<(), Box<dyn Error>> {
 }
 ```
 
+## Backends
+
+Two backend are currently implemented. 
+
+### `core` backend
+
+This is the default backend, using the FFTW library for the Fourier transforms.
+
+### `optalysys` backend
+
+This backend is designed to use the Optalysys optical technology for the Fourier transforms. It currently makes use of the Optalysys simulator, and will be updated to use the optical hardware as soon as it is publicly available.
+
 ## Links
 
 - [TFHE](https://eprint.iacr.org/2018/421.pdf)
@@ -83,6 +95,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 - [Concrete-core V1.0.0-alpha release](https://community.zama.ai/t/concrete-core-v1-0-0-alpha/120)
 - [Concrete-core V1.0.0-beta release](https://www.zama.ai/post/announcing-concrete-core-v1-0-beta)
 - [Concrete-core V1.0.0-gamma release](https://community.zama.ai/t/concrete-core-v1-0-0-gamma-with-gpu-acceleration/234)
+- [Optalysys](https://optalysys.com/)
 
 ## License
 

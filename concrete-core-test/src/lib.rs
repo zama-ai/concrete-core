@@ -18,3 +18,5 @@ pub mod cuda;
 pub mod default;
 #[cfg(all(test, feature = "backend_fftw"))]
 pub mod fftw;
+#[cfg(all(test, feature = "backend_optalysys"))]
+pub mod optalysys;
