@@ -16,3 +16,5 @@ pub const SAMPLE_SIZE: SampleSize = SampleSize(100);
 pub mod default;
 #[cfg(all(test, feature = "backend_fftw"))]
 pub mod fftw;
+#[cfg(all(test, feature = "backend_optalysys"))]
+pub mod optalysys;
