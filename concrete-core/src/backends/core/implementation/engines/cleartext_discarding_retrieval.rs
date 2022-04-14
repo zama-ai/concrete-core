@@ -17,7 +17,10 @@ impl CleartextDiscardingRetrievalEngine<Cleartext32, u32> for CoreEngine {
     /// let input: u32 = 3;
     /// let mut output: u32 = 0;
     ///
-    /// let mut engine = CoreEngine::new(())?;
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = CoreEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let cleartext: Cleartext32 = engine.create_cleartext(&input)?;
     /// engine.discard_retrieve_cleartext(&mut output, &cleartext)?;
     ///
@@ -58,7 +61,10 @@ impl CleartextDiscardingRetrievalEngine<Cleartext64, u64> for CoreEngine {
     /// let input: u64 = 3;
     /// let mut output: u64 = 0;
     ///
-    /// let mut engine = CoreEngine::new(())?;
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = CoreEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let cleartext: Cleartext64 = engine.create_cleartext(&input)?;
     /// engine.discard_retrieve_cleartext(&mut output, &cleartext)?;
     ///

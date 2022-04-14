@@ -18,7 +18,10 @@ impl LweCiphertextTrivialDecryptionEngine<LweCiphertext32, Plaintext32> for Core
     /// let lwe_size = LweSize(10);
     /// let input = 3_u32 << 20;
     ///
-    /// let mut engine = CoreEngine::new(())?;
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = CoreEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let plaintext: Plaintext32 = engine.create_plaintext(&input)?;
     /// // DISCLAIMER: trivial encryption is NOT secure, and DOES NOT hide the message at all.
     /// let ciphertext: LweCiphertext32 =
@@ -63,7 +66,10 @@ impl LweCiphertextTrivialDecryptionEngine<LweCiphertext64, Plaintext64> for Core
     /// let lwe_size = LweSize(10);
     /// let input = 3_u64 << 20;
     ///
-    /// let mut engine = CoreEngine::new(())?;
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = CoreEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let plaintext: Plaintext64 = engine.create_plaintext(&input)?;
     /// // DISCLAIMER: trivial encryption is NOT secure, and DOES NOT hide the message at all.
     /// let ciphertext: LweCiphertext64 =

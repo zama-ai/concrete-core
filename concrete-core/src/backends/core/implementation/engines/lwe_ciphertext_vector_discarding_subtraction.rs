@@ -27,7 +27,10 @@ impl LweCiphertextVectorDiscardingSubtractionEngine<LweCiphertextVector32, LweCi
     /// let input_vector = vec![3_u32 << 20; 8];
     /// let noise = Variance::from_variance(2_f64.powf(-25.));
     ///
-    /// let mut engine = CoreEngine::new(())?;
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = CoreEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
     /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector(&input_vector)?;
     /// let ciphertext_vector = engine.encrypt_lwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
@@ -100,7 +103,10 @@ impl LweCiphertextVectorDiscardingSubtractionEngine<LweCiphertextVector64, LweCi
     /// let input_vector = vec![3_u64 << 50; 8];
     /// let noise = Variance::from_variance(2_f64.powf(-25.));
     ///
-    /// let mut engine = CoreEngine::new(())?;
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = CoreEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
     /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector(&input_vector)?;
     /// let ciphertext_vector = engine.encrypt_lwe_ciphertext_vector(&key, &plaintext_vector, noise)?;

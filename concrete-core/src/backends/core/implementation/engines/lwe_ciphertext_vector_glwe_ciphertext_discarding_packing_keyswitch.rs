@@ -38,7 +38,10 @@ impl
     /// // Here a hard-set encoding is applied (shift by 20 bits)
     /// let input_vector = vec![3_u32 << 20, 256];
     ///
-    /// let mut engine = CoreEngine::new(())?;
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = CoreEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let input_key: LweSecretKey32 = engine.create_lwe_secret_key(input_lwe_dimension)?;
     /// let output_key: GlweSecretKey32 =
     ///     engine.create_glwe_secret_key(output_glwe_dimension, polynomial_size)?;
@@ -130,7 +133,10 @@ impl
     /// // Here a hard-set encoding is applied (shift by 50 bits)
     /// let input_vector = vec![3_u64 << 50, 256];
     ///
-    /// let mut engine = CoreEngine::new(())?;
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = CoreEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let input_key: LweSecretKey64 = engine.create_lwe_secret_key(input_lwe_dimension)?;
     /// let output_key: GlweSecretKey64 =
     ///     engine.create_glwe_secret_key(output_glwe_dimension, polynomial_size)?;

@@ -397,9 +397,12 @@ impl<Cont> GlweCiphertext<Cont> {
     /// use concrete_core::backends::core::private::crypto::secret::GlweSecretKey;
     /// use concrete_core::backends::core::private::math::polynomial::MonomialDegree;
     /// use concrete_core::backends::core::private::math::tensor::AsRefTensor;
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
-    /// let mut secret_generator = SecretRandomGenerator::new(None);
-    /// let mut encryption_generator = EncryptionRandomGenerator::new(None);
+    /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
+    /// let mut encryption_generator =
+    ///     EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0), &mut UnixSeeder::new(0));
     /// let poly_size = PolynomialSize(4);
     /// let glwe_dim = GlweDimension(2);
     /// let glwe_secret_key =

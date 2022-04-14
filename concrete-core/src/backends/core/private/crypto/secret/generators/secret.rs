@@ -1,25 +1,22 @@
-use crate::backends::core::private::math::random::{Gaussian, RandomGenerable, RandomGenerator};
+use crate::backends::core::private::math::random::{
+    ByteRandomGenerator, Gaussian, RandomGenerable, RandomGenerator, Seed,
+};
 use crate::backends::core::private::math::tensor::Tensor;
 use crate::backends::core::private::math::torus::UnsignedTorus;
 use concrete_commons::dispersion::DispersionParameter;
 
 /// A random number generator which can be used to generate secret keys.
-pub struct SecretRandomGenerator(RandomGenerator);
+pub struct SecretRandomGenerator<G: ByteRandomGenerator>(RandomGenerator<G>);
 
-impl SecretRandomGenerator {
+impl<G: ByteRandomGenerator> SecretRandomGenerator<G> {
     /// Creates a new generator, optionally seeding it with the given value.
-    pub fn new(seed: Option<u128>) -> SecretRandomGenerator {
+    pub fn new(seed: Seed) -> SecretRandomGenerator<G> {
         SecretRandomGenerator(RandomGenerator::new(seed))
     }
 
     /// Returns the number of remaining bytes, if the generator is bounded.
     pub fn remaining_bytes(&self) -> Option<usize> {
         self.0.remaining_bytes()
-    }
-
-    /// Returns whether the generator is bounded.
-    pub fn is_bounded(&self) -> bool {
-        self.0.is_bounded()
     }
 
     // Returns a tensor with random uniform binary values.
