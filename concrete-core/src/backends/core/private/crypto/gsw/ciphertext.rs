@@ -381,9 +381,11 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     /// };
     /// use concrete_commons::parameters::DecompositionLevelCount;
     /// use concrete_commons::parameters::DecompositionBaseLog;
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
-    /// let mut secret_generator = SecretRandomGenerator::new(None);
-    /// let mut encryption_generator = EncryptionRandomGenerator::new(None);
+    /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
+    /// let mut encryption_generator = EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0), &mut UnixSeeder::new(0));
     ///
     /// let lwe_sk = LweSecretKey::generate_binary(LweDimension(256), &mut secret_generator);
 
@@ -492,9 +494,12 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     ///     EncryptionRandomGenerator, SecretRandomGenerator,
     /// };
     /// use concrete_core::backends::core::private::crypto::secret::LweSecretKey;
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
-    /// let mut secret_generator = SecretRandomGenerator::new(None);
-    /// let mut encryption_generator = EncryptionRandomGenerator::new(None);
+    /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
+    /// let mut encryption_generator =
+    ///     EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0), &mut UnixSeeder::new(0));
     ///
     /// let lwe_sk = LweSecretKey::generate_binary(LweDimension(256), &mut secret_generator);
     ///

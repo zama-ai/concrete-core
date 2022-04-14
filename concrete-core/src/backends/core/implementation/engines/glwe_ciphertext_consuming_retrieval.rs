@@ -29,7 +29,9 @@ impl GlweCiphertextConsumingRetrievalEngine<GlweCiphertext32, Vec<u32>> for Core
     /// let mut owned_container = vec![0_u32; glwe_size.0 * polynomial_size.0];
     /// let original_vec_ptr = owned_container.as_ptr();
     ///
-    /// let mut engine = CoreEngine::new(())?;
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = CoreEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext: GlweCiphertext32 =
     ///     engine.create_glwe_ciphertext(owned_container, polynomial_size)?;
     /// let retrieved_container = engine.consume_retrieve_glwe_ciphertext(ciphertext)?;
@@ -74,7 +76,9 @@ impl GlweCiphertextConsumingRetrievalEngine<GlweCiphertext64, Vec<u64>> for Core
     /// let mut owned_container = vec![0_u64; glwe_size.0 * polynomial_size.0];
     /// let original_vec_ptr = owned_container.as_ptr();
     ///
-    /// let mut engine = CoreEngine::new(())?;
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = CoreEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext: GlweCiphertext64 =
     ///     engine.create_glwe_ciphertext(owned_container, polynomial_size)?;
     /// let retrieved_container = engine.consume_retrieve_glwe_ciphertext(ciphertext)?;
@@ -122,7 +126,9 @@ impl<'data> GlweCiphertextConsumingRetrievalEngine<GlweCiphertextView32<'data>, 
     ///
     /// let slice = &owned_container[..];
     ///
-    /// let mut engine = CoreEngine::new(())?;
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = CoreEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext_view: GlweCiphertextView32 =
     ///     engine.create_glwe_ciphertext(slice, polynomial_size)?;
     /// let retrieved_slice = engine.consume_retrieve_glwe_ciphertext(ciphertext_view)?;
@@ -172,7 +178,9 @@ impl<'data> GlweCiphertextConsumingRetrievalEngine<GlweCiphertextMutView32<'data
     /// // Required as we can't borrow a mut slice more than once
     /// let underlying_ptr = slice.as_ptr();
     ///
-    /// let mut engine = CoreEngine::new(())?;
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = CoreEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext_view: GlweCiphertextMutView32 =
     ///     engine.create_glwe_ciphertext(slice, polynomial_size)?;
     /// let retrieved_slice = engine.consume_retrieve_glwe_ciphertext(ciphertext_view)?;
@@ -220,7 +228,9 @@ impl<'data> GlweCiphertextConsumingRetrievalEngine<GlweCiphertextView64<'data>, 
     ///
     /// let slice = &owned_container[..];
     ///
-    /// let mut engine = CoreEngine::new(())?;
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = CoreEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext_view: GlweCiphertextView64 =
     ///     engine.create_glwe_ciphertext(slice, polynomial_size)?;
     /// let retrieved_slice = engine.consume_retrieve_glwe_ciphertext(ciphertext_view)?;
@@ -270,7 +280,9 @@ impl<'data> GlweCiphertextConsumingRetrievalEngine<GlweCiphertextMutView64<'data
     /// // Required as we can't borrow a mut slice more than once
     /// let underlying_ptr = slice.as_ptr();
     ///
-    /// let mut engine = CoreEngine::new(())?;
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = CoreEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext_view: GlweCiphertextMutView64 =
     ///     engine.create_glwe_ciphertext(slice, polynomial_size)?;
     /// let retrieved_slice = engine.consume_retrieve_glwe_ciphertext(ciphertext_view)?;

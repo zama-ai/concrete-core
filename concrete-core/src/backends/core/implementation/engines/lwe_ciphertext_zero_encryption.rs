@@ -27,7 +27,10 @@ impl LweCiphertextZeroEncryptionEngine<LweSecretKey32, LweCiphertext32> for Core
     /// let lwe_dimension = LweDimension(2);
     /// let noise = Variance(2_f64.powf(-25.));
     ///
-    /// let mut engine = CoreEngine::new(())?;
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = CoreEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
     ///
     /// let ciphertext = engine.zero_encrypt_lwe_ciphertext(&key, noise)?;
@@ -80,7 +83,10 @@ impl LweCiphertextZeroEncryptionEngine<LweSecretKey64, LweCiphertext64> for Core
     /// let lwe_dimension = LweDimension(2);
     /// let noise = Variance(2_f64.powf(-25.));
     ///
-    /// let mut engine = CoreEngine::new(())?;
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = CoreEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
     ///
     /// let ciphertext = engine.zero_encrypt_lwe_ciphertext(&key, noise)?;

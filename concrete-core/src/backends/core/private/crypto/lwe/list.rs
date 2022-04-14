@@ -66,8 +66,10 @@ where
     /// };
     /// use concrete_core::backends::core::private::crypto::secret::*;
     /// use concrete_core::backends::core::private::crypto::*;
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::Seed;
     ///
-    /// let mut secret_generator = SecretRandomGenerator::new(None);
+    /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
     /// let secret_key = LweSecretKey::generate_binary(LweDimension(256), &mut secret_generator);
     ///
     /// let clear_values = CleartextList::allocate(2. as f32, CleartextCount(100));
@@ -357,9 +359,12 @@ impl<Cont> LweList<Cont> {
     /// use concrete_core::backends::core::private::crypto::secret::*;
     /// use concrete_core::backends::core::private::crypto::*;
     /// use concrete_core::backends::core::private::math::tensor::AsRefTensor;
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
-    /// let mut secret_generator = SecretRandomGenerator::new(None);
-    /// let mut encryption_generator = EncryptionRandomGenerator::new(None);
+    /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
+    /// let mut encryption_generator =
+    ///     EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0), &mut UnixSeeder::new(0));
     ///
     /// let secret_key = LweSecretKey::generate_binary(LweDimension(4), &mut secret_generator);
     /// let parameters = LogStandardDev::from_log_standard_dev(-15.);

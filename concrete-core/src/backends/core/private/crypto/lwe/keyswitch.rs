@@ -13,6 +13,7 @@ use crate::backends::core::private::crypto::secret::LweSecretKey;
 use crate::backends::core::private::math::decomposition::{
     DecompositionLevel, DecompositionTerm, SignedDecomposer,
 };
+use crate::backends::core::private::math::random::ByteRandomGenerator;
 use crate::backends::core::private::math::tensor::{
     ck_dim_div, ck_dim_eq, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
@@ -304,14 +305,17 @@ impl<Cont> LweKeyswitchKey<Cont> {
     /// use concrete_core::backends::core::private::crypto::secret::LweSecretKey;
     /// use concrete_core::backends::core::private::crypto::*;
     /// use concrete_core::backends::core::private::math::tensor::AsRefTensor;
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
     /// let input_size = LweDimension(10);
     /// let output_size = LweDimension(20);
     /// let decomp_log_base = DecompositionBaseLog(3);
     /// let decomp_level_count = DecompositionLevelCount(5);
     /// let cipher_size = LweSize(55);
-    /// let mut secret_generator = SecretRandomGenerator::new(None);
-    /// let mut encryption_generator = EncryptionRandomGenerator::new(None);
+    /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
+    /// let mut encryption_generator =
+    ///     EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0), &mut UnixSeeder::new(0));
     /// let noise = LogStandardDev::from_log_standard_dev(-15.);
     ///
     /// let input_key = LweSecretKey::generate_binary(input_size, &mut secret_generator);
@@ -328,17 +332,18 @@ impl<Cont> LweKeyswitchKey<Cont> {
     ///
     /// assert!(!ksk.as_tensor().iter().all(|a| *a == 0));
     /// ```
-    pub fn fill_with_keyswitch_key<InKeyCont, OutKeyCont, Scalar>(
+    pub fn fill_with_keyswitch_key<InKeyCont, OutKeyCont, Scalar, Gen>(
         &mut self,
         before_key: &LweSecretKey<BinaryKeyKind, InKeyCont>,
         after_key: &LweSecretKey<BinaryKeyKind, OutKeyCont>,
         noise_parameters: impl DispersionParameter,
-        generator: &mut EncryptionRandomGenerator,
+        generator: &mut EncryptionRandomGenerator<Gen>,
     ) where
         Self: AsMutTensor<Element = Scalar>,
         LweSecretKey<BinaryKeyKind, InKeyCont>: AsRefTensor<Element = Scalar>,
         LweSecretKey<BinaryKeyKind, OutKeyCont>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
+        Gen: ByteRandomGenerator,
     {
         // We instantiate a buffer
         let mut messages = PlaintextList::from_container(vec![
@@ -476,14 +481,17 @@ impl<Cont> LweKeyswitchKey<Cont> {
     /// use concrete_core::backends::core::private::crypto::secret::LweSecretKey;
     /// use concrete_core::backends::core::private::crypto::*;
     /// use concrete_core::backends::core::private::math::tensor::AsRefTensor;
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
     /// let input_size = LweDimension(1024);
     /// let output_size = LweDimension(1024);
     /// let decomp_log_base = DecompositionBaseLog(3);
     /// let decomp_level_count = DecompositionLevelCount(8);
     /// let noise = LogStandardDev::from_log_standard_dev(-15.);
-    /// let mut secret_generator = SecretRandomGenerator::new(None);
-    /// let mut encryption_generator = EncryptionRandomGenerator::new(None);
+    /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
+    /// let mut encryption_generator =
+    ///     EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0), &mut UnixSeeder::new(0));
     /// let input_key = LweSecretKey::generate_binary(input_size, &mut secret_generator);
     /// let output_key = LweSecretKey::generate_binary(output_size, &mut secret_generator);
     ///

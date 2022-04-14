@@ -99,7 +99,7 @@ pub trait RandomGenerator: Iterator<Item = u8> {
 
 /// A trait extending [`RandomGenerator`] to the parallel iterators of `rayon`.
 #[cfg(feature = "parallel")]
-pub trait ParallelRandomGenerator: RandomGenerator {
+pub trait ParallelRandomGenerator: RandomGenerator + Send {
     /// The iterator over children generators, returned by `par_try_fork` in case of success.
     type ParChildrenIter: rayon::prelude::IndexedParallelIterator<Item = Self>;
 

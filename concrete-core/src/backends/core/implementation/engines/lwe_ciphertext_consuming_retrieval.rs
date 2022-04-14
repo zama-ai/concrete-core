@@ -26,7 +26,9 @@ impl LweCiphertextConsumingRetrievalEngine<LweCiphertext32, Vec<u32>> for CoreEn
     /// let mut owned_container = vec![0_u32; lwe_size.0];
     /// let original_vec_ptr = owned_container.as_ptr();
     ///
-    /// let mut engine = CoreEngine::new(())?;
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = CoreEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext: LweCiphertext32 = engine.create_lwe_ciphertext(owned_container)?;
     /// let retrieved_container = engine.consume_retrieve_lwe_ciphertext(ciphertext)?;
     /// assert_eq!(original_vec_ptr, retrieved_container.as_ptr());
@@ -67,7 +69,9 @@ impl LweCiphertextConsumingRetrievalEngine<LweCiphertext64, Vec<u64>> for CoreEn
     /// let mut owned_container = vec![0_u64; lwe_size.0];
     /// let original_vec_ptr = owned_container.as_ptr();
     ///
-    /// let mut engine = CoreEngine::new(())?;
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = CoreEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext: LweCiphertext64 = engine.create_lwe_ciphertext(owned_container)?;
     /// let retrieved_container = engine.consume_retrieve_lwe_ciphertext(ciphertext)?;
     /// assert_eq!(original_vec_ptr, retrieved_container.as_ptr());
@@ -111,7 +115,9 @@ impl<'data> LweCiphertextConsumingRetrievalEngine<LweCiphertextView32<'data>, &'
     ///
     /// let slice = &owned_container[..];
     ///
-    /// let mut engine = CoreEngine::new(())?;
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = CoreEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext_view: LweCiphertextView32 = engine.create_lwe_ciphertext(slice)?;
     /// let retrieved_slice = engine.consume_retrieve_lwe_ciphertext(ciphertext_view)?;
     /// assert_eq!(slice, retrieved_slice);
@@ -157,7 +163,9 @@ impl<'data> LweCiphertextConsumingRetrievalEngine<LweCiphertextMutView32<'data>,
     /// // Required as we can't borrow a mut slice more than once
     /// let underlying_ptr = slice.as_ptr();
     ///
-    /// let mut engine = CoreEngine::new(())?;
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = CoreEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext_view: LweCiphertextMutView32 = engine.create_lwe_ciphertext(slice)?;
     /// let retrieved_slice = engine.consume_retrieve_lwe_ciphertext(ciphertext_view)?;
     /// assert_eq!(underlying_ptr, retrieved_slice.as_ptr());
@@ -201,7 +209,9 @@ impl<'data> LweCiphertextConsumingRetrievalEngine<LweCiphertextView64<'data>, &'
     ///
     /// let slice = &owned_container[..];
     ///
-    /// let mut engine = CoreEngine::new(())?;
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = CoreEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext_view: LweCiphertextView64 = engine.create_lwe_ciphertext(slice)?;
     /// let retrieved_slice = engine.consume_retrieve_lwe_ciphertext(ciphertext_view)?;
     /// assert_eq!(slice, retrieved_slice);
@@ -247,7 +257,9 @@ impl<'data> LweCiphertextConsumingRetrievalEngine<LweCiphertextMutView64<'data>,
     /// // Required as we can't borrow a mut slice more than once
     /// let underlying_ptr = slice.as_ptr();
     ///
-    /// let mut engine = CoreEngine::new(())?;
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = CoreEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext_view: LweCiphertextMutView64 = engine.create_lwe_ciphertext(slice)?;
     /// let retrieved_slice = engine.consume_retrieve_lwe_ciphertext(ciphertext_view)?;
     /// assert_eq!(underlying_ptr, retrieved_slice.as_ptr());

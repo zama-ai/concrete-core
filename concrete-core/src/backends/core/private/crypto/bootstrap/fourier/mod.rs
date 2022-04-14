@@ -765,6 +765,8 @@ where
     /// use concrete_core::backends::core::private::crypto::secret::{GlweSecretKey, LweSecretKey};
     /// use concrete_core::backends::core::private::math::fft::Complex64;
     /// use concrete_core::backends::core::private::math::tensor::AsMutTensor;
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
     /// // define settings
     /// let polynomial_size = PolynomialSize(1024);
@@ -775,8 +777,9 @@ where
     /// let base_log = DecompositionBaseLog(7);
     /// let std = LogStandardDev::from_log_standard_dev(-29.);
     ///
-    /// let mut secret_generator = SecretRandomGenerator::new(None);
-    /// let mut encryption_generator = EncryptionRandomGenerator::new(None);
+    /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
+    /// let mut encryption_generator =
+    ///     EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0), &mut UnixSeeder::new(0));
     ///
     /// let mut rlwe_sk =
     ///     GlweSecretKey::generate_binary(rlwe_dimension, polynomial_size, &mut secret_generator);

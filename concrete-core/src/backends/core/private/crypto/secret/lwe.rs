@@ -18,7 +18,11 @@ use crate::backends::core::private::crypto::lwe::{LweCiphertext, LweList};
 use crate::backends::core::private::crypto::secret::generators::{
     EncryptionRandomGenerator, SecretRandomGenerator,
 };
-use crate::backends::core::private::math::random::{Gaussian, RandomGenerable};
+#[cfg(feature = "multithread")]
+use crate::backends::core::private::math::random::ParallelByteRandomGenerator;
+use crate::backends::core::private::math::random::{
+    ByteRandomGenerator, Gaussian, RandomGenerable,
+};
 use crate::backends::core::private::math::tensor::{
     ck_dim_eq, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, IntoTensor, Tensor,
 };
@@ -49,12 +53,17 @@ where
     /// use concrete_core::backends::core::private::crypto::secret::generators::SecretRandomGenerator;
     /// use concrete_core::backends::core::private::crypto::secret::*;
     /// use concrete_core::backends::core::private::crypto::*;
-    /// let mut generator = SecretRandomGenerator::new(None);
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::Seed;
+    /// let mut generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
     /// let secret_key: LweSecretKey<_, Vec<u32>> =
     ///     LweSecretKey::generate_binary(LweDimension(256), &mut generator);
     /// assert_eq!(secret_key.key_size(), LweDimension(256));
     /// ```
-    pub fn generate_binary(size: LweDimension, generator: &mut SecretRandomGenerator) -> Self {
+    pub fn generate_binary<Gen: ByteRandomGenerator>(
+        size: LweDimension,
+        generator: &mut SecretRandomGenerator<Gen>,
+    ) -> Self {
         LweSecretKey {
             tensor: generator.random_binary_tensor(size.0),
             kind: PhantomData,
@@ -76,12 +85,17 @@ where
     /// use concrete_core::backends::core::private::crypto::secret::generators::SecretRandomGenerator;
     /// use concrete_core::backends::core::private::crypto::secret::*;
     /// use concrete_core::backends::core::private::crypto::*;
-    /// let mut generator = SecretRandomGenerator::new(None);
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::Seed;
+    /// let mut generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
     /// let secret_key: LweSecretKey<_, Vec<u32>> =
     ///     LweSecretKey::generate_ternary(LweDimension(256), &mut generator);
     /// assert_eq!(secret_key.key_size(), LweDimension(256));
     /// ```
-    pub fn generate_ternary(size: LweDimension, generator: &mut SecretRandomGenerator) -> Self {
+    pub fn generate_ternary<Gen: ByteRandomGenerator>(
+        size: LweDimension,
+        generator: &mut SecretRandomGenerator<Gen>,
+    ) -> Self {
         LweSecretKey {
             tensor: generator.random_ternary_tensor(size.0),
             kind: PhantomData,
@@ -104,12 +118,17 @@ where
     /// use concrete_core::backends::core::private::crypto::secret::generators::SecretRandomGenerator;
     /// use concrete_core::backends::core::private::crypto::secret::*;
     /// use concrete_core::backends::core::private::crypto::*;
-    /// let mut generator = SecretRandomGenerator::new(None);
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::Seed;
+    /// let mut generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
     /// let secret_key: LweSecretKey<_, Vec<u32>> =
     ///     LweSecretKey::generate_gaussian(LweDimension(256), &mut generator);
     /// assert_eq!(secret_key.key_size(), LweDimension(256));
     /// ```
-    pub fn generate_gaussian(size: LweDimension, generator: &mut SecretRandomGenerator) -> Self {
+    pub fn generate_gaussian<Gen: ByteRandomGenerator>(
+        size: LweDimension,
+        generator: &mut SecretRandomGenerator<Gen>,
+    ) -> Self {
         LweSecretKey {
             tensor: generator.random_gaussian_tensor(size.0),
             kind: PhantomData,
@@ -131,12 +150,17 @@ where
     /// use concrete_core::backends::core::private::crypto::secret::generators::SecretRandomGenerator;
     /// use concrete_core::backends::core::private::crypto::secret::*;
     /// use concrete_core::backends::core::private::crypto::*;
-    /// let mut generator = SecretRandomGenerator::new(None);
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::Seed;
+    /// let mut generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
     /// let secret_key: LweSecretKey<_, Vec<u32>> =
     ///     LweSecretKey::generate_uniform(LweDimension(256), &mut generator);
     /// assert_eq!(secret_key.key_size(), LweDimension(256));
     /// ```
-    pub fn generate_uniform(size: LweDimension, generator: &mut SecretRandomGenerator) -> Self {
+    pub fn generate_uniform<Gen: ByteRandomGenerator>(
+        size: LweDimension,
+        generator: &mut SecretRandomGenerator<Gen>,
+    ) -> Self {
         LweSecretKey {
             tensor: generator.random_uniform_tensor(size.0),
             kind: PhantomData,
@@ -296,8 +320,10 @@ where
     /// };
     /// use concrete_core::backends::core::private::crypto::secret::*;
     /// use concrete_core::backends::core::private::crypto::*;
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
-    /// let mut secret_generator = SecretRandomGenerator::new(None);
+    /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
     /// let secret_key = LweSecretKey::generate_binary(LweDimension(256), &mut secret_generator);
     /// let encoder = RealEncoder {
     ///     offset: 0. as f32,
@@ -308,7 +334,8 @@ where
     /// let clear = Cleartext(2. as f32);
     /// let plain: Plaintext<u32> = encoder.encode(clear);
     /// let mut encrypted = LweCiphertext::allocate(0u32, LweSize(257));
-    /// let mut encryption_generator = EncryptionRandomGenerator::new(None);
+    /// let mut encryption_generator =
+    ///     EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0), &mut UnixSeeder::new(0));
     /// secret_key.encrypt_lwe(&mut encrypted, &plain, noise, &mut encryption_generator);
     ///
     /// let mut decrypted = Plaintext(0u32);
@@ -317,16 +344,17 @@ where
     ///
     /// assert!((decoded.0 - clear.0).abs() < 0.1);
     /// ```
-    pub fn encrypt_lwe<OutputCont, Scalar>(
+    pub fn encrypt_lwe<OutputCont, Scalar, Gen>(
         &self,
         output: &mut LweCiphertext<OutputCont>,
         encoded: &Plaintext<Scalar>,
         noise_parameters: impl DispersionParameter,
-        generator: &mut EncryptionRandomGenerator,
+        generator: &mut EncryptionRandomGenerator<Gen>,
     ) where
         Self: AsRefTensor<Element = Scalar>,
         LweCiphertext<OutputCont>: AsMutTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
+        Gen: ByteRandomGenerator,
     {
         let (output_body, mut output_masks) = output.get_mut_body_and_mask();
 
@@ -361,8 +389,10 @@ where
     /// };
     /// use concrete_core::backends::core::private::crypto::secret::*;
     /// use concrete_core::backends::core::private::crypto::*;
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
-    /// let mut secret_generator = SecretRandomGenerator::new(None);
+    /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
     /// let secret_key = LweSecretKey::generate_binary(LweDimension(256), &mut secret_generator);
     /// let encoder = RealEncoder {
     ///     offset: 0. as f32,
@@ -374,7 +404,8 @@ where
     /// let mut plain_values = PlaintextList::allocate(0u32, PlaintextCount(100));
     /// encoder.encode_list(&mut plain_values, &clear_values);
     /// let mut encrypted_values = LweList::allocate(0u32, LweSize(257), CiphertextCount(100));
-    /// let mut encryption_generator = EncryptionRandomGenerator::new(None);
+    /// let mut encryption_generator =
+    ///     EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0), &mut UnixSeeder::new(0));
     /// secret_key.encrypt_lwe_list(
     ///     &mut encrypted_values,
     ///     &plain_values,
@@ -393,17 +424,18 @@ where
     ///     assert!((clear.0 - decoded.0).abs() < 0.1);
     /// }
     /// ```
-    pub fn encrypt_lwe_list<OutputCont, InputCont, Scalar>(
+    pub fn encrypt_lwe_list<OutputCont, InputCont, Scalar, Gen>(
         &self,
         output: &mut LweList<OutputCont>,
         encoded: &PlaintextList<InputCont>,
         noise_parameters: impl DispersionParameter,
-        generator: &mut EncryptionRandomGenerator,
+        generator: &mut EncryptionRandomGenerator<Gen>,
     ) where
         Self: AsRefTensor<Element = Scalar>,
         LweList<OutputCont>: AsMutTensor<Element = Scalar>,
         PlaintextList<InputCont>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
+        Gen: ByteRandomGenerator,
     {
         debug_assert!(
             output.count().0 == encoded.count().0,
@@ -473,8 +505,10 @@ where
     ///     EncryptionRandomGenerator, SecretRandomGenerator,
     /// };
     /// use concrete_core::backends::core::private::crypto::secret::LweSecretKey;
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
-    /// let mut generator = SecretRandomGenerator::new(None);
+    /// let mut generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
     /// let secret_key = LweSecretKey::generate_binary(LweDimension(256), &mut generator);
     /// let mut ciphertext = GswCiphertext::allocate(
     ///     0 as u32,
@@ -483,7 +517,8 @@ where
     ///     DecompositionBaseLog(7),
     /// );
     /// let noise = LogStandardDev::from_log_standard_dev(-15.);
-    /// let mut secret_generator = EncryptionRandomGenerator::new(None);
+    /// let mut secret_generator =
+    ///     EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0), &mut UnixSeeder::new(0));
     /// secret_key.encrypt_constant_gsw(
     ///     &mut ciphertext,
     ///     &Plaintext(10),
@@ -491,17 +526,18 @@ where
     ///     &mut secret_generator,
     /// );
     /// ```
-    pub fn encrypt_constant_gsw<OutputCont, Scalar>(
+    pub fn encrypt_constant_gsw<OutputCont, Scalar, Gen>(
         &self,
         encrypted: &mut GswCiphertext<OutputCont, Scalar>,
         encoded: &Plaintext<Scalar>,
         noise_parameters: impl DispersionParameter,
-        generator: &mut EncryptionRandomGenerator,
+        generator: &mut EncryptionRandomGenerator<Gen>,
     ) where
         Self: AsRefTensor<Element = Scalar>,
         GswCiphertext<OutputCont, Scalar>: AsMutTensor<Element = Scalar>,
         OutputCont: AsMutSlice<Element = Scalar>,
         Scalar: UnsignedTorus,
+        Gen: ByteRandomGenerator,
     {
         ck_dim_eq!(self.key_size() => encrypted.lwe_size().to_lwe_dimension());
         let gen_iter = generator
@@ -565,8 +601,10 @@ where
     ///     EncryptionRandomGenerator, SecretRandomGenerator,
     /// };
     /// use concrete_core::backends::core::private::crypto::secret::LweSecretKey;
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
-    /// let mut secret_generator = SecretRandomGenerator::new(None);
+    /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
     /// let secret_key = LweSecretKey::generate_binary(LweDimension(256), &mut secret_generator);
     /// let mut ciphertext = GswCiphertext::allocate(
     ///     0 as u32,
@@ -575,7 +613,8 @@ where
     ///     DecompositionBaseLog(7),
     /// );
     /// let noise = LogStandardDev::from_log_standard_dev(-15.);
-    /// let mut encryption_generator = EncryptionRandomGenerator::new(None);
+    /// let mut encryption_generator =
+    ///     EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0), &mut UnixSeeder::new(0));
     /// secret_key.par_encrypt_constant_gsw(
     ///     &mut ciphertext,
     ///     &Plaintext(10),
@@ -584,18 +623,19 @@ where
     /// );
     /// ```
     #[cfg(feature = "multithread")]
-    pub fn par_encrypt_constant_gsw<OutputCont, Scalar>(
+    pub fn par_encrypt_constant_gsw<OutputCont, Scalar, Gen>(
         &self,
         encrypted: &mut GswCiphertext<OutputCont, Scalar>,
         encoded: &Plaintext<Scalar>,
         noise_parameters: impl DispersionParameter + Send + Sync,
-        generator: &mut EncryptionRandomGenerator,
+        generator: &mut EncryptionRandomGenerator<Gen>,
     ) where
         Self: AsRefTensor<Element = Scalar>,
         GswCiphertext<OutputCont, Scalar>: AsMutTensor<Element = Scalar>,
         OutputCont: AsMutSlice<Element = Scalar>,
         Scalar: UnsignedTorus + Send + Sync,
         Cont: Sync,
+        Gen: ParallelByteRandomGenerator,
     {
         ck_dim_eq!(self.key_size() => encrypted.lwe_size().to_lwe_dimension());
         let generators = generator
@@ -659,8 +699,10 @@ where
     ///     EncryptionRandomGenerator, SecretRandomGenerator,
     /// };
     /// use concrete_core::backends::core::private::crypto::secret::LweSecretKey;
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
-    /// let mut secret_generator = SecretRandomGenerator::new(None);
+    /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
     /// let secret_key: LweSecretKey<_, Vec<u32>> =
     ///     LweSecretKey::generate_binary(LweDimension(256), &mut secret_generator);
     /// let mut ciphertext = GswCiphertext::allocate(
@@ -670,7 +712,8 @@ where
     ///     DecompositionBaseLog(7),
     /// );
     /// let noise = LogStandardDev::from_log_standard_dev(-15.);
-    /// let mut encryption_generator = EncryptionRandomGenerator::new(None);
+    /// let mut encryption_generator =
+    ///     EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0), &mut UnixSeeder::new(0));
     /// secret_key.trivial_encrypt_constant_gsw(
     ///     &mut ciphertext,
     ///     &Plaintext(10),
@@ -678,17 +721,18 @@ where
     ///     &mut encryption_generator,
     /// );
     /// ```
-    pub fn trivial_encrypt_constant_gsw<OutputCont, Scalar>(
+    pub fn trivial_encrypt_constant_gsw<OutputCont, Scalar, Gen>(
         &self,
         encrypted: &mut GswCiphertext<OutputCont, Scalar>,
         encoded: &Plaintext<Scalar>,
         noise_parameters: impl DispersionParameter,
-        generator: &mut EncryptionRandomGenerator,
+        generator: &mut EncryptionRandomGenerator<Gen>,
     ) where
         Self: AsRefTensor<Element = Scalar>,
         GswCiphertext<OutputCont, Scalar>: AsMutTensor<Element = Scalar>,
         OutputCont: AsMutSlice<Element = Scalar>,
         Scalar: UnsignedTorus,
+        Gen: ByteRandomGenerator,
     {
         ck_dim_eq!(self.key_size() => encrypted.lwe_size().to_lwe_dimension());
         // We fill the gsw with trivial lwe encryptions of zero:
