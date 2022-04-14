@@ -12,6 +12,7 @@ use std::sync::atomic::Ordering::Relaxed;
 mod build;
 mod check;
 mod chore;
+mod format_latex_doc;
 mod test;
 mod utils;
 
@@ -91,6 +92,9 @@ fn main() -> Result<(), std::io::Error> {
         .subcommand(App::new("check_clippy").about("Checks that clippy runs without warnings"))
         .subcommand(App::new("check_fmt").about("Checks that rustfmt runs without warnings"))
         .subcommand(App::new("chore_format").about("Format the codebase with rustfmt"))
+        .subcommand(
+            App::new("chore_format_latex_doc").about("Escape underscores in latex equations"),
+        )
         .setting(AppSettings::ArgRequiredElseHelp)
         .get_matches();
 
@@ -180,6 +184,12 @@ fn main() -> Result<(), std::io::Error> {
     }
     if matches.subcommand_matches("chore_format").is_some() {
         chore::format()?;
+    }
+    if matches
+        .subcommand_matches("chore_format_latex_doc")
+        .is_some()
+    {
+        chore::format_latex_doc()?;
     }
 
     Ok(())
