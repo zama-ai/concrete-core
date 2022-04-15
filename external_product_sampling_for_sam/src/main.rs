@@ -65,7 +65,7 @@ fn write_to_file(
         params.glwe_dimension.0,
         params.decomposition_level_count.0,
         params.decomposition_base_log.0,
-        params.ggsw_value_to_use.unwrap(),
+        params.ggsw_encrypted_value,
         input_stddev.get_variance(),
         output_stddev.get_variance(),
         pred_stddev.get_variance()
@@ -255,14 +255,6 @@ fn filter_b_l(bases: &[usize], levels: &[usize]) -> Vec<Parameter> {
     bases_levels
 }
 
-fn ggsw_value_to_use(ggsw_value: Option<usize>) -> Option<usize> {
-    match ggsw_value {
-        Some(value) => Some(value),
-        // GGSW value is randomly generated here so that other functions can retrieve its value
-        None => Some(rand::thread_rng().gen_range(0, 2)),
-    }
-}
-
 fn main() {
     let args = Args::parse();
     let tot = args.tot;
@@ -339,7 +331,7 @@ fn main() {
             ggsw_noise,
             glwe_noise,
             glwe_dimension,
-            ggsw_value_to_use: ggsw_value_to_use(ggsw_value),
+            ggsw_encrypted_value: 0,
             polynomial_size: poly_size,
             decomposition_base_log: dec_base_log,
             decomposition_level_count: dec_level_count,
@@ -365,7 +357,12 @@ fn main() {
             for (_, errs) in (0..total_repetitions.0)
                 .zip(errors.chunks_mut(sample_size.0 * size.get_singleton()))
             {
-                parameters.ggsw_value_to_use = ggsw_value_to_use(ggsw_value);
+                parameters.ggsw_encrypted_value = match ggsw_value {
+                    Some(value) => value,
+                    // GGSW value is randomly generated here so that other functions can retrieve
+                    // its value
+                    None => rand::thread_rng().gen_range(0, 2),
+                };
 
                 let repetitions = <GlweCiphertextGgswCiphertextExternalProductFixture as Fixture<
                     Precision,
@@ -395,7 +392,7 @@ fn main() {
                     errs,
                     output_plaintext_vector,
                     raw_input_plaintext_vector,
-                    parameters.ggsw_value_to_use.unwrap() as u64,
+                    parameters.ggsw_encrypted_value as u64,
                 );
             }
             let _mean_err = mean(&errors).unwrap();
