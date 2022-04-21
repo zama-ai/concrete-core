@@ -110,9 +110,12 @@ impl
             ggsw_input.polynomial_size(),
             ggsw_input.glwe_dimension().to_glwe_size(),
         );
-        ggsw_input
-            .0
-            .external_product(&mut output, &glwe_input.0, buffers);
+        ggsw_input.0.external_product(
+            &mut output,
+            &glwe_input.0,
+            &mut buffers.fft_buffers,
+            &mut buffers.rounded_buffer,
+        );
         GlweCiphertext32(output)
     }
 }
@@ -212,9 +215,12 @@ impl
             ggsw_input.polynomial_size(),
             ggsw_input.glwe_dimension().to_glwe_size(),
         );
-        ggsw_input
-            .0
-            .external_product(&mut output, &glwe_input.0, buffers);
+        ggsw_input.0.external_product(
+            &mut output,
+            &glwe_input.0,
+            &mut buffers.fft_buffers,
+            &mut buffers.rounded_buffer,
+        );
         GlweCiphertext64(output)
     }
 }
