@@ -38,8 +38,12 @@ struct Args {
     #[clap(long, short, default_value_t = 15)]
     repetitions: usize,
     /// The size of the sample per key
-    #[clap(long, short, default_value_t = 40)]
+    #[clap(long, short = 'S', default_value_t = 40)]
     sample_size: usize,
+    /// Step used for testing levels beyond 20in hypercube.
+    /// Example: with a step of 3, tested levels tested would be: 1 through 20 then 21, 24, 27, etc
+    #[clap(long, short = 's', default_value_t = 1)]
+    steps: usize,
     /// Set value of the bit for GGSW
     #[clap(long, short, default_value_t = 1)]
     ggsw_value: usize,
@@ -288,21 +292,12 @@ fn main() {
     for b in 1..65 {
         base_logs[b - 1] = b;
     }
-    let mut levels = vec![1; 64];
-    for level in 1..65 {
-        levels[level - 1] = level;
-    }
-
-    // let mut base_logs = vec![10usize; 1];
-    // let mut levels = vec![4; 1];
-
-    // Xperiment
-
+    let mut levels = (1..21).collect::<Vec<_>>();
+    let mut stepped_levels = (21..65).step_by(args.steps).collect::<Vec<_>>();
+    levels.append(&mut stepped_levels);
     let bases_levels = filter_b_l(&base_logs, &levels);
 
-    // let hypercube = iproduct!(base_logs, glwe_dimensions, levels, polynomial_sizes);
     let hypercube = iproduct!(glwe_dimensions, bases_levels, polynomial_sizes);
-
     let mut hypercube: Vec<(Parameter, Parameter, Parameter)> = hypercube.collect();
     let seed = [0; 32];
     let mut rng = ChaChaRng::from_seed(seed);
