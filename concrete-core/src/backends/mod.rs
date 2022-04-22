@@ -7,3 +7,9 @@
 
 #[cfg(feature = "backend_core")]
 pub mod core;
+
+#[cfg(feature = "backend_aesni")]
+pub mod aesni;
+
+#[cfg(feature = "backend_fftw")]
+pub mod fftw;
