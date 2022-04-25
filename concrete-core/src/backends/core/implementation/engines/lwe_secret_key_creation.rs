@@ -2,7 +2,7 @@ use concrete_commons::parameters::LweDimension;
 
 use crate::backends::core::implementation::engines::CoreEngine;
 use crate::backends::core::implementation::entities::{LweSecretKey32, LweSecretKey64};
-use crate::backends::core::private::crypto::secret::LweSecretKey as ImplLweSecretKey;
+use crate::commons::crypto::secret::LweSecretKey as ImplLweSecretKey;
 use crate::specification::engines::{LweSecretKeyCreationEngine, LweSecretKeyCreationError};
 
 /// # Description:

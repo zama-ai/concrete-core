@@ -3,7 +3,7 @@ use concrete_commons::parameters::GlweSize;
 use crate::backends::core::entities::{
     GlweCiphertext32, GlweCiphertext64, PlaintextVector32, PlaintextVector64,
 };
-use crate::backends::core::private::crypto::glwe::GlweCiphertext as ImplGlweCiphertext;
+use crate::commons::crypto::glwe::GlweCiphertext as ImplGlweCiphertext;
 use crate::specification::engines::{
     GlweCiphertextTrivialEncryptionEngine, GlweCiphertextTrivialEncryptionError,
 };

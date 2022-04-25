@@ -329,8 +329,8 @@ Finally, the `lwe_ciphertext_vector_conversion.rs` file is going to contain:
 
 ```rust
 use crate::backends::core::implementation::entities::LweCiphertextVector32;
-use crate::backends::core::private::crypto::lwe::LweList;
-use crate::backends::core::private::math::tensor::{AsRefSlice, AsRefTensor};
+use crate::commons::crypto::lwe::LweList;
+use crate::commons::math::tensor::{AsRefSlice, AsRefTensor};
 use crate::backends::gpu::implementation::engines::{GpuEngine, GpuError};
 use crate::backends::gpu::implementation::entities::{
     GpuLweCiphertextVector32,

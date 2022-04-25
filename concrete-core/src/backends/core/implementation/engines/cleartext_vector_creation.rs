@@ -1,6 +1,6 @@
 use crate::backends::core::implementation::engines::CoreEngine;
 use crate::backends::core::implementation::entities::{CleartextVector32, CleartextVector64};
-use crate::backends::core::private::crypto::encoding::CleartextList as ImplCleartextList;
+use crate::commons::crypto::encoding::CleartextList as ImplCleartextList;
 use crate::specification::engines::{CleartextVectorCreationEngine, CleartextVectorCreationError};
 
 /// # Description:

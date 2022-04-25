@@ -1,5 +1,5 @@
-use crate::backends::core::private::crypto::encoding::PlaintextList as ImplPlaintextList;
-use crate::backends::core::private::math::tensor::{AsMutTensor, AsRefTensor};
+use crate::commons::crypto::encoding::PlaintextList as ImplPlaintextList;
+use crate::commons::math::tensor::{AsMutTensor, AsRefTensor};
 use crate::prelude::{
     CoreEngine, GlweCiphertextVector32, GlweCiphertextVector64, GlweCiphertextVectorEntity,
     GlweCiphertextVectorTrivialDecryptionEngine, GlweCiphertextVectorTrivialDecryptionError,

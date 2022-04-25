@@ -2,7 +2,7 @@ use concrete_commons::parameters::{GlweDimension, PolynomialSize};
 
 use crate::backends::core::implementation::engines::CoreEngine;
 use crate::backends::core::implementation::entities::{GlweSecretKey32, GlweSecretKey64};
-use crate::backends::core::private::crypto::secret::GlweSecretKey as ImplGlweSecretKey;
+use crate::commons::crypto::secret::GlweSecretKey as ImplGlweSecretKey;
 use crate::specification::engines::{GlweSecretKeyCreationEngine, GlweSecretKeyCreationError};
 
 /// # Description:

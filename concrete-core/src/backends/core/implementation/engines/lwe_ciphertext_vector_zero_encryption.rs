@@ -5,8 +5,8 @@ use crate::backends::core::implementation::engines::CoreEngine;
 use crate::backends::core::implementation::entities::{
     LweCiphertextVector32, LweCiphertextVector64, LweSecretKey32, LweSecretKey64,
 };
-use crate::backends::core::private::crypto::encoding::PlaintextList as ImplPlaintextList;
-use crate::backends::core::private::crypto::lwe::LweList as ImplLweList;
+use crate::commons::crypto::encoding::PlaintextList as ImplPlaintextList;
+use crate::commons::crypto::lwe::LweList as ImplLweList;
 use crate::specification::engines::{
     LweCiphertextVectorZeroEncryptionEngine, LweCiphertextVectorZeroEncryptionError,
 };

@@ -6,8 +6,7 @@ use std::fmt::{Display, Formatter};
 
 use concrete_commons::parameters::{GlweSize, PolynomialSize};
 
-use crate::backends::core::private::crypto::bootstrap::FourierBuffers;
-use crate::backends::core::private::crypto::secret::generators::{
+use crate::commons::crypto::secret::generators::{
     EncryptionRandomGenerator as ImplEncryptionRandomGenerator,
     SecretRandomGenerator as ImplSecretRandomGenerator,
 };
@@ -116,13 +115,10 @@ mod ggsw_ciphertext_discarding_conversion;
 mod ggsw_ciphertext_scalar_discarding_encryption;
 mod ggsw_ciphertext_scalar_encryption;
 mod ggsw_ciphertext_scalar_trivial_encryption;
-mod glwe_ciphertext_conversion;
 mod glwe_ciphertext_decryption;
 mod glwe_ciphertext_discarding_decryption;
 mod glwe_ciphertext_discarding_encryption;
 mod glwe_ciphertext_encryption;
-mod glwe_ciphertext_ggsw_ciphertext_discarding_external_product;
-mod glwe_ciphertext_ggsw_ciphertext_external_product;
 mod glwe_ciphertext_trivial_decryption;
 mod glwe_ciphertext_trivial_encryption;
 mod glwe_ciphertext_vector_decryption;
@@ -135,13 +131,11 @@ mod glwe_ciphertext_vector_zero_encryption;
 mod glwe_ciphertext_zero_encryption;
 mod glwe_secret_key_creation;
 mod glwe_secret_key_to_lwe_secret_key_transmutation;
-mod lwe_bootstrap_key_conversion;
 mod lwe_bootstrap_key_creation;
 mod lwe_ciphertext_cleartext_discarding_multiplication;
 mod lwe_ciphertext_cleartext_fusing_multiplication;
 mod lwe_ciphertext_decryption;
 mod lwe_ciphertext_discarding_addition;
-mod lwe_ciphertext_discarding_bootstrap;
 mod lwe_ciphertext_discarding_decryption;
 mod lwe_ciphertext_discarding_encryption;
 mod lwe_ciphertext_discarding_extraction;

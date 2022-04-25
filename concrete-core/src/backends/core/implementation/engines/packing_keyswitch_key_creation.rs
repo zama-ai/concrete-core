@@ -3,7 +3,7 @@ use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount
 
 use crate::backends::core::implementation::engines::CoreEngine;
 use crate::backends::core::implementation::entities::{LweSecretKey32, LweSecretKey64};
-use crate::backends::core::private::crypto::glwe::PackingKeyswitchKey as ImplPackingKeyswitchKey;
+use crate::commons::crypto::glwe::PackingKeyswitchKey as ImplPackingKeyswitchKey;
 use crate::prelude::{
     GlweSecretKey32, GlweSecretKey64, GlweSecretKeyEntity, PackingKeyswitchKey32,
     PackingKeyswitchKey64, PackingKeyswitchKeyCreationError,

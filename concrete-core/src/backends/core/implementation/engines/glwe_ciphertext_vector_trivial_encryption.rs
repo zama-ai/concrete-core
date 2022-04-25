@@ -4,7 +4,7 @@ use crate::backends::core::engines::CoreEngine;
 use crate::backends::core::entities::{
     GlweCiphertextVector32, GlweCiphertextVector64, PlaintextVector32, PlaintextVector64,
 };
-use crate::backends::core::private::crypto::glwe::GlweList as ImplGlweList;
+use crate::commons::crypto::glwe::GlweList as ImplGlweList;
 use crate::prelude::{CiphertextCount, GlweCiphertextCount, PlaintextVectorEntity, PolynomialSize};
 use crate::specification::engines::{
     GlweCiphertextVectorTrivialEncryptionEngine, GlweCiphertextVectorTrivialEncryptionError,

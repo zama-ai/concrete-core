@@ -1,4 +1,4 @@
-use super::super::super::private::crypto::encoding::Plaintext as CorePlaintext;
+use crate::commons::crypto::encoding::Plaintext as CorePlaintext;
 use crate::specification::entities::markers::PlaintextKind;
 use crate::specification::entities::{AbstractEntity, PlaintextEntity};
 

@@ -2,7 +2,7 @@ use crate::backends::core::implementation::engines::CoreEngine;
 use crate::backends::core::implementation::entities::{
     LweCiphertext32, LweCiphertext64, Plaintext32, Plaintext64,
 };
-use crate::backends::core::private::math::tensor::{AsMutTensor, AsRefTensor};
+use crate::commons::math::tensor::{AsMutTensor, AsRefTensor};
 use crate::specification::engines::{
     LweCiphertextPlaintextDiscardingAdditionEngine, LweCiphertextPlaintextDiscardingAdditionError,
 };

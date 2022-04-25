@@ -1,4 +1,4 @@
-use crate::backends::core::private::crypto::encoding::{
+use crate::commons::crypto::encoding::{
     Plaintext, PlaintextList as ImplPlaintextList,
 };
 use crate::prelude::{

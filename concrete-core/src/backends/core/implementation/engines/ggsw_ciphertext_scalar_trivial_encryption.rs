@@ -5,7 +5,7 @@ use concrete_commons::parameters::{
 use crate::backends::core::entities::{
     GgswCiphertext32, GgswCiphertext64, Plaintext32, Plaintext64,
 };
-use crate::backends::core::private::crypto::ggsw::StandardGgswCiphertext as ImplGgswCiphertext;
+use crate::commons::crypto::ggsw::StandardGgswCiphertext as ImplGgswCiphertext;
 use crate::specification::engines::{
     GgswCiphertextScalarTrivialEncryptionEngine, GgswCiphertextScalarTrivialEncryptionError,
 };
