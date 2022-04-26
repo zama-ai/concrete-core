@@ -74,6 +74,7 @@ bench! {
     (LweCiphertextTrivialDecryptionFixture, (Plaintext, LweCiphertext)),
     (LweCiphertextVectorZeroEncryptionFixture, (LweSecretKey, LweCiphertextVector)),
     (LweCiphertextDecryptionFixture, (Plaintext, LweSecretKey, LweCiphertext)),
+    (LweCiphertextDecryptionFixture, (Plaintext, LweSecretKey, LweCiphertextView)),
     (LweCiphertextDiscardingEncryptionFixture, (Plaintext, LweSecretKey, LweCiphertext)),
     (LweCiphertextDiscardingEncryptionFixture, (Plaintext, LweSecretKey, LweCiphertextMutView)),
     (LweCiphertextVectorDecryptionFixture, (PlaintextVector, LweSecretKey, LweCiphertextVector)),
