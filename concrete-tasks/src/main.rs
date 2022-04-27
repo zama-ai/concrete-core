@@ -12,7 +12,6 @@ use std::sync::atomic::Ordering::Relaxed;
 mod build;
 mod check;
 mod chore;
-mod doc;
 mod test;
 mod utils;
 
@@ -55,7 +54,7 @@ fn main() -> Result<(), std::io::Error> {
 
     // We parse the input args
     let matches = App::new("concrete-tasks")
-        .about("Performs concrete plumbing tasks")
+        .about("Performs concrete-core plumbing tasks")
         .arg(
             Arg::with_name("verbose")
                 .short("v")
@@ -71,7 +70,6 @@ fn main() -> Result<(), std::io::Error> {
         .subcommand(App::new("cov").about("Computes test coverage in native mode"))
         .subcommand(App::new("build").about("Builds the crates in all available mode"))
         .subcommand(App::new("check").about("Performs all the available checks"))
-        .subcommand(App::new("test_toplevel").about("Tests the `concrete` crate in native mode"))
         .subcommand(
             App::new("test_commons").about("Tests the `concrete-commons` crate in native mode"),
         )
@@ -85,7 +83,6 @@ fn main() -> Result<(), std::io::Error> {
             App::new("test_and_cov_crates")
                 .about("Compute tests coverage of all crates in native mode"),
         )
-        .subcommand(App::new("test_book_boolean").about("Test the book for concrete-boolean"))
         .subcommand(App::new("build_debug_crates").about("Build all the crates in debug mode"))
         .subcommand(App::new("build_release_crates").about("Build all the crates in release mode"))
         .subcommand(App::new("build_simd_crates").about("Build all the crates in simd mode"))
@@ -142,9 +139,6 @@ fn main() -> Result<(), std::io::Error> {
         check::clippy()?;
         check::fmt()?;
     }
-    if matches.subcommand_matches("test_toplevel").is_some() {
-        test::toplevel()?;
-    }
     if matches.subcommand_matches("test_commons").is_some() {
         test::commons()?;
     }
@@ -162,9 +156,6 @@ fn main() -> Result<(), std::io::Error> {
     }
     if matches.subcommand_matches("test_and_cov_crates").is_some() {
         test::cov_crates()?;
-    }
-    if matches.subcommand_matches("test_book_boolean").is_some() {
-        doc::test_book_boolean()?;
     }
     if matches.subcommand_matches("build_debug_crates").is_some() {
         build::debug::crates()?;

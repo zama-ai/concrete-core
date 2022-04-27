@@ -33,3 +33,18 @@ jobs:
           override: true
       - name: Run clippy
         run: cargo xtask check_clippy
+
+  check-doc:
+    name: doc
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          components: rustfmt
+          override: true
+      - name: Builds doc
+        run: cargo xtask check_doc
