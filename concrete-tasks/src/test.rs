@@ -13,10 +13,6 @@ lazy_static! {
     };
 }
 
-pub fn toplevel() -> Result<(), Error> {
-    cmd!(<ENV_TARGET_NATIVE> "cargo test --release --no-fail-fast --all-features -p concrete")
-}
-
 pub fn commons() -> Result<(), Error> {
     cmd!(<ENV_TARGET_NATIVE> "cargo test --release --no-fail-fast --all-features -p concrete-commons")
 }
@@ -37,13 +33,7 @@ pub fn npe() -> Result<(), Error> {
     cmd!(<ENV_TARGET_NATIVE> "cargo test --release --no-fail-fast --all-features -p concrete-npe")
 }
 
-pub fn boolean() -> Result<(), Error> {
-    cmd!(<ENV_TARGET_NATIVE> "cargo test --release --no-fail-fast --all-features -p concrete-boolean")
-}
-
 pub fn crates() -> Result<(), Error> {
-    toplevel()?;
-    boolean()?;
     commons()?;
     core()?;
     core_test()?;

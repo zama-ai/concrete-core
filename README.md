@@ -26,13 +26,14 @@ allows very fast, yet very secure implementations.
 
 The ecosystem is composed of several crates (packages in the Rust language):
 
-+ [`concrete`](concrete): A high-level library, useful to cryptographers that want to quickly
-  implement homomorphic applications, without having to understand the details of the
-  implementation.
++ [`concrete`](https://github.com/zama-ai/concrete/tree/main/concrete): A high-level library, useful
+  to cryptographers that want to quickly implement homomorphic applications, without having to 
+  understand the details of the implementation.
 + [`concrete-core`](concrete-core): A low-level library, useful to cryptographers who want the
   fastest implementation possible, with all the settings at their disposal.
-+ [`concrete-boolean`](concrete-boolean): A high-level library, implementing homomorphic Boolean
-  gates, making it easy to run any kind of circuits over encrypted data.
++ [`concrete-boolean`](https://github.com/zama-ai/concrete/tree/main/concrete-boolean): A high-level
+  library, implementing homomorphic Boolean gates, making it easy to run any kind of circuits over 
+  encrypted data.
 + [`concrete-npe`](concrete-npe): A noise propagation estimator, used in `concrete` to simulate the
   evolution of the noise in ciphertexts, through homomorphic operations.
 + [`concrete-csprng`](concrete-csprng): A fast cryptographically secure pseudorandom number
