@@ -102,6 +102,7 @@ test! {
     (LweCiphertextDiscardingKeyswitchFixture, (LweKeyswitchKey, LweCiphertextView, LweCiphertextMutView)),
     (LweCiphertextDiscardingAdditionFixture, (LweCiphertext, LweCiphertext)),
     (LweCiphertextDiscardingOppositeFixture, (LweCiphertext, LweCiphertext)),
+    (LweCiphertextDiscardingOppositeFixture, (LweCiphertextView, LweCiphertextMutView)),
     (LweCiphertextFusingAdditionFixture, (LweCiphertext, LweCiphertext)),
     (LweCiphertextVectorTrivialDecryptionFixture, (PlaintextVector, LweCiphertextVector)),
     (LweCiphertextVectorTrivialEncryptionFixture, (PlaintextVector, LweCiphertextVector)),
