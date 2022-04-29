@@ -107,6 +107,8 @@ bench! {
     (LweCiphertextPlaintextFusingSubtractionFixture, (Plaintext, LweCiphertext)),
     (LweCiphertextDiscardingBootstrapFixture1, (FourierLweBootstrapKey, GlweCiphertext, LweCiphertext, LweCiphertext)),
     (LweCiphertextDiscardingBootstrapFixture2, (FourierLweBootstrapKey, GlweCiphertext, LweCiphertext, LweCiphertext)),
+    (LweCiphertextDiscardingBootstrapFixture1, (FourierLweBootstrapKey, GlweCiphertextView, LweCiphertextView, LweCiphertextMutView)),
+    (LweCiphertextDiscardingBootstrapFixture2, (FourierLweBootstrapKey, GlweCiphertextView, LweCiphertextView, LweCiphertextMutView)),
     (LweCiphertextDiscardingExtractionFixture, (GlweCiphertext, LweCiphertext)),
     (LweCiphertextVectorGlweCiphertextDiscardingPackingKeyswitchFixture, (LweCiphertextVector,
         PackingKeyswitchKey, GlweCiphertext)),
