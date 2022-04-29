@@ -96,6 +96,7 @@ bench! {
     (LweCiphertextDiscardingKeyswitchFixture, (LweKeyswitchKey, LweCiphertext, LweCiphertext)),
     (LweCiphertextDiscardingKeyswitchFixture, (LweKeyswitchKey, LweCiphertextView, LweCiphertextMutView)),
     (LweCiphertextDiscardingAdditionFixture, (LweCiphertext, LweCiphertext)),
+    (LweCiphertextDiscardingAdditionFixture, (LweCiphertextView, LweCiphertextMutView)),
     (LweCiphertextDiscardingOppositeFixture, (LweCiphertext, LweCiphertext)),
     (LweCiphertextDiscardingOppositeFixture, (LweCiphertextView, LweCiphertextMutView)),
     (LweCiphertextFusingAdditionFixture, (LweCiphertext, LweCiphertext)),
