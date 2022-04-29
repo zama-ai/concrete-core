@@ -89,6 +89,7 @@ test! {
     (LweCiphertextVectorDiscardingDecryptionFixture, (PlaintextVector, LweSecretKey,
         LweCiphertextVector)),
     (LweCiphertextCleartextDiscardingMultiplicationFixture, (LweCiphertext, Cleartext, LweCiphertext)),
+    (LweCiphertextCleartextDiscardingMultiplicationFixture, (LweCiphertextView, Cleartext, LweCiphertextMutView)),
     (LweCiphertextCleartextFusingMultiplicationFixture, (LweCiphertext, Cleartext)),
     (LweCiphertextFusingOppositeFixture, (LweCiphertext)),
     (LweCiphertextFusingSubtractionFixture, (LweCiphertext, LweCiphertext)),
