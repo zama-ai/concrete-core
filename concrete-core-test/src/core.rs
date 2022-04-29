@@ -110,6 +110,7 @@ test! {
     (LweCiphertextDiscardingSubtractionFixture, (LweCiphertext, LweCiphertext)),
     (LweCiphertextDiscardingDecryptionFixture, (LweCiphertext, LweSecretKey, Plaintext)),
     (LweCiphertextPlaintextDiscardingAdditionFixture, (LweCiphertext, Plaintext, LweCiphertext)),
+    (LweCiphertextPlaintextDiscardingAdditionFixture, (LweCiphertextView, Plaintext, LweCiphertextMutView)),
     (LweCiphertextPlaintextFusingAdditionFixture, (Plaintext, LweCiphertext)),
     (LweCiphertextPlaintextDiscardingSubtractionFixture, (LweCiphertext, Plaintext, LweCiphertext)),
     (LweCiphertextPlaintextFusingSubtractionFixture, (Plaintext, LweCiphertext)),
