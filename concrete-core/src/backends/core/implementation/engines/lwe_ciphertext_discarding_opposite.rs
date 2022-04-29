@@ -1,5 +1,8 @@
 use crate::backends::core::implementation::engines::CoreEngine;
-use crate::backends::core::implementation::entities::{LweCiphertext32, LweCiphertext64};
+use crate::backends::core::implementation::entities::{
+    LweCiphertext32, LweCiphertext64, LweCiphertextMutView32, LweCiphertextMutView64,
+    LweCiphertextView32, LweCiphertextView64,
+};
 use crate::backends::core::private::math::tensor::{AsMutTensor, AsRefTensor};
 use crate::specification::engines::{
     LweCiphertextDiscardingOppositeEngine, LweCiphertextDiscardingOppositeError,
@@ -111,6 +114,144 @@ impl LweCiphertextDiscardingOppositeEngine<LweCiphertext64, LweCiphertext64> for
         &mut self,
         output: &mut LweCiphertext64,
         input: &LweCiphertext64,
+    ) {
+        output.0.as_mut_tensor().fill_with_copy(input.0.as_tensor());
+        output.0.update_with_neg();
+    }
+}
+
+/// # Description:
+/// Implementation of [`LweCiphertextDiscardingOppositeEngine`] for [`CoreEngine`] that operates on
+/// views containing 32 bits integers.
+impl LweCiphertextDiscardingOppositeEngine<LweCiphertextView32<'_>, LweCiphertextMutView32<'_>>
+    for CoreEngine
+{
+    /// # Example:
+    /// ```
+    /// use concrete_commons::dispersion::Variance;
+    /// use concrete_commons::parameters::LweDimension;
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let lwe_dimension = LweDimension(2);
+    /// // Here a hard-set encoding is applied (shift by 20 bits)
+    /// let input = 3_u32 << 20;
+    /// let noise = Variance(2_f64.powf(-25.));
+    ///
+    /// let mut engine = CoreEngine::new(())?;
+    /// let key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext(&input)?;
+    ///
+    /// let mut ciphertext_1_container = vec![0_u32; key.lwe_dimension().to_lwe_size().0];
+    /// let mut ciphertext_1: LweCiphertextMutView32 =
+    ///     engine.create_lwe_ciphertext(&mut ciphertext_1_container[..])?;
+    /// engine.discard_encrypt_lwe_ciphertext(&key, &mut ciphertext_1, &plaintext, noise)?;
+    ///
+    /// // Convert MutView to View
+    /// let raw_ciphertext_1 = engine.consume_retrieve_lwe_ciphertext(ciphertext_1)?;
+    /// let ciphertext_1: LweCiphertextView32 = engine.create_lwe_ciphertext(&raw_ciphertext_1[..])?;
+    ///
+    /// let mut ciphertext_2_container = vec![0_u32; key.lwe_dimension().to_lwe_size().0];
+    /// let mut ciphertext_2: LweCiphertextMutView32 =
+    ///     engine.create_lwe_ciphertext(&mut ciphertext_2_container[..])?;
+    ///
+    /// engine.discard_opp_lwe_ciphertext(&mut ciphertext_2, &ciphertext_1)?;
+    /// #
+    /// assert_eq!(ciphertext_2.lwe_dimension(), lwe_dimension);
+    ///
+    /// engine.destroy(key)?;
+    /// engine.destroy(plaintext)?;
+    /// engine.destroy(ciphertext_1)?;
+    /// engine.destroy(ciphertext_2)?;
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn discard_opp_lwe_ciphertext(
+        &mut self,
+        output: &mut LweCiphertextMutView32,
+        input: &LweCiphertextView32,
+    ) -> Result<(), LweCiphertextDiscardingOppositeError<Self::EngineError>> {
+        LweCiphertextDiscardingOppositeError::perform_generic_checks(output, input)?;
+        unsafe { self.discard_opp_lwe_ciphertext_unchecked(output, input) };
+        Ok(())
+    }
+
+    unsafe fn discard_opp_lwe_ciphertext_unchecked(
+        &mut self,
+        output: &mut LweCiphertextMutView32,
+        input: &LweCiphertextView32,
+    ) {
+        output.0.as_mut_tensor().fill_with_copy(input.0.as_tensor());
+        output.0.update_with_neg();
+    }
+}
+
+/// # Description:
+/// Implementation of [`LweCiphertextDiscardingOppositeEngine`] for [`CoreEngine`] that operates on
+/// views containing 64 bits integers.
+impl LweCiphertextDiscardingOppositeEngine<LweCiphertextView64<'_>, LweCiphertextMutView64<'_>>
+    for CoreEngine
+{
+    /// # Example:
+    /// ```
+    /// use concrete_commons::dispersion::Variance;
+    /// use concrete_commons::parameters::LweDimension;
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let lwe_dimension = LweDimension(2);
+    /// // Here a hard-set encoding is applied (shift by 50 bits)
+    /// let input = 3_u64 << 50;
+    /// let noise = Variance(2_f64.powf(-25.));
+    ///
+    /// let mut engine = CoreEngine::new(())?;
+    /// let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext(&input)?;
+    ///
+    /// let mut ciphertext_1_container = vec![0_u64; key.lwe_dimension().to_lwe_size().0];
+    /// let mut ciphertext_1: LweCiphertextMutView64 =
+    ///     engine.create_lwe_ciphertext(&mut ciphertext_1_container[..])?;
+    /// engine.discard_encrypt_lwe_ciphertext(&key, &mut ciphertext_1, &plaintext, noise)?;
+    ///
+    /// // Convert MutView to View
+    /// let raw_ciphertext_1 = engine.consume_retrieve_lwe_ciphertext(ciphertext_1)?;
+    /// let ciphertext_1: LweCiphertextView64 = engine.create_lwe_ciphertext(&raw_ciphertext_1[..])?;
+    ///
+    /// let mut ciphertext_2_container = vec![0_u64; key.lwe_dimension().to_lwe_size().0];
+    /// let mut ciphertext_2: LweCiphertextMutView64 =
+    ///     engine.create_lwe_ciphertext(&mut ciphertext_2_container[..])?;
+    ///
+    /// engine.discard_opp_lwe_ciphertext(&mut ciphertext_2, &ciphertext_1)?;
+    /// #
+    /// assert_eq!(ciphertext_2.lwe_dimension(), lwe_dimension);
+    ///
+    /// engine.destroy(key)?;
+    /// engine.destroy(plaintext)?;
+    /// engine.destroy(ciphertext_1)?;
+    /// engine.destroy(ciphertext_2)?;
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn discard_opp_lwe_ciphertext(
+        &mut self,
+        output: &mut LweCiphertextMutView64,
+        input: &LweCiphertextView64,
+    ) -> Result<(), LweCiphertextDiscardingOppositeError<Self::EngineError>> {
+        LweCiphertextDiscardingOppositeError::perform_generic_checks(output, input)?;
+        unsafe { self.discard_opp_lwe_ciphertext_unchecked(output, input) };
+        Ok(())
+    }
+
+    unsafe fn discard_opp_lwe_ciphertext_unchecked(
+        &mut self,
+        output: &mut LweCiphertextMutView64,
+        input: &LweCiphertextView64,
     ) {
         output.0.as_mut_tensor().fill_with_copy(input.0.as_tensor());
         output.0.update_with_neg();
