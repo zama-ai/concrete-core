@@ -1,21 +1,11 @@
-use std::panic;
 use crate::entities::*;
 use concrete_commons::dispersion::Variance;
 use concrete_commons::parameters::*;
 use concrete_core::backends::core::private::crypto::encoding::CryptoApiEncoder;
 use concrete_core::prelude as core;
-use concrete_core::prelude::{
-    AbstractEngine, CleartextCreationEngine, CleartextEncodingEngine, CleartextRetrievalEngine,
-    CleartextVectorCreationEngine, CleartextVectorEncodingEngine, CleartextVectorRetrievalEngine,
-    GlweCiphertextDecryptionEngine, GlweCiphertextEncryptionEngine, GlweSecretKeyCreationEngine,
-    GlweToLweSecretKeyTransmutationEngine, LweBootstrapKeyCreationEngine,
-    LweCiphertextDecryptionEngine, LweCiphertextEncryptionEngine,
-    LweCiphertextVectorDecryptionEngine, LweCiphertextVectorEncryptionEngine,
-    LweKeyswitchKeyCreationEngine, LweSecretKeyCreationEngine, PlaintextCreationEngine,
-    PlaintextDecodingEngine, PlaintextRetrievalEngine, PlaintextVectorCreationEngine,
-    PlaintextVectorDecodingEngine, PlaintextVectorRetrievalEngine,
-};
+use concrete_core::prelude::{AbstractEngine, CleartextCreationEngine, CleartextEncodingEngine, CleartextRetrievalEngine, CleartextVectorCreationEngine, CleartextVectorEncodingEngine, CleartextVectorRetrievalEngine, GlweCiphertextDecryptionEngine, GlweCiphertextEncryptionEngine, GlweSecretKeyCreationEngine, GlweToLweSecretKeyTransmutationEngine, LweBootstrapKeyCreationEngine, LweCiphertextDecryptionEngine, LweCiphertextDiscardingAdditionEngine, LweCiphertextEncryptionEngine, LweCiphertextVectorDecryptionEngine, LweCiphertextVectorEncryptionEngine, LweKeyswitchKeyCreationEngine, LweSecretKeyCreationEngine, PlaintextCreationEngine, PlaintextDecodingEngine, PlaintextRetrievalEngine, PlaintextVectorCreationEngine, PlaintextVectorDecodingEngine, PlaintextVectorRetrievalEngine};
 use js_sys::{BigInt, BigUint64Array, Float64Array};
+use std::panic;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -26,7 +16,7 @@ impl CoreEngine {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Result<CoreEngine, JsError> {
         #[cfg(feature = "console_error_panic_hook")]
-            panic::set_hook(Box::new(console_error_panic_hook::hook));
+        panic::set_hook(Box::new(console_error_panic_hook::hook));
 
         Ok(CoreEngine(
             core::CoreEngine::new().map_err(|e| JsError::new(format!("{}", e).as_str()))?,
@@ -59,14 +49,18 @@ impl CoreEngine {
         round: bool,
         size: u32,
     ) -> Result<CryptoEncoderVector, JsError> {
-
-        Ok(CryptoEncoderVector(core::CryptoEncoderVector(vec![CryptoApiEncoder {
-            o: offset,
-            delta,
-            nb_bit_padding: nb_bit_padding as usize,
-            nb_bit_precision: nb_bit_precision as usize,
-            round,
-        }; size as usize])))
+        Ok(CryptoEncoderVector(core::CryptoEncoderVector(
+            vec![
+                CryptoApiEncoder {
+                    o: offset,
+                    delta,
+                    nb_bit_padding: nb_bit_padding as usize,
+                    nb_bit_precision: nb_bit_precision as usize,
+                    round,
+                };
+                size as usize
+            ],
+        )))
     }
 
     pub fn create_plaintext_64(&mut self, input: u64) -> Result<Plaintext64, JsError> {
@@ -318,6 +312,16 @@ impl CoreEngine {
                 )
                 .map_err(|e| JsError::new(format!("{}", e).as_str()))?,
         ))
+    }
+
+    pub fn discard_add_lwe_ciphertext_64(
+        &mut self,
+        output: &mut LweCiphertext64,
+        lhs: &LweCiphertext64,
+        rhs: &LweCiphertext64,
+    ) -> Result<(), JsError>{
+        Ok(self.0.discard_add_lwe_ciphertext(&mut output.0, &lhs.0, &rhs.0)
+               .map_err(|e| JsError::new(format!("{}", e).as_str()))?)
     }
 
     pub fn create_bootstrap_key_64(
