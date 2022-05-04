@@ -488,6 +488,7 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
     {
         // We retrieve a buffer for the fft.
         let fft_buffer = &mut buffers.fft_buffers.first_buffer;
+        let third_fft_buffer = &mut buffers.fft_buffers.third_buffer;
         let fft = &mut buffers.fft_buffers.fft;
 
         // We move every polynomials to the fourier domain.
@@ -502,7 +503,7 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
                     .map(|t| Polynomial::from_container(t.into_container())),
             );
         for (mut fourier_poly, coef_poly) in iterator {
-            fft.forward_as_torus(fft_buffer, &coef_poly);
+            fft.forward_as_torus(fft_buffer, &coef_poly, third_fft_buffer);
             fourier_poly
                 .as_mut_tensor()
                 .fill_with_one((fft_buffer).as_tensor(), |a| *a);
@@ -540,6 +541,7 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
         let fft = &mut fft_buffers.fft;
         let first_fft_buffer = &mut fft_buffers.first_buffer;
         let second_fft_buffer = &mut fft_buffers.second_buffer;
+        let third_fft_buffer = &mut fft_buffers.third_buffer;
         let output_fft_buffer = &mut fft_buffers.output_buffer;
         output_fft_buffer.fill_with_element(Complex64::new(0., 0.));
 
@@ -597,6 +599,7 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
                             second_fft_buffer,
                             &first_glwe_poly,
                             &second_glwe_poly,
+                            third_fft_buffer,
                         );
                         // Now we loop through the polynomials of the output, and add the
                         // corresponding product of polynomials.
@@ -630,7 +633,11 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
                         // We unpack the iterator values
                         let (first_ggsw_row, first_glwe_poly) = first;
                         // We perform the forward fft transform for the glwe polynomial
-                        fft.forward_as_integer(first_fft_buffer, &first_glwe_poly);
+                        fft.forward_as_integer(
+                            first_fft_buffer,
+                            &first_glwe_poly,
+                            third_fft_buffer,
+                        );
                         // Now we loop through the polynomials of the output, and add the
                         // corresponding product of polynomials.
                         let iterator = zip!(
@@ -680,13 +687,18 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
                         &mut second_output,
                         &mut first_fourier,
                         &mut second_fourier,
+                        third_fft_buffer,
                     );
                 }
                 (Some(first), None) => {
                     // We unpack the iterates
                     let (mut first_output, mut first_fourier) = first;
                     // We perform the backward transform
-                    fft.add_backward_as_torus(&mut first_output, &mut first_fourier);
+                    fft.add_backward_as_torus(
+                        &mut first_output,
+                        &mut first_fourier,
+                        third_fft_buffer,
+                    );
                 }
                 _ => break,
             }

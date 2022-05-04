@@ -14,6 +14,7 @@ pub struct FftBuffers {
     // logic apply, and we don't have to allocate them multiple times.
     pub first_buffer: FourierPolynomial<AlignedVec<Complex64>>,
     pub second_buffer: FourierPolynomial<AlignedVec<Complex64>>,
+    pub third_buffer: FourierPolynomial<AlignedVec<Complex64>>,
     pub output_buffer: Tensor<AlignedVec<Complex64>>,
 }
 
@@ -37,6 +38,7 @@ where
         let fft = Fft::new(poly_size);
         let first_buffer = FourierPolynomial::allocate(Complex64::new(0., 0.), poly_size);
         let second_buffer = FourierPolynomial::allocate(Complex64::new(0., 0.), poly_size);
+        let third_buffer = FourierPolynomial::allocate(Complex64::new(0., 0.), poly_size);
         let output_buffer = Tensor::from_container(AlignedVec::new(poly_size.0 * glwe_size.0));
         let lut_buffer = GlweCiphertext::allocate(Scalar::ZERO, poly_size, glwe_size);
         let rounded_buffer = GlweCiphertext::allocate(Scalar::ZERO, poly_size, glwe_size);
@@ -48,6 +50,7 @@ where
                 fft,
                 first_buffer,
                 second_buffer,
+                third_buffer,
                 output_buffer,
             },
         }

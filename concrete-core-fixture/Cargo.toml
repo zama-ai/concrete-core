@@ -13,3 +13,4 @@ paste = "1.0"
 
 [features]
 backend_core = []
+backend_multithread = ["concrete-core/backend_multithread"]

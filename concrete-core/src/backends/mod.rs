@@ -7,3 +7,6 @@
 
 #[cfg(feature = "backend_core")]
 pub mod core;
+
+#[cfg(feature = "backend_multithread")]
+pub mod multithread;

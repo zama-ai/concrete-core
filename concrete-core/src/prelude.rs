@@ -12,5 +12,7 @@ pub use concrete_commons::*;
 pub use super::backends::core::engines::*;
 #[cfg(feature = "backend_core")]
 pub use super::backends::core::entities::*;
+#[cfg(feature = "backend_multithread")]
+pub use super::backends::multithread::engines::*;
 pub use super::specification::engines::*;
 pub use super::specification::entities::*;
