@@ -36,9 +36,6 @@ bench = false
 default = ["backend_core", "seeder_unix"]
 doc = []
 backend_core = [
-    "concrete-csprng/generator_x86_64_aesni",
-    "concrete-csprng/seeder_x86_64_rdseed",
-    "concrete-csprng/seeder_unix",
     "concrete-csprng/generator_soft"
 ]
 seeder_unix = ["concrete-csprng/seeder_unix"]

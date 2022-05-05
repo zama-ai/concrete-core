@@ -5,7 +5,7 @@ use std::error::Error;
 use std::fmt::{Display, Formatter};
 
 use concrete_commons::parameters::{GlweSize, PolynomialSize};
-use concrete_csprng::generators::AesniRandomGenerator;
+use concrete_csprng::generators::SoftwareRandomGenerator;
 use concrete_csprng::seeders::Seeder;
 
 use crate::commons::crypto::bootstrap::FourierBuffers;
@@ -61,8 +61,8 @@ pub(crate) struct FourierBufferKey(pub PolynomialSize, pub GlweSize);
 // In this way we avoid re-allocating those buffers
 // every time an FFT or iFFT is performed.
 pub struct CoreEngine {
-    secret_generator: ImplSecretRandomGenerator<AesniRandomGenerator>,
-    encryption_generator: ImplEncryptionRandomGenerator<AesniRandomGenerator>,
+    secret_generator: ImplSecretRandomGenerator<SoftwareRandomGenerator>,
+    encryption_generator: ImplEncryptionRandomGenerator<SoftwareRandomGenerator>,
     fourier_buffers_u32: BTreeMap<FourierBufferKey, FourierBuffers<u32>>,
     fourier_buffers_u64: BTreeMap<FourierBufferKey, FourierBuffers<u64>>,
 }
