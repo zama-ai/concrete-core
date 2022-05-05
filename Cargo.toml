@@ -11,7 +11,6 @@ members = [
     "concrete-benchmark",
     "concrete-core-fixture",
     "concrete-core-test",
-    "concrete-wasm-api"
 ]
 
 [patch.crates-io]
