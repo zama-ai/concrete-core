@@ -2,8 +2,8 @@ use crate::backends::core::implementation::engines::CoreEngine;
 use crate::backends::core::implementation::entities::{
     FourierGlweCiphertext32, FourierGlweCiphertext64, GlweCiphertext32, GlweCiphertext64,
 };
-use crate::backends::core::private::crypto::glwe::FourierGlweCiphertext;
-use crate::backends::core::private::math::fft::{Complex64, ALLOWED_POLY_SIZE};
+use crate::commons::crypto::glwe::FourierGlweCiphertext;
+use crate::commons::math::fft::{Complex64, ALLOWED_POLY_SIZE};
 use crate::prelude::CoreError;
 use crate::specification::engines::{
     GlweCiphertextConversionEngine, GlweCiphertextConversionError,

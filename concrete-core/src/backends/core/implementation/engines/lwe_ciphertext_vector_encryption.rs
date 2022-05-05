@@ -6,7 +6,7 @@ use crate::backends::core::implementation::entities::{
     LweCiphertextVector32, LweCiphertextVector64, LweSecretKey32, LweSecretKey64,
     PlaintextVector32, PlaintextVector64,
 };
-use crate::backends::core::private::crypto::lwe::LweList as ImplLweList;
+use crate::commons::crypto::lwe::LweList as ImplLweList;
 use crate::specification::engines::{
     LweCiphertextVectorEncryptionEngine, LweCiphertextVectorEncryptionError,
 };

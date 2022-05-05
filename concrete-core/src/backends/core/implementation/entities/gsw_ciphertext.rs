@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
 
-use crate::backends::core::private::crypto::gsw::GswCiphertext as ImplGswCiphertext;
+use crate::commons::crypto::gsw::GswCiphertext as ImplGswCiphertext;
 use crate::specification::entities::markers::{BinaryKeyDistribution, GswCiphertextKind};
 use crate::specification::entities::{AbstractEntity, GswCiphertextEntity};
 

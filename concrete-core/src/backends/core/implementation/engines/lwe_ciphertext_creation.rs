@@ -3,7 +3,7 @@ use crate::backends::core::implementation::entities::{
     LweCiphertext32, LweCiphertext64, LweCiphertextMutView32, LweCiphertextMutView64,
     LweCiphertextView32, LweCiphertextView64,
 };
-use crate::backends::core::private::crypto::lwe::LweCiphertext as ImplLweCiphertext;
+use crate::commons::crypto::lwe::LweCiphertext as ImplLweCiphertext;
 use crate::specification::engines::{LweCiphertextCreationEngine, LweCiphertextCreationError};
 
 /// # Description:

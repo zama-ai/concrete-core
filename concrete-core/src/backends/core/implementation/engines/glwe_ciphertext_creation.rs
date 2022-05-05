@@ -3,7 +3,7 @@ use crate::backends::core::implementation::entities::{
     GlweCiphertext32, GlweCiphertext64, GlweCiphertextMutView32, GlweCiphertextMutView64,
     GlweCiphertextView32, GlweCiphertextView64,
 };
-use crate::backends::core::private::crypto::glwe::GlweCiphertext as ImplGlweCiphertext;
+use crate::commons::crypto::glwe::GlweCiphertext as ImplGlweCiphertext;
 use crate::specification::engines::{GlweCiphertextCreationEngine, GlweCiphertextCreationError};
 use concrete_commons::parameters::PolynomialSize;
 

@@ -5,7 +5,7 @@ use crate::backends::core::implementation::entities::{
     GlweCiphertext32, GlweCiphertext64, GlweSecretKey32, GlweSecretKey64, PlaintextVector32,
     PlaintextVector64,
 };
-use crate::backends::core::private::crypto::glwe::GlweCiphertext as ImplGlweCiphertext;
+use crate::commons::crypto::glwe::GlweCiphertext as ImplGlweCiphertext;
 use crate::specification::engines::{
     GlweCiphertextEncryptionEngine, GlweCiphertextEncryptionError,
 };

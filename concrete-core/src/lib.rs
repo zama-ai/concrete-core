@@ -40,9 +40,8 @@
 //! to first have a look at the [`specification`] module, which contains explanations on the
 //! abstract API, and navigate from there.
 
-// This is to leave the specification module on top in the doc; rustfmt sort modules
-#![cfg_attr(rustfmt, rustfmt::skip)]
-
-pub mod specification;
 pub mod backends;
+#[doc(hidden)]
+pub mod commons;
 pub mod prelude;
+pub mod specification;

@@ -1,6 +1,6 @@
 //! A module containing sampling entry points for raw integers
 use concrete_commons::numeric::{CastInto, UnsignedInteger};
-use concrete_core::backends::core::private::math::random::RandomGenerator;
+use concrete_core::commons::math::random::RandomGenerator;
 use concrete_csprng::generators::AesniRandomGenerator;
 use concrete_csprng::seeders::{Seeder, UnixSeeder};
 use std::cell::RefCell;

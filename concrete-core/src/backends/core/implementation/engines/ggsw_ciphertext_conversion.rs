@@ -2,8 +2,8 @@ use crate::backends::core::implementation::engines::CoreEngine;
 use crate::backends::core::implementation::entities::{
     FourierGgswCiphertext32, FourierGgswCiphertext64, GgswCiphertext32, GgswCiphertext64,
 };
-use crate::backends::core::private::crypto::ggsw::FourierGgswCiphertext;
-use crate::backends::core::private::math::fft::Complex64;
+use crate::commons::crypto::ggsw::FourierGgswCiphertext;
+use crate::commons::math::fft::Complex64;
 use crate::specification::engines::{
     GgswCiphertextConversionEngine, GgswCiphertextConversionError,
 };

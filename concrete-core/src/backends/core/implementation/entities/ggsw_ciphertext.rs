@@ -1,8 +1,8 @@
-use crate::backends::core::private::crypto::ggsw::{
+use crate::commons::crypto::ggsw::{
     FourierGgswCiphertext as ImplFourierGgswCiphertext,
     StandardGgswCiphertext as ImplStandardGgswCiphertext,
 };
-use crate::backends::core::private::math::fft::Complex64;
+use crate::commons::math::fft::Complex64;
 use crate::specification::entities::markers::{BinaryKeyDistribution, GgswCiphertextKind};
 use crate::specification::entities::{AbstractEntity, GgswCiphertextEntity};
 use concrete_commons::parameters::{

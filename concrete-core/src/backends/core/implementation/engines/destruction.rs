@@ -11,7 +11,7 @@ use crate::backends::core::implementation::entities::{
     LweKeyswitchKey64, LweSecretKey32, LweSecretKey64, PackingKeyswitchKey32,
     PackingKeyswitchKey64, Plaintext32, Plaintext64, PlaintextVector32, PlaintextVector64,
 };
-use crate::backends::core::private::math::tensor::AsMutTensor;
+use crate::commons::math::tensor::AsMutTensor;
 use crate::specification::engines::{DestructionEngine, DestructionError};
 
 impl DestructionEngine<Cleartext32> for CoreEngine {

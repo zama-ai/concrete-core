@@ -6,11 +6,11 @@ use crate::backends::core::implementation::entities::{
     FourierLweBootstrapKey32, FourierLweBootstrapKey64, GlweSecretKey32, GlweSecretKey64,
     LweBootstrapKey32, LweBootstrapKey64, LweSecretKey32, LweSecretKey64,
 };
-use crate::backends::core::private::crypto::bootstrap::{
+use crate::commons::crypto::bootstrap::{
     FourierBootstrapKey as ImplFourierBootstrapKey,
     StandardBootstrapKey as ImplStandardBootstrapKey,
 };
-use crate::backends::core::private::math::fft::Complex64;
+use crate::commons::math::fft::Complex64;
 use crate::prelude::LweBootstrapKeyEntity;
 use crate::specification::engines::{LweBootstrapKeyCreationEngine, LweBootstrapKeyCreationError};
 

@@ -5,7 +5,7 @@ use crate::backends::core::implementation::entities::{
     GlweCiphertextVector32, GlweCiphertextVector64, GlweSecretKey32, GlweSecretKey64,
     PlaintextVector32, PlaintextVector64,
 };
-use crate::backends::core::private::crypto::encoding::PlaintextList as ImplPlaintextList;
+use crate::commons::crypto::encoding::PlaintextList as ImplPlaintextList;
 use crate::specification::engines::{
     GlweCiphertextVectorDecryptionEngine, GlweCiphertextVectorDecryptionError,
 };

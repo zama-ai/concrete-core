@@ -5,7 +5,7 @@ use crate::backends::core::implementation::engines::CoreEngine;
 use crate::backends::core::implementation::entities::{
     GgswCiphertext32, GgswCiphertext64, GlweSecretKey32, GlweSecretKey64, Plaintext32, Plaintext64,
 };
-use crate::backends::core::private::crypto::ggsw::StandardGgswCiphertext as ImplGgswCiphertext;
+use crate::commons::crypto::ggsw::StandardGgswCiphertext as ImplGgswCiphertext;
 use crate::specification::engines::{
     GgswCiphertextScalarEncryptionEngine, GgswCiphertextScalarEncryptionError,
 };

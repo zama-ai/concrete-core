@@ -1,8 +1,8 @@
-use crate::backends::core::private::crypto::bootstrap::{
+use crate::commons::crypto::bootstrap::{
     FourierBootstrapKey as ImplFourierBootstrapKey,
     StandardBootstrapKey as ImplStandardBootstrapKey,
 };
-use crate::backends::core::private::math::fft::Complex64;
+use crate::commons::math::fft::Complex64;
 use crate::specification::entities::markers::{BinaryKeyDistribution, LweBootstrapKeyKind};
 use crate::specification::entities::{AbstractEntity, LweBootstrapKeyEntity};
 use concrete_commons::parameters::{

@@ -6,7 +6,7 @@ use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
 use crate::specification::entities::markers::{BinaryKeyDistribution, LweCiphertextVectorKind};
 use crate::specification::entities::{AbstractEntity, LweCiphertextVectorEntity};
 
-use super::super::super::private::crypto::lwe::LweList as ImplLweList;
+use crate::commons::crypto::lwe::LweList as ImplLweList;
 
 /// A structure representing a vector of LWE ciphertexts with 32 bits of precision.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]

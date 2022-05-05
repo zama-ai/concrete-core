@@ -1,4 +1,4 @@
-use crate::backends::core::private::crypto::encoding::Cleartext as ImplCleartext;
+use crate::commons::crypto::encoding::Cleartext as ImplCleartext;
 use crate::specification::entities::markers::CleartextKind;
 use crate::specification::entities::{AbstractEntity, CleartextEntity};
 

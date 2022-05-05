@@ -1,6 +1,4 @@
-use crate::backends::core::private::crypto::encoding::{
-    Plaintext, PlaintextList as ImplPlaintextList,
-};
+use crate::commons::crypto::encoding::{Plaintext, PlaintextList as ImplPlaintextList};
 use crate::prelude::{
     CoreEngine, LweCiphertextVector32, LweCiphertextVector64, LweCiphertextVectorEntity,
     LweCiphertextVectorTrivialDecryptionEngine, LweCiphertextVectorTrivialDecryptionError,
