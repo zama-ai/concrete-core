@@ -30,10 +30,7 @@ mod backend_core {
     };
     use crate::generation::synthesizing::SynthesizesLweBootstrapKey;
     use crate::generation::{Maker, Precision32, Precision64};
-    use concrete_core::prelude::{
-        DestructionEngine, FourierLweBootstrapKey32, FourierLweBootstrapKey64, LweBootstrapKey32,
-        LweBootstrapKey64, LweBootstrapKeyConversionEngine,
-    };
+    use concrete_core::prelude::{DestructionEngine, LweBootstrapKey32, LweBootstrapKey64};
 
     impl SynthesizesLweBootstrapKey<Precision32, LweBootstrapKey32> for Maker {
         fn synthesize_lwe_bootstrap_key(
@@ -71,50 +68,6 @@ mod backend_core {
         }
 
         fn destroy_lwe_bootstrap_key(&mut self, entity: LweBootstrapKey64) {
-            self.core_engine.destroy(entity).unwrap();
-        }
-    }
-
-    impl SynthesizesLweBootstrapKey<Precision32, FourierLweBootstrapKey32> for Maker {
-        fn synthesize_lwe_bootstrap_key(
-            &mut self,
-            prototype: &Self::LweBootstrapKeyProto,
-        ) -> FourierLweBootstrapKey32 {
-            self.core_engine
-                .convert_lwe_bootstrap_key(&prototype.0)
-                .unwrap()
-        }
-
-        fn unsynthesize_lwe_bootstrap_key(
-            &mut self,
-            _entity: FourierLweBootstrapKey32,
-        ) -> Self::LweBootstrapKeyProto {
-            todo!()
-        }
-
-        fn destroy_lwe_bootstrap_key(&mut self, entity: FourierLweBootstrapKey32) {
-            self.core_engine.destroy(entity).unwrap();
-        }
-    }
-
-    impl SynthesizesLweBootstrapKey<Precision64, FourierLweBootstrapKey64> for Maker {
-        fn synthesize_lwe_bootstrap_key(
-            &mut self,
-            prototype: &Self::LweBootstrapKeyProto,
-        ) -> FourierLweBootstrapKey64 {
-            self.core_engine
-                .convert_lwe_bootstrap_key(&prototype.0)
-                .unwrap()
-        }
-
-        fn unsynthesize_lwe_bootstrap_key(
-            &mut self,
-            _entity: FourierLweBootstrapKey64,
-        ) -> Self::LweBootstrapKeyProto {
-            todo!()
-        }
-
-        fn destroy_lwe_bootstrap_key(&mut self, entity: FourierLweBootstrapKey64) {
             self.core_engine.destroy(entity).unwrap();
         }
     }

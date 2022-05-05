@@ -652,7 +652,6 @@ impl<Cont> StandardBootstrapKey<Cont> {
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
     /// };
     /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
-    /// use concrete_core::commons::math::fft::Complex64;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
     /// let bsk = StandardBootstrapKey::allocate(
     ///     9u32,
@@ -687,7 +686,6 @@ impl<Cont> StandardBootstrapKey<Cont> {
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
     /// };
     /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
-    /// use concrete_core::commons::math::fft::Complex64;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
     /// let mut bsk = StandardBootstrapKey::allocate(
     ///     9u32,

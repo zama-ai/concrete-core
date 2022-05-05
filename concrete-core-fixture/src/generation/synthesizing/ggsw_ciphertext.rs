@@ -22,10 +22,7 @@ mod backend_core {
     use crate::generation::prototypes::{ProtoBinaryGgswCiphertext32, ProtoBinaryGgswCiphertext64};
     use crate::generation::synthesizing::SynthesizesGgswCiphertext;
     use crate::generation::{Maker, Precision32, Precision64};
-    use concrete_core::prelude::{
-        DestructionEngine, FourierGgswCiphertext32, FourierGgswCiphertext64, GgswCiphertext32,
-        GgswCiphertext64, GgswCiphertextConversionEngine,
-    };
+    use concrete_core::prelude::{DestructionEngine, GgswCiphertext32, GgswCiphertext64};
 
     impl SynthesizesGgswCiphertext<Precision32, GgswCiphertext32> for Maker {
         fn synthesize_ggsw_ciphertext(
@@ -63,52 +60,6 @@ mod backend_core {
         }
 
         fn destroy_ggsw_ciphertext(&mut self, entity: GgswCiphertext64) {
-            self.core_engine.destroy(entity).unwrap();
-        }
-    }
-
-    impl SynthesizesGgswCiphertext<Precision32, FourierGgswCiphertext32> for Maker {
-        fn synthesize_ggsw_ciphertext(
-            &mut self,
-            prototype: &Self::GgswCiphertextProto,
-        ) -> FourierGgswCiphertext32 {
-            self.core_engine
-                .convert_ggsw_ciphertext(&prototype.0)
-                .unwrap()
-        }
-
-        fn unsynthesize_ggsw_ciphertext(
-            &mut self,
-            _entity: FourierGgswCiphertext32,
-        ) -> Self::GgswCiphertextProto {
-            // FIXME:
-            unimplemented!("The backward fourier conversion was not yet implemented");
-        }
-
-        fn destroy_ggsw_ciphertext(&mut self, entity: FourierGgswCiphertext32) {
-            self.core_engine.destroy(entity).unwrap();
-        }
-    }
-
-    impl SynthesizesGgswCiphertext<Precision64, FourierGgswCiphertext64> for Maker {
-        fn synthesize_ggsw_ciphertext(
-            &mut self,
-            prototype: &Self::GgswCiphertextProto,
-        ) -> FourierGgswCiphertext64 {
-            self.core_engine
-                .convert_ggsw_ciphertext(&prototype.0)
-                .unwrap()
-        }
-
-        fn unsynthesize_ggsw_ciphertext(
-            &mut self,
-            _entity: FourierGgswCiphertext64,
-        ) -> Self::GgswCiphertextProto {
-            // FIXME:
-            unimplemented!("The backward fourier conversion was not yet implemented");
-        }
-
-        fn destroy_ggsw_ciphertext(&mut self, entity: FourierGgswCiphertext64) {
             self.core_engine.destroy(entity).unwrap();
         }
     }
