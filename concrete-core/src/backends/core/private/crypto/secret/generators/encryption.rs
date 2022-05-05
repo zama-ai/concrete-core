@@ -52,7 +52,7 @@ impl<G: ByteRandomGenerator> EncryptionRandomGenerator<G> {
         level: DecompositionLevelCount,
         glwe_size: GlweSize,
         polynomial_size: PolynomialSize,
-    ) -> Option<impl Iterator<Item = EncryptionRandomGenerator<G>>> {
+    ) -> Result<impl Iterator<Item = EncryptionRandomGenerator<G>>, ForkError> {
         let mask_bytes = mask_bytes_per_ggsw::<T>(level, glwe_size, polynomial_size);
         let noise_bytes = noise_bytes_per_ggsw(level, glwe_size, polynomial_size);
         self.try_fork(lwe_dimension.0, mask_bytes, noise_bytes)
@@ -64,7 +64,7 @@ impl<G: ByteRandomGenerator> EncryptionRandomGenerator<G> {
         level: DecompositionLevelCount,
         glwe_size: GlweSize,
         polynomial_size: PolynomialSize,
-    ) -> Option<impl Iterator<Item = EncryptionRandomGenerator<G>>> {
+    ) -> Result<impl Iterator<Item = EncryptionRandomGenerator<G>>, ForkError> {
         let mask_bytes = mask_bytes_per_ggsw_level::<T>(glwe_size, polynomial_size);
         let noise_bytes = noise_bytes_per_ggsw_level(glwe_size, polynomial_size);
         self.try_fork(level.0, mask_bytes, noise_bytes)
@@ -75,7 +75,7 @@ impl<G: ByteRandomGenerator> EncryptionRandomGenerator<G> {
         &mut self,
         glwe_size: GlweSize,
         polynomial_size: PolynomialSize,
-    ) -> Option<impl Iterator<Item = EncryptionRandomGenerator<G>>> {
+    ) -> Result<impl Iterator<Item = EncryptionRandomGenerator<G>>, ForkError> {
         let mask_bytes = mask_bytes_per_glwe::<T>(glwe_size.to_glwe_dimension(), polynomial_size);
         let noise_bytes = noise_bytes_per_glwe(polynomial_size);
         self.try_fork(glwe_size.0, mask_bytes, noise_bytes)
@@ -86,7 +86,7 @@ impl<G: ByteRandomGenerator> EncryptionRandomGenerator<G> {
         &mut self,
         level: DecompositionLevelCount,
         lwe_size: LweSize,
-    ) -> Option<impl Iterator<Item = EncryptionRandomGenerator<G>>> {
+    ) -> Result<impl Iterator<Item = EncryptionRandomGenerator<G>>, ForkError> {
         let mask_bytes = mask_bytes_per_gsw_level::<T>(lwe_size);
         let noise_bytes = noise_bytes_per_gsw_level(lwe_size);
         self.try_fork(level.0, mask_bytes, noise_bytes)
@@ -96,7 +96,7 @@ impl<G: ByteRandomGenerator> EncryptionRandomGenerator<G> {
     pub(crate) fn fork_gsw_level_to_lwe<T: UnsignedInteger>(
         &mut self,
         lwe_size: LweSize,
-    ) -> Option<impl Iterator<Item = EncryptionRandomGenerator<G>>> {
+    ) -> Result<impl Iterator<Item = EncryptionRandomGenerator<G>>, ForkError> {
         let mask_bytes = mask_bytes_per_lwe::<T>(lwe_size.to_lwe_dimension());
         let noise_bytes = noise_bytes_per_lwe();
         self.try_fork(lwe_size.0, mask_bytes, noise_bytes)
@@ -108,17 +108,15 @@ impl<G: ByteRandomGenerator> EncryptionRandomGenerator<G> {
         n_child: usize,
         mask_bytes: usize,
         noise_bytes: usize,
-    ) -> Option<impl Iterator<Item = EncryptionRandomGenerator<G>>> {
+    ) -> Result<impl Iterator<Item = EncryptionRandomGenerator<G>>, ForkError> {
         // We try to fork the generators
         let mask_iter = self.mask.try_fork(n_child, mask_bytes)?;
         let noise_iter = self.noise.try_fork(n_child, noise_bytes)?;
 
         // We return a proper iterator.
-        Some(
-            mask_iter
-                .zip(noise_iter)
-                .map(|(mask, noise)| EncryptionRandomGenerator { mask, noise }),
-        )
+        Ok(mask_iter
+            .zip(noise_iter)
+            .map(|(mask, noise)| EncryptionRandomGenerator { mask, noise }))
     }
 
     // Fills the tensor with random uniform values, using the mask generator.

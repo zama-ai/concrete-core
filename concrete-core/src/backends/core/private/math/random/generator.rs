@@ -104,11 +104,10 @@ impl<G: ByteRandomGenerator> RandomGenerator<G> {
         &mut self,
         n_child: usize,
         bytes_per_child: usize,
-    ) -> Option<impl Iterator<Item = RandomGenerator<G>>> {
+    ) -> Result<impl Iterator<Item = RandomGenerator<G>>, ForkError> {
         self.0
             .try_fork(ChildrenCount(n_child), BytesPerChild(bytes_per_child))
             .map(|iter| iter.map(Self))
-            .ok()
     }
 
     /// Generates a random uniform unsigned integer.
