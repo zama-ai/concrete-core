@@ -13,8 +13,8 @@ where
     fn destroy_lwe_ciphertext(&mut self, entity: LweCiphertext);
 }
 
-#[cfg(feature = "backend_core")]
-mod backend_core {
+#[cfg(feature = "backend_default")]
+mod backend_default {
     use crate::generation::prototypes::{ProtoBinaryLweCiphertext32, ProtoBinaryLweCiphertext64};
     use crate::generation::synthesizing::SynthesizesLweCiphertext;
     use crate::generation::{Maker, Precision32, Precision64};
@@ -36,7 +36,7 @@ mod backend_core {
         }
 
         fn destroy_lwe_ciphertext(&mut self, entity: LweCiphertext32) {
-            self.core_engine.destroy(entity).unwrap();
+            self.default_engine.destroy(entity).unwrap();
         }
     }
 
@@ -56,7 +56,7 @@ mod backend_core {
         }
 
         fn destroy_lwe_ciphertext(&mut self, entity: LweCiphertext64) {
-            self.core_engine.destroy(entity).unwrap();
+            self.default_engine.destroy(entity).unwrap();
         }
     }
 
@@ -72,10 +72,10 @@ mod backend_core {
         ) -> LweCiphertextView32<'a> {
             let ciphertext = prototype.0.to_owned();
             let container = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_lwe_ciphertext(ciphertext)
                 .unwrap();
-            self.core_engine
+            self.default_engine
                 .create_lwe_ciphertext(container.leak() as &[u32])
                 .unwrap()
         }
@@ -85,14 +85,14 @@ mod backend_core {
             entity: LweCiphertextView32,
         ) -> Self::LweCiphertextProto {
             let slice = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_lwe_ciphertext(entity)
                 .unwrap();
             let reconstructed_vec = unsafe {
                 Vec::from_raw_parts(slice.as_ptr() as *mut u32, slice.len(), slice.len())
             };
             ProtoBinaryLweCiphertext32(
-                self.core_engine
+                self.default_engine
                     .create_lwe_ciphertext(reconstructed_vec)
                     .unwrap(),
             )
@@ -101,7 +101,7 @@ mod backend_core {
         fn destroy_lwe_ciphertext(&mut self, entity: LweCiphertextView32) {
             // Re-construct the vector so that it frees memory when it's dropped
             let slice = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_lwe_ciphertext(entity)
                 .unwrap();
             unsafe { Vec::from_raw_parts(slice.as_ptr() as *mut u32, slice.len(), slice.len()) };
@@ -115,10 +115,10 @@ mod backend_core {
         ) -> LweCiphertextView64<'a> {
             let ciphertext = prototype.0.to_owned();
             let container = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_lwe_ciphertext(ciphertext)
                 .unwrap();
-            self.core_engine
+            self.default_engine
                 .create_lwe_ciphertext(container.leak() as &[u64])
                 .unwrap()
         }
@@ -128,14 +128,14 @@ mod backend_core {
             entity: LweCiphertextView64,
         ) -> Self::LweCiphertextProto {
             let slice = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_lwe_ciphertext(entity)
                 .unwrap();
             let reconstructed_vec = unsafe {
                 Vec::from_raw_parts(slice.as_ptr() as *mut u64, slice.len(), slice.len())
             };
             ProtoBinaryLweCiphertext64(
-                self.core_engine
+                self.default_engine
                     .create_lwe_ciphertext(reconstructed_vec)
                     .unwrap(),
             )
@@ -144,7 +144,7 @@ mod backend_core {
         fn destroy_lwe_ciphertext(&mut self, entity: LweCiphertextView64) {
             // Re-construct the vector so that it frees memory when it's dropped
             let slice = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_lwe_ciphertext(entity)
                 .unwrap();
             unsafe { Vec::from_raw_parts(slice.as_ptr() as *mut u32, slice.len(), slice.len()) };
@@ -160,10 +160,10 @@ mod backend_core {
         ) -> LweCiphertextMutView32<'a> {
             let ciphertext = prototype.0.to_owned();
             let container = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_lwe_ciphertext(ciphertext)
                 .unwrap();
-            self.core_engine
+            self.default_engine
                 .create_lwe_ciphertext(container.leak())
                 .unwrap()
         }
@@ -173,13 +173,13 @@ mod backend_core {
             entity: LweCiphertextMutView32,
         ) -> Self::LweCiphertextProto {
             let slice = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_lwe_ciphertext(entity)
                 .unwrap();
             let reconstructed_vec =
                 unsafe { Vec::from_raw_parts(slice.as_mut_ptr(), slice.len(), slice.len()) };
             ProtoBinaryLweCiphertext32(
-                self.core_engine
+                self.default_engine
                     .create_lwe_ciphertext(reconstructed_vec)
                     .unwrap(),
             )
@@ -188,7 +188,7 @@ mod backend_core {
         fn destroy_lwe_ciphertext(&mut self, entity: LweCiphertextMutView32) {
             // Re-construct the vector so that it frees memory when it's dropped
             let slice = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_lwe_ciphertext(entity)
                 .unwrap();
             unsafe { Vec::from_raw_parts(slice.as_mut_ptr(), slice.len(), slice.len()) };
@@ -202,10 +202,10 @@ mod backend_core {
         ) -> LweCiphertextMutView64<'a> {
             let ciphertext = prototype.0.to_owned();
             let container = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_lwe_ciphertext(ciphertext)
                 .unwrap();
-            self.core_engine
+            self.default_engine
                 .create_lwe_ciphertext(container.leak())
                 .unwrap()
         }
@@ -215,13 +215,13 @@ mod backend_core {
             entity: LweCiphertextMutView64,
         ) -> Self::LweCiphertextProto {
             let slice = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_lwe_ciphertext(entity)
                 .unwrap();
             let reconstructed_vec =
                 unsafe { Vec::from_raw_parts(slice.as_mut_ptr(), slice.len(), slice.len()) };
             ProtoBinaryLweCiphertext64(
-                self.core_engine
+                self.default_engine
                     .create_lwe_ciphertext(reconstructed_vec)
                     .unwrap(),
             )
@@ -230,7 +230,7 @@ mod backend_core {
         fn destroy_lwe_ciphertext(&mut self, entity: LweCiphertextMutView64) {
             // Re-construct the vector so that it frees memory when it's dropped
             let slice = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_lwe_ciphertext(entity)
                 .unwrap();
             unsafe { Vec::from_raw_parts(slice.as_mut_ptr(), slice.len(), slice.len()) };

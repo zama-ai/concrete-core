@@ -13,8 +13,8 @@ where
     fn destroy_cleartext(&mut self, entity: Cleartext);
 }
 
-#[cfg(feature = "backend_core")]
-mod backend_core {
+#[cfg(feature = "backend_default")]
+mod backend_default {
     use crate::generation::prototypes::{ProtoCleartext32, ProtoCleartext64};
     use crate::generation::synthesizing::SynthesizesCleartext;
     use crate::generation::{Maker, Precision32, Precision64};
@@ -30,7 +30,7 @@ mod backend_core {
         }
 
         fn destroy_cleartext(&mut self, entity: Cleartext32) {
-            self.core_engine.destroy(entity).unwrap();
+            self.default_engine.destroy(entity).unwrap();
         }
     }
 
@@ -44,7 +44,7 @@ mod backend_core {
         }
 
         fn destroy_cleartext(&mut self, entity: Cleartext64) {
-            self.core_engine.destroy(entity).unwrap();
+            self.default_engine.destroy(entity).unwrap();
         }
     }
 }

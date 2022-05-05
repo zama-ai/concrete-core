@@ -67,11 +67,11 @@ impl PrototypesGlweCiphertextVector<Precision32, BinaryKeyDistribution> for Make
         plaintext_count: PlaintextCount,
     ) -> Self::GlweCiphertextVectorProto {
         let plaintext_vector = self
-            .core_engine
+            .default_engine
             .create_plaintext_vector(&vec![0u32; plaintext_count.0])
             .unwrap();
         ProtoBinaryGlweCiphertextVector32(
-            self.core_engine
+            self.default_engine
                 .trivially_encrypt_glwe_ciphertext_vector(
                     glwe_size,
                     glwe_ciphertext_count,
@@ -88,7 +88,7 @@ impl PrototypesGlweCiphertextVector<Precision32, BinaryKeyDistribution> for Make
         plaintext_vector: &Self::PlaintextVectorProto,
     ) -> Self::GlweCiphertextVectorProto {
         ProtoBinaryGlweCiphertextVector32(
-            self.core_engine
+            self.default_engine
                 .trivially_encrypt_glwe_ciphertext_vector(
                     glwe_size,
                     glwe_ciphertext_count,
@@ -103,7 +103,7 @@ impl PrototypesGlweCiphertextVector<Precision32, BinaryKeyDistribution> for Make
         ciphertext: &Self::GlweCiphertextVectorProto,
     ) -> Self::PlaintextVectorProto {
         ProtoPlaintextVector32(
-            self.core_engine
+            self.default_engine
                 .trivially_decrypt_glwe_ciphertext_vector(&ciphertext.0)
                 .unwrap(),
         )
@@ -116,7 +116,7 @@ impl PrototypesGlweCiphertextVector<Precision32, BinaryKeyDistribution> for Make
         noise: Variance,
     ) -> Self::GlweCiphertextVectorProto {
         ProtoBinaryGlweCiphertextVector32(
-            self.core_engine
+            self.default_engine
                 .encrypt_glwe_ciphertext_vector(&secret_key.0, &plaintext_vector.0, noise)
                 .unwrap(),
         )
@@ -128,7 +128,7 @@ impl PrototypesGlweCiphertextVector<Precision32, BinaryKeyDistribution> for Make
         ciphertext: &Self::GlweCiphertextVectorProto,
     ) -> Self::PlaintextVectorProto {
         ProtoPlaintextVector32(
-            self.core_engine
+            self.default_engine
                 .decrypt_glwe_ciphertext_vector(&secret_key.0, &ciphertext.0)
                 .unwrap(),
         )
@@ -145,11 +145,11 @@ impl PrototypesGlweCiphertextVector<Precision64, BinaryKeyDistribution> for Make
         plaintext_count: PlaintextCount,
     ) -> Self::GlweCiphertextVectorProto {
         let plaintext_vector = self
-            .core_engine
+            .default_engine
             .create_plaintext_vector(&vec![0u64; plaintext_count.0])
             .unwrap();
         ProtoBinaryGlweCiphertextVector64(
-            self.core_engine
+            self.default_engine
                 .trivially_encrypt_glwe_ciphertext_vector(
                     glwe_size,
                     glwe_ciphertext_count,
@@ -166,7 +166,7 @@ impl PrototypesGlweCiphertextVector<Precision64, BinaryKeyDistribution> for Make
         plaintext_vector: &Self::PlaintextVectorProto,
     ) -> Self::GlweCiphertextVectorProto {
         ProtoBinaryGlweCiphertextVector64(
-            self.core_engine
+            self.default_engine
                 .trivially_encrypt_glwe_ciphertext_vector(
                     glwe_size,
                     glwe_ciphertext_count,
@@ -181,7 +181,7 @@ impl PrototypesGlweCiphertextVector<Precision64, BinaryKeyDistribution> for Make
         ciphertext: &Self::GlweCiphertextVectorProto,
     ) -> Self::PlaintextVectorProto {
         ProtoPlaintextVector64(
-            self.core_engine
+            self.default_engine
                 .trivially_decrypt_glwe_ciphertext_vector(&ciphertext.0)
                 .unwrap(),
         )
@@ -193,7 +193,7 @@ impl PrototypesGlweCiphertextVector<Precision64, BinaryKeyDistribution> for Make
         noise: Variance,
     ) -> Self::GlweCiphertextVectorProto {
         ProtoBinaryGlweCiphertextVector64(
-            self.core_engine
+            self.default_engine
                 .encrypt_glwe_ciphertext_vector(&secret_key.0, &plaintext_vector.0, noise)
                 .unwrap(),
         )
@@ -205,7 +205,7 @@ impl PrototypesGlweCiphertextVector<Precision64, BinaryKeyDistribution> for Make
         ciphertext: &Self::GlweCiphertextVectorProto,
     ) -> Self::PlaintextVectorProto {
         ProtoPlaintextVector64(
-            self.core_engine
+            self.default_engine
                 .decrypt_glwe_ciphertext_vector(&secret_key.0, &ciphertext.0)
                 .unwrap(),
         )

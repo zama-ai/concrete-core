@@ -55,7 +55,7 @@ impl PrototypesPackingKeyswitchKey<Precision32, BinaryKeyDistribution, BinaryKey
         noise: Variance,
     ) -> Self::PackingKeyswitchKeyProto {
         ProtoBinaryBinaryPackingKeyswitchKey32(
-            self.core_engine
+            self.default_engine
                 .create_packing_keyswitch_key(
                     &input_key.0,
                     &output_key.0,
@@ -82,7 +82,7 @@ impl PrototypesPackingKeyswitchKey<Precision64, BinaryKeyDistribution, BinaryKey
         noise: Variance,
     ) -> Self::PackingKeyswitchKeyProto {
         ProtoBinaryBinaryPackingKeyswitchKey64(
-            self.core_engine
+            self.default_engine
                 .create_packing_keyswitch_key(
                     &input_key.0,
                     &output_key.0,

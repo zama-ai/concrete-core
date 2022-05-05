@@ -12,5 +12,5 @@ pub const REPETITIONS: Repetitions = Repetitions(10);
 /// The size of the sample used to perform statistical tests.
 pub const SAMPLE_SIZE: SampleSize = SampleSize(100);
 
-#[cfg(all(test, feature = "backend_core"))]
-pub mod core;
+#[cfg(all(test, feature = "backend_default"))]
+pub mod default;

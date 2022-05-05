@@ -44,9 +44,9 @@ Open `concrete-core`'s `Cargo.toml` file and edit the following section:
 
 ```ini
 [features]
-default = ["backend_core"]
+default = ["backend_default"]
 doc = []
-backend_core = []
+backend_default = []
 slow-csprng = ["concrete-csprng/slow"]
 multithread = ["rayon", "concrete-csprng/multithread"]
 ```
@@ -70,7 +70,7 @@ Now, you'll be able to:
 cargo build -p concrete-core --release --features=backend_gpu
 ```
 
-which will build `concrete-core` with the features `backend_core` and `backend_gpu`.
+which will build `concrete-core` with the features `backend_default` and `backend_gpu`.
 
 ## Build the structure for the new backend
 
@@ -419,11 +419,11 @@ let lwe_dimension = LweDimension(6);
 let input = vec![3_u32 << 20; 3];
 let noise = Variance(2_f64.powf(-25.));
 
-let mut core_engine = CoreEngine::new().unwrap();
-let h_key: LweSecretKey32 = core_engine.create_lwe_secret_key(lwe_dimension).unwrap();
-let h_plaintext_vector: PlaintextVector32 = core_engine.create_plaintext_vector(&input).unwrap();
+let mut default_engine = DefaultEngine::new().unwrap();
+let h_key: LweSecretKey32 = default_engine.create_lwe_secret_key(lwe_dimension).unwrap();
+let h_plaintext_vector: PlaintextVector32 = default_engine.create_plaintext_vector(&input).unwrap();
 let mut h_ciphertext_vector: LweCiphertextVector32 =
-core_engine.encrypt_lwe_ciphertext_vector(&h_key, &h_plaintext_vector, noise).unwrap();
+default_engine.encrypt_lwe_ciphertext_vector(&h_key, &h_plaintext_vector, noise).unwrap();
 
 let mut gpu_engine = GpuEngine::new().unwrap();
 let d_ciphertext_vector: GpuLweCiphertextVector32 =
@@ -437,11 +437,11 @@ assert_eq!(
     LweCiphertextCount(3)
 );
 
-core_engine.destroy(h_key).unwrap();
-core_engine.destroy(h_plaintext_vector).unwrap();
-core_engine.destroy(h_ciphertext_vector).unwrap();
+default_engine.destroy(h_key).unwrap();
+default_engine.destroy(h_plaintext_vector).unwrap();
+default_engine.destroy(h_ciphertext_vector).unwrap();
 gpu_engine.destroy(d_ciphertext_vector).unwrap();
-core_engine.destroy(h_output_ciphertext_vector).unwrap();
+default_engine.destroy(h_output_ciphertext_vector).unwrap();
 ```
 
 And this converts an LWE ciphertext vector from the CPU to the GPU! Next step is to test your

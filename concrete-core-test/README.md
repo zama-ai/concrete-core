@@ -4,7 +4,7 @@ This library contains statistical tests for the `concrete-core` library.
 
 To execute the tests:
 ```shell
-RUSTFLAGS="-Ctarget-cpu=native" cargo test --release --features=backend_core -- some_filters
+RUSTFLAGS="-Ctarget-cpu=native" cargo test --release --features=backend_default -- some_filters
 ```
 
 ## License

@@ -23,8 +23,8 @@ where
     fn destroy_lwe_bootstrap_key(&mut self, entity: LweBootstrapKey);
 }
 
-#[cfg(feature = "backend_core")]
-mod backend_core {
+#[cfg(feature = "backend_default")]
+mod backend_default {
     use crate::generation::prototypes::{
         ProtoBinaryBinaryLweBootstrapKey32, ProtoBinaryBinaryLweBootstrapKey64,
     };
@@ -48,7 +48,7 @@ mod backend_core {
         }
 
         fn destroy_lwe_bootstrap_key(&mut self, entity: LweBootstrapKey32) {
-            self.core_engine.destroy(entity).unwrap();
+            self.default_engine.destroy(entity).unwrap();
         }
     }
 
@@ -68,7 +68,7 @@ mod backend_core {
         }
 
         fn destroy_lwe_bootstrap_key(&mut self, entity: LweBootstrapKey64) {
-            self.core_engine.destroy(entity).unwrap();
+            self.default_engine.destroy(entity).unwrap();
         }
     }
 }

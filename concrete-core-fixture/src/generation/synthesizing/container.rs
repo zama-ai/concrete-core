@@ -12,8 +12,8 @@ where
     fn destroy_container(&mut self, container: Container);
 }
 
-#[cfg(feature = "backend_core")]
-mod backend_core {
+#[cfg(feature = "backend_default")]
+mod backend_default {
     use crate::generation::prototypes::{ProtoVec32, ProtoVec64};
     use crate::generation::synthesizing::SynthesizesContainer;
     use crate::generation::{Maker, Precision32, Precision64};

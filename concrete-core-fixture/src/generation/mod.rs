@@ -53,15 +53,15 @@ impl IntegerPrecision for Precision64 {
 /// + Convert back and forth between prototypical entities and actual entity types used in the
 /// fixture.
 pub struct Maker {
-    core_engine: concrete_core::backends::core::engines::CoreEngine,
+    default_engine: concrete_core::backends::default::engines::DefaultEngine,
 }
 
 impl Default for Maker {
     fn default() -> Self {
         Maker {
-            core_engine: concrete_core::backends::core::engines::CoreEngine::new(Box::new(
-                UnixSeeder::new(0),
-            ))
+            default_engine: concrete_core::backends::default::engines::DefaultEngine::new(
+                Box::new(UnixSeeder::new(0)),
+            )
             .unwrap(),
         }
     }

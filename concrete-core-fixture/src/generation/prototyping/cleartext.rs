@@ -13,11 +13,13 @@ impl PrototypesCleartext<Precision32> for Maker {
     type CleartextProto = ProtoCleartext32;
 
     fn transform_raw_to_cleartext(&mut self, raw: &u32) -> Self::CleartextProto {
-        ProtoCleartext32(self.core_engine.create_cleartext(raw).unwrap())
+        ProtoCleartext32(self.default_engine.create_cleartext(raw).unwrap())
     }
 
     fn transform_cleartext_to_raw(&mut self, cleartext: &Self::CleartextProto) -> u32 {
-        self.core_engine.retrieve_cleartext(&cleartext.0).unwrap()
+        self.default_engine
+            .retrieve_cleartext(&cleartext.0)
+            .unwrap()
     }
 }
 
@@ -25,10 +27,12 @@ impl PrototypesCleartext<Precision64> for Maker {
     type CleartextProto = ProtoCleartext64;
 
     fn transform_raw_to_cleartext(&mut self, raw: &u64) -> Self::CleartextProto {
-        ProtoCleartext64(self.core_engine.create_cleartext(raw).unwrap())
+        ProtoCleartext64(self.default_engine.create_cleartext(raw).unwrap())
     }
 
     fn transform_cleartext_to_raw(&mut self, cleartext: &Self::CleartextProto) -> u64 {
-        self.core_engine.retrieve_cleartext(&cleartext.0).unwrap()
+        self.default_engine
+            .retrieve_cleartext(&cleartext.0)
+            .unwrap()
     }
 }

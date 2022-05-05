@@ -33,9 +33,9 @@ name = "concrete_core"
 bench = false
 
 [features]
-default = ["backend_core", "seeder_unix"]
+default = ["backend_default", "seeder_unix"]
 doc = []
-backend_core = [
+backend_default = [
     "concrete-csprng/generator_soft"
 ]
 seeder_unix = ["concrete-csprng/seeder_unix"]
