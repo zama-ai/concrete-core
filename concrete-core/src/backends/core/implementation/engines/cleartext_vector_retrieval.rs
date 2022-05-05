@@ -1,6 +1,6 @@
 use crate::backends::core::implementation::engines::CoreEngine;
 use crate::backends::core::implementation::entities::{CleartextVector32, CleartextVector64};
-use crate::backends::core::private::math::tensor::AsRefTensor;
+use crate::commons::math::tensor::AsRefTensor;
 use crate::specification::engines::{
     CleartextVectorRetrievalEngine, CleartextVectorRetrievalError,
 };

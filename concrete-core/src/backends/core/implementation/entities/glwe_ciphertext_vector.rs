@@ -1,4 +1,4 @@
-use super::super::super::private::crypto::glwe::GlweList as ImplGlweList;
+use crate::commons::crypto::glwe::GlweList as ImplGlweList;
 use crate::specification::entities::markers::{BinaryKeyDistribution, GlweCiphertextVectorKind};
 use crate::specification::entities::{AbstractEntity, GlweCiphertextVectorEntity};
 use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};

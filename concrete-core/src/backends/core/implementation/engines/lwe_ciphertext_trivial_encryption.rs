@@ -4,7 +4,7 @@ use crate::specification::engines::{
 };
 use concrete_commons::parameters::LweSize;
 
-use crate::backends::core::private::crypto::lwe::LweCiphertext as ImplLweCiphertext;
+use crate::commons::crypto::lwe::LweCiphertext as ImplLweCiphertext;
 
 impl LweCiphertextTrivialEncryptionEngine<Plaintext32, LweCiphertext32> for CoreEngine {
     /// # Example:

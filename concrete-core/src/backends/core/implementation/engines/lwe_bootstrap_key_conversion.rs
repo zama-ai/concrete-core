@@ -2,8 +2,8 @@ use crate::backends::core::implementation::engines::CoreEngine;
 use crate::backends::core::implementation::entities::{
     FourierLweBootstrapKey32, FourierLweBootstrapKey64, LweBootstrapKey32, LweBootstrapKey64,
 };
-use crate::backends::core::private::crypto::bootstrap::FourierBootstrapKey as ImplFourierBootstrapKey;
-use crate::backends::core::private::math::fft::Complex64;
+use crate::commons::crypto::bootstrap::FourierBootstrapKey as ImplFourierBootstrapKey;
+use crate::commons::math::fft::Complex64;
 use crate::specification::engines::{
     LweBootstrapKeyConversionEngine, LweBootstrapKeyConversionError,
 };

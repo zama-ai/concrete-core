@@ -1,4 +1,4 @@
-use crate::backends::core::private::crypto::secret::GlweSecretKey as ImpGlweSecretKey;
+use crate::commons::crypto::secret::GlweSecretKey as ImpGlweSecretKey;
 use crate::specification::entities::markers::{BinaryKeyDistribution, GlweSecretKeyKind};
 use crate::specification::entities::{AbstractEntity, GlweSecretKeyEntity};
 use concrete_commons::key_kinds::BinaryKeyKind;

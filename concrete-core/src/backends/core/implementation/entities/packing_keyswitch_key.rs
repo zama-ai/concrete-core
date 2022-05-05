@@ -1,4 +1,4 @@
-use crate::backends::core::private::crypto::glwe::PackingKeyswitchKey as ImplPackingKeyswitchKey;
+use crate::commons::crypto::glwe::PackingKeyswitchKey as ImplPackingKeyswitchKey;
 use crate::prelude::markers::PackingKeyswitchKeyKind;
 use crate::prelude::PackingKeyswitchKeyEntity;
 use crate::specification::entities::markers::BinaryKeyDistribution;

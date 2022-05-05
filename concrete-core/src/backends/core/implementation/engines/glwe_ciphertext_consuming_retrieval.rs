@@ -3,7 +3,7 @@ use crate::backends::core::implementation::entities::{
     GlweCiphertext32, GlweCiphertext64, GlweCiphertextMutView32, GlweCiphertextMutView64,
     GlweCiphertextView32, GlweCiphertextView64,
 };
-use crate::backends::core::private::math::tensor::IntoTensor;
+use crate::commons::math::tensor::IntoTensor;
 use crate::specification::engines::{
     GlweCiphertextConsumingRetrievalEngine, GlweCiphertextConsumingRetrievalError,
 };

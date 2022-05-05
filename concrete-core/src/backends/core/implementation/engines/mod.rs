@@ -8,8 +8,8 @@ use concrete_commons::parameters::{GlweSize, PolynomialSize};
 use concrete_csprng::generators::AesniRandomGenerator;
 use concrete_csprng::seeders::Seeder;
 
-use crate::backends::core::private::crypto::bootstrap::FourierBuffers;
-use crate::backends::core::private::crypto::secret::generators::{
+use crate::commons::crypto::bootstrap::FourierBuffers;
+use crate::commons::crypto::secret::generators::{
     EncryptionRandomGenerator as ImplEncryptionRandomGenerator,
     SecretRandomGenerator as ImplSecretRandomGenerator,
 };

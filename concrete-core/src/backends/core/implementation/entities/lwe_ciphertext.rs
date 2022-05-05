@@ -1,4 +1,4 @@
-use super::super::super::private::crypto::lwe::LweCiphertext as ImplLweCiphertext;
+use crate::commons::crypto::lwe::LweCiphertext as ImplLweCiphertext;
 use crate::specification::entities::markers::{BinaryKeyDistribution, LweCiphertextKind};
 use crate::specification::entities::{AbstractEntity, LweCiphertextEntity};
 use concrete_commons::parameters::LweDimension;

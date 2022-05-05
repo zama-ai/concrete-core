@@ -1,4 +1,4 @@
-use crate::backends::core::private::crypto::secret::LweSecretKey as ImpLweSecretKey;
+use crate::commons::crypto::secret::LweSecretKey as ImpLweSecretKey;
 use crate::specification::entities::markers::{BinaryKeyDistribution, LweSecretKeyKind};
 use crate::specification::entities::{AbstractEntity, LweSecretKeyEntity};
 use concrete_commons::key_kinds::BinaryKeyKind;

@@ -5,9 +5,6 @@
 //! multiplication, and uses special aesni and rdseed instructions for faster random number
 //! generation.
 
-#[doc(hidden)]
-pub mod private;
-
 mod implementation;
 
 pub use implementation::{engines, entities};

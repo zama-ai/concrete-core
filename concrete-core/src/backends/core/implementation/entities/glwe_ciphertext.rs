@@ -4,11 +4,11 @@ use serde::{Deserialize, Serialize};
 
 use concrete_commons::parameters::{GlweDimension, PolynomialSize};
 
-use crate::backends::core::private::math::fft::Complex64;
+use crate::commons::math::fft::Complex64;
 use crate::specification::entities::markers::{BinaryKeyDistribution, GlweCiphertextKind};
 use crate::specification::entities::{AbstractEntity, GlweCiphertextEntity};
 
-use super::super::super::private::crypto::glwe::{
+use crate::commons::crypto::glwe::{
     FourierGlweCiphertext as ImplFourierGlweCiphertext, GlweCiphertext as ImplGlweCiphertext,
 };
 

@@ -5,7 +5,7 @@ use crate::backends::core::implementation::engines::CoreEngine;
 use crate::backends::core::implementation::entities::{
     LweKeyswitchKey32, LweKeyswitchKey64, LweSecretKey32, LweSecretKey64,
 };
-use crate::backends::core::private::crypto::lwe::LweKeyswitchKey as ImplLweKeyswitchKey;
+use crate::commons::crypto::lwe::LweKeyswitchKey as ImplLweKeyswitchKey;
 use crate::specification::engines::{LweKeyswitchKeyCreationEngine, LweKeyswitchKeyCreationError};
 use crate::specification::entities::LweSecretKeyEntity;
 

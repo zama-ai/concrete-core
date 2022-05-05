@@ -4,7 +4,7 @@ use crate::backends::core::implementation::entities::{
     GlweCiphertextView32, GlweCiphertextView64, LweCiphertext32, LweCiphertext64,
     LweCiphertextMutView32, LweCiphertextMutView64, LweCiphertextView32, LweCiphertextView64,
 };
-use crate::backends::core::private::math::fft::ALLOWED_POLY_SIZE;
+use crate::commons::math::fft::ALLOWED_POLY_SIZE;
 use crate::prelude::{CoreError, GlweCiphertextEntity, LweBootstrapKeyEntity};
 use crate::specification::engines::{
     LweCiphertextDiscardingBootstrapEngine, LweCiphertextDiscardingBootstrapError,

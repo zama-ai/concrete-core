@@ -1,6 +1,6 @@
 use crate::backends::core::implementation::engines::CoreEngine;
 use crate::backends::core::implementation::entities::{Plaintext32, Plaintext64};
-use crate::backends::core::private::crypto::encoding::Plaintext as ImplPlaintext;
+use crate::commons::crypto::encoding::Plaintext as ImplPlaintext;
 use crate::specification::engines::{PlaintextCreationEngine, PlaintextCreationError};
 
 /// # Description:

@@ -1,4 +1,4 @@
-use crate::backends::core::private::crypto::lwe::LweList as ImplLweList;
+use crate::commons::crypto::lwe::LweList as ImplLweList;
 use crate::prelude::{
     CoreEngine, LweCiphertextVector32, LweCiphertextVector64,
     LweCiphertextVectorTrivialEncryptionEngine, LweCiphertextVectorTrivialEncryptionError,
