@@ -71,11 +71,11 @@ impl PrototypesGlweCiphertext<Precision32, BinaryKeyDistribution> for Maker {
         poly_size: PolynomialSize,
     ) -> Self::GlweCiphertextProto {
         let plaintext_vector = self
-            .core_engine
+            .default_engine
             .create_plaintext_vector(&vec![0u32; poly_size.0])
             .unwrap();
         ProtoBinaryGlweCiphertext32(
-            self.core_engine
+            self.default_engine
                 .trivially_encrypt_glwe_ciphertext(glwe_dimension.to_glwe_size(), &plaintext_vector)
                 .unwrap(),
         )
@@ -87,7 +87,7 @@ impl PrototypesGlweCiphertext<Precision32, BinaryKeyDistribution> for Maker {
         plaintext_vector: &Self::PlaintextVectorProto,
     ) -> Self::GlweCiphertextProto {
         ProtoBinaryGlweCiphertext32(
-            self.core_engine
+            self.default_engine
                 .trivially_encrypt_glwe_ciphertext(
                     glwe_dimension.to_glwe_size(),
                     &plaintext_vector.0,
@@ -101,7 +101,7 @@ impl PrototypesGlweCiphertext<Precision32, BinaryKeyDistribution> for Maker {
         ciphertext: &Self::GlweCiphertextProto,
     ) -> Self::PlaintextVectorProto {
         ProtoPlaintextVector32(
-            self.core_engine
+            self.default_engine
                 .trivially_decrypt_glwe_ciphertext(&ciphertext.0)
                 .unwrap(),
         )
@@ -114,7 +114,7 @@ impl PrototypesGlweCiphertext<Precision32, BinaryKeyDistribution> for Maker {
         noise: Variance,
     ) -> Self::GlweCiphertextProto {
         ProtoBinaryGlweCiphertext32(
-            self.core_engine
+            self.default_engine
                 .encrypt_glwe_ciphertext(&secret_key.0, &plaintext_vector.0, noise)
                 .unwrap(),
         )
@@ -126,7 +126,7 @@ impl PrototypesGlweCiphertext<Precision32, BinaryKeyDistribution> for Maker {
         ciphertext: &Self::GlweCiphertextProto,
     ) -> Self::PlaintextVectorProto {
         ProtoPlaintextVector32(
-            self.core_engine
+            self.default_engine
                 .decrypt_glwe_ciphertext(&secret_key.0, &ciphertext.0)
                 .unwrap(),
         )
@@ -138,7 +138,7 @@ impl PrototypesGlweCiphertext<Precision32, BinaryKeyDistribution> for Maker {
         polynomial_size: PolynomialSize,
     ) -> Self::GlweCiphertextProto {
         let glwe_ciphertext = self
-            .core_engine
+            .default_engine
             .create_glwe_ciphertext(raw.to_owned(), polynomial_size)
             .unwrap();
         ProtoBinaryGlweCiphertext32(glwe_ciphertext)
@@ -151,7 +151,7 @@ impl PrototypesGlweCiphertext<Precision32, BinaryKeyDistribution> for Maker {
         let ciphertext = ciphertext.0.to_owned();
         let polynomial_size = ciphertext.polynomial_size();
         (
-            self.core_engine
+            self.default_engine
                 .consume_retrieve_glwe_ciphertext(ciphertext)
                 .unwrap(),
             polynomial_size,
@@ -168,11 +168,11 @@ impl PrototypesGlweCiphertext<Precision64, BinaryKeyDistribution> for Maker {
         poly_size: PolynomialSize,
     ) -> Self::GlweCiphertextProto {
         let plaintext_vector = self
-            .core_engine
+            .default_engine
             .create_plaintext_vector(&vec![0u64; poly_size.0])
             .unwrap();
         ProtoBinaryGlweCiphertext64(
-            self.core_engine
+            self.default_engine
                 .trivially_encrypt_glwe_ciphertext(glwe_dimension.to_glwe_size(), &plaintext_vector)
                 .unwrap(),
         )
@@ -184,7 +184,7 @@ impl PrototypesGlweCiphertext<Precision64, BinaryKeyDistribution> for Maker {
         plaintext_vector: &Self::PlaintextVectorProto,
     ) -> Self::GlweCiphertextProto {
         ProtoBinaryGlweCiphertext64(
-            self.core_engine
+            self.default_engine
                 .trivially_encrypt_glwe_ciphertext(
                     glwe_dimension.to_glwe_size(),
                     &plaintext_vector.0,
@@ -198,7 +198,7 @@ impl PrototypesGlweCiphertext<Precision64, BinaryKeyDistribution> for Maker {
         ciphertext: &Self::GlweCiphertextProto,
     ) -> Self::PlaintextVectorProto {
         ProtoPlaintextVector64(
-            self.core_engine
+            self.default_engine
                 .trivially_decrypt_glwe_ciphertext(&ciphertext.0)
                 .unwrap(),
         )
@@ -211,7 +211,7 @@ impl PrototypesGlweCiphertext<Precision64, BinaryKeyDistribution> for Maker {
         noise: Variance,
     ) -> Self::GlweCiphertextProto {
         ProtoBinaryGlweCiphertext64(
-            self.core_engine
+            self.default_engine
                 .encrypt_glwe_ciphertext(&secret_key.0, &plaintext_vector.0, noise)
                 .unwrap(),
         )
@@ -223,7 +223,7 @@ impl PrototypesGlweCiphertext<Precision64, BinaryKeyDistribution> for Maker {
         ciphertext: &Self::GlweCiphertextProto,
     ) -> Self::PlaintextVectorProto {
         ProtoPlaintextVector64(
-            self.core_engine
+            self.default_engine
                 .decrypt_glwe_ciphertext(&secret_key.0, &ciphertext.0)
                 .unwrap(),
         )
@@ -235,7 +235,7 @@ impl PrototypesGlweCiphertext<Precision64, BinaryKeyDistribution> for Maker {
         polynomial_size: PolynomialSize,
     ) -> Self::GlweCiphertextProto {
         let glwe_ciphertext = self
-            .core_engine
+            .default_engine
             .create_glwe_ciphertext(raw.to_owned(), polynomial_size)
             .unwrap();
         ProtoBinaryGlweCiphertext64(glwe_ciphertext)
@@ -248,7 +248,7 @@ impl PrototypesGlweCiphertext<Precision64, BinaryKeyDistribution> for Maker {
         let ciphertext = ciphertext.0.to_owned();
         let polynomial_size = ciphertext.polynomial_size();
         (
-            self.core_engine
+            self.default_engine
                 .consume_retrieve_glwe_ciphertext(ciphertext)
                 .unwrap(),
             polynomial_size,

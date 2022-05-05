@@ -11,7 +11,7 @@ of `concrete-core-bench` to add the following lines in the dependencies and feat
 backend_gpu = ["concrete-core/backend_gpu"]
 ```
 
-## Create a new module alongside the core one
+## Create a new module alongside the default one
 
 Let's start by editing the `main.rs` file of `concrete-core-bench` to have:
 
@@ -22,8 +22,8 @@ mod gpu;
 // The main entry point. Uses criterion as benchmark harness.
 fn main() {
     // We instantiate the benchmarks for different backends depending on the feature flag activated.
-    #[cfg(feature = "backend_core")]
-        core::bench();
+    #[cfg(feature = "backend_default")]
+        default::bench();
     #[cfg(feature = "backend_gpu")]
         gpu::bench();
 
@@ -65,7 +65,7 @@ That's all you need to do!
 Launching the command:
 
 ```
-cargo run -p concrete-core-bench --features=backend_gpu,backend_core --release -- --bench Conversion
+cargo run -p concrete-core-bench --features=backend_gpu,backend_default --release -- --bench Conversion
 ```
 
 Should now yield:

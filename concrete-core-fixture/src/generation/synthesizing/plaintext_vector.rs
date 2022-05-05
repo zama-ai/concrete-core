@@ -19,8 +19,8 @@ where
     fn destroy_plaintext_vector(&mut self, entity: PlaintextVector);
 }
 
-#[cfg(feature = "backend_core")]
-mod backend_core {
+#[cfg(feature = "backend_default")]
+mod backend_default {
     use crate::generation::prototypes::{ProtoPlaintextVector32, ProtoPlaintextVector64};
     use crate::generation::synthesizing::SynthesizesPlaintextVector;
     use crate::generation::{Maker, Precision32, Precision64};
@@ -42,7 +42,7 @@ mod backend_core {
         }
 
         fn destroy_plaintext_vector(&mut self, entity: PlaintextVector32) {
-            self.core_engine.destroy(entity).unwrap();
+            self.default_engine.destroy(entity).unwrap();
         }
     }
 
@@ -62,7 +62,7 @@ mod backend_core {
         }
 
         fn destroy_plaintext_vector(&mut self, entity: PlaintextVector64) {
-            self.core_engine.destroy(entity).unwrap();
+            self.default_engine.destroy(entity).unwrap();
         }
     }
 }

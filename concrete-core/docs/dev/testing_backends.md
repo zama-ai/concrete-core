@@ -33,7 +33,7 @@ in `concrete-core-fixture/src/generation/mod.rs`:
 
 ```rust
 pub struct Maker {
-    core_engine: concrete_core::backends::core::engines::CoreEngine,
+    default_engine: concrete_core::backends::default::engines::DefaultEngine,
     #[cfg(feature = "backend_gpu")]
     gpu_engine: concrete_core::backends::gpu::engines::GpuEngine,
 }
@@ -41,7 +41,7 @@ pub struct Maker {
 impl Default for Maker {
     fn default() -> Self {
         Maker {
-            core_engine: concrete_core::backends::core::engines::CoreEngine::new().unwrap(),
+            default_engine: concrete_core::backends::default::engines::DefaultEngine::new().unwrap(),
             #[cfg(feature = "backend_gpu")]
             gpu_engine: concrete_core::backends::gpu::engines::GpuEngine::new().unwrap(),
         }
@@ -106,7 +106,7 @@ fhe-gpu = { version = "0.0.1", optional = true }
 paste = "1.0"
 
 [features]
-backend_core = ["concrete-core/backend_core", "concrete-core-fixture/backend_core"]
+backend_default = ["concrete-core/backend_default", "concrete-core-fixture/backend_default"]
 backend_gpu = ["concrete-core/backend_gpu", "concrete-core-fixture/backend_gpu"]
 ```
 
@@ -150,13 +150,13 @@ Finally, let's run our test!
 The command to run the tests for the GPU backend is:
 
 ```
-cargo test -p concrete-core-test --features=backend_gpu,backend_core --release
+cargo test -p concrete-core-test --features=backend_gpu,backend_default --release
 ```
 
 You can filter it to execute a specific engine only:
 
 ```
-cargo test -p concrete-core-test --features=backend_gpu,backend_core --release -- --test conversion
+cargo test -p concrete-core-test --features=backend_gpu,backend_default --release -- --test conversion
 ```
 
 You should get as the output:

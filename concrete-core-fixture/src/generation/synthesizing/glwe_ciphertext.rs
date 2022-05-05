@@ -17,8 +17,8 @@ where
     fn destroy_glwe_ciphertext(&mut self, entity: GlweCiphertext);
 }
 
-#[cfg(feature = "backend_core")]
-mod backend_core {
+#[cfg(feature = "backend_default")]
+mod backend_default {
     use crate::generation::prototypes::{ProtoBinaryGlweCiphertext32, ProtoBinaryGlweCiphertext64};
     use crate::generation::synthesizing::SynthesizesGlweCiphertext;
     use crate::generation::{Maker, Precision32, Precision64};
@@ -40,7 +40,7 @@ mod backend_core {
         }
 
         fn destroy_glwe_ciphertext(&mut self, entity: GlweCiphertext32) {
-            self.core_engine.destroy(entity).unwrap();
+            self.default_engine.destroy(entity).unwrap();
         }
     }
 
@@ -60,7 +60,7 @@ mod backend_core {
         }
 
         fn destroy_glwe_ciphertext(&mut self, entity: GlweCiphertext64) {
-            self.core_engine.destroy(entity).unwrap();
+            self.default_engine.destroy(entity).unwrap();
         }
     }
 
@@ -77,10 +77,10 @@ mod backend_core {
             let ciphertext = prototype.0.to_owned();
             let polynomial_size = ciphertext.polynomial_size();
             let container = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_glwe_ciphertext(ciphertext)
                 .unwrap();
-            self.core_engine
+            self.default_engine
                 .create_glwe_ciphertext(container.leak() as &[u32], polynomial_size)
                 .unwrap()
         }
@@ -91,11 +91,11 @@ mod backend_core {
         ) -> Self::GlweCiphertextProto {
             let polynomial_size = entity.polynomial_size();
             let slice = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_glwe_ciphertext(entity)
                 .unwrap();
             let ciphertext = self
-                .core_engine
+                .default_engine
                 .create_glwe_ciphertext(
                     unsafe {
                         Vec::from_raw_parts(slice.as_ptr() as *mut u32, slice.len(), slice.len())
@@ -109,7 +109,7 @@ mod backend_core {
         fn destroy_glwe_ciphertext(&mut self, entity: GlweCiphertextView32) {
             // Re-construct the vector so that it frees memory when it's dropped
             let slice = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_glwe_ciphertext(entity)
                 .unwrap();
             unsafe { Vec::from_raw_parts(slice.as_ptr() as *mut u32, slice.len(), slice.len()) };
@@ -124,10 +124,10 @@ mod backend_core {
             let ciphertext = prototype.0.to_owned();
             let polynomial_size = ciphertext.polynomial_size();
             let container = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_glwe_ciphertext(ciphertext)
                 .unwrap();
-            self.core_engine
+            self.default_engine
                 .create_glwe_ciphertext(container.leak() as &[u64], polynomial_size)
                 .unwrap()
         }
@@ -138,11 +138,11 @@ mod backend_core {
         ) -> Self::GlweCiphertextProto {
             let polynomial_size = entity.polynomial_size();
             let slice = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_glwe_ciphertext(entity)
                 .unwrap();
             let ciphertext = self
-                .core_engine
+                .default_engine
                 .create_glwe_ciphertext(
                     unsafe {
                         Vec::from_raw_parts(slice.as_ptr() as *mut u64, slice.len(), slice.len())
@@ -156,7 +156,7 @@ mod backend_core {
         fn destroy_glwe_ciphertext(&mut self, entity: GlweCiphertextView64) {
             // Re-construct the vector so that it frees memory when it's dropped
             let slice = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_glwe_ciphertext(entity)
                 .unwrap();
             unsafe { Vec::from_raw_parts(slice.as_ptr() as *mut u64, slice.len(), slice.len()) };
@@ -173,10 +173,10 @@ mod backend_core {
             let ciphertext = prototype.0.to_owned();
             let polynomial_size = ciphertext.polynomial_size();
             let container = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_glwe_ciphertext(ciphertext)
                 .unwrap();
-            self.core_engine
+            self.default_engine
                 .create_glwe_ciphertext(container.leak(), polynomial_size)
                 .unwrap()
         }
@@ -187,11 +187,11 @@ mod backend_core {
         ) -> Self::GlweCiphertextProto {
             let polynomial_size = entity.polynomial_size();
             let slice = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_glwe_ciphertext(entity)
                 .unwrap();
             let ciphertext = self
-                .core_engine
+                .default_engine
                 .create_glwe_ciphertext(
                     unsafe { Vec::from_raw_parts(slice.as_mut_ptr(), slice.len(), slice.len()) },
                     polynomial_size,
@@ -203,7 +203,7 @@ mod backend_core {
         fn destroy_glwe_ciphertext(&mut self, entity: GlweCiphertextMutView32) {
             // Re-construct the vector so that it frees memory when it's dropped
             let slice = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_glwe_ciphertext(entity)
                 .unwrap();
             unsafe { Vec::from_raw_parts(slice.as_mut_ptr(), slice.len(), slice.len()) };
@@ -218,10 +218,10 @@ mod backend_core {
             let ciphertext = prototype.0.to_owned();
             let polynomial_size = ciphertext.polynomial_size();
             let container = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_glwe_ciphertext(ciphertext)
                 .unwrap();
-            self.core_engine
+            self.default_engine
                 .create_glwe_ciphertext(container.leak(), polynomial_size)
                 .unwrap()
         }
@@ -232,11 +232,11 @@ mod backend_core {
         ) -> Self::GlweCiphertextProto {
             let polynomial_size = entity.polynomial_size();
             let slice = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_glwe_ciphertext(entity)
                 .unwrap();
             let ciphertext = self
-                .core_engine
+                .default_engine
                 .create_glwe_ciphertext(
                     unsafe { Vec::from_raw_parts(slice.as_mut_ptr(), slice.len(), slice.len()) },
                     polynomial_size,
@@ -248,7 +248,7 @@ mod backend_core {
         fn destroy_glwe_ciphertext(&mut self, entity: GlweCiphertextMutView64) {
             // Re-construct the vector so that it frees memory when it's dropped
             let slice = self
-                .core_engine
+                .default_engine
                 .consume_retrieve_glwe_ciphertext(entity)
                 .unwrap();
             unsafe { Vec::from_raw_parts(slice.as_mut_ptr(), slice.len(), slice.len()) };

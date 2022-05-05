@@ -15,9 +15,9 @@ pub use concrete_csprng::seeders::Seeder;
 #[cfg(feature = "seeder_unix")]
 pub use concrete_csprng::seeders::UnixSeeder;
 
-#[cfg(feature = "backend_core")]
-pub use super::backends::core::engines::*;
-#[cfg(feature = "backend_core")]
-pub use super::backends::core::entities::*;
+#[cfg(feature = "backend_default")]
+pub use super::backends::default::engines::*;
+#[cfg(feature = "backend_default")]
+pub use super::backends::default::entities::*;
 pub use super::specification::engines::*;
 pub use super::specification::entities::*;

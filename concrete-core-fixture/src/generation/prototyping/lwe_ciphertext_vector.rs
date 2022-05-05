@@ -66,11 +66,11 @@ impl PrototypesLweCiphertextVector<Precision32, BinaryKeyDistribution> for Maker
         count: LweCiphertextCount,
     ) -> Self::LweCiphertextVectorProto {
         let plaintext_vector = self
-            .core_engine
+            .default_engine
             .create_plaintext_vector(&vec![0u32; count.0])
             .unwrap();
         ProtoBinaryLweCiphertextVector32(
-            self.core_engine
+            self.default_engine
                 .trivially_encrypt_lwe_ciphertext_vector(
                     lwe_dimension.to_lwe_size(),
                     &plaintext_vector,
@@ -85,7 +85,7 @@ impl PrototypesLweCiphertextVector<Precision32, BinaryKeyDistribution> for Maker
         plaintext_vector: &Self::PlaintextVectorProto,
     ) -> Self::LweCiphertextVectorProto {
         ProtoBinaryLweCiphertextVector32(
-            self.core_engine
+            self.default_engine
                 .trivially_encrypt_lwe_ciphertext_vector(
                     lwe_dimension.to_lwe_size(),
                     &plaintext_vector.0,
@@ -101,7 +101,7 @@ impl PrototypesLweCiphertextVector<Precision32, BinaryKeyDistribution> for Maker
         noise: Variance,
     ) -> Self::LweCiphertextVectorProto {
         ProtoBinaryLweCiphertextVector32(
-            self.core_engine
+            self.default_engine
                 .encrypt_lwe_ciphertext_vector(&secret_key.0, &plaintext_vector.0, noise)
                 .unwrap(),
         )
@@ -113,7 +113,7 @@ impl PrototypesLweCiphertextVector<Precision32, BinaryKeyDistribution> for Maker
         ciphertext_vector: &Self::LweCiphertextVectorProto,
     ) -> Self::PlaintextVectorProto {
         ProtoPlaintextVector32(
-            self.core_engine
+            self.default_engine
                 .decrypt_lwe_ciphertext_vector(&secret_key.0, &ciphertext_vector.0)
                 .unwrap(),
         )
@@ -124,7 +124,7 @@ impl PrototypesLweCiphertextVector<Precision32, BinaryKeyDistribution> for Maker
         ciphertext_vector: &Self::LweCiphertextVectorProto,
     ) -> Self::PlaintextVectorProto {
         ProtoPlaintextVector32(
-            self.core_engine
+            self.default_engine
                 .trivially_decrypt_lwe_ciphertext_vector(&ciphertext_vector.0)
                 .unwrap(),
         )
@@ -140,11 +140,11 @@ impl PrototypesLweCiphertextVector<Precision64, BinaryKeyDistribution> for Maker
         count: LweCiphertextCount,
     ) -> Self::LweCiphertextVectorProto {
         let plaintext_vector = self
-            .core_engine
+            .default_engine
             .create_plaintext_vector(&vec![0u64; count.0])
             .unwrap();
         ProtoBinaryLweCiphertextVector64(
-            self.core_engine
+            self.default_engine
                 .trivially_encrypt_lwe_ciphertext_vector(
                     lwe_dimension.to_lwe_size(),
                     &plaintext_vector,
@@ -159,7 +159,7 @@ impl PrototypesLweCiphertextVector<Precision64, BinaryKeyDistribution> for Maker
         plaintext_vector: &Self::PlaintextVectorProto,
     ) -> Self::LweCiphertextVectorProto {
         ProtoBinaryLweCiphertextVector64(
-            self.core_engine
+            self.default_engine
                 .trivially_encrypt_lwe_ciphertext_vector(
                     lwe_dimension.to_lwe_size(),
                     &plaintext_vector.0,
@@ -175,7 +175,7 @@ impl PrototypesLweCiphertextVector<Precision64, BinaryKeyDistribution> for Maker
         noise: Variance,
     ) -> Self::LweCiphertextVectorProto {
         ProtoBinaryLweCiphertextVector64(
-            self.core_engine
+            self.default_engine
                 .encrypt_lwe_ciphertext_vector(&secret_key.0, &plaintext_vector.0, noise)
                 .unwrap(),
         )
@@ -187,7 +187,7 @@ impl PrototypesLweCiphertextVector<Precision64, BinaryKeyDistribution> for Maker
         ciphertext_vector: &Self::LweCiphertextVectorProto,
     ) -> Self::PlaintextVectorProto {
         ProtoPlaintextVector64(
-            self.core_engine
+            self.default_engine
                 .decrypt_lwe_ciphertext_vector(&secret_key.0, &ciphertext_vector.0)
                 .unwrap(),
         )
@@ -198,7 +198,7 @@ impl PrototypesLweCiphertextVector<Precision64, BinaryKeyDistribution> for Maker
         ciphertext_vector: &Self::LweCiphertextVectorProto,
     ) -> Self::PlaintextVectorProto {
         ProtoPlaintextVector64(
-            self.core_engine
+            self.default_engine
                 .trivially_decrypt_lwe_ciphertext_vector(&ciphertext_vector.0)
                 .unwrap(),
         )

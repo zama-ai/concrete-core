@@ -47,7 +47,7 @@ impl PrototypesLweKeyswitchKey<Precision32, BinaryKeyDistribution, BinaryKeyDist
         noise: Variance,
     ) -> Self::LweKeyswitchKeyProto {
         ProtoBinaryBinaryLweKeyswitchKey32(
-            self.core_engine
+            self.default_engine
                 .create_lwe_keyswitch_key(
                     &input_key.0,
                     &output_key.0,
@@ -74,7 +74,7 @@ impl PrototypesLweKeyswitchKey<Precision64, BinaryKeyDistribution, BinaryKeyDist
         noise: Variance,
     ) -> Self::LweKeyswitchKeyProto {
         ProtoBinaryBinaryLweKeyswitchKey64(
-            self.core_engine
+            self.default_engine
                 .create_lwe_keyswitch_key(
                     &input_key.0,
                     &output_key.0,

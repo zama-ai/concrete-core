@@ -13,8 +13,8 @@ where
     fn destroy_lwe_secret_key(&mut self, entity: LweSecretKey);
 }
 
-#[cfg(feature = "backend_core")]
-mod backend_core {
+#[cfg(feature = "backend_default")]
+mod backend_default {
     use crate::generation::prototypes::{ProtoBinaryLweSecretKey32, ProtoBinaryLweSecretKey64};
     use crate::generation::synthesizing::SynthesizesLweSecretKey;
     use crate::generation::{Maker, Precision32, Precision64};
@@ -36,7 +36,7 @@ mod backend_core {
         }
 
         fn destroy_lwe_secret_key(&mut self, entity: LweSecretKey32) {
-            self.core_engine.destroy(entity).unwrap();
+            self.default_engine.destroy(entity).unwrap();
         }
     }
 
@@ -56,7 +56,7 @@ mod backend_core {
         }
 
         fn destroy_lwe_secret_key(&mut self, entity: LweSecretKey64) {
-            self.core_engine.destroy(entity).unwrap();
+            self.default_engine.destroy(entity).unwrap();
         }
     }
 }

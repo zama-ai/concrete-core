@@ -4,7 +4,7 @@ This library contains benchmarking facilities for the `concrete-core` library.
 
 To execute the benchmark:
 ```shell
-RUSTFLAGS="-Ctarget-cpu=native" cargo run --release --features=backend_core -- --bench
+RUSTFLAGS="-Ctarget-cpu=native" cargo run --release --features=backend_default -- --bench
 ```
 
 Note that you have to activate the feature flags corresponding to the backends you want to benchmark with the 

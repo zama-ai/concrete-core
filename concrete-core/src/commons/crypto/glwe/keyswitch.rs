@@ -414,8 +414,8 @@ impl<Cont> PackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```ignore
-    /// use concrete_core::backends::core::private::crypto::{*, glwe::PackingKeyswitchKey};
-    /// use concrete_core::backends::core::private::math::decomposition::{DecompositionLevelCount, DecompositionBaseLog};
+    /// use concrete_core::backends::default::private::crypto::{*, glwe::PackingKeyswitchKey};
+    /// use concrete_core::backends::default::private::math::decomposition::{DecompositionLevelCount, DecompositionBaseLog};
     /// let pksk = PackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
@@ -453,9 +453,9 @@ impl<Cont> PackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```ignore
-    /// use concrete_core::backends::core::private::crypto::{*, glwe::PackingKeyswitchKey};
-    /// use concrete_core::backends::core::private::math::tensor::{AsRefTensor, AsMutTensor};
-    /// use concrete_core::backends::core::private::math::decomposition::{DecompositionLevelCount, DecompositionBaseLog};
+    /// use concrete_core::backends::default::private::crypto::{*, glwe::PackingKeyswitchKey};
+    /// use concrete_core::backends::default::private::math::tensor::{AsRefTensor, AsMutTensor};
+    /// use concrete_core::backends::default::private::math::decomposition::{DecompositionLevelCount, DecompositionBaseLog};
     /// let mut pksk = PackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
@@ -654,7 +654,7 @@ impl<Cont> LweKeyBitDecomposition<Cont> {
     /// # Example
     ///
     /// ```rust,ignore
-    /// use concrete_core::backends::core::private::crypto::{*, glwe::LweKeyBitDecomposition};
+    /// use concrete_core::backends::default::private::crypto::{*, glwe::LweKeyBitDecomposition};
     /// let kbd = LweKeyBitDecomposition::from_container(vec![0 as u8; 1500], GlweSize(10),
     /// PolynomialSize(10);
     /// assert_eq!(kbd.count(), CiphertextCount(15));
@@ -677,7 +677,7 @@ impl<Cont> LweKeyBitDecomposition<Cont> {
     /// # Example
     ///
     /// ```rust,ignore
-    /// use concrete_core::backends::core::private::crypto::{*, glwe::LweKeyBitDecomposition};
+    /// use concrete_core::backends::default::private::crypto::{*, glwe::LweKeyBitDecomposition};
     /// let kbd = LweKeyBitDecomposition::from_container(vec![0 as u8; 150], LweSize(10));
     /// assert_eq!(kbd.lwe_size(), LweSize(10));
     /// ```
@@ -691,7 +691,7 @@ impl<Cont> LweKeyBitDecomposition<Cont> {
     /// # Example
     ///
     /// ```rust,ignore
-    /// use concrete_core::backends::core::private::crypto::{*, glwe::LweKeyBitDecomposition};
+    /// use concrete_core::backends::default::private::crypto::{*, glwe::LweKeyBitDecomposition};
     /// let kbd = LweKeyBitDecomposition::from_container(vec![0 as u8; 150], LweSize(10));
     /// assert_eq!(kbd.lwe_size(), LweSize(10));
     /// ```
@@ -707,7 +707,7 @@ impl<Cont> LweKeyBitDecomposition<Cont> {
     /// # Example
     ///
     /// ```rust,ignore
-    /// use concrete_core::backends::core::private::crypto::{*, glwe::LweKeyBitDecomposition};
+    /// use concrete_core::backends::default::private::crypto::{*, glwe::LweKeyBitDecomposition};
     /// let kbd = LweKeyBitDecomposition::from_container(vec![0 as u8; 150], LweSize(10));
     /// assert_eq!(kbd.count(), CiphertextCount(15));
     /// ```
@@ -725,7 +725,7 @@ impl<Cont> LweKeyBitDecomposition<Cont> {
     /// # Example
     ///
     /// ```rust,ignore
-    /// use concrete_core::backends::core::private::crypto::{*, glwe::LweKeyBitDecomposition};
+    /// use concrete_core::backends::default::private::crypto::{*, glwe::LweKeyBitDecomposition};
     /// let kbd = LweKeyBitDecomposition::from_container(vec![0 as u8; 150], LweSize(10));
     /// for ciphertext in kbd.ciphertext_iter(){
     ///     assert_eq!(ciphertext.lwe_size(), LweSize(10));
@@ -749,8 +749,8 @@ impl<Cont> LweKeyBitDecomposition<Cont> {
     /// # Example
     ///
     /// ```rust,ignore
-    /// use concrete_core::backends::core::private::crypto::{*, glwe::LweKeyBitDecomposition};
-    /// use concrete_core::backends::core::private::math::tensor::{AsRefTensor, AsMutTensor};
+    /// use concrete_core::backends::default::private::crypto::{*, glwe::LweKeyBitDecomposition};
+    /// use concrete_core::backends::default::private::math::tensor::{AsRefTensor, AsMutTensor};
     /// let mut kbd = LweKeyBitDecomposition::from_container(vec![0 as u8; 150], LweSize(10));
     /// for mut ciphertext in kbd.ciphertext_iter_mut(){
     ///     ciphertext.as_mut_tensor().fill_with_element(9);
@@ -780,7 +780,7 @@ impl<Cont> LweKeyBitDecomposition<Cont> {
     /// # Example
     ///
     /// ```rust,ignore
-    /// use concrete_core::backends::core::private::crypto::{*, glwe::LweKeyBitDecomposition};
+    /// use concrete_core::backends::default::private::crypto::{*, glwe::LweKeyBitDecomposition};
     /// let kbd = LweKeyBitDecomposition::from_container(vec![0 as u8; 150], LweSize(10));
     /// let glwe = kbd.into_glwe_list();
     /// assert_eq!(list.count(), CiphertextCount(15));

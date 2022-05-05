@@ -14,8 +14,8 @@ where
     fn destroy_glwe_secret_key(&mut self, entity: GlweSecretKey);
 }
 
-#[cfg(feature = "backend_core")]
-mod backend_core {
+#[cfg(feature = "backend_default")]
+mod backend_default {
     use crate::generation::prototypes::{ProtoBinaryGlweSecretKey32, ProtoBinaryGlweSecretKey64};
     use crate::generation::synthesizing::SynthesizesGlweSecretKey;
     use crate::generation::{Maker, Precision32, Precision64};
@@ -37,7 +37,7 @@ mod backend_core {
         }
 
         fn destroy_glwe_secret_key(&mut self, entity: GlweSecretKey32) {
-            self.core_engine.destroy(entity).unwrap();
+            self.default_engine.destroy(entity).unwrap();
         }
     }
 
@@ -57,7 +57,7 @@ mod backend_core {
         }
 
         fn destroy_glwe_secret_key(&mut self, entity: GlweSecretKey64) {
-            self.core_engine.destroy(entity).unwrap();
+            self.default_engine.destroy(entity).unwrap();
         }
     }
 }

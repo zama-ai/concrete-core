@@ -17,8 +17,8 @@ where
     fn destroy_ggsw_ciphertext(&mut self, entity: GgswCiphertext);
 }
 
-#[cfg(feature = "backend_core")]
-mod backend_core {
+#[cfg(feature = "backend_default")]
+mod backend_default {
     use crate::generation::prototypes::{ProtoBinaryGgswCiphertext32, ProtoBinaryGgswCiphertext64};
     use crate::generation::synthesizing::SynthesizesGgswCiphertext;
     use crate::generation::{Maker, Precision32, Precision64};
@@ -40,7 +40,7 @@ mod backend_core {
         }
 
         fn destroy_ggsw_ciphertext(&mut self, entity: GgswCiphertext32) {
-            self.core_engine.destroy(entity).unwrap();
+            self.default_engine.destroy(entity).unwrap();
         }
     }
 
@@ -60,7 +60,7 @@ mod backend_core {
         }
 
         fn destroy_ggsw_ciphertext(&mut self, entity: GgswCiphertext64) {
-            self.core_engine.destroy(entity).unwrap();
+            self.default_engine.destroy(entity).unwrap();
         }
     }
 }

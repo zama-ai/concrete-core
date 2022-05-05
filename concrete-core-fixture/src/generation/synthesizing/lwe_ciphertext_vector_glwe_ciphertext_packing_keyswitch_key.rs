@@ -22,8 +22,8 @@ where
     fn destroy_packing_keyswitch_key(&mut self, entity: PackingKeyswitchKey);
 }
 
-#[cfg(feature = "backend_core")]
-mod backend_core {
+#[cfg(feature = "backend_default")]
+mod backend_default {
     use crate::generation::prototypes::{
         ProtoBinaryBinaryPackingKeyswitchKey32, ProtoBinaryBinaryPackingKeyswitchKey64,
     };
@@ -47,7 +47,7 @@ mod backend_core {
         }
 
         fn destroy_packing_keyswitch_key(&mut self, entity: PackingKeyswitchKey32) {
-            self.core_engine.destroy(entity).unwrap();
+            self.default_engine.destroy(entity).unwrap();
         }
     }
 
@@ -67,7 +67,7 @@ mod backend_core {
         }
 
         fn destroy_packing_keyswitch_key(&mut self, entity: PackingKeyswitchKey64) {
-            self.core_engine.destroy(entity).unwrap();
+            self.default_engine.destroy(entity).unwrap();
         }
     }
 }

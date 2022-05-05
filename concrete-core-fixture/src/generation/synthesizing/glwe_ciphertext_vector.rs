@@ -19,8 +19,8 @@ where
     fn destroy_glwe_ciphertext_vector(&mut self, entity: GlweCiphertextVector);
 }
 
-#[cfg(feature = "backend_core")]
-mod backend_core {
+#[cfg(feature = "backend_default")]
+mod backend_default {
     use crate::generation::prototypes::{
         ProtoBinaryGlweCiphertextVector32, ProtoBinaryGlweCiphertextVector64,
     };
@@ -46,7 +46,7 @@ mod backend_core {
         }
 
         fn destroy_glwe_ciphertext_vector(&mut self, entity: GlweCiphertextVector32) {
-            self.core_engine.destroy(entity).unwrap();
+            self.default_engine.destroy(entity).unwrap();
         }
     }
 
@@ -66,7 +66,7 @@ mod backend_core {
         }
 
         fn destroy_glwe_ciphertext_vector(&mut self, entity: GlweCiphertextVector64) {
-            self.core_engine.destroy(entity).unwrap();
+            self.default_engine.destroy(entity).unwrap();
         }
     }
 }

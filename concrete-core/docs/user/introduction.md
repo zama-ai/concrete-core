@@ -25,7 +25,7 @@ let lwe_dimension = LweDimension(630);
 let input = 3_u32 << 20;
 let noise = Variance(2_f64.powf(-25.));
 
-let mut engine = CoreEngine::new().unwrap();
+let mut engine = DefaultEngine::new().unwrap();
 let key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension).unwrap();
 let plaintext = engine.create_plaintext(&input).unwrap();
 let ciphertext = engine.encrypt_lwe_ciphertext(&key, &plaintext, noise).unwrap();

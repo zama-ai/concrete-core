@@ -24,7 +24,7 @@ impl PrototypesLweSecretKey<Precision32, BinaryKeyDistribution> for Maker {
 
     fn new_lwe_secret_key(&mut self, lwe_dimension: LweDimension) -> Self::LweSecretKeyProto {
         ProtoBinaryLweSecretKey32(
-            self.core_engine
+            self.default_engine
                 .create_lwe_secret_key(lwe_dimension)
                 .unwrap(),
         )
@@ -36,7 +36,7 @@ impl PrototypesLweSecretKey<Precision64, BinaryKeyDistribution> for Maker {
 
     fn new_lwe_secret_key(&mut self, lwe_dimension: LweDimension) -> Self::LweSecretKeyProto {
         ProtoBinaryLweSecretKey64(
-            self.core_engine
+            self.default_engine
                 .create_lwe_secret_key(lwe_dimension)
                 .unwrap(),
         )

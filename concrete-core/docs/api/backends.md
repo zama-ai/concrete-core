@@ -58,26 +58,26 @@ practice, we tend to expose very few engines in a given backend.
 Let's go through an example of a backend implementation to illustrate the concepts.
 
 The `core` backend, contains Zama's own cpu based implementation of the scheme. It is located at
-[`backends::core`](https://docs.rs/concrete-core/1.0.0-beta/concrete_core/backends/core/index.html)
-. The associated feature flag is the `backend_core`, but since it is the most prominent backend for
+[`backends::core`](https://docs.rs/concrete-core/1.0.0-beta/concrete_core/backends/default/index.html)
+. The associated feature flag is the `backend_default`, but since it is the most prominent backend for
 now, we include it automatically (it is part of the `default` flag).
 
 In this core backend, you will find the same structure as in the `specification`:
 
-+ One [`engines`](https://docs.rs/concrete-core/1.0.0-beta/concrete_core/backends/core/engines/index.html)
++ One [`engines`](https://docs.rs/concrete-core/1.0.0-beta/concrete_core/backends/default/engines/index.html)
 module containing the engines exported by the `core` backend
 
-+ One [`entities`](https://docs.rs/concrete-core/1.0.0-beta/concrete_core/backends/core/entities/index.html)
++ One [`entities`](https://docs.rs/concrete-core/1.0.0-beta/concrete_core/backends/default/entities/index.html)
 module containing the entities exported by the `core` backend
 
 In the `entities` module, among other types, we find the
-[`LweCiphertext64`](https://docs.rs/concrete-core/1.0.0-beta/concrete_core/backends/core/entities/struct.LweCiphertext64.html)
+[`LweCiphertext64`](https://docs.rs/concrete-core/1.0.0-beta/concrete_core/backends/default/entities/struct.LweCiphertext64.html)
 type. It is an _entity_, which implements the
 [`LweCiphertextEntity`](https://docs.rs/concrete-core/1.0.0-beta/concrete_core/specification/entities/trait.LweCiphertextEntity.html)
 trait (this type is actually listed in the implementors of the type).
 
 In the `engines` module, we find a single type, which is
-[`CoreEngine`](https://docs.rs/concrete-core/1.0.0-beta/concrete_core/backends/core/engines/struct.CoreEngine.html)
+[`DefaultEngine`](https://docs.rs/concrete-core/1.0.0-beta/concrete_core/backends/default/engines/struct.DefaultEngine.html)
 . It is an _engine_ which implements many `*Engine` traits, among which the
 [`LweCiphertextEncryptionEngine`](https://docs.rs/concrete-core/1.0.0-beta/concrete_core/specification/engines/trait.LweCiphertextEncryptionEngine.html)
 trait, or the
@@ -158,7 +158,7 @@ type system.
 The `backends::core::entities::LweSecretKey64` type implements `LweSecretKeyEntity` with
 the `KeyDistribution`
 type equal to `BinaryKeyDistribution` (see
-[this line of the doc](https://docs.rs/concrete-core/1.0.0-beta/concrete_core/backends/core/entities/struct.LweSecretKey64.html#associatedtype.KeyDistribution))
+[this line of the doc](https://docs.rs/concrete-core/1.0.0-beta/concrete_core/backends/default/entities/struct.LweSecretKey64.html#associatedtype.KeyDistribution))
 . This means that it represents binary lwe secret keys.
 
 Now, if we have a look at the definition of the `LweCiphertextEntity` trait:
@@ -175,7 +175,7 @@ key was used when encrypting the ciphertext.
 
 The `backends::core::entities::LweCiphertext64` type implements `LweCiphertextEntity` with the
 `KeyDistribution` type also equals to `BinaryKeyDistribution` (see
-[this line of the doc](https://docs.rs/concrete-core/1.0.0-beta/concrete_core/backends/core/entities/struct.LweCiphertext64.html#associatedtype.KeyDistribution))
+[this line of the doc](https://docs.rs/concrete-core/1.0.0-beta/concrete_core/backends/default/entities/struct.LweCiphertext64.html#associatedtype.KeyDistribution))
 . This means that it represents an lwe ciphertext encoded with a binary key.
 
 Most importantly, the definition of `LweCiphertextEncryptionEngine` looks like this:
@@ -194,7 +194,7 @@ If you focus on the trait bounds, you can see
 prevents implementing `LweCiphertextEncryptionEngine` for two generic types `SecretKey`
 and `Ciphertext` with incompatible key distribution.
 
-Considering the `backends::core::engines::CoreEngine` type, it
+Considering the `backends::core::engines::DefaultEngine` type, it
 implements `LweCiphertextEncryptionEngine` for
 `SecretKey=LweSecretKey64` and `Ciphertext=LweCiphertext64` which have the same `KeyDistribution`
 associated type.

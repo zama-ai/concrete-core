@@ -59,9 +59,9 @@ impl PrototypesGgswCiphertext<Precision32, BinaryKeyDistribution> for Maker {
         decomposition_level_count: DecompositionLevelCount,
         decomposition_base_log: DecompositionBaseLog,
     ) -> Self::GgswCiphertextProto {
-        let plaintext = self.core_engine.create_plaintext(&0u32).unwrap();
+        let plaintext = self.default_engine.create_plaintext(&0u32).unwrap();
         ProtoBinaryGgswCiphertext32(
-            self.core_engine
+            self.default_engine
                 .trivially_encrypt_scalar_ggsw_ciphertext(
                     poly_size,
                     glwe_dimension.to_glwe_size(),
@@ -82,7 +82,7 @@ impl PrototypesGgswCiphertext<Precision32, BinaryKeyDistribution> for Maker {
         plaintext: &Self::PlaintextProto,
     ) -> Self::GgswCiphertextProto {
         ProtoBinaryGgswCiphertext32(
-            self.core_engine
+            self.default_engine
                 .trivially_encrypt_scalar_ggsw_ciphertext(
                     poly_size,
                     glwe_dimension.to_glwe_size(),
@@ -103,7 +103,7 @@ impl PrototypesGgswCiphertext<Precision32, BinaryKeyDistribution> for Maker {
         decomposition_base_log: DecompositionBaseLog,
     ) -> Self::GgswCiphertextProto {
         ProtoBinaryGgswCiphertext32(
-            self.core_engine
+            self.default_engine
                 .encrypt_scalar_ggsw_ciphertext(
                     &secret_key.0,
                     &plaintext.0,
@@ -126,9 +126,9 @@ impl PrototypesGgswCiphertext<Precision64, BinaryKeyDistribution> for Maker {
         decomposition_level_count: DecompositionLevelCount,
         decomposition_base_log: DecompositionBaseLog,
     ) -> Self::GgswCiphertextProto {
-        let plaintext = self.core_engine.create_plaintext(&0u64).unwrap();
+        let plaintext = self.default_engine.create_plaintext(&0u64).unwrap();
         ProtoBinaryGgswCiphertext64(
-            self.core_engine
+            self.default_engine
                 .trivially_encrypt_scalar_ggsw_ciphertext(
                     poly_size,
                     glwe_dimension.to_glwe_size(),
@@ -149,7 +149,7 @@ impl PrototypesGgswCiphertext<Precision64, BinaryKeyDistribution> for Maker {
         plaintext: &Self::PlaintextProto,
     ) -> Self::GgswCiphertextProto {
         ProtoBinaryGgswCiphertext64(
-            self.core_engine
+            self.default_engine
                 .trivially_encrypt_scalar_ggsw_ciphertext(
                     poly_size,
                     glwe_dimension.to_glwe_size(),
@@ -170,7 +170,7 @@ impl PrototypesGgswCiphertext<Precision64, BinaryKeyDistribution> for Maker {
         decomposition_base_log: DecompositionBaseLog,
     ) -> Self::GgswCiphertextProto {
         ProtoBinaryGgswCiphertext64(
-            self.core_engine
+            self.default_engine
                 .encrypt_scalar_ggsw_ciphertext(
                     &secret_key.0,
                     &plaintext.0,

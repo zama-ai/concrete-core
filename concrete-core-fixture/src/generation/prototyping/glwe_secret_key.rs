@@ -38,7 +38,7 @@ impl PrototypesGlweSecretKey<Precision32, BinaryKeyDistribution> for Maker {
         polynomial_size: PolynomialSize,
     ) -> Self::GlweSecretKeyProto {
         ProtoBinaryGlweSecretKey32(
-            self.core_engine
+            self.default_engine
                 .create_glwe_secret_key(glwe_dimension, polynomial_size)
                 .unwrap(),
         )
@@ -49,7 +49,7 @@ impl PrototypesGlweSecretKey<Precision32, BinaryKeyDistribution> for Maker {
         glwe_key: &Self::GlweSecretKeyProto,
     ) -> Self::LweSecretKeyProto {
         ProtoBinaryLweSecretKey32(
-            self.core_engine
+            self.default_engine
                 .transmute_glwe_secret_key_to_lwe_secret_key(glwe_key.0.to_owned())
                 .unwrap(),
         )
@@ -65,7 +65,7 @@ impl PrototypesGlweSecretKey<Precision64, BinaryKeyDistribution> for Maker {
         polynomial_size: PolynomialSize,
     ) -> Self::GlweSecretKeyProto {
         ProtoBinaryGlweSecretKey64(
-            self.core_engine
+            self.default_engine
                 .create_glwe_secret_key(glwe_dimension, polynomial_size)
                 .unwrap(),
         )
@@ -76,7 +76,7 @@ impl PrototypesGlweSecretKey<Precision64, BinaryKeyDistribution> for Maker {
         glwe_key: &Self::GlweSecretKeyProto,
     ) -> Self::LweSecretKeyProto {
         ProtoBinaryLweSecretKey64(
-            self.core_engine
+            self.default_engine
                 .transmute_glwe_secret_key_to_lwe_secret_key(glwe_key.0.to_owned())
                 .unwrap(),
         )
