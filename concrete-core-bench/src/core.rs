@@ -111,10 +111,6 @@ bench! {
     (LweCiphertextPlaintextFusingAdditionFixture, (Plaintext, LweCiphertext)),
     (LweCiphertextPlaintextDiscardingSubtractionFixture, (LweCiphertext, Plaintext, LweCiphertext)),
     (LweCiphertextPlaintextFusingSubtractionFixture, (Plaintext, LweCiphertext)),
-    (LweCiphertextDiscardingBootstrapFixture1, (FourierLweBootstrapKey, GlweCiphertext, LweCiphertext, LweCiphertext)),
-    (LweCiphertextDiscardingBootstrapFixture2, (FourierLweBootstrapKey, GlweCiphertext, LweCiphertext, LweCiphertext)),
-    (LweCiphertextDiscardingBootstrapFixture1, (FourierLweBootstrapKey, GlweCiphertextView, LweCiphertextView, LweCiphertextMutView)),
-    (LweCiphertextDiscardingBootstrapFixture2, (FourierLweBootstrapKey, GlweCiphertextView, LweCiphertextView, LweCiphertextMutView)),
     (LweCiphertextDiscardingExtractionFixture, (GlweCiphertext, LweCiphertext)),
     (LweCiphertextVectorGlweCiphertextDiscardingPackingKeyswitchFixture, (LweCiphertextVector,
         PackingKeyswitchKey, GlweCiphertext)),
@@ -129,7 +125,5 @@ bench! {
     (PlaintextRetrievalFixture, (Plaintext)),
     (PlaintextVectorDiscardingRetrievalFixture, (PlaintextVector)),
     (PlaintextVectorCreationFixture, (PlaintextVector)),
-    (PlaintextVectorRetrievalFixture, (PlaintextVector)),
-    (GlweCiphertextGgswCiphertextExternalProductFixture, (GlweCiphertext, FourierGgswCiphertext, GlweCiphertext)),
-    (GlweCiphertextGgswCiphertextDiscardingExternalProductFixture, (GlweCiphertext, FourierGgswCiphertext, GlweCiphertext))
+    (PlaintextVectorRetrievalFixture, (PlaintextVector))
 }
