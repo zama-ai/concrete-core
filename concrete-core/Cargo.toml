@@ -35,9 +35,17 @@ bench = false
 [features]
 default = ["backend_default", "seeder_unix"]
 doc = []
+
+# A pure-rust backend. Included by default in the build.
 backend_default = [
     "concrete-csprng/generator_soft"
 ]
+
+# An accelerated backend, using the `fftw` library.
+backend_fftw = [
+    "concrete-fftw"
+]
+
 seeder_unix = ["concrete-csprng/seeder_unix"]
 seeder_x86_64_rdseed = ["concrete-csprng/seeder_x86_64_rdseed"]
 multithread = ["rayon", "concrete-csprng/parallel"]

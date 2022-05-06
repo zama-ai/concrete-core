@@ -10,11 +10,16 @@ pub mod benchmark;
 #[cfg(feature = "backend_default")]
 mod default;
 
+#[cfg(feature = "backend_fftw")]
+mod fftw;
+
 // The main entry point. Uses criterion as benchmark harness.
 fn main() {
     // We instantiate the benchmarks for different backends depending on the feature flag activated.
     #[cfg(feature = "backend_default")]
     default::bench();
+    #[cfg(feature = "backend_fftw")]
+    fftw::bench();
 
     // We launch the benchmarks.
     criterion::Criterion::default()

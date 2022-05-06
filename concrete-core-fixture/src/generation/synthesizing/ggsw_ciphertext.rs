@@ -64,3 +64,59 @@ mod backend_default {
         }
     }
 }
+
+#[cfg(feature = "backend_fftw")]
+mod backend_fftw {
+    use crate::generation::synthesizing::SynthesizesGgswCiphertext;
+    use crate::generation::{Maker, Precision32, Precision64};
+    use concrete_core::prelude::{
+        DestructionEngine, FftwFourierGgswCiphertext32, FftwFourierGgswCiphertext64,
+        GgswCiphertextConversionEngine,
+    };
+
+    impl SynthesizesGgswCiphertext<Precision32, FftwFourierGgswCiphertext32> for Maker {
+        fn synthesize_ggsw_ciphertext(
+            &mut self,
+            prototype: &Self::GgswCiphertextProto,
+        ) -> FftwFourierGgswCiphertext32 {
+            self.fftw_engine
+                .convert_ggsw_ciphertext(&prototype.0)
+                .unwrap()
+        }
+
+        fn unsynthesize_ggsw_ciphertext(
+            &mut self,
+            _entity: FftwFourierGgswCiphertext32,
+        ) -> Self::GgswCiphertextProto {
+            // FIXME:
+            unimplemented!("The backward fourier conversion was not yet implemented");
+        }
+
+        fn destroy_ggsw_ciphertext(&mut self, entity: FftwFourierGgswCiphertext32) {
+            self.fftw_engine.destroy(entity).unwrap();
+        }
+    }
+
+    impl SynthesizesGgswCiphertext<Precision64, FftwFourierGgswCiphertext64> for Maker {
+        fn synthesize_ggsw_ciphertext(
+            &mut self,
+            prototype: &Self::GgswCiphertextProto,
+        ) -> FftwFourierGgswCiphertext64 {
+            self.fftw_engine
+                .convert_ggsw_ciphertext(&prototype.0)
+                .unwrap()
+        }
+
+        fn unsynthesize_ggsw_ciphertext(
+            &mut self,
+            _entity: FftwFourierGgswCiphertext64,
+        ) -> Self::GgswCiphertextProto {
+            // FIXME:
+            unimplemented!("The backward fourier conversion was not yet implemented");
+        }
+
+        fn destroy_ggsw_ciphertext(&mut self, entity: FftwFourierGgswCiphertext64) {
+            self.fftw_engine.destroy(entity).unwrap();
+        }
+    }
+}
