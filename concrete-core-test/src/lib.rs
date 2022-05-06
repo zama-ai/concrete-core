@@ -14,3 +14,5 @@ pub const SAMPLE_SIZE: SampleSize = SampleSize(100);
 
 #[cfg(all(test, feature = "backend_default"))]
 pub mod default;
+#[cfg(all(test, feature = "backend_fftw"))]
+pub mod fftw;

@@ -13,3 +13,4 @@ criterion = "0.3.5"
 
 [features]
 backend_default = ["concrete-core/backend_default", "concrete-core-fixture/backend_default"]
+backend_fftw = ["concrete-core/backend_fftw", "concrete-core-fixture/backend_fftw"]
