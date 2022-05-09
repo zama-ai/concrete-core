@@ -13,10 +13,10 @@ use concrete_core::prelude::{
 };
 
 /// A fixture for the types implementing the `LweBootstrapKeyCreationEngine` trait.
-pub struct LweSecretKeyCreationFixture;
+pub struct LweBootstrapKeyCreationFixture;
 
 #[derive(Debug)]
-pub struct LweSecretKeyCreationParameters {
+pub struct LweBootstrapKeyCreationParameters {
     pub lwe_dimension: LweDimension,
     pub glwe_dimension: GlweDimension,
     pub polynomial_size: PolynomialSize,
@@ -27,7 +27,7 @@ pub struct LweSecretKeyCreationParameters {
 
 impl<Precision, Engine, LweSecretKey, GlweSecretKey, BootstrapKey>
     Fixture<Precision, Engine, (LweSecretKey, GlweSecretKey, BootstrapKey)>
-    for LweSecretKeyCreationFixture
+    for LweBootstrapKeyCreationFixture
 where
     Precision: IntegerPrecision,
     Engine: LweBootstrapKeyCreationEngine<LweSecretKey, GlweSecretKey, BootstrapKey>,
@@ -41,7 +41,7 @@ where
         + SynthesizesGlweSecretKey<Precision, GlweSecretKey>
         + SynthesizesLweBootstrapKey<Precision, BootstrapKey>,
 {
-    type Parameters = LweSecretKeyCreationParameters;
+    type Parameters = LweBootstrapKeyCreationParameters;
     type RepetitionPrototypes = ();
     type SamplePrototypes = (
         <Maker as PrototypesLweSecretKey<Precision, LweSecretKey::KeyDistribution>>::LweSecretKeyProto,
@@ -55,7 +55,7 @@ where
     fn generate_parameters_iterator() -> Box<dyn Iterator<Item = Self::Parameters>> {
         Box::new(
             vec![
-                LweSecretKeyCreationParameters {
+                LweBootstrapKeyCreationParameters {
                     lwe_dimension: LweDimension(630),
                     glwe_dimension: GlweDimension(1),
                     polynomial_size: PolynomialSize(1024),
@@ -63,7 +63,7 @@ where
                     base_log: DecompositionBaseLog(7),
                     noise: Variance(0.00000001),
                 },
-                LweSecretKeyCreationParameters {
+                LweBootstrapKeyCreationParameters {
                     lwe_dimension: LweDimension(630),
                     glwe_dimension: GlweDimension(2),
                     polynomial_size: PolynomialSize(512),
@@ -135,7 +135,6 @@ where
     ) -> Self::Outcome {
         let (bsk,) = context;
         maker.destroy_lwe_bootstrap_key(bsk);
-        unimplemented!()
     }
 
     fn compute_criteria(
@@ -143,10 +142,10 @@ where
         _maker: &mut Maker,
         _repetition_proto: &Self::RepetitionPrototypes,
     ) -> Self::Criteria {
-        unimplemented!()
     }
 
     fn verify(_criteria: &Self::Criteria, _outputs: &[Self::Outcome]) -> bool {
-        unimplemented!()
+        // The test to verify the generated key is not yet implemented.
+        false
     }
 }

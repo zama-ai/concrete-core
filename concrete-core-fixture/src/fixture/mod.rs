@@ -414,8 +414,8 @@ pub use lwe_secret_key_creation::*;
 mod glwe_secret_key_creation;
 pub use glwe_secret_key_creation::*;
 
-mod glwe_secret_key_to_lwe_secret_key_transmutation;
-pub use glwe_secret_key_to_lwe_secret_key_transmutation::*;
+mod glwe_to_lwe_secret_key_transmutation;
+pub use glwe_to_lwe_secret_key_transmutation::*;
 
 mod lwe_bootstrap_key_creation;
 pub use lwe_bootstrap_key_creation::*;
