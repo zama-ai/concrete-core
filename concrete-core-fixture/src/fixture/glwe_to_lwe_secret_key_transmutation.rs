@@ -7,17 +7,18 @@ use concrete_core::prelude::{
     GlweSecretKeyEntity, GlweToLweSecretKeyTransmutationEngine, LweSecretKeyEntity,
 };
 
-/// A fixture for the types implementing the `LweKeyswitchKeyCreationEngine` trait.
-pub struct LweKeyswitchKeyCreationFixture;
+/// A fixture for the types implementing the `GlweToLweSecretKeyTransmutationEngine` trait.
+pub struct GlweToLweSecretKeyTransmutationFixture;
 
 #[derive(Debug)]
-pub struct LweKeyswitchKeyCreationParameters {
+pub struct GlweToLweSecretKeyTransmutationParameters {
     pub glwe_dimension: GlweDimension,
     pub polynomial_size: PolynomialSize,
 }
 
 impl<Precision, Engine, InputSecretKey, OutputSecretKey>
-    Fixture<Precision, Engine, (InputSecretKey, OutputSecretKey)> for LweKeyswitchKeyCreationFixture
+    Fixture<Precision, Engine, (InputSecretKey, OutputSecretKey)>
+    for GlweToLweSecretKeyTransmutationFixture
 where
     Precision: IntegerPrecision,
     Engine: GlweToLweSecretKeyTransmutationEngine<InputSecretKey, OutputSecretKey>,
@@ -26,7 +27,7 @@ where
     Maker: SynthesizesLweSecretKey<Precision, OutputSecretKey>
         + SynthesizesGlweSecretKey<Precision, InputSecretKey>,
 {
-    type Parameters = LweKeyswitchKeyCreationParameters;
+    type Parameters = GlweToLweSecretKeyTransmutationParameters;
     type RepetitionPrototypes = ();
     type SamplePrototypes = (
         <Maker as PrototypesGlweSecretKey<Precision, InputSecretKey::KeyDistribution>>::GlweSecretKeyProto,
@@ -38,7 +39,7 @@ where
 
     fn generate_parameters_iterator() -> Box<dyn Iterator<Item = Self::Parameters>> {
         Box::new(
-            vec![LweKeyswitchKeyCreationParameters {
+            vec![GlweToLweSecretKeyTransmutationParameters {
                 glwe_dimension: GlweDimension(1),
                 polynomial_size: PolynomialSize(1024),
             }]
@@ -92,7 +93,6 @@ where
     ) -> Self::Outcome {
         let (sk_out,) = context;
         maker.destroy_lwe_secret_key(sk_out);
-        unimplemented!()
     }
 
     fn compute_criteria(
@@ -100,10 +100,10 @@ where
         _maker: &mut Maker,
         _repetition_proto: &Self::RepetitionPrototypes,
     ) -> Self::Criteria {
-        unimplemented!()
     }
 
     fn verify(_criteria: &Self::Criteria, _outputs: &[Self::Outcome]) -> bool {
-        unimplemented!()
+        // The test to verify the generated key is not yet implemented.
+        false
     }
 }

@@ -123,7 +123,6 @@ where
     ) -> Self::Outcome {
         let (ksk,) = context;
         maker.destroy_lwe_keyswitch_key(ksk);
-        unimplemented!()
     }
 
     fn compute_criteria(
@@ -131,10 +130,10 @@ where
         _maker: &mut Maker,
         _repetition_proto: &Self::RepetitionPrototypes,
     ) -> Self::Criteria {
-        unimplemented!()
     }
 
     fn verify(_criteria: &Self::Criteria, _outputs: &[Self::Outcome]) -> bool {
-        unimplemented!()
+        // The test to verify the generated key is not yet implemented.
+        false
     }
 }

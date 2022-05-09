@@ -20,13 +20,13 @@ where
     InputKey: GlweSecretKeyEntity,
     OutputKey: LweSecretKeyEntity<KeyDistribution = InputKey::KeyDistribution>,
 {
-    /// Does the transmutation of the GLWE secret key into a LWE secret key
+    /// Does the transmutation of the GLWE secret key into an LWE secret key
     fn transmute_glwe_secret_key_to_lwe_secret_key(
         &mut self,
         glwe_secret_key: InputKey,
     ) -> Result<OutputKey, GlweToLweSecretKeyTransmutationEngineError<Self::EngineError>>;
 
-    /// Unsafely transmutes a GLWE secret key into a lwe secret key
+    /// Unsafely transmutes a GLWE secret key into an LWE secret key
     ///
     /// # Safety
     /// For the _general_ safety concerns regarding this operation, refer to the different variants

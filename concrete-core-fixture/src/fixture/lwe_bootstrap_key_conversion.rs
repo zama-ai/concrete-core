@@ -11,10 +11,10 @@ use concrete_commons::parameters::{
 use concrete_core::prelude::{LweBootstrapKeyConversionEngine, LweBootstrapKeyEntity};
 
 /// A fixture for the types implementing the `LweBootstrapKeyConversionEngine` trait.
-pub struct LweSecretKeyConversionFixture;
+pub struct LweBootstrapKeyConversionFixture;
 
 #[derive(Debug)]
-pub struct LweSecretKeyConversionParameters {
+pub struct LweBootstrapKeyConversionParameters {
     pub lwe_dimension: LweDimension,
     pub glwe_dimension: GlweDimension,
     pub polynomial_size: PolynomialSize,
@@ -24,7 +24,7 @@ pub struct LweSecretKeyConversionParameters {
 }
 
 impl<Precision, Engine, InputKey, OutputKey> Fixture<Precision, Engine, (InputKey, OutputKey)>
-    for LweSecretKeyConversionFixture
+    for LweBootstrapKeyConversionFixture
 where
     Precision: IntegerPrecision,
     Engine: LweBootstrapKeyConversionEngine<InputKey, OutputKey>,
@@ -36,7 +36,7 @@ where
     Maker: SynthesizesLweBootstrapKey<Precision, InputKey>
         + SynthesizesLweBootstrapKey<Precision, OutputKey>,
 {
-    type Parameters = LweSecretKeyConversionParameters;
+    type Parameters = LweBootstrapKeyConversionParameters;
     type RepetitionPrototypes = (
         <Maker as PrototypesLweBootstrapKey<
             Precision,
@@ -52,7 +52,7 @@ where
 
     fn generate_parameters_iterator() -> Box<dyn Iterator<Item = Self::Parameters>> {
         Box::new(
-            vec![LweSecretKeyConversionParameters {
+            vec![LweBootstrapKeyConversionParameters {
                 lwe_dimension: LweDimension(630),
                 glwe_dimension: GlweDimension(1),
                 polynomial_size: PolynomialSize(1024),
@@ -121,7 +121,6 @@ where
     ) -> Self::Outcome {
         let (bsk,) = context;
         maker.destroy_lwe_bootstrap_key(bsk);
-        unimplemented!()
     }
 
     fn compute_criteria(
@@ -129,10 +128,10 @@ where
         _maker: &mut Maker,
         _repetition_proto: &Self::RepetitionPrototypes,
     ) -> Self::Criteria {
-        unimplemented!()
     }
 
     fn verify(_criteria: &Self::Criteria, _outputs: &[Self::Outcome]) -> bool {
-        unimplemented!()
+        // The test to verify the generated key is not yet implemented.
+        false
     }
 }
