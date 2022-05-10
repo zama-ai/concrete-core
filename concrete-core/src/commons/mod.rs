@@ -100,6 +100,10 @@ pub mod test_tools {
         fn seed(&mut self) -> Seed {
             Seed(rand::thread_rng().gen())
         }
+
+        fn is_available() -> bool {
+            true
+        }
     }
 
     pub fn assert_delta_std_dev<First, Second, Element>(

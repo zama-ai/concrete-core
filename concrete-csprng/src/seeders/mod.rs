@@ -13,6 +13,12 @@ pub struct Seed(pub u128);
 pub trait Seeder {
     /// Generates a new seed.
     fn seed(&mut self) -> Seed;
+
+    /// Check whether the seeder can be used on the current machine. This function may check if some
+    /// required CPU features are available or if some OS features are availble for example.
+    fn is_available() -> bool
+    where
+        Self: Sized;
 }
 
 mod implem;

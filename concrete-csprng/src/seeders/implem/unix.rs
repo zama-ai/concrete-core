@@ -37,6 +37,10 @@ impl Seeder for UnixSeeder {
         self.counter = self.counter.wrapping_add(1);
         Seed(output)
     }
+
+    fn is_available() -> bool {
+        cfg!(target_family = "unix")
+    }
 }
 
 fn dev_random(random: &mut File) -> u128 {
