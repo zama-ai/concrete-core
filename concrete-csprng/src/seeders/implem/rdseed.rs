@@ -10,6 +10,10 @@ impl Seeder for RdseedSeeder {
     fn seed(&mut self) -> Seed {
         Seed(rdseed_random_m128())
     }
+
+    fn is_available() -> bool {
+        is_x86_feature_detected!("rdseed")
+    }
 }
 
 // Generates a random 128 bits value from rdseed
