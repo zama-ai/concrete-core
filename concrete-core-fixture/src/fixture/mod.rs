@@ -411,6 +411,9 @@ pub use lwe_keyswitch_key_creation::*;
 mod lwe_secret_key_creation;
 pub use lwe_secret_key_creation::*;
 
+mod lwe_to_glwe_secret_key_transmutation;
+pub use lwe_to_glwe_secret_key_transmutation::*;
+
 mod glwe_secret_key_creation;
 pub use glwe_secret_key_creation::*;
 
