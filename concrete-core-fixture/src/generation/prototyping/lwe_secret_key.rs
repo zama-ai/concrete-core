@@ -17,6 +17,8 @@ pub trait PrototypesLweSecretKey<
         KeyDistribution = KeyDistribution,
     >;
     fn new_lwe_secret_key(&mut self, lwe_dimension: LweDimension) -> Self::LweSecretKeyProto;
+    // Due to issues with cyclic imports, transmutation of an LWE secret key to a GLWE secret key
+    // is available in glwe_secret_keys.rs as part of the PrototypesGlweSecretKey trait
 }
 
 impl PrototypesLweSecretKey<Precision32, BinaryKeyDistribution> for Maker {
