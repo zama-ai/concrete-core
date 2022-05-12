@@ -53,6 +53,58 @@ impl AbstractEngine for DefaultEngine {
     }
 }
 
+#[cfg(feature = "parallel")]
+pub mod parallel {
+    use std::error::Error;
+    use std::fmt::{Display, Formatter};
+
+    use concrete_csprng::generators::SoftwareRandomGenerator;
+    use concrete_csprng::seeders::Seeder;
+
+    use crate::commons::crypto::secret::generators::EncryptionRandomGenerator as ImplEncryptionRandomGenerator;
+    use crate::specification::engines::sealed::AbstractEngineSeal;
+    use crate::specification::engines::AbstractEngine;
+
+    /// The error which can occur in the execution of FHE operations, due to the default
+    /// parallel implementation.
+    ///
+    /// # Note:
+    ///
+    /// There is currently no such case, as the default parallel implementation is not expected to
+    /// undergo major issues unrelated to FHE.
+    #[derive(Debug)]
+    pub enum DefaultParallelError {}
+
+    impl Display for DefaultParallelError {
+        fn fmt(&self, _f: &mut Formatter<'_>) -> std::fmt::Result {
+            match *self {}
+        }
+    }
+
+    impl Error for DefaultParallelError {}
+
+    pub struct DefaultParallelEngine {
+        pub(crate) encryption_generator: ImplEncryptionRandomGenerator<SoftwareRandomGenerator>,
+    }
+
+    impl AbstractEngineSeal for DefaultParallelEngine {}
+
+    impl AbstractEngine for DefaultParallelEngine {
+        type EngineError = DefaultParallelError;
+
+        type Parameters = Box<dyn Seeder>;
+
+        fn new(mut parameters: Self::Parameters) -> Result<Self, Self::EngineError> {
+            Ok(DefaultParallelEngine {
+                encryption_generator: ImplEncryptionRandomGenerator::new(
+                    parameters.seed(),
+                    parameters.as_mut(),
+                ),
+            })
+        }
+    }
+}
+
 mod cleartext_creation;
 mod cleartext_discarding_retrieval;
 mod cleartext_retrieval;

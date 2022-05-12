@@ -1,4 +1,4 @@
-#[cfg(feature = "multithread")]
+#[cfg(feature = "parallel")]
 use crate::commons::math::random::ParallelByteRandomGenerator;
 use crate::commons::math::random::{
     ByteRandomGenerator, Gaussian, RandomGenerable, RandomGenerator, Seed, Seeder, Uniform,
@@ -11,7 +11,7 @@ use concrete_commons::parameters::{
     DecompositionLevelCount, GlweDimension, GlweSize, LweDimension, LweSize, PolynomialSize,
 };
 use concrete_csprng::generators::ForkError;
-#[cfg(feature = "multithread")]
+#[cfg(feature = "parallel")]
 use rayon::prelude::*;
 
 /// A random number generator which can be used to encrypt messages.
@@ -158,7 +158,7 @@ impl<G: ByteRandomGenerator> EncryptionRandomGenerator<G> {
     }
 }
 
-#[cfg(feature = "multithread")]
+#[cfg(feature = "parallel")]
 impl<G: ParallelByteRandomGenerator> EncryptionRandomGenerator<G> {
     // Forks the generator into a parallel iterator, when splitting a bootstrap key into ggsw ct.
     pub(crate) fn par_fork_bsk_to_ggsw<T: UnsignedInteger>(
@@ -308,7 +308,7 @@ fn noise_bytes_per_ggsw(
     level.0 * noise_bytes_per_ggsw_level(glwe_size, poly_size)
 }
 
-#[cfg(all(test, feature = "multithread"))]
+#[cfg(all(test, feature = "parallel"))]
 mod test {
     use crate::commons::crypto::bootstrap::StandardBootstrapKey;
     use crate::commons::crypto::secret::{GlweSecretKey, LweSecretKey};

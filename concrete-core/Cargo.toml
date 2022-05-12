@@ -48,7 +48,7 @@ backend_fftw = [
 
 seeder_unix = ["concrete-csprng/seeder_unix"]
 seeder_x86_64_rdseed = ["concrete-csprng/seeder_x86_64_rdseed"]
-multithread = ["rayon", "concrete-csprng/parallel"]
+parallel = ["rayon", "concrete-csprng/parallel"]
 serde_serialize = ["serde", "serde/derive", "concrete-commons/serde_serialize",
     "concrete-fftw/serialize"]
 

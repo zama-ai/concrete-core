@@ -5,7 +5,7 @@ use std::ops::{
 };
 use std::slice::SliceIndex;
 
-#[cfg(feature = "multithread")]
+#[cfg(feature = "parallel")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
 #[cfg(feature = "serde_serialize")]
 use serde::{Deserialize, Serialize};
@@ -266,7 +266,7 @@ impl<Container> Tensor<Container> {
     /// Returns a parallel iterator over `&Scalar` elements.
     ///
     /// # Notes:
-    /// This iterator is hidden behind the "multithread" feature gate.
+    /// This iterator is hidden behind the "parallel" feature gate.
     ///
     /// # Example
     /// ```
@@ -277,7 +277,7 @@ impl<Container> Tensor<Container> {
     ///     assert_eq!(*scalar, 9);
     /// });
     /// ```
-    #[cfg(feature = "multithread")]
+    #[cfg(feature = "parallel")]
     pub fn par_iter(&self) -> impl IndexedParallelIterator<Item = &<Self as AsRefSlice>::Element>
     where
         Self: AsRefSlice,
@@ -311,7 +311,7 @@ impl<Container> Tensor<Container> {
     /// Returns a parallel iterator over `&mut T` elements.
     ///
     /// # Notes:
-    /// This iterator is hidden behind the "multithread" feature gate.
+    /// This iterator is hidden behind the "parallel" feature gate.
     ///
     /// # Example:
     /// ```
@@ -324,7 +324,7 @@ impl<Container> Tensor<Container> {
     ///     assert_eq!(*scalar, 8);
     /// }
     /// ```
-    #[cfg(feature = "multithread")]
+    #[cfg(feature = "parallel")]
     pub fn par_iter_mut(
         &mut self,
     ) -> impl IndexedParallelIterator<Item = &mut <Self as AsMutSlice>::Element>
@@ -363,7 +363,7 @@ impl<Container> Tensor<Container> {
     ///
     /// # Note:
     /// The length of the sub-tensors must divide the size of the tensor.
-    /// This iterator is hidden behind the "multithread" feature gate.
+    /// This iterator is hidden behind the "parallel" feature gate.
     ///
     /// # Example:
     /// ```
@@ -374,7 +374,7 @@ impl<Container> Tensor<Container> {
     ///     assert_eq!(sub.len(), 10);
     /// });
     /// ```
-    #[cfg(feature = "multithread")]
+    #[cfg(feature = "parallel")]
     pub fn par_subtensor_iter(
         &self,
         size: usize,
@@ -423,7 +423,7 @@ impl<Container> Tensor<Container> {
     /// # Note:
     ///
     /// The length of the sub-tensors must divide the size of the tensor.
-    /// This iterator is hidden behind the "multithread" feature gate.
+    /// This iterator is hidden behind the "parallel" feature gate.
     ///
     /// # Example:
     /// ```
@@ -439,7 +439,7 @@ impl<Container> Tensor<Container> {
     ///     assert_eq!(*sub.get_element(10), 1);
     /// }
     /// ```
-    #[cfg(feature = "multithread")]
+    #[cfg(feature = "parallel")]
     pub fn par_subtensor_iter_mut(
         &mut self,
         size: usize,

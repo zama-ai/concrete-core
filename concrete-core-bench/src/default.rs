@@ -134,3 +134,36 @@ bench! {
     (PlaintextVectorCreationFixture, (PlaintextVector)),
     (PlaintextVectorRetrievalFixture, (PlaintextVector))
 }
+
+#[cfg(feature = "parallel")]
+macro_rules! bench_parallel {
+    ($fixture: ident, $precision: ident, ($($types:ident),+), $maker: ident, $engine: ident, $criterion: ident) => {
+        paste!{
+            <$fixture as BenchmarkFixture<$precision, DefaultParallelEngine, ($($types,)+),
+            >>::bench_all_parameters(
+                &mut $maker,
+                &mut $engine,
+                &mut $criterion,
+                None
+            );
+        }
+    };
+    ($(($fixture: ident, ($($types:ident),+))),+) => {
+        pub fn bench_parallel() {
+            let mut criterion = Criterion::default().configure_from_args();
+            let mut maker = Maker::default();
+            let mut engine = DefaultParallelEngine::new(Box::new(UnixSeeder::new(0))).unwrap();
+            $(
+                paste!{
+                    bench_parallel!{$fixture, Precision32, ($([< $types 32 >]),+), maker, engine, criterion}
+                    bench_parallel!{$fixture, Precision64, ($([< $types 64 >]),+), maker, engine, criterion}
+                }
+            )+
+        }
+    };
+}
+
+#[cfg(feature = "parallel")]
+bench_parallel! {
+    (LweBootstrapKeyCreationFixture, (LweSecretKey, GlweSecretKey, LweBootstrapKey))
+}

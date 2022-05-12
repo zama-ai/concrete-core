@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-#[cfg(feature = "multithread")]
+#[cfg(feature = "parallel")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
 #[cfg(feature = "serde_serialize")]
 use serde::{Deserialize, Serialize};
@@ -18,7 +18,7 @@ use crate::commons::crypto::lwe::{LweCiphertext, LweList};
 use crate::commons::crypto::secret::generators::{
     EncryptionRandomGenerator, SecretRandomGenerator,
 };
-#[cfg(feature = "multithread")]
+#[cfg(feature = "parallel")]
 use crate::commons::math::random::ParallelByteRandomGenerator;
 use crate::commons::math::random::{ByteRandomGenerator, Gaussian, RandomGenerable};
 use crate::commons::math::tensor::{
@@ -583,7 +583,7 @@ where
     /// This function encrypts a message as a GSW ciphertext, using as many threads as possible.
     ///
     /// # Notes
-    /// This method is hidden behind the "multithread" feature gate.
+    /// This method is hidden behind the "parallel" feature gate.
     ///
     /// # Examples
     ///
@@ -620,7 +620,7 @@ where
     ///     &mut encryption_generator,
     /// );
     /// ```
-    #[cfg(feature = "multithread")]
+    #[cfg(feature = "parallel")]
     pub fn par_encrypt_constant_gsw<OutputCont, Scalar, Gen>(
         &self,
         encrypted: &mut GswCiphertext<OutputCont, Scalar>,
