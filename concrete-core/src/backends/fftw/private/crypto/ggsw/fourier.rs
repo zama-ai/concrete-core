@@ -7,7 +7,7 @@ use concrete_commons::parameters::{
 };
 
 use concrete_fftw::array::AlignedVec;
-#[cfg(feature = "multithread")]
+#[cfg(feature = "parallel")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
 
 use crate::backends::fftw::private::crypto::bootstrap::fourier::FftBuffers;
@@ -418,7 +418,7 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
     /// Returns a parallel iterator over mutably borrowed level matrices.
     ///
     /// # Notes
-    /// This iterator is hidden behind the "multithread" feature gate.
+    /// This iterator is hidden behind the "parallel" feature gate.
     ///
     /// # Example
     ///
@@ -451,7 +451,7 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
     ///     .all(|a| *a == Complex64::new(0., 0.)));
     /// assert_eq!(ggsw.level_matrix_iter_mut().count(), 3);
     /// ```
-    #[cfg(feature = "multithread")]
+    #[cfg(feature = "parallel")]
     pub fn par_level_matrix_iter_mut(
         &mut self,
     ) -> impl IndexedParallelIterator<Item = GgswLevelMatrix<&mut [<Self as AsRefTensor>::Element]>>

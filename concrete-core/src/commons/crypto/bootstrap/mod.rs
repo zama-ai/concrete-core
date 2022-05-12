@@ -7,7 +7,7 @@ pub use standard::StandardBootstrapKey;
 
 mod standard;
 
-#[cfg(all(test, feature = "multithread"))]
+#[cfg(all(test, feature = "parallel"))]
 mod test {
     use crate::commons::crypto::bootstrap::StandardBootstrapKey;
     use crate::commons::crypto::secret::generators::EncryptionRandomGenerator;

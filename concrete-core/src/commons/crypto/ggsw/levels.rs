@@ -4,7 +4,7 @@ use crate::commons::math::tensor::{
     ck_dim_div, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
 use concrete_commons::parameters::{GlweSize, PolynomialSize};
-#[cfg(feature = "multithread")]
+#[cfg(feature = "parallel")]
 use rayon::prelude::*;
 
 /// A matrix containing a single level of gadget decomposition.
@@ -188,7 +188,7 @@ impl<Cont> GgswLevelMatrix<Cont> {
     ///
     /// # Note
     ///
-    /// This method uses _rayon_ internally, and is hidden behind the "multithread" feature
+    /// This method uses _rayon_ internally, and is hidden behind the "parallel" feature
     /// gate.
     ///
     /// # Example
@@ -209,7 +209,7 @@ impl<Cont> GgswLevelMatrix<Cont> {
     ///     row.as_mut_tensor().fill_with_element(9);
     /// });
     /// ```
-    #[cfg(feature = "multithread")]
+    #[cfg(feature = "parallel")]
     pub fn par_row_iter_mut(
         &mut self,
     ) -> impl IndexedParallelIterator<Item = GgswLevelRow<&mut [<Self as AsRefTensor>::Element]>>
