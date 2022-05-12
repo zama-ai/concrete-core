@@ -13,6 +13,9 @@ mod default;
 #[cfg(feature = "backend_fftw")]
 mod fftw;
 
+#[cfg(feature = "backend_x86_64_aesni")]
+mod aesni;
+
 // The main entry point. Uses criterion as benchmark harness.
 fn main() {
     // We instantiate the benchmarks for different backends depending on the feature flag activated.
@@ -22,6 +25,8 @@ fn main() {
     default::bench_parallel();
     #[cfg(feature = "backend_fftw")]
     fftw::bench();
+    #[cfg(feature = "backend_x86_64_aesni")]
+    aesni::bench();
 
     // We launch the benchmarks.
     criterion::Criterion::default()

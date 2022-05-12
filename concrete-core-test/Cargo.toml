@@ -13,3 +13,4 @@ paste = "1.0"
 [features]
 backend_default = ["concrete-core/backend_default", "concrete-core-fixture/backend_default"]
 backend_fftw = ["concrete-core/backend_fftw", "concrete-core-fixture/backend_fftw"]
+backend_x86_64_aesni = ["concrete-core/backend_x86_64_aesni", "concrete-core-fixture/backend_x86_64_aesni"]

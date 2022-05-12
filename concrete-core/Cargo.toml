@@ -46,6 +46,11 @@ backend_fftw = [
     "concrete-fftw"
 ]
 
+# An accelerated backend, using the `aesni` feature of x86_64 processors.
+backend_x86_64_aesni = [
+    "concrete-csprng/generator_x86_64_aesni"
+]
+
 seeder_unix = ["concrete-csprng/seeder_unix"]
 seeder_x86_64_rdseed = ["concrete-csprng/seeder_x86_64_rdseed"]
 parallel = ["rayon", "concrete-csprng/parallel"]

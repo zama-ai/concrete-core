@@ -18,6 +18,10 @@ pub use super::backends::fftw::engines::*;
 #[cfg(feature = "backend_fftw")]
 pub use super::backends::fftw::entities::*;
 
+// ----------------------------------------------------------------------------------- AESNI BACKEND
+#[cfg(feature = "backend_x86_64_aesni")]
+pub use super::backends::aesni::engines::*;
+
 // -------------------------------------------------------------------------------- COMMONS REEXPORT
 // Expose concrete_commons types in the prelude. This avoids having to add concrete-commons as a
 // dependency in crates built on top of concrete-core.
