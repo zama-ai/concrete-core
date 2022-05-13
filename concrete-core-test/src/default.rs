@@ -22,11 +22,6 @@ macro_rules! test {
             }
         }
     };
-    ($(($fixture: ident, $precision: ident, ($($types:ident),+))),+) => {
-        $(
-            test!{$fixture, $precision, ($($types),+)}
-        )+
-    };
     ($(($fixture: ident, ($($types:ident),+))),+) => {
         $(
             paste!{
