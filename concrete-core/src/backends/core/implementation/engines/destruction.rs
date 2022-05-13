@@ -12,6 +12,7 @@ use crate::backends::core::implementation::entities::{
     PackingKeyswitchKey64, Plaintext32, Plaintext64, PlaintextVector32, PlaintextVector64,
 };
 use crate::backends::core::private::math::tensor::AsMutTensor;
+use crate::prelude::{FunctionalPackingKeyswitchKey32, FunctionalPackingKeyswitchKey64};
 use crate::specification::engines::{DestructionEngine, DestructionError};
 
 impl DestructionEngine<Cleartext32> for CoreEngine {
@@ -526,6 +527,34 @@ impl DestructionEngine<PackingKeyswitchKey64> for CoreEngine {
     }
 
     unsafe fn destroy_unchecked(&mut self, entity: &mut PackingKeyswitchKey64) {
+        entity.0.as_mut_tensor().fill_with_element(0u64);
+    }
+}
+
+impl DestructionEngine<FunctionalPackingKeyswitchKey32> for CoreEngine {
+    fn destroy(
+        &mut self,
+        mut entity: FunctionalPackingKeyswitchKey32,
+    ) -> Result<(), DestructionError<Self::EngineError>> {
+        unsafe { self.destroy_unchecked(&mut entity) };
+        Ok(())
+    }
+
+    unsafe fn destroy_unchecked(&mut self, entity: &mut FunctionalPackingKeyswitchKey32) {
+        entity.0.as_mut_tensor().fill_with_element(0u32);
+    }
+}
+
+impl DestructionEngine<FunctionalPackingKeyswitchKey64> for CoreEngine {
+    fn destroy(
+        &mut self,
+        mut entity: FunctionalPackingKeyswitchKey64,
+    ) -> Result<(), DestructionError<Self::EngineError>> {
+        unsafe { self.destroy_unchecked(&mut entity) };
+        Ok(())
+    }
+
+    unsafe fn destroy_unchecked(&mut self, entity: &mut FunctionalPackingKeyswitchKey64) {
         entity.0.as_mut_tensor().fill_with_element(0u64);
     }
 }

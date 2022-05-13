@@ -36,7 +36,7 @@ impl GlweCiphertextEntity for GlweCiphertext32 {
 /// A structure representing a GLWE ciphertext with 64 bits of precision.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
-pub struct GlweCiphertext64(pub(crate) ImplGlweCiphertext<Vec<u64>>);
+pub struct GlweCiphertext64(pub ImplGlweCiphertext<Vec<u64>>);
 
 impl AbstractEntity for GlweCiphertext64 {
     type Kind = GlweCiphertextKind;

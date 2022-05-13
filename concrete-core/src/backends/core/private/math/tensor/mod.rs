@@ -174,7 +174,7 @@ mod tests;
 mod tensor;
 pub use tensor::*;
 
-mod as_slice;
+pub(crate) mod as_slice;
 pub use as_slice::*;
 
 mod as_element;

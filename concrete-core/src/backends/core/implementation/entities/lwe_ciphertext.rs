@@ -23,7 +23,7 @@ impl LweCiphertextEntity for LweCiphertext32 {
 /// A structure representing an LWE ciphertext with 64 bits of precision.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct LweCiphertext64(pub(crate) ImplLweCiphertext<Vec<u64>>);
+pub struct LweCiphertext64(pub ImplLweCiphertext<Vec<u64>>);
 impl AbstractEntity for LweCiphertext64 {
     type Kind = LweCiphertextKind;
 }

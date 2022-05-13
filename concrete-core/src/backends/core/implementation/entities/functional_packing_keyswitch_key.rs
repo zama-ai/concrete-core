@@ -1,6 +1,6 @@
-use crate::backends::core::private::crypto::glwe::PackingKeyswitchKey as ImplPackingKeyswitchKey;
-use crate::prelude::markers::PackingKeyswitchKeyKind;
-use crate::prelude::PackingKeyswitchKeyEntity;
+use crate::backends::core::private::crypto::glwe::FunctionalPackingKeyswitchKey as ImplFunctionalPackingKeyswitchKey;
+use crate::prelude::markers::FunctionalPackingKeyswitchKeyKind;
+use crate::prelude::FunctionalPackingKeyswitchKeyEntity;
 use crate::specification::entities::markers::BinaryKeyDistribution;
 use crate::specification::entities::AbstractEntity;
 use concrete_commons::parameters::{
@@ -9,14 +9,14 @@ use concrete_commons::parameters::{
 #[cfg(feature = "serde_serialize")]
 use serde::{Deserialize, Serialize};
 
-/// A structure representing a packing keyswitch key with 32 bits of precision.
+/// A structure representing a functional packing keyswitch key with 32 bits of precision.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
-pub struct PackingKeyswitchKey32(pub(crate) ImplPackingKeyswitchKey<Vec<u32>>);
-impl AbstractEntity for PackingKeyswitchKey32 {
-    type Kind = PackingKeyswitchKeyKind;
+pub struct FunctionalPackingKeyswitchKey32(pub(crate) ImplFunctionalPackingKeyswitchKey<Vec<u32>>);
+impl AbstractEntity for FunctionalPackingKeyswitchKey32 {
+    type Kind = FunctionalPackingKeyswitchKeyKind;
 }
-impl PackingKeyswitchKeyEntity for PackingKeyswitchKey32 {
+impl FunctionalPackingKeyswitchKeyEntity for FunctionalPackingKeyswitchKey32 {
     type InputKeyDistribution = BinaryKeyDistribution;
     type OutputKeyDistribution = BinaryKeyDistribution;
 
@@ -41,14 +41,14 @@ impl PackingKeyswitchKeyEntity for PackingKeyswitchKey32 {
     }
 }
 
-/// A structure representing a packing keyswitch key with 64 bits of precision.
+/// A structure representing a functional packing keyswitch key with 64 bits of precision.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
-pub struct PackingKeyswitchKey64(pub ImplPackingKeyswitchKey<Vec<u64>>);
-impl AbstractEntity for PackingKeyswitchKey64 {
-    type Kind = PackingKeyswitchKeyKind;
+pub struct FunctionalPackingKeyswitchKey64(pub ImplFunctionalPackingKeyswitchKey<Vec<u64>>);
+impl AbstractEntity for FunctionalPackingKeyswitchKey64 {
+    type Kind = FunctionalPackingKeyswitchKeyKind;
 }
-impl PackingKeyswitchKeyEntity for PackingKeyswitchKey64 {
+impl FunctionalPackingKeyswitchKeyEntity for FunctionalPackingKeyswitchKey64 {
     type InputKeyDistribution = BinaryKeyDistribution;
     type OutputKeyDistribution = BinaryKeyDistribution;
 

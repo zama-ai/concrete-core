@@ -28,7 +28,7 @@ impl GlweSecretKeyEntity for GlweSecretKey32 {
 /// A structure representing a GLWE secret key with 64 bits of precision.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
-pub struct GlweSecretKey64(pub(crate) ImpGlweSecretKey<BinaryKeyKind, Vec<u64>>);
+pub struct GlweSecretKey64(pub ImpGlweSecretKey<BinaryKeyKind, Vec<u64>>);
 impl AbstractEntity for GlweSecretKey64 {
     type Kind = GlweSecretKeyKind;
 }

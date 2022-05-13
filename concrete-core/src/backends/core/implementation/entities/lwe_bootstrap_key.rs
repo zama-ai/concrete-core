@@ -109,7 +109,7 @@ impl LweBootstrapKeyEntity for FourierLweBootstrapKey32 {
 /// A structure representing an LWE bootstrap key with 64 bits of precision, in the fourier domain.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
-pub struct FourierLweBootstrapKey64(pub(crate) ImplFourierBootstrapKey<AlignedVec<Complex64>, u64>);
+pub struct FourierLweBootstrapKey64(pub ImplFourierBootstrapKey<AlignedVec<Complex64>, u64>);
 impl AbstractEntity for FourierLweBootstrapKey64 {
     type Kind = LweBootstrapKeyKind;
 }

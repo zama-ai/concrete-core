@@ -10,7 +10,7 @@ use crate::backends::core::private::crypto::glwe::GlweCiphertext;
 use crate::backends::core::private::crypto::lwe::LweCiphertext;
 use crate::backends::core::private::math::decomposition::SignedDecomposer;
 use crate::backends::core::private::math::fft::{Complex64, FourierPolynomial};
-use crate::backends::core::private::math::polynomial::Polynomial;
+use crate::backends::core::private::math::polynomial::{Polynomial, PolynomialList};
 use crate::backends::core::private::math::tensor::{
     ck_dim_div, ck_dim_eq, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, IntoTensor, Tensor,
 };
@@ -652,8 +652,11 @@ where
         self.external_product(ct0, ggsw, ct1, fft_buffers, rounded_buffer);
     }
 
-    fn blind_rotate<C2>(&self, buffers: &mut FourierBuffers<Scalar>, lwe: &LweCiphertext<C2>)
-    where
+    pub(crate) fn blind_rotate<C2>(
+        &self,
+        buffers: &mut FourierBuffers<Scalar>,
+        lwe: &LweCiphertext<C2>,
+    ) where
         LweCiphertext<C2>: AsRefTensor<Element = Scalar>,
         GlweCiphertext<Vec<Scalar>>: AsMutTensor<Element = Scalar>,
         Self: AsRefTensor<Element = Complex64>,
@@ -734,6 +737,42 @@ where
     // Apply the lsb padding
     output <<= lut_count_log.0;
     MonomialDegree(output.cast_into() as usize)
+}
+
+pub(crate) fn constant_sample_extract<LweCont, RlweCont, Scalar>(
+    lwe: &mut LweCiphertext<LweCont>,
+    glwe: &GlweCiphertext<RlweCont>,
+) where
+    LweCiphertext<LweCont>: AsMutTensor<Element = Scalar>,
+    GlweCiphertext<RlweCont>: AsRefTensor<Element = Scalar>,
+    Scalar: UnsignedTorus,
+{
+    // We extract the mask  and body of both ciphertexts
+    let (mut body_lwe, mut mask_lwe) = lwe.get_mut_body_and_mask();
+    let (body_glwe, mask_glwe) = glwe.get_body_and_mask();
+
+    // We construct a polynomial list from the lwe mask
+    let mut mask_lwe_poly = PolynomialList::from_container(
+        mask_lwe.as_mut_tensor().as_mut_slice(),
+        glwe.polynomial_size(),
+    );
+
+    // We copy the mask values with the proper ordering and sign
+    for (mut mask_lwe_polynomial, mask_glwe_polynomial) in mask_lwe_poly
+        .polynomial_iter_mut()
+        .zip(mask_glwe.as_polynomial_list().polynomial_iter())
+    {
+        for (lwe_coeff, glwe_coeff) in mask_lwe_polynomial
+            .coefficient_iter_mut()
+            .zip(mask_glwe_polynomial.coefficient_iter().rev())
+        {
+            *lwe_coeff = (Scalar::ZERO).wrapping_sub(*glwe_coeff);
+        }
+    }
+    mask_lwe_poly.update_with_wrapping_monic_monomial_mul(MonomialDegree(1));
+
+    // We set the body
+    body_lwe.0 = *body_glwe.as_tensor().get_element(0);
 }
 
 impl<Cont, Scalar> FourierBootstrapKey<Cont, Scalar>
@@ -853,7 +892,7 @@ where
 
         // We perform the extraction of the first sample.
         let local_accumulator = &mut buffers.lut_buffer;
-        local_accumulator.fill_lwe_with_sample_extraction(lwe_out, MonomialDegree(0));
+        constant_sample_extract(lwe_out, &*local_accumulator);
     }
 }
 

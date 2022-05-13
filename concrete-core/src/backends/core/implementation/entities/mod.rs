@@ -3,6 +3,7 @@
 
 mod cleartext;
 mod cleartext_vector;
+mod functional_packing_keyswitch_key;
 mod ggsw_ciphertext;
 mod glwe_ciphertext;
 mod glwe_ciphertext_vector;
@@ -19,6 +20,7 @@ mod plaintext_vector;
 
 pub use cleartext::*;
 pub use cleartext_vector::*;
+pub use functional_packing_keyswitch_key::*;
 pub use ggsw_ciphertext::*;
 pub use glwe_ciphertext::*;
 pub use glwe_ciphertext_vector::*;

@@ -36,7 +36,7 @@ impl LweKeyswitchKeyEntity for LweKeyswitchKey32 {
 /// A structure representing an LWE keyswitch key with 64 bits of precision.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
-pub struct LweKeyswitchKey64(pub(crate) ImplLweKeyswitchKey<Vec<u64>>);
+pub struct LweKeyswitchKey64(pub ImplLweKeyswitchKey<Vec<u64>>);
 impl AbstractEntity for LweKeyswitchKey64 {
     type Kind = LweKeyswitchKeyKind;
 }
