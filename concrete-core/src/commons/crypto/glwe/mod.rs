@@ -2,6 +2,14 @@
 
 mod body;
 mod ciphertext;
+pub use body::*;
+pub use ciphertext::*;
+pub use functional_keyswitch::*;
+pub use keyswitch::*;
+pub use list::*;
+pub use mask::*;
+
+mod functional_keyswitch;
 mod keyswitch;
 mod list;
 mod mask;

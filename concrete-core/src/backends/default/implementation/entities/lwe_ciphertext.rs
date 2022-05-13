@@ -27,7 +27,7 @@ pub(crate) enum LweCiphertext32Version {
 
 /// A structure representing an LWE ciphertext with 64 bits of precision.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct LweCiphertext64(pub(crate) ImplLweCiphertext<Vec<u64>>);
+pub struct LweCiphertext64(pub ImplLweCiphertext<Vec<u64>>);
 impl AbstractEntity for LweCiphertext64 {
     type Kind = LweCiphertextKind;
 }

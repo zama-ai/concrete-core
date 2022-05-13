@@ -27,8 +27,9 @@ pub(crate) enum LweSecretKey32Version {
 }
 
 /// A structure representing an LWE secret key with 64 bits of precision.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct LweSecretKey64(pub(crate) ImpLweSecretKey<BinaryKeyKind, Vec<u64>>);
+#[derive(Debug, Clone, PartialEq)]
+pub struct LweSecretKey64(pub ImpLweSecretKey<BinaryKeyKind, Vec<u64>>);
+
 impl AbstractEntity for LweSecretKey64 {
     type Kind = LweSecretKeyKind;
 }

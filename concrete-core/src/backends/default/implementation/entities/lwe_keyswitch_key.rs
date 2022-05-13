@@ -39,10 +39,12 @@ pub(crate) enum LweKeyswitchKey32Version {
 
 /// A structure representing an LWE keyswitch key with 64 bits of precision.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct LweKeyswitchKey64(pub(crate) ImplLweKeyswitchKey<Vec<u64>>);
+pub struct LweKeyswitchKey64(pub ImplLweKeyswitchKey<Vec<u64>>);
+
 impl AbstractEntity for LweKeyswitchKey64 {
     type Kind = LweKeyswitchKeyKind;
 }
+
 impl LweKeyswitchKeyEntity for LweKeyswitchKey64 {
     fn input_lwe_dimension(&self) -> LweDimension {
         self.0.before_key_size()

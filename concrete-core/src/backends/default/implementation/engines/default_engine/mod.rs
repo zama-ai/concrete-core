@@ -173,6 +173,7 @@ mod lwe_ciphertext_vector_trivial_decryption;
 mod lwe_ciphertext_vector_trivial_encryption;
 mod lwe_ciphertext_vector_zero_encryption;
 mod lwe_ciphertext_zero_encryption;
+mod lwe_functional_packing_keyswitch_key_creation;
 mod lwe_keyswitch_key_creation;
 mod lwe_private_functional_packing_keyswitch_key_creation;
 mod lwe_secret_key_creation;
