@@ -47,7 +47,7 @@ pub(crate) enum FftwFourierLweBootstrapKey32Version {
 
 /// A structure representing an LWE bootstrap key with 64 bits of precision, in the fourier domain.
 #[derive(Debug, Clone, PartialEq)]
-pub struct FftwFourierLweBootstrapKey64(pub(crate) FourierBootstrapKey<AlignedVec<Complex64>, u64>);
+pub struct FftwFourierLweBootstrapKey64(pub FourierBootstrapKey<AlignedVec<Complex64>, u64>);
 impl AbstractEntity for FftwFourierLweBootstrapKey64 {
     type Kind = LweBootstrapKeyKind;
 }

@@ -8,7 +8,6 @@ use crate::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LutCountLog, LweDimension,
     ModulusSwitchOffset, MonomialDegree, PolynomialSize,
 };
-
 mod buffers;
 
 use crate::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
@@ -16,11 +15,15 @@ use crate::backends::fftw::private::math::fft::Complex64;
 use crate::commons::crypto::bootstrap::StandardBootstrapKey;
 use crate::commons::crypto::glwe::GlweCiphertext;
 use crate::commons::crypto::lwe::LweCiphertext;
+use crate::commons::math::polynomial::PolynomialList;
 use crate::commons::math::tensor::{
     ck_dim_div, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, IntoTensor, Tensor,
 };
 use crate::commons::math::torus::UnsignedTorus;
 pub use buffers::{FftBuffers, FourierBuffers};
+
+#[cfg(feature = "test")]
+mod tests;
 
 /// A bootstrapping key in the fourier domain.
 #[cfg_attr(feature = "backend_fftw_serialization", derive(Serialize, Deserialize))]
@@ -445,8 +448,11 @@ where
             })
     }
 
-    fn blind_rotate<C2>(&self, buffers: &mut FourierBuffers<Scalar>, lwe: &LweCiphertext<C2>)
-    where
+    pub(crate) fn blind_rotate<C2>(
+        &self,
+        buffers: &mut FourierBuffers<Scalar>,
+        lwe: &LweCiphertext<C2>,
+    ) where
         LweCiphertext<C2>: AsRefTensor<Element = Scalar>,
         GlweCiphertext<Vec<Scalar>>: AsMutTensor<Element = Scalar>,
         Self: AsRefTensor<Element = Complex64>,
@@ -526,6 +532,42 @@ where
     // Apply the lsb padding
     output <<= lut_count_log.0;
     MonomialDegree(output.cast_into() as usize)
+}
+
+pub(crate) fn constant_sample_extract<LweCont, RlweCont, Scalar>(
+    lwe: &mut LweCiphertext<LweCont>,
+    glwe: &GlweCiphertext<RlweCont>,
+) where
+    LweCiphertext<LweCont>: AsMutTensor<Element = Scalar>,
+    GlweCiphertext<RlweCont>: AsRefTensor<Element = Scalar>,
+    Scalar: UnsignedTorus,
+{
+    // We extract the mask  and body of both ciphertexts
+    let (mut body_lwe, mut mask_lwe) = lwe.get_mut_body_and_mask();
+    let (body_glwe, mask_glwe) = glwe.get_body_and_mask();
+
+    // We construct a polynomial list from the lwe mask
+    let mut mask_lwe_poly = PolynomialList::from_container(
+        mask_lwe.as_mut_tensor().as_mut_slice(),
+        glwe.polynomial_size(),
+    );
+
+    // We copy the mask values with the proper ordering and sign
+    for (mut mask_lwe_polynomial, mask_glwe_polynomial) in mask_lwe_poly
+        .polynomial_iter_mut()
+        .zip(mask_glwe.as_polynomial_list().polynomial_iter())
+    {
+        for (lwe_coeff, glwe_coeff) in mask_lwe_polynomial
+            .coefficient_iter_mut()
+            .zip(mask_glwe_polynomial.coefficient_iter().rev())
+        {
+            *lwe_coeff = (Scalar::ZERO).wrapping_sub(*glwe_coeff);
+        }
+    }
+    mask_lwe_poly.update_with_wrapping_monic_monomial_mul(MonomialDegree(1));
+
+    // We set the body
+    body_lwe.0 = *body_glwe.as_tensor().get_element(0);
 }
 
 impl<Cont, Scalar> FourierBootstrapKey<Cont, Scalar>
@@ -648,7 +690,7 @@ where
 
         // We perform the extraction of the first sample.
         let local_accumulator = &mut buffers.lut_buffer;
-        local_accumulator.fill_lwe_with_sample_extraction(lwe_out, MonomialDegree(0));
+        constant_sample_extract(lwe_out, &*local_accumulator);
     }
 }
 
