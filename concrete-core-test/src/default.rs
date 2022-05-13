@@ -117,6 +117,7 @@ test! {
     (LweCiphertextPlaintextDiscardingSubtractionFixture, (LweCiphertext, Plaintext, LweCiphertext)),
     (LweCiphertextPlaintextFusingSubtractionFixture, (Plaintext, LweCiphertext)),
     (LweCiphertextDiscardingExtractionFixture, (GlweCiphertext, LweCiphertext)),
+    (LweCiphertextSampleExtractionFixture, (GlweCiphertext, LweCiphertext)),
     (LweCiphertextVectorGlweCiphertextDiscardingPackingKeyswitchFixture, (LweCiphertextVector, PackingKeyswitchKey, GlweCiphertext)),
     (LweCiphertextCreationFixture, (LweCiphertext, Vec)),
     (LweCiphertextCreationFixture, (LweCiphertextView, Slice)),
