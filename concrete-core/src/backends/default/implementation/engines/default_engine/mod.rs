@@ -189,3 +189,4 @@ mod plaintext_vector_creation;
 mod plaintext_vector_decoding;
 mod plaintext_vector_discarding_retrieval;
 mod plaintext_vector_retrieval;
+mod lwe_functional_packing_keyswitch_key_creation;

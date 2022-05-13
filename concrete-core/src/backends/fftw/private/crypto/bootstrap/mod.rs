@@ -6,3 +6,5 @@
 pub use fourier::{FourierBootstrapKey, FourierBuffers};
 
 pub(crate) mod fourier;
+pub mod multivaluepbs;
+pub mod treepbs;
