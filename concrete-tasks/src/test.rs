@@ -33,12 +33,17 @@ pub fn npe() -> Result<(), Error> {
     cmd!(<ENV_TARGET_NATIVE> "cargo test --release --no-fail-fast --all-features -p concrete-npe")
 }
 
+pub fn ffi() -> Result<(), Error> {
+    cmd!(<ENV_TARGET_NATIVE> "./concrete-ffi/build-ffi-and-run-c-tests.sh")
+}
+
 pub fn crates() -> Result<(), Error> {
     commons()?;
     core()?;
     core_test()?;
     csprng()?;
-    npe()
+    npe()?;
+    ffi()
 }
 
 pub fn cov_crates() -> Result<(), Error> {

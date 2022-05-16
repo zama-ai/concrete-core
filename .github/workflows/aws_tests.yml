@@ -31,7 +31,7 @@ jobs:
         with:
           mode: start
           github-token: ${{ secrets.CONCRETE_ACTIONS_TOKEN }}
-          ec2-image-id: ami-016cd2805f00564a5
+          ec2-image-id: ami-0dae0bbbc42a4664a
           ec2-instance-type: m5n.2xlarge
           subnet-id: subnet-da319dd4
           security-group-id: sg-064a7184f24469c76
