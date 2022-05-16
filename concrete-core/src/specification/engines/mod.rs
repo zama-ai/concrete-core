@@ -176,6 +176,7 @@ mod lwe_ciphertext_cleartext_fusing_multiplication;
 mod lwe_ciphertext_conversion;
 mod lwe_ciphertext_decryption;
 mod lwe_ciphertext_discarding_addition;
+mod lwe_ciphertext_discarding_subtraction;
 mod lwe_ciphertext_discarding_bootstrap;
 mod lwe_ciphertext_discarding_conversion;
 mod lwe_ciphertext_discarding_decryption;
