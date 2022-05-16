@@ -1,0 +1,170 @@
+name: concrete-ffi GitHub release
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  OUTPUT_BUILD_DIR: "target/release/"
+
+jobs:
+  build-linux:
+    name: Build concrete-ffi on Linux
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build libconcreteffi
+        env:
+          RUSTFLAGS: "-Ctarget-feature=+aes,+rdseed,+sse2,+avx,+avx2"
+        run: |
+          cargo build --release \
+          --features backend_default \
+          --features backend_fftw \
+          --features parallel \
+          --features seeder_unix \
+          --features seeder_x86_64_rdseed \
+          --features serde_serialize \
+          -p concrete-ffi
+
+          echo "Build artifacts:"
+
+          # Check the build output
+          ls "${OUTPUT_BUILD_DIR}"
+
+          # Use cargo metadata to emit all metadata in json form, format version is recommended
+          # for compatibility. Then use the jq (r: raw string, c: condensed) filter which does:
+          # Iterate over json["packages"] as array, select the package named "concrete-ffi" and
+          # output its version
+          CONCRETE_FFI_VERSION="$(cargo metadata --format-version 1 |
+            jq -rc '.packages[] | select(.name=="concrete-ffi") | .version')"
+
+          echo "concrete-ffi version: ${CONCRETE_FFI_VERSION}"
+
+          # Create a temporary directory and a raw artifacts dir in it
+          TMP_DIR="$(mktemp -d)"
+          RAW_ARTIFACTS_DIR="${TMP_DIR}/raw_artifacts"
+          mkdir -p "${RAW_ARTIFACTS_DIR}"
+
+          echo "TO_UPLOAD=${TMP_DIR}/*" >> "${GITHUB_ENV}"
+
+          # Copy the build artifacts to the raw_artifacts dir
+          # Hard code the names of the files we want to archive
+          cp "${OUTPUT_BUILD_DIR}/concrete-ffi.h" "${RAW_ARTIFACTS_DIR}/"
+          cp "${OUTPUT_BUILD_DIR}/libconcrete_ffi.a" "${RAW_ARTIFACTS_DIR}/"
+          cp "${OUTPUT_BUILD_DIR}/libconcrete_ffi.so" "${RAW_ARTIFACTS_DIR}/"
+
+          OUTPUT_TARBALL="${TMP_DIR}/concrete-ffi_${CONCRETE_FFI_VERSION}_linux_amd64.tar.gz"
+          OUTPUT_ZIP="${TMP_DIR}/concrete-ffi_${CONCRETE_FFI_VERSION}_linux_amd64.zip"
+
+          # Goto TMP_DIR first then RAW_ARTIFACTS_DIR
+          pushd "${TMP_DIR}"
+          pushd "${RAW_ARTIFACTS_DIR}"
+
+          # Create archives
+          echo "Creating tarball..."
+          tar -cvzf "${OUTPUT_TARBALL}" ./*
+
+          echo "Creating zip archive..."
+          zip -r "${OUTPUT_ZIP}" ./*
+
+          # Return to TMP_DIR
+          popd
+          # Create the sha256 for both archives
+          ls concrete-ffi* | sort | xargs shasum -a 256 -b > sha256_linux.txt
+
+          # Remove the copies to make our lives easier when packaging artifacts
+          rm -rf "${RAW_ARTIFACTS_DIR}"
+
+          ls
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux_amd64
+          path: ${{ env.TO_UPLOAD }}
+
+  build-mac-os:
+    name: Build concrete-ffi on macOS
+    runs-on: macos-10.15
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build libconcreteffi
+        env:
+          RUSTFLAGS: "-Ctarget-cpu=native"
+        run: |
+          cargo build --release \
+          --features backend_default \
+          --features backend_fftw \
+          --features parallel \
+          --features seeder_unix \
+          --features seeder_x86_64_rdseed \
+          --features serde_serialize \
+          -p concrete-ffi
+
+          echo "Build artifacts:"
+
+          # Check the build output
+          ls "${OUTPUT_BUILD_DIR}"
+
+          # Use cargo metadata to emit all metadata in json form, format version is recommended
+          # for compatibility. Then use the jq (r: raw string, c: condensed) filter which does:
+          # Iterate over json["packages"] as array, select the package named "concrete-ffi" and
+          # output its version
+          CONCRETE_FFI_VERSION="$(cargo metadata --format-version 1 |
+            jq -rc '.packages[] | select(.name=="concrete-ffi") | .version')"
+
+          echo "concrete-ffi version: ${CONCRETE_FFI_VERSION}"
+
+          # Create a temporary directory
+          TMP_DIR="$(mktemp -d)"
+          RAW_ARTIFACTS_DIR="${TMP_DIR}/raw_artifacts"
+          mkdir -p "${RAW_ARTIFACTS_DIR}"
+
+          echo "TO_UPLOAD=${TMP_DIR}/*" >> "${GITHUB_ENV}"
+
+          # Copy the build artifacts to the raw_artifacts dir
+          # Hard code the names of the files we want to archive
+          cp "${OUTPUT_BUILD_DIR}/concrete-ffi.h" "${RAW_ARTIFACTS_DIR}/"
+          cp "${OUTPUT_BUILD_DIR}/libconcrete_ffi.a" "${RAW_ARTIFACTS_DIR}/"
+          cp "${OUTPUT_BUILD_DIR}/libconcrete_ffi.dylib" "${RAW_ARTIFACTS_DIR}/"
+
+          OUTPUT_TARBALL="${TMP_DIR}/concrete-ffi_${CONCRETE_FFI_VERSION}_darwin_amd64.tar.gz"
+          OUTPUT_ZIP="${TMP_DIR}/concrete-ffi_${CONCRETE_FFI_VERSION}_darwin_amd64.zip"
+
+          # Goto TMP_DIR first then RAW_ARTIFACTS_DIR
+          pushd "${TMP_DIR}"
+          pushd "${RAW_ARTIFACTS_DIR}"
+
+          # Create archives
+          echo "Creating tarball..."
+          tar -cvzf "${OUTPUT_TARBALL}" ./*
+
+          echo "Creating zip archive..."
+          zip -r "${OUTPUT_ZIP}" ./*
+
+          # Return to TMP_DIR
+          popd
+          # Create the sha256 for both archives
+          ls concrete-ffi* | sort | xargs shasum -a 256 -b > sha256_darwin.txt
+
+          # Remove the copies to make our lives easier when packaging artifacts
+          rm -rf "${RAW_ARTIFACTS_DIR}"
+
+          ls
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: darwin_amd64
+          path: ${{ env.TO_UPLOAD }}
