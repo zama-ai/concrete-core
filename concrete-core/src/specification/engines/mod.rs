@@ -270,6 +270,7 @@ pub use lwe_ciphertext_cleartext_fusing_multiplication::*;
 pub use lwe_ciphertext_conversion::*;
 pub use lwe_ciphertext_decryption::*;
 pub use lwe_ciphertext_discarding_addition::*;
+pub use lwe_ciphertext_discarding_subtraction::*;
 pub use lwe_ciphertext_discarding_bootstrap::*;
 pub use lwe_ciphertext_discarding_conversion::*;
 pub use lwe_ciphertext_discarding_decryption::*;
