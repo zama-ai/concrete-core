@@ -186,10 +186,21 @@ impl<BlockCipher: AesBlockCipher> Iterator for AesCtrGenerator<BlockCipher> {
     type Item = u8;
 
     fn next(&mut self) -> Option<Self::Item> {
+        // To avoid code duplication, call the slightly more generic nth and tell clippy that
+        // everything will be alright
+        #[allow(clippy::iter_nth_zero)]
+        // nth is zero indexed
+        self.nth(0)
+    }
+
+    // advance_by is unstable, the current recommendation is to implement nth to advance an iterator
+    // here we will avoid computing AES a lot of times and just move the state to the proper byte.
+    fn nth(&mut self, n: usize) -> Option<Self::Item> {
         if self.state.table_index() >= self.last {
             None
         } else {
-            match self.state.increment() {
+            // nth is zero indexed, so increase by 1
+            match self.state.increase(n + 1) {
                 ShiftAction::OutputByte(BufferPointer(ptr)) => Some(self.buffer[ptr]),
                 ShiftAction::RefreshBatchAndOutputByte(aes_index, BufferPointer(ptr)) => {
                     self.buffer = self.block_cipher.generate_batch(aes_index);

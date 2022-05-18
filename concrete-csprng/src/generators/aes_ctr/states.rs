@@ -59,6 +59,7 @@ impl State {
         }
     }
 
+    #[allow(unused)] // to please clippy when tests are not activated
     /// Shifts the state forward of one byte.
     pub fn increment(&mut self) -> ShiftAction {
         self.increase(1)

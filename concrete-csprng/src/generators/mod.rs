@@ -51,6 +51,23 @@ impl Display for ForkError {
 }
 impl Error for ForkError {}
 
+/// An error when calling methods on a generator
+#[derive(Debug)]
+pub enum GeneratorError {
+    ShiftTooLarge(usize),
+}
+
+impl Display for GeneratorError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            GeneratorError::ShiftTooLarge(n) => {
+                write!(f, "Unable to shift by {} bytes", n)
+            }
+        }
+    }
+}
+impl Error for GeneratorError {}
+
 /// A trait for cryptographically secure pseudo-random generators.
 ///
 /// See the [crate-level](#crate) documentation for details.
@@ -70,7 +87,7 @@ pub trait RandomGenerator: Iterator<Item = u8> {
     /// Note:
     /// -----
     ///
-    /// A fresh generator can generate 2¹³² bytes. Unfortunately, no rust integer type in is able
+    /// A fresh generator can generate 2¹³² bytes. Unfortunately, no rust integer type is able
     /// to encode such a large number. Consequently [`ByteCount`] uses the largest integer type
     /// available to encode this value: the `u128` type. For this reason, this method does not
     /// effectively return the number of remaining bytes, but instead
@@ -80,6 +97,15 @@ pub trait RandomGenerator: Iterator<Item = u8> {
     /// Returns the next byte of the stream, if the generator did not yet reach its bound.
     fn next_byte(&mut self) -> Option<u8> {
         self.next()
+    }
+
+    /// Skips n bytes without consuming the generator like `Iterator::skip` does.
+    fn shift(&mut self, n: usize) -> Result<(), GeneratorError> {
+        if n > 0 {
+            // nth(n) skips n + 1
+            self.nth(n - 1).ok_or(GeneratorError::ShiftTooLarge(n))?;
+        }
+        Ok(())
     }
 
     /// Tries to fork the generator into an iterator of `n_children` new generators, each able to
@@ -206,9 +232,9 @@ pub mod generator_generic_test {
             for _ in 0..n_bytes.0 {
                 bounded.next().unwrap();
             }
-
             // Assert we are at the bound
             assert!(bounded.next().is_none());
+            assert_eq!(bounded.remaining_bytes(), ByteCount(0));
         }
     }
 
