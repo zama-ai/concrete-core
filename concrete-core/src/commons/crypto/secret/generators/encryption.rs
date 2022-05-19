@@ -33,13 +33,13 @@ impl<G: ByteRandomGenerator> EncryptionRandomGenerator<G> {
     }
 
     // Allows to seed the noise generator. For testing purpose only.
-    #[allow(dead_code)]
+    #[cfg(test)]
     pub(crate) fn seed_noise_generator(&mut self, seed: Seed) {
         println!("WARNING: The noise generator of the encryption random generator was seeded.");
         self.noise = RandomGenerator::new(seed);
     }
 
-    /// Returns the number of remaining bytes, if the generator is bounded.
+    /// Returns the number of remaining bytes for the mask generator, if the generator is bounded.
     pub fn remaining_bytes(&self) -> Option<usize> {
         self.mask.remaining_bytes()
     }
