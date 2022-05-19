@@ -14,6 +14,32 @@ pub use concrete_csprng::generators::ParallelRandomGenerator as ParallelByteRand
 pub use concrete_csprng::generators::RandomGenerator as ByteRandomGenerator;
 pub use concrete_csprng::seeders::{Seed, Seeder};
 
+/// Module to proxy the serialization for `concrete-csprng::Seed` to avoid adding serde as a
+/// dependency to `concrete-csprng`
+#[cfg(feature = "__commons_serialization")]
+pub mod serialization_proxy {
+    pub(crate) use concrete_csprng::seeders::Seed;
+    pub(crate) use serde::{Deserialize, Serialize};
+
+    // See https://serde.rs/remote-derive.html
+    // Serde calls this the definition of the remote type. It is just a copy of the remote data
+    // structure. The `remote` attribute gives the path to the actual type we intend to derive code
+    // for. This avoids having to introduce serde in concrete-csprng
+    #[derive(Serialize, Deserialize)]
+    #[serde(remote = "Seed")]
+    pub(crate) struct SeedSerdeDef(pub u128);
+}
+
+#[cfg(feature = "__commons_serialization")]
+pub(crate) use serialization_proxy::*;
+
+#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
+#[derive(PartialEq, Eq, Debug, Clone, Copy)]
+pub struct CompressionSeed {
+    #[cfg_attr(feature = "__commons_serialization", serde(with = "SeedSerdeDef"))]
+    pub seed: Seed,
+}
+
 /// A cryptographically secure random number generator.
 ///
 /// This csprng is used by every objects that needs sampling in the library. If the proper
@@ -52,7 +78,7 @@ pub use concrete_csprng::seeders::{Seed, Seeder};
 pub struct RandomGenerator<G: ByteRandomGenerator>(G);
 
 impl<G: ByteRandomGenerator> RandomGenerator<G> {
-    pub(crate) fn generate_next(&mut self) -> u8 {
+    pub fn generate_next(&mut self) -> u8 {
         self.0.next_byte().unwrap()
     }
 
