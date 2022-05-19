@@ -14,13 +14,13 @@ use concrete_commons::parameters::LweDimension;
 
 use crate::commons::crypto::encoding::{Plaintext, PlaintextList};
 use crate::commons::crypto::gsw::GswCiphertext;
-use crate::commons::crypto::lwe::{LweCiphertext, LweList};
+use crate::commons::crypto::lwe::{LweBody, LweCiphertext, LweList, LweMask, LweSeededCiphertext};
 use crate::commons::crypto::secret::generators::{
     EncryptionRandomGenerator, SecretRandomGenerator,
 };
 #[cfg(feature = "parallel")]
 use crate::commons::math::random::ParallelByteRandomGenerator;
-use crate::commons::math::random::{ByteRandomGenerator, Gaussian, RandomGenerable};
+use crate::commons::math::random::{ByteRandomGenerator, Gaussian, RandomGenerable, Seeder};
 use crate::commons::math::tensor::{
     ck_dim_eq, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, IntoTensor, Tensor,
 };
@@ -304,6 +304,34 @@ where
         LweDimension(self.as_tensor().len())
     }
 
+    fn fill_lwe_mask_and_body_for_encryption<OutputCont, Scalar, Gen>(
+        &self,
+        output_body: &mut LweBody<Scalar>,
+        output_mask: &mut LweMask<OutputCont>,
+        encoded: &Plaintext<Scalar>,
+        noise_parameters: impl DispersionParameter,
+        generator: &mut EncryptionRandomGenerator<Gen>,
+    ) where
+        Self: AsRefTensor<Element = Scalar>,
+        OutputCont: AsMutSlice<Element = Scalar>,
+        Scalar: UnsignedTorus,
+        Gen: ByteRandomGenerator,
+    {
+        // generate a uniformly random mask
+        generator.fill_tensor_with_random_mask(output_mask);
+
+        // generate an error from the normal distribution described by std_dev
+        output_body.0 = generator.random_noise(noise_parameters);
+
+        // compute the multisum between the secret key and the mask
+        output_body.0 = output_body
+            .0
+            .wrapping_add(output_mask.compute_multisum(self));
+
+        // add the encoded message
+        output_body.0 = output_body.0.wrapping_add(encoded.0);
+    }
+
     /// Encrypts a single ciphertext.
     ///
     /// # Example
@@ -354,21 +382,101 @@ where
         Scalar: UnsignedTorus,
         Gen: ByteRandomGenerator,
     {
-        let (output_body, mut output_masks) = output.get_mut_body_and_mask();
+        let (output_body, mut output_mask) = output.get_mut_body_and_mask();
 
-        // generate a uniformly random mask
-        generator.fill_tensor_with_random_mask(&mut output_masks);
+        self.fill_lwe_mask_and_body_for_encryption(
+            output_body,
+            &mut output_mask,
+            encoded,
+            noise_parameters,
+            generator,
+        );
+    }
 
-        // generate an error from the normal distribution described by std_dev
-        output_body.0 = generator.random_noise(noise_parameters);
+    /// Encrypts a single seeded ciphertext.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use concrete_commons::dispersion::LogStandardDev;
+    /// use concrete_commons::parameters::{LweDimension, LweSize};
+    /// use concrete_core::commons::crypto::encoding::*;
+    /// use concrete_core::commons::crypto::lwe::*;
+    /// use concrete_core::commons::crypto::secret::generators::SecretRandomGenerator;
+    /// use concrete_core::commons::crypto::secret::*;
+    /// use concrete_core::commons::crypto::*;
+    ///
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::{Seed, Seeder, UnixSeeder};
+    ///
+    /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
+    ///
+    /// let mut seeder: Box<dyn Seeder> = Box::new(UnixSeeder::new(0));
+    ///
+    /// let secret_key = LweSecretKey::generate_binary(LweDimension(256), &mut secret_generator);
+    /// let encoder = RealEncoder {
+    ///     offset: 0. as f32,
+    ///     delta: 10.,
+    /// };
+    /// let noise = LogStandardDev::from_log_standard_dev(-15.);
+    ///
+    /// let clear = Cleartext(2. as f32);
+    /// let plain: Plaintext<u32> = encoder.encode(clear);
+    /// let mut encrypted: LweSeededCiphertext<u32> =
+    ///     LweSeededCiphertext::allocate(LweDimension(256), Seed(42), 37);
+    /// secret_key.encrypt_seeded_lwe::<_, _, SoftwareRandomGenerator>(
+    ///     &mut encrypted,
+    ///     &plain,
+    ///     noise,
+    ///     &mut seeder,
+    /// );
+    ///
+    /// let mut encrypted_expanded = LweCiphertext::allocate(0u32, LweSize(257));
+    /// encrypted.expand_into::<_, SoftwareRandomGenerator>(&mut encrypted_expanded);
+    ///
+    /// let mut decrypted = Plaintext(0u32);
+    /// secret_key.decrypt_lwe(&mut decrypted, &encrypted_expanded);
+    /// let decoded = encoder.decode(decrypted);
+    ///
+    /// assert!((decoded.0 - clear.0).abs() < 0.1);
+    /// ```
+    pub fn encrypt_seeded_lwe<Scalar, NoiseParameter, Gen>(
+        &self,
+        output: &mut LweSeededCiphertext<Scalar>,
+        encoded: &Plaintext<Scalar>,
+        noise_parameters: NoiseParameter,
+        seeder: &mut Box<dyn Seeder>,
+    ) where
+        Self: AsRefTensor<Element = Scalar>,
+        Scalar: UnsignedTorus,
+        Gen: ByteRandomGenerator,
+        // This will be removable when https://github.com/rust-lang/rust/issues/83701 is stabilized
+        // We currently need to be able to specify concrete types for the generic type parameters
+        // which cannot be done when some arguments use the `impl Trait` pattern
+        NoiseParameter: DispersionParameter,
+    {
+        debug_assert!(
+            output.lwe_size().to_lwe_dimension() == self.key_size(),
+            "Output LweSeededCiphertext dimension is not compatible with LweSecretKey dimension"
+        );
 
-        // compute the multisum between the secret key and the mask
-        output_body.0 = output_body
-            .0
-            .wrapping_add(output_masks.compute_multisum(self));
+        // Create the generator for the encryption, seed it with the output seed, pass a seeder so
+        // that the noise generator is seeded with a private seed
+        let mut generator =
+            EncryptionRandomGenerator::<Gen>::new(output.get_seed(), seeder.as_mut());
+        // Shift the generator to match the state required by the ciphertext
+        generator.shift(output.get_generator_byte_index());
 
-        // add the encoded message
-        output_body.0 = output_body.0.wrapping_add(encoded.0);
+        let mut output_mask = LweMask::from_container(vec![Scalar::ZERO; self.key_size().0]);
+        let output_body = output.get_mut_body();
+
+        self.fill_lwe_mask_and_body_for_encryption(
+            output_body,
+            &mut output_mask,
+            encoded,
+            noise_parameters,
+            &mut generator,
+        );
     }
 
     /// Encrypts a list of ciphertexts.

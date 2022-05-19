@@ -14,6 +14,25 @@ pub use concrete_csprng::generators::ParallelRandomGenerator as ParallelByteRand
 pub use concrete_csprng::generators::RandomGenerator as ByteRandomGenerator;
 pub use concrete_csprng::seeders::{Seed, Seeder};
 
+/// Module to proxy the serialization for `concrete-csprng::Seed` to avoid adding serde as a
+/// dependency to `concrete-csprng`
+#[cfg(feature = "serde_serialize")]
+pub mod serialization_proxy {
+    use concrete_csprng::seeders::Seed;
+    use serde::{Deserialize, Serialize};
+
+    // See https://serde.rs/remote-derive.html
+    // Serde calls this the definition of the remote type. It is just a copy of the remote data
+    // structure. The `remote` attribute gives the path to the actual type we intend to derive code
+    // for. This avoids having to introduce serde in concrete-csprng
+    #[derive(Serialize, Deserialize)]
+    #[serde(remote = "Seed")]
+    pub(crate) struct SeedSerdeDef(pub u128);
+}
+
+#[cfg(feature = "serde_serialize")]
+pub(crate) use serialization_proxy::*;
+
 /// A cryptographically secure random number generator.
 ///
 /// This csprng is used by every objects that needs sampling in the library. If the proper
@@ -52,8 +71,29 @@ pub use concrete_csprng::seeders::{Seed, Seeder};
 pub struct RandomGenerator<G: ByteRandomGenerator>(G);
 
 impl<G: ByteRandomGenerator> RandomGenerator<G> {
-    pub(crate) fn generate_next(&mut self) -> u8 {
+    pub fn generate_next(&mut self) -> u8 {
         self.0.next_byte().unwrap()
+    }
+
+    /// Skip n bytes. Depending on the underlying implementation of the CSPRNG this may short
+    /// circuit avoiding the cost of generating n bytes.
+    ///
+    /// ```rust
+    /// use concrete_core::commons::math::random::RandomGenerator;
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::Seed;
+    /// let mut generator = RandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
+    /// generator.shift(42);
+    /// let byte = generator.generate_next();
+    /// let mut second_generator = RandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
+    /// for _ in 0..42 {
+    ///     second_generator.generate_next();
+    /// }
+    /// let mut second_byte = second_generator.generate_next();
+    /// assert_eq!(byte, second_byte);
+    /// ```
+    pub fn shift(&mut self, n: usize) {
+        self.0.shift(n).unwrap()
     }
 
     /// Generates a new generator, optionally seeding it with the given value.
