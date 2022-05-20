@@ -36,8 +36,18 @@ type ActivatedRandomGenerator = AesniRandomGenerator;
 type ActivatedRandomGenerator = SoftwareRandomGenerator;
 
 pub struct DefaultEngine {
+    /// A structure containing a single CSPRNG to generate secret key coefficients.
     secret_generator: ImplSecretRandomGenerator<ActivatedRandomGenerator>,
+    /// A structure containing two CSPRNGs to generate material for encryption like public masks
+    /// and secret errors.
+    ///
+    /// The [`ImplEncryptionRandomGenerator`] contains two CSPRNGs, one publicly seeded used to
+    /// generate mask coefficients and one privately seeded used to generate errors during
+    /// encryption.
     encryption_generator: ImplEncryptionRandomGenerator<ActivatedRandomGenerator>,
+    /// A seeder that can be called to generate 128 bits seeds, useful to create new
+    /// [`ImplEncryptionRandomGenerator`] to encrypt seeded types.
+    seeder: ImplDeterministicSeeder<ActivatedRandomGenerator>,
 }
 
 impl AbstractEngineSeal for DefaultEngine {}
@@ -51,12 +61,17 @@ impl AbstractEngine for DefaultEngine {
         let mut deterministic_seeder =
             ImplDeterministicSeeder::<ActivatedRandomGenerator>::new(parameters.seed());
 
+        // Note that the operands are evaluated from left to right for Rust Struct expressions
+        // See: https://doc.rust-lang.org/stable/reference/expressions.html?highlight=left#evaluation-order-of-operands
+        // So parameters is moved in seeder after the calls to seed and the potential calls when it
+        // is passed as_mut in ImplEncryptionRandomGenerator::new
         Ok(DefaultEngine {
             secret_generator: ImplSecretRandomGenerator::new(deterministic_seeder.seed()),
             encryption_generator: ImplEncryptionRandomGenerator::new(
                 deterministic_seeder.seed(),
                 &mut deterministic_seeder,
             ),
+            seeder: deterministic_seeder,
         })
     }
 }
@@ -129,6 +144,7 @@ mod lwe_ciphertext_vector_zero_encryption;
 mod lwe_ciphertext_zero_encryption;
 mod lwe_keyswitch_key_creation;
 mod lwe_secret_key_creation;
+mod lwe_seeded_ciphertext_encryption;
 mod lwe_to_glwe_secret_key_transformation;
 mod packing_keyswitch_key_creation;
 mod plaintext_creation;
