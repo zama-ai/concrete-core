@@ -1,0 +1,136 @@
+use super::ActivatedRandomGenerator;
+use crate::backends::default::engines::DefaultEngine;
+use crate::backends::default::entities::{
+    LweCiphertext32, LweCiphertext64, LweSeededCiphertext32, LweSeededCiphertext64,
+};
+use crate::commons::crypto::lwe::LweCiphertext as ImplLweCiphertext;
+use crate::specification::engines::{
+    LweSeededToLweCiphertextTransformationEngine, LweSeededToLweCiphertextTransformationEngineError,
+};
+use crate::specification::entities::LweSeededCiphertextEntity;
+
+/// # Description:
+/// Implementation of [`LweSeededToLweCiphertextTransformationEngine`] for [`DefaultEngine`] that
+/// operates on 32 bits integers.
+impl LweSeededToLweCiphertextTransformationEngine<LweSeededCiphertext32, LweCiphertext32>
+    for DefaultEngine
+{
+    /// # Example:
+    /// ```
+    /// use concrete_commons::dispersion::Variance;
+    /// use concrete_commons::parameters::LweDimension;
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let lwe_dimension = LweDimension(2);
+    /// // Here a hard-set encoding is applied (shift by 20 bits)
+    /// let input = 3_u32 << 20;
+    /// let noise = Variance(2_f64.powf(-25.));
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext(&input)?;
+    ///
+    /// let seeded_ciphertext = engine.encrypt_lwe_seeded_ciphertext(&key, &plaintext, noise)?;
+    /// let ciphertext = engine.transform_lwe_seeded_ciphertext_to_lwe_ciphertext(seeded_ciphertext)?;
+    /// #
+    /// assert_eq!(ciphertext.lwe_dimension(), lwe_dimension);
+    ///
+    /// engine.destroy(key)?;
+    /// engine.destroy(plaintext)?;
+    /// engine.destroy(ciphertext)?;
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn transform_lwe_seeded_ciphertext_to_lwe_ciphertext(
+        &mut self,
+        lwe_seeded_ciphertext: LweSeededCiphertext32,
+    ) -> Result<LweCiphertext32, LweSeededToLweCiphertextTransformationEngineError<Self::EngineError>>
+    {
+        Ok(unsafe {
+            self.transform_lwe_seeded_ciphertext_to_lwe_ciphertext_unchecked(lwe_seeded_ciphertext)
+        })
+    }
+
+    unsafe fn transform_lwe_seeded_ciphertext_to_lwe_ciphertext_unchecked(
+        &mut self,
+        lwe_seeded_ciphertext: LweSeededCiphertext32,
+    ) -> LweCiphertext32 {
+        let mut output_ciphertext =
+            ImplLweCiphertext::allocate(0_u32, lwe_seeded_ciphertext.lwe_dimension().to_lwe_size());
+        lwe_seeded_ciphertext
+            .0
+            .expand_into::<_, ActivatedRandomGenerator>(&mut output_ciphertext);
+
+        LweCiphertext32(output_ciphertext)
+    }
+}
+
+/// # Description:
+/// Implementation of [`LweSeededToLweCiphertextTransformationEngine`] for [`DefaultEngine`] that
+/// operates on 64 bits integers.
+impl LweSeededToLweCiphertextTransformationEngine<LweSeededCiphertext64, LweCiphertext64>
+    for DefaultEngine
+{
+    /// # Example:
+    /// ```
+    /// use concrete_commons::dispersion::Variance;
+    /// use concrete_commons::parameters::LweDimension;
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let lwe_dimension = LweDimension(2);
+    /// // Here a hard-set encoding is applied (shift by 50 bits)
+    /// let input = 3_u64 << 50;
+    /// let noise = Variance(2_f64.powf(-25.));
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext(&input)?;
+    ///
+    /// let seeded_ciphertext = engine.encrypt_lwe_seeded_ciphertext(&key, &plaintext, noise)?;
+    /// let ciphertext = engine.transform_lwe_seeded_ciphertext_to_lwe_ciphertext(seeded_ciphertext)?;
+    /// #
+    /// assert_eq!(ciphertext.lwe_dimension(), lwe_dimension);
+    ///
+    /// engine.destroy(key)?;
+    /// engine.destroy(plaintext)?;
+    /// engine.destroy(ciphertext)?;
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn transform_lwe_seeded_ciphertext_to_lwe_ciphertext(
+        &mut self,
+        lwe_seeded_ciphertext: LweSeededCiphertext64,
+    ) -> Result<LweCiphertext64, LweSeededToLweCiphertextTransformationEngineError<Self::EngineError>>
+    {
+        Ok(unsafe {
+            self.transform_lwe_seeded_ciphertext_to_lwe_ciphertext_unchecked(lwe_seeded_ciphertext)
+        })
+    }
+
+    unsafe fn transform_lwe_seeded_ciphertext_to_lwe_ciphertext_unchecked(
+        &mut self,
+        lwe_seeded_ciphertext: LweSeededCiphertext64,
+    ) -> LweCiphertext64 {
+        let mut output_ciphertext =
+            ImplLweCiphertext::allocate(0_u64, lwe_seeded_ciphertext.lwe_dimension().to_lwe_size());
+        lwe_seeded_ciphertext
+            .0
+            .expand_into::<_, ActivatedRandomGenerator>(&mut output_ciphertext);
+
+        LweCiphertext64(output_ciphertext)
+    }
+}
