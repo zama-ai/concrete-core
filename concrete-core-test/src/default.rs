@@ -121,6 +121,7 @@ test! {
     (LweCiphertextConsumingRetrievalFixture, (LweCiphertext, Vec)),
     (LweCiphertextConsumingRetrievalFixture, (LweCiphertextView, Slice)),
     (LweCiphertextConsumingRetrievalFixture, (LweCiphertextMutView, MutSlice)),
+    (LweSeededCiphertextEncryptionFixture, (Plaintext, LweSecretKey, LweSeededCiphertext)),
     (LweToGlweSecretKeyTransformationFixture, (LweSecretKey, GlweSecretKey)),
     (PlaintextCreationFixture, (Plaintext)),
     (PlaintextDiscardingRetrievalFixture, (Plaintext)),
