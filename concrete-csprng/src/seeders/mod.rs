@@ -6,7 +6,7 @@
 //! seeds that can accomodate varying scenarios.
 
 /// A seed value, used to initialize a generator.
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Seed(pub u128);
 
 /// A trait representing a seeding strategy.

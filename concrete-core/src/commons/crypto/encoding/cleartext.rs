@@ -7,7 +7,7 @@ use concrete_commons::parameters::CleartextCount;
 pub struct Cleartext<T: Numeric>(pub T);
 
 /// A list of clear, non-encoded, values.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CleartextList<Cont> {
     tensor: Tensor<Cont>,
 }

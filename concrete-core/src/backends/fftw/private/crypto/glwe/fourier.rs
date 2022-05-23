@@ -13,7 +13,7 @@ use concrete_commons::parameters::{GlweSize, PolynomialSize};
 
 /// A GLWE ciphertext in the Fourier Domain.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FourierGlweCiphertext<Cont, Scalar> {
     tensor: Tensor<Cont>,
     pub poly_size: PolynomialSize,

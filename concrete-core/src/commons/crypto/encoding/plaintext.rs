@@ -11,7 +11,7 @@ use concrete_commons::parameters::PlaintextCount;
 pub struct Plaintext<T: Numeric>(pub T);
 
 /// A list of plaintexts
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PlaintextList<Cont> {
     pub(crate) tensor: Tensor<Cont>,
 }

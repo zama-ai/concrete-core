@@ -14,7 +14,7 @@ use concrete_commons::parameters::{
 
 /// A list of ciphertexts encoded with the GLWE scheme.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GlweList<Cont> {
     pub(crate) tensor: Tensor<Cont>,
     pub(crate) rlwe_size: GlweSize,

@@ -13,7 +13,7 @@ use serde::{Deserialize, Serialize};
 
 /// An GLWE ciphertext.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GlweCiphertext<Cont> {
     pub(crate) tensor: Tensor<Cont>,
     pub(crate) poly_size: PolynomialSize,

@@ -26,7 +26,7 @@ pub use buffers::{FftBuffers, FourierBuffers};
 
 /// A bootstrapping key in the fourier domain.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FourierBootstrapKey<Cont, Scalar>
 where
     Scalar: UnsignedTorus,

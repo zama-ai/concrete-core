@@ -9,7 +9,7 @@ use crate::specification::entities::{AbstractEntity, GswCiphertextEntity};
 
 /// A structure representing a GSW ciphertext with 32 bits of precision.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GswCiphertext32(ImplGswCiphertext<Vec<u32>, u32>);
 
 impl AbstractEntity for GswCiphertext32 {
@@ -34,7 +34,7 @@ impl GswCiphertextEntity for GswCiphertext32 {
 
 /// A structure representing a GSW ciphertext with 64 bits of precision.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GswCiphertext64(ImplGswCiphertext<Vec<u64>, u64>);
 
 impl AbstractEntity for GswCiphertext64 {

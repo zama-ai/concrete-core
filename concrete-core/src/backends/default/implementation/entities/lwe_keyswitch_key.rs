@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 
 /// A structure representing an LWE keyswitch key with 32 bits of precision.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LweKeyswitchKey32(pub(crate) ImplLweKeyswitchKey<Vec<u32>>);
 impl AbstractEntity for LweKeyswitchKey32 {
     type Kind = LweKeyswitchKeyKind;
@@ -35,7 +35,7 @@ impl LweKeyswitchKeyEntity for LweKeyswitchKey32 {
 
 /// A structure representing an LWE keyswitch key with 64 bits of precision.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LweKeyswitchKey64(pub(crate) ImplLweKeyswitchKey<Vec<u64>>);
 impl AbstractEntity for LweKeyswitchKey64 {
     type Kind = LweKeyswitchKeyKind;
