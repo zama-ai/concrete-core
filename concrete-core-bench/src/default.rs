@@ -128,6 +128,7 @@ bench! {
     (LweCiphertextConsumingRetrievalFixture, (LweCiphertextMutView, MutSlice)),
     (LweKeyswitchKeyCreationFixture, (LweSecretKey, LweSecretKey, LweKeyswitchKey)),
     (LweSecretKeyCreationFixture, (LweSecretKey)),
+    (LweSeededCiphertextEncryptionFixture, (Plaintext, LweSecretKey, LweSeededCiphertext)),
     (LweToGlweSecretKeyTransformationFixture, (LweSecretKey, GlweSecretKey)),
     (PlaintextCreationFixture, (Plaintext)),
     (PlaintextDiscardingRetrievalFixture, (Plaintext)),
