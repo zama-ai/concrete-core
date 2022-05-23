@@ -29,7 +29,7 @@ use std::ops::Add;
 
 /// A GLWE secret key
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GlweSecretKey<Kind, Container>
 where
     Kind: KeyKind,

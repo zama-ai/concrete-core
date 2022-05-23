@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 
 /// A structure representing a vector of GLWE ciphertexts with 32 bits of precision.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GlweCiphertextVector32(pub(crate) ImplGlweList<Vec<u32>>);
 impl AbstractEntity for GlweCiphertextVector32 {
     type Kind = GlweCiphertextVectorKind;
@@ -30,7 +30,7 @@ impl GlweCiphertextVectorEntity for GlweCiphertextVector32 {
 
 /// A structure representing a vector of GLWE ciphertexts with 64 bits of precision.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GlweCiphertextVector64(pub(crate) ImplGlweList<Vec<u64>>);
 impl AbstractEntity for GlweCiphertextVector64 {
     type Kind = GlweCiphertextVectorKind;

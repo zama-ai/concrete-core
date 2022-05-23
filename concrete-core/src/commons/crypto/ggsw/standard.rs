@@ -21,7 +21,7 @@ use serde::{Deserialize, Serialize};
 
 /// A GGSW ciphertext.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct StandardGgswCiphertext<Cont> {
     tensor: Tensor<Cont>,
     poly_size: PolynomialSize,

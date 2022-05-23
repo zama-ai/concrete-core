@@ -4,7 +4,7 @@ use crate::specification::entities::{AbstractEntity, CleartextVectorEntity};
 use concrete_commons::parameters::CleartextCount;
 
 /// A structure representing a vector of cleartexts with 32 bits of precision.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CleartextVector32(pub(crate) ImplCleartextList<Vec<u32>>);
 impl AbstractEntity for CleartextVector32 {
     type Kind = CleartextVectorKind;
@@ -16,7 +16,7 @@ impl CleartextVectorEntity for CleartextVector32 {
 }
 
 /// A structure representing a vector of cleartexts with 64 bits of precision.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CleartextVector64(pub(crate) ImplCleartextList<Vec<u64>>);
 impl AbstractEntity for CleartextVector64 {
     type Kind = CleartextVectorKind;

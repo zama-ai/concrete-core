@@ -23,7 +23,7 @@ use serde::{Deserialize, Serialize};
 
 /// A GGSW ciphertext in the Fourier Domain.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FourierGgswCiphertext<Cont, Scalar> {
     tensor: Tensor<Cont>,
     poly_size: PolynomialSize,

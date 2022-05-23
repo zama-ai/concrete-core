@@ -22,7 +22,7 @@ use concrete_commons::parameters::{
 use rayon::{iter::IndexedParallelIterator, prelude::*};
 
 /// A bootstrapping key represented in the standard domain.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct StandardBootstrapKey<Cont> {
     tensor: Tensor<Cont>,
     poly_size: PolynomialSize,

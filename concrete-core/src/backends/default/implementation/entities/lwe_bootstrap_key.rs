@@ -6,7 +6,7 @@ use concrete_commons::parameters::{
 };
 
 /// A structure representing an LWE bootstrap key with 32 bits of precision.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LweBootstrapKey32(pub(crate) ImplStandardBootstrapKey<Vec<u32>>);
 impl AbstractEntity for LweBootstrapKey32 {
     type Kind = LweBootstrapKeyKind;
@@ -37,7 +37,7 @@ impl LweBootstrapKeyEntity for LweBootstrapKey32 {
 }
 
 /// A structure representing an LWE bootstrap key with 64 bits of precision.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LweBootstrapKey64(pub(crate) ImplStandardBootstrapKey<Vec<u64>>);
 impl AbstractEntity for LweBootstrapKey64 {
     type Kind = LweBootstrapKeyKind;

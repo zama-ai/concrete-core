@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 
 /// A structure representing a packing keyswitch key with 32 bits of precision.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PackingKeyswitchKey32(pub(crate) ImplPackingKeyswitchKey<Vec<u32>>);
 impl AbstractEntity for PackingKeyswitchKey32 {
     type Kind = PackingKeyswitchKeyKind;
@@ -43,7 +43,7 @@ impl PackingKeyswitchKeyEntity for PackingKeyswitchKey32 {
 
 /// A structure representing a packing keyswitch key with 64 bits of precision.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PackingKeyswitchKey64(pub(crate) ImplPackingKeyswitchKey<Vec<u64>>);
 impl AbstractEntity for PackingKeyswitchKey64 {
     type Kind = PackingKeyswitchKeyKind;
