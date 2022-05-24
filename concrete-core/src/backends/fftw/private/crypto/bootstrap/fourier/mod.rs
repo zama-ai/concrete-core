@@ -447,25 +447,6 @@ where
             })
     }
 
-    // This cmux mutates both ct1 and ct0. The result is in ct0 after the method was called.
-    fn cmux<C0, C1, C2>(
-        &self,
-        ct0: &mut GlweCiphertext<C0>,
-        ct1: &mut GlweCiphertext<C1>,
-        ggsw: &FourierGgswCiphertext<C2, Scalar>,
-        fft_buffers: &mut FftBuffers,
-        rounded_buffer: &mut GlweCiphertext<Vec<Scalar>>,
-    ) where
-        GlweCiphertext<C0>: AsMutTensor<Element = Scalar>,
-        GlweCiphertext<C1>: AsMutTensor<Element = Scalar>,
-        FourierGgswCiphertext<C2, Scalar>: AsRefTensor<Element = Complex64>,
-        Scalar: UnsignedTorus,
-    {
-        ct1.as_mut_tensor()
-            .update_with_wrapping_sub(ct0.as_tensor());
-        ggsw.external_product(ct0, ct1, fft_buffers, rounded_buffer);
-    }
-
     fn blind_rotate<C2>(&self, buffers: &mut FourierBuffers<Scalar>, lwe: &LweCiphertext<C2>)
     where
         LweCiphertext<C2>: AsRefTensor<Element = Scalar>,
@@ -511,10 +492,9 @@ where
                         LutCountLog(0),
                     ));
                 // We perform the cmux.
-                self.cmux(
+                bootstrap_key_ggsw.cmux(
                     ct_0,
                     &mut ct_1,
-                    &bootstrap_key_ggsw,
                     &mut buffers.fft_buffers,
                     &mut buffers.rounded_buffer,
                 );

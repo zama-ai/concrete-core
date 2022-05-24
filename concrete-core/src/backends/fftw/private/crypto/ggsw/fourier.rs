@@ -690,6 +690,24 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
             }
         }
     }
+
+    // This cmux mutates both ct1 and ct0. The result is in ct0 after the method was called.
+    pub fn cmux<C0, C1>(
+        &self,
+        ct0: &mut GlweCiphertext<C0>,
+        ct1: &mut GlweCiphertext<C1>,
+        fft_buffers: &mut FftBuffers,
+        rounded_buffer: &mut GlweCiphertext<Vec<Scalar>>,
+    ) where
+        Self: AsRefTensor<Element = Complex64>,
+        GlweCiphertext<C0>: AsMutTensor<Element = Scalar>,
+        GlweCiphertext<C1>: AsMutTensor<Element = Scalar>,
+        Scalar: UnsignedTorus,
+    {
+        ct1.as_mut_tensor()
+            .update_with_wrapping_sub(ct0.as_tensor());
+        self.external_product(ct0, ct1, fft_buffers, rounded_buffer);
+    }
 }
 
 impl<Element, Cont, Scalar> AsRefTensor for FourierGgswCiphertext<Cont, Scalar>
