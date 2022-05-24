@@ -104,10 +104,9 @@ fn test_cmux_0<T: UnsignedTorus>() {
 
         // compute cmux
         let mut buffers = FourierBuffers::new(fourier_bsk.poly_size, fourier_bsk.glwe_size);
-        fourier_bsk.cmux(
+        rgsw.cmux(
             &mut ciphertext0,
             &mut ciphertext1,
-            &rgsw,
             &mut buffers.fft_buffers,
             &mut buffers.rounded_buffer,
         );
@@ -215,10 +214,9 @@ fn test_cmux_1<T: UnsignedTorus>() {
 
         // compute cmux
         let mut buffers = FourierBuffers::new(fourier_bsk.poly_size, fourier_bsk.glwe_size);
-        fourier_bsk.cmux(
+        rgsw.cmux(
             &mut ciphertext0,
             &mut ciphertext1,
-            &rgsw,
             &mut buffers.fft_buffers,
             &mut buffers.rounded_buffer,
         );
