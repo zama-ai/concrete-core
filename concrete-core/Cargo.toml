@@ -1,7 +1,7 @@
 [package]
 name = "concrete-core"
 version = "1.0.0-beta"
-edition = "2018"
+edition = "2021"
 authors = ["D. Ligier", "J.B. Orfila", "A. Péré", "S. Tap", "Zama team"]
 license = "BSD-3-Clause-Clear"
 description = "Concrete is a fully homomorphic encryption (FHE) library that implements Zama's variant of TFHE."

@@ -1,7 +1,7 @@
 [package]
 name = "concrete-core-fixture"
 version = "0.0.0"
-edition = "2018"
+edition = "2021"
 license = "BSD-3-Clause-Clear"
 
 [dependencies]
