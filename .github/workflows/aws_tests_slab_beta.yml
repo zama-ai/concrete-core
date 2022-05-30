@@ -1,0 +1,52 @@
+# Compile and test project on an AWS instance
+name: AWS tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      instance_id:
+        description: 'AWS instance ID'
+        type: string
+      instance_image_id:
+        description: 'AWS instance AMI ID'
+        type: string
+      instance_type:
+        description: 'AWS EC2 instance product type'
+        type: string
+      runner_name:
+        description: 'Action runner name'
+        type: string
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  run-tests-linux:
+    concurrency:
+      group: ${{ github.head_ref }}
+      cancel-in-progress: true
+    name: Test code in EC2
+    runs-on: ${{ github.event.inputs.runner_name }}
+    strategy:
+      fail-fast: false
+      # explicit include-based build matrix, of known valid options
+      matrix:
+        include:
+          - os: ubuntu-20.04
+    steps:
+      - name: EC2 instance configuration used
+        run: |
+          echo "IDs: ${{ github.event.inputs.instance_id }}"
+          echo "AMI: ${{ github.event.inputs.instance_image_id }}"
+          echo "Type: ${{ github.event.inputs.instance_type }}"
+      - uses: actions/checkout@v2
+      - name: Set up home
+        run: |
+          echo "HOME=/home/ubuntu" >> "${GITHUB_ENV}"
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - name: Run concrete tests
+        run: cargo xtask test
