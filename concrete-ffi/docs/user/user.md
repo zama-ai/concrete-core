@@ -1,0 +1,221 @@
+# Introduction
+
+Welcome to the `concrete-ffi` guide!
+
+This library exposes a C binding to the low-level `concrete-core` primitives to implement _Fully Homomorphic Encryption_ (FHE) programs.
+
+In a nutshell, FHE makes it possible to perform arbitrary computations over encrypted data. With FHE, you can perform computations without putting your trust on third-party computation providers, as data is always processed under an encrypted form.
+
+Please note that the FFI is very much a prototype at this stage, not all engines and entities from `concrete-core` are available. The available entry points were written to be used by the `concrete-compiler` and should be enough for most use cases.
+
+# First steps using `concrete-ffi`
+
+## Setting-up `concrete-ffi` for use in a C program.
+
+You can build `concrete-ffi` yourself on a Unix x86_64 machine using the following command:
+
+```shell
+RUSTFLAGS="-Ctarget-cpu=native" cargo build --all-features --release -p concrete-ffi
+```
+
+All features in the FFI crate are opt-in, but for simplicity here, we enable all of them.
+
+You can then find the `concrete-ffi.h` header as well as the static (.a) and dynamic (.so) `libconcrete_ffi` binaries in "${REPO_ROOT}/target/release/"
+
+Whether you build `concrete-ffi` yourself or downloaded a pre-built version you will need to set-up you build system so that your C or C++ program links against `concrete-ffi`.
+
+Here is a minimal CMakeLists.txt allowing to do just that:
+
+```cmake
+project(my-project)
+
+cmake_minimum_required(VERSION 3.16)
+
+set(CONCRETE_FFI_RELEASE "/path/to/concrete-ffi/binaries/and/header")
+
+include_directories(${CONCRETE_FFI_RELEASE})
+add_library(Concrete STATIC IMPORTED)
+set_target_properties(Concrete PROPERTIES IMPORTED_LOCATION ${CONCRETE_FFI_RELEASE}/libconcrete_ffi.a)
+
+set(EXECUTABLE_NAME my-executable)
+add_executable(${EXECUTABLE_NAME} main.c)
+target_include_directories(${EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(${EXECUTABLE_NAME} LINK_PUBLIC Concrete m pthread dl)
+target_compile_options(${EXECUTABLE_NAME} PRIVATE -Werror)
+```
+
+## Commented code of an homomorphic addition done with `concrete-ffi`
+
+Here we will detail the steps required to perform the homomorphic addition of 1 and 2.
+
+WARNING: The following example does not have proper memory management in the error case to make it easier to fit the code on this page.
+
+DISCLAIMER: the parameters in the example below are insecure and for example purposes only.
+
+```c
+// First we need some headers
+
+// The header for concrete-ffi
+#include "concrete-ffi.h"
+
+// And some standard headers for other functions we will use in this example
+#include <stdio.h>
+#include <stdlib.h>
+#include <tgmath.h>
+
+// Precision related constants, this requires understanding of the underlying cryptography.
+// You can find more information about encoding in this blog post:
+// https://www.zama.ai/post/tfhe-deep-dive-part-2
+const int MESSAGE_BITS = 4;
+const int SHIFT = 64 - (MESSAGE_BITS + 1);
+
+// Our program's entry point
+int main(void) {
+    // DefaultEngine requires a seeder to seed random number generators for key generation and
+    // encryption.
+    SeederBuilder* builder = NULL;
+
+    bool unix_seeder_available = false;
+    int unix_seeder_available_ok = unix_seeder_is_available(&unix_seeder_available);
+
+    // Here we crash if something goes wrong, you will want to have a different behavior in your
+    // production code for better error handling
+    if (unix_seeder_available_ok != 0) {
+        printf("Error checking Unix seeder availability.\n");
+        return unix_seeder_available_ok;
+    }
+
+    if (unix_seeder_available) {
+        // DANGER DANGER DANGER DANGER DANGER DANGER
+        // HIGHLY UNSAFE ONLY FOR TESTING PURPOSES
+        uint64_t secret_high_64 = 0;
+        uint64_t secret_low_64 = 0;
+        int get_builder_ok = get_unix_seeder_builder(secret_high_64, secret_low_64, &builder);
+        if (get_builder_ok != 0) {
+            printf("Error getting the Unix seeder builder.\n");
+            return get_builder_ok;
+        }
+    }
+    else {
+        printf("UNIX seeder unavailable on this system.\n");
+        return EXIT_FAILURE;
+    }
+
+    // Pointer for the engine we will instantiate and later use
+    DefaultEngine *engine = NULL;
+
+    // Instantiate the DefaultEngine, used as the main entry point to the concrete-core API
+    int default_engine_ok = new_default_engine(builder, &engine);
+    if (default_engine_ok != 0) {
+        printf("Error while creating DefaultEngine.\n");
+        return default_engine_ok;
+    }
+
+    // We select the size of the mask for LWE ciphertexts. Note that theses parameters are not
+    // secure and are given for example purposes only.
+    // You can find more information about LWE encryption in this blog post:
+    // https://www.zama.ai/post/tfhe-deep-dive-part-1
+    size_t lwe_dimension = 10;
+    LweSecretKey64 *sk = NULL;
+    // We generate the secret key
+    int sk_ok = default_engine_create_lwe_secret_key_u64(engine, lwe_dimension, &sk);
+    if (sk_ok != 0) {
+        printf("Error while creating LWE secret key.\n");
+        return sk_ok;
+    }
+
+    // For now concrete-ffi expects the caller to provide memory for the ciphertexts used during
+    // computation.
+    // Here We allocate the ciphertext buffers
+    uint64_t *input_ct_1_buffer =
+        aligned_alloc(U64_ALIGNMENT, sizeof(uint64_t) * (lwe_dimension + 1));
+    uint64_t *input_ct_2_buffer =
+        aligned_alloc(U64_ALIGNMENT, sizeof(uint64_t) * (lwe_dimension + 1));
+    uint64_t *output_ct_buffer = aligned_alloc(U64_ALIGNMENT, sizeof(uint64_t) * (lwe_dimension + 1));
+
+    // Encoding the values before use
+    // You can find more information about encoding in this blog post:
+    // https://www.zama.ai/post/tfhe-deep-dive-part-2
+    uint64_t plaintext_1 = {((uint64_t)1) << SHIFT};
+    uint64_t plaintext_2 = {((uint64_t)2) << SHIFT};
+
+    // This variance is not secure and requires understanding the underlying cryptography to choose
+    // proper parameters.
+    // You can check this blog post: https://www.zama.ai/post/tfhe-deep-dive-part-1
+    // for information on encryption in TFHE.
+    double variance = 0.000000001;
+
+    // We encrypt the plaintexts in the previously allocated ciphertext buffers, here we use the
+    // raw_ptr_buffers API to make the code more compact, a view_buffers API is also available.
+    // You can check the concrete-ffi documentation on https://docs.rs for more information on those
+    // APIs.
+    int enc_ct_1_ok = default_engine_discard_encrypt_lwe_ciphertext_u64_raw_ptr_buffers(
+        engine, sk, input_ct_1_buffer, plaintext_1, variance);
+    if (enc_ct_1_ok != 0) {
+        printf("Error while encrypting the first ciphertext.\n");
+        return enc_ct_1_ok;
+    }
+    int enc_ct_2_ok = default_engine_discard_encrypt_lwe_ciphertext_u64_raw_ptr_buffers(
+        engine, sk, input_ct_2_buffer, plaintext_2, variance);
+    if (enc_ct_2_ok != 0) {
+        printf("Error while encrypting the first ciphertext.\n");
+        return enc_ct_2_ok;
+    }
+
+    // Perform the homomorphic addition
+    int add_ok = default_engine_discard_add_lwe_ciphertext_u64_raw_ptr_buffers(
+        engine, output_ct_buffer, input_ct_1_buffer, input_ct_2_buffer, lwe_dimension);
+    if (add_ok != 0) {
+        printf("Error while performing homomorphic addition.\n");
+        return add_ok;
+    }
+
+    // We decrypt the plaintext
+    uint64_t output = -1;
+    int decrypt_ok = default_engine_decrypt_lwe_ciphertext_u64_raw_ptr_buffers(
+        engine, sk, output_ct_buffer, &output);
+    if (decrypt_ok != 0) {
+        printf("Error while decrypting the result.\n");
+        return decrypt_ok;
+    }
+
+    // Here the encoding is removed.
+    // You can find more information about encoding in this blog post:
+    // https://www.zama.ai/post/tfhe-deep-dive-part-2
+    double expected = ((double)plaintext_2 + (double)plaintext_1) / pow(2, SHIFT);
+    double obtained = (double)output / pow(2, SHIFT);
+    printf("Comparing output. Expected %f, Obtained %f\n", expected, obtained);
+
+    // We check that the output are the same to a small (expected) error.
+    double abs_diff = abs(obtained - expected);
+    double rel_error = abs_diff / fmax(expected, obtained);
+    if (rel_error < 0.002) {
+        printf("The error in the result is higher than expected.\n");
+        return EXIT_FAILURE;
+    }
+
+    // We deallocate the objects
+    default_engine_destroy_lwe_secret_key_u64(engine, sk);
+    destroy_default_engine(engine);
+    destroy_seeder_builder(builder);
+    free(input_ct_1_buffer);
+    free(input_ct_2_buffer);
+    free(output_ct_buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+# Audience
+
+This C FFI was primarily written for use by the `concrete-compiler`.
+
+Programmers wishing to use `concrete-core` but unable to use Rust (for various reasons) can use these bindings in their language of choice as long as it can interface with C code to bring `concrete-core` functionalities to said language.
+
+The API is certainly rough around the edges and may not have all the engines that your use case requires. As this is still experimental/early work any feedback on missing utilities and usability are welcome.
+
+You can reach out here: https://community.zama.ai/c/concrete-lib/5, or on the concrete channel or the https://fhe.org discord server that you can join from here: https://discord.fhe.org/
+
+# API Structure
+
+Documentation about the API can be found [here](../api/api.md#api-structure).

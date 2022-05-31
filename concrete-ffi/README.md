@@ -6,9 +6,47 @@ This FFI is currently experimental and therefore unstable in terms of naming and
 
 ## An example
 
+### Setting-up `concrete-ffi` for use in a C program.
+
+You can build `concrete-ffi` yourself on a Unix x86_64 machine using the following command:
+
+```shell
+RUSTFLAGS="-Ctarget-cpu=native" cargo build --all-features --release -p concrete-ffi
+```
+
+All features in the FFI crate are opt-in, but for simplicity here, we enable all of them.
+
+You can then find the `concrete-ffi.h` header as well as the static (.a) and dynamic (.so) `libconcrete_ffi` binaries in "${REPO_ROOT}/target/release/"
+
+Whether you build concrete-ffi yourself or downloaded a pre-built version you will need to set-up you build system so that your C or C++ program links against `concrete-ffi`.
+
+Here is a minimal CMakeLists.txt allowing to do just that:
+
+```cmake
+project(my-project)
+
+cmake_minimum_required(VERSION 3.16)
+
+set(CONCRETE_FFI_RELEASE "/path/to/concrete-ffi/binaries/and/header")
+
+include_directories(${CONCRETE_FFI_RELEASE})
+add_library(Concrete STATIC IMPORTED)
+set_target_properties(Concrete PROPERTIES IMPORTED_LOCATION ${CONCRETE_FFI_RELEASE}/libconcrete_ffi.a)
+
+set(EXECUTABLE_NAME my-executable)
+add_executable(${EXECUTABLE_NAME} main.c)
+target_include_directories(${EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(${EXECUTABLE_NAME} LINK_PUBLIC Concrete m pthread dl)
+target_compile_options(${EXECUTABLE_NAME} PRIVATE -Werror)
+```
+
+### Homomorphic addition of two ciphertexts using `concrete-ffi`
+
 DISCLAIMER: the parameters in the example below are insecure and for example purposes only.
 
 Here is a small-ish example of how to call `concrete-core` from C through `concrete-ffi` to compute the homomorphic addition of two ciphertexts. This needs to be linked against `libconcrete_ffi`.
+
+If you use the following code block content for the main.c file used in the CMakeLists.txt above you will be able to compile and run the homomorphic addition between 1 and 2.
 
 ```c
 #include "concrete-ffi.h"
@@ -17,14 +55,19 @@ Here is a small-ish example of how to call `concrete-core` from C through `concr
 #include <stdlib.h>
 #include <tgmath.h>
 
+// Precision related constants
 const int MESSAGE_BITS = 4;
 const int SHIFT = 64 - (MESSAGE_BITS + 1);
 
 int main(void) {
+    // DefaultEngine requires a seeder to seed random number generators for key generation and
+    // encryption.
     SeederBuilder* builder = NULL;
 
     bool unix_seeder_available = false;
     int unix_seeder_available_ok = unix_seeder_is_available(&unix_seeder_available);
+    // Here we use asserts to hard crash if something goes wrong, you will want to have a different
+    // behavior in your production code for better error handling
     assert(unix_seeder_available_ok == 0);
 
     if (unix_seeder_available) {
@@ -40,6 +83,7 @@ int main(void) {
         return EXIT_FAILURE;
     }
 
+    // Pointer for the engine we will instantiate and later use
     DefaultEngine *engine = NULL;
 
     int default_engine_ok = new_default_engine(builder, &engine);
