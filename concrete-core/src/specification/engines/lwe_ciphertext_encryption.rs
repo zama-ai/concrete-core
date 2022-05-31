@@ -21,8 +21,7 @@ engine_error! {
 /// ###### inputs:
 /// - $\mathsf{pt}\in\mathbb{Z}\_q$: a plaintext
 /// - $\vec{s}\in\mathbb{Z}\_q^n$: a secret key
-/// - $\mathcal{D\_{\sigma^2,\mu}}$: a normal distribution of variance $\sigma^2$ and a mean of
-///   $\mu$
+/// - $\mathcal{D\_{\sigma^2,\mu}}$: a normal distribution of variance $\sigma^2$ and a mean $\mu$
 ///
 /// ###### outputs:
 /// - $\mathsf{ct} = \left( \vec{a} , b\right) \in \mathsf{LWE}^n\_{\vec{s}}( \mathsf{pt} )\subseteq
