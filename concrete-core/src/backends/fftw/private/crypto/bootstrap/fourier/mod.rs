@@ -12,7 +12,7 @@ use concrete_commons::parameters::{
 mod buffers;
 
 use crate::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
-use crate::backends::fftw::private::math::fft::Complex64;
+use crate::commons::math::fft::Complex64;
 use crate::commons::crypto::bootstrap::StandardBootstrapKey;
 use crate::commons::crypto::glwe::GlweCiphertext;
 use crate::commons::crypto::lwe::LweCiphertext;

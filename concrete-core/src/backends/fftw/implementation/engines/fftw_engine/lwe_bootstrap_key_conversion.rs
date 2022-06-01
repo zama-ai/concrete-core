@@ -1,7 +1,7 @@
 use crate::backends::fftw::engines::FftwEngine;
 use crate::backends::fftw::entities::{FftwFourierLweBootstrapKey32, FftwFourierLweBootstrapKey64};
 use crate::backends::fftw::private::crypto::bootstrap::FourierBootstrapKey;
-use crate::backends::fftw::private::math::fft::Complex64;
+use crate::commons::math::fft::Complex64;
 use crate::prelude::{LweBootstrapKey32, LweBootstrapKey64};
 use crate::specification::engines::{
     LweBootstrapKeyConversionEngine, LweBootstrapKeyConversionError,

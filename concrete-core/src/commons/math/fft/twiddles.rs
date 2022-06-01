@@ -3,7 +3,8 @@
 use crate::commons::math::tensor::{tensor_traits, Tensor};
 use concrete_fftw::types::*;
 
-use super::Complex64;
+/// A complex number encoded over two `f64`.
+pub type Complex64 = concrete_fftw::types::c64;
 
 /// Correcting factors for the forward transform.
 #[derive(Debug, Clone)]

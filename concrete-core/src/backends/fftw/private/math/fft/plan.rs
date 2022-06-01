@@ -1,4 +1,5 @@
-use crate::backends::fftw::private::math::fft::{Complex64, ALLOWED_POLY_SIZE};
+use crate::commons::math::fft::Complex64;
+use crate::backends::fftw::private::math::fft::ALLOWED_POLY_SIZE;
 use concrete_commons::parameters::PolynomialSize;
 use concrete_fftw::plan::{C2CPlan, C2CPlan64};
 use concrete_fftw::types::{Flag, Sign};

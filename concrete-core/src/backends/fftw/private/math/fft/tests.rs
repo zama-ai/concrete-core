@@ -1,7 +1,7 @@
-use crate::backends::fftw::private::math::fft::twiddles::{BackwardCorrector, ForwardCorrector};
 use crate::backends::fftw::private::math::fft::{
     Complex64, Fft, FourierPolynomial, ALLOWED_POLY_SIZE,
 };
+use crate::commons::math::fft::twiddles::{BackwardCorrector, ForwardCorrector};
 use crate::commons::math::polynomial::Polynomial;
 use crate::commons::math::tensor::{AsMutTensor, AsRefTensor};
 use crate::commons::test_tools::new_random_generator;
