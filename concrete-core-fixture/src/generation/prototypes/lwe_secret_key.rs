@@ -10,7 +10,7 @@ pub trait LweSecretKeyPrototype: PartialEq {
 }
 
 /// A type representing the prototype of a 32 bit binary lwe secret key entity.
-#[derive(PartialEq)]
+#[derive(PartialEq, Eq)]
 pub struct ProtoBinaryLweSecretKey32(pub(crate) LweSecretKey32);
 impl LweSecretKeyPrototype for ProtoBinaryLweSecretKey32 {
     type KeyDistribution = BinaryKeyDistribution;
@@ -18,7 +18,7 @@ impl LweSecretKeyPrototype for ProtoBinaryLweSecretKey32 {
 }
 
 /// A type representing the prototype of a 64 bit binary lwe secret key entity.
-#[derive(PartialEq)]
+#[derive(PartialEq, Eq)]
 pub struct ProtoBinaryLweSecretKey64(pub(crate) LweSecretKey64);
 impl LweSecretKeyPrototype for ProtoBinaryLweSecretKey64 {
     type KeyDistribution = BinaryKeyDistribution;
