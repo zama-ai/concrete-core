@@ -206,10 +206,16 @@ pub mod generator_generic_test {
             for _ in 0..n_bytes.0 {
                 bounded.next().unwrap();
             }
+
+            // Assert we are at the bound
+            assert!(bounded.next().is_none());
         }
     }
 
     /// Checks that a bounded prng returns none when exceeding the allowed number of bytes.
+    ///
+    /// To properly check for panic use `#[should_panic(expected = "expected test panic")]` as an
+    /// attribute on the test function.
     pub fn test_bounded_none_should_panic<G: RandomGenerator>() {
         let ((seed, n_children), n_bytes) = any_seed()
             .zip(some_children_count())
@@ -219,8 +225,11 @@ pub mod generator_generic_test {
         let mut gen = G::new(seed);
         let mut bounded = gen.try_fork(n_children, n_bytes).unwrap().next().unwrap();
         assert_eq!(bounded.remaining_bytes(), ByteCount(n_bytes.0 as u128));
-        for _ in 0..(n_bytes.0 + 1) {
-            bounded.next().unwrap();
+        for _ in 0..n_bytes.0 {
+            assert!(bounded.next().is_some());
         }
+
+        // One call too many, should panic
+        bounded.next().ok_or("expected test panic").unwrap();
     }
 }
