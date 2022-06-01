@@ -1,5 +1,6 @@
 use crate::commons::crypto::glwe::GlweCiphertext;
-use crate::backends::optalysys::private::math::fft::{Fft, Complex64, FourierPolynomial};
+use crate::backends::optalysys::private::math::fft::{Fft, FourierPolynomial};
+use crate::commons::math::fft::Complex64;
 use crate::commons::math::tensor::Tensor;
 use crate::commons::math::torus::UnsignedTorus;
 use crate::prelude::LweBootstrapKeyEntity;

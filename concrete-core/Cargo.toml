@@ -50,7 +50,9 @@ backend_fftw = [
 
 # An accelerated backend, using the Optalysys hardware.
 backend_optalysys = [
-    "proto_graphec"
+    "proto_graphec", 
+    "concrete-fftw" # required for the definitions of the `AlignedVec` type and 
+                    # `c64` type; to be changed
 ]
 
 seeder_unix = ["concrete-csprng/seeder_unix"]

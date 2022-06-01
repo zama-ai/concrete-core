@@ -15,7 +15,8 @@ use crate::commons::crypto::ggsw::StandardGgswCiphertext as GgswCiphertext;
 use crate::commons::crypto::glwe::GlweCiphertext;
 use crate::commons::crypto::lwe::LweCiphertext;
 use crate::commons::math::decomposition::SignedDecomposer;
-use crate::backends::optalysys::private::math::fft::{Complex64, FourierPolynomial};
+use crate::commons::math::fft::Complex64;
+use crate::backends::optalysys::private::math::fft::FourierPolynomial;
 use crate::commons::math::polynomial::{Polynomial, PolynomialList};
 use crate::commons::math::tensor::{
     ck_dim_div, ck_dim_eq, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, IntoTensor, Tensor,
