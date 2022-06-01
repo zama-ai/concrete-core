@@ -1,15 +1,13 @@
-use crate::backends::core::entities::{
+use crate::backends::default::entities::{
     GlweCiphertext32, GlweCiphertext64, LweCiphertext32, LweCiphertext64,
 };
 use crate::backends::optalysys::entities::{
     OptalysysFourierLweBootstrapKey32, OptalysysFourierLweBootstrapKey64,
 };
 use crate::backends::optalysys::implementation::engines::OptalysysEngine;
-use crate::prelude::{FourierLweBootstrapKey32, FourierLweBootstrapKey64};
 use crate::specification::engines::{
     LweCiphertextDiscardingBootstrapEngine, LweCiphertextDiscardingBootstrapError,
 };
-use crate::specification::entities::{LweBootstrapKeyEntity, LweCiphertextEntity};
 
 /// # Description:
 /// Implementation of [`LweCiphertextDiscardingBootstrapEngine`] for [`OptalysysEngine`] that

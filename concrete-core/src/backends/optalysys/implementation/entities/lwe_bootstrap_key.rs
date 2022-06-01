@@ -1,4 +1,4 @@
-use crate::backends::core::private::math::fft::Complex64;
+use crate::backends::optalysys::private::math::fft::Complex64;
 use crate::backends::optalysys::private::crypto::bootstrap::FourierBootstrapKey as ImplFourierBootstrapKey;
 use crate::specification::entities::markers::{BinaryKeyDistribution, LweBootstrapKeyKind};
 use crate::specification::entities::{AbstractEntity, LweBootstrapKeyEntity};

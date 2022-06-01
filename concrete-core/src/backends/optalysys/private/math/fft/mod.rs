@@ -9,4 +9,13 @@ mod tests;
 mod transform;
 pub use transform::*;
 
+mod polynomial;
+pub use polynomial::*;
+
+mod twiddles;
+pub use twiddles::*;
+
 pub use concrete_fftw::array::AlignedVec;
+
+/// A complex number encoded over two `f64`.
+pub type Complex64 = concrete_fftw::types::c64;

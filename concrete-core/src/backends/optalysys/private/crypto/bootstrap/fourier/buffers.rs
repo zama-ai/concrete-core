@@ -1,8 +1,7 @@
-use crate::backends::core::private::crypto::glwe::GlweCiphertext;
-use crate::backends::core::private::math::fft::{Complex64, FourierPolynomial};
-use crate::backends::optalysys::private::math::fft::Fft;
-use crate::backends::core::private::math::tensor::Tensor;
-use crate::backends::core::private::math::torus::UnsignedTorus;
+use crate::commons::crypto::glwe::GlweCiphertext;
+use crate::backends::optalysys::private::math::fft::{Fft, Complex64, FourierPolynomial};
+use crate::commons::math::tensor::Tensor;
+use crate::commons::math::torus::UnsignedTorus;
 use crate::prelude::LweBootstrapKeyEntity;
 use concrete_commons::parameters::{GlweSize, PolynomialSize};
 use concrete_fftw::array::AlignedVec;
