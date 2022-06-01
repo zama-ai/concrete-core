@@ -10,8 +10,6 @@ use concrete_commons::parameters::{
 };
 
 mod buffers;
-#[cfg(test)]
-mod tests;
 
 use crate::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
 use crate::backends::fftw::private::math::fft::Complex64;
