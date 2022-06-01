@@ -7,7 +7,7 @@ use concrete_commons::parameters::LweDimension;
 use serde::{Deserialize, Serialize};
 
 /// A structure representing an LWE secret key with 32 bits of precision.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct LweSecretKey32(pub(crate) ImpLweSecretKey<BinaryKeyKind, Vec<u32>>);
 impl AbstractEntity for LweSecretKey32 {
     type Kind = LweSecretKeyKind;
@@ -27,7 +27,7 @@ pub(crate) enum LweSecretKey32Version {
 }
 
 /// A structure representing an LWE secret key with 64 bits of precision.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct LweSecretKey64(pub(crate) ImpLweSecretKey<BinaryKeyKind, Vec<u64>>);
 impl AbstractEntity for LweSecretKey64 {
     type Kind = LweSecretKeyKind;
