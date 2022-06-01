@@ -13,7 +13,6 @@ where
     fn destroy_lwe_ciphertext(&mut self, entity: LweCiphertext);
 }
 
-#[cfg(feature = "backend_default")]
 mod backend_default {
     use crate::generation::prototypes::{ProtoBinaryLweCiphertext32, ProtoBinaryLweCiphertext64};
     use crate::generation::synthesizing::SynthesizesLweCiphertext;

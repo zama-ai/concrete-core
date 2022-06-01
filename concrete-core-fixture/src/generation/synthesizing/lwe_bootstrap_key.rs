@@ -23,7 +23,6 @@ where
     fn destroy_lwe_bootstrap_key(&mut self, entity: LweBootstrapKey);
 }
 
-#[cfg(feature = "backend_default")]
 mod backend_default {
     use crate::generation::prototypes::{
         ProtoBinaryBinaryLweBootstrapKey32, ProtoBinaryBinaryLweBootstrapKey64,

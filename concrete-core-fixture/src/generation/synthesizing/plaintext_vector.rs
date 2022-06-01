@@ -19,7 +19,6 @@ where
     fn destroy_plaintext_vector(&mut self, entity: PlaintextVector);
 }
 
-#[cfg(feature = "backend_default")]
 mod backend_default {
     use crate::generation::prototypes::{ProtoPlaintextVector32, ProtoPlaintextVector64};
     use crate::generation::synthesizing::SynthesizesPlaintextVector;

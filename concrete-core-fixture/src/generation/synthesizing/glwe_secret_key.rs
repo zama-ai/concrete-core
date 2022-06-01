@@ -14,7 +14,6 @@ where
     fn destroy_glwe_secret_key(&mut self, entity: GlweSecretKey);
 }
 
-#[cfg(feature = "backend_default")]
 mod backend_default {
     use crate::generation::prototypes::{ProtoBinaryGlweSecretKey32, ProtoBinaryGlweSecretKey64};
     use crate::generation::synthesizing::SynthesizesGlweSecretKey;

@@ -13,7 +13,6 @@ where
     fn destroy_cleartext(&mut self, entity: Cleartext);
 }
 
-#[cfg(feature = "backend_default")]
 mod backend_default {
     use crate::generation::prototypes::{ProtoCleartext32, ProtoCleartext64};
     use crate::generation::synthesizing::SynthesizesCleartext;

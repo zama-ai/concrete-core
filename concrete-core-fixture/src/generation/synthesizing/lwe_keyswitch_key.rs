@@ -22,7 +22,6 @@ where
     fn destroy_lwe_keyswitch_key(&mut self, entity: LweKeyswitchKey);
 }
 
-#[cfg(feature = "backend_default")]
 mod backend_default {
     use crate::generation::prototypes::{
         ProtoBinaryBinaryLweKeyswitchKey32, ProtoBinaryBinaryLweKeyswitchKey64,
