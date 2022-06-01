@@ -254,3 +254,62 @@ mod backend_default {
         }
     }
 }
+
+#[cfg(feature = "backend_fftw")]
+mod backend_fftw {
+    use crate::generation::prototypes::{ProtoBinaryGlweCiphertext32, ProtoBinaryGlweCiphertext64};
+    use crate::generation::synthesizing::SynthesizesGlweCiphertext;
+    use crate::generation::{Maker, Precision32, Precision64};
+    use concrete_core::prelude::{
+        DestructionEngine, FftwFourierGlweCiphertext32, FftwFourierGlweCiphertext64,
+        GlweCiphertextConversionEngine,
+    };
+
+    impl SynthesizesGlweCiphertext<Precision32, FftwFourierGlweCiphertext32> for Maker {
+        fn synthesize_glwe_ciphertext(
+            &mut self,
+            prototype: &Self::GlweCiphertextProto,
+        ) -> FftwFourierGlweCiphertext32 {
+            self.fftw_engine
+                .convert_glwe_ciphertext(&prototype.0)
+                .unwrap()
+        }
+
+        fn unsynthesize_glwe_ciphertext(
+            &mut self,
+            entity: FftwFourierGlweCiphertext32,
+        ) -> Self::GlweCiphertextProto {
+            let proto = self.fftw_engine.convert_glwe_ciphertext(&entity).unwrap();
+            self.fftw_engine.destroy(entity).unwrap();
+            ProtoBinaryGlweCiphertext32(proto)
+        }
+
+        fn destroy_glwe_ciphertext(&mut self, entity: FftwFourierGlweCiphertext32) {
+            self.fftw_engine.destroy(entity).unwrap();
+        }
+    }
+
+    impl SynthesizesGlweCiphertext<Precision64, FftwFourierGlweCiphertext64> for Maker {
+        fn synthesize_glwe_ciphertext(
+            &mut self,
+            prototype: &Self::GlweCiphertextProto,
+        ) -> FftwFourierGlweCiphertext64 {
+            self.fftw_engine
+                .convert_glwe_ciphertext(&prototype.0)
+                .unwrap()
+        }
+
+        fn unsynthesize_glwe_ciphertext(
+            &mut self,
+            entity: FftwFourierGlweCiphertext64,
+        ) -> Self::GlweCiphertextProto {
+            let proto = self.fftw_engine.convert_glwe_ciphertext(&entity).unwrap();
+            self.fftw_engine.destroy(entity).unwrap();
+            ProtoBinaryGlweCiphertext64(proto)
+        }
+
+        fn destroy_glwe_ciphertext(&mut self, entity: FftwFourierGlweCiphertext64) {
+            self.fftw_engine.destroy(entity).unwrap();
+        }
+    }
+}
