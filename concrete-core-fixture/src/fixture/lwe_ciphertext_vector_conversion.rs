@@ -152,9 +152,13 @@ where
     ) -> Self::Outcome {
         let (key,) = repetition_proto;
         let (proto_ciphertext_vector,) = sample_proto;
-        let (output_ciphertext_vector, input_ciphertext_vector) = context;
-        let proto_output_ciphertext_vector =
-            maker.unsynthesize_lwe_ciphertext_vector(output_ciphertext_vector);
+        let (input_ciphertext_vector, output_ciphertext_vector) = context;
+        let proto_output_ciphertext_vector = <Maker as SynthesizesLweCiphertextVector<
+            Precision,
+            OutputCiphertextVector,
+        >>::unsynthesize_lwe_ciphertext_vector(
+            maker, output_ciphertext_vector
+        );
         let proto_plaintext_vector =
             maker.decrypt_lwe_ciphertext_vector_to_plaintext_vector(key, proto_ciphertext_vector);
         let proto_output_plaintext_vector = <Maker as PrototypesLweCiphertextVector<
