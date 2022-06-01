@@ -12,7 +12,8 @@ use rayon::{iter::IndexedParallelIterator, prelude::*};
 
 use crate::backends::fftw::private::crypto::bootstrap::fourier::FftBuffers;
 use crate::backends::fftw::private::crypto::bootstrap::FourierBuffers;
-use crate::backends::fftw::private::math::fft::{Complex64, FourierPolynomial};
+use crate::commons::math::fft::Complex64;
+use crate::backends::fftw::private::math::fft::FourierPolynomial;
 use crate::commons::crypto::ggsw::{GgswLevelMatrix, StandardGgswCiphertext};
 use crate::commons::crypto::glwe::{GlweCiphertext, GlweList};
 use crate::commons::math::decomposition::{DecompositionLevel, SignedDecomposer};

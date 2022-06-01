@@ -1,5 +1,5 @@
 use crate::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
-use crate::backends::fftw::private::math::fft::Complex64;
+use crate::commons::math::fft::Complex64;
 use crate::specification::entities::markers::{BinaryKeyDistribution, GgswCiphertextKind};
 use crate::specification::entities::{AbstractEntity, GgswCiphertextEntity};
 use concrete_commons::parameters::{

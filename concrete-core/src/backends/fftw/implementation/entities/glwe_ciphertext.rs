@@ -3,7 +3,7 @@ use concrete_fftw::array::AlignedVec;
 use serde::{Deserialize, Serialize};
 
 use crate::backends::fftw::private::crypto::glwe::FourierGlweCiphertext;
-use crate::backends::fftw::private::math::fft::Complex64;
+use crate::commons::math::fft::Complex64;
 use concrete_commons::parameters::{GlweDimension, PolynomialSize};
 
 use crate::specification::entities::markers::{BinaryKeyDistribution, GlweCiphertextKind};

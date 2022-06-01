@@ -1,7 +1,8 @@
 use crate::backends::fftw::engines::{FftwEngine, FftwError};
 use crate::backends::fftw::entities::{FftwFourierGlweCiphertext32, FftwFourierGlweCiphertext64};
 use crate::backends::fftw::private::crypto::glwe::FourierGlweCiphertext;
-use crate::backends::fftw::private::math::fft::{Complex64, ALLOWED_POLY_SIZE};
+use crate::backends::fftw::private::math::fft::ALLOWED_POLY_SIZE;
+use crate::commons::math::fft::Complex64;
 use crate::prelude::{GlweCiphertext32, GlweCiphertext64};
 use crate::specification::engines::{
     GlweCiphertextConversionEngine, GlweCiphertextConversionError,

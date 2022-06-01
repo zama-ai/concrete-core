@@ -5,7 +5,7 @@ use concrete_fftw::array::AlignedVec;
 use concrete_fftw::types::c64;
 
 use crate::backends::fftw::private::math::fft::plan::Plans;
-use crate::backends::fftw::private::math::fft::twiddles::{BackwardCorrector, ForwardCorrector};
+use crate::commons::math::fft::twiddles::{BackwardCorrector, ForwardCorrector};
 use crate::backends::fftw::private::math::fft::ALLOWED_POLY_SIZE;
 use crate::commons::math::polynomial::Polynomial;
 use crate::commons::math::tensor::{ck_dim_eq, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor};
@@ -14,7 +14,8 @@ use crate::commons::utils::{zip, zip_args};
 use concrete_commons::numeric::{CastInto, SignedInteger, UnsignedInteger};
 use concrete_commons::parameters::PolynomialSize;
 
-use super::{Complex64, Correctors, FourierPolynomial};
+use crate::backends::fftw::private::math::fft::FourierPolynomial;
+use crate::commons::math::fft::{Complex64, Correctors};
 
 /// A fast fourier transformer.
 ///

@@ -1,5 +1,5 @@
 use crate::backends::fftw::private::crypto::bootstrap::FourierBootstrapKey;
-use crate::backends::fftw::private::math::fft::Complex64;
+use crate::commons::math::fft::Complex64;
 use crate::specification::entities::markers::{BinaryKeyDistribution, LweBootstrapKeyKind};
 use crate::specification::entities::{AbstractEntity, LweBootstrapKeyEntity};
 use concrete_commons::parameters::{

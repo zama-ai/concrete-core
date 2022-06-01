@@ -1,4 +1,5 @@
-use crate::backends::fftw::private::math::fft::{Complex64, Fft, FourierPolynomial};
+use crate::commons::math::fft::Complex64;
+use crate::backends::fftw::private::math::fft::{Fft, FourierPolynomial};
 use crate::commons::crypto::glwe::GlweCiphertext;
 use crate::commons::math::tensor::Tensor;
 use crate::commons::math::torus::UnsignedTorus;

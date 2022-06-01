@@ -1,7 +1,7 @@
 use crate::backends::fftw::engines::FftwEngine;
 use crate::backends::fftw::entities::{FftwFourierGgswCiphertext32, FftwFourierGgswCiphertext64};
 use crate::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
-use crate::backends::fftw::private::math::fft::Complex64;
+use crate::commons::math::fft::Complex64;
 use crate::prelude::{
     GgswCiphertext32, GgswCiphertext64, GgswCiphertextConversionEngine,
     GgswCiphertextConversionError,

@@ -3,7 +3,8 @@ use concrete_fftw::array::AlignedVec;
 use serde::{Deserialize, Serialize};
 
 use crate::backends::fftw::private::crypto::bootstrap::FourierBuffers;
-use crate::backends::fftw::private::math::fft::{Complex64, FourierPolynomial};
+use crate::backends::fftw::private::math::fft::FourierPolynomial;
+use crate::commons::math::fft::Complex64;
 use crate::commons::crypto::glwe::GlweCiphertext;
 use crate::commons::math::tensor::{
     ck_dim_div, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, IntoTensor, Tensor,
