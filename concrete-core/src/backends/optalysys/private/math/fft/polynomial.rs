@@ -2,7 +2,7 @@ use concrete_fftw::array::AlignedVec;
 #[cfg(feature = "serde_serialize")]
 use serde::{Deserialize, Serialize};
 
-use super::Complex64;
+use crate::commons::math::fft::Complex64;
 use crate::commons::math::tensor::{
     ck_dim_eq, tensor_traits, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };

@@ -1,4 +1,4 @@
-use crate::backends::optalysys::private::math::fft::Complex64;
+use crate::commons::math::fft::Complex64;
 use crate::backends::optalysys::entities::{
     OptalysysFourierLweBootstrapKey32, OptalysysFourierLweBootstrapKey64,
 };
