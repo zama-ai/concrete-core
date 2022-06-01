@@ -18,9 +18,18 @@ See [here](https://github.com/rustwasm/wasm-pack/issues/823#issuecomment-9781626
 
 ### Build 
 
+For web:
+
 ```bash
 wasm-pack  build --target web
 ```
+
+For nodejs:
+
+```bash
+wasm-pack  build --target nodejs
+```
+
 
 This will create a pkg folder, the most useful part for us is the __concrete_wasm_api.js__ file. 
 
