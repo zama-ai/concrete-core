@@ -22,7 +22,6 @@ where
     fn destroy_packing_keyswitch_key(&mut self, entity: PackingKeyswitchKey);
 }
 
-#[cfg(feature = "backend_default")]
 mod backend_default {
     use crate::generation::prototypes::{
         ProtoBinaryBinaryPackingKeyswitchKey32, ProtoBinaryBinaryPackingKeyswitchKey64,

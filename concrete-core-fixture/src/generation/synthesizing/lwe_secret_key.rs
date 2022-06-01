@@ -13,7 +13,6 @@ where
     fn destroy_lwe_secret_key(&mut self, entity: LweSecretKey);
 }
 
-#[cfg(feature = "backend_default")]
 mod backend_default {
     use crate::generation::prototypes::{ProtoBinaryLweSecretKey32, ProtoBinaryLweSecretKey64};
     use crate::generation::synthesizing::SynthesizesLweSecretKey;

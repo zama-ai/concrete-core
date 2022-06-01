@@ -19,7 +19,6 @@ where
     fn destroy_cleartext_vector(&mut self, entity: CleartextVector);
 }
 
-#[cfg(feature = "backend_default")]
 mod backend_default {
     use crate::generation::prototypes::{ProtoCleartextVector32, ProtoCleartextVector64};
     use crate::generation::synthesizing::SynthesizesCleartextVector;

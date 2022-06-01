@@ -17,7 +17,6 @@ where
     fn destroy_ggsw_ciphertext(&mut self, entity: GgswCiphertext);
 }
 
-#[cfg(feature = "backend_default")]
 mod backend_default {
     use crate::generation::prototypes::{ProtoBinaryGgswCiphertext32, ProtoBinaryGgswCiphertext64};
     use crate::generation::synthesizing::SynthesizesGgswCiphertext;
