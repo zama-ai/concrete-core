@@ -13,18 +13,18 @@ use concrete_fftw::types::c64;
 use concrete_commons::numeric::{CastInto, SignedInteger, UnsignedInteger};
 use concrete_commons::parameters::PolynomialSize;
 
-use crate::backends::core::private::math::fft::twiddles::{BackwardCorrector, ForwardCorrector};
-use crate::backends::core::private::math::polynomial::Polynomial;
-use crate::backends::core::private::math::tensor::{
+use crate::backends::optalysys::private::math::fft::twiddles::{BackwardCorrector, ForwardCorrector};
+use crate::commons::math::polynomial::Polynomial;
+use crate::commons::math::tensor::{
     ck_dim_eq, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor,
 };
-use crate::backends::core::private::math::torus::UnsignedTorus;
-use crate::backends::core::private::utils::zip;
+use crate::commons::math::torus::UnsignedTorus;
+use crate::commons::utils::zip;
 
 use proto_graphec::prelude::{FourierEngine, OFTSimulator2 as Simulator};
 use std::cell::RefCell;
 
-use crate::backends::core::private::math::fft::{Complex64, Correctors, FourierPolynomial};
+use crate::backends::optalysys::private::math::fft::{Complex64, Correctors, FourierPolynomial};
 
 // Number of bits of accuracy for the OFT simulator.
 const ACCURACY: usize = 40;

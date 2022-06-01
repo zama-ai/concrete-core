@@ -10,18 +10,18 @@ use concrete_commons::parameters::{
     PolynomialSize,
 };
 
-use crate::backends::core::private::crypto::bootstrap::standard::StandardBootstrapKey;
-use crate::backends::core::private::crypto::ggsw::StandardGgswCiphertext as GgswCiphertext;
-use crate::backends::core::private::crypto::glwe::GlweCiphertext;
-use crate::backends::core::private::crypto::lwe::LweCiphertext;
-use crate::backends::core::private::math::decomposition::SignedDecomposer;
-use crate::backends::core::private::math::fft::{Complex64, FourierPolynomial};
-use crate::backends::core::private::math::polynomial::{Polynomial, PolynomialList};
-use crate::backends::core::private::math::tensor::{
+use crate::commons::crypto::bootstrap::StandardBootstrapKey;
+use crate::commons::crypto::ggsw::StandardGgswCiphertext as GgswCiphertext;
+use crate::commons::crypto::glwe::GlweCiphertext;
+use crate::commons::crypto::lwe::LweCiphertext;
+use crate::commons::math::decomposition::SignedDecomposer;
+use crate::backends::optalysys::private::math::fft::{Complex64, FourierPolynomial};
+use crate::commons::math::polynomial::{Polynomial, PolynomialList};
+use crate::commons::math::tensor::{
     ck_dim_div, ck_dim_eq, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, IntoTensor, Tensor,
 };
-use crate::backends::core::private::math::torus::UnsignedTorus;
-use crate::backends::core::private::utils::{zip, zip_args};
+use crate::commons::math::torus::UnsignedTorus;
+use crate::commons::utils::{zip, zip_args};
 use crate::backends::optalysys::private::crypto::bootstrap::fourier::buffers::FftBuffers;
 use crate::backends::optalysys::private::crypto::bootstrap::fourier::buffers::FourierBuffers;
 

@@ -2,10 +2,6 @@ use std::collections::BTreeMap;
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 
-use crate::backends::core::private::crypto::secret::generators::{
-    EncryptionRandomGenerator as ImplEncryptionRandomGenerator,
-    SecretRandomGenerator as ImplSecretRandomGenerator,
-};
 use crate::backends::optalysys::entities::{
     OptalysysFourierLweBootstrapKey32, OptalysysFourierLweBootstrapKey64,
 };
