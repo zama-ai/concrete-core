@@ -1,6 +1,7 @@
 # Compile and test project on an AWS instance
 name: AWS tests
 
+# This workflow is meant to be run via Zama CI bot Slab.
 on:
   workflow_dispatch:
     inputs:
