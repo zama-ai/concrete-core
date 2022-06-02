@@ -1,10 +1,14 @@
 #![allow(clippy::excessive_precision, clippy::approx_constant)]
 
 use crate::commons::math::tensor::{tensor_traits, Tensor};
-use concrete_fftw::types::*;
 
 /// A complex number encoded over two `f64`.
+#[cfg(feature="backend_fftw")]
 pub type Complex64 = concrete_fftw::types::c64;
+#[cfg(feature="backend_optalysys")]
+pub type Complex64 = num::complex::Complex64;
+
+type c64 = Complex64;
 
 /// Correcting factors for the forward transform.
 #[derive(Debug, Clone)]
