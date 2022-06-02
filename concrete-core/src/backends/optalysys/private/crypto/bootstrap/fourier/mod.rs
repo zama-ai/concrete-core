@@ -22,8 +22,7 @@ use crate::commons::math::tensor::{
 };
 use crate::commons::math::torus::UnsignedTorus;
 use crate::commons::utils::{zip, zip_args};
-use crate::backends::optalysys::private::crypto::bootstrap::fourier::buffers::FftBuffers;
-use crate::backends::optalysys::private::crypto::bootstrap::fourier::buffers::FourierBuffers;
+pub use crate::backends::optalysys::private::crypto::bootstrap::fourier::buffers::{ FftBuffers, FourierBuffers };
 
 pub(crate) mod buffers;
 #[cfg(test)]
@@ -84,9 +83,10 @@ where
         decomp_base_log: DecompositionBaseLog,
         key_size: LweDimension,
     ) -> Self {
-        let mut tensor = Tensor::from_container(Vec::with_capacity(
-            key_size.0 * decomp_level.0 * glwe_size.0 * glwe_size.0 * poly_size.0,
-        ));
+        let mut tensor = Tensor::from_container(vec![
+            Complex64::new(0., 0.);
+            key_size.0 * decomp_level.0 * glwe_size.0 * glwe_size.0 * poly_size.0
+        ]);
         tensor.as_mut_tensor().fill_with_element(value);
         FourierBootstrapKey {
             tensor,
