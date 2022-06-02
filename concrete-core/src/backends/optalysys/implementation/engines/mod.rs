@@ -9,7 +9,8 @@ use crate::backends::optalysys::entities::{
 use crate::backends::optalysys::private::crypto::bootstrap::fourier::buffers::FourierBuffers;
 use crate::prelude::sealed::AbstractEngineSeal;
 use crate::prelude::LweBootstrapKeyEntity;
-use crate::prelude::{AbstractEngine, FourierBufferKey};
+use crate::prelude::AbstractEngine;
+use crate::prelude::{PolynomialSize, GlweSize};
 
 #[derive(Debug)]
 pub enum OptalysysError {
@@ -27,6 +28,9 @@ impl Display for OptalysysError {
 }
 
 impl Error for OptalysysError {}
+
+#[derive(Ord, PartialOrd, Eq, PartialEq)]
+pub(crate) struct FourierBufferKey(pub PolynomialSize, pub GlweSize);
 
 /// The main engine exposed by the Optalysys backend.
 pub struct OptalysysEngine {
@@ -64,8 +68,10 @@ impl AbstractEngineSeal for OptalysysEngine {}
 
 impl AbstractEngine for OptalysysEngine {
     type EngineError = OptalysysError;
+    
+    type Parameters = ();
 
-    fn new() -> Result<Self, Self::EngineError> {
+    fn new(_parameters: Self::Parameters) -> Result<Self, Self::EngineError> {
         Ok(OptalysysEngine {
             fourier_buffers_u32: Default::default(),
             fourier_buffers_u64: Default::default(),

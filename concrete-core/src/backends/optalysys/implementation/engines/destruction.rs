@@ -13,7 +13,7 @@ impl DestructionEngine<OptalysysFourierLweBootstrapKey32> for OptalysysEngine {
         Ok(())
     }
 
-    unsafe fn destroy_unchecked(&mut self, _entity: OptalysysFourierLweBootstrapKey32) {}
+    unsafe fn destroy_unchecked(&mut self, _entity: &mut OptalysysFourierLweBootstrapKey32) {}
 }
 
 impl DestructionEngine<OptalysysFourierLweBootstrapKey64> for OptalysysEngine {
@@ -25,5 +25,5 @@ impl DestructionEngine<OptalysysFourierLweBootstrapKey64> for OptalysysEngine {
         Ok(())
     }
 
-    unsafe fn destroy_unchecked(&mut self, _entity: OptalysysFourierLweBootstrapKey64) {}
+    unsafe fn destroy_unchecked(&mut self, _entity: &mut OptalysysFourierLweBootstrapKey64) {}
 }
