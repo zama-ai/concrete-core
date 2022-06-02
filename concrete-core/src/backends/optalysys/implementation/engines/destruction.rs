@@ -7,9 +7,9 @@ use crate::specification::engines::{DestructionEngine, DestructionError};
 impl DestructionEngine<OptalysysFourierLweBootstrapKey32> for OptalysysEngine {
     fn destroy(
         &mut self,
-        entity: OptalysysFourierLweBootstrapKey32,
+        mut entity: OptalysysFourierLweBootstrapKey32,
     ) -> Result<(), DestructionError<Self::EngineError>> {
-        unsafe { self.destroy_unchecked(entity) };
+        unsafe { self.destroy_unchecked(&mut entity) };
         Ok(())
     }
 
@@ -19,9 +19,9 @@ impl DestructionEngine<OptalysysFourierLweBootstrapKey32> for OptalysysEngine {
 impl DestructionEngine<OptalysysFourierLweBootstrapKey64> for OptalysysEngine {
     fn destroy(
         &mut self,
-        entity: OptalysysFourierLweBootstrapKey64,
+        mut entity: OptalysysFourierLweBootstrapKey64,
     ) -> Result<(), DestructionError<Self::EngineError>> {
-        unsafe { self.destroy_unchecked(entity) };
+        unsafe { self.destroy_unchecked(&mut entity) };
         Ok(())
     }
 

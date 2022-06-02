@@ -1,13 +1,12 @@
 use std::fmt::Debug;
 
-use concrete_fftw::array::AlignedVec;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 use concrete_commons::numeric::{CastInto, Numeric};
 use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, MonomialDegree,
-    PolynomialSize,
+    DecompositionBaseLog, DecompositionLevelCount, GlweSize, LutCountLog, LweDimension,
+    ModulusSwitchOffset, MonomialDegree, PolynomialSize,
 };
 
 use crate::commons::crypto::bootstrap::StandardBootstrapKey;
@@ -32,7 +31,7 @@ mod tests;
 
 /// A bootstrapping key in the fourier domain.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FourierBootstrapKey<Cont, Scalar>
 where
     Scalar: UnsignedTorus,
@@ -49,7 +48,7 @@ where
     _scalar: std::marker::PhantomData<Scalar>,
 }
 
-impl<Scalar> FourierBootstrapKey<AlignedVec<Complex64>, Scalar>
+impl<Scalar> FourierBootstrapKey<Vec<Complex64>, Scalar>
 where
     Scalar: UnsignedTorus,
 {
@@ -85,7 +84,7 @@ where
         decomp_base_log: DecompositionBaseLog,
         key_size: LweDimension,
     ) -> Self {
-        let mut tensor = Tensor::from_container(AlignedVec::new(
+        let mut tensor = Tensor::from_container(Vec::with_capacity(
             key_size.0 * decomp_level.0 * glwe_size.0 * glwe_size.0 * poly_size.0,
         ));
         tensor.as_mut_tensor().fill_with_element(value);
