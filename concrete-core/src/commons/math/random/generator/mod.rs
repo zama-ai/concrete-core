@@ -4,15 +4,28 @@ use crate::commons::math::random::{
 };
 use crate::commons::math::tensor::{AsMutSlice, AsMutTensor, Tensor};
 use concrete_commons::numeric::{FloatingPoint, Numeric};
-use concrete_csprng::generators::{BytesPerChild, ChildrenCount, ForkError};
-#[cfg(feature = "parallel")]
-use rayon::prelude::*;
+use concrete_csprng::generators::{
+    BytesPerChild, ChildrenCount, DynamicRandomGenerator, DynamicRandomGeneratorChildrenIterator,
+    ForkError, InstantiatesRandomGenerator as InstantiatesByteRandomGenerator,
+    SoftwareRandomGenerator,
+};
 use std::convert::TryInto;
+use std::marker::PhantomData;
+
+pub use concrete_csprng::generators::{
+    RandomGenerator as ByteRandomGenerator, RandomGeneratorImplementation,
+};
+pub use concrete_csprng::seeders::{Seed, Seeder};
+
+#[cfg(feature = "generator_x86_64_aesni")]
+mod x86_64;
+#[cfg(feature = "generator_x86_64_aesni")]
+pub use x86_64::*;
 
 #[cfg(feature = "parallel")]
-pub use concrete_csprng::generators::ParallelRandomGenerator as ParallelByteRandomGenerator;
-pub use concrete_csprng::generators::RandomGenerator as ByteRandomGenerator;
-pub use concrete_csprng::seeders::{Seed, Seeder};
+mod parallel;
+#[cfg(feature = "parallel")]
+pub use parallel::*;
 
 /// A cryptographically secure random number generator.
 ///
@@ -49,25 +62,42 @@ pub use concrete_csprng::seeders::{Seed, Seeder};
 /// }
 /// // use the parent to generate as many bytes as needed.
 /// ```
-pub struct RandomGenerator<G: ByteRandomGenerator>(G);
+pub struct RandomGenerator<G: ByteRandomGenerator>(DynamicRandomGenerator, PhantomData<G>);
 
-impl<G: ByteRandomGenerator> RandomGenerator<G> {
+impl RandomGenerator<SoftwareRandomGenerator> {
+    pub fn new(seed: Seed) -> Self {
+        RandomGenerator(
+            <DynamicRandomGenerator as InstantiatesByteRandomGenerator>::new(
+                RandomGeneratorImplementation::Software,
+                seed,
+            )
+            .unwrap(),
+            PhantomData,
+        )
+    }
+}
+
+/// Result iterator for [`RandomGenerator::try_fork`].
+pub struct RandomGeneratorChildrenIterator<G: ByteRandomGenerator>(
+    DynamicRandomGeneratorChildrenIterator,
+    PhantomData<G>,
+);
+
+impl<G: ByteRandomGenerator> Iterator for RandomGeneratorChildrenIterator<G> {
+    type Item = RandomGenerator<G>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.next().map(|gen| RandomGenerator(gen, PhantomData))
+    }
+}
+
+/// Sequential random generation functions.
+impl<G> RandomGenerator<G>
+where
+    G: ByteRandomGenerator,
+{
     pub(crate) fn generate_next(&mut self) -> u8 {
         self.0.next_byte().unwrap()
-    }
-
-    /// Generates a new generator, optionally seeding it with the given value.
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use concrete_core::commons::math::random::RandomGenerator;
-    /// use concrete_csprng::generators::SoftwareRandomGenerator;
-    /// use concrete_csprng::seeders::Seed;
-    /// let mut generator = RandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
-    /// ```
-    pub fn new(seed: Seed) -> RandomGenerator<G> {
-        RandomGenerator(G::new(seed))
     }
 
     /// Returns the number of bytes that can still be generated, if the generator is bounded.
@@ -104,10 +134,12 @@ impl<G: ByteRandomGenerator> RandomGenerator<G> {
         &mut self,
         n_child: usize,
         bytes_per_child: usize,
-    ) -> Result<impl Iterator<Item = RandomGenerator<G>>, ForkError> {
-        self.0
-            .try_fork(ChildrenCount(n_child), BytesPerChild(bytes_per_child))
-            .map(|iter| iter.map(Self))
+    ) -> Result<RandomGeneratorChildrenIterator<G>, ForkError> {
+        Ok(RandomGeneratorChildrenIterator(
+            self.0
+                .try_fork(ChildrenCount(n_child), BytesPerChild(bytes_per_child))?,
+            PhantomData,
+        ))
     }
 
     /// Generates a random uniform unsigned integer.
@@ -611,37 +643,5 @@ impl<G: ByteRandomGenerator> RandomGenerator<G> {
         let mut tensor = Tensor::allocate(Scalar::ZERO, size);
         self.fill_tensor_with_random_gaussian(&mut tensor, mean, std);
         tensor
-    }
-}
-
-#[cfg(feature = "parallel")]
-impl<G: ParallelByteRandomGenerator> RandomGenerator<G> {
-    /// Tries to fork the current generator into `n_child` generator bounded to `bytes_per_child`,
-    /// as a parallel iterator.
-    ///
-    /// If `n_child*bytes_per_child` exceeds the bound of the current generator, the method
-    /// returns `None`.
-    ///
-    /// # Notes
-    ///
-    /// This method necessitates the "parallel" feature to be used.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use concrete_core::commons::math::random::RandomGenerator;
-    /// use concrete_csprng::generators::SoftwareRandomGenerator;
-    /// use concrete_csprng::seeders::Seed;
-    /// let mut generator = RandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
-    /// let children = generator.try_fork(5, 50).unwrap().collect::<Vec<_>>();
-    /// ```
-    pub fn par_try_fork(
-        &mut self,
-        n_child: usize,
-        bytes_per_child: usize,
-    ) -> Result<impl IndexedParallelIterator<Item = RandomGenerator<G>>, ForkError> {
-        self.0
-            .par_try_fork(ChildrenCount(n_child), BytesPerChild(bytes_per_child))
-            .map(|iter| iter.map(Self))
     }
 }

@@ -1,5 +1,12 @@
 mod encryption;
-pub use encryption::EncryptionRandomGenerator;
+#[cfg(feature = "parallel")]
+pub use encryption::ParallelEncryptionRandomGeneratorInterface;
+pub use encryption::{
+    DynamicEncryptionRandomGenerator, EncryptionRandomGenerator,
+    SequentialEncryptionRandomGeneratorInterface,
+};
 
 mod secret;
-pub use secret::SecretRandomGenerator;
+pub use secret::{
+    DynamicSecretRandomGenerator, SecretRandomGenerator, SecretRandomGeneratorInterface,
+};

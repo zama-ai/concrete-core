@@ -6,13 +6,13 @@ use crate::commons::math::tensor::{
     ck_dim_div, ck_dim_eq, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, IntoTensor, Tensor,
 };
 
+#[cfg(feature = "parallel")]
+use crate::commons::crypto::secret::generators::ParallelEncryptionRandomGeneratorInterface;
 use crate::commons::crypto::secret::generators::{
-    EncryptionRandomGenerator, SecretRandomGenerator,
+    SecretRandomGeneratorInterface, SequentialEncryptionRandomGeneratorInterface,
 };
 use crate::commons::math::polynomial::PolynomialList;
-#[cfg(feature = "parallel")]
-use crate::commons::math::random::ParallelByteRandomGenerator;
-use crate::commons::math::random::{ByteRandomGenerator, Gaussian, RandomGenerable};
+use crate::commons::math::random::{Gaussian, RandomGenerable};
 use crate::commons::math::torus::UnsignedTorus;
 use concrete_commons::dispersion::DispersionParameter;
 use concrete_commons::key_kinds::{
@@ -61,10 +61,10 @@ where
     /// assert_eq!(secret_key.key_size(), GlweDimension(256));
     /// assert_eq!(secret_key.polynomial_size(), PolynomialSize(10));
     /// ```
-    pub fn generate_binary<Gen: ByteRandomGenerator>(
+    pub fn generate_binary(
         dimension: GlweDimension,
         poly_size: PolynomialSize,
-        generator: &mut SecretRandomGenerator<Gen>,
+        generator: &mut impl SecretRandomGeneratorInterface,
     ) -> Self {
         GlweSecretKey {
             tensor: generator.random_binary_tensor(poly_size.0 * dimension.0),
@@ -99,10 +99,10 @@ where
     /// assert_eq!(secret_key.key_size(), GlweDimension(256));
     /// assert_eq!(secret_key.polynomial_size(), PolynomialSize(10));
     /// ```
-    pub fn generate_ternary<Gen: ByteRandomGenerator>(
+    pub fn generate_ternary(
         dimension: GlweDimension,
         poly_size: PolynomialSize,
-        generator: &mut SecretRandomGenerator<Gen>,
+        generator: &mut impl SecretRandomGeneratorInterface,
     ) -> Self {
         GlweSecretKey {
             tensor: generator.random_ternary_tensor(poly_size.0 * dimension.0),
@@ -138,10 +138,10 @@ where
     /// assert_eq!(secret_key.key_size(), GlweDimension(256));
     /// assert_eq!(secret_key.polynomial_size(), PolynomialSize(10));
     /// ```
-    pub fn generate_gaussian<Gen: ByteRandomGenerator>(
+    pub fn generate_gaussian(
         dimension: GlweDimension,
         poly_size: PolynomialSize,
-        generator: &mut SecretRandomGenerator<Gen>,
+        generator: &mut impl SecretRandomGeneratorInterface,
     ) -> Self {
         GlweSecretKey {
             tensor: generator.random_gaussian_tensor(poly_size.0 * dimension.0),
@@ -176,10 +176,10 @@ where
     /// assert_eq!(secret_key.key_size(), GlweDimension(256));
     /// assert_eq!(secret_key.polynomial_size(), PolynomialSize(10));
     /// ```
-    pub fn generate_uniform<Gen: ByteRandomGenerator>(
+    pub fn generate_uniform(
         dimension: GlweDimension,
         poly_size: PolynomialSize,
-        generator: &mut SecretRandomGenerator<Gen>,
+        generator: &mut impl SecretRandomGeneratorInterface,
     ) -> Self {
         GlweSecretKey {
             tensor: generator.random_uniform_tensor(poly_size.0 * dimension.0),
@@ -508,18 +508,17 @@ where
     ///     assert!(dist < 400, "dist: {:?}", dist);
     /// }
     /// ```
-    pub fn encrypt_glwe<Cont1, Cont2, Scalar, Gen>(
+    pub fn encrypt_glwe<Cont1, Cont2, Scalar>(
         &self,
         encrypted: &mut GlweCiphertext<Cont1>,
         encoded: &PlaintextList<Cont2>,
         noise_parameter: impl DispersionParameter,
-        generator: &mut EncryptionRandomGenerator<Gen>,
+        generator: &mut impl SequentialEncryptionRandomGeneratorInterface,
     ) where
         Self: AsRefTensor<Element = Scalar>,
         GlweCiphertext<Cont1>: AsMutTensor<Element = Scalar>,
         PlaintextList<Cont2>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
-        Gen: ByteRandomGenerator,
     {
         ck_dim_eq!(encoded.count().0 => encrypted.polynomial_size().0);
         ck_dim_eq!(encrypted.mask_size().0 => self.key_size().0);
@@ -571,16 +570,15 @@ where
     ///     assert!(dist < 500, "dist: {:?}", dist);
     /// }
     /// ```
-    pub fn encrypt_zero_glwe<Scalar, Cont1, Gen>(
+    pub fn encrypt_zero_glwe<Scalar, Cont1>(
         &self,
         encrypted: &mut GlweCiphertext<Cont1>,
         noise_parameters: impl DispersionParameter,
-        generator: &mut EncryptionRandomGenerator<Gen>,
+        generator: &mut impl SequentialEncryptionRandomGeneratorInterface,
     ) where
         Self: AsRefTensor<Element = Scalar>,
         GlweCiphertext<Cont1>: AsMutTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
-        Gen: ByteRandomGenerator,
     {
         ck_dim_eq!(encrypted.mask_size().0 => self.key_size().0);
         let (mut body, mut masks) = encrypted.get_mut_body_and_mask();
@@ -640,19 +638,18 @@ where
     ///     assert!(dist < 400, "dist: {:?}", dist);
     /// }
     /// ```
-    pub fn encrypt_glwe_list<CiphCont, EncCont, Scalar, Gen>(
+    pub fn encrypt_glwe_list<CiphCont, EncCont, Scalar>(
         &self,
         encrypt: &mut GlweList<CiphCont>,
         encoded: &PlaintextList<EncCont>,
         noise_parameters: impl DispersionParameter,
-        generator: &mut EncryptionRandomGenerator<Gen>,
+        generator: &mut impl SequentialEncryptionRandomGeneratorInterface,
     ) where
         Self: AsRefTensor<Element = Scalar>,
         GlweList<CiphCont>: AsMutTensor<Element = Scalar>,
         PlaintextList<EncCont>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
         for<'a> PlaintextList<&'a [Scalar]>: AsRefTensor<Element = Scalar>,
-        Gen: ByteRandomGenerator,
     {
         ck_dim_eq!(encrypt.ciphertext_count().0 * encrypt.polynomial_size().0 => encoded.count().0);
         ck_dim_eq!(encrypt.glwe_dimension().0 => self.key_size().0);
@@ -708,16 +705,15 @@ where
     ///     assert!(dist < 400, "dist: {:?}", dist);
     /// }
     /// ```
-    pub fn encrypt_zero_glwe_list<Scalar, OutputCont, Gen>(
+    pub fn encrypt_zero_glwe_list<Scalar, OutputCont>(
         &self,
         encrypted: &mut GlweList<OutputCont>,
         noise_parameters: impl DispersionParameter,
-        generator: &mut EncryptionRandomGenerator<Gen>,
+        generator: &mut impl SequentialEncryptionRandomGeneratorInterface,
     ) where
         Self: AsRefTensor<Element = Scalar>,
         GlweList<OutputCont>: AsMutTensor<Element = Scalar>,
         Scalar: UnsignedTorus + Add,
-        Gen: ByteRandomGenerator,
     {
         for mut ciphertext in encrypted.ciphertext_iter_mut() {
             self.encrypt_zero_glwe(&mut ciphertext, noise_parameters, generator);
@@ -811,18 +807,17 @@ where
     ///     &mut secret_generator,
     /// );
     /// ```
-    pub fn encrypt_constant_ggsw<OutputCont, Scalar, Gen>(
+    pub fn encrypt_constant_ggsw<OutputCont, Scalar>(
         &self,
         encrypted: &mut StandardGgswCiphertext<OutputCont>,
         encoded: &Plaintext<Scalar>,
         noise_parameters: impl DispersionParameter,
-        generator: &mut EncryptionRandomGenerator<Gen>,
+        generator: &mut impl SequentialEncryptionRandomGeneratorInterface,
     ) where
         Self: AsRefTensor<Element = Scalar>,
         StandardGgswCiphertext<OutputCont>: AsMutTensor<Element = Scalar>,
         OutputCont: AsMutSlice<Element = Scalar>,
         Scalar: UnsignedTorus,
-        Gen: ByteRandomGenerator,
     {
         ck_dim_eq!(self.polynomial_size() => encrypted.polynomial_size());
         ck_dim_eq!(self.key_size() => encrypted.glwe_size().to_glwe_dimension());
@@ -901,19 +896,19 @@ where
     /// );
     /// ```
     #[cfg(feature = "parallel")]
-    pub fn par_encrypt_constant_ggsw<OutputCont, Scalar, Gen>(
+    pub fn par_encrypt_constant_ggsw<OutputCont, Scalar>(
         &self,
         encrypted: &mut StandardGgswCiphertext<OutputCont>,
         encoded: &Plaintext<Scalar>,
         noise_parameters: impl DispersionParameter + Send + Sync,
-        generator: &mut EncryptionRandomGenerator<Gen>,
+        generator: &mut (impl SequentialEncryptionRandomGeneratorInterface
+                  + ParallelEncryptionRandomGeneratorInterface),
     ) where
         Self: AsRefTensor<Element = Scalar>,
         StandardGgswCiphertext<OutputCont>: AsMutTensor<Element = Scalar>,
         OutputCont: AsMutSlice<Element = Scalar>,
         Scalar: UnsignedTorus + Send + Sync,
         Cont: Sync,
-        Gen: ParallelByteRandomGenerator,
     {
         ck_dim_eq!(self.polynomial_size() => encrypted.polynomial_size());
         ck_dim_eq!(self.key_size() => encrypted.glwe_size().to_glwe_dimension());
@@ -997,18 +992,17 @@ where
     ///     &mut encryption_generator,
     /// );
     /// ```
-    pub fn trivial_encrypt_constant_ggsw<OutputCont, Scalar, Gen>(
+    pub fn trivial_encrypt_constant_ggsw<OutputCont, Scalar>(
         &self,
         encrypted: &mut StandardGgswCiphertext<OutputCont>,
         encoded: &Plaintext<Scalar>,
         noise_parameters: impl DispersionParameter,
-        generator: &mut EncryptionRandomGenerator<Gen>,
+        generator: &mut impl SequentialEncryptionRandomGeneratorInterface,
     ) where
         Self: AsRefTensor<Element = Scalar>,
         StandardGgswCiphertext<OutputCont>: AsMutTensor<Element = Scalar>,
         OutputCont: AsMutSlice<Element = Scalar>,
         Scalar: UnsignedTorus,
-        Gen: ByteRandomGenerator,
     {
         ck_dim_eq!(self.polynomial_size() => encrypted.polynomial_size());
         ck_dim_eq!(self.key_size() => encrypted.glwe_size().to_glwe_dimension());

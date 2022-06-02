@@ -10,12 +10,11 @@ use concrete_commons::parameters::{
 
 use crate::commons::crypto::encoding::PlaintextList;
 use crate::commons::crypto::lwe::{LweCiphertext, LweList};
-use crate::commons::crypto::secret::generators::EncryptionRandomGenerator;
+use crate::commons::crypto::secret::generators::SequentialEncryptionRandomGeneratorInterface;
 use crate::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
 use crate::commons::math::decomposition::{
     DecompositionLevel, DecompositionTerm, SignedDecomposer,
 };
-use crate::commons::math::random::ByteRandomGenerator;
 use crate::commons::math::tensor::{
     ck_dim_div, ck_dim_eq, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
@@ -350,18 +349,17 @@ impl<Cont> PackingKeyswitchKey<Cont> {
     ///
     /// assert!(!pksk.as_tensor().iter().all(|a| *a == 0));
     /// ```
-    pub fn fill_with_packing_keyswitch_key<InKeyCont, OutKeyCont, Scalar, Gen>(
+    pub fn fill_with_packing_keyswitch_key<InKeyCont, OutKeyCont, Scalar>(
         &mut self,
         input_lwe_key: &LweSecretKey<BinaryKeyKind, InKeyCont>,
         output_glwe_key: &GlweSecretKey<BinaryKeyKind, OutKeyCont>,
         noise_parameters: impl DispersionParameter,
-        generator: &mut EncryptionRandomGenerator<Gen>,
+        generator: &mut impl SequentialEncryptionRandomGeneratorInterface,
     ) where
         Self: AsMutTensor<Element = Scalar>,
         LweSecretKey<BinaryKeyKind, InKeyCont>: AsRefTensor<Element = Scalar>,
         GlweSecretKey<BinaryKeyKind, OutKeyCont>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
-        Gen: ByteRandomGenerator,
     {
         // We instantiate a buffer
         let mut messages = PlaintextList::from_container(vec![

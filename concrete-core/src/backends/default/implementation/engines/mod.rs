@@ -3,12 +3,11 @@
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 
-use concrete_csprng::generators::SoftwareRandomGenerator;
+use concrete_csprng::generators::RandomGeneratorImplementation;
 use concrete_csprng::seeders::Seeder;
 
 use crate::commons::crypto::secret::generators::{
-    EncryptionRandomGenerator as ImplEncryptionRandomGenerator,
-    SecretRandomGenerator as ImplSecretRandomGenerator,
+    DynamicEncryptionRandomGenerator, DynamicSecretRandomGenerator,
 };
 use crate::specification::engines::sealed::AbstractEngineSeal;
 use crate::specification::engines::AbstractEngine;
@@ -31,8 +30,8 @@ impl Display for DefaultError {
 impl Error for DefaultError {}
 
 pub struct DefaultEngine {
-    secret_generator: ImplSecretRandomGenerator<SoftwareRandomGenerator>,
-    encryption_generator: ImplEncryptionRandomGenerator<SoftwareRandomGenerator>,
+    secret_generator: DynamicSecretRandomGenerator,
+    encryption_generator: DynamicEncryptionRandomGenerator,
 }
 
 impl AbstractEngineSeal for DefaultEngine {}
@@ -40,14 +39,19 @@ impl AbstractEngineSeal for DefaultEngine {}
 impl AbstractEngine for DefaultEngine {
     type EngineError = DefaultError;
 
-    type Parameters = Box<dyn Seeder>;
+    type Parameters = (RandomGeneratorImplementation, Box<dyn Seeder>);
 
-    fn new(mut parameters: Self::Parameters) -> Result<Self, Self::EngineError> {
+    fn new(parameters: Self::Parameters) -> Result<Self, Self::EngineError> {
+        let (random_generator_backend, mut seeder) = parameters;
         Ok(DefaultEngine {
-            secret_generator: ImplSecretRandomGenerator::new(parameters.seed()),
-            encryption_generator: ImplEncryptionRandomGenerator::new(
-                parameters.seed(),
-                parameters.as_mut(),
+            secret_generator: DynamicSecretRandomGenerator::new(
+                &random_generator_backend,
+                seeder.seed(),
+            ),
+            encryption_generator: DynamicEncryptionRandomGenerator::new(
+                &random_generator_backend,
+                seeder.seed(),
+                seeder.as_mut(),
             ),
         })
     }
@@ -58,10 +62,10 @@ pub mod parallel {
     use std::error::Error;
     use std::fmt::{Display, Formatter};
 
-    use concrete_csprng::generators::SoftwareRandomGenerator;
+    use concrete_csprng::generators::RandomGeneratorImplementation;
     use concrete_csprng::seeders::Seeder;
 
-    use crate::commons::crypto::secret::generators::EncryptionRandomGenerator as ImplEncryptionRandomGenerator;
+    use crate::commons::crypto::secret::generators::DynamicEncryptionRandomGenerator;
     use crate::specification::engines::sealed::AbstractEngineSeal;
     use crate::specification::engines::AbstractEngine;
 
@@ -84,7 +88,7 @@ pub mod parallel {
     impl Error for DefaultParallelError {}
 
     pub struct DefaultParallelEngine {
-        pub(crate) encryption_generator: ImplEncryptionRandomGenerator<SoftwareRandomGenerator>,
+        pub(crate) encryption_generator: DynamicEncryptionRandomGenerator,
     }
 
     impl AbstractEngineSeal for DefaultParallelEngine {}
@@ -92,13 +96,15 @@ pub mod parallel {
     impl AbstractEngine for DefaultParallelEngine {
         type EngineError = DefaultParallelError;
 
-        type Parameters = Box<dyn Seeder>;
+        type Parameters = (RandomGeneratorImplementation, Box<dyn Seeder>);
 
-        fn new(mut parameters: Self::Parameters) -> Result<Self, Self::EngineError> {
+        fn new(parameters: Self::Parameters) -> Result<Self, Self::EngineError> {
+            let (random_generator_backend, mut seeder) = parameters;
             Ok(DefaultParallelEngine {
-                encryption_generator: ImplEncryptionRandomGenerator::new(
-                    parameters.seed(),
-                    parameters.as_mut(),
+                encryption_generator: DynamicEncryptionRandomGenerator::new(
+                    &random_generator_backend,
+                    seeder.seed(),
+                    seeder.as_mut(),
                 ),
             })
         }

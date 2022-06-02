@@ -1,11 +1,10 @@
 use crate::commons::crypto::encoding::Plaintext;
 use crate::commons::crypto::ggsw::StandardGgswCiphertext;
-use crate::commons::crypto::secret::generators::EncryptionRandomGenerator;
+#[cfg(feature = "parallel")]
+use crate::commons::crypto::secret::generators::ParallelEncryptionRandomGeneratorInterface;
+use crate::commons::crypto::secret::generators::SequentialEncryptionRandomGeneratorInterface;
 use crate::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
 use crate::commons::math::polynomial::Polynomial;
-use crate::commons::math::random::ByteRandomGenerator;
-#[cfg(feature = "parallel")]
-use crate::commons::math::random::ParallelByteRandomGenerator;
 use crate::commons::math::tensor::{
     ck_dim_div, ck_dim_eq, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
@@ -176,18 +175,17 @@ impl<Cont> StandardBootstrapKey<Cont> {
     ///     &mut encryption_generator,
     /// );
     /// ```
-    pub fn fill_with_new_key<LweCont, RlweCont, Scalar, Gen>(
+    pub fn fill_with_new_key<LweCont, RlweCont, Scalar>(
         &mut self,
         lwe_secret_key: &LweSecretKey<BinaryKeyKind, LweCont>,
         glwe_secret_key: &GlweSecretKey<BinaryKeyKind, RlweCont>,
         noise_parameters: impl DispersionParameter,
-        generator: &mut EncryptionRandomGenerator<Gen>,
+        generator: &mut impl SequentialEncryptionRandomGeneratorInterface,
     ) where
         Self: AsMutTensor<Element = Scalar>,
         LweSecretKey<BinaryKeyKind, LweCont>: AsRefTensor<Element = Scalar>,
         GlweSecretKey<BinaryKeyKind, RlweCont>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
-        Gen: ByteRandomGenerator,
     {
         ck_dim_eq!(self.key_size().0 => lwe_secret_key.key_size().0);
         self.as_mut_tensor()
@@ -263,19 +261,19 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// );
     /// ```
     #[cfg(feature = "parallel")]
-    pub fn par_fill_with_new_key<LweCont, RlweCont, Scalar, Gen>(
+    pub fn par_fill_with_new_key<LweCont, RlweCont, Scalar>(
         &mut self,
         lwe_secret_key: &LweSecretKey<BinaryKeyKind, LweCont>,
         glwe_secret_key: &GlweSecretKey<BinaryKeyKind, RlweCont>,
         noise_parameters: impl DispersionParameter + Sync + Send,
-        generator: &mut EncryptionRandomGenerator<Gen>,
+        generator: &mut (impl SequentialEncryptionRandomGeneratorInterface
+                  + ParallelEncryptionRandomGeneratorInterface),
     ) where
         Self: AsMutTensor<Element = Scalar>,
         LweSecretKey<BinaryKeyKind, LweCont>: AsRefTensor<Element = Scalar>,
         GlweSecretKey<BinaryKeyKind, RlweCont>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus + Sync + Send,
         RlweCont: Sync,
-        Gen: ParallelByteRandomGenerator,
     {
         ck_dim_eq!(self.key_size().0 => lwe_secret_key.key_size().0);
         self.as_mut_tensor()
@@ -342,18 +340,17 @@ impl<Cont> StandardBootstrapKey<Cont> {
     ///     &mut encryption_generator,
     /// );
     /// ```
-    pub fn fill_with_new_trivial_key<LweCont, RlweCont, Scalar, Gen>(
+    pub fn fill_with_new_trivial_key<LweCont, RlweCont, Scalar>(
         &mut self,
         lwe_secret_key: &LweSecretKey<BinaryKeyKind, LweCont>,
         rlwe_secret_key: &GlweSecretKey<BinaryKeyKind, RlweCont>,
         noise_parameters: impl DispersionParameter,
-        generator: &mut EncryptionRandomGenerator<Gen>,
+        generator: &mut impl SequentialEncryptionRandomGeneratorInterface,
     ) where
         Self: AsMutTensor<Element = Scalar>,
         LweSecretKey<BinaryKeyKind, LweCont>: AsRefTensor<Element = Scalar>,
         GlweSecretKey<BinaryKeyKind, RlweCont>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
-        Gen: ByteRandomGenerator,
     {
         ck_dim_eq!(self.key_size().0 => lwe_secret_key.key_size().0);
         for (mut rgsw, sk_scalar) in self.ggsw_iter_mut().zip(lwe_secret_key.as_tensor().iter()) {

@@ -27,8 +27,9 @@ pub use concrete_commons::parameters::*;
 pub use concrete_commons::*;
 
 // --------------------------------------------------------------------------------- CSPRNG REEXPORT
-// Re-export the different seeders of the `concrete-csprng` crate, which are needed to construct
-// default engines.
+// Re-export the different data structures of the `concrete-csprng` crate, which are needed to
+// construct default engines.
+pub use concrete_csprng::generators::RandomGeneratorImplementation;
 #[cfg(feature = "seeder_x86_64_rdseed")]
 pub use concrete_csprng::seeders::RdseedSeeder;
 pub use concrete_csprng::seeders::Seeder;

@@ -79,15 +79,18 @@ pub mod test_tools {
     }
 
     pub fn new_random_generator() -> RandomGenerator<SoftwareRandomGenerator> {
-        RandomGenerator::new(random_seed())
+        RandomGenerator::<SoftwareRandomGenerator>::new(random_seed())
     }
 
     pub fn new_secret_random_generator() -> SecretRandomGenerator<SoftwareRandomGenerator> {
-        SecretRandomGenerator::new(random_seed())
+        SecretRandomGenerator::<SoftwareRandomGenerator>::new(random_seed())
     }
 
     pub fn new_encryption_random_generator() -> EncryptionRandomGenerator<SoftwareRandomGenerator> {
-        EncryptionRandomGenerator::new(random_seed(), &mut UnsafeRandSeeder)
+        EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(
+            random_seed(),
+            &mut UnsafeRandSeeder,
+        )
     }
 
     pub fn random_seed() -> Seed {
