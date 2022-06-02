@@ -5,7 +5,7 @@ use crate::commons::math::tensor::{tensor_traits, Tensor};
 /// A complex number encoded over two `f64`.
 #[cfg(feature="backend_fftw")]
 pub type Complex64 = concrete_fftw::types::c64;
-#[cfg(feature="backend_optalysys")]
+#[cfg(all(feature="backend_optalysys", not(feature="backend_fftw")))]
 pub type Complex64 = num::complex::Complex64;
 
 type c64 = Complex64;
