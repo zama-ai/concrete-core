@@ -32,12 +32,13 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey32, OptalysysFourierLweBoots
     /// let (dec_lc, dec_bl) = (DecompositionLevelCount(3), DecompositionBaseLog(5));
     /// let noise = Variance(2_f64.powf(-25.));
     ///
-    /// let mut engine = OptalysysEngine::new()?;
-    /// let mut core_engine = CoreEngine::new()?;
+    /// let mut engine = OptalysysEngine::new(())?;
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut core_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let lwe_sk: LweSecretKey32 = core_engine.create_lwe_secret_key(lwe_dim)?;
     /// let glwe_sk: GlweSecretKey32 = core_engine.create_glwe_secret_key(glwe_dim, poly_size)?;
     /// let bsk: LweBootstrapKey32 =
-    ///     engine.create_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
+    ///     core_engine.create_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
     ///
     /// let fourier_bsk: OptalysysFourierLweBootstrapKey32 = engine.convert_lwe_bootstrap_key(&bsk)?;
     /// #
@@ -104,12 +105,13 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey64, OptalysysFourierLweBoots
     /// let (dec_lc, dec_bl) = (DecompositionLevelCount(3), DecompositionBaseLog(5));
     /// let noise = Variance(2_f64.powf(-25.));
     ///
-    /// let mut engine = OptalysysEngine::new()?;
-    /// let mut core_engine = CoreEngine::new()?;
+    /// let mut engine = OptalysysEngine::new(())?;
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut core_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let lwe_sk: LweSecretKey64 = core_engine.create_lwe_secret_key(lwe_dim)?;
     /// let glwe_sk: GlweSecretKey64 = core_engine.create_glwe_secret_key(glwe_dim, poly_size)?;
     /// let bsk: LweBootstrapKey64 =
-    ///     engine.create_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
+    ///     core_engine.create_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
     ///
     /// let fourier_bsk: OptalysysFourierLweBootstrapKey64 = engine.convert_lwe_bootstrap_key(&bsk)?;
     /// #
