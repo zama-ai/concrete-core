@@ -1,19 +1,19 @@
-use crate::backends::fftw::private::math::fft::twiddles::{BackwardCorrector, ForwardCorrector};
-use crate::backends::fftw::private::math::fft::{
-    Complex64, Fft, FourierPolynomial, 
+use crate::backends::optalysys::private::math::fft::{
+    Fft, FourierPolynomial, ALLOWED_POLY_SIZE,
 };
-use crate::backends::fftw::private::math::polynomial::Polynomial;
-use crate::backends::fftw::private::math::random::RandomGenerator;
-use crate::backends::fftw::private::math::tensor::{AsMutTensor, AsRefTensor};
+use crate::commons::math::fft::twiddles::{Complex64, BackwardCorrector, ForwardCorrector};
+use crate::commons::math::polynomial::Polynomial;
+use crate::commons::math::tensor::{AsMutTensor, AsRefTensor};
+use crate::commons::test_tools::new_random_generator;
 use concrete_commons::numeric::Numeric;
 use concrete_commons::parameters::PolynomialSize;
-use concrete_fftw::array::AlignedVec;
-use serde_test::{assert_tokens, Token};
+
+const ACCEPTABLE_ERROR: f64 = 1e-6;
 
 #[test]
 fn test_single_forward_backward() {
     fn fw_conv(
-        out: &mut FourierPolynomial<AlignedVec<Complex64>>,
+        out: &mut FourierPolynomial<Vec<Complex64>>,
         inp: &Polynomial<Vec<f64>>,
         corr: &ForwardCorrector<&'static [Complex64]>,
     ) {
@@ -27,7 +27,7 @@ fn test_single_forward_backward() {
     }
     fn bw_conv(
         out: &mut Polynomial<Vec<f64>>,
-        inp: &FourierPolynomial<AlignedVec<Complex64>>,
+        inp: &FourierPolynomial<Vec<Complex64>>,
         corr: &BackwardCorrector<&'static [Complex64]>,
     ) {
         for (input, (corrector, output)) in inp
@@ -38,9 +38,9 @@ fn test_single_forward_backward() {
             *output = (input * corrector).re;
         }
     }
-    let mut generator = RandomGenerator::new(None);
+    let mut generator = new_random_generator();
     for _ in 0..100 {
-        for size in &[128, 256, 512, 1024, 2048, 4096, 8192, 16384] {
+        for size in &ALLOWED_POLY_SIZE {
             let fft = Fft::new(PolynomialSize(*size));
             let mut poly = Polynomial::allocate(f64::ZERO, PolynomialSize(*size));
             generator.fill_tensor_with_random_gaussian(&mut poly, 0., 1.);
@@ -52,7 +52,7 @@ fn test_single_forward_backward() {
             poly.as_tensor()
                 .iter()
                 .zip(out.as_tensor().iter())
-                .for_each(|(exp, out)| assert!((exp - out).abs() < 1e-12f64))
+                .for_each(|(exp, out)| assert!((exp - out).abs() < ACCEPTABLE_ERROR))
         }
     }
 }
@@ -60,7 +60,7 @@ fn test_single_forward_backward() {
 #[test]
 fn test_two_forward_backward() {
     fn fw_conv(
-        out: &mut FourierPolynomial<AlignedVec<Complex64>>,
+        out: &mut FourierPolynomial<Vec<Complex64>>,
         inp1: &Polynomial<Vec<f64>>,
         inp2: &Polynomial<Vec<f64>>,
         corr: &ForwardCorrector<&'static [Complex64]>,
@@ -76,7 +76,7 @@ fn test_two_forward_backward() {
     fn bw_conv(
         out1: &mut Polynomial<Vec<f64>>,
         out2: &mut Polynomial<Vec<f64>>,
-        inp: &FourierPolynomial<AlignedVec<Complex64>>,
+        inp: &FourierPolynomial<Vec<Complex64>>,
         corr: &BackwardCorrector<&'static [Complex64]>,
     ) {
         for (input, (corrector, (output1, output2))) in inp.as_tensor().iter().zip(
@@ -91,9 +91,9 @@ fn test_two_forward_backward() {
             *output2 = interm.im;
         }
     }
-    let mut generator = RandomGenerator::new(None);
+    let mut generator = new_random_generator();
     for _ in 0..100 {
-        for size in &[128, 256, 512, 1024, 2048, 4096, 8192, 16384] {
+        for size in &ALLOWED_POLY_SIZE {
             let fft = Fft::new(PolynomialSize(*size));
             let mut poly1 = Polynomial::allocate(f64::ZERO, PolynomialSize(*size));
             generator.fill_tensor_with_random_gaussian(&mut poly1, 0., 1.);
@@ -123,12 +123,12 @@ fn test_two_forward_backward() {
                 .as_tensor()
                 .iter()
                 .zip(out1.as_tensor().iter())
-                .for_each(|(exp, out)| assert!((exp - out).abs() < 1e-12f64));
+                .for_each(|(exp, out)| assert!((exp - out).abs() < ACCEPTABLE_ERROR));
             poly2
                 .as_tensor()
                 .iter()
                 .zip(out2.as_tensor().iter())
-                .for_each(|(exp, out)| assert!((exp - out).abs() < 1e-12f64));
+                .for_each(|(exp, out)| assert!((exp - out).abs() < ACCEPTABLE_ERROR));
         }
     }
 }

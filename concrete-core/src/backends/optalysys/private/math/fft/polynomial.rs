@@ -31,7 +31,7 @@ impl FourierPolynomial<Vec<Complex64>> {
     /// assert_eq!(fourier_poly.polynomial_size(), PolynomialSize(128));
     /// ```
     pub fn allocate(value: Complex64, coef_count: PolynomialSize) -> Self {
-        let mut tensor = Tensor::from_container(Vec::with_capacity(coef_count.0));
+        let mut tensor = Tensor::from_container(vec![Complex64::new(0., 0.); coef_count.0]);
         tensor.fill_with_element(value);
         FourierPolynomial { tensor }
     }
@@ -45,7 +45,7 @@ impl<Cont> FourierPolynomial<Cont> {
     /// ```rust
     /// use concrete_commons::parameters::PolynomialSize;
     /// use concrete_core::backends::fftw::private::math::fft::{Complex64, FourierPolynomial};
-    /// let mut alvec: Vec<Complex64> = Vec::with_capacity(128);
+    /// let mut alvec: Vec<Complex64> = vec![Complex64::new(0., 0.), 128];
     /// let fourier_poly = FourierPolynomial::from_container(alvec.as_slice_mut());
     /// assert_eq!(fourier_poly.polynomial_size(), PolynomialSize(128));
     /// ```

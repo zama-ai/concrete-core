@@ -40,7 +40,7 @@ where
         let fft = Fft::new(poly_size);
         let first_buffer = FourierPolynomial::allocate(Complex64::new(0., 0.), poly_size);
         let second_buffer = FourierPolynomial::allocate(Complex64::new(0., 0.), poly_size);
-        let output_buffer = Tensor::from_container(Vec::with_capacity(poly_size.0 * glwe_size.0));
+        let output_buffer = Tensor::from_container(vec![Complex64::new(0., 0.); poly_size.0 * glwe_size.0]);
         let lut_buffer = GlweCiphertext::allocate(Scalar::ZERO, poly_size, glwe_size);
         let rounded_buffer = GlweCiphertext::allocate(Scalar::ZERO, poly_size, glwe_size);
 
