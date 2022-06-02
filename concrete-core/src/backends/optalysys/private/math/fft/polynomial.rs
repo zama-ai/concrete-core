@@ -26,7 +26,8 @@ impl FourierPolynomial<Vec<Complex64>> {
     ///
     /// ```
     /// use concrete_commons::parameters::PolynomialSize;
-    /// use concrete_core::backends::fftw::private::math::fft::{Complex64, FourierPolynomial};
+    /// use concrete_core::commons::math::fft::Complex64;
+    /// use concrete_core::backends::optalysys::private::math::fft::FourierPolynomial;
     /// let fourier_poly = FourierPolynomial::allocate(Complex64::new(0., 0.), PolynomialSize(128));
     /// assert_eq!(fourier_poly.polynomial_size(), PolynomialSize(128));
     /// ```
@@ -44,9 +45,10 @@ impl<Cont> FourierPolynomial<Cont> {
     ///
     /// ```rust
     /// use concrete_commons::parameters::PolynomialSize;
-    /// use concrete_core::backends::fftw::private::math::fft::{Complex64, FourierPolynomial};
-    /// let mut alvec: Vec<Complex64> = vec![Complex64::new(0., 0.), 128];
-    /// let fourier_poly = FourierPolynomial::from_container(alvec.as_slice_mut());
+    /// use concrete_core::commons::math::fft::Complex64;
+    /// use concrete_core::backends::optalysys::private::math::fft::FourierPolynomial;
+    /// let mut alvec: Vec<Complex64> = vec![Complex64::new(0., 0.); 128];
+    /// let fourier_poly = FourierPolynomial::from_container(alvec.as_slice());
     /// assert_eq!(fourier_poly.polynomial_size(), PolynomialSize(128));
     /// ```
     pub fn from_container(cont: Cont) -> Self {
@@ -65,7 +67,8 @@ impl<Cont> FourierPolynomial<Cont> {
     ///
     /// ```
     /// use concrete_commons::parameters::PolynomialSize;
-    /// use concrete_core::backends::fftw::private::math::fft::{Complex64, FourierPolynomial};
+    /// use concrete_core::commons::math::fft::Complex64;
+    /// use concrete_core::backends::optalysys::private::math::fft::FourierPolynomial;
     /// let fourier_poly = FourierPolynomial::allocate(Complex64::new(0., 0.), PolynomialSize(128));
     /// assert_eq!(fourier_poly.polynomial_size(), PolynomialSize(128));
     /// ```
@@ -86,7 +89,8 @@ impl<Cont> FourierPolynomial<Cont> {
     ///
     /// ```
     /// use concrete_commons::parameters::PolynomialSize;
-    /// use concrete_core::backends::fftw::private::math::fft::{Complex64, FourierPolynomial};
+    /// use concrete_core::commons::math::fft::Complex64;
+    /// use concrete_core::backends::optalysys::private::math::fft::FourierPolynomial;
     /// let fourier_poly = FourierPolynomial::allocate(Complex64::new(0., 0.), PolynomialSize(128));
     /// for coef in fourier_poly.coefficient_iter() {
     ///     assert_eq!(*coef, Complex64::new(0., 0.));
@@ -110,7 +114,8 @@ impl<Cont> FourierPolynomial<Cont> {
     ///
     /// ```
     /// use concrete_commons::parameters::PolynomialSize;
-    /// use concrete_core::backends::fftw::private::math::fft::{Complex64, FourierPolynomial};
+    /// use concrete_core::commons::math::fft::Complex64;
+    /// use concrete_core::backends::optalysys::private::math::fft::FourierPolynomial;
     /// use concrete_core::commons::math::tensor::AsRefTensor;
     /// let mut fourier_poly = FourierPolynomial::allocate(Complex64::new(0., 0.), PolynomialSize(128));
     /// for mut coef in fourier_poly.coefficient_iter_mut() {
@@ -139,7 +144,8 @@ impl<Cont> FourierPolynomial<Cont> {
     ///
     /// ```rust
     /// use concrete_commons::parameters::PolynomialSize;
-    /// use concrete_core::backends::fftw::private::math::fft::{Complex64, FourierPolynomial};
+    /// use concrete_core::commons::math::fft::Complex64;
+    /// use concrete_core::backends::optalysys::private::math::fft::FourierPolynomial;
     /// let mut fpoly1 = FourierPolynomial::allocate(Complex64::new(1., 2.), PolynomialSize(128));
     /// let fpoly2 = FourierPolynomial::allocate(Complex64::new(3., 4.), PolynomialSize(128));
     /// let fpoly3 = FourierPolynomial::allocate(Complex64::new(5., 6.), PolynomialSize(128));
@@ -181,7 +187,8 @@ impl<Cont> FourierPolynomial<Cont> {
     ///
     /// ```rust
     /// use concrete_commons::parameters::PolynomialSize;
-    /// use concrete_core::backends::fftw::private::math::fft::{Complex64, FourierPolynomial};
+    /// use concrete_core::commons::math::fft::Complex64;
+    /// use concrete_core::backends::optalysys::private::math::fft::FourierPolynomial;
     /// let mut fpoly1 = FourierPolynomial::allocate(Complex64::new(1., 2.), PolynomialSize(128));
     /// let fpoly2 = FourierPolynomial::allocate(Complex64::new(3., 4.), PolynomialSize(128));
     /// let fpoly3 = FourierPolynomial::allocate(Complex64::new(5., 6.), PolynomialSize(128));
@@ -235,7 +242,8 @@ impl<Cont> FourierPolynomial<Cont> {
     ///
     /// ```rust
     /// use concrete_commons::parameters::PolynomialSize;
-    /// use concrete_core::backends::fftw::private::math::fft::{Complex64, FourierPolynomial};
+    /// use concrete_core::commons::math::fft::Complex64;
+    /// use concrete_core::backends::optalysys::private::math::fft::FourierPolynomial;
     /// macro_rules! new_poly {
     ///     ($name: ident, $re: literal, $im: literal) => {
     ///         let mut $name =
