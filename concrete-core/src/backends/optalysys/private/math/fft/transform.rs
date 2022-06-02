@@ -7,7 +7,6 @@
 
 use std::slice;
 
-use concrete_fftw::array::AlignedVec;
 use concrete_fftw::types::c64;
 
 use concrete_commons::numeric::{CastInto, SignedInteger, UnsignedInteger};
@@ -38,7 +37,7 @@ const ACCURACY: usize = 40;
 pub struct Fft {
     plans: Simulator,
     correctors: Correctors,
-    buffer: RefCell<FourierPolynomial<AlignedVec<Complex64>>>,
+    buffer: RefCell<FourierPolynomial<Vec<Complex64>>>,
 }
 
 impl Fft {
@@ -455,7 +454,7 @@ impl Fft {
         fourier_poly: &mut FourierPolynomial<OutCont>,
         poly: &Polynomial<InCont>,
         convert_function: impl Fn(
-            &mut FourierPolynomial<AlignedVec<Complex64>>,
+            &mut FourierPolynomial<Vec<Complex64>>,
             &Polynomial<InCont>,
             &ForwardCorrector<&'static [Complex64]>,
         ),
@@ -488,7 +487,7 @@ impl Fft {
         poly_1: &Polynomial<InCont1>,
         poly_2: &Polynomial<InCont2>,
         convert_function: impl Fn(
-            &mut FourierPolynomial<AlignedVec<Complex64>>,
+            &mut FourierPolynomial<Vec<Complex64>>,
             &Polynomial<InCont1>,
             &Polynomial<InCont2>,
             &ForwardCorrector<&'static [Complex64]>,
@@ -535,7 +534,7 @@ impl Fft {
         fourier_poly: &mut FourierPolynomial<InCont>,
         convert_function: impl Fn(
             &mut Polynomial<OutCont>,
-            &FourierPolynomial<AlignedVec<Complex64>>,
+            &FourierPolynomial<Vec<Complex64>>,
             &BackwardCorrector<&'static [Complex64]>,
         ),
     ) where
@@ -570,7 +569,7 @@ impl Fft {
         convert_function: impl Fn(
             &mut Polynomial<OutCont1>,
             &mut Polynomial<OutCont2>,
-            &FourierPolynomial<AlignedVec<Complex64>>,
+            &FourierPolynomial<Vec<Complex64>>,
             &BackwardCorrector<&'static [Complex64]>,
         ),
     ) where
@@ -695,7 +694,7 @@ fn replicate_coefficients(fft_a: &mut [Complex64], fft_b: &mut [Complex64], big_
 }
 
 fn regular_convert_forward_single_torus<InCont, Coef>(
-    out: &mut FourierPolynomial<AlignedVec<Complex64>>,
+    out: &mut FourierPolynomial<Vec<Complex64>>,
     inp: &Polynomial<InCont>,
     corr: &ForwardCorrector<&'static [Complex64]>,
 ) where
@@ -716,7 +715,7 @@ fn regular_convert_forward_single_torus<InCont, Coef>(
 }
 
 fn regular_convert_forward_two_torus<InCont1, InCont2, Coef>(
-    out: &mut FourierPolynomial<AlignedVec<Complex64>>,
+    out: &mut FourierPolynomial<Vec<Complex64>>,
     inp1: &Polynomial<InCont1>,
     inp2: &Polynomial<InCont2>,
     corr: &ForwardCorrector<&'static [Complex64]>,
@@ -745,7 +744,7 @@ fn regular_convert_forward_two_torus<InCont1, InCont2, Coef>(
 }
 
 fn regular_convert_forward_single_integer<InCont, Coef>(
-    out: &mut FourierPolynomial<AlignedVec<Complex64>>,
+    out: &mut FourierPolynomial<Vec<Complex64>>,
     inp: &Polynomial<InCont>,
     corr: &ForwardCorrector<&'static [Complex64]>,
 ) where
@@ -764,7 +763,7 @@ fn regular_convert_forward_single_integer<InCont, Coef>(
 }
 
 fn regular_convert_forward_two_integer<InCont1, InCont2, Coef>(
-    out: &mut FourierPolynomial<AlignedVec<Complex64>>,
+    out: &mut FourierPolynomial<Vec<Complex64>>,
     inp1: &Polynomial<InCont1>,
     inp2: &Polynomial<InCont2>,
     corr: &ForwardCorrector<&'static [Complex64]>,
@@ -792,7 +791,7 @@ fn regular_convert_forward_two_integer<InCont1, InCont2, Coef>(
 
 fn regular_convert_add_backward_single_torus<OutCont, Coef>(
     out: &mut Polynomial<OutCont>,
-    inp: &FourierPolynomial<AlignedVec<Complex64>>,
+    inp: &FourierPolynomial<Vec<Complex64>>,
     corr: &BackwardCorrector<&'static [Complex64]>,
 ) where
     Polynomial<OutCont>: AsMutTensor<Element = Coef>,
@@ -811,7 +810,7 @@ fn regular_convert_add_backward_single_torus<OutCont, Coef>(
 
 fn regular_convert_add_backward_single_integer<OutCont, Coef>(
     out: &mut Polynomial<OutCont>,
-    inp: &FourierPolynomial<AlignedVec<Complex64>>,
+    inp: &FourierPolynomial<Vec<Complex64>>,
     corr: &BackwardCorrector<&'static [Complex64]>,
 ) where
     Polynomial<OutCont>: AsMutTensor<Element = Coef>,
@@ -832,7 +831,7 @@ fn regular_convert_add_backward_single_integer<OutCont, Coef>(
 fn regular_convert_add_backward_two_torus<OutCont1, OutCont2, Coef>(
     out1: &mut Polynomial<OutCont1>,
     out2: &mut Polynomial<OutCont2>,
-    inp: &FourierPolynomial<AlignedVec<Complex64>>,
+    inp: &FourierPolynomial<Vec<Complex64>>,
     corr: &BackwardCorrector<&'static [Complex64]>,
 ) where
     Polynomial<OutCont1>: AsMutTensor<Element = Coef>,
@@ -861,7 +860,7 @@ fn regular_convert_add_backward_two_torus<OutCont1, OutCont2, Coef>(
 fn regular_convert_add_backward_two_integer<OutCont1, OutCont2, Coef>(
     out1: &mut Polynomial<OutCont1>,
     out2: &mut Polynomial<OutCont2>,
-    inp: &FourierPolynomial<AlignedVec<Complex64>>,
+    inp: &FourierPolynomial<Vec<Complex64>>,
     corr: &BackwardCorrector<&'static [Complex64]>,
 ) where
     Polynomial<OutCont1>: AsMutTensor<Element = Coef>,

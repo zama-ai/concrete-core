@@ -5,7 +5,6 @@ use crate::commons::math::tensor::Tensor;
 use crate::commons::math::torus::UnsignedTorus;
 use crate::prelude::LweBootstrapKeyEntity;
 use concrete_commons::parameters::{GlweSize, PolynomialSize};
-use concrete_fftw::array::AlignedVec;
 
 #[derive(Debug, Clone)]
 pub struct FftBuffers {
@@ -14,9 +13,9 @@ pub struct FftBuffers {
     pub fft: Fft,
     // The buffers used to perform the FFT are also stored in the bootstrap key. Again, the same
     // logic apply, and we don't have to allocate them multiple times.
-    pub first_buffer: FourierPolynomial<AlignedVec<Complex64>>,
-    pub second_buffer: FourierPolynomial<AlignedVec<Complex64>>,
-    pub output_buffer: Tensor<AlignedVec<Complex64>>,
+    pub first_buffer: FourierPolynomial<Vec<Complex64>>,
+    pub second_buffer: FourierPolynomial<Vec<Complex64>>,
+    pub output_buffer: Tensor<Vec<Complex64>>,
 }
 
 #[derive(Debug, Clone)]
@@ -41,7 +40,7 @@ where
         let fft = Fft::new(poly_size);
         let first_buffer = FourierPolynomial::allocate(Complex64::new(0., 0.), poly_size);
         let second_buffer = FourierPolynomial::allocate(Complex64::new(0., 0.), poly_size);
-        let output_buffer = Tensor::from_container(AlignedVec::new(poly_size.0 * glwe_size.0));
+        let output_buffer = Tensor::from_container(Vec::with_capacity(poly_size.0 * glwe_size.0));
         let lut_buffer = GlweCiphertext::allocate(Scalar::ZERO, poly_size, glwe_size);
         let rounded_buffer = GlweCiphertext::allocate(Scalar::ZERO, poly_size, glwe_size);
 

@@ -5,7 +5,6 @@ use crate::specification::entities::{AbstractEntity, LweBootstrapKeyEntity};
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
 };
-use concrete_fftw::array::AlignedVec;
 
 #[cfg(feature = "serde_serialize")]
 use serde::{Deserialize, Serialize};
@@ -14,7 +13,7 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct OptalysysFourierLweBootstrapKey32(
-    pub(crate) ImplFourierBootstrapKey<AlignedVec<Complex64>, u32>,
+    pub(crate) ImplFourierBootstrapKey<Vec<Complex64>, u32>,
 );
 impl AbstractEntity for OptalysysFourierLweBootstrapKey32 {
     type Kind = LweBootstrapKeyKind;
@@ -48,7 +47,7 @@ impl LweBootstrapKeyEntity for OptalysysFourierLweBootstrapKey32 {
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct OptalysysFourierLweBootstrapKey64(
-    pub(crate) ImplFourierBootstrapKey<AlignedVec<Complex64>, u64>,
+    pub(crate) ImplFourierBootstrapKey<Vec<Complex64>, u64>,
 );
 impl AbstractEntity for OptalysysFourierLweBootstrapKey64 {
     type Kind = LweBootstrapKeyKind;
