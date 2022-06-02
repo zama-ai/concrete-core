@@ -77,7 +77,6 @@ _ci_do_not_compile = ["concrete-cuda/_ci_do_not_compile"]
 backend_optalysys = [
     "proto_graphec", 
     "num"
-                    # `c64` type; to be changed
 ]
 
 seeder_unix = ["concrete-csprng/seeder_unix"]
