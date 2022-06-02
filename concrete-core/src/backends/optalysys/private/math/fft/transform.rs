@@ -7,8 +7,6 @@
 
 use std::slice;
 
-use concrete_fftw::types::c64;
-
 use concrete_commons::numeric::{CastInto, SignedInteger, UnsignedInteger};
 use concrete_commons::parameters::PolynomialSize;
 
@@ -646,7 +644,7 @@ fn split_in_mut_imut(sli: &mut [Complex64], big_n: usize) -> (&mut [Complex64], 
     }
 }
 
-fn split_in_imut_mut(sli: &mut [Complex64], big_n: usize) -> (&[c64], &mut [c64]) {
+fn split_in_imut_mut(sli: &mut [Complex64], big_n: usize) -> (&[Complex64], &mut [Complex64]) {
     let len = sli.len() - 2;
     let mid = big_n / 2 - 1;
     let ptr = unsafe { sli.as_mut_ptr().add(2) };
