@@ -358,9 +358,6 @@ impl GlweCiphertextConversionEngine<FftwFourierGlweCiphertext64, GlweCiphertext6
     }
 }
 
-
-
->>>>>>> Continue tensor product - fixture still broken
 /// # Description:
 /// Implementation of [`GlweCiphertextConversionEngine`] for [`FftwEngine`] that operates on
 /// 32 bits integers. It converts a tensor product GLWE ciphertext from the Fourier to the standard 
