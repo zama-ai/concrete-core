@@ -4,9 +4,9 @@ use std::collections::BTreeMap;
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 
-use crate::backends::fftw::private::crypto::bootstrap::FourierBuffers;
 use concrete_commons::parameters::{GlweSize, PolynomialSize};
 
+use crate::backends::fftw::private::crypto::bootstrap::FourierBuffers;
 use crate::specification::engines::sealed::AbstractEngineSeal;
 use crate::specification::engines::AbstractEngine;
 
@@ -91,5 +91,8 @@ mod ggsw_ciphertext_discarding_conversion;
 mod glwe_ciphertext_conversion;
 mod glwe_ciphertext_ggsw_ciphertext_discarding_external_product;
 mod glwe_ciphertext_ggsw_ciphertext_external_product;
+mod glwe_ciphertext_tensor_product_same_key;
+mod glwe_secret_key_conversion;
+mod glwe_secret_key_tensor_product_same_key;
 mod lwe_bootstrap_key_conversion;
 mod lwe_ciphertext_discarding_bootstrap;
