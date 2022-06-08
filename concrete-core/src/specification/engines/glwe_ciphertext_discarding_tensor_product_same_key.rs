@@ -4,7 +4,7 @@ use crate::specification::engines::AbstractEngine;
 use crate::specification::entities::GlweCiphertextEntity;
 
 engine_error! {
-    GlweCiphertextDiscardingTensorProductSameKeyError for GlweCiphertextDiscardingTensorProductEngine @
+    GlweCiphertextDiscardingTensorProductSameKeyError for GlweCiphertextDiscardingTensorProductSameKeyEngine @
     PolynomialSizeMismatch => "The polynomial size of the input and output GLWE ciphertexts must be\
      the same.",
     InputGlweDimensionMismatch => "The GLWE dimension of the input ciphertexts must be the same.",
@@ -49,8 +49,10 @@ impl<EngineError: std::error::Error>
 /// This [discarding](super#operation-semantics) operation fills the `output` GLWE ciphertext with
 /// the tensor product of the `input` GLWE ciphertexts encrypted using the exact same key.
 ///
+///
 /// # Formal Definition
-/// // TODO add link to the pure operation documentation
+/// The formal definition is as in the
+/// [GlweCiphertextTensorProductSameKeyEngine][crate::specification::engines::GlweCiphertextTensorProductSameKeyEngine`]
 pub trait GlweCiphertextDiscardingTensorProductSameKeyEngine<
     InputCiphertext1,
     InputCiphertext2,

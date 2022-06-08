@@ -14,10 +14,19 @@ engine_error! {
 ///
 /// # Formal Definition
 ///
-/// The goal of this function is to take as input a GLWE secret key, and
-/// and output the tensor product with itself.
-/// // TODO describe the math
-/// //   don't forget that in the rust doc every _ latex symbol has to be replaced by \_
+/// This function takes as input a
+/// [`GLWE secret key`](`crate::specification::entities::GlweSecretKeyEntity`)
+/// $\mathsf{s} = (s\_{1}, s\_{2}, \dots, s\_{k}) $
+/// [`GLWE secret key`](`crate::specification::entities::GlweSecretKeyEntity`)
+/// contains the tensor product of the input secret key with itself.
+/// In particular, the function outputs a GLWE secret key of the form
+///
+/// $(s^{\prime}\_1, s^{\prime}\_2, \dots, s^{\prime}\_{(k + k \cdot (k + 1) / 2 + k)})$
+/// where the ordering of the terms is as follows:
+///
+/// $(s\_1^{2}, s\_1, s\_{2}^2, s\_2, s\_{1}s\_{2}, s\_{3}^2, s\_3, s\_{1}s\_{3}, s\_{2}s\_{3},
+/// \dots, s\_{k}^2, s\_k, s\_{1}s\_{k}, \dots, s\_{k-1}s\_{k})$.
+///
 pub trait GlweSecretKeyTensorProductSameKeyEngine<InputKey, OutputKey>: AbstractEngine
 where
     InputKey: GlweSecretKeyEntity,
@@ -32,7 +41,7 @@ where
     ///
     /// # Safety
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
-    /// of [`TensorProductGlweSecretKeyCreationError`]. For safety concerns _specific_ to an engine,
+    /// of [`GlweSecretKeyTensorProductSameKeyError`]. For safety concerns _specific_ to an engine,
     /// refer to the implementer safety section.
 
     unsafe fn create_tensor_product_glwe_secret_key_same_key_unchecked(

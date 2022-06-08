@@ -36,9 +36,8 @@ impl<EngineError: std::error::Error> GlweSecretKeyDiscardingTensorProductSameKey
 /// secret key `input` with itself, and stores the result in `output`.
 ///
 /// # Formal Definition
-///
-/// //TODO Ben add link
-/// Check []
+/// The formal definition is as in the
+/// [GlweSecretKeyTensorProductSameKeyEngine][crate::specification::engines::GlweSecretKeyTensorProductSameKeyEngine`]
 pub trait GlweSecretKeyDiscardingTensorProductSameKeyEngine<InputKey, OutputKey>:
     AbstractEngine
 where
@@ -55,7 +54,7 @@ where
     ///
     /// # Safety
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
-    /// of [`GlweKeyDiscardingTensorProductError`]. For safety concerns _specific_ to an engine,
+    /// of [`GlweSecretKeyDiscardingTensorProductSameKeyError`]. For safety concerns _specific_ to an engine,
     /// refer to the implementer safety section.
 
     unsafe fn discard_tensor_product_glwe_secret_key_same_key_unchecked(

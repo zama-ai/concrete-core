@@ -37,7 +37,33 @@ impl<EngineError: std::error::Error> GlweCiphertextTensorProductSameKeyError<Eng
 /// the tensor product of the `input` GLWE ciphertexts.
 ///
 /// # Formal Definition
-/// // TODO add documentation
+///
+/// This function takes as input two
+/// [`GLWE ciphertexts`](`crate::specification::entities::GlweCiphertextEntity`)
+/// $\mathsf{c}\_1 = \mathsf{GLWE}\_{\vec{s}}(
+/// \mathsf{m}\_1)  = (A\_{1,1}, \dots, A\_{1,k}, B\_1)$ and $\mathsf{c}\_2 =
+/// \mathsf{GLWE}\_{\vec{s}}( \mathsf{m}_2 ) = (A\_{2,1}, \dots, A\_{2,k}, B\_2)$ encrypted with the
+/// same key $\vec{s}$ and outputs a
+/// [`GLWE ciphertext`](`crate::specification::entities::GlweCiphertextEntity`) which
+/// contains the tensor product of the two ciphertexts. In particular, the output GLWE ciphertext is
+/// of the form:
+///
+/// $(A^{\prime}\_1, A^{\prime}\_2, \dots, A^{\prime}\_{(k + k \cdot (k + 1) / 2 + k)}, B^{\prime})$
+/// where the ordering of the terms is as follows:
+///
+/// $(T\_1, A\_1, T\_2, A\_2, R\_{1,2}, T\_3, A\_3, R\_{1,3}, R\_{2,3}, \dots,
+/// T\_k, A\_k, R\_{1,k}, \dots, R\_{k-1, k}, B^{\prime})$.
+///
+/// each $T\_i$ is of the form:
+/// $\left[ \left\lfloor \frac{[A\_{1,i} \cdot A\_{2,i}]\_Q}{\Delta} \right\rceil \right]\_q$,
+///
+/// each $A\_{i}^\prime$ is of the form:
+/// $\left[ \left\lfloor \frac{[A\_{1,i} \cdot A\_{2,j} + A\_{1,j} \cdot A\_{2,i} ]\_Q}{\Delta} \right\rceil \right]\_q$,
+///
+/// each $R\_{i,j}$ is of the form:
+/// $\left[ \left\lfloor \frac{[A\_{1,i} \cdot B_2 + B_1 \cdot A\_{2,i}]\_Q}{\Delta} \right\rceil \right]\_q$,
+///
+/// and $B^{\prime} = \left[ \left\lfloor \frac{[B_1 \cdot B_2]\_Q}{\Delta} \right\rceil \right]\_q$.
 pub trait GlweCiphertextTensorProductSameKeyEngine<
     InputCiphertext1,
     InputCiphertext2,
