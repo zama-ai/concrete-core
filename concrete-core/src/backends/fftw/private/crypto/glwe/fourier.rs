@@ -309,8 +309,14 @@ impl<Scalar: UnsignedTorus> FourierGlweCiphertext<AlignedVec<Complex64>, Scalar>
             // polynomials, even though they are not in capital letters to respect our variable 
             // names format.
             for (i, a1i) in iter_glwe_1.enumerate() {
-                // The last polynomial in self is the body, we need to break when we reach it
+                // The last polynomial in self is the body, we need to handle it specifically
                 if i == self.glwe_size.0 - 1 {
+                    // Get the body polynomial
+                    let mut output_poly = iter_output.next().unwrap();
+                    let b1 = self.polynomial_iter().last().unwrap();
+                    let b2 = glwe.polynomial_iter().last().unwrap();
+                    // Modify the body
+                    output_poly.update_with_multiply_accumulate(&b1, &b2);
                     break;
                 }
                 let iter_glwe_2 = glwe.polynomial_iter();
@@ -329,7 +335,6 @@ impl<Scalar: UnsignedTorus> FourierGlweCiphertext<AlignedVec<Complex64>, Scalar>
                         let b2 = glwe.polynomial_iter().last().unwrap();
                         output_poly2.update_with_two_multiply_accumulate(
                             &a1i,
-                            // TODO: make sure that this index is correct, should be [-1]
                             &b2,
                             &b1,
                             &a2i,

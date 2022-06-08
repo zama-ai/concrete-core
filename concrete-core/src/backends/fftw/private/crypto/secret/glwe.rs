@@ -5,6 +5,8 @@ use crate::commons::math::tensor::{ck_dim_div, AsMutSlice, AsMutTensor, AsRefSli
 use crate::commons::math::torus::UnsignedTorus;
 use crate::prelude::{GlweDimension, KeyKind, PolynomialSize, TensorProductKeyKind,};
 use std::marker::PhantomData;
+#[cfg(feature = "serde_serialize")]
+use serde::{Deserialize, Serialize};
 
 /// A GLWE secret key in the Fourier Domain.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]

@@ -256,7 +256,7 @@ mod backend_default {
 }
 #[cfg(feature="backend_fftw")]
 mod backend_fftw {
-    use crate::generation::prototypes::{ProtoTensorProductGlweCiphertext32, ProtoTensorProductGlweCiphertext64};
+    use crate::generation::prototypes::{ProtoBinaryGlweCiphertext32, ProtoBinaryGlweCiphertext64, ProtoTensorProductGlweCiphertext32, ProtoTensorProductGlweCiphertext64};
     use crate::generation::synthesizing::SynthesizesGlweCiphertext;
     use crate::generation::{Maker, Precision32, Precision64};
     use concrete_core::prelude::{DestructionEngine, FftwFourierGlweCiphertext32, FftwFourierGlweCiphertext64, FftwFourierGlweTensorProductCiphertext32, FftwFourierGlweTensorProductCiphertext64, GlweCiphertextConversionEngine};
@@ -325,7 +325,7 @@ mod backend_fftw {
         ) -> Self::GlweCiphertextProto {
             let proto = self.fftw_engine.convert_glwe_ciphertext(&entity).unwrap();
             self.fftw_engine.destroy(entity).unwrap();
-            ProtoGlweTensorProductCiphertext32(proto)
+            ProtoTensorProductGlweCiphertext32(proto)
         }
 
         fn destroy_glwe_ciphertext(&mut self, entity: FftwFourierGlweTensorProductCiphertext32) {
