@@ -3,8 +3,10 @@
 
 mod ggsw_ciphertext;
 mod glwe_ciphertext;
+mod glwe_secret_key;
 mod lwe_bootstrap_key;
 
 pub use ggsw_ciphertext::*;
 pub use glwe_ciphertext::*;
+pub use glwe_secret_key::*;
 pub use lwe_bootstrap_key::*;

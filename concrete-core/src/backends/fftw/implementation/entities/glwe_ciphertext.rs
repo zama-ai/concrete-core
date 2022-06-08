@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::backends::fftw::private::crypto::glwe::FourierGlweCiphertext;
 use crate::backends::fftw::private::math::fft::Complex64;
+use crate::prelude::markers::TensorProductKeyDistribution;
 use concrete_commons::parameters::{GlweDimension, PolynomialSize};
 
 use crate::specification::entities::markers::{BinaryKeyDistribution, GlweCiphertextKind};
@@ -41,6 +42,50 @@ impl AbstractEntity for FftwFourierGlweCiphertext64 {
 }
 impl GlweCiphertextEntity for FftwFourierGlweCiphertext64 {
     type KeyDistribution = BinaryKeyDistribution;
+
+    fn glwe_dimension(&self) -> GlweDimension {
+        self.0.glwe_size().to_glwe_dimension()
+    }
+
+    fn polynomial_size(&self) -> PolynomialSize {
+        self.0.polynomial_size()
+    }
+}
+
+/// A structure representing a Fourier GLWE ciphertext which is the result of a tensor product with
+/// 32 bits of precision.
+#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone, PartialEq)]
+pub struct FftwFourierGlweTensorProductCiphertext32(
+    pub(crate) FourierGlweCiphertext<AlignedVec<Complex64>, u32>,
+);
+impl AbstractEntity for FftwFourierGlweTensorProductCiphertext32 {
+    type Kind = GlweCiphertextKind;
+}
+impl GlweCiphertextEntity for FftwFourierGlweTensorProductCiphertext32 {
+    type KeyDistribution = TensorProductKeyDistribution;
+
+    fn glwe_dimension(&self) -> GlweDimension {
+        self.0.glwe_size().to_glwe_dimension()
+    }
+
+    fn polynomial_size(&self) -> PolynomialSize {
+        self.0.polynomial_size()
+    }
+}
+
+/// A structure representing a Fourier GLWE ciphertext which is the result of a tensor product with
+/// 64 bits of precision.
+#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone, PartialEq)]
+pub struct FftwFourierGlweTensorProductCiphertext64(
+    pub(crate) FourierGlweCiphertext<AlignedVec<Complex64>, u64>,
+);
+impl AbstractEntity for FftwFourierGlweTensorProductCiphertext64 {
+    type Kind = GlweCiphertextKind;
+}
+impl GlweCiphertextEntity for FftwFourierGlweTensorProductCiphertext64 {
+    type KeyDistribution = TensorProductKeyDistribution;
 
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.glwe_size().to_glwe_dimension()

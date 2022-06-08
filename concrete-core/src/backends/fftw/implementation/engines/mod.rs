@@ -4,9 +4,9 @@ use std::collections::BTreeMap;
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 
-use crate::backends::fftw::private::crypto::bootstrap::FourierBuffers;
 use concrete_commons::parameters::{GlweSize, PolynomialSize};
 
+use crate::backends::fftw::private::crypto::bootstrap::FourierBuffers;
 use crate::specification::engines::sealed::AbstractEngineSeal;
 use crate::specification::engines::AbstractEngine;
 
@@ -14,6 +14,7 @@ use crate::specification::engines::AbstractEngine;
 #[derive(Debug)]
 pub enum FftwError {
     UnsupportedPolynomialSize,
+    ScalingFactorTooLarge,
 }
 
 impl Display for FftwError {
@@ -24,6 +25,13 @@ impl Display for FftwError {
                     f,
                     "The Fftw Backend only supports polynomials of size: 512, \
                 1024, 2048, 4096, 8192, 16384."
+                )
+            }
+            FftwError::ScalingFactorTooLarge => {
+                write!(
+                    f,
+                    "The scaling factor has to be less than the maximum \
+                    value of the ciphertext's integer representation."
                 )
             }
         }
@@ -91,6 +99,9 @@ mod ggsw_ciphertext_discarding_conversion;
 mod glwe_ciphertext_conversion;
 mod glwe_ciphertext_ggsw_ciphertext_discarding_external_product;
 mod glwe_ciphertext_ggsw_ciphertext_external_product;
+mod glwe_ciphertext_tensor_product_same_key;
 mod glwe_ciphertexts_ggsw_ciphertext_fusing_cmux;
+mod glwe_secret_key_conversion;
+mod glwe_secret_key_tensor_product_same_key;
 mod lwe_bootstrap_key_conversion;
 mod lwe_ciphertext_discarding_bootstrap;
