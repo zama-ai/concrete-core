@@ -21,12 +21,15 @@ impl Iterator for AesniChildrenIterator {
 
 impl RandomGenerator for AesniRandomGenerator {
     type ChildrenIter = AesniChildrenIterator;
+
     fn new(seed: Seed) -> Self {
         AesniRandomGenerator(AesCtrGenerator::new(AesKey(seed.0), None, None))
     }
+
     fn remaining_bytes(&self) -> ByteCount {
         self.0.remaining_bytes()
     }
+
     fn try_fork(
         &mut self,
         n_children: ChildrenCount,
@@ -35,6 +38,10 @@ impl RandomGenerator for AesniRandomGenerator {
         self.0
             .try_fork(n_children, n_bytes)
             .map(AesniChildrenIterator)
+    }
+
+    fn is_available() -> bool {
+        is_x86_feature_detected!("aes")
     }
 }
 

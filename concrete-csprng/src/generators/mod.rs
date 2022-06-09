@@ -95,6 +95,11 @@ pub trait RandomGenerator: Iterator<Item = u8> {
         n_children: ChildrenCount,
         n_bytes: BytesPerChild,
     ) -> Result<Self::ChildrenIter, ForkError>;
+
+    /// Indicates whether the [`RandomGenerator`] is available. This is useful if a generator
+    /// requires a special hardware feature that may not be available on the runtime CPU for
+    /// example.
+    fn is_available() -> bool;
 }
 
 /// A trait extending [`RandomGenerator`] to the parallel iterators of `rayon`.

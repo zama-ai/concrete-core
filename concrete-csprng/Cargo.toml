@@ -25,6 +25,7 @@ seeder_x86_64_rdseed = []
 seeder_unix = []
 generator_x86_64_aesni = []
 generator_soft = []
+generator_enum_dispatch = []
 
 [[bench]]
 name = "benchmark"

@@ -21,12 +21,15 @@ impl Iterator for SoftwareChildrenIterator {
 
 impl RandomGenerator for SoftwareRandomGenerator {
     type ChildrenIter = SoftwareChildrenIterator;
+
     fn new(seed: Seed) -> Self {
         SoftwareRandomGenerator(AesCtrGenerator::new(AesKey(seed.0), None, None))
     }
+
     fn remaining_bytes(&self) -> ByteCount {
         self.0.remaining_bytes()
     }
+
     fn try_fork(
         &mut self,
         n_children: ChildrenCount,
@@ -35,6 +38,10 @@ impl RandomGenerator for SoftwareRandomGenerator {
         self.0
             .try_fork(n_children, n_bytes)
             .map(SoftwareChildrenIterator)
+    }
+
+    fn is_available() -> bool {
+        true
     }
 }
 

@@ -7,3 +7,8 @@ pub use aesni::*;
 mod soft;
 #[cfg(feature = "generator_soft")]
 pub use soft::*;
+
+#[cfg(feature = "generator_enum_dispatch")]
+mod enum_dispatch;
+#[cfg(feature = "generator_enum_dispatch")]
+pub use enum_dispatch::*;
