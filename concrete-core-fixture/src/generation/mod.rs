@@ -20,7 +20,7 @@
 //! the entities are destroyed after the execution of the engine. Again, this can be done by the
 //! [`Maker`] instance and the `Synthesizes*` traits, which contains functions to destroy data.
 use crate::raw::generation::RawUnsignedIntegers;
-use concrete_core::prelude::AbstractEngine;
+use concrete_core::prelude::{AbstractEngine, RandomGeneratorImplementation};
 use concrete_csprng::seeders::UnixSeeder;
 
 pub mod prototypes;
@@ -58,12 +58,27 @@ pub struct Maker {
     fftw_engine: concrete_core::backends::fftw::engines::FftwEngine,
 }
 
+fn choose_rng_implementation() -> RandomGeneratorImplementation {
+    #[cfg(target_arch = "x86_64")]
+    if RandomGeneratorImplementation::Aesni.is_available() {
+        return RandomGeneratorImplementation::Aesni;
+    }
+
+    // This form is to please clippy
+    assert!(
+        RandomGeneratorImplementation::Software.is_available(),
+        "The Software RandomGeneratorImplementation was not available which should not happen."
+    );
+    RandomGeneratorImplementation::Software
+}
+
 impl Default for Maker {
     fn default() -> Self {
         Maker {
-            default_engine: concrete_core::backends::default::engines::DefaultEngine::new(
+            default_engine: concrete_core::backends::default::engines::DefaultEngine::new((
+                choose_rng_implementation(),
                 Box::new(UnixSeeder::new(0)),
-            )
+            ))
             .unwrap(),
             #[cfg(feature = "backend_fftw")]
             fftw_engine: concrete_core::backends::fftw::engines::FftwEngine::new(()).unwrap(),

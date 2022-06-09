@@ -9,7 +9,7 @@ use std::ops::Range;
 
 thread_local! {
     pub static GENERATOR: RefCell<RandomGenerator<AesniRandomGenerator>> = RefCell::new(
-        RandomGenerator::new(UnixSeeder::new(0).seed())
+        RandomGenerator::<AesniRandomGenerator>::new(UnixSeeder::new(0).seed())
     );
 }
 
