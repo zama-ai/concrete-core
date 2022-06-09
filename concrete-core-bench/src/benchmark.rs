@@ -19,7 +19,7 @@
 //! the benchmarked device. Depending on the available memory, this could be problematic. To
 //! accomodate this situation, the input parameter `batch_size` can be used to provide a different
 //! batch size.
-use concrete_core::prelude::AbstractEngine;
+use concrete_core::prelude::{AbstractEngine, RandomGeneratorImplementation};
 use concrete_core_fixture::fixture::Fixture;
 use concrete_core_fixture::generation::{IntegerPrecision, Maker};
 use criterion::measurement::WallTime;
@@ -141,4 +141,11 @@ fn type_name<T: ?Sized>() -> &'static str {
         .collect::<Vec<_>>()
         .pop()
         .unwrap()
+}
+
+#[allow(unreachable_code)]
+pub(crate) fn choose_rng_implementation() -> RandomGeneratorImplementation {
+    #[cfg(feature = "generator_x86_64_aesni")]
+    return RandomGeneratorImplementation::Aesni;
+    RandomGeneratorImplementation::Software
 }

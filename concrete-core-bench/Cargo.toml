@@ -18,3 +18,4 @@ backend_fftw = [
     "concrete-core-fixture/backend_fftw",
 ]
 parallel = ["concrete-core/parallel", "concrete-core-fixture/parallel"]
+generator_x86_64_aesni = ["concrete-core/generator_x86_64_aesni"]
