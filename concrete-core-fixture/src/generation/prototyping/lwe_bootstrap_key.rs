@@ -48,7 +48,7 @@ impl PrototypesLweBootstrapKey<Precision32, BinaryKeyDistribution, BinaryKeyDist
         noise: Variance,
     ) -> Self::LweBootstrapKeyProto {
         ProtoBinaryBinaryLweBootstrapKey32(
-            self.default_engine
+            self.default_parallel_engine
                 .create_lwe_bootstrap_key(
                     &input_key.0,
                     &output_key.0,
@@ -75,7 +75,7 @@ impl PrototypesLweBootstrapKey<Precision64, BinaryKeyDistribution, BinaryKeyDist
         noise: Variance,
     ) -> Self::LweBootstrapKeyProto {
         ProtoBinaryBinaryLweBootstrapKey64(
-            self.default_engine
+            self.default_parallel_engine
                 .create_lwe_bootstrap_key(
                     &input_key.0,
                     &output_key.0,
