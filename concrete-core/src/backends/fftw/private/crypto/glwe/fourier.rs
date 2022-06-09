@@ -323,11 +323,10 @@ impl<Scalar: UnsignedTorus> FourierGlweCiphertext<AlignedVec<Complex64>, Scalar>
                 // consumes the iterator object with enumerate()
                 for (j, a2i) in iter_glwe_2.enumerate() {
                     if i == j {
-                        println!("i: {}", i);
                         let mut output_poly1 = iter_output.next().unwrap();
                         // 1. Put the T_i = A1i * A2i terms in the output
                         output_poly1.update_with_multiply_accumulate(&a1i, &a2i);
-                        // Put A1i * B2 + B1 * A2i into the output
+                        // 2. Put A1i * B2 + B1 * A2i into the output
                         // create new iterators for glwe_1 and glwe_2
                         // A_i'
                         let mut output_poly2 = iter_output.next().unwrap();
@@ -342,7 +341,6 @@ impl<Scalar: UnsignedTorus> FourierGlweCiphertext<AlignedVec<Complex64>, Scalar>
                     } else {
                         // When i and j are different, only compute the terms where j < i for R_ij
                         if j < i {
-                            println!("i: {}, j: {}", i, j);
                             let mut output_poly = iter_output.next().unwrap();
                             // Put A1i * A2j + A1j * A2i
                             let a1j = self.polynomial_iter().nth(j).unwrap();

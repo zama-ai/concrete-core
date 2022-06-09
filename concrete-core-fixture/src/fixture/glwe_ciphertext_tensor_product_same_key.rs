@@ -23,7 +23,6 @@ pub struct GlweCiphertextTensorProductSameKeyParameters {
     pub glwe_dimension: GlweDimension,
     pub noise: Variance,
     pub scaling_factor: ScalingFactor,
-    pub msg_bound: f64,
     pub msg_n_msb: usize,
 }
 
@@ -67,7 +66,6 @@ type Parameters = GlweCiphertextTensorProductSameKeyParameters;
                 GlweCiphertextTensorProductSameKeyParameters {
                     noise: Variance(0.00000001),
                     scaling_factor: ScalingFactor(16_u64),
-                    msg_bound: 4_f64,
                     glwe_dimension: GlweDimension(200),
                     polynomial_size: PolynomialSize(256),
                     msg_n_msb: 5,
@@ -75,7 +73,6 @@ type Parameters = GlweCiphertextTensorProductSameKeyParameters;
                 GlweCiphertextTensorProductSameKeyParameters {
                     noise: Variance(0.00000001),
                     scaling_factor: ScalingFactor(16_u64),
-                    msg_bound: 4_f64,
                     glwe_dimension: GlweDimension(1),
                     polynomial_size: PolynomialSize(256),
                     msg_n_msb: 5,
@@ -262,6 +259,7 @@ type Parameters = GlweCiphertextTensorProductSameKeyParameters;
         _maker: &mut Maker,
         _repetition_proto: &Self::RepetitionPrototypes,
     ) -> Self::Criteria {
+        let msg_bound = (1 << parameters.msg_n_msb.0) as f64;
         let output_variance = fix_estimate_tensor_product_noise::<
             Precision::Raw,
             Variance,
@@ -274,8 +272,8 @@ type Parameters = GlweCiphertextTensorProductSameKeyParameters;
             parameters.noise,
             parameters.scaling_factor.0 as f64,
             parameters.scaling_factor.0 as f64,
-            parameters.msg_bound,
-            parameters.msg_bound,
+            msg_bound,
+            msg_bound,
         );
         (output_variance,)
     }

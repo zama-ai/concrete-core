@@ -352,15 +352,19 @@ impl<Kind, Cont, Scalar: UnsignedTorus> FourierGlweSecretKey<Kind, Cont, Scalar>
                 for (j, polyj) in iter_2.enumerate() {
                     let mut iter_1_ = self.polynomial_iter();
                     if i == j {
-                        let mut output_poly = iter_output.next().unwrap();
+                        // 1. T_i = A1i * A2i terms in the output have an s_i^2 key polynomial
+                        let mut output_poly_1 = iter_output.next().unwrap();
+                        output_poly_1.update_with_multiply_accumulate(&polyi, &polyi);
+                        // 2. The A1i * B2 + B1 * A2i terms have an s_i key polynomial
+                        let mut output_poly_2 = iter_output.next().unwrap();
                         // in this case we just need s_i, so we can access the original coefficient
-                        output_poly.copy_polynomial_content(&polyi);
+                        output_poly_2.copy_polynomial_content(&polyi);
                     } else {
                         // else condition means i != j
                         if j < i {
-                            let mut output_poly1 = iter_output.next().unwrap();
-                            // we create the key terms of the form s_{i}s_{j}
-                            output_poly1.update_with_multiply_accumulate(&iter_1_.next().unwrap(),
+                            let mut output_poly = iter_output.next().unwrap();
+                            // we create the key terms of the form s_{i}s_{j} for the R_ij terms
+                            output_poly.update_with_multiply_accumulate(&iter_1_.next().unwrap(),
                                                                          &polyj);
                         }
                     }
