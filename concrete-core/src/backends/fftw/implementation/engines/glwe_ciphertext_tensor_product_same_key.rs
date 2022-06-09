@@ -3,7 +3,7 @@ use crate::backends::fftw::entities::{
     FftwFourierGlweCiphertext32, FftwFourierGlweCiphertext64,
 };
 use crate::backends::fftw::private::math::fft::ALLOWED_POLY_SIZE;
-use crate::prelude::{FftwError, FftwFourierGlweTensorProductCiphertext32, FftwFourierGlweTensorProductCiphertext64, GlweCiphertext32, GlweCiphertext64, GlweCiphertextConversionEngine, GlweCiphertextTensorProductSameKeyEngine, GlweCiphertextTensorProductSameKeyError, ScalingFactor};
+use crate::prelude::{FftwError, FftwFourierGlweTensorProductCiphertext32, FftwFourierGlweTensorProductCiphertext64, GlweCiphertext32, GlweCiphertext64, GlweCiphertextConversionEngine, GlweCiphertextTensorProductSameKeyEngine, GlweCiphertextTensorProductSameKeyError, ScalingFactor, GlweCiphertextEntity};
 
 impl From<FftwError> for GlweCiphertextTensorProductSameKeyError<FftwError> {
     fn from(err: FftwError) -> Self {
@@ -81,8 +81,8 @@ impl
     ) -> Result<FftwFourierGlweTensorProductCiphertext32, 
         GlweCiphertextTensorProductSameKeyError<Self::EngineError>>
     {
-        GlweCiphertextTensorProductSameKeyError::perform_generic_checks(input1, input2)?;
-        if !ALLOWED_POLY_SIZE.contains(&glwe_input.polynomial_size().0) {
+        GlweCiphertextTensorProductSameKeyError::perform_generic_checks(input1, input2, scale)?;
+        if !ALLOWED_POLY_SIZE.contains(&input1.polynomial_size().0) {
             return Err(GlweCiphertextTensorProductSameKeyError::from(
                 FftwError::UnsupportedPolynomialSize,
             ));
@@ -183,8 +183,8 @@ impl
         scale: ScalingFactor,
     ) -> Result<FftwFourierGlweTensorProductCiphertext64, GlweCiphertextTensorProductSameKeyError<Self::EngineError>>
     {
-        GlweCiphertextTensorProductSameKeyError::perform_generic_checks(input1, input2)?;
-        if !ALLOWED_POLY_SIZE.contains(&glwe_input.polynomial_size().0) {
+        GlweCiphertextTensorProductSameKeyError::perform_generic_checks(input1, input2, scale)?;
+        if !ALLOWED_POLY_SIZE.contains(&input1.polynomial_size().0) {
             return Err(GlweCiphertextTensorProductSameKeyError::from(
                 FftwError::UnsupportedPolynomialSize,
             ));
@@ -295,8 +295,8 @@ GlweCiphertextTensorProductSameKeyEngine<
     ) -> Result<FftwFourierGlweTensorProductCiphertext32,
         GlweCiphertextTensorProductSameKeyError<Self::EngineError>>
     {
-        GlweCiphertextTensorProductSameKeyError::perform_generic_checks(input1, input2)?;
-        if !ALLOWED_POLY_SIZE.contains(&glwe_input.polynomial_size().0) {
+        GlweCiphertextTensorProductSameKeyError::perform_generic_checks(input1, input2, scale)?;
+        if !ALLOWED_POLY_SIZE.contains(&input1.polynomial_size().0) {
             return Err(GlweCiphertextTensorProductSameKeyError::from(
                 FftwError::UnsupportedPolynomialSize,
             ));
@@ -402,8 +402,8 @@ GlweCiphertextTensorProductSameKeyEngine<
         scale: ScalingFactor,
     ) -> Result<FftwFourierGlweTensorProductCiphertext64, GlweCiphertextTensorProductSameKeyError<Self::EngineError>>
     {
-        GlweCiphertextTensorProductSameKeyError::perform_generic_checks(input1, input2)?;
-        if !ALLOWED_POLY_SIZE.contains(&glwe_input.polynomial_size().0) {
+        GlweCiphertextTensorProductSameKeyError::perform_generic_checks(input1, input2, scale)?;
+        if !ALLOWED_POLY_SIZE.contains(&input1.polynomial_size().0) {
             return Err(GlweCiphertextTensorProductSameKeyError::from(
                 FftwError::UnsupportedPolynomialSize,
             ));
