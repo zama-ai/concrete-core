@@ -37,6 +37,9 @@ backend_default = ["concrete-core/backend_default"]
 # An accelerated backend, using the `fftw` library
 backend_fftw = ["concrete-core/backend_fftw"]
 
+# x86_64 specific csprng using aes hardware feature
+generator_x86_64_aesni = ["concrete-core/generator_x86_64_aesni"]
+
 # Multithreaded key generation
 parallel = ["concrete-core/parallel"]
 

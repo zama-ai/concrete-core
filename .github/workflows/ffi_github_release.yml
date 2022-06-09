@@ -27,6 +27,7 @@ jobs:
           cargo build --release \
           --features backend_default \
           --features backend_fftw \
+          --features generator_x86_64_aesni \
           --features parallel \
           --features seeder_unix \
           --features seeder_x86_64_rdseed \
@@ -106,6 +107,7 @@ jobs:
           cargo build --release \
           --features backend_default \
           --features backend_fftw \
+          --features generator_x86_64_aesni \
           --features parallel \
           --features seeder_unix \
           --features seeder_x86_64_rdseed \

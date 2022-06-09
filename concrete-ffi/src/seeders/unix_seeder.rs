@@ -34,7 +34,7 @@ impl SeederFactory for UnixSeederFactory {
     }
 }
 
-/// Check if `UnixSeeder` is available on x86 CPUs.
+/// Check if `UnixSeeder` is available.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]

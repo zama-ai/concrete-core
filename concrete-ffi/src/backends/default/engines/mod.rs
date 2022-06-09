@@ -1,6 +1,7 @@
 //! Module providing utilities and entry points to the `C` FFI for the `default` backend
 //! `DefaultEngine` and its various implementations.
 
+use crate::backends::RandomGeneratorImplementation;
 use crate::seeders::SeederBuilder;
 use crate::utils::*;
 use concrete_core::prelude::*;
@@ -13,6 +14,7 @@ use std::os::raw::c_int;
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
 pub unsafe extern "C" fn new_default_engine(
+    random_generator_backend: RandomGeneratorImplementation,
     seeder_builder: *mut SeederBuilder,
     result: *mut *mut DefaultEngine,
 ) -> c_int {
@@ -27,7 +29,8 @@ pub unsafe extern "C" fn new_default_engine(
             .unwrap()
             .create_seeder()
             .unwrap();
-        let heap_allocated_default_engine = Box::new(DefaultEngine::new(seeder).unwrap());
+        let heap_allocated_default_engine =
+            Box::new(DefaultEngine::new((random_generator_backend.into(), seeder)).unwrap());
         *result = Box::into_raw(heap_allocated_default_engine);
     })
 }
@@ -35,6 +38,7 @@ pub unsafe extern "C" fn new_default_engine(
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of [`new_default_engine`]
 #[no_mangle]
 pub unsafe extern "C" fn new_default_engine_unchecked(
+    random_generator_backend: RandomGeneratorImplementation,
     seeder_builder: *mut SeederBuilder,
     result: *mut *mut DefaultEngine,
 ) -> c_int {
@@ -44,7 +48,8 @@ pub unsafe extern "C" fn new_default_engine_unchecked(
         *result = std::ptr::null_mut();
 
         let seeder = (*seeder_builder).create_seeder().unwrap();
-        let heap_allocated_default_engine = Box::new(DefaultEngine::new(seeder).unwrap());
+        let heap_allocated_default_engine =
+            Box::new(DefaultEngine::new((random_generator_backend.into(), seeder)).unwrap());
         *result = Box::into_raw(heap_allocated_default_engine);
     })
 }
@@ -79,6 +84,7 @@ pub unsafe extern "C" fn destroy_default_engine_unchecked(engine: *mut DefaultEn
 #[no_mangle]
 #[cfg(feature = "parallel")]
 pub unsafe extern "C" fn new_default_parallel_engine(
+    random_generator_backend: RandomGeneratorImplementation,
     seeder_builder: *mut SeederBuilder,
     result: *mut *mut DefaultParallelEngine,
 ) -> c_int {
@@ -93,7 +99,9 @@ pub unsafe extern "C" fn new_default_parallel_engine(
             .unwrap()
             .create_seeder()
             .unwrap();
-        let heap_allocated_default_engine = Box::new(DefaultParallelEngine::new(seeder).unwrap());
+        let heap_allocated_default_engine = Box::new(
+            DefaultParallelEngine::new((random_generator_backend.into(), seeder)).unwrap(),
+        );
         *result = Box::into_raw(heap_allocated_default_engine);
     })
 }
@@ -103,6 +111,7 @@ pub unsafe extern "C" fn new_default_parallel_engine(
 #[no_mangle]
 #[cfg(feature = "parallel")]
 pub unsafe extern "C" fn new_default_parallel_engine_unchecked(
+    random_generator_backend: RandomGeneratorImplementation,
     seeder_builder: *mut SeederBuilder,
     result: *mut *mut DefaultParallelEngine,
 ) -> c_int {
@@ -112,7 +121,9 @@ pub unsafe extern "C" fn new_default_parallel_engine_unchecked(
         *result = std::ptr::null_mut();
 
         let seeder = (*seeder_builder).create_seeder().unwrap();
-        let heap_allocated_default_engine = Box::new(DefaultParallelEngine::new(seeder).unwrap());
+        let heap_allocated_default_engine = Box::new(
+            DefaultParallelEngine::new((random_generator_backend.into(), seeder)).unwrap(),
+        );
         *result = Box::into_raw(heap_allocated_default_engine);
     })
 }

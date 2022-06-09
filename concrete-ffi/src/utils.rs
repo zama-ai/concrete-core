@@ -27,6 +27,8 @@ pub fn check_ptr_is_non_null_and_aligned<T>(ptr: *const T) -> Result<(), String>
     Ok(())
 }
 
+// For warnings in build benches
+#[allow(dead_code)]
 pub fn get_mut_checked<'a, T>(ptr: *mut T) -> Result<&'a mut T, String> {
     match check_ptr_is_non_null_and_aligned(ptr) {
         Ok(()) => unsafe {
@@ -37,6 +39,8 @@ pub fn get_mut_checked<'a, T>(ptr: *mut T) -> Result<&'a mut T, String> {
     }
 }
 
+// For warnings in build benches
+#[allow(dead_code)]
 pub fn get_ref_checked<'a, T>(ptr: *const T) -> Result<&'a T, String> {
     match check_ptr_is_non_null_and_aligned(ptr) {
         Ok(()) => unsafe {
@@ -47,6 +51,8 @@ pub fn get_ref_checked<'a, T>(ptr: *const T) -> Result<&'a T, String> {
     }
 }
 
+// For warnings in build benches
+#[allow(dead_code)]
 pub fn engine_error_as_readable_string<R, T: Debug + Display>(error: T) -> Result<R, String> {
     Err(format!("{:#?}: {}", error, error))
 }

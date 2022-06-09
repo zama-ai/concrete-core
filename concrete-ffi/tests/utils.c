@@ -112,3 +112,54 @@ int clone_transmute_lwe_secret_key_to_glwe_secret_key_unchecked_u64(
 
   return 0;
 }
+
+RandomGeneratorImplementation get_best_csprng() {
+  bool aesni_csprng_is_available = false;
+  int aesni_check_ok = aesni_random_generator_is_available(&aesni_csprng_is_available);
+
+  assert(aesni_check_ok == 0);
+
+  if (aesni_csprng_is_available) {
+    printf("Using aesni csprng implementation.\n");
+    return Aesni;
+  }
+
+  bool software_csprng_is_available = false;
+  int software_check_ok = software_random_generator_is_available(&software_csprng_is_available);
+
+  assert(software_check_ok == 0);
+
+  if (software_csprng_is_available) {
+    printf("Using software csprng implementation.\n");
+    return Software;
+  }
+
+  printf("Unable to use a csprng!\n");
+  assert(false);
+}
+
+RandomGeneratorImplementation get_best_csprng_unchecked() {
+  bool aesni_csprng_is_available = false;
+  int aesni_check_ok = aesni_random_generator_is_available_unchecked(&aesni_csprng_is_available);
+
+  assert(aesni_check_ok == 0);
+
+  if (aesni_csprng_is_available) {
+    printf("Using aesni csprng implementation.\n");
+    return Aesni;
+  }
+
+  bool software_csprng_is_available = false;
+  int software_check_ok =
+      software_random_generator_is_available_unchecked(&software_csprng_is_available);
+
+  assert(software_check_ok == 0);
+
+  if (software_csprng_is_available) {
+    printf("Using software csprng implementation.\n");
+    return Software;
+  }
+
+  printf("Unable to use a csprng!\n");
+  assert(false);
+}

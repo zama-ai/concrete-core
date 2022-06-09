@@ -11,7 +11,7 @@ void add_plaintext_view_buffers_test(void) {
   DefaultEngine *engine = NULL;
   SeederBuilder *builder = get_best_seeder();
 
-  int default_engine_ok = new_default_engine(builder, &engine);
+  int default_engine_ok = new_default_engine(get_best_csprng(), builder, &engine);
   assert(default_engine_ok == 0);
   size_t lwe_dimension = 10;
   LweSecretKey64 *sk = NULL;
@@ -86,7 +86,8 @@ void add_plaintext_unchecked_view_buffers_test(void) {
   DefaultEngine *engine = NULL;
   SeederBuilder *builder = get_best_seeder_unchecked();
 
-  int default_engine_ok = new_default_engine_unchecked(builder, &engine);
+  int default_engine_ok =
+      new_default_engine_unchecked(get_best_csprng_unchecked(), builder, &engine);
   assert(default_engine_ok == 0);
   size_t lwe_dimension = 10;
   LweSecretKey64 *sk = NULL;
@@ -161,7 +162,7 @@ void add_plaintext_raw_ptr_buffers_test(void) {
   DefaultEngine *engine = NULL;
   SeederBuilder *builder = get_best_seeder();
 
-  int default_engine_ok = new_default_engine(builder, &engine);
+  int default_engine_ok = new_default_engine(get_best_csprng(), builder, &engine);
   assert(default_engine_ok == 0);
   size_t lwe_dimension = 10;
   LweSecretKey64 *sk = NULL;
@@ -211,7 +212,8 @@ void add_plaintext_unchecked_raw_ptr_buffers_test(void) {
   DefaultEngine *engine = NULL;
   SeederBuilder *builder = get_best_seeder_unchecked();
 
-  int default_engine_ok = new_default_engine_unchecked(builder, &engine);
+  int default_engine_ok =
+      new_default_engine_unchecked(get_best_csprng_unchecked(), builder, &engine);
   assert(default_engine_ok == 0);
   size_t lwe_dimension = 10;
   LweSecretKey64 *sk = NULL;

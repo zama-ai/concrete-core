@@ -41,12 +41,15 @@ void bootstrap_view_buffers_test(void) {
   // DANGER IN THE GENERAL CASE YOU WANT A SEEDER PER ENGINE, THIS IS FOR TESTING ONLY
   SeederBuilder *builder = get_best_seeder();
 
-  int default_engine_ok = new_default_engine(builder, &default_engine);
+  RandomGeneratorImplementation rng_backend = get_best_csprng();
+
+  int default_engine_ok = new_default_engine(rng_backend, builder, &default_engine);
   assert(default_engine_ok == 0);
 
   DefaultParallelEngine *default_parallel_engine = NULL;
 
-  int default_parallel_engine_ok = new_default_parallel_engine(builder, &default_parallel_engine);
+  int default_parallel_engine_ok =
+      new_default_parallel_engine(rng_backend, builder, &default_parallel_engine);
   assert(default_parallel_engine_ok == 0);
 
   FftwEngine *fftw_engine = NULL;
@@ -215,13 +218,15 @@ void bootstrap_unchecked_view_buffers_test(void) {
   // DANGER IN THE GENERAL CASE YOU WANT A SEEDER PER ENGINE, THIS IS FOR TESTING ONLY
   SeederBuilder *builder = get_best_seeder_unchecked();
 
-  int default_engine_ok = new_default_engine_unchecked(builder, &default_engine);
+  RandomGeneratorImplementation rng_backend = get_best_csprng_unchecked();
+
+  int default_engine_ok = new_default_engine_unchecked(rng_backend, builder, &default_engine);
   assert(default_engine_ok == 0);
 
   DefaultParallelEngine *default_parallel_engine = NULL;
 
   int default_parallel_engine_ok =
-      new_default_parallel_engine_unchecked(builder, &default_parallel_engine);
+      new_default_parallel_engine_unchecked(rng_backend, builder, &default_parallel_engine);
   assert(default_parallel_engine_ok == 0);
 
   FftwEngine *fftw_engine = NULL;
@@ -395,12 +400,15 @@ void bootstrap_raw_ptr_buffers_test(void) {
   // DANGER IN THE GENERAL CASE YOU WANT A SEEDER PER ENGINE, THIS IS FOR TESTING ONLY
   SeederBuilder *builder = get_best_seeder();
 
-  int default_engine_ok = new_default_engine(builder, &default_engine);
+  RandomGeneratorImplementation rng_backend = get_best_csprng();
+
+  int default_engine_ok = new_default_engine(rng_backend, builder, &default_engine);
   assert(default_engine_ok == 0);
 
   DefaultParallelEngine *default_parallel_engine = NULL;
 
-  int default_parallel_engine_ok = new_default_parallel_engine(builder, &default_parallel_engine);
+  int default_parallel_engine_ok =
+      new_default_parallel_engine(rng_backend, builder, &default_parallel_engine);
   assert(default_parallel_engine_ok == 0);
 
   FftwEngine *fftw_engine = NULL;
@@ -532,13 +540,15 @@ void bootstrap_unchecked_raw_ptr_buffers_test(void) {
   // DANGER IN THE GENERAL CASE YOU WANT A SEEDER PER ENGINE, THIS IS FOR TESTING ONLY
   SeederBuilder *builder = get_best_seeder_unchecked();
 
-  int default_engine_ok = new_default_engine_unchecked(builder, &default_engine);
+  RandomGeneratorImplementation rng_backend = get_best_csprng_unchecked();
+
+  int default_engine_ok = new_default_engine_unchecked(rng_backend, builder, &default_engine);
   assert(default_engine_ok == 0);
 
   DefaultParallelEngine *default_parallel_engine = NULL;
 
   int default_parallel_engine_ok =
-      new_default_parallel_engine_unchecked(builder, &default_parallel_engine);
+      new_default_parallel_engine_unchecked(rng_backend, builder, &default_parallel_engine);
   assert(default_parallel_engine_ok == 0);
 
   FftwEngine *fftw_engine = NULL;

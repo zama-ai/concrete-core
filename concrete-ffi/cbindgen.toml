@@ -58,7 +58,7 @@ usize_is_size_t = true
 
 
 [export]
-include = []
+include = ["RandomGeneratorImplementation"]
 exclude = []
 #prefix = "CAPI_"
 item_types = []

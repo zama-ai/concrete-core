@@ -42,7 +42,7 @@ int main(void) {
 
     DefaultEngine *engine = NULL;
 
-    int default_engine_ok = new_default_engine(builder, &engine);
+    int default_engine_ok = new_default_engine(get_best_csprng(), builder, &engine);
     assert(default_engine_ok == 0);
     double variance = 0.000000001;
 

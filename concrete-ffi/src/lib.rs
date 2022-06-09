@@ -125,6 +125,7 @@
 pub mod backends;
 #[cfg(feature = "serde_serialize")]
 pub mod buffer;
+pub mod generators;
 pub mod mem;
 pub mod seeders;
 pub(crate) mod utils;

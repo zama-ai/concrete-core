@@ -16,4 +16,7 @@ int clone_transmute_lwe_secret_key_to_glwe_secret_key_unchecked_u64(
     DefaultEngine *default_engine, LweSecretKey64 *output_lwe_sk, size_t poly_size,
     GlweSecretKey64 **output_glwe_sk);
 
+RandomGeneratorImplementation get_best_csprng();
+RandomGeneratorImplementation get_best_csprng_unchecked();
+
 #endif // FFI_TEST_UTILS
