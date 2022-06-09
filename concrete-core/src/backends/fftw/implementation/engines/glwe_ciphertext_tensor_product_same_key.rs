@@ -2,7 +2,14 @@ use crate::backends::fftw::engines::FftwEngine;
 use crate::backends::fftw::entities::{
     FftwFourierGlweCiphertext32, FftwFourierGlweCiphertext64,
 };
-use crate::prelude::{FftwFourierGlweTensorProductCiphertext32, FftwFourierGlweTensorProductCiphertext64, GlweCiphertext32, GlweCiphertext64, GlweCiphertextConversionEngine, GlweCiphertextTensorProductSameKeyEngine, GlweCiphertextTensorProductSameKeyError, ScalingFactor};
+use crate::backends::fftw::private::math::fft::ALLOWED_POLY_SIZE;
+use crate::prelude::{FftwError, FftwFourierGlweTensorProductCiphertext32, FftwFourierGlweTensorProductCiphertext64, GlweCiphertext32, GlweCiphertext64, GlweCiphertextConversionEngine, GlweCiphertextTensorProductSameKeyEngine, GlweCiphertextTensorProductSameKeyError, ScalingFactor};
+
+impl From<FftwError> for GlweCiphertextTensorProductSameKeyError<FftwError> {
+    fn from(err: FftwError) -> Self {
+        Self::Engine(err)
+    }
+}
 
 /// # Description:
 /// Implementation of [`GlweTensorProductSameKeyEngine`] for [`FftwEngine`] that operates on 32-bit
@@ -75,7 +82,16 @@ impl
         GlweCiphertextTensorProductSameKeyError<Self::EngineError>>
     {
         GlweCiphertextTensorProductSameKeyError::perform_generic_checks(input1, input2)?;
-        // TODO check that scale is <= MAX U32
+        if !ALLOWED_POLY_SIZE.contains(&glwe_input.polynomial_size().0) {
+            return Err(GlweCiphertextTensorProductSameKeyError::from(
+                FftwError::UnsupportedPolynomialSize,
+            ));
+        }
+        if scale.0 >= u32::MAX as u64 {
+            return Err(GlweCiphertextTensorProductSameKeyError::from(
+                FftwError::ScalingFactorTooLarge,
+            ));
+        } 
         Ok(
             unsafe {
                 self.tensor_product_glwe_ciphertext_same_key_unchecked(input1, input2, scale)
@@ -168,6 +184,16 @@ impl
     ) -> Result<FftwFourierGlweTensorProductCiphertext64, GlweCiphertextTensorProductSameKeyError<Self::EngineError>>
     {
         GlweCiphertextTensorProductSameKeyError::perform_generic_checks(input1, input2)?;
+        if !ALLOWED_POLY_SIZE.contains(&glwe_input.polynomial_size().0) {
+            return Err(GlweCiphertextTensorProductSameKeyError::from(
+                FftwError::UnsupportedPolynomialSize,
+            ));
+        }
+        if scale.0 >= u64::MAX {
+            return Err(GlweCiphertextTensorProductSameKeyError::from(
+                FftwError::ScalingFactorTooLarge,
+            ));
+        }
         Ok(
             unsafe {
                 self.tensor_product_glwe_ciphertext_same_key_unchecked(input1, input2, scale)
@@ -270,7 +296,16 @@ GlweCiphertextTensorProductSameKeyEngine<
         GlweCiphertextTensorProductSameKeyError<Self::EngineError>>
     {
         GlweCiphertextTensorProductSameKeyError::perform_generic_checks(input1, input2)?;
-        // TODO check that scale is <= MAX U32
+        if !ALLOWED_POLY_SIZE.contains(&glwe_input.polynomial_size().0) {
+            return Err(GlweCiphertextTensorProductSameKeyError::from(
+                FftwError::UnsupportedPolynomialSize,
+            ));
+        }
+        if scale.0 >= u32::MAX as u64 {
+            return Err(GlweCiphertextTensorProductSameKeyError::from(
+                FftwError::ScalingFactorTooLarge,
+            ));
+        }
         Ok(
             unsafe {
                 self.tensor_product_glwe_ciphertext_same_key_unchecked(input1, input2, scale)
@@ -368,6 +403,16 @@ GlweCiphertextTensorProductSameKeyEngine<
     ) -> Result<FftwFourierGlweTensorProductCiphertext64, GlweCiphertextTensorProductSameKeyError<Self::EngineError>>
     {
         GlweCiphertextTensorProductSameKeyError::perform_generic_checks(input1, input2)?;
+        if !ALLOWED_POLY_SIZE.contains(&glwe_input.polynomial_size().0) {
+            return Err(GlweCiphertextTensorProductSameKeyError::from(
+                FftwError::UnsupportedPolynomialSize,
+            ));
+        }
+        if scale.0 >= u64::MAX {
+            return Err(GlweCiphertextTensorProductSameKeyError::from(
+                FftwError::ScalingFactorTooLarge,
+            ));
+        }
         Ok(
             unsafe {
                 self.tensor_product_glwe_ciphertext_same_key_unchecked(input1, input2, scale)

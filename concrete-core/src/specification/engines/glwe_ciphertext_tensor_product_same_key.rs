@@ -8,6 +8,8 @@ engine_error! {
     GlweCiphertextTensorProductSameKeyError for GlweCiphertextTensorProductSameKeyEngine @
     PolynomialSizeMismatch => "The polynomial size of the input and output GLWE ciphertexts must be\
      the same.",
+    NegativeScaleError => "The scaling factor for the tensor product must be stricly greater than\
+     zero.",
     InputGlweDimensionMismatch => "The GLWE dimension of the input ciphertexts must be the same."
 }
 
@@ -15,11 +17,15 @@ impl<EngineError: std::error::Error> GlweCiphertextTensorProductSameKeyError<Eng
     pub fn perform_generic_checks<InputCiphertext1, InputCiphertext2>(
         input1: &InputCiphertext1,
         input2: &InputCiphertext2,
+        scale: ScalingFactor,
     ) -> Result<(), Self>
     where
         InputCiphertext1: GlweCiphertextEntity,
         InputCiphertext2: GlweCiphertextEntity<KeyDistribution = InputCiphertext1::KeyDistribution>,
     {
+        if scale.0 <= 0 {
+            return Err(Self::NegativeScaleError);
+        }
         if input1.polynomial_size().0 != input2.polynomial_size().0 {
             return Err(Self::PolynomialSizeMismatch);
         }
