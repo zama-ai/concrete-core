@@ -1,6 +1,6 @@
 #[macro_use]
 extern crate lazy_static;
-use clap::{App, AppSettings, Arg};
+use clap::{Arg, Command};
 use log::LevelFilter;
 use simplelog::{ColorChoice, CombinedLogger, Config, TermLogger, TerminalMode};
 use std::collections::HashMap;
@@ -54,48 +54,54 @@ fn main() -> Result<(), std::io::Error> {
     }
 
     // We parse the input args
-    let matches = App::new("concrete-tasks")
+    let matches = Command::new("concrete-tasks")
         .about("Performs concrete-core plumbing tasks")
         .arg(
-            Arg::with_name("verbose")
-                .short("v")
+            Arg::new("verbose")
+                .short('v')
                 .long("verbose")
                 .help("Prints debug messages"),
         )
         .arg(
-            Arg::with_name("dry-run")
+            Arg::new("dry-run")
                 .long("dry-run")
                 .help("Do not execute the commands"),
         )
-        .subcommand(App::new("test").about("Executes all available tests in native mode"))
-        .subcommand(App::new("cov").about("Computes test coverage in native mode"))
-        .subcommand(App::new("build").about("Builds the crates in all available mode"))
-        .subcommand(App::new("check").about("Performs all the available checks"))
+        .subcommand(Command::new("test").about("Executes all available tests in native mode"))
+        .subcommand(Command::new("cov").about("Computes test coverage in native mode"))
+        .subcommand(Command::new("build").about("Builds the crates in all available mode"))
+        .subcommand(Command::new("check").about("Performs all the available checks"))
         .subcommand(
-            App::new("test_commons").about("Tests the `concrete-commons` crate in native mode"),
+            Command::new("test_commons").about("Tests the `concrete-commons` crate in native mode"),
         )
-        .subcommand(App::new("test_core").about("Tests the `concrete-core` crate in native mode"))
         .subcommand(
-            App::new("test_csprng").about("Tests the `concrete-csprng` crate in native mode"),
+            Command::new("test_core").about("Tests the `concrete-core` crate in native mode"),
         )
-        .subcommand(App::new("test_npe").about("Tests the `concrete-npe` crate in native mode"))
-        .subcommand(App::new("test_crates").about("Tests all the crates in native mode"))
         .subcommand(
-            App::new("test_and_cov_crates")
+            Command::new("test_csprng").about("Tests the `concrete-csprng` crate in native mode"),
+        )
+        .subcommand(Command::new("test_npe").about("Tests the `concrete-npe` crate in native mode"))
+        .subcommand(Command::new("test_crates").about("Tests all the crates in native mode"))
+        .subcommand(
+            Command::new("test_and_cov_crates")
                 .about("Compute tests coverage of all crates in native mode"),
         )
-        .subcommand(App::new("build_debug_crates").about("Build all the crates in debug mode"))
-        .subcommand(App::new("build_release_crates").about("Build all the crates in release mode"))
-        .subcommand(App::new("build_simd_crates").about("Build all the crates in simd mode"))
-        .subcommand(App::new("build_benches").about("Build the benchmarks in release mode"))
-        .subcommand(App::new("check_doc").about("Checks that the doc compiles without warnings"))
-        .subcommand(App::new("check_clippy").about("Checks that clippy runs without warnings"))
-        .subcommand(App::new("check_fmt").about("Checks that rustfmt runs without warnings"))
-        .subcommand(App::new("chore_format").about("Format the codebase with rustfmt"))
+        .subcommand(Command::new("build_debug_crates").about("Build all the crates in debug mode"))
         .subcommand(
-            App::new("chore_format_latex_doc").about("Escape underscores in latex equations"),
+            Command::new("build_release_crates").about("Build all the crates in release mode"),
         )
-        .setting(AppSettings::ArgRequiredElseHelp)
+        .subcommand(Command::new("build_simd_crates").about("Build all the crates in simd mode"))
+        .subcommand(Command::new("build_benches").about("Build the benchmarks in release mode"))
+        .subcommand(
+            Command::new("check_doc").about("Checks that the doc compiles without warnings"),
+        )
+        .subcommand(Command::new("check_clippy").about("Checks that clippy runs without warnings"))
+        .subcommand(Command::new("check_fmt").about("Checks that rustfmt runs without warnings"))
+        .subcommand(Command::new("chore_format").about("Format the codebase with rustfmt"))
+        .subcommand(
+            Command::new("chore_format_latex_doc").about("Escape underscores in latex equations"),
+        )
+        .arg_required_else_help(true)
         .get_matches();
 
     // We initialize the logger with proper verbosity

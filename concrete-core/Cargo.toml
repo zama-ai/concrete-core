@@ -13,12 +13,8 @@ keywords = ["fully", "homomorphic", "encryption", "fhe", "cryptography"]
 
 [dev-dependencies]
 concrete-npe = "0.2.1"
-criterion = "0.3.4"
 rand = "0.7"
-rand_distr = "0.2.2"
 kolmogorov_smirnov = "1.1.0"
-itertools = "0.10"
-serde_test = "1.0.125"
 
 [dependencies]
 concrete-fftw = { version = "=0.1.2", optional = true}
