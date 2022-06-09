@@ -16,10 +16,10 @@ engine_error! {
 ///
 /// This function takes as input a
 /// [`GLWE secret key`](`crate::specification::entities::GlweSecretKeyEntity`)
-/// $\mathsf{s} = (s\_{1}, s\_{2}, \dots, s\_{k}) $
+/// $\mathsf{s} = (s\_{1}, s\_{2}, \dots, s\_{k}) $ and outputs a
 /// [`GLWE secret key`](`crate::specification::entities::GlweSecretKeyEntity`)
-/// contains the tensor product of the input secret key with itself.
-/// In particular, the function outputs a GLWE secret key of the form
+/// which contains the tensor product of the input secret key with itself.
+/// In particular, the function outputs a GLWE secret key of the form:
 ///
 /// $(s^{\prime}\_1, s^{\prime}\_2, \dots, s^{\prime}\_{(k + k \cdot (k + 1) / 2 + k)})$
 /// where the ordering of the terms is as follows:
