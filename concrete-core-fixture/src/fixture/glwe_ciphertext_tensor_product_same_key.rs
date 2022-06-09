@@ -259,7 +259,7 @@ type Parameters = GlweCiphertextTensorProductSameKeyParameters;
         _maker: &mut Maker,
         _repetition_proto: &Self::RepetitionPrototypes,
     ) -> Self::Criteria {
-        let msg_bound = (1 << parameters.msg_n_msb.0) as f64;
+        let msg_bound = (1 << parameters.msg_n_msb) as f64;
         let output_variance = fix_estimate_tensor_product_noise::<
             Precision::Raw,
             Variance,
