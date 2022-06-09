@@ -4,6 +4,8 @@
 //! Each submodule here is expected to be activated by a given feature flag (matching the
 //! `backend_*` naming), and to contain the instantiation of a generic correctness test for every
 //! implemented operator.
+#[cfg(test)]
+use concrete_core::prelude::RandomGeneratorImplementation;
 use concrete_core_fixture::{Repetitions, SampleSize};
 
 /// The number of time a test is repeated for a single set of parameter.
@@ -16,3 +18,11 @@ pub const SAMPLE_SIZE: SampleSize = SampleSize(100);
 pub mod default;
 #[cfg(all(test, feature = "backend_fftw"))]
 pub mod fftw;
+
+#[cfg(test)]
+#[allow(unreachable_code)]
+pub(crate) fn choose_rng_implementation() -> RandomGeneratorImplementation {
+    #[cfg(feature = "generator_x86_64_aesni")]
+    return RandomGeneratorImplementation::Aesni;
+    RandomGeneratorImplementation::Software
+}

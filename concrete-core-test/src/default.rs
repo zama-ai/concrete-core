@@ -1,4 +1,4 @@
-use crate::{REPETITIONS, SAMPLE_SIZE};
+use crate::{choose_rng_implementation, REPETITIONS, SAMPLE_SIZE};
 use concrete_core::prelude::*;
 use concrete_core_fixture::fixture::*;
 use concrete_core_fixture::generation::{Maker, Precision32, Precision64};
@@ -11,7 +11,7 @@ macro_rules! test {
             #[test]
             fn [< test_ $fixture:snake _ $precision:snake _ $($types:snake)_+ >]() {
                 let mut maker = Maker::default();
-                let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(0))).unwrap();
+                let mut engine = DefaultEngine::new((choose_rng_implementation(), Box::new(UnixSeeder::new(0)))).unwrap();
                 let test_result =
                     <$fixture as Fixture<
                         $precision,

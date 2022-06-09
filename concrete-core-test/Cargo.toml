@@ -16,3 +16,4 @@ backend_fftw = [
     "concrete-core/backend_fftw",
     "concrete-core-fixture/backend_fftw",
 ]
+generator_x86_64_aesni = ["concrete-core/generator_x86_64_aesni"]
