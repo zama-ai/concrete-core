@@ -52,7 +52,9 @@ impl<EngineError: std::error::Error>
 ///
 /// # Formal Definition
 /// The formal definition is as in the
-/// [GlweCiphertextTensorProductSameKeyEngine][crate::specification::engines::GlweCiphertextTensorProductSameKeyEngine`]
+/// [`GlweCiphertextTensorProductSameKeyEngine`](
+///crate::specification::engines::GlweCiphertextTensorProductSameKeyEngine
+/// )
 pub trait GlweCiphertextDiscardingTensorProductSameKeyEngine<
     InputCiphertext1,
     InputCiphertext2,

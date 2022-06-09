@@ -58,12 +58,15 @@ impl<EngineError: std::error::Error> GlweCiphertextTensorProductSameKeyError<Eng
 /// $\left[ \left\lfloor \frac{[A\_{1,i} \cdot A\_{2,i}]\_Q}{\Delta} \right\rceil \right]\_q$,
 ///
 /// each $A\_{i}^\prime$ is of the form:
-/// $\left[ \left\lfloor \frac{[A\_{1,i} \cdot A\_{2,j} + A\_{1,j} \cdot A\_{2,i} ]\_Q}{\Delta} \right\rceil \right]\_q$,
+/// $\left[ \left\lfloor \frac{[A\_{1,i} \cdot A\_{2,j} + A\_{1,j} \cdot A\_{2,i} ]\_Q}{\Delta}
+/// \right\rceil \right]\_q$,
 ///
 /// each $R\_{i,j}$ is of the form:
-/// $\left[ \left\lfloor \frac{[A\_{1,i} \cdot B_2 + B_1 \cdot A\_{2,i}]\_Q}{\Delta} \right\rceil \right]\_q$,
+/// $\left[ \left\lfloor \frac{[A\_{1,i} \cdot B_2 + B_1 \cdot A\_{2,i}]\_Q}{\Delta} \right\rceil
+/// \right]\_q$,
 ///
-/// and $B^{\prime} = \left[ \left\lfloor \frac{[B_1 \cdot B_2]\_Q}{\Delta} \right\rceil \right]\_q$.
+/// and $B^{\prime} = \left[ \left\lfloor \frac{[B_1 \cdot B_2]\_Q}{\Delta} \right\rceil
+/// \right]\_q$.
 pub trait GlweCiphertextTensorProductSameKeyEngine<
     InputCiphertext1,
     InputCiphertext2,

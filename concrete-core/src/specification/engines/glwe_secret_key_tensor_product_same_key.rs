@@ -26,7 +26,6 @@ engine_error! {
 ///
 /// $(s\_1^{2}, s\_1, s\_{2}^2, s\_2, s\_{1}s\_{2}, s\_{3}^2, s\_3, s\_{1}s\_{3}, s\_{2}s\_{3},
 /// \dots, s\_{k}^2, s\_k, s\_{1}s\_{k}, \dots, s\_{k-1}s\_{k})$.
-///
 pub trait GlweSecretKeyTensorProductSameKeyEngine<InputKey, OutputKey>: AbstractEngine
 where
     InputKey: GlweSecretKeyEntity,
