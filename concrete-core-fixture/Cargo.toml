@@ -5,7 +5,7 @@ edition = "2021"
 license = "BSD-3-Clause-Clear"
 
 [dependencies]
-concrete-core = { path = "../concrete-core" }
+concrete-core = { path = "../concrete-core", features = ["parallel"] }
 concrete-csprng = { path = "../concrete-csprng", features = ["seeder_unix"] }
 concrete-commons = { path = "../concrete-commons" }
 concrete-npe = { path = "../concrete-npe" }
