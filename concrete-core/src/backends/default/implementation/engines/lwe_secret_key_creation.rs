@@ -22,7 +22,10 @@ impl LweSecretKeyCreationEngine<LweSecretKey32> for DefaultEngine {
     /// // Unix seeder must be given a secret input.
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
-    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let mut engine = DefaultEngine::new((
+    ///     RandomGeneratorImplementation::Software,
+    ///     Box::new(UnixSeeder::new(UNSAFE_SECRET)),
+    /// ))?;
     /// let lwe_secret_key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
     /// #
     /// assert_eq!(lwe_secret_key.lwe_dimension(), lwe_dimension);
@@ -67,7 +70,10 @@ impl LweSecretKeyCreationEngine<LweSecretKey64> for DefaultEngine {
     /// // Unix seeder must be given a secret input.
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
-    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let mut engine = DefaultEngine::new((
+    ///     RandomGeneratorImplementation::Software,
+    ///     Box::new(UnixSeeder::new(UNSAFE_SECRET)),
+    /// ))?;
     /// let lwe_secret_key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
     /// #
     /// assert_eq!(lwe_secret_key.lwe_dimension(), lwe_dimension);

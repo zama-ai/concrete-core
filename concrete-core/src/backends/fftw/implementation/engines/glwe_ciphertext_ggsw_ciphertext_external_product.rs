@@ -46,7 +46,10 @@ impl
     /// // Unix seeder must be given a secret input.
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
-    /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let mut default_engine = DefaultEngine::new((
+    ///     RandomGeneratorImplementation::Software,
+    ///     Box::new(UnixSeeder::new(UNSAFE_SECRET)),
+    /// ))?;
     /// let mut fftw_engine = FftwEngine::new(())?;
     /// let key: GlweSecretKey32 = default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
     /// let plaintext_ggsw = default_engine.create_plaintext(&input_ggsw)?;
@@ -151,7 +154,10 @@ impl
     /// // Unix seeder must be given a secret input.
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
-    /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let mut default_engine = DefaultEngine::new((
+    ///     RandomGeneratorImplementation::Software,
+    ///     Box::new(UnixSeeder::new(UNSAFE_SECRET)),
+    /// ))?;
     /// let mut fftw_engine = FftwEngine::new(())?;
     /// let key: GlweSecretKey64 = default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
     /// let plaintext_ggsw = default_engine.create_plaintext(&input_ggsw)?;

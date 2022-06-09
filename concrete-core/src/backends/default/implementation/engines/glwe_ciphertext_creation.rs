@@ -29,7 +29,10 @@ impl GlweCiphertextCreationEngine<Vec<u32>, GlweCiphertext32> for DefaultEngine 
     ///
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
-    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let mut engine = DefaultEngine::new((
+    ///     RandomGeneratorImplementation::Software,
+    ///     Box::new(UnixSeeder::new(UNSAFE_SECRET)),
+    /// ))?;
     /// let ciphertext: GlweCiphertext32 =
     ///     engine.create_glwe_ciphertext(owned_container, polynomial_size)?;
     /// engine.destroy(ciphertext)?;
@@ -83,7 +86,10 @@ impl GlweCiphertextCreationEngine<Vec<u64>, GlweCiphertext64> for DefaultEngine 
     ///
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
-    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let mut engine = DefaultEngine::new((
+    ///     RandomGeneratorImplementation::Software,
+    ///     Box::new(UnixSeeder::new(UNSAFE_SECRET)),
+    /// ))?;
     /// let ciphertext: GlweCiphertext64 =
     ///     engine.create_glwe_ciphertext(owned_container, polynomial_size)?;
     /// engine.destroy(ciphertext)?;
@@ -141,7 +147,10 @@ impl<'data> GlweCiphertextCreationEngine<&'data [u32], GlweCiphertextView32<'dat
     ///
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
-    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let mut engine = DefaultEngine::new((
+    ///     RandomGeneratorImplementation::Software,
+    ///     Box::new(UnixSeeder::new(UNSAFE_SECRET)),
+    /// ))?;
     /// let ciphertext_view: GlweCiphertextView32 =
     ///     engine.create_glwe_ciphertext(slice, polynomial_size)?;
     /// engine.destroy(ciphertext_view)?;
@@ -199,7 +208,10 @@ impl<'data> GlweCiphertextCreationEngine<&'data mut [u32], GlweCiphertextMutView
     ///
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
-    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let mut engine = DefaultEngine::new((
+    ///     RandomGeneratorImplementation::Software,
+    ///     Box::new(UnixSeeder::new(UNSAFE_SECRET)),
+    /// ))?;
     /// let ciphertext_view: GlweCiphertextMutView32 =
     ///     engine.create_glwe_ciphertext(slice, polynomial_size)?;
     /// engine.destroy(ciphertext_view)?;
@@ -258,7 +270,10 @@ impl<'data> GlweCiphertextCreationEngine<&'data [u64], GlweCiphertextView64<'dat
     ///
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
-    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let mut engine = DefaultEngine::new((
+    ///     RandomGeneratorImplementation::Software,
+    ///     Box::new(UnixSeeder::new(UNSAFE_SECRET)),
+    /// ))?;
     /// let ciphertext_view: GlweCiphertextView64 =
     ///     engine.create_glwe_ciphertext(slice, polynomial_size)?;
     /// engine.destroy(ciphertext_view)?;
@@ -316,7 +331,10 @@ impl<'data> GlweCiphertextCreationEngine<&'data mut [u64], GlweCiphertextMutView
     ///
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
-    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let mut engine = DefaultEngine::new((
+    ///     RandomGeneratorImplementation::Software,
+    ///     Box::new(UnixSeeder::new(UNSAFE_SECRET)),
+    /// ))?;
     /// let ciphertext_view: GlweCiphertextMutView64 =
     ///     engine.create_glwe_ciphertext(slice, polynomial_size)?;
     /// engine.destroy(ciphertext_view)?;

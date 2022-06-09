@@ -20,7 +20,10 @@ impl PlaintextVectorCreationEngine<u32, PlaintextVector32> for DefaultEngine {
     /// // Unix seeder must be given a secret input.
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
-    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let mut engine = DefaultEngine::new((
+    ///     RandomGeneratorImplementation::Software,
+    ///     Box::new(UnixSeeder::new(UNSAFE_SECRET)),
+    /// ))?;
     /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector(&input)?;
     /// #
     /// assert_eq!(plaintext_vector.plaintext_count(), PlaintextCount(3));
@@ -61,7 +64,10 @@ impl PlaintextVectorCreationEngine<u64, PlaintextVector64> for DefaultEngine {
     /// // Unix seeder must be given a secret input.
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
-    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let mut engine = DefaultEngine::new((
+    ///     RandomGeneratorImplementation::Software,
+    ///     Box::new(UnixSeeder::new(UNSAFE_SECRET)),
+    /// ))?;
     /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector(&input)?;
     /// #
     /// assert_eq!(plaintext_vector.plaintext_count(), PlaintextCount(3));

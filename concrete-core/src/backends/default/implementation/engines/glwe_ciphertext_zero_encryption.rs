@@ -30,7 +30,10 @@ impl GlweCiphertextZeroEncryptionEngine<GlweSecretKey32, GlweCiphertext32> for D
     /// // Unix seeder must be given a secret input.
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
-    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let mut engine = DefaultEngine::new((
+    ///     RandomGeneratorImplementation::Software,
+    ///     Box::new(UnixSeeder::new(UNSAFE_SECRET)),
+    /// ))?;
     /// let key: GlweSecretKey32 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
     ///
     /// let ciphertext = engine.zero_encrypt_glwe_ciphertext(&key, noise)?;
@@ -88,7 +91,10 @@ impl GlweCiphertextZeroEncryptionEngine<GlweSecretKey64, GlweCiphertext64> for D
     /// // Unix seeder must be given a secret input.
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
-    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let mut engine = DefaultEngine::new((
+    ///     RandomGeneratorImplementation::Software,
+    ///     Box::new(UnixSeeder::new(UNSAFE_SECRET)),
+    /// ))?;
     /// let key: GlweSecretKey64 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
     ///
     /// let ciphertext = engine.zero_encrypt_glwe_ciphertext(&key, noise)?;

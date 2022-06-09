@@ -21,7 +21,10 @@ impl PlaintextDiscardingRetrievalEngine<Plaintext32, u32> for DefaultEngine {
     /// // Unix seeder must be given a secret input.
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
-    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let mut engine = DefaultEngine::new((
+    ///     RandomGeneratorImplementation::Software,
+    ///     Box::new(UnixSeeder::new(UNSAFE_SECRET)),
+    /// ))?;
     /// let plaintext: Plaintext32 = engine.create_plaintext(&input)?;
     /// engine.discard_retrieve_plaintext(&mut output, &plaintext)?;
     ///
@@ -63,7 +66,10 @@ impl PlaintextDiscardingRetrievalEngine<Plaintext64, u64> for DefaultEngine {
     /// // Unix seeder must be given a secret input.
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
-    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let mut engine = DefaultEngine::new((
+    ///     RandomGeneratorImplementation::Software,
+    ///     Box::new(UnixSeeder::new(UNSAFE_SECRET)),
+    /// ))?;
     /// let plaintext: Plaintext64 = engine.create_plaintext(&input)?;
     /// engine.discard_retrieve_plaintext(&mut output, &plaintext)?;
     ///

@@ -37,7 +37,10 @@ impl
     /// // Unix seeder must be given a secret input.
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
-    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let mut engine = DefaultEngine::new((
+    ///     RandomGeneratorImplementation::Software,
+    ///     Box::new(UnixSeeder::new(UNSAFE_SECRET)),
+    /// ))?;
     /// let key_1: GlweSecretKey32 =
     ///     engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
     /// let key_2: GlweSecretKey32 =
@@ -124,7 +127,10 @@ impl
     /// // Unix seeder must be given a secret input.
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
-    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let mut engine = DefaultEngine::new((
+    ///     RandomGeneratorImplementation::Software,
+    ///     Box::new(UnixSeeder::new(UNSAFE_SECRET)),
+    /// ))?;
     /// let key_1: GlweSecretKey64 =
     ///     engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
     /// let key_2: GlweSecretKey64 =

@@ -23,7 +23,10 @@ impl GlweSecretKeyCreationEngine<GlweSecretKey32> for DefaultEngine {
     /// // Unix seeder must be given a secret input.
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
-    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let mut engine = DefaultEngine::new((
+    ///     RandomGeneratorImplementation::Software,
+    ///     Box::new(UnixSeeder::new(UNSAFE_SECRET)),
+    /// ))?;
     /// let glwe_secret_key: GlweSecretKey32 =
     ///     engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
     /// #
@@ -75,7 +78,10 @@ impl GlweSecretKeyCreationEngine<GlweSecretKey64> for DefaultEngine {
     /// // Unix seeder must be given a secret input.
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
-    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let mut engine = DefaultEngine::new((
+    ///     RandomGeneratorImplementation::Software,
+    ///     Box::new(UnixSeeder::new(UNSAFE_SECRET)),
+    /// ))?;
     /// let glwe_secret_key: GlweSecretKey64 =
     ///     engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
     /// #
