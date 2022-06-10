@@ -12,7 +12,9 @@ from sklearn.ensemble import IsolationForest
 
 
 # Command used to run Rust program responsible to perform sampling on external product.
-BASH_COMMAND = "RUSTFLAGS=\"-C target-cpu=native -Awarnings\" cargo run --quiet --release -- --tot {} --id {} {}"
+BASE_COMMAND = "RUSTFLAGS=\"-C target-cpu=native -Awarnings\" cargo {} --quiet --release"
+BUILD_COMMAND = BASE_COMMAND.format("build")
+RUN_COMMAND = BASE_COMMAND.format("run") + " -- --tot {} --id {} {}"
 
 SECS_PER_HOUR = 3600
 SECS_PER_MINUTES = 60
@@ -205,6 +207,26 @@ def write_to_file(filename, obj):
         print(f"Results written to {filename}")
 
 
+def build_sampler():
+    """
+    Build sampling Rust program as a subprocess.
+    """
+    start_time = datetime.datetime.now()
+    print(f"Building sampling program")
+
+    process = subprocess.run(BUILD_COMMAND, shell=True, capture_output=True)
+
+    elapsed_time = (datetime.datetime.now() - start_time).total_seconds()
+    if process.returncode == 0:
+        print(f"Building done in {elapsed_time} seconds")
+    else:
+        stderr = process.stderr.decode()
+        stderr_formatted = f"STDERR: {stderr}" if stderr else ""
+        print(f"Building failed after {elapsed_time} seconds\n"
+              f"STDOUT: {process.stdout.decode()}"
+              f"{stderr_formatted}")
+
+
 def run_sampling_chunk(total_chunks, identity, input_args):
     """
     Run an external product sampling on a chunk of data as a subprocess.
@@ -213,7 +235,7 @@ def run_sampling_chunk(total_chunks, identity, input_args):
     :param identity: chunk identifier as :class:`int`
     :param input_args: arguments passed to sampling program
     """
-    cmd = BASH_COMMAND.format(total_chunks, identity, input_args)
+    cmd = RUN_COMMAND.format(total_chunks, identity, input_args)
     start_time = datetime.datetime.now()
     print(f"External product sampling chunk #{identity} starting")
 
@@ -240,6 +262,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if not args.analysis_only:
+        build_sampler()
         with concurrent.futures.ThreadPoolExecutor(max_workers=args.chunks) as executor:
             futures = []
             for n in range(args.chunks):
