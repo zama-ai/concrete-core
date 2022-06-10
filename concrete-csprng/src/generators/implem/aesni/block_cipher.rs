@@ -14,15 +14,19 @@ pub struct AesniBlockCipher {
 
 impl AesBlockCipher for AesniBlockCipher {
     fn new(key: AesKey) -> AesniBlockCipher {
-        if is_x86_feature_detected!("aes")
-            && is_x86_feature_detected!("rdseed")
-            && is_x86_feature_detected!("sse2")
-        {
-            let round_keys = generate_round_keys(key);
-            AesniBlockCipher { round_keys }
-        } else {
-            panic!("One of the `aes`, `rdseed`, or `sse2` instructions set was not found")
+        let aes_detected = is_x86_feature_detected!("aes");
+        let sse2_detected = is_x86_feature_detected!("sse2");
+
+        if !(aes_detected && sse2_detected) {
+            panic!(
+                "The AesniBlockCipher requires both aes and sse2 x86 CPU features.\n\
+                aes feature available: {}\nsse2 feature available: {}\n.",
+                aes_detected, sse2_detected
+            )
         }
+
+        let round_keys = generate_round_keys(key);
+        AesniBlockCipher { round_keys }
     }
 
     fn generate_batch(&mut self, AesIndex(aes_ctr): AesIndex) -> [u8; BYTES_PER_BATCH] {
@@ -41,7 +45,6 @@ impl AesBlockCipher for AesniBlockCipher {
 }
 
 fn generate_round_keys(key: AesKey) -> [__m128i; 11] {
-    // The secret key is a random value from rdseed.
     let key = u128_to_si128(key.0);
     let mut keys: [__m128i; 11] = [u128_to_si128(0); 11];
     aes_128_key_expansion(key, &mut keys);
