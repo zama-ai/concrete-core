@@ -46,10 +46,10 @@ impl<EngineError: std::error::Error> GlweCiphertextTensorProductSameKeyError<Eng
 ///
 /// This function takes as input two
 /// [`GLWE ciphertexts`](`crate::specification::entities::GlweCiphertextEntity`)
-/// $\mathsf{c}\_1 = \mathsf{GLWE}\_{\vec{s}}(
+/// $\mathsf{c}\_1 = \mathsf{GLWE}\_{\vec{S}}(
 /// \mathsf{m}\_1)  = (A\_{1,1}, \dots, A\_{1,k}, B\_1)$ and $\mathsf{c}\_2 =
-/// \mathsf{GLWE}\_{\vec{s}}( \mathsf{m}_2 ) = (A\_{2,1}, \dots, A\_{2,k}, B\_2)$ encrypted with the
-/// same key $\vec{s}$ and outputs a
+/// \mathsf{GLWE}\_{\vec{S}}( \mathsf{m}_2 ) = (A\_{2,1}, \dots, A\_{2,k}, B\_2)$ encrypted with the
+/// same key $\vec{S}$ and outputs a
 /// [`GLWE ciphertext`](`crate::specification::entities::GlweCiphertextEntity`) which
 /// contains the tensor product of the two ciphertexts. In particular, the output GLWE ciphertext is
 /// of the form:

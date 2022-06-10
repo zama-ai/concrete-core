@@ -16,16 +16,16 @@ engine_error! {
 ///
 /// This function takes as input a
 /// [`GLWE secret key`](`crate::specification::entities::GlweSecretKeyEntity`)
-/// $\mathsf{s} = (s\_{1}, s\_{2}, \dots, s\_{k}) $ and outputs a
+/// $\mathsf{S} = (S\_{1}, S\_{2}, \dots, S\_{k}) $ and outputs a
 /// [`GLWE secret key`](`crate::specification::entities::GlweSecretKeyEntity`)
 /// which contains the tensor product of the input secret key with itself.
 /// In particular, the function outputs a GLWE secret key of the form:
 ///
-/// $(s^{\prime}\_1, s^{\prime}\_2, \dots, s^{\prime}\_{(k + k \cdot (k + 1) / 2 + k)})$
+/// $(S^{\prime}\_1, S^{\prime}\_2, \dots, S^{\prime}\_{(k + k \cdot (k + 1) / 2 + k)})$
 /// where the ordering of the terms is as follows:
 ///
-/// $(s\_1^{2}, s\_1, s\_{2}^2, s\_2, s\_{1}s\_{2}, s\_{3}^2, s\_3, s\_{1}s\_{3}, s\_{2}s\_{3},
-/// \dots, s\_{k}^2, s\_k, s\_{1}s\_{k}, \dots, s\_{k-1}s\_{k})$.
+/// $(S\_1^{2}, S\_1, S\_{2}^2, S\_2, S\_{1}S\_{2}, S\_{3}^2, S\_3, S\_{1}S\_{3}, S\_{2}S\_{3},
+/// \dots, S\_{k}^2, S\_k, S\_{1}S\_{k}, \dots, S\_{k-1}S\_{k})$.
 pub trait GlweSecretKeyTensorProductSameKeyEngine<InputKey, OutputKey>: AbstractEngine
 where
     InputKey: GlweSecretKeyEntity,
