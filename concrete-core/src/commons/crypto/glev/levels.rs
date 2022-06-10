@@ -6,70 +6,78 @@ use crate::commons::math::tensor::{
 use concrete_commons::parameters::{GlweSize, PolynomialSize};
 #[cfg(feature = "__commons_parallel")]
 use rayon::prelude::*;
+use crate::prelude::GlevCount;
 
-/// A matrix containing a single level of gadget decomposition.
-pub struct GgswLevelMatrix<Cont> {
+/// A matrix corresponding to a single level of decomposition `l` of a vector of Glevs.
+/// It contains `glev_count` GLWE ciphertexts of size `glwe_size` and polynomial size `poly_size`.
+/// Each row of the matrix corresponds to a GLWE ciphertext.
+pub struct GlevListLevelMatrix<Cont> {
     tensor: Tensor<Cont>,
     poly_size: PolynomialSize,
     glwe_size: GlweSize,
+    glev_count: GlevCount,
     level: DecompositionLevel,
 }
 
-tensor_traits!(GgswLevelMatrix);
+tensor_traits!(GlevListLevelMatrix);
 
-impl<Cont> GgswLevelMatrix<Cont> {
-    /// Creates a GGSW level matrix from an arbitrary container.
+impl<Cont> GlevListLevelMatrix<Cont> {
+    /// Creates a Glev list level matrix from an arbitrary container.
     ///
     /// # Example
     ///
     /// ```rust
     /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
-    /// use concrete_core::commons::crypto::ggsw::GgswLevelMatrix;
+    /// use concrete_core::commons::crypto::glev::GlevListLevelMatrix;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
-    /// let level_matrix = GgswLevelMatrix::from_container(
+    /// use concrete_core::prelude::GlevCount;
+    /// let level_matrix = GlevListLevelMatrix::from_container(
     ///     vec![0 as u8; 10 * 7 * 7],
     ///     PolynomialSize(10),
     ///     GlweSize(7),
+    ///     GlevCount(7),
     ///     DecompositionLevel(1),
     /// );
     /// assert_eq!(level_matrix.polynomial_size(), PolynomialSize(10));
     /// assert_eq!(level_matrix.glwe_size(), GlweSize(7));
+    /// assert_eq!(level_matrix.glev_count(), GlevCount(7));
     /// assert_eq!(level_matrix.decomposition_level(), DecompositionLevel(1));
     /// ```
     pub fn from_container(
         cont: Cont,
         poly_size: PolynomialSize,
-        rlwe_size: GlweSize,
+        glwe_size: GlweSize,
+        glev_count: GlevCount,
         level: DecompositionLevel,
     ) -> Self
     where
         Cont: AsRefSlice,
     {
         let tensor = Tensor::from_container(cont);
-        ck_dim_div!(tensor.len() => rlwe_size.0, poly_size.0);
-        GgswLevelMatrix {
+        ck_dim_div!(tensor.len() => glwe_size.0, poly_size.0, glev_count.0);
+        GlevListLevelMatrix {
             tensor,
             poly_size,
-            glwe_size: rlwe_size,
+            glwe_size,
+            glev_count,
             level,
         }
     }
 
-    /// Returns the size of the GLWE ciphertexts composing the GGSW level matrix.
-    ///
-    /// This is also the number of columns of the matrix (assuming it is a matrix of
-    /// polynomials), as well as its number of rows.
+    /// Returns the size of the GLWE ciphertexts composing the Glev list level matrix.
     ///
     /// # Example
     ///
     /// ```rust
     /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
-    /// use concrete_core::commons::crypto::ggsw::GgswLevelMatrix;
+    /// use concrete_core::commons::crypto::glev::GlevListLevelMatrix;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
-    /// let level_matrix = GgswLevelMatrix::from_container(
+    /// use concrete_core::prelude::GlevCount;
+    /// let level_matrix = GlevListLevelMatrix::from_container(
     ///     vec![0 as u8; 10 * 7 * 7],
     ///     PolynomialSize(10),
     ///     GlweSize(7),
+    ///     GlevCount(7),
     ///     DecompositionLevel(1),
     /// );
     /// assert_eq!(level_matrix.glwe_size(), GlweSize(7));
@@ -78,18 +86,42 @@ impl<Cont> GgswLevelMatrix<Cont> {
         self.glwe_size
     }
 
+    /// Returns the number of Glev in the list
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
+    /// use concrete_core::commons::crypto::glev::GlevListLevelMatrix;
+    /// use concrete_core::commons::math::decomposition::DecompositionLevel;
+    /// use concrete_core::prelude::GlevCount;
+    /// let level_matrix = GlevListLevelMatrix::from_container(
+    ///     vec![0 as u8; 10 * 7 * 7],
+    ///     PolynomialSize(10),
+    ///     GlweSize(7),
+    ///     GlevCount(7),
+    ///     DecompositionLevel(1),
+    /// );
+    /// assert_eq!(level_matrix.glwe_size(), GlweSize(7));
+    /// ```
+    pub fn glev_count(&self) -> GlevCount {
+        self.glev_count
+    }
+
     /// Returns the index of the level corresponding to this matrix.
     ///
     /// # Example
     ///
     /// ```rust
     /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
-    /// use concrete_core::commons::crypto::ggsw::GgswLevelMatrix;
+    /// use concrete_core::commons::crypto::glev::GlevListLevelMatrix;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
-    /// let level_matrix = GgswLevelMatrix::from_container(
+    /// use concrete_core::prelude::GlevCount;
+    /// let level_matrix = GlevListLevelMatrix::from_container(
     ///     vec![0 as u8; 10 * 7 * 7],
     ///     PolynomialSize(10),
     ///     GlweSize(7),
+    ///     GlevCount(7),
     ///     DecompositionLevel(1),
     /// );
     /// assert_eq!(level_matrix.decomposition_level(), DecompositionLevel(1));
@@ -104,12 +136,14 @@ impl<Cont> GgswLevelMatrix<Cont> {
     ///
     /// ```rust
     /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
-    /// use concrete_core::commons::crypto::ggsw::GgswLevelMatrix;
+    /// use concrete_core::commons::crypto::glev::GlevListLevelMatrix;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
-    /// let level_matrix = GgswLevelMatrix::from_container(
+    /// use concrete_core::prelude::GlevCount;
+    /// let level_matrix = GlevListLevelMatrix::from_container(
     ///     vec![0 as u8; 10 * 7 * 7],
     ///     PolynomialSize(10),
     ///     GlweSize(7),
+    ///     GlevCount(7),
     ///     DecompositionLevel(1),
     /// );
     /// assert_eq!(level_matrix.polynomial_size(), PolynomialSize(10));
@@ -118,18 +152,20 @@ impl<Cont> GgswLevelMatrix<Cont> {
         self.poly_size
     }
 
-    /// Returns an iterator over the borrowed rows of the matrix.
+    /// Returns an iterator over the borrowed rows (GLWE's) of the matrix.
     ///
     /// # Example
     ///
     /// ```rust
     /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
-    /// use concrete_core::commons::crypto::ggsw::GgswLevelMatrix;
+    /// use concrete_core::commons::crypto::glev::GlevListLevelMatrix;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
-    /// let level_matrix = GgswLevelMatrix::from_container(
+    /// use concrete_core::prelude::GlevCount;
+    /// let level_matrix = GlevListLevelMatrix::from_container(
     ///     vec![0 as u8; 10 * 7 * 7],
     ///     PolynomialSize(10),
     ///     GlweSize(7),
+    ///     GlevCount(7),
     ///     DecompositionLevel(1),
     /// );
     /// for row in level_matrix.row_iter() {
@@ -138,14 +174,14 @@ impl<Cont> GgswLevelMatrix<Cont> {
     /// }
     /// assert_eq!(level_matrix.row_iter().count(), 7);
     /// ```
-    pub fn row_iter(&self) -> impl Iterator<Item = GgswLevelRow<&[<Self as AsRefTensor>::Element]>>
+    pub fn row_iter(&self) -> impl Iterator<Item = GlevListLevelRow<&[<Self as AsRefTensor>::Element]>>
     where
         Self: AsRefTensor,
     {
         self.as_tensor()
             .subtensor_iter(self.poly_size.0 * self.glwe_size.0)
             .map(move |tens| {
-                GgswLevelRow::from_container(tens.into_container(), self.poly_size, self.level)
+                GlevListLevelRow::from_container(tens.into_container(), self.poly_size, self.level)
             })
     }
 
@@ -155,13 +191,15 @@ impl<Cont> GgswLevelMatrix<Cont> {
     ///
     /// ```rust
     /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
-    /// use concrete_core::commons::crypto::ggsw::GgswLevelMatrix;
+    /// use concrete_core::commons::crypto::glev::GlevListLevelMatrix;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
-    /// let mut level_matrix = GgswLevelMatrix::from_container(
+    /// use concrete_core::prelude::GlevCount;
+    /// let mut level_matrix = GlevListLevelMatrix::from_container(
     ///     vec![0 as u8; 10 * 7 * 7],
     ///     PolynomialSize(10),
     ///     GlweSize(7),
+    ///     GlevCount(7),
     ///     DecompositionLevel(1),
     /// );
     /// for mut row in level_matrix.row_iter_mut() {
@@ -172,7 +210,7 @@ impl<Cont> GgswLevelMatrix<Cont> {
     /// ```
     pub fn row_iter_mut(
         &mut self,
-    ) -> impl Iterator<Item = GgswLevelRow<&mut [<Self as AsRefTensor>::Element]>>
+    ) -> impl Iterator<Item = GlevListLevelRow<&mut [<Self as AsRefTensor>::Element]>>
     where
         Self: AsMutTensor,
     {
@@ -181,7 +219,7 @@ impl<Cont> GgswLevelMatrix<Cont> {
         let level = self.level;
         self.as_mut_tensor()
             .subtensor_iter_mut(chunks_size)
-            .map(move |tens| GgswLevelRow::from_container(tens.into_container(), poly_size, level))
+            .map(move |tens| GlevListLevelRow::from_container(tens.into_container(), poly_size, level))
     }
 
     /// Returns a parallel iterator over the mutably borrowed rows of the matrix.
@@ -195,14 +233,16 @@ impl<Cont> GgswLevelMatrix<Cont> {
     ///
     /// ```rust
     /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
-    /// use concrete_core::commons::crypto::ggsw::GgswLevelMatrix;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
     /// use rayon::iter::ParallelIterator;
-    /// let mut level_matrix = GgswLevelMatrix::from_container(
+    /// use concrete_core::commons::crypto::glev::GlevListLevelMatrix;
+    /// use concrete_core::prelude::GlevCount;
+    /// let mut level_matrix = GlevListLevelMatrix::from_container(
     ///     vec![0 as u8; 10 * 7 * 7],
     ///     PolynomialSize(10),
     ///     GlweSize(7),
+    ///     GlevCount(7),
     ///     DecompositionLevel(1),
     /// );
     /// level_matrix.par_row_iter_mut().for_each(|mut row| {
@@ -212,7 +252,7 @@ impl<Cont> GgswLevelMatrix<Cont> {
     #[cfg(feature = "__commons_parallel")]
     pub fn par_row_iter_mut(
         &mut self,
-    ) -> impl IndexedParallelIterator<Item = GgswLevelRow<&mut [<Self as AsRefTensor>::Element]>>
+    ) -> impl IndexedParallelIterator<Item = GlevListLevelRow<&mut [<Self as AsRefTensor>::Element]>>
     where
         Self: AsMutTensor,
         <Self as AsMutTensor>::Element: Send + Sync,
@@ -222,27 +262,26 @@ impl<Cont> GgswLevelMatrix<Cont> {
         let level = self.level;
         self.as_mut_tensor()
             .par_subtensor_iter_mut(chunks_size)
-            .map(move |tens| GgswLevelRow::from_container(tens.into_container(), poly_size, level))
+            .map(move |tens| GlevListLevelRow::from_container(tens.into_container(), poly_size, level))
     }
 }
 
-/// A row of a GGSW level matrix.
-pub struct GgswLevelRow<Cont> {
+/// A row of a Glev list level matrix (each rwo is a GLWE ciphertext).
+pub struct GlevListLevelRow<Cont> {
     tensor: Tensor<Cont>,
     poly_size: PolynomialSize,
     level: DecompositionLevel,
 }
 
-tensor_traits!(GgswLevelRow);
+tensor_traits!(GlevListLevelRow);
 
-impl<Cont> GgswLevelRow<Cont> {
-    /// Creates an Rgsw level row from an arbitrary container.
+impl<Cont> GlevListLevelRow<Cont> {
+    /// Creates a Glev list level row from an arbitrary container.
     ///
     /// # Example
     ///
     /// ```rust
     /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
-    /// use concrete_core::commons::crypto::ggsw::GgswLevelRow;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
     /// let level_row = GgswLevelRow::from_container(
     ///     vec![0 as u8; 10 * 7],
@@ -259,7 +298,7 @@ impl<Cont> GgswLevelRow<Cont> {
     {
         let tensor = Tensor::from_container(cont);
         ck_dim_div!(tensor.len() => poly_size.0);
-        GgswLevelRow {
+        GlevListLevelRow {
             tensor,
             poly_size,
             level,
@@ -272,7 +311,6 @@ impl<Cont> GgswLevelRow<Cont> {
     ///
     /// ```rust
     /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
-    /// use concrete_core::commons::crypto::ggsw::GgswLevelRow;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
     /// let level_row = GgswLevelRow::from_container(
     ///     vec![0 as u8; 10 * 7],
@@ -295,7 +333,6 @@ impl<Cont> GgswLevelRow<Cont> {
     ///
     /// ```rust
     /// use concrete_commons::parameters::PolynomialSize;
-    /// use concrete_core::commons::crypto::ggsw::GgswLevelRow;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
     /// let level_row = GgswLevelRow::from_container(
     ///     vec![0 as u8; 10 * 7],
@@ -314,7 +351,6 @@ impl<Cont> GgswLevelRow<Cont> {
     ///
     /// ```rust
     /// use concrete_commons::parameters::PolynomialSize;
-    /// use concrete_core::commons::crypto::ggsw::GgswLevelRow;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
     /// let level_row = GgswLevelRow::from_container(
     ///     vec![0 as u8; 10 * 7],
@@ -333,7 +369,6 @@ impl<Cont> GgswLevelRow<Cont> {
     ///
     /// ```rust
     /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
-    /// use concrete_core::commons::crypto::ggsw::GgswLevelRow;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
     /// let level_row = GgswLevelRow::from_container(
     ///     vec![0 as u8; 10 * 7],

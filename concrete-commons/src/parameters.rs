@@ -192,3 +192,9 @@ pub struct ModulusSwitchOffset(pub usize);
 #[derive(Debug, PartialEq, Eq, Copy, Clone, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 pub struct ScalingFactor(pub u64);
+
+/// The number of Glevs in a Glev list.
+#[derive(Debug, PartialEq, Eq, Ord, PartialOrd, Copy, Clone)]
+#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+pub struct GlevCount(pub usize);
+

@@ -7,8 +7,6 @@ use crate::commons::math::tensor::{
 };
 use crate::commons::math::torus::UnsignedTorus;
 
-use super::GgswLevelMatrix;
-
 use concrete_commons::numeric::Numeric;
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
@@ -17,6 +15,8 @@ use concrete_commons::parameters::{
 use rayon::{iter::IndexedParallelIterator, prelude::*};
 #[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
+use crate::commons::crypto::glev::GlevListLevelMatrix;
+use crate::prelude::GlevCount;
 
 /// A GGSW ciphertext.
 #[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
@@ -345,7 +345,7 @@ impl<Cont> StandardGgswCiphertext<Cont> {
     /// ```
     pub fn level_matrix_iter(
         &self,
-    ) -> impl DoubleEndedIterator<Item = GgswLevelMatrix<&[<Self as AsRefTensor>::Element]>>
+    ) -> impl DoubleEndedIterator<Item = GlevListLevelMatrix<&[<Self as AsRefTensor>::Element]>>
     where
         Self: AsRefTensor,
     {
@@ -356,10 +356,11 @@ impl<Cont> StandardGgswCiphertext<Cont> {
             .subtensor_iter(chunks_size)
             .enumerate()
             .map(move |(index, tensor)| {
-                GgswLevelMatrix::from_container(
+                GlevListLevelMatrix::from_container(
                     tensor.into_container(),
                     poly_size,
                     rlwe_size,
+                    GlevCount(rlwe_size.0),
                     DecompositionLevel(index + 1),
                 )
             })
@@ -398,7 +399,7 @@ impl<Cont> StandardGgswCiphertext<Cont> {
     /// ```
     pub fn level_matrix_iter_mut(
         &mut self,
-    ) -> impl DoubleEndedIterator<Item = GgswLevelMatrix<&mut [<Self as AsRefTensor>::Element]>>
+    ) -> impl DoubleEndedIterator<Item = GlevListLevelMatrix<&mut [<Self as AsRefTensor>::Element]>>
     where
         Self: AsMutTensor,
     {
@@ -409,10 +410,11 @@ impl<Cont> StandardGgswCiphertext<Cont> {
             .subtensor_iter_mut(chunks_size)
             .enumerate()
             .map(move |(index, tensor)| {
-                GgswLevelMatrix::from_container(
+                GlevListLevelMatrix::from_container(
                     tensor.into_container(),
                     poly_size,
                     rlwe_size,
+                    GlevCount(rlwe_size.0),
                     DecompositionLevel(index + 1),
                 )
             })
@@ -452,7 +454,7 @@ impl<Cont> StandardGgswCiphertext<Cont> {
     #[cfg(feature = "__commons_parallel")]
     pub fn par_level_matrix_iter_mut(
         &mut self,
-    ) -> impl IndexedParallelIterator<Item = GgswLevelMatrix<&mut [<Self as AsRefTensor>::Element]>>
+    ) -> impl IndexedParallelIterator<Item = GlevListLevelMatrix<&mut [<Self as AsRefTensor>::Element]>>
     where
         Self: AsMutTensor,
         <Self as AsMutTensor>::Element: Sync + Send,
@@ -464,10 +466,11 @@ impl<Cont> StandardGgswCiphertext<Cont> {
             .par_subtensor_iter_mut(chunks_size)
             .enumerate()
             .map(move |(index, tensor)| {
-                GgswLevelMatrix::from_container(
+                GlevListLevelMatrix::from_container(
                     tensor.into_container(),
                     poly_size,
                     rlwe_size,
+                    GlevCount(rlwe_size.0),
                     DecompositionLevel(index + 1),
                 )
             })
