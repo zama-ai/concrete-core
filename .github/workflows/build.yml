@@ -15,9 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install Fftw
-        if: ${{ !cancelled() }}
-        run: sudo apt-get install -y libfftw3-dev
       - name: Build debug
         if: ${{ !cancelled() }}
         run: cargo xtask build_debug_crates
@@ -32,9 +29,6 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install Fftw
-        if: ${{ !cancelled() }}
-        run: brew install fftw
       - name: Build debug
         if: ${{ !cancelled() }}
         run: cargo xtask build_debug_crates
