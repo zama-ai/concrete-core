@@ -1,17 +1,19 @@
 //! A module containing the [engines](crate::specification::engines) exposed by the default backend.
 
-use std::error::Error;
-use std::fmt::{Display, Formatter};
-
-use concrete_csprng::generators::SoftwareRandomGenerator;
-use concrete_csprng::seeders::Seeder;
-
 use crate::commons::crypto::secret::generators::{
     EncryptionRandomGenerator as ImplEncryptionRandomGenerator,
     SecretRandomGenerator as ImplSecretRandomGenerator,
 };
 use crate::specification::engines::sealed::AbstractEngineSeal;
 use crate::specification::engines::AbstractEngine;
+use concrete_csprng::seeders::Seeder;
+use std::error::Error;
+use std::fmt::{Display, Formatter};
+
+#[cfg(not(feature = "backend_default_aesni"))]
+type ActivatedRandomGenerator = concrete_csprng::generators::SoftwareRandomGenerator;
+#[cfg(feature = "backend_default_aesni")]
+type ActivatedRandomGenerator = concrete_csprng::generators::AesniRandomGenerator;
 
 /// The error which can occur in the execution of FHE operations, due to the default implementation.
 ///
@@ -31,8 +33,8 @@ impl Display for DefaultError {
 impl Error for DefaultError {}
 
 pub struct DefaultEngine {
-    secret_generator: ImplSecretRandomGenerator<SoftwareRandomGenerator>,
-    encryption_generator: ImplEncryptionRandomGenerator<SoftwareRandomGenerator>,
+    secret_generator: ImplSecretRandomGenerator<ActivatedRandomGenerator>,
+    encryption_generator: ImplEncryptionRandomGenerator<ActivatedRandomGenerator>,
 }
 
 impl AbstractEngineSeal for DefaultEngine {}

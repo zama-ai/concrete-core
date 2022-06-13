@@ -36,6 +36,9 @@ doc = []
 backend_default = [
     "concrete-csprng/generator_soft"
 ]
+backend_default_aesni = [
+    "concrete-csprng/generator_x86_64_aesni"
+]
 
 # An accelerated backend, using the `fftw` library.
 backend_fftw = [
