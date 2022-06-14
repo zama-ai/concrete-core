@@ -5,6 +5,6 @@ Summary
    :maxdepth: 2
 
    User Guide <user/introduction.md>
-   API <api/backends.md>
+   API <api/index.rst>
    Developer <dev/index.rst>
 
