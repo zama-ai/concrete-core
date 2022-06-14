@@ -62,7 +62,7 @@ impl AbstractEngine for DefaultEngine {
 }
 
 #[cfg(feature = "parallel")]
-pub mod parallel {
+mod parallel {
     use std::error::Error;
     use std::fmt::{Display, Formatter};
 
@@ -120,6 +120,8 @@ pub mod parallel {
         }
     }
 }
+#[cfg(feature = "parallel")]
+pub use parallel::*;
 
 mod cleartext_creation;
 mod cleartext_discarding_retrieval;

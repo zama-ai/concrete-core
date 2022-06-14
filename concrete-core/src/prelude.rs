@@ -5,8 +5,6 @@ pub use super::specification::engines::*;
 pub use super::specification::entities::*;
 
 // --------------------------------------------------------------------------------- DEFAULT BACKEND
-#[cfg(all(feature = "backend_default", feature = "parallel"))]
-pub use super::backends::default::engines::parallel::*;
 #[cfg(feature = "backend_default")]
 pub use super::backends::default::engines::*;
 #[cfg(feature = "backend_default")]
