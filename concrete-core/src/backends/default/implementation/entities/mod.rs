@@ -25,6 +25,7 @@ mod lwe_seeded_keyswitch_key;
 mod packing_keyswitch_key;
 mod plaintext;
 mod plaintext_vector;
+mod private_functional_packing_keyswitch_key;
 
 pub use cleartext::*;
 pub use cleartext_vector::*;
@@ -50,3 +51,4 @@ pub use lwe_seeded_keyswitch_key::*;
 pub use packing_keyswitch_key::*;
 pub use plaintext::*;
 pub use plaintext_vector::*;
+pub use private_functional_packing_keyswitch_key::*;

@@ -489,6 +489,82 @@ where
     Variance::from_modular_variance::<T>(res_1 + res_2 + res_3 + res_4)
 }
 
+/// Computes the dispersion of the constant terms of a GLWE after an LWE
+/// to GLWE private functional keyswitch.
+/// # Example
+/// ```rust
+/// use concrete_commons::dispersion::Variance;
+/// use concrete_commons::key_kinds::BinaryKeyKind;
+/// use concrete_commons::parameters::{
+///     DecompositionBaseLog, DecompositionLevelCount, LweDimension,
+/// };
+/// use concrete_npe::estimate_private_functional_keyswitch_noise_lwe_to_glwe_with_constant_terms;
+/// let lwe_mask_size = LweDimension(630);
+/// let l_ks = DecompositionLevelCount(4);
+/// let base_log = DecompositionBaseLog(7);
+/// let dispersion_lwe = Variance(2_f64.powi(-38));
+/// let dispersion_ks = Variance(2_f64.powi(-40));
+/// let function_lipschitz_bound = 10.;
+/// let var_ks = estimate_private_functional_keyswitch_noise_lwe_to_glwe_with_constant_terms::<
+///     u64,
+///     _,
+///     _,
+///     BinaryKeyKind,
+/// >(
+///     lwe_mask_size,
+///     dispersion_lwe,
+///     dispersion_ks,
+///     base_log,
+///     l_ks,
+///     function_lipschitz_bound,
+/// );
+/// ```
+pub fn estimate_private_functional_keyswitch_noise_lwe_to_glwe_with_constant_terms<T, D1, D2, K>(
+    lwe_mask_size: LweDimension,
+    dispersion_lwe: D1,
+    dispersion_ksk: D2,
+    base_log: DecompositionBaseLog,
+    level: DecompositionLevelCount,
+    function_lipschitz_bound: f64,
+) -> Variance
+where
+    T: UnsignedInteger,
+    D1: DispersionParameter,
+    D2: DispersionParameter,
+    K: KeyDispersion,
+{
+    let n = lwe_mask_size.0 as f64;
+    let base = 2_f64.powi(base_log.0 as i32);
+    let b2l = 2_f64.powi((base_log.0 * 2 * level.0) as i32);
+    let q_square = 2_f64.powi((2 * T::BITS) as i32);
+    let r2 = square(function_lipschitz_bound);
+
+    // res 1
+    let res_1 = r2 * dispersion_lwe.get_modular_variance::<T>();
+
+    // res 2
+    let res_2 = r2
+        * n
+        * (q_square / (12. * b2l) - 1. / 12.)
+        * (K::variance_key_coefficient::<T>().get_modular_variance::<T>()
+            + square(K::expectation_key_coefficient()));
+
+    // res 3
+    let res_3 = r2 * n / 4. * K::variance_key_coefficient::<T>().get_modular_variance::<T>();
+
+    // res 4
+    let res_4 = r2 * (q_square / (12. * b2l) - 1. / 12.);
+
+    // res 5
+    let res_5 = (n + 1.)
+        * (level.0 as f64)
+        * dispersion_ksk.get_modular_variance::<T>()
+        * (square(base) + 2.)
+        / 12.;
+
+    Variance::from_modular_variance::<T>(res_1 + res_2 + res_3 + res_4 + res_5)
+}
+
 /// Computes the dispersion of the non-constant GLWE terms after an LWE to GLWE keyswitch.
 /// # Example
 /// ```rust
