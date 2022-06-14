@@ -2,11 +2,10 @@ use crate::commons::crypto::lwe::LweKeyswitchKey as ImplLweKeyswitchKey;
 use crate::specification::entities::markers::{BinaryKeyDistribution, LweKeyswitchKeyKind};
 use crate::specification::entities::{AbstractEntity, LweKeyswitchKeyEntity};
 use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
-#[cfg(feature = "serde_serialize")]
+#[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 
 /// A structure representing an LWE keyswitch key with 32 bits of precision.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LweKeyswitchKey32(pub(crate) ImplLweKeyswitchKey<Vec<u32>>);
 impl AbstractEntity for LweKeyswitchKey32 {
@@ -33,8 +32,15 @@ impl LweKeyswitchKeyEntity for LweKeyswitchKey32 {
     }
 }
 
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum LweKeyswitchKey32Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
+}
+
 /// A structure representing an LWE keyswitch key with 64 bits of precision.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LweKeyswitchKey64(pub(crate) ImplLweKeyswitchKey<Vec<u64>>);
 impl AbstractEntity for LweKeyswitchKey64 {
@@ -59,4 +65,12 @@ impl LweKeyswitchKeyEntity for LweKeyswitchKey64 {
     fn decomposition_base_log(&self) -> DecompositionBaseLog {
         self.0.decomposition_base_log()
     }
+}
+
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum LweKeyswitchKey64Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
 }

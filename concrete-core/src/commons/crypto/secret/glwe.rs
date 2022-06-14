@@ -22,13 +22,13 @@ use concrete_commons::numeric::Numeric;
 use concrete_commons::parameters::{GlweDimension, PlaintextCount, PolynomialSize};
 #[cfg(feature = "__commons_parallel")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
-#[cfg(feature = "serde_serialize")]
+#[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
 use std::marker::PhantomData;
 use std::ops::Add;
 
 /// A GLWE secret key
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GlweSecretKey<Kind, Container>
 where

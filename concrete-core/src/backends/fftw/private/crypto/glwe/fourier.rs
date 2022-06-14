@@ -1,7 +1,3 @@
-use concrete_fftw::array::AlignedVec;
-#[cfg(feature = "serde_serialize")]
-use serde::{Deserialize, Serialize};
-
 use crate::backends::fftw::private::crypto::bootstrap::FourierBuffers;
 use crate::backends::fftw::private::math::fft::{Complex64, FourierPolynomial};
 use crate::commons::crypto::glwe::GlweCiphertext;
@@ -10,9 +6,12 @@ use crate::commons::math::tensor::{
 };
 use crate::commons::math::torus::UnsignedTorus;
 use concrete_commons::parameters::{GlweSize, PolynomialSize};
+use concrete_fftw::array::AlignedVec;
+#[cfg(feature = "backend_fftw_serialization")]
+use serde::{Deserialize, Serialize};
 
 /// A GLWE ciphertext in the Fourier Domain.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "backend_fftw_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FourierGlweCiphertext<Cont, Scalar> {
     tensor: Tensor<Cont>,

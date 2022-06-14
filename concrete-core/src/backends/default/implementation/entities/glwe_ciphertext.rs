@@ -1,15 +1,11 @@
-#[cfg(feature = "serde_serialize")]
-use serde::{Deserialize, Serialize};
-
-use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-
+use crate::commons::crypto::glwe::GlweCiphertext as ImplGlweCiphertext;
 use crate::specification::entities::markers::{BinaryKeyDistribution, GlweCiphertextKind};
 use crate::specification::entities::{AbstractEntity, GlweCiphertextEntity};
-
-use crate::commons::crypto::glwe::GlweCiphertext as ImplGlweCiphertext;
+use concrete_commons::parameters::{GlweDimension, PolynomialSize};
+#[cfg(feature = "backend_default_serialization")]
+use serde::{Deserialize, Serialize};
 
 /// A structure representing a GLWE ciphertext with 32 bits of precision.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GlweCiphertext32(pub(crate) ImplGlweCiphertext<Vec<u32>>);
 
@@ -29,8 +25,15 @@ impl GlweCiphertextEntity for GlweCiphertext32 {
     }
 }
 
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum GlweCiphertext32Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
+}
+
 /// A structure representing a GLWE ciphertext with 64 bits of precision.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GlweCiphertext64(pub(crate) ImplGlweCiphertext<Vec<u64>>);
 
@@ -50,6 +53,14 @@ impl GlweCiphertextEntity for GlweCiphertext64 {
     }
 }
 
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum GlweCiphertext64Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
+}
+
 // GlweCiphertextViews are just GlweCiphertext entities that do not own their memory, they use a
 // slice as a container as opposed to Vec for the standard GlweCiphertext
 
@@ -61,7 +72,6 @@ impl GlweCiphertextEntity for GlweCiphertext64 {
 /// ------
 /// This view is not Clone as Clone for a slice is not defined. It is not Deserialize either,
 /// as Deserialize of a slice is not defined. Immutable variant.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize))]
 #[derive(Debug, PartialEq, Eq)]
 pub struct GlweCiphertextView32<'a>(pub(crate) ImplGlweCiphertext<&'a [u32]>);
 impl AbstractEntity for GlweCiphertextView32<'_> {
@@ -88,7 +98,6 @@ impl GlweCiphertextEntity for GlweCiphertextView32<'_> {
 /// ------
 /// This view is not Clone as Clone for a slice is not defined. It is not Deserialize either,
 /// as Deserialize of a slice is not defined. Mutable variant.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize))]
 #[derive(Debug, PartialEq, Eq)]
 pub struct GlweCiphertextMutView32<'a>(pub(crate) ImplGlweCiphertext<&'a mut [u32]>);
 impl AbstractEntity for GlweCiphertextMutView32<'_> {
@@ -115,7 +124,6 @@ impl GlweCiphertextEntity for GlweCiphertextMutView32<'_> {
 /// ------
 /// This view is not Clone as Clone for a slice is not defined. It is not Deserialize either,
 /// as Deserialize of a slice is not defined. Immutable variant.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize))]
 #[derive(Debug, PartialEq, Eq)]
 pub struct GlweCiphertextView64<'a>(pub(crate) ImplGlweCiphertext<&'a [u64]>);
 
@@ -143,7 +151,6 @@ impl GlweCiphertextEntity for GlweCiphertextView64<'_> {
 /// ------
 /// This view is not Clone as Clone for a slice is not defined. It is not Deserialize either,
 /// as Deserialize of a slice is not defined. Mutable variant.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize))]
 #[derive(Debug, PartialEq, Eq)]
 pub struct GlweCiphertextMutView64<'a>(pub(crate) ImplGlweCiphertext<&'a mut [u64]>);
 

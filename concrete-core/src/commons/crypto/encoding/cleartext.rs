@@ -1,12 +1,16 @@
 use crate::commons::math::tensor::{ck_dim_div, tensor_traits, AsMutTensor, AsRefTensor, Tensor};
 use concrete_commons::numeric::Numeric;
 use concrete_commons::parameters::CleartextCount;
+#[cfg(feature = "__commons_serialization")]
+use serde::{Deserialize, Serialize};
 
 /// A clear, non-encoded, value.
+#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct Cleartext<T: Numeric>(pub T);
 
 /// A list of clear, non-encoded, values.
+#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CleartextList<Cont> {
     tensor: Tensor<Cont>,

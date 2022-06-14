@@ -2,6 +2,8 @@ use crate::commons::crypto::encoding::CleartextList as ImplCleartextList;
 use crate::specification::entities::markers::CleartextVectorKind;
 use crate::specification::entities::{AbstractEntity, CleartextVectorEntity};
 use concrete_commons::parameters::CleartextCount;
+#[cfg(feature = "backend_default_serialization")]
+use serde::{Deserialize, Serialize};
 
 /// A structure representing a vector of cleartexts with 32 bits of precision.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -15,6 +17,14 @@ impl CleartextVectorEntity for CleartextVector32 {
     }
 }
 
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum CleartextVector32Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
+}
+
 /// A structure representing a vector of cleartexts with 64 bits of precision.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CleartextVector64(pub(crate) ImplCleartextList<Vec<u64>>);
@@ -25,4 +35,12 @@ impl CleartextVectorEntity for CleartextVector64 {
     fn cleartext_count(&self) -> CleartextCount {
         self.0.count()
     }
+}
+
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum CleartextVector64Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
 }

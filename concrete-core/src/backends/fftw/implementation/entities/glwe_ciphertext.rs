@@ -1,16 +1,13 @@
-use concrete_fftw::array::AlignedVec;
-#[cfg(feature = "serde_serialize")]
-use serde::{Deserialize, Serialize};
-
 use crate::backends::fftw::private::crypto::glwe::FourierGlweCiphertext;
 use crate::backends::fftw::private::math::fft::Complex64;
-use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-
 use crate::specification::entities::markers::{BinaryKeyDistribution, GlweCiphertextKind};
 use crate::specification::entities::{AbstractEntity, GlweCiphertextEntity};
+use concrete_commons::parameters::{GlweDimension, PolynomialSize};
+use concrete_fftw::array::AlignedVec;
+#[cfg(feature = "backend_fftw_serialization")]
+use serde::{Deserialize, Serialize};
 
 /// A structure representing a Fourier GLWE ciphertext with 32 bits of precision.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct FftwFourierGlweCiphertext32(
     pub(crate) FourierGlweCiphertext<AlignedVec<Complex64>, u32>,
@@ -30,8 +27,15 @@ impl GlweCiphertextEntity for FftwFourierGlweCiphertext32 {
     }
 }
 
+#[cfg(feature = "backend_fftw_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum FftwFourierGlweCiphertext32Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
+}
+
 /// A structure representing a Fourier GLWE ciphertext with 64 bits of precision.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct FftwFourierGlweCiphertext64(
     pub(crate) FourierGlweCiphertext<AlignedVec<Complex64>, u64>,
@@ -49,4 +53,12 @@ impl GlweCiphertextEntity for FftwFourierGlweCiphertext64 {
     fn polynomial_size(&self) -> PolynomialSize {
         self.0.polynomial_size()
     }
+}
+
+#[cfg(feature = "backend_fftw_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum FftwFourierGlweCiphertext64Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
 }

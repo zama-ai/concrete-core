@@ -3,11 +3,10 @@ use crate::specification::entities::markers::{BinaryKeyDistribution, GlweSecretK
 use crate::specification::entities::{AbstractEntity, GlweSecretKeyEntity};
 use concrete_commons::key_kinds::BinaryKeyKind;
 use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-#[cfg(feature = "serde_serialize")]
+#[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 
 /// A structure representing a GLWE secret key with 32 bits of precision.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GlweSecretKey32(pub(crate) ImpGlweSecretKey<BinaryKeyKind, Vec<u32>>);
 impl AbstractEntity for GlweSecretKey32 {
@@ -25,8 +24,15 @@ impl GlweSecretKeyEntity for GlweSecretKey32 {
     }
 }
 
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum GlweSecretKey32Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
+}
+
 /// A structure representing a GLWE secret key with 64 bits of precision.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GlweSecretKey64(pub(crate) ImpGlweSecretKey<BinaryKeyKind, Vec<u64>>);
 impl AbstractEntity for GlweSecretKey64 {
@@ -42,4 +48,12 @@ impl GlweSecretKeyEntity for GlweSecretKey64 {
     fn polynomial_size(&self) -> PolynomialSize {
         self.0.polynomial_size()
     }
+}
+
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum GlweSecretKey64Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
 }

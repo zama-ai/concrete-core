@@ -4,6 +4,8 @@ use crate::specification::entities::{AbstractEntity, LweBootstrapKeyEntity};
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
 };
+#[cfg(feature = "backend_default_serialization")]
+use serde::{Deserialize, Serialize};
 
 /// A structure representing an LWE bootstrap key with 32 bits of precision.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -36,6 +38,14 @@ impl LweBootstrapKeyEntity for LweBootstrapKey32 {
     }
 }
 
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum LweBootstrapKey32Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
+}
+
 /// A structure representing an LWE bootstrap key with 64 bits of precision.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LweBootstrapKey64(pub(crate) ImplStandardBootstrapKey<Vec<u64>>);
@@ -65,4 +75,12 @@ impl LweBootstrapKeyEntity for LweBootstrapKey64 {
     fn decomposition_level_count(&self) -> DecompositionLevelCount {
         self.0.level_count()
     }
+}
+
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum LweBootstrapKey64Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
 }

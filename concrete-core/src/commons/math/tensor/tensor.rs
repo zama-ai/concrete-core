@@ -7,7 +7,7 @@ use std::slice::SliceIndex;
 
 #[cfg(feature = "__commons_parallel")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
-#[cfg(feature = "serde_serialize")]
+#[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
 
 use concrete_commons::numeric::{CastFrom, UnsignedInteger};
@@ -28,7 +28,7 @@ use super::{AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor};
 /// operation.
 /// + Methods prefixed with `fill_with` discard the current vales of `self`, and overwrite it with
 /// the result of an operation on other values.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(PartialEq, Eq, Debug, Clone)]
 #[repr(transparent)]
 pub struct Tensor<Container: ?Sized>(Container);

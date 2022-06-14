@@ -1,17 +1,3 @@
-use std::marker::PhantomData;
-
-#[cfg(feature = "__commons_parallel")]
-use rayon::{iter::IndexedParallelIterator, prelude::*};
-#[cfg(feature = "serde_serialize")]
-use serde::{Deserialize, Serialize};
-
-use concrete_commons::dispersion::DispersionParameter;
-use concrete_commons::key_kinds::{
-    BinaryKeyKind, GaussianKeyKind, KeyKind, TernaryKeyKind, UniformKeyKind,
-};
-use concrete_commons::numeric::Numeric;
-use concrete_commons::parameters::LweDimension;
-
 use crate::commons::crypto::encoding::{Plaintext, PlaintextList};
 use crate::commons::crypto::gsw::GswCiphertext;
 use crate::commons::crypto::lwe::{LweCiphertext, LweList};
@@ -25,9 +11,20 @@ use crate::commons::math::tensor::{
     ck_dim_eq, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, IntoTensor, Tensor,
 };
 use crate::commons::math::torus::UnsignedTorus;
+use concrete_commons::dispersion::DispersionParameter;
+use concrete_commons::key_kinds::{
+    BinaryKeyKind, GaussianKeyKind, KeyKind, TernaryKeyKind, UniformKeyKind,
+};
+use concrete_commons::numeric::Numeric;
+use concrete_commons::parameters::LweDimension;
+#[cfg(feature = "__commons_parallel")]
+use rayon::{iter::IndexedParallelIterator, prelude::*};
+#[cfg(feature = "__commons_serialization")]
+use serde::{Deserialize, Serialize};
+use std::marker::PhantomData;
 
 /// A LWE secret key.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LweSecretKey<Kind, Cont>
 where

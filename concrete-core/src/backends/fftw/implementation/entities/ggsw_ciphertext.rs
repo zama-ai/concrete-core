@@ -6,6 +6,8 @@ use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
 };
 use concrete_fftw::array::AlignedVec;
+#[cfg(feature = "backend_fftw_serialization")]
+use serde::{Deserialize, Serialize};
 
 /// A structure representing a GGSW ciphertext with 64 bits of precision in the Fourier domain.
 /// Note: The name `FftwFourierGgswCiphertext64` refers to the bit size of the coefficients in the
@@ -38,6 +40,14 @@ impl GgswCiphertextEntity for FftwFourierGgswCiphertext64 {
     }
 }
 
+#[cfg(feature = "backend_fftw_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum FftwFourierGgswCiphertext64Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
+}
+
 /// A structure representing a GGSW ciphertext with 32 bits of precision in the Fourier domain.
 /// Note: The name `FftwFourierGgswCiphertext32` refers to the bit size of the coefficients in the
 /// standard domain. Complex coefficients (eg in the Fourier domain) are always represented on 64
@@ -67,4 +77,12 @@ impl GgswCiphertextEntity for FftwFourierGgswCiphertext32 {
     fn decomposition_base_log(&self) -> DecompositionBaseLog {
         self.0.decomposition_base_log()
     }
+}
+
+#[cfg(feature = "backend_fftw_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum FftwFourierGgswCiphertext32Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
 }

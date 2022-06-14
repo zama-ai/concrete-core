@@ -2,6 +2,8 @@ use crate::commons::crypto::encoding::PlaintextList as ImplPlaintextList;
 use crate::specification::entities::markers::PlaintextVectorKind;
 use crate::specification::entities::{AbstractEntity, PlaintextVectorEntity};
 use concrete_commons::parameters::PlaintextCount;
+#[cfg(feature = "backend_default_serialization")]
+use serde::{Deserialize, Serialize};
 
 /// A structure representing a vector of plaintexts with 32 bits of precision.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -15,6 +17,14 @@ impl PlaintextVectorEntity for PlaintextVector32 {
     }
 }
 
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum PlaintextVector32Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
+}
+
 /// A structure representing a vector of plaintexts with 64 bits of precision.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PlaintextVector64(pub(crate) ImplPlaintextList<Vec<u64>>);
@@ -25,4 +35,12 @@ impl PlaintextVectorEntity for PlaintextVector64 {
     fn plaintext_count(&self) -> PlaintextCount {
         self.0.count()
     }
+}
+
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum PlaintextVector64Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
 }

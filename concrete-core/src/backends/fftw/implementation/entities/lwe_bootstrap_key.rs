@@ -6,11 +6,10 @@ use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
 };
 use concrete_fftw::array::AlignedVec;
-#[cfg(feature = "serde_serialize")]
+#[cfg(feature = "backend_fftw_serialization")]
 use serde::{Deserialize, Serialize};
 
 /// A structure representing an LWE bootstrap key with 32 bits of precision, in the fourier domain.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct FftwFourierLweBootstrapKey32(pub(crate) FourierBootstrapKey<AlignedVec<Complex64>, u32>);
 impl AbstractEntity for FftwFourierLweBootstrapKey32 {
@@ -41,8 +40,15 @@ impl LweBootstrapKeyEntity for FftwFourierLweBootstrapKey32 {
     }
 }
 
+#[cfg(feature = "backend_fftw_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum FftwFourierLweBootstrapKey32Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
+}
+
 /// A structure representing an LWE bootstrap key with 64 bits of precision, in the fourier domain.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct FftwFourierLweBootstrapKey64(pub(crate) FourierBootstrapKey<AlignedVec<Complex64>, u64>);
 impl AbstractEntity for FftwFourierLweBootstrapKey64 {
@@ -71,4 +77,12 @@ impl LweBootstrapKeyEntity for FftwFourierLweBootstrapKey64 {
     fn decomposition_level_count(&self) -> DecompositionLevelCount {
         self.0.level_count()
     }
+}
+
+#[cfg(feature = "backend_fftw_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum FftwFourierLweBootstrapKey64Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
 }
