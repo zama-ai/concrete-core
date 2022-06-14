@@ -1,5 +1,5 @@
 use crate::cmd;
-use crate::utils::Environment;
+use crate::utils::{get_nightly_toolchain, Environment};
 use std::collections::HashMap;
 use std::io::Error;
 
@@ -12,13 +12,19 @@ lazy_static! {
 }
 
 pub fn doc() -> Result<(), Error> {
-    cmd!(<ENV_DOC_KATEX> "cargo +nightly doc --features=doc --no-deps")
+    cmd!(<ENV_DOC_KATEX> &format!("cargo {} doc --features=doc --no-deps", get_nightly_toolchain()?))
 }
 
 pub fn clippy() -> Result<(), Error> {
-    cmd!("cargo +nightly clippy --all-targets --all-features -- --no-deps -D warnings")
+    cmd!(&format!(
+        "cargo {} clippy --all-targets --all-features -- --no-deps -D warnings",
+        get_nightly_toolchain()?
+    ))
 }
 
 pub fn fmt() -> Result<(), Error> {
-    cmd!("cargo +nightly fmt --all -- --check")
+    cmd!(&format!(
+        "cargo {} fmt --all -- --check",
+        get_nightly_toolchain()?
+    ))
 }

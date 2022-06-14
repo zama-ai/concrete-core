@@ -1,4 +1,4 @@
-use crate::utils::Environment;
+use crate::utils::{get_nightly_toolchain, Environment};
 use crate::{cmd, ENV_TARGET_NATIVE};
 use std::collections::HashMap;
 use std::io::Error;
@@ -47,5 +47,6 @@ pub fn crates() -> Result<(), Error> {
 }
 
 pub fn cov_crates() -> Result<(), Error> {
-    cmd!(<ENV_COVERAGE> "cargo +nightly test --release --no-fail-fast --all-features")
+    cmd!(<ENV_COVERAGE>
+        &format!("cargo {} test --release --no-fail-fast --all-features", get_nightly_toolchain()?))
 }

@@ -35,11 +35,11 @@ lazy_static! {
 
 #[macro_export]
 macro_rules! cmd {
-    ($cmd: literal) => {
-        $crate::utils::execute($cmd, None, Some(&*$crate::ROOT_DIR))
-    };
-    (<$env: ident> $cmd: literal) => {
+    (<$env: ident> $cmd: expr) => {
         $crate::utils::execute($cmd, Some(&*$env), Some(&*$crate::ROOT_DIR))
+    };
+    ($cmd: expr) => {
+        $crate::utils::execute($cmd, None, Some(&*$crate::ROOT_DIR))
     };
 }
 

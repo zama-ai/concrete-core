@@ -1,8 +1,9 @@
+use crate::utils::get_nightly_toolchain;
 use crate::{cmd, format_latex_doc};
 use std::io::Error;
 
 pub fn format() -> Result<(), Error> {
-    cmd!("cargo +nightly fmt")
+    cmd!(&format!("cargo {} fmt", get_nightly_toolchain()?))
 }
 
 pub fn format_latex_doc() -> Result<(), Error> {

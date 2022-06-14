@@ -1,4 +1,4 @@
-use crate::utils::Environment;
+use crate::utils::{get_nightly_toolchain, Environment};
 use crate::{cmd, ENV_TARGET_NATIVE};
 use std::collections::HashMap;
 use std::io::Error;
@@ -50,7 +50,8 @@ pub mod debug {
     }
 
     pub fn doctests() -> Result<(), Error> {
-        cmd!(<ENV_DOCTEST> "cargo +nightly test --doc --all-features")
+        cmd!(<ENV_DOCTEST>
+            &format!("cargo {} test --doc --all-features", get_nightly_toolchain()?))
     }
 }
 
@@ -70,7 +71,8 @@ pub mod release {
     }
 
     pub fn doctests() -> Result<(), Error> {
-        cmd!(<ENV_DOCTEST> "cargo +nightly test --release --doc --all-features")
+        cmd!(<ENV_DOCTEST>
+            &format!("cargo {} test --release --doc --all-features", get_nightly_toolchain()?))
     }
 }
 
@@ -109,9 +111,11 @@ pub mod simd {
 
     pub fn doctests() -> Result<(), Error> {
         if cfg!(target_os = "linux") {
-            cmd!(<ENV_DOCTEST_SIMD> "cargo +nightly test --release --doc --all-features")
+            cmd!(<ENV_DOCTEST_SIMD>
+                &format!("cargo {} test --release --doc --all-features", get_nightly_toolchain()?))
         } else if cfg!(target_os = "macos") {
-            cmd!(<ENV_DOCTEST_NATIVE> "cargo +nightly test --release --doc --all-features")
+            cmd!(<ENV_DOCTEST_NATIVE>
+                &format!("cargo {} test --release --doc --all-features", get_nightly_toolchain()?))
         } else {
             unreachable!()
         }
