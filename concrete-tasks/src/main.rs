@@ -105,7 +105,7 @@ fn main() -> Result<(), std::io::Error> {
         .get_matches();
 
     // We initialize the logger with proper verbosity
-    let verb = if matches.is_present("verbose") {
+    let verb = if matches.contains_id("verbose") {
         LevelFilter::Debug
     } else {
         LevelFilter::Info
@@ -119,7 +119,7 @@ fn main() -> Result<(), std::io::Error> {
     .unwrap();
 
     // We set the dry-run mode if present
-    if matches.is_present("dry-run") {
+    if matches.contains_id("dry-run") {
         DRY_RUN.store(true, Relaxed);
     }
 
