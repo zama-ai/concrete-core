@@ -507,5 +507,8 @@ pub use lwe_bootstrap_key_discarding_conversion::*;
 mod lwe_ciphertext_vector_glwe_ciphertext_discarding_packing_keyswitch;
 pub use lwe_ciphertext_vector_glwe_ciphertext_discarding_packing_keyswitch::*;
 
+mod lwe_ciphertext_vector_glwe_ciphertext_discarding_private_functional_packing_keyswitch;
+pub use lwe_ciphertext_vector_glwe_ciphertext_discarding_private_functional_packing_keyswitch::*;
+
 mod glwe_ciphertext_conversion;
 pub use glwe_ciphertext_conversion::*;

@@ -16,9 +16,14 @@
 //! [`synthesizing`] module, which are all implemented by the [`Maker`] type.
 //!
 //! Of course, we can also go in the reverse direction by _unsynthesizing_ entities into
-//! prototypical ones, and extracting _raw_ outputs. Also, the fixture developer should ensure that
-//! the entities are destroyed after the execution of the engine. Again, this can be done by the
-//! [`Maker`] instance and the `Synthesizes*` traits, which contains functions to destroy data.
+//! prototypical ones, and extracting _raw_ outputs.
+//! Also, the fixture developer should ensure that
+//! the entities are destroyed after the execution of the engine. This is actually only
+//! necessary for views entities, to avoid memory leak, but we don't have any simple way to track
+//! which entities have view implementations, so we have to call functions to destroy the data.
+//! This can be done by the
+//! [`Maker`] instance and the `Synthesizes*` traits, which contains functions to destroy data
+//! (which are empty for all entities that are not actually views).
 use crate::raw::generation::RawUnsignedIntegers;
 use concrete_core::prelude::{AbstractEngine, DefaultEngine, DefaultParallelEngine};
 use concrete_csprng::seeders::UnixSeeder;
