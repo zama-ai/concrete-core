@@ -1,3 +1,13 @@
+use crate::commons::math::tensor::{
+    ck_dim_div, ck_dim_eq, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, IntoTensor, Tensor,
+};
+use crate::commons::utils::{zip, zip_args};
+use concrete_commons::parameters::{
+    DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+};
+
+use concrete_fftw::array::AlignedVec;
+
 use crate::backends::fftw::private::crypto::bootstrap::fourier::FftBuffers;
 use crate::backends::fftw::private::crypto::bootstrap::FourierBuffers;
 use crate::backends::fftw::private::math::fft::{Complex64, FourierPolynomial};
@@ -5,20 +15,12 @@ use crate::commons::crypto::ggsw::{GgswLevelMatrix, StandardGgswCiphertext};
 use crate::commons::crypto::glwe::{GlweCiphertext, GlweList};
 use crate::commons::math::decomposition::{DecompositionLevel, SignedDecomposer};
 use crate::commons::math::polynomial::Polynomial;
-use crate::commons::math::tensor::{
-    ck_dim_div, ck_dim_eq, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, IntoTensor, Tensor,
-};
 use crate::commons::math::torus::UnsignedTorus;
-use crate::commons::utils::{zip, zip_args};
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-};
-use concrete_fftw::array::AlignedVec;
-#[cfg(feature = "serde_serialize")]
+#[cfg(feature = "backend_fftw_serialization")]
 use serde::{Deserialize, Serialize};
 
 /// A GGSW ciphertext in the Fourier Domain.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "backend_fftw_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FourierGgswCiphertext<Cont, Scalar> {
     tensor: Tensor<Cont>,

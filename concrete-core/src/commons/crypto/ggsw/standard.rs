@@ -15,12 +15,11 @@ use concrete_commons::parameters::{
 };
 #[cfg(feature = "__commons_parallel")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
-
-#[cfg(feature = "serde_serialize")]
+#[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
 
 /// A GGSW ciphertext.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct StandardGgswCiphertext<Cont> {
     tensor: Tensor<Cont>,

@@ -4,11 +4,10 @@ use crate::specification::entities::{AbstractEntity, GgswCiphertextEntity};
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
 };
-#[cfg(feature = "serde_serialize")]
+#[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 
 /// A structure representing a GGSW ciphertext with 32 bits of precision.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GgswCiphertext32(pub(crate) ImplStandardGgswCiphertext<Vec<u32>>);
 impl AbstractEntity for GgswCiphertext32 {
@@ -34,8 +33,15 @@ impl GgswCiphertextEntity for GgswCiphertext32 {
     }
 }
 
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum GgswCiphertext32Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
+}
+
 /// A structure representing a GGSW ciphertext with 64 bits of precision.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GgswCiphertext64(pub(crate) ImplStandardGgswCiphertext<Vec<u64>>);
 impl AbstractEntity for GgswCiphertext64 {
@@ -59,4 +65,12 @@ impl GgswCiphertextEntity for GgswCiphertext64 {
     fn decomposition_base_log(&self) -> DecompositionBaseLog {
         self.0.decomposition_base_log()
     }
+}
+
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum GgswCiphertext64Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
 }

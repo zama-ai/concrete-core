@@ -6,11 +6,10 @@ use crate::specification::entities::AbstractEntity;
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension,
 };
-#[cfg(feature = "serde_serialize")]
+#[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 
 /// A structure representing a packing keyswitch key with 32 bits of precision.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PackingKeyswitchKey32(pub(crate) ImplPackingKeyswitchKey<Vec<u32>>);
 impl AbstractEntity for PackingKeyswitchKey32 {
@@ -41,8 +40,15 @@ impl PackingKeyswitchKeyEntity for PackingKeyswitchKey32 {
     }
 }
 
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum PackingKeyswitchKey32Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
+}
+
 /// A structure representing a packing keyswitch key with 64 bits of precision.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PackingKeyswitchKey64(pub(crate) ImplPackingKeyswitchKey<Vec<u64>>);
 impl AbstractEntity for PackingKeyswitchKey64 {
@@ -71,4 +77,12 @@ impl PackingKeyswitchKeyEntity for PackingKeyswitchKey64 {
     fn decomposition_base_log(&self) -> DecompositionBaseLog {
         self.0.decomposition_base_log()
     }
+}
+
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum PackingKeyswitchKey64Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
 }

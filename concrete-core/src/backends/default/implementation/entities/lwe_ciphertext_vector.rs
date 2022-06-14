@@ -1,15 +1,11 @@
-#[cfg(feature = "serde_serialize")]
-use serde::{Deserialize, Serialize};
-
-use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
-
+use crate::commons::crypto::lwe::LweList as ImplLweList;
 use crate::specification::entities::markers::{BinaryKeyDistribution, LweCiphertextVectorKind};
 use crate::specification::entities::{AbstractEntity, LweCiphertextVectorEntity};
-
-use crate::commons::crypto::lwe::LweList as ImplLweList;
+use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
+#[cfg(feature = "backend_default_serialization")]
+use serde::{Deserialize, Serialize};
 
 /// A structure representing a vector of LWE ciphertexts with 32 bits of precision.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LweCiphertextVector32(pub(crate) ImplLweList<Vec<u32>>);
 
@@ -29,8 +25,15 @@ impl LweCiphertextVectorEntity for LweCiphertextVector32 {
     }
 }
 
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum LweCiphertextVector32Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
+}
+
 /// A structure representing a vector of LWE ciphertexts with 64 bits of precision.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LweCiphertextVector64(pub(crate) ImplLweList<Vec<u64>>);
 
@@ -48,4 +51,12 @@ impl LweCiphertextVectorEntity for LweCiphertextVector64 {
     fn lwe_ciphertext_count(&self) -> LweCiphertextCount {
         LweCiphertextCount(self.0.count().0)
     }
+}
+
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum LweCiphertextVector64Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
 }

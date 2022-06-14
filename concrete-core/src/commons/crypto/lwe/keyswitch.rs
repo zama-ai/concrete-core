@@ -1,12 +1,4 @@
-#[cfg(feature = "serde_serialize")]
-use serde::{Deserialize, Serialize};
-
-use concrete_commons::dispersion::DispersionParameter;
-use concrete_commons::key_kinds::BinaryKeyKind;
-use concrete_commons::parameters::{
-    CiphertextCount, DecompositionBaseLog, DecompositionLevelCount, LweDimension, LweSize,
-};
-
+use super::{LweCiphertext, LweList};
 use crate::commons::crypto::encoding::{Plaintext, PlaintextList};
 use crate::commons::crypto::secret::generators::EncryptionRandomGenerator;
 use crate::commons::crypto::secret::LweSecretKey;
@@ -18,8 +10,13 @@ use crate::commons::math::tensor::{
     ck_dim_div, ck_dim_eq, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
 use crate::commons::math::torus::UnsignedTorus;
-
-use super::{LweCiphertext, LweList};
+use concrete_commons::dispersion::DispersionParameter;
+use concrete_commons::key_kinds::BinaryKeyKind;
+use concrete_commons::parameters::{
+    CiphertextCount, DecompositionBaseLog, DecompositionLevelCount, LweDimension, LweSize,
+};
+#[cfg(feature = "__commons_serialization")]
+use serde::{Deserialize, Serialize};
 
 /// An Lwe Keyswithing key.
 ///
@@ -32,7 +29,7 @@ use super::{LweCiphertext, LweList};
 /// The keyswitch key will be composed of $m$ encryptions of each bits of the $s_{out}$ key, under
 /// the key $s_{in}$; encryptions which will be stored as their decomposition over a given basis
 /// $B_{ks}\in\mathbb{N}$, up to a level $l_{ks}\in\mathbb{N}$.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LweKeyswitchKey<Cont> {
     tensor: Tensor<Cont>,
@@ -581,7 +578,7 @@ impl<Cont> LweKeyswitchKey<Cont> {
 }
 
 /// The encryption of a single bit of the output key.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, PartialEq)]
 pub(crate) struct LweKeyBitDecomposition<Cont> {
     pub(crate) tensor: Tensor<Cont>,

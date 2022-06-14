@@ -4,13 +4,17 @@ use crate::commons::math::tensor::{
 };
 use concrete_commons::numeric::Numeric;
 use concrete_commons::parameters::PlaintextCount;
+#[cfg(feature = "__commons_serialization")]
+use serde::{Deserialize, Serialize};
 
 /// An plaintext (encoded) value.
+#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[repr(transparent)]
 pub struct Plaintext<T: Numeric>(pub T);
 
 /// A list of plaintexts
+#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PlaintextList<Cont> {
     pub(crate) tensor: Tensor<Cont>,

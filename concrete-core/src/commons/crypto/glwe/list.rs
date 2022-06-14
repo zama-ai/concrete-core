@@ -1,19 +1,17 @@
-use concrete_commons::numeric::Numeric;
-#[cfg(feature = "serde_serialize")]
-use serde::{Deserialize, Serialize};
-
+use super::GlweCiphertext;
+use crate::commons::crypto::encoding::PlaintextList;
 use crate::commons::math::tensor::{
     ck_dim_div, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
-
-use super::GlweCiphertext;
-use crate::commons::crypto::encoding::PlaintextList;
+use concrete_commons::numeric::Numeric;
 use concrete_commons::parameters::{
     CiphertextCount, GlweDimension, GlweSize, PlaintextCount, PolynomialSize,
 };
+#[cfg(feature = "__commons_serialization")]
+use serde::{Deserialize, Serialize};
 
 /// A list of ciphertexts encoded with the GLWE scheme.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GlweList<Cont> {
     pub(crate) tensor: Tensor<Cont>,

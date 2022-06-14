@@ -1,13 +1,4 @@
-#[cfg(feature = "serde_serialize")]
-use serde::{Deserialize, Serialize};
-
-use concrete_commons::dispersion::DispersionParameter;
-use concrete_commons::key_kinds::BinaryKeyKind;
-use concrete_commons::parameters::{
-    CiphertextCount, DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize,
-    LweDimension, MonomialDegree, PlaintextCount, PolynomialSize,
-};
-
+use super::{GlweCiphertext, GlweList};
 use crate::commons::crypto::encoding::PlaintextList;
 use crate::commons::crypto::lwe::{LweCiphertext, LweList};
 use crate::commons::crypto::secret::generators::EncryptionRandomGenerator;
@@ -20,14 +11,20 @@ use crate::commons::math::tensor::{
     ck_dim_div, ck_dim_eq, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
 use crate::commons::math::torus::UnsignedTorus;
-
-use super::{GlweCiphertext, GlweList};
+use concrete_commons::dispersion::DispersionParameter;
+use concrete_commons::key_kinds::BinaryKeyKind;
+use concrete_commons::parameters::{
+    CiphertextCount, DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize,
+    LweDimension, MonomialDegree, PlaintextCount, PolynomialSize,
+};
+#[cfg(feature = "__commons_serialization")]
+use serde::{Deserialize, Serialize};
 
 /// A packing keyswitching key.
 ///
 /// A packing keyswitching key allows to  pack several LWE ciphertexts into a single GLWE
 /// ciphertext.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PackingKeyswitchKey<Cont> {
     tensor: Tensor<Cont>,
@@ -632,7 +629,7 @@ impl<Cont> PackingKeyswitchKey<Cont> {
 }
 
 /// The encryption of a single bit of the output key.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, PartialEq)]
 pub(crate) struct LweKeyBitDecomposition<Cont> {
     pub(crate) tensor: Tensor<Cont>,

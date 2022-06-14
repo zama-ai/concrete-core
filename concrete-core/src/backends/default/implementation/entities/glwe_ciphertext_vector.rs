@@ -2,11 +2,10 @@ use crate::commons::crypto::glwe::GlweList as ImplGlweList;
 use crate::specification::entities::markers::{BinaryKeyDistribution, GlweCiphertextVectorKind};
 use crate::specification::entities::{AbstractEntity, GlweCiphertextVectorEntity};
 use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
-#[cfg(feature = "serde_serialize")]
+#[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 
 /// A structure representing a vector of GLWE ciphertexts with 32 bits of precision.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GlweCiphertextVector32(pub(crate) ImplGlweList<Vec<u32>>);
 impl AbstractEntity for GlweCiphertextVector32 {
@@ -28,8 +27,15 @@ impl GlweCiphertextVectorEntity for GlweCiphertextVector32 {
     }
 }
 
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum GlweCiphertextVector32Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
+}
+
 /// A structure representing a vector of GLWE ciphertexts with 64 bits of precision.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GlweCiphertextVector64(pub(crate) ImplGlweList<Vec<u64>>);
 impl AbstractEntity for GlweCiphertextVector64 {
@@ -49,4 +55,12 @@ impl GlweCiphertextVectorEntity for GlweCiphertextVector64 {
     fn glwe_ciphertext_count(&self) -> GlweCiphertextCount {
         GlweCiphertextCount(self.0.ciphertext_count().0)
     }
+}
+
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum GlweCiphertextVector64Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
 }

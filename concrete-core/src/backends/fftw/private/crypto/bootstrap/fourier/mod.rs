@@ -23,7 +23,7 @@ use crate::commons::math::torus::UnsignedTorus;
 pub use buffers::{FftBuffers, FourierBuffers};
 
 /// A bootstrapping key in the fourier domain.
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "backend_fftw_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FourierBootstrapKey<Cont, Scalar>
 where

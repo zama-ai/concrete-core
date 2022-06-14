@@ -23,6 +23,7 @@ concrete-csprng = { version = "0.2", features = [] }
 serde = { version = "1.0", optional = true }
 lazy_static = "1.4.0"
 rayon = { version = "1.5.0", optional = true }
+bincode = { version = "1.3.3", optional = true }
 
 [lib]
 name = "concrete_core"
@@ -42,17 +43,31 @@ backend_default_parallel = ["__commons_parallel"]
 # backend
 backend_default_generator_x86_64_aesni = ["concrete-csprng/generator_x86_64_aesni"]
 
+# Enable the serialization engine in the default backend.
+backend_default_serialization = [
+    "bincode",
+    "__commons_serialization",
+]
+
 # An accelerated backend, using the `fftw` library.
 backend_fftw = [
     "concrete-fftw"
 ]
 
+# Enable the serialization engine in the fftw backend.
+backend_fftw_serialization = [
+    "bincode",
+    "concrete-fftw/serialize",
+    "__commons_serialization",
+]
+
+
+# Private features
 __commons_parallel = ["rayon", "concrete-csprng/parallel"]
+__commons_serialization = ["serde", "serde/derive", "concrete-commons/serde_serialize"]
 
 seeder_unix = ["concrete-csprng/seeder_unix"]
 seeder_x86_64_rdseed = ["concrete-csprng/seeder_x86_64_rdseed"]
-serde_serialize = ["serde", "serde/derive", "concrete-commons/serde_serialize",
-    "concrete-fftw/serialize"]
 
 [package.metadata.docs.rs]
 features = ["doc"]

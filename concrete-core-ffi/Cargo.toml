@@ -29,7 +29,6 @@ doc = [
     "backend_fftw",
     "seeder_unix",
     "seeder_x86_64_rdseed",
-    "serde_serialize",
 ]
 
 # A pure-rust backend
@@ -53,7 +52,7 @@ seeder_unix = ["concrete-core/seeder_unix"]
 seeder_x86_64_rdseed = ["concrete-core/seeder_x86_64_rdseed"]
 
 # Necessary for key serialization
-serde_serialize = ["concrete-core/serde_serialize"]
+serde_serialize = ["concrete-core/backend_default_serialization"]
 
 [build-dependencies]
 cbindgen = "0.23"

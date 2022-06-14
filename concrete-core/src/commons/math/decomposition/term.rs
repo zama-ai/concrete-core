@@ -2,7 +2,7 @@ use crate::commons::math::decomposition::DecompositionLevel;
 use crate::commons::math::tensor::{AsMutTensor, Tensor};
 use concrete_commons::numeric::{Numeric, UnsignedInteger};
 use concrete_commons::parameters::DecompositionBaseLog;
-#[cfg(feature = "serde_serialize")]
+#[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 
@@ -10,7 +10,7 @@ use std::fmt::Debug;
 ///
 /// If we decompose a value $\theta$ as a sum $\sum_{i=1}^l\tilde{\theta}_i\frac{q}{B^i}$, this
 /// represents a $\tilde{\theta}_i$.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct DecompositionTerm<T>
 where
