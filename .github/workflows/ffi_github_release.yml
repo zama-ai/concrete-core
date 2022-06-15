@@ -27,11 +27,12 @@ jobs:
           cargo build --release \
           --features backend_default \
           --features backend_default_generator_x86_64_aesni \
+          --features backend_default_serialization \
+          --features backend_default_parallel \
           --features backend_fftw \
-          --features parallel \
+          --features backend_fftw_serialization \
           --features seeder_unix \
           --features seeder_x86_64_rdseed \
-          --features serde_serialize \
           -p concrete-core-ffi
 
           echo "Build artifacts:"
@@ -107,11 +108,12 @@ jobs:
           cargo build --release \
           --features backend_default \
           --features backend_default_generator_x86_64_aesni \
+          --features backend_default_serialization \
+          --features backend_default_parallel \
           --features backend_fftw \
-          --features parallel \
+          --features backend_fftw_serialization \
           --features seeder_unix \
           --features seeder_x86_64_rdseed \
-          --features serde_serialize \
           -p concrete-core-ffi
 
           echo "Build artifacts:"
