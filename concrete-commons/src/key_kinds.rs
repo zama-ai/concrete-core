@@ -21,7 +21,7 @@ pub struct UniformKeyKind;
 /// This type is a marker for keys generated doing the tensor product of one key with itself.
 #[derive(Clone, Debug, PartialEq, Eq)]
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
-pub struct TensorProductKeyKind;
+pub struct BinaryTensorProductKeyKind;
 
 #[derive(Clone)]
 /// This type is a marker for keys filled with zeros (used for testing)
@@ -37,7 +37,7 @@ impl KeyKind for TernaryKeyKind {}
 impl KeyKind for GaussianKeyKind {}
 impl KeyKind for UniformKeyKind {}
 impl KeyKind for ZeroKeyKind {}
-impl KeyKind for TensorProductKeyKind {}
+impl KeyKind for BinaryTensorProductKeyKind {}
 
 mod seal {
     pub trait SealedKeyKind {}
@@ -46,5 +46,5 @@ mod seal {
     impl SealedKeyKind for super::GaussianKeyKind {}
     impl SealedKeyKind for super::UniformKeyKind {}
     impl SealedKeyKind for super::ZeroKeyKind {}
-    impl SealedKeyKind for super::TensorProductKeyKind {}
+    impl SealedKeyKind for super::BinaryTensorProductKeyKind {}
 }

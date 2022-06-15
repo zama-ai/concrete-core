@@ -15,9 +15,9 @@ use crate::commons::math::random::ParallelByteRandomGenerator;
 use crate::commons::math::random::{ByteRandomGenerator, Gaussian, RandomGenerable};
 use crate::commons::math::torus::UnsignedTorus;
 use crate::prelude::key_kinds::{
-    BinaryKeyKind, GaussianKeyKind, KeyKind, TernaryKeyKind, UniformKeyKind,
+    BinaryKeyKind, BinaryTensorProductKeyKind, GaussianKeyKind, KeyKind, TernaryKeyKind,
+    UniformKeyKind,
 };
-use crate::prelude::TensorProductKeyKind;
 use concrete_commons::dispersion::DispersionParameter;
 use concrete_commons::numeric::Numeric;
 use concrete_commons::parameters::{GlweDimension, PlaintextCount, PolynomialSize};
@@ -322,7 +322,7 @@ impl<Cont> GlweSecretKey<UniformKeyKind, Cont> {
     }
 }
 
-impl<Cont> GlweSecretKey<TensorProductKeyKind, Cont> {
+impl<Cont> GlweSecretKey<BinaryTensorProductKeyKind, Cont> {
     /// Creates a tensor product key from a container.
     ///
     /// # Notes
