@@ -18,3 +18,9 @@ backend_fftw = [
     "concrete-core-fixture/backend_fftw",
 ]
 parallel = ["concrete-core/parallel", "concrete-core-fixture/parallel"]
+
+[target.'cfg(target_arch = "x86_64")'.dependencies]
+# This does nothing if backend_default is not requested by the user
+concrete-core = { path = "../concrete-core", features = [
+    "backend_default_generator_x86_64_aesni",
+] }
