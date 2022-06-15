@@ -10,7 +10,7 @@ CURR_DIR="$(dirname "$0")"
 C_TESTS_BUILD_DIR="${CURR_DIR}/build/"
 
 echo "Build the ffi libs"
-cargo build --release --all-features -p concrete-ffi
+cargo build --release --all-features -p concrete-core-ffi
 
 echo "Clear the build dir"
 rm -rf "${C_TESTS_BUILD_DIR}"

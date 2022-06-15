@@ -1,4 +1,4 @@
-name: concrete-ffi GitHub release
+name: concrete-core-ffi GitHub release
 on:
   workflow_dispatch:
 
@@ -12,7 +12,7 @@ env:
 
 jobs:
   build-linux:
-    name: Build concrete-ffi on Linux
+    name: Build concrete-core-ffi on Linux
     runs-on: ubuntu-20.04
     defaults:
       run:
@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Build libconcreteffi
+      - name: Build libconcrete_core_ffi
         env:
           RUSTFLAGS: "-Ctarget-feature=+aes,+rdseed,+sse2"
         run: |
@@ -32,7 +32,7 @@ jobs:
           --features seeder_unix \
           --features seeder_x86_64_rdseed \
           --features serde_serialize \
-          -p concrete-ffi
+          -p concrete-core-ffi
 
           echo "Build artifacts:"
 
@@ -41,12 +41,12 @@ jobs:
 
           # Use cargo metadata to emit all metadata in json form, format version is recommended
           # for compatibility. Then use the jq (r: raw string, c: condensed) filter which does:
-          # Iterate over json["packages"] as array, select the package named "concrete-ffi" and
+          # Iterate over json["packages"] as array, select the package named "concrete-core-ffi" and
           # output its version
-          CONCRETE_FFI_VERSION="$(cargo metadata --format-version 1 |
-            jq -rc '.packages[] | select(.name=="concrete-ffi") | .version')"
+          CONCRETE_CORE_FFI_VERSION="$(cargo metadata --format-version 1 |
+            jq -rc '.packages[] | select(.name=="concrete-core-ffi") | .version')"
 
-          echo "concrete-ffi version: ${CONCRETE_FFI_VERSION}"
+          echo "concrete-core-ffi version: ${CONCRETE_CORE_FFI_VERSION}"
 
           # Create a temporary directory and a raw artifacts dir in it
           TMP_DIR="$(mktemp -d)"
@@ -57,12 +57,12 @@ jobs:
 
           # Copy the build artifacts to the raw_artifacts dir
           # Hard code the names of the files we want to archive
-          cp "${OUTPUT_BUILD_DIR}/concrete-ffi.h" "${RAW_ARTIFACTS_DIR}/"
-          cp "${OUTPUT_BUILD_DIR}/libconcrete_ffi.a" "${RAW_ARTIFACTS_DIR}/"
-          cp "${OUTPUT_BUILD_DIR}/libconcrete_ffi.so" "${RAW_ARTIFACTS_DIR}/"
+          cp "${OUTPUT_BUILD_DIR}/concrete-core-ffi.h" "${RAW_ARTIFACTS_DIR}/"
+          cp "${OUTPUT_BUILD_DIR}/libconcrete_core_ffi.a" "${RAW_ARTIFACTS_DIR}/"
+          cp "${OUTPUT_BUILD_DIR}/libconcrete_core_ffi.so" "${RAW_ARTIFACTS_DIR}/"
 
-          OUTPUT_TARBALL="${TMP_DIR}/concrete-ffi_${CONCRETE_FFI_VERSION}_linux_amd64.tar.gz"
-          OUTPUT_ZIP="${TMP_DIR}/concrete-ffi_${CONCRETE_FFI_VERSION}_linux_amd64.zip"
+          OUTPUT_TARBALL="${TMP_DIR}/concrete-core-ffi_${CONCRETE_CORE_FFI_VERSION}_linux_amd64.tar.gz"
+          OUTPUT_ZIP="${TMP_DIR}/concrete-core-ffi_${CONCRETE_CORE_FFI_VERSION}_linux_amd64.zip"
 
           # Goto TMP_DIR first then RAW_ARTIFACTS_DIR
           pushd "${TMP_DIR}"
@@ -78,7 +78,7 @@ jobs:
           # Return to TMP_DIR
           popd
           # Create the sha256 for both archives
-          ls concrete-ffi* | sort | xargs shasum -a 256 -b > sha256_linux.txt
+          ls concrete-core-ffi* | sort | xargs shasum -a 256 -b > sha256_linux.txt
 
           # Remove the copies to make our lives easier when packaging artifacts
           rm -rf "${RAW_ARTIFACTS_DIR}"
@@ -92,7 +92,7 @@ jobs:
           path: ${{ env.TO_UPLOAD }}
 
   build-mac-os:
-    name: Build concrete-ffi on macOS
+    name: Build concrete-core-ffi on macOS
     runs-on: macos-10.15
     defaults:
       run:
@@ -100,7 +100,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Build libconcreteffi
+      - name: Build libconcrete_core_ffi
         env:
           RUSTFLAGS: "-Ctarget-feature=+aes,+rdseed,+sse2"
         run: |
@@ -112,7 +112,7 @@ jobs:
           --features seeder_unix \
           --features seeder_x86_64_rdseed \
           --features serde_serialize \
-          -p concrete-ffi
+          -p concrete-core-ffi
 
           echo "Build artifacts:"
 
@@ -121,12 +121,12 @@ jobs:
 
           # Use cargo metadata to emit all metadata in json form, format version is recommended
           # for compatibility. Then use the jq (r: raw string, c: condensed) filter which does:
-          # Iterate over json["packages"] as array, select the package named "concrete-ffi" and
+          # Iterate over json["packages"] as array, select the package named "concrete-core-ffi" and
           # output its version
-          CONCRETE_FFI_VERSION="$(cargo metadata --format-version 1 |
-            jq -rc '.packages[] | select(.name=="concrete-ffi") | .version')"
+          CONCRETE_CORE_FFI_VERSION="$(cargo metadata --format-version 1 |
+            jq -rc '.packages[] | select(.name=="concrete-core-ffi") | .version')"
 
-          echo "concrete-ffi version: ${CONCRETE_FFI_VERSION}"
+          echo "concrete-core-ffi version: ${CONCRETE_CORE_FFI_VERSION}"
 
           # Create a temporary directory
           TMP_DIR="$(mktemp -d)"
@@ -137,12 +137,12 @@ jobs:
 
           # Copy the build artifacts to the raw_artifacts dir
           # Hard code the names of the files we want to archive
-          cp "${OUTPUT_BUILD_DIR}/concrete-ffi.h" "${RAW_ARTIFACTS_DIR}/"
-          cp "${OUTPUT_BUILD_DIR}/libconcrete_ffi.a" "${RAW_ARTIFACTS_DIR}/"
-          cp "${OUTPUT_BUILD_DIR}/libconcrete_ffi.dylib" "${RAW_ARTIFACTS_DIR}/"
+          cp "${OUTPUT_BUILD_DIR}/concrete-core-ffi.h" "${RAW_ARTIFACTS_DIR}/"
+          cp "${OUTPUT_BUILD_DIR}/libconcrete_core_ffi.a" "${RAW_ARTIFACTS_DIR}/"
+          cp "${OUTPUT_BUILD_DIR}/libconcrete_core_ffi.dylib" "${RAW_ARTIFACTS_DIR}/"
 
-          OUTPUT_TARBALL="${TMP_DIR}/concrete-ffi_${CONCRETE_FFI_VERSION}_darwin_amd64.tar.gz"
-          OUTPUT_ZIP="${TMP_DIR}/concrete-ffi_${CONCRETE_FFI_VERSION}_darwin_amd64.zip"
+          OUTPUT_TARBALL="${TMP_DIR}/concrete-core-ffi_${CONCRETE_CORE_FFI_VERSION}_darwin_amd64.tar.gz"
+          OUTPUT_ZIP="${TMP_DIR}/concrete-core-ffi_${CONCRETE_CORE_FFI_VERSION}_darwin_amd64.zip"
 
           # Goto TMP_DIR first then RAW_ARTIFACTS_DIR
           pushd "${TMP_DIR}"
@@ -158,7 +158,7 @@ jobs:
           # Return to TMP_DIR
           popd
           # Create the sha256 for both archives
-          ls concrete-ffi* | sort | xargs shasum -a 256 -b > sha256_darwin.txt
+          ls concrete-core-ffi* | sort | xargs shasum -a 256 -b > sha256_darwin.txt
 
           # Remove the copies to make our lives easier when packaging artifacts
           rm -rf "${RAW_ARTIFACTS_DIR}"

@@ -1,4 +1,4 @@
-#include "concrete-ffi.h"
+#include "concrete-core-ffi.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

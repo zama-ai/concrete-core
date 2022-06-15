@@ -1,6 +1,6 @@
 # Introduction
 
-Welcome to the `concrete-ffi` guide!
+Welcome to the `concrete-core-ffi` guide!
 
 This library exposes a C binding to the low-level `concrete-core` primitives to implement _Fully Homomorphic Encryption_ (FHE) programs.
 
@@ -8,21 +8,21 @@ In a nutshell, FHE makes it possible to perform arbitrary computations over encr
 
 Please note that the FFI is very much a prototype at this stage, not all engines and entities from `concrete-core` are available. The available entry points were written to be used by the `concrete-compiler` and should be enough for most use cases.
 
-# First steps using `concrete-ffi`
+# First steps using `concrete-core-ffi`
 
-## Setting-up `concrete-ffi` for use in a C program.
+## Setting-up `concrete-core-ffi` for use in a C program.
 
-You can build `concrete-ffi` yourself on a Unix x86_64 machine using the following command:
+You can build `concrete-core-ffi` yourself on a Unix x86_64 machine using the following command:
 
 ```shell
-RUSTFLAGS="-Ctarget-cpu=native" cargo build --all-features --release -p concrete-ffi
+RUSTFLAGS="-Ctarget-cpu=native" cargo build --all-features --release -p concrete-core-ffi
 ```
 
 All features in the FFI crate are opt-in, but for simplicity here, we enable all of them.
 
-You can then find the `concrete-ffi.h` header as well as the static (.a) and dynamic (.so) `libconcrete_ffi` binaries in "${REPO_ROOT}/target/release/"
+You can then find the `concrete-core-ffi.h` header as well as the static (.a) and dynamic (.so) `libconcrete_core_ffi` binaries in "${REPO_ROOT}/target/release/"
 
-Whether you build `concrete-ffi` yourself or downloaded a pre-built version you will need to set-up you build system so that your C or C++ program links against `concrete-ffi`.
+Whether you build `concrete-core-ffi` yourself or downloaded a pre-built version you will need to set-up you build system so that your C or C++ program links against `concrete-core-ffi`.
 
 Here is a minimal CMakeLists.txt allowing to do just that:
 
@@ -31,11 +31,11 @@ project(my-project)
 
 cmake_minimum_required(VERSION 3.16)
 
-set(CONCRETE_FFI_RELEASE "/path/to/concrete-ffi/binaries/and/header")
+set(CONCRETE_CORE_FFI_RELEASE "/path/to/concrete-core-ffi/binaries/and/header")
 
-include_directories(${CONCRETE_FFI_RELEASE})
+include_directories(${CONCRETE_CORE_FFI_RELEASE})
 add_library(Concrete STATIC IMPORTED)
-set_target_properties(Concrete PROPERTIES IMPORTED_LOCATION ${CONCRETE_FFI_RELEASE}/libconcrete_ffi.a)
+set_target_properties(Concrete PROPERTIES IMPORTED_LOCATION ${CONCRETE_CORE_FFI_RELEASE}/libconcrete_core_ffi.a)
 
 set(EXECUTABLE_NAME my-executable)
 add_executable(${EXECUTABLE_NAME} main.c)
@@ -44,7 +44,7 @@ target_link_libraries(${EXECUTABLE_NAME} LINK_PUBLIC Concrete m pthread dl)
 target_compile_options(${EXECUTABLE_NAME} PRIVATE -Werror)
 ```
 
-## Commented code of an homomorphic addition done with `concrete-ffi`
+## Commented code of an homomorphic addition done with `concrete-core-ffi`
 
 Here we will detail the steps required to perform the homomorphic addition of 1 and 2.
 
@@ -55,8 +55,8 @@ DISCLAIMER: the parameters in the example below are insecure and for example pur
 ```c
 // First we need some headers
 
-// The header for concrete-ffi
-#include "concrete-ffi.h"
+// The header for concrete-core-ffi
+#include "concrete-core-ffi.h"
 
 // And some standard headers for other functions we will use in this example
 #include <stdio.h>
@@ -124,7 +124,7 @@ int main(void) {
         return sk_ok;
     }
 
-    // For now concrete-ffi expects the caller to provide memory for the ciphertexts used during
+    // For now concrete-core-ffi expects the caller to provide memory for the ciphertexts used during
     // computation.
     // Here We allocate the ciphertext buffers
     uint64_t *input_ct_1_buffer =
@@ -147,7 +147,7 @@ int main(void) {
 
     // We encrypt the plaintexts in the previously allocated ciphertext buffers, here we use the
     // raw_ptr_buffers API to make the code more compact, a view_buffers API is also available.
-    // You can check the concrete-ffi documentation on https://docs.rs for more information on those
+    // You can check the concrete-core-ffi documentation on https://docs.rs for more information on those
     // APIs.
     int enc_ct_1_ok = default_engine_discard_encrypt_lwe_ciphertext_u64_raw_ptr_buffers(
         engine, sk, input_ct_1_buffer, plaintext_1, variance);
