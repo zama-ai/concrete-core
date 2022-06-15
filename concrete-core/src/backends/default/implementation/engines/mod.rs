@@ -3,6 +3,9 @@
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 
+#[cfg(feature = "backend_default_generator_x86_64_aesni")]
+use concrete_csprng::generators::AesniRandomGenerator;
+#[cfg(not(feature = "backend_default_generator_x86_64_aesni"))]
 use concrete_csprng::generators::SoftwareRandomGenerator;
 use concrete_csprng::seeders::Seeder;
 
@@ -30,9 +33,14 @@ impl Display for DefaultError {
 
 impl Error for DefaultError {}
 
+#[cfg(feature = "backend_default_generator_x86_64_aesni")]
+type ActivatedRandomGenerator = AesniRandomGenerator;
+#[cfg(not(feature = "backend_default_generator_x86_64_aesni"))]
+type ActivatedRandomGenerator = SoftwareRandomGenerator;
+
 pub struct DefaultEngine {
-    secret_generator: ImplSecretRandomGenerator<SoftwareRandomGenerator>,
-    encryption_generator: ImplEncryptionRandomGenerator<SoftwareRandomGenerator>,
+    secret_generator: ImplSecretRandomGenerator<ActivatedRandomGenerator>,
+    encryption_generator: ImplEncryptionRandomGenerator<ActivatedRandomGenerator>,
 }
 
 impl AbstractEngineSeal for DefaultEngine {}
@@ -58,6 +66,9 @@ pub mod parallel {
     use std::error::Error;
     use std::fmt::{Display, Formatter};
 
+    #[cfg(feature = "backend_default_generator_x86_64_aesni")]
+    use concrete_csprng::generators::AesniRandomGenerator;
+    #[cfg(not(feature = "backend_default_generator_x86_64_aesni"))]
     use concrete_csprng::generators::SoftwareRandomGenerator;
     use concrete_csprng::seeders::Seeder;
 
@@ -83,8 +94,13 @@ pub mod parallel {
 
     impl Error for DefaultParallelError {}
 
+    #[cfg(feature = "backend_default_generator_x86_64_aesni")]
+    type ActivatedRandomGenerator = AesniRandomGenerator;
+    #[cfg(not(feature = "backend_default_generator_x86_64_aesni"))]
+    type ActivatedRandomGenerator = SoftwareRandomGenerator;
+
     pub struct DefaultParallelEngine {
-        pub(crate) encryption_generator: ImplEncryptionRandomGenerator<SoftwareRandomGenerator>,
+        pub(crate) encryption_generator: ImplEncryptionRandomGenerator<ActivatedRandomGenerator>,
     }
 
     impl AbstractEngineSeal for DefaultParallelEngine {}
