@@ -24,6 +24,7 @@ default = []
 # This will need to be handled differently once more CPUs are supported (like M1 e.g.)
 doc = [
     "backend_default",
+    "backend_default_generator_x86_64_aesni",
     "backend_fftw",
     "parallel",
     "seeder_unix",
@@ -33,6 +34,11 @@ doc = [
 
 # A pure-rust backend
 backend_default = ["concrete-core/backend_default"]
+
+# Enable x86_64 specific aes accelerated CSPRNG
+backend_default_generator_x86_64_aesni = [
+    "concrete-core/backend_default_generator_x86_64_aesni",
+]
 
 # An accelerated backend, using the `fftw` library
 backend_fftw = ["concrete-core/backend_fftw"]
