@@ -123,7 +123,10 @@
 //! Pointers passed to the FFI must not alias/overlap each other for a given call to the FFI.
 
 pub mod backends;
-#[cfg(feature = "serde_serialize")]
+#[cfg(any(
+    feature = "backend_default_serialization",
+    feature = "backend_fftw_serialization"
+))]
 pub mod buffer;
 pub mod mem;
 pub mod seeders;

@@ -26,13 +26,16 @@ doc = [
     "backend_default",
     "backend_default_generator_x86_64_aesni",
     "backend_default_parallel",
+    "backend_default_serialization",
     "backend_fftw",
+    "backend_fftw_serialization",
     "seeder_unix",
     "seeder_x86_64_rdseed",
 ]
 
 # A pure-rust backend
 backend_default = ["concrete-core/backend_default"]
+backend_default_serialization = ["concrete-core/backend_default_serialization"]
 
 # Enable x86_64 specific aes accelerated CSPRNG
 backend_default_generator_x86_64_aesni = [
@@ -41,6 +44,7 @@ backend_default_generator_x86_64_aesni = [
 
 # An accelerated backend, using the `fftw` library
 backend_fftw = ["concrete-core/backend_fftw"]
+backend_fftw_serialization = ["concrete-core/backend_fftw_serialization"]
 
 # Multithreaded key generation
 backend_default_parallel = ["concrete-core/backend_default_parallel"]
@@ -50,9 +54,6 @@ seeder_unix = ["concrete-core/seeder_unix"]
 
 # x86_64 specific seeder using rdseed hardware feature
 seeder_x86_64_rdseed = ["concrete-core/seeder_x86_64_rdseed"]
-
-# Necessary for key serialization
-serde_serialize = ["concrete-core/backend_default_serialization"]
 
 [build-dependencies]
 cbindgen = "0.23"
