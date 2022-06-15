@@ -1,4 +1,4 @@
-#include "concrete-ffi.h"
+#include "concrete-core-ffi.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,7 +6,7 @@
 
 #include "utils.h"
 
-void negate_view_buffers_test(void) {
+void mul_cleartext_view_buffers_test(void) {
   // We generate the random sources
   DefaultEngine *engine = NULL;
   SeederBuilder *builder = get_best_seeder();
@@ -24,17 +24,16 @@ void negate_view_buffers_test(void) {
   // We generate the texts
   uint64_t *input_ct_buffer = aligned_alloc(U64_ALIGNMENT, sizeof(uint64_t) * (lwe_dimension + 1));
   uint64_t *output_ct_buffer = aligned_alloc(U64_ALIGNMENT, sizeof(uint64_t) * (lwe_dimension + 1));
-  uint64_t plaintext = ((uint64_t)1) << SHIFT;
 
   LweCiphertextView64 *input_ct_as_view = NULL;
-  int input_ct_as_view_ok = default_engine_create_lwe_ciphertext_view_u64(
+  int input_ct_view_ok = default_engine_create_lwe_ciphertext_view_u64(
       engine, input_ct_buffer, lwe_dimension + 1, &input_ct_as_view);
-  assert(input_ct_as_view_ok == 0);
+  assert(input_ct_view_ok == 0);
 
   LweCiphertextMutView64 *input_ct_as_mut_view = NULL;
-  int input_ct_as_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_u64(
+  int input_ct_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_u64(
       engine, input_ct_buffer, lwe_dimension + 1, &input_ct_as_mut_view);
-  assert(input_ct_as_mut_view_ok == 0);
+  assert(input_ct_mut_view_ok == 0);
 
   LweCiphertextView64 *output_ct_as_view = NULL;
   int output_ct_as_view_ok = default_engine_create_lwe_ciphertext_view_u64(
@@ -42,18 +41,22 @@ void negate_view_buffers_test(void) {
   assert(output_ct_as_view_ok == 0);
 
   LweCiphertextMutView64 *output_ct_as_mut_view = NULL;
-  int output_ct_as_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_u64(
+  int output_ct_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_u64(
       engine, output_ct_buffer, lwe_dimension + 1, &output_ct_as_mut_view);
-  assert(output_ct_as_mut_view_ok == 0);
+  assert(output_ct_mut_view_ok == 0);
+
+  uint64_t plaintext = ((uint64_t)2) << SHIFT;
+
+  uint64_t integer_multiplier = 3;
 
   // We encrypt the plaintext
   int encrypt_ok = default_engine_discard_encrypt_lwe_ciphertext_u64_view_buffers(
       engine, sk, input_ct_as_mut_view, plaintext, variance);
   assert(encrypt_ok == 0);
 
-  int opp_ok = default_engine_discard_opp_lwe_ciphertext_u64_view_buffers(
-      engine, output_ct_as_mut_view, input_ct_as_view);
-  assert(opp_ok == 0);
+  int mul_ok = default_engine_discard_mul_lwe_ciphertext_cleartext_u64_view_buffers(
+      engine, output_ct_as_mut_view, input_ct_as_view, integer_multiplier);
+  assert(mul_ok == 0);
 
   // We decrypt the plaintext
   uint64_t output = -1;
@@ -62,8 +65,8 @@ void negate_view_buffers_test(void) {
   assert(decrypt_ok == 0);
 
   // We check that the output are the same
-  double expected = (pow(2, 64) - 1 - (double)plaintext) / pow(2, SHIFT);
-  double obtained = ((double)output) / pow(2, SHIFT);
+  double expected = ((double)plaintext * (double)integer_multiplier) / pow(2, SHIFT);
+  double obtained = (double)output / pow(2, SHIFT);
   printf("Comparing output. Expected %f, Obtained %f\n", expected, obtained);
   double abs_diff = abs(obtained - expected);
   double rel_error = abs_diff / fmax(expected, obtained);
@@ -75,14 +78,13 @@ void negate_view_buffers_test(void) {
   default_engine_destroy_lwe_ciphertext_mut_view_u64(engine, input_ct_as_mut_view);
   default_engine_destroy_lwe_ciphertext_view_u64(engine, output_ct_as_view);
   default_engine_destroy_lwe_ciphertext_mut_view_u64(engine, output_ct_as_mut_view);
-
   destroy_default_engine(engine);
   destroy_seeder_builder(builder);
   free(input_ct_buffer);
   free(output_ct_buffer);
 }
 
-void negate_unchecked_view_buffers_test(void) {
+void mul_cleartext_unchecked_view_buffers_test(void) {
   // We generate the random sources
   DefaultEngine *engine = NULL;
   SeederBuilder *builder = get_best_seeder_unchecked();
@@ -92,7 +94,7 @@ void negate_unchecked_view_buffers_test(void) {
   double variance = 0.000000001;
 
   // We generate the key
-  size_t lwe_dimension = 10;
+  size_t lwe_dimension = {10};
   LweSecretKey64 *sk = NULL;
   int sk_ok = default_engine_create_lwe_secret_key_unchecked_u64(engine, lwe_dimension, &sk);
   assert(sk_ok == 0);
@@ -100,17 +102,16 @@ void negate_unchecked_view_buffers_test(void) {
   // We generate the texts
   uint64_t *input_ct_buffer = aligned_alloc(U64_ALIGNMENT, sizeof(uint64_t) * (lwe_dimension + 1));
   uint64_t *output_ct_buffer = aligned_alloc(U64_ALIGNMENT, sizeof(uint64_t) * (lwe_dimension + 1));
-  uint64_t plaintext = ((uint64_t)1) << SHIFT;
 
   LweCiphertextView64 *input_ct_as_view = NULL;
-  int input_ct_as_view_ok = default_engine_create_lwe_ciphertext_view_unchecked_u64(
+  int input_ct_view_ok = default_engine_create_lwe_ciphertext_view_unchecked_u64(
       engine, input_ct_buffer, lwe_dimension + 1, &input_ct_as_view);
-  assert(input_ct_as_view_ok == 0);
+  assert(input_ct_view_ok == 0);
 
   LweCiphertextMutView64 *input_ct_as_mut_view = NULL;
-  int input_ct_as_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_unchecked_u64(
+  int input_ct_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_unchecked_u64(
       engine, input_ct_buffer, lwe_dimension + 1, &input_ct_as_mut_view);
-  assert(input_ct_as_mut_view_ok == 0);
+  assert(input_ct_mut_view_ok == 0);
 
   LweCiphertextView64 *output_ct_as_view = NULL;
   int output_ct_as_view_ok = default_engine_create_lwe_ciphertext_view_unchecked_u64(
@@ -118,18 +119,22 @@ void negate_unchecked_view_buffers_test(void) {
   assert(output_ct_as_view_ok == 0);
 
   LweCiphertextMutView64 *output_ct_as_mut_view = NULL;
-  int output_ct_as_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_unchecked_u64(
+  int output_ct_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_unchecked_u64(
       engine, output_ct_buffer, lwe_dimension + 1, &output_ct_as_mut_view);
-  assert(output_ct_as_mut_view_ok == 0);
+  assert(output_ct_mut_view_ok == 0);
+
+  uint64_t plaintext = ((uint64_t)2) << SHIFT;
+
+  uint64_t integer_multiplier = 3;
 
   // We encrypt the plaintext
   int encrypt_ok = default_engine_discard_encrypt_lwe_ciphertext_unchecked_u64_view_buffers(
       engine, sk, input_ct_as_mut_view, plaintext, variance);
   assert(encrypt_ok == 0);
 
-  int opp_ok = default_engine_discard_opp_lwe_ciphertext_unchecked_u64_view_buffers(
-      engine, output_ct_as_mut_view, input_ct_as_view);
-  assert(opp_ok == 0);
+  int mul_ok = default_engine_discard_mul_lwe_ciphertext_cleartext_unchecked_u64_view_buffers(
+      engine, output_ct_as_mut_view, input_ct_as_view, integer_multiplier);
+  assert(mul_ok == 0);
 
   // We decrypt the plaintext
   uint64_t output = -1;
@@ -138,8 +143,8 @@ void negate_unchecked_view_buffers_test(void) {
   assert(decrypt_ok == 0);
 
   // We check that the output are the same
-  double expected = (pow(2, 64) - 1 - (double)plaintext) / pow(2, SHIFT);
-  double obtained = ((double)output) / pow(2, SHIFT);
+  double expected = ((double)plaintext * (double)integer_multiplier) / pow(2, SHIFT);
+  double obtained = (double)output / pow(2, SHIFT);
   printf("Comparing output. Expected %f, Obtained %f\n", expected, obtained);
   double abs_diff = abs(obtained - expected);
   double rel_error = abs_diff / fmax(expected, obtained);
@@ -151,14 +156,13 @@ void negate_unchecked_view_buffers_test(void) {
   default_engine_destroy_lwe_ciphertext_mut_view_unchecked_u64(engine, input_ct_as_mut_view);
   default_engine_destroy_lwe_ciphertext_view_unchecked_u64(engine, output_ct_as_view);
   default_engine_destroy_lwe_ciphertext_mut_view_unchecked_u64(engine, output_ct_as_mut_view);
-
   destroy_default_engine_unchecked(engine);
   destroy_seeder_builder_unchecked(builder);
   free(input_ct_buffer);
   free(output_ct_buffer);
 }
 
-void negate_raw_ptr_buffers_test(void) {
+void mul_cleartext_raw_ptr_buffers_test(void) {
   // We generate the random sources
   DefaultEngine *engine = NULL;
   SeederBuilder *builder = get_best_seeder();
@@ -168,7 +172,7 @@ void negate_raw_ptr_buffers_test(void) {
   double variance = 0.000000001;
 
   // We generate the key
-  size_t lwe_dimension = 10;
+  size_t lwe_dimension = {10};
   LweSecretKey64 *sk = NULL;
   int sk_ok = default_engine_create_lwe_secret_key_u64(engine, lwe_dimension, &sk);
   assert(sk_ok == 0);
@@ -176,16 +180,19 @@ void negate_raw_ptr_buffers_test(void) {
   // We generate the texts
   uint64_t *input_ct_buffer = aligned_alloc(U64_ALIGNMENT, sizeof(uint64_t) * (lwe_dimension + 1));
   uint64_t *output_ct_buffer = aligned_alloc(U64_ALIGNMENT, sizeof(uint64_t) * (lwe_dimension + 1));
-  uint64_t plaintext = ((uint64_t)1) << SHIFT;
+
+  uint64_t plaintext = ((uint64_t)2) << SHIFT;
+
+  uint64_t integer_multiplier = 3;
 
   // We encrypt the plaintext
   int encrypt_ok = default_engine_discard_encrypt_lwe_ciphertext_u64_raw_ptr_buffers(
       engine, sk, input_ct_buffer, plaintext, variance);
   assert(encrypt_ok == 0);
 
-  int opp_ok = default_engine_discard_opp_lwe_ciphertext_u64_raw_ptr_buffers(
-      engine, output_ct_buffer, input_ct_buffer, lwe_dimension);
-  assert(opp_ok == 0);
+  int mul_ok = default_engine_discard_mul_lwe_ciphertext_cleartext_u64_raw_ptr_buffers(
+      engine, output_ct_buffer, input_ct_buffer, lwe_dimension, integer_multiplier);
+  assert(mul_ok == 0);
 
   // We decrypt the plaintext
   uint64_t output = -1;
@@ -194,8 +201,8 @@ void negate_raw_ptr_buffers_test(void) {
   assert(decrypt_ok == 0);
 
   // We check that the output are the same
-  double expected = (pow(2, 64) - 1 - (double)plaintext) / pow(2, SHIFT);
-  double obtained = ((double)output) / pow(2, SHIFT);
+  double expected = ((double)plaintext * (double)integer_multiplier) / pow(2, SHIFT);
+  double obtained = (double)output / pow(2, SHIFT);
   printf("Comparing output. Expected %f, Obtained %f\n", expected, obtained);
   double abs_diff = abs(obtained - expected);
   double rel_error = abs_diff / fmax(expected, obtained);
@@ -203,14 +210,13 @@ void negate_raw_ptr_buffers_test(void) {
 
   // We deallocate the objects
   default_engine_destroy_lwe_secret_key_u64(engine, sk);
-
   destroy_default_engine(engine);
   destroy_seeder_builder(builder);
   free(input_ct_buffer);
   free(output_ct_buffer);
 }
 
-void negate_unchecked_raw_ptr_buffers_test(void) {
+void mul_cleartext_unchecked_raw_ptr_buffers_test(void) {
   // We generate the random sources
   DefaultEngine *engine = NULL;
   SeederBuilder *builder = get_best_seeder_unchecked();
@@ -220,7 +226,7 @@ void negate_unchecked_raw_ptr_buffers_test(void) {
   double variance = 0.000000001;
 
   // We generate the key
-  size_t lwe_dimension = 10;
+  size_t lwe_dimension = {10};
   LweSecretKey64 *sk = NULL;
   int sk_ok = default_engine_create_lwe_secret_key_unchecked_u64(engine, lwe_dimension, &sk);
   assert(sk_ok == 0);
@@ -228,16 +234,19 @@ void negate_unchecked_raw_ptr_buffers_test(void) {
   // We generate the texts
   uint64_t *input_ct_buffer = aligned_alloc(U64_ALIGNMENT, sizeof(uint64_t) * (lwe_dimension + 1));
   uint64_t *output_ct_buffer = aligned_alloc(U64_ALIGNMENT, sizeof(uint64_t) * (lwe_dimension + 1));
-  uint64_t plaintext = ((uint64_t)1) << SHIFT;
+
+  uint64_t plaintext = ((uint64_t)2) << SHIFT;
+
+  uint64_t integer_multiplier = 3;
 
   // We encrypt the plaintext
   int encrypt_ok = default_engine_discard_encrypt_lwe_ciphertext_unchecked_u64_raw_ptr_buffers(
       engine, sk, input_ct_buffer, plaintext, variance);
   assert(encrypt_ok == 0);
 
-  int opp_ok = default_engine_discard_opp_lwe_ciphertext_unchecked_u64_raw_ptr_buffers(
-      engine, output_ct_buffer, input_ct_buffer, lwe_dimension);
-  assert(opp_ok == 0);
+  int mul_ok = default_engine_discard_mul_lwe_ciphertext_cleartext_unchecked_u64_raw_ptr_buffers(
+      engine, output_ct_buffer, input_ct_buffer, lwe_dimension, integer_multiplier);
+  assert(mul_ok == 0);
 
   // We decrypt the plaintext
   uint64_t output = -1;
@@ -246,8 +255,8 @@ void negate_unchecked_raw_ptr_buffers_test(void) {
   assert(decrypt_ok == 0);
 
   // We check that the output are the same
-  double expected = (pow(2, 64) - 1 - (double)plaintext) / pow(2, SHIFT);
-  double obtained = ((double)output) / pow(2, SHIFT);
+  double expected = ((double)plaintext * (double)integer_multiplier) / pow(2, SHIFT);
+  double obtained = (double)output / pow(2, SHIFT);
   printf("Comparing output. Expected %f, Obtained %f\n", expected, obtained);
   double abs_diff = abs(obtained - expected);
   double rel_error = abs_diff / fmax(expected, obtained);
@@ -255,7 +264,6 @@ void negate_unchecked_raw_ptr_buffers_test(void) {
 
   // We deallocate the objects
   default_engine_destroy_lwe_secret_key_unchecked_u64(engine, sk);
-
   destroy_default_engine_unchecked(engine);
   destroy_seeder_builder_unchecked(builder);
   free(input_ct_buffer);
@@ -263,9 +271,9 @@ void negate_unchecked_raw_ptr_buffers_test(void) {
 }
 
 int main(void) {
-  negate_view_buffers_test();
-  negate_unchecked_view_buffers_test();
-  negate_raw_ptr_buffers_test();
-  negate_unchecked_raw_ptr_buffers_test();
+  mul_cleartext_view_buffers_test();
+  mul_cleartext_unchecked_view_buffers_test();
+  mul_cleartext_raw_ptr_buffers_test();
+  mul_cleartext_unchecked_raw_ptr_buffers_test();
   return EXIT_SUCCESS;
 }

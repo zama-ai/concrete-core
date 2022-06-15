@@ -1,6 +1,6 @@
 # Introduction
 
-Welcome to the developer guide for `concrete-ffi`!
+Welcome to the developer guide for `concrete-core-ffi`!
 
 For general infos on writing a C FFI in Rust you can check the following:
 
@@ -9,19 +9,19 @@ For general infos on writing a C FFI in Rust you can check the following:
 
 If some programming concepts are unclear in the next sections you probably missed some paragraphs from the Rust nomicon. If we forgot to define something don't hesitate to open an issue/submit a PR to improve this documentation!
 
-In the next few guides we will see how to extend the `concrete-ffi` by analyzing how some functionalities are exposed in `concrete-ffi`.
+In the next few guides we will see how to extend the `concrete-core-ffi` by analyzing how some functionalities are exposed in `concrete-core-ffi`.
 
 ## Source structure
 
-The `src/backends` directory mirrors the source organization of `concrete-core`. Wrappers for the C FFI can be expected to be found in the same sub-tree in `concrete-ffi` as in `concrete-core` without the `implementation` part of the path, i.e. `concrete-core/src/backends/default/implementation/engines/lwe_ciphertext_discarding_encryption.rs` C FFI wrappers can be found in `concrete-ffi/src/backends/default/engines/lwe_ciphertext_discarding_encryption.rs`.
+The `src/backends` directory mirrors the source organization of `concrete-core`. Wrappers for the C FFI can be expected to be found in the same sub-tree in `concrete-core-ffi` as in `concrete-core` without the `implementation` part of the path, i.e. `concrete-core/src/backends/default/implementation/engines/lwe_ciphertext_discarding_encryption.rs` C FFI wrappers can be found in `concrete-core-ffi/src/backends/default/engines/lwe_ciphertext_discarding_encryption.rs`.
 
 ## Memory origin
 
-Currently, to fulfill the needs of the `concrete-compiler` which relies on MLIR, the ciphertexts used for computation use memory allocated by the foreign language calling into `concrete-ffi` instead of using memory allocated by `concrete-ffi`.
+Currently, to fulfill the needs of the `concrete-compiler` which relies on MLIR, the ciphertexts used for computation use memory allocated by the foreign language calling into `concrete-core-ffi` instead of using memory allocated by `concrete-core-ffi`.
 
-The two versions of the exposed APIs called `view_buffers` and `raw_ptr_buffers` are explained in greater detail [here](../api/api.md#concrete-ffi).
+The two versions of the exposed APIs called `view_buffers` and `raw_ptr_buffers` are explained in greater detail [here](../api/api.md#concrete-core-ffi).
 
-Other structures like keys are allocated on the heap by `concrete-ffi`.
+Other structures like keys are allocated on the heap by `concrete-core-ffi`.
 
 ## Common utils
 

@@ -1,12 +1,12 @@
-project(concrete-ffi-tests)
+project(concrete-core-ffi-tests)
 
 cmake_minimum_required(VERSION 3.16)
 
-set(CONCRETE_FFI_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/../../target/release/")
+set(CONCRETE_CORE_FFI_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/../../target/release/")
 
-include_directories(${CONCRETE_FFI_RELEASE})
+include_directories(${CONCRETE_CORE_FFI_RELEASE})
 add_library(Concrete STATIC IMPORTED)
-set_target_properties(Concrete PROPERTIES IMPORTED_LOCATION ${CONCRETE_FFI_RELEASE}/libconcrete_ffi.a)
+set_target_properties(Concrete PROPERTIES IMPORTED_LOCATION ${CONCRETE_CORE_FFI_RELEASE}/libconcrete_core_ffi.a)
 
 file(GLOB TEST_CASES test_*.c)
 foreach (testsourcefile ${TEST_CASES})

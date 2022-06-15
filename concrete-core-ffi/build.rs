@@ -1,4 +1,4 @@
-// concrete-ffi/build.rs
+// concrete-core-ffi/build.rs
 
 extern crate cbindgen;
 

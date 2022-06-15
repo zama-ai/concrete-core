@@ -1,7 +1,7 @@
 #ifndef FFI_TEST_UTILS
 #define FFI_TEST_UTILS
 
-#include "concrete-ffi.h"
+#include "concrete-core-ffi.h"
 
 const int MESSAGE_BITS = 4;
 const int SHIFT = 64 - (MESSAGE_BITS + 1);

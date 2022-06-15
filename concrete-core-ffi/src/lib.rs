@@ -3,7 +3,7 @@
 // function
 #![allow(clippy::missing_safety_doc)]
 
-//! Welcome to the `concrete-ffi` documentation!
+//! Welcome to the `concrete-core-ffi` documentation!
 //!
 //! This crate provides an experimental `C` FFI giving the ability to call `concrete-core`
 //! primitives from `C` and other languages which are able to call into and link to `C` libraries,

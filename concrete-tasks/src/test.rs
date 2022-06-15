@@ -34,7 +34,7 @@ pub fn npe() -> Result<(), Error> {
 }
 
 pub fn ffi() -> Result<(), Error> {
-    cmd!(<ENV_TARGET_NATIVE> "./concrete-ffi/build-ffi-and-run-c-tests.sh")
+    cmd!(<ENV_TARGET_NATIVE> "./concrete-core-ffi/build-ffi-and-run-c-tests.sh")
 }
 
 pub fn crates() -> Result<(), Error> {

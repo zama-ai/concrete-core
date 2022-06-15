@@ -24,7 +24,7 @@ For opaque structs intantiation we need a set of two methods:
 
 We also provide unchecked versions of each function, these unchecked functions have the same name as the checked function with `_unchecked` appended.
 
-You can read more about `checked` vs `unchecked` APIs [here](../api/api.md#concrete-ffi).
+You can read more about `checked` vs `unchecked` APIs [here](../api/api.md#concrete-core-ffi).
 
 Here we will look at how `new_fftw_engine`, `new_fftw_engine_unchecked`, `destroy_fftw_engine` and `destroy_fftw_engine_unchecked` were constructed. If you want you can check out these functions in `src/backends/fftw/engines/mod.rs`.
 
