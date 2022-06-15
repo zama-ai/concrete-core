@@ -1,14 +1,24 @@
 //! A module containing sampling entry points for raw integers
 use concrete_commons::numeric::{CastInto, UnsignedInteger};
 use concrete_core::commons::math::random::RandomGenerator;
+#[cfg(target_arch = "x86_64")]
 use concrete_csprng::generators::AesniRandomGenerator;
+#[cfg(not(target_arch = "x86_64"))]
+use concrete_csprng::generators::SoftwareRandomGenerator;
 use concrete_csprng::seeders::{Seeder, UnixSeeder};
 use std::cell::RefCell;
 use std::fmt::Debug;
 use std::ops::Range;
 
+#[cfg(target_arch = "x86_64")]
 thread_local! {
     pub static GENERATOR: RefCell<RandomGenerator<AesniRandomGenerator>> = RefCell::new(
+        RandomGenerator::new(UnixSeeder::new(0).seed())
+    );
+}
+#[cfg(not(target_arch = "x86_64"))]
+thread_local! {
+    pub static GENERATOR: RefCell<RandomGenerator<SoftwareRandomGenerator>> = RefCell::new(
         RandomGenerator::new(UnixSeeder::new(0).seed())
     );
 }
