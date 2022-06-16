@@ -297,7 +297,6 @@ impl<Scalar: UnsignedTorus> FourierGlweCiphertext<AlignedVec<Complex64>, Scalar>
             self.poly_size,
             new_k.to_glwe_size(),
         );
-        println!("output k: {}", output.glwe_size.0);
         let iter_glwe_1 = self.polynomial_iter();
         {
             let mut iter_output = output.polynomial_iter_mut();
