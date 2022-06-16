@@ -263,8 +263,9 @@ impl GlweCiphertextConversionEngine<FftwFourierGlweCiphertext32, GlweCiphertext3
             input.polynomial_size(),
             input.glwe_dimension().to_glwe_size(),
         );
-        let mut input_ = input.0.clone();
-        input_.fill_with_backward_fourier(&mut output, buffers);
+        input
+            .0
+            .fill_glwe_with_backward_fourier(&mut output, buffers);
         GlweCiphertext32(output)
     }
 }
@@ -348,8 +349,9 @@ impl GlweCiphertextConversionEngine<FftwFourierGlweCiphertext64, GlweCiphertext6
             input.polynomial_size(),
             input.glwe_dimension().to_glwe_size(),
         );
-        let mut input_ = input.0.clone();
-        input_.fill_with_backward_fourier(&mut output, buffers);
+        input
+            .0
+            .fill_glwe_with_backward_fourier(&mut output, buffers);
         GlweCiphertext64(output)
     }
 }
