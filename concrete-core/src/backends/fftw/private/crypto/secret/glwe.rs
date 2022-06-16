@@ -360,7 +360,7 @@ where
                 let iter_2 = self.polynomial_iter();
                 // consumes the iterator object with enumerate()
                 for (j, polyj) in iter_2.enumerate() {
-                    let mut iter_1_ = self.polynomial_iter();
+                    let mut iter_1 = self.polynomial_iter();
                     if i == j {
                         // 1. T_i = A1i * A2i terms in the output have an s_i^2 key polynomial
                         let mut output_poly_1 = iter_output.next().unwrap();
@@ -375,7 +375,7 @@ where
                             let mut output_poly = iter_output.next().unwrap();
                             // we create the key terms of the form s_{i}s_{j} for the R_ij terms
                             output_poly
-                                .update_with_multiply_accumulate(&iter_1_.next().unwrap(), &polyj);
+                                .update_with_multiply_accumulate(&iter_1.next().unwrap(), &polyj);
                         }
                     }
                 }
