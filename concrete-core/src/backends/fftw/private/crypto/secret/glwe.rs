@@ -357,9 +357,7 @@ where
             let mut iter_output = fourier_output.polynomial_iter_mut();
 
             for (i, polyi) in self.polynomial_iter().enumerate() {
-                let iter_2 = self.polynomial_iter();
-                // consumes the iterator object with enumerate()
-                for (j, polyj) in iter_2.enumerate() {
+                for (j, polyj) in self.polynomial_iter().enumerate(){
                     let mut iter_1 = self.polynomial_iter();
                     if i == j {
                         // 1. T_i = A1i * A2i terms in the output have an s_i^2 key polynomial
