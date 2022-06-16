@@ -47,8 +47,8 @@ impl<Precision, Engine, CiphertextIn1, CiphertextIn2, CiphertextOut, TensorProdu
 where
     Precision: IntegerPrecision,
     Engine: GlweCiphertextTensorProductSameKeyEngine<CiphertextIn1, CiphertextIn2, CiphertextOut>,
-    CiphertextIn1: GlweCiphertextEntity,
-    CiphertextIn2: GlweCiphertextEntity<KeyDistribution = CiphertextIn1::KeyDistribution>,
+    CiphertextIn1: GlweCiphertextEntity<KeyDistribution = BinaryKeyDistribution>,
+    CiphertextIn2: GlweCiphertextEntity<KeyDistribution = BinaryKeyDistribution>,
     CiphertextOut: GlweCiphertextEntity<KeyDistribution = TensorProductKeyDistribution>,
     TensorProductKey: GlweSecretKeyEntity<KeyDistribution = TensorProductKeyDistribution>,
     Maker: SynthesizesGlweCiphertext<Precision, CiphertextIn1>
