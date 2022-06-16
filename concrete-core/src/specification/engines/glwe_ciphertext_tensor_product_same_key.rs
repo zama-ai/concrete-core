@@ -36,7 +36,8 @@ impl<EngineError: std::error::Error> GlweCiphertextTensorProductSameKeyError<Eng
         Ok(())
     }
 }
-/// A trait for engines multiplying GLWE ciphertexts **encrypted with the SAME KEY**.
+/// A trait for engines to perform the tensor product of two GLWE ciphertexts
+/// **encrypted with the SAME KEY**.
 ///
 /// # Semantics
 ///

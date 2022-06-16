@@ -7,6 +7,8 @@ engine_error! {
     GlweSecretKeyTensorProductSameKeyEngine @
 }
 
+/// A trait for engines to perform the tensor product of a GLWE secret key with itself
+///
 /// # Semantics
 ///
 /// This [pure](super#operation-semantics) operation generates the tensor product of a GLWE secret
