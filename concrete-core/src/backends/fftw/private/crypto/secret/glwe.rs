@@ -369,14 +369,11 @@ where
                         let mut output_poly_2 = iter_output.next().unwrap();
                         // in this case we just need s_i, so we can access the original coefficient
                         output_poly_2.copy_polynomial_content(&polyi);
-                    } else {
-                        // else condition means i != j
-                        if j < i {
+                    } else if j < i {
                             let mut output_poly = iter_output.next().unwrap();
                             // we create the key terms of the form s_{i}s_{j} for the R_ij terms
                             output_poly
                                 .update_with_multiply_accumulate(&iter_1.next().unwrap(), &polyj);
-                        }
                     }
                 }
             }
