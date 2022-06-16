@@ -166,38 +166,50 @@ impl<Cont, Scalar: UnsignedTorus> FourierGlweCiphertext<Cont, Scalar> {
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
     /// use concrete_core::commons::crypto::glwe::GlweCiphertext;
     ///
-    /// let mut fourier_glwe: FourierGlweCiphertext<_, u32> =
+    /// let fourier_glwe: FourierGlweCiphertext<_, u32> =
     ///     FourierGlweCiphertext::allocate(Complex64::new(0., 0.), PolynomialSize(128), GlweSize(7));
     ///
     /// let mut buffers = FourierBuffers::new(fourier_glwe.poly_size, fourier_glwe.glwe_size);
     /// let mut buffers_out = FourierBuffers::new(fourier_glwe.poly_size, fourier_glwe.glwe_size);
     ///
-    /// let glwe = GlweCiphertext::allocate(0 as u32, PolynomialSize(128), GlweSize(7));
+    /// let mut glwe = GlweCiphertext::allocate(0 as u32, PolynomialSize(128), GlweSize(7));
     ///
-    /// fourier_glwe.fill_with_forward_fourier(&glwe, &mut buffers);
+    /// fourier_glwe.fill_glwe_with_backward_fourier(&mut glwe, &mut buffers);
     ///
     /// let mut glwe_out = GlweCiphertext::allocate(0 as u32, PolynomialSize(128), GlweSize(7));
     ///
-    /// fourier_glwe.fill_with_backward_fourier(&mut glwe_out, &mut buffers_out);
+    /// fourier_glwe.fill_glwe_with_backward_fourier(&mut glwe_out, &mut buffers_out);
     /// ```
-    pub fn fill_with_backward_fourier<InputCont, Scalar_>(
-        &mut self,
+    pub fn fill_glwe_with_backward_fourier<InputCont>(
+        &self,
         glwe: &mut GlweCiphertext<InputCont>,
         buffers: &mut FourierBuffers<Scalar>,
     ) where
         Cont: AsMutSlice<Element = Complex64>,
-        GlweCiphertext<InputCont>: AsMutTensor<Element = Scalar_>,
-        Scalar_: UnsignedTorus,
+        GlweCiphertext<InputCont>: AsMutTensor<Element = Scalar>,
     {
-        // We retrieve a buffer for the fft.
+        // We get the fft to use from the passed buffers
         let fft = &mut buffers.fft_buffers.fft;
 
-        let mut poly_list = glwe.as_mut_polynomial_list();
+        // Output buffer is large enough to hold self which is a FourierGlweCiphertext
+        let input_fourier_polynomials_buffer = &mut buffers.fft_buffers.output_buffer;
 
-        // we move every polynomial to the coefficient domain
-        let iterator = poly_list
+        input_fourier_polynomials_buffer
+            .as_mut_tensor()
+            .fill_with_copy(self.as_tensor());
+
+        // Create an iterator that takes chunk of the input buffer and map these to polynomials
+        let input_fourier_polynomials_list = input_fourier_polynomials_buffer
+            .subtensor_iter_mut(self.poly_size.0)
+            .map(FourierPolynomial::from_tensor);
+
+        // Prepare the output polynomials list
+        let mut output_std_glwe_polynomials = glwe.as_mut_polynomial_list();
+
+        // Prepare the iterator for the backward calls
+        let iterator = output_std_glwe_polynomials
             .polynomial_iter_mut()
-            .zip(self.polynomial_iter_mut());
+            .zip(input_fourier_polynomials_list);
 
         for (mut coef_poly, mut fourier_poly) in iterator {
             fft.backward_as_torus(&mut coef_poly, &mut fourier_poly);
