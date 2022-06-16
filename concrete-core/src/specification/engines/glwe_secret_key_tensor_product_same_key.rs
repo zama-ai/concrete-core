@@ -1,6 +1,7 @@
 use super::engine_error;
 use crate::specification::engines::AbstractEngine;
 use crate::specification::entities::GlweSecretKeyEntity;
+use crate::prelude::markers::{BinaryKeyDistribution, TensorProductKeyDistribution};
 
 engine_error! {
     GlweSecretKeyTensorProductSameKeyError for
@@ -17,9 +18,9 @@ engine_error! {
 /// # Formal Definition
 ///
 /// This function takes as input a
-/// [`GLWE secret key`](`crate::specification::entities::GlweSecretKeyEntity`)
+/// [GLWE Secret Key](`crate::specification::entities::GlweSecretKeyEntity`)
 /// $\mathsf{S} = (S\_{1}, S\_{2}, \dots, S\_{k}) $ and outputs a
-/// [`GLWE secret key`](`crate::specification::entities::GlweSecretKeyEntity`)
+/// [GLWE Secret Key](`crate::specification::entities::GlweSecretKeyEntity`)
 /// which contains the tensor product of the input secret key with itself.
 /// In particular, the function outputs a GLWE secret key of the form:
 ///
@@ -30,8 +31,8 @@ engine_error! {
 /// \dots, S\_{k}^2, S\_k, S\_{1}S\_{k}, \dots, S\_{k-1}S\_{k})$.
 pub trait GlweSecretKeyTensorProductSameKeyEngine<InputKey, OutputKey>: AbstractEngine
 where
-    InputKey: GlweSecretKeyEntity,
-    OutputKey: GlweSecretKeyEntity,
+    InputKey: GlweSecretKeyEntity<KeyDistribution = BinaryKeyDistribution>,
+    OutputKey: GlweSecretKeyEntity<KeyDistribution = TensorProductKeyDistribution>,
 {
     /// performs the tensor product of a GLWE secret key with itself.
     fn create_tensor_product_glwe_secret_key_same_key(

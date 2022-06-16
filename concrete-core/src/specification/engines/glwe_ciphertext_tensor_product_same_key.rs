@@ -1,5 +1,5 @@
 use super::engine_error;
-use crate::prelude::markers::TensorProductKeyDistribution;
+use crate::prelude::markers::{TensorProductKeyDistribution, BinaryKeyDistribution};
 use crate::prelude::ScalingFactor;
 use crate::specification::engines::AbstractEngine;
 use crate::specification::entities::GlweCiphertextEntity;
@@ -9,8 +9,7 @@ engine_error! {
     PolynomialSizeMismatch => "The polynomial size of the input and output GLWE ciphertexts must be\
      the same.",
     ZeroScalingFactorError => "The scaling factor for the tensor product must be stricly greater \
-    than\
-     zero.",
+    than zero.",
     InputGlweDimensionMismatch => "The GLWE dimension of the input ciphertexts must be the same."
 }
 
@@ -21,8 +20,8 @@ impl<EngineError: std::error::Error> GlweCiphertextTensorProductSameKeyError<Eng
         scale: ScalingFactor,
     ) -> Result<(), Self>
     where
-        InputCiphertext1: GlweCiphertextEntity,
-        InputCiphertext2: GlweCiphertextEntity<KeyDistribution = InputCiphertext1::KeyDistribution>,
+        InputCiphertext1: GlweCiphertextEntity<KeyDistribution = BinaryKeyDistribution>,
+        InputCiphertext2: GlweCiphertextEntity<KeyDistribution = BinaryKeyDistribution>,
     {
         if scale.0 == 0 {
             return Err(Self::ZeroScalingFactorError);
@@ -47,12 +46,12 @@ impl<EngineError: std::error::Error> GlweCiphertextTensorProductSameKeyError<Eng
 /// # Formal Definition
 ///
 /// This function takes as input two
-/// [`GLWE ciphertexts`](`crate::specification::entities::GlweCiphertextEntity`)
+/// [GLWE ciphertexts](`crate::specification::entities::GlweCiphertextEntity`)
 /// $\mathsf{c}\_1 = \mathsf{GLWE}\_{\vec{S}}(
 /// \mathsf{m}\_1)  = (A\_{1,1}, \dots, A\_{1,k}, B\_1)$ and $\mathsf{c}\_2 =
 /// \mathsf{GLWE}\_{\vec{S}}( \mathsf{m}_2 ) = (A\_{2,1}, \dots, A\_{2,k}, B\_2)$ encrypted with the
 /// same key $\vec{S}$ and outputs a
-/// [`GLWE ciphertext`](`crate::specification::entities::GlweCiphertextEntity`) which
+/// [GLWE ciphertext](`crate::specification::entities::GlweCiphertextEntity`) which
 /// contains the tensor product of the two ciphertexts. In particular, the output GLWE ciphertext is
 /// of the form:
 ///
@@ -80,8 +79,8 @@ pub trait GlweCiphertextTensorProductSameKeyEngine<
     InputCiphertext2,
     OutputCiphertext,
 >: AbstractEngine where
-    InputCiphertext1: GlweCiphertextEntity,
-    InputCiphertext2: GlweCiphertextEntity<KeyDistribution = InputCiphertext1::KeyDistribution>,
+    InputCiphertext1: GlweCiphertextEntity<KeyDistribution = BinaryKeyDistribution>,
+    InputCiphertext2: GlweCiphertextEntity<KeyDistribution = BinaryKeyDistribution>,
     OutputCiphertext: GlweCiphertextEntity<KeyDistribution = TensorProductKeyDistribution>,
 {
     /// performs a tensor product of two GLWE ciphertexts **encrypted with the SAME KEY**.
