@@ -19,8 +19,8 @@ where
 {
     tensor: Tensor<Cont>,
     pub poly_size: PolynomialSize,
-    _kind: PhantomData<Kind>,
-    _scalar: PhantomData<Scalar>,
+    kind: PhantomData<Kind>,
+    scalar: PhantomData<Scalar>,
 }
 
 impl<Kind, Scalar> FourierGlweSecretKey<Kind, AlignedVec<Complex64>, Scalar>
@@ -57,8 +57,8 @@ where
         FourierGlweSecretKey {
             tensor,
             poly_size,
-            _kind: Default::default(),
-            _scalar: Default::default(),
+            kind: Default::default(),
+            scalar: Default::default(),
         }
     }
 }
@@ -99,8 +99,8 @@ where
         FourierGlweSecretKey {
             tensor,
             poly_size,
-            _kind: Default::default(),
-            _scalar: Default::default(),
+            kind: Default::default(),
+            scalar: Default::default(),
         }
     }
 
