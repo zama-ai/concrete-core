@@ -96,7 +96,7 @@ key_distribution_marker! {
     GaussianKeyDistribution => "An empty type encoding the gaussian key distribution in the type \
     system.",
     TensorProductKeyDistribution => "An empty type encoding the distribution created \
-    by the tensor product of a key with itself in the type system."
+    by the tensor product of a binary key with itself in the type system."
 }
 
 pub(crate) mod seal {
