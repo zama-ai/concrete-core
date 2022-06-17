@@ -1,6 +1,8 @@
 use crate::commons::crypto::encoding::{Plaintext, PlaintextList};
 use crate::commons::crypto::gsw::GswCiphertext;
-use crate::commons::crypto::lwe::{LweBody, LweCiphertext, LweList, LweMask, LweSeededCiphertext};
+use crate::commons::crypto::lwe::{
+    LweBody, LweCiphertext, LweList, LweMask, LweSeededCiphertext, LweSeededList,
+};
 use crate::commons::crypto::secret::generators::{
     EncryptionRandomGenerator, SecretRandomGenerator,
 };
@@ -546,6 +548,88 @@ where
         );
         for (mut cipher, message) in output.ciphertext_iter_mut().zip(encoded.plaintext_iter()) {
             self.encrypt_lwe(&mut cipher, message, noise_parameters, generator);
+        }
+    }
+
+    /// Encrypts a list of seeded ciphertexts.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use concrete_commons::dispersion::LogStandardDev;
+    /// use concrete_commons::parameters::{CiphertextCount, LweDimension, PlaintextCount};
+    ///
+    /// use concrete_core::commons::crypto::encoding::*;
+    /// use concrete_core::commons::crypto::lwe::*;
+    /// use concrete_core::commons::crypto::secret::generators::{
+    ///     EncryptionRandomGenerator, SecretRandomGenerator,
+    /// };
+    /// use concrete_core::commons::crypto::secret::*;
+    /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    ///
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::{Seeder, UnixSeeder};
+    ///
+    /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
+    ///
+    /// let mut seeder = UnixSeeder::new(0);
+    ///
+    /// let secret_key = LweSecretKey::generate_binary(LweDimension(256), &mut secret_generator);
+    /// let noise = LogStandardDev::from_log_standard_dev(-15.);
+    ///
+    /// let mut plain_values = PlaintextList::allocate(3u32, PlaintextCount(100));
+    /// let mut encrypted_values = LweSeededList::allocate(
+    ///     LweDimension(256),
+    ///     CiphertextCount(100),
+    ///     CompressionSeed { seed: Seed(42) },
+    /// );
+    /// secret_key.encrypt_seeded_lwe_list::<_, _, _, _, _, SoftwareRandomGenerator>(
+    ///     &mut encrypted_values,
+    ///     &plain_values,
+    ///     noise,
+    ///     &mut seeder,
+    /// );
+    /// ```
+    pub fn encrypt_seeded_lwe_list<
+        OutputCont,
+        InputCont,
+        Scalar,
+        NoiseParameter,
+        NoiseSeeder,
+        Gen,
+    >(
+        &self,
+        output: &mut LweSeededList<OutputCont>,
+        encoded: &PlaintextList<InputCont>,
+        noise_parameters: NoiseParameter,
+        seeder: &mut NoiseSeeder,
+    ) where
+        Self: AsRefTensor<Element = Scalar>,
+        LweSeededList<OutputCont>: AsMutTensor<Element = Scalar>,
+        PlaintextList<InputCont>: AsRefTensor<Element = Scalar>,
+        Scalar: UnsignedTorus,
+        Gen: ByteRandomGenerator,
+        // This will be removable when https://github.com/rust-lang/rust/issues/83701 is stabilized
+        // We currently need to be able to specify concrete types for the generic type parameters
+        // which cannot be done when some arguments use the `impl Trait` pattern
+        NoiseParameter: DispersionParameter,
+        NoiseSeeder: Seeder,
+    {
+        let mut generator =
+            EncryptionRandomGenerator::<Gen>::new(output.get_compression_seed().seed, seeder);
+
+        let mut mask_tensor = vec![Scalar::ZERO; self.key_size().0];
+        let mut output_mask = LweMask::from_container(mask_tensor.as_mut_slice());
+
+        for (output_body, encoded_message) in output.body_iter_mut().zip(encoded.plaintext_iter()) {
+            self.fill_lwe_mask_and_body_for_encryption(
+                output_body,
+                &mut output_mask,
+                encoded_message,
+                noise_parameters,
+                &mut generator,
+            );
         }
     }
 
