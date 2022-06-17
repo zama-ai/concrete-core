@@ -5,19 +5,20 @@
 This repository holds the code for GPU acceleration of Zama's variant of TFHE.
 It implements CUDA/C++ functions to perform homomorphic operations on LWE ciphertexts.
 
-In this first minimal API, it provides functions to allocate memory on the GPU, to copy data back 
+In this first API, it provides functions to allocate memory on the GPU, to copy data back 
 and forth between the CPU and the GPU, to create and destroy Cuda streams, etc.:
 - `cuda_create_stream`, `cuda_destroy_stream`
 - `cuda_malloc`, `cuda_check_valid_malloc`
 - `cuda_memcpy_async_to_cpu`, `cuda_memcpy_async_to_gpu`
 - `cuda_get_number_of_gpus`
 - `cuda_synchronize_device`
-The only cryptographic operation it provides is an amortized implementation of the TFHE 
-programmable bootstrapping:
-- `cu_batch_bootstrap`
+The cryptographic operations it provides are:
+- an amortized implementation of the TFHE programmable bootstrap: `cuda_bootstrap_amortized_lwe_ciphertext_vector_32` and `cuda_bootstrap_amortized_lwe_ciphertext_vector_64`
+- a low latency implementation of the TFHE programmable bootstrap: `cuda_bootstrap_low latency_lwe_ciphertext_vector_32` and `cuda_bootstrap_low_latency_lwe_ciphertext_vector_64`
+- the keyswitch: `cuda_keyswitch_lwe_ciphertext_vector_32` and `cuda_keyswitch_lwe_ciphertext_vector_64`
 
 These C++/CUDA functions are available to the [Concrete-core](https://github.com/zama-ai/concrete-core) 
-implementation through a dedicated Rust API, which is wrapped in the `backend_cuda` of 
+implementation via a dedicated Rust API, which is wrapped in the `backend_cuda` of 
 `concrete-core`.
 
 ## Dependencies
