@@ -20,7 +20,7 @@
 //! the entities are destroyed after the execution of the engine. Again, this can be done by the
 //! [`Maker`] instance and the `Synthesizes*` traits, which contains functions to destroy data.
 use crate::raw::generation::RawUnsignedIntegers;
-use concrete_core::prelude::AbstractEngine;
+use concrete_core::prelude::{AbstractEngine, DefaultEngine, DefaultParallelEngine};
 use concrete_csprng::seeders::UnixSeeder;
 
 pub mod prototypes;
@@ -53,9 +53,8 @@ impl IntegerPrecision for Precision64 {
 /// + Convert back and forth between prototypical entities and actual entity types used in the
 /// fixture.
 pub struct Maker {
-    default_engine: concrete_core::backends::default::engines::DefaultEngine,
-    default_parallel_engine:
-        concrete_core::backends::default::engines::parallel::DefaultParallelEngine,
+    default_engine: DefaultEngine,
+    default_parallel_engine: DefaultParallelEngine,
     #[cfg(feature = "backend_fftw")]
     fftw_engine: concrete_core::backends::fftw::engines::FftwEngine,
 }
@@ -63,14 +62,8 @@ pub struct Maker {
 impl Default for Maker {
     fn default() -> Self {
         Maker {
-            default_engine: concrete_core::backends::default::engines::DefaultEngine::new(
-                Box::new(UnixSeeder::new(0)),
-            )
-            .unwrap(),
-            default_parallel_engine:
-                concrete_core::backends::default::engines::parallel::DefaultParallelEngine::new(
-                    Box::new(UnixSeeder::new(0)),
-                )
+            default_engine: DefaultEngine::new(Box::new(UnixSeeder::new(0))).unwrap(),
+            default_parallel_engine: DefaultParallelEngine::new(Box::new(UnixSeeder::new(0)))
                 .unwrap(),
             #[cfg(feature = "backend_fftw")]
             fftw_engine: concrete_core::backends::fftw::engines::FftwEngine::new(()).unwrap(),

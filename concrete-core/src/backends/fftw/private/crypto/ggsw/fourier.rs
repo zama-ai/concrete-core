@@ -1,15 +1,3 @@
-use crate::commons::math::tensor::{
-    ck_dim_div, ck_dim_eq, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, IntoTensor, Tensor,
-};
-use crate::commons::utils::{zip, zip_args};
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-};
-
-use concrete_fftw::array::AlignedVec;
-#[cfg(feature = "parallel")]
-use rayon::{iter::IndexedParallelIterator, prelude::*};
-
 use crate::backends::fftw::private::crypto::bootstrap::fourier::FftBuffers;
 use crate::backends::fftw::private::crypto::bootstrap::FourierBuffers;
 use crate::backends::fftw::private::math::fft::{Complex64, FourierPolynomial};
@@ -17,7 +5,15 @@ use crate::commons::crypto::ggsw::{GgswLevelMatrix, StandardGgswCiphertext};
 use crate::commons::crypto::glwe::{GlweCiphertext, GlweList};
 use crate::commons::math::decomposition::{DecompositionLevel, SignedDecomposer};
 use crate::commons::math::polynomial::Polynomial;
+use crate::commons::math::tensor::{
+    ck_dim_div, ck_dim_eq, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, IntoTensor, Tensor,
+};
 use crate::commons::math::torus::UnsignedTorus;
+use crate::commons::utils::{zip, zip_args};
+use concrete_commons::parameters::{
+    DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+};
+use concrete_fftw::array::AlignedVec;
 #[cfg(feature = "serde_serialize")]
 use serde::{Deserialize, Serialize};
 
@@ -404,66 +400,6 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
         let glwe_size = self.glwe_size;
         self.as_mut_tensor()
             .subtensor_iter_mut(chunks_size)
-            .enumerate()
-            .map(move |(index, tensor)| {
-                GgswLevelMatrix::from_container(
-                    tensor.into_container(),
-                    poly_size,
-                    glwe_size,
-                    DecompositionLevel(index + 1),
-                )
-            })
-    }
-
-    /// Returns a parallel iterator over mutably borrowed level matrices.
-    ///
-    /// # Notes
-    /// This iterator is hidden behind the "parallel" feature gate.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-    /// };
-    /// use concrete_core::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
-    /// use concrete_core::backends::fftw::private::math::fft::Complex64;
-    /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
-    /// use rayon::iter::ParallelIterator;
-    ///
-    /// let mut ggsw: FourierGgswCiphertext<_, u32> = FourierGgswCiphertext::allocate(
-    ///     Complex64::new(0., 0.),
-    ///     PolynomialSize(9),
-    ///     GlweSize(7),
-    ///     DecompositionLevelCount(3),
-    ///     DecompositionBaseLog(4),
-    /// );
-    /// ggsw.par_level_matrix_iter_mut()
-    ///     .for_each(|mut level_matrix| {
-    ///         for mut glwe in level_matrix.row_iter_mut() {
-    ///             glwe.as_mut_tensor()
-    ///                 .fill_with_element(Complex64::new(0., 0.));
-    ///         }
-    ///     });
-    /// assert!(ggsw
-    ///     .as_tensor()
-    ///     .iter()
-    ///     .all(|a| *a == Complex64::new(0., 0.)));
-    /// assert_eq!(ggsw.level_matrix_iter_mut().count(), 3);
-    /// ```
-    #[cfg(feature = "parallel")]
-    pub fn par_level_matrix_iter_mut(
-        &mut self,
-    ) -> impl IndexedParallelIterator<Item = GgswLevelMatrix<&mut [<Self as AsRefTensor>::Element]>>
-    where
-        Self: AsMutTensor,
-        <Self as AsMutTensor>::Element: Sync + Send,
-    {
-        let chunks_size = self.poly_size.0 * self.glwe_size.0 * self.glwe_size.0;
-        let poly_size = self.poly_size;
-        let glwe_size = self.glwe_size;
-        self.as_mut_tensor()
-            .par_subtensor_iter_mut(chunks_size)
             .enumerate()
             .map(move |(index, tensor)| {
                 GgswLevelMatrix::from_container(

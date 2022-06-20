@@ -4,7 +4,7 @@ use crate::commons::crypto::secret::generators::EncryptionRandomGenerator;
 use crate::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
 use crate::commons::math::polynomial::Polynomial;
 use crate::commons::math::random::ByteRandomGenerator;
-#[cfg(feature = "parallel")]
+#[cfg(feature = "__commons_parallel")]
 use crate::commons::math::random::ParallelByteRandomGenerator;
 use crate::commons::math::tensor::{
     ck_dim_div, ck_dim_eq, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
@@ -18,7 +18,7 @@ use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
 };
 
-#[cfg(feature = "parallel")]
+#[cfg(feature = "__commons_parallel")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
 
 /// A bootstrapping key represented in the standard domain.
@@ -220,7 +220,7 @@ impl<Cont> StandardBootstrapKey<Cont> {
     ///
     /// # Note
     ///
-    /// This method uses _rayon_ internally, and is hidden behind the "parallel" feature
+    /// This method uses _rayon_ internally, and is hidden behind the "__commons_parallel" feature
     /// gate.
     ///
     /// # Example
@@ -262,7 +262,7 @@ impl<Cont> StandardBootstrapKey<Cont> {
     ///     &mut secret_generator,
     /// );
     /// ```
-    #[cfg(feature = "parallel")]
+    #[cfg(feature = "__commons_parallel")]
     pub fn par_fill_with_new_key<LweCont, RlweCont, Scalar, Gen>(
         &mut self,
         lwe_secret_key: &LweSecretKey<BinaryKeyKind, LweCont>,
@@ -570,7 +570,7 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// assert!(bsk.as_tensor().iter().all(|a| *a == 0));
     /// assert_eq!(bsk.ggsw_iter_mut().count(), 4);
     /// ```
-    #[cfg(feature = "parallel")]
+    #[cfg(feature = "__commons_parallel")]
     pub fn par_ggsw_iter_mut(
         &mut self,
     ) -> impl IndexedParallelIterator<Item = StandardGgswCiphertext<&mut [<Self as AsRefTensor>::Element]>>

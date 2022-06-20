@@ -137,7 +137,7 @@ bench! {
     (PlaintextVectorRetrievalFixture, (PlaintextVector))
 }
 
-#[cfg(feature = "parallel")]
+#[cfg(feature = "backend_default_parallel")]
 macro_rules! bench_parallel {
     ($fixture: ident, $precision: ident, ($($types:ident),+), $maker: ident, $engine: ident, $criterion: ident) => {
         paste!{
@@ -165,7 +165,7 @@ macro_rules! bench_parallel {
     };
 }
 
-#[cfg(feature = "parallel")]
+#[cfg(feature = "backend_default_parallel")]
 bench_parallel! {
     (LweBootstrapKeyCreationFixture, (LweSecretKey, GlweSecretKey, LweBootstrapKey))
 }

@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-#[cfg(feature = "parallel")]
+#[cfg(feature = "__commons_parallel")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
 #[cfg(feature = "serde_serialize")]
 use serde::{Deserialize, Serialize};
@@ -18,7 +18,7 @@ use crate::commons::crypto::lwe::{LweCiphertext, LweList};
 use crate::commons::crypto::secret::generators::{
     EncryptionRandomGenerator, SecretRandomGenerator,
 };
-#[cfg(feature = "parallel")]
+#[cfg(feature = "__commons_parallel")]
 use crate::commons::math::random::ParallelByteRandomGenerator;
 use crate::commons::math::random::{ByteRandomGenerator, Gaussian, RandomGenerable};
 use crate::commons::math::tensor::{
@@ -620,7 +620,7 @@ where
     ///     &mut encryption_generator,
     /// );
     /// ```
-    #[cfg(feature = "parallel")]
+    #[cfg(feature = "__commons_parallel")]
     pub fn par_encrypt_constant_gsw<OutputCont, Scalar, Gen>(
         &self,
         encrypted: &mut GswCiphertext<OutputCont, Scalar>,

@@ -5,7 +5,7 @@ use std::ops::{
 };
 use std::slice::SliceIndex;
 
-#[cfg(feature = "parallel")]
+#[cfg(feature = "__commons_parallel")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
 #[cfg(feature = "serde_serialize")]
 use serde::{Deserialize, Serialize};
@@ -277,7 +277,7 @@ impl<Container> Tensor<Container> {
     ///     assert_eq!(*scalar, 9);
     /// });
     /// ```
-    #[cfg(feature = "parallel")]
+    #[cfg(feature = "__commons_parallel")]
     pub fn par_iter(&self) -> impl IndexedParallelIterator<Item = &<Self as AsRefSlice>::Element>
     where
         Self: AsRefSlice,
@@ -324,7 +324,7 @@ impl<Container> Tensor<Container> {
     ///     assert_eq!(*scalar, 8);
     /// }
     /// ```
-    #[cfg(feature = "parallel")]
+    #[cfg(feature = "__commons_parallel")]
     pub fn par_iter_mut(
         &mut self,
     ) -> impl IndexedParallelIterator<Item = &mut <Self as AsMutSlice>::Element>
@@ -374,7 +374,7 @@ impl<Container> Tensor<Container> {
     ///     assert_eq!(sub.len(), 10);
     /// });
     /// ```
-    #[cfg(feature = "parallel")]
+    #[cfg(feature = "__commons_parallel")]
     pub fn par_subtensor_iter(
         &self,
         size: usize,
@@ -439,7 +439,7 @@ impl<Container> Tensor<Container> {
     ///     assert_eq!(*sub.get_element(10), 1);
     /// }
     /// ```
-    #[cfg(feature = "parallel")]
+    #[cfg(feature = "__commons_parallel")]
     pub fn par_subtensor_iter_mut(
         &mut self,
         size: usize,

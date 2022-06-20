@@ -89,7 +89,7 @@ pub unsafe extern "C" fn default_engine_create_lwe_bootstrap_key_unchecked_u64(
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-#[cfg(feature = "parallel")]
+#[cfg(feature = "backend_default_parallel")]
 pub unsafe extern "C" fn default_parallel_engine_create_lwe_bootstrap_key_u64(
     engine: *mut DefaultParallelEngine,
     input_key: *const LweSecretKey64,
@@ -131,7 +131,7 @@ pub unsafe extern "C" fn default_parallel_engine_create_lwe_bootstrap_key_u64(
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
 /// [`default_parallel_engine_create_lwe_bootstrap_key_u64`]
 #[no_mangle]
-#[cfg(feature = "parallel")]
+#[cfg(feature = "backend_default_parallel")]
 pub unsafe extern "C" fn default_parallel_engine_create_lwe_bootstrap_key_unchecked_u64(
     engine: *mut DefaultParallelEngine,
     input_key: *const LweSecretKey64,

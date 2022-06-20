@@ -12,7 +12,7 @@ use super::GswLevelMatrix;
 
 use concrete_commons::numeric::Numeric;
 use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
-#[cfg(feature = "parallel")]
+#[cfg(feature = "__commons_parallel")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
 #[cfg(feature = "serde_serialize")]
 use serde::{Deserialize, Serialize};
@@ -341,7 +341,7 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     /// assert!(gsw.as_tensor().iter().all(|a| *a == 9));
     /// assert_eq!(gsw.level_matrix_iter_mut().count(), 3);
     /// ```
-    #[cfg(feature = "parallel")]
+    #[cfg(feature = "__commons_parallel")]
     pub fn par_level_matrix_iter_mut(
         &mut self,
     ) -> impl IndexedParallelIterator<Item = GswLevelMatrix<&mut [<Self as AsRefTensor>::Element]>>
