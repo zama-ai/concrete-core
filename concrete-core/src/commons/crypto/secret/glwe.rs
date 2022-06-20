@@ -14,10 +14,11 @@ use crate::commons::math::polynomial::PolynomialList;
 use crate::commons::math::random::ParallelByteRandomGenerator;
 use crate::commons::math::random::{ByteRandomGenerator, Gaussian, RandomGenerable};
 use crate::commons::math::torus::UnsignedTorus;
-use concrete_commons::dispersion::DispersionParameter;
-use concrete_commons::key_kinds::{
-    BinaryKeyKind, GaussianKeyKind, KeyKind, TernaryKeyKind, UniformKeyKind,
+use crate::prelude::key_kinds::{
+    BinaryKeyKind, BinaryTensorProductKeyKind, GaussianKeyKind, KeyKind, TernaryKeyKind,
+    UniformKeyKind,
 };
+use concrete_commons::dispersion::DispersionParameter;
 use concrete_commons::numeric::Numeric;
 use concrete_commons::parameters::{GlweDimension, PlaintextCount, PolynomialSize};
 #[cfg(feature = "parallel")]
@@ -309,6 +310,38 @@ impl<Cont> GlweSecretKey<UniformKeyKind, Cont> {
     /// assert_eq!(secret_key.polynomial_size(), PolynomialSize(11));
     /// ```
     pub fn uniform_from_container(cont: Cont, poly_size: PolynomialSize) -> Self
+    where
+        Cont: AsRefSlice,
+    {
+        ck_dim_div!(cont.as_slice().len() => poly_size.0);
+        GlweSecretKey {
+            tensor: Tensor::from_container(cont),
+            poly_size,
+            kind: PhantomData,
+        }
+    }
+}
+
+impl<Cont> GlweSecretKey<BinaryTensorProductKeyKind, Cont> {
+    /// Creates a tensor product key from a container.
+    ///
+    /// # Notes
+    ///
+    /// This method does not fill the container with random data. It merely wraps the container in
+    /// the appropriate type.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use concrete_commons::parameters::{GlweDimension, PolynomialSize};
+    /// use concrete_core::commons::crypto::secret::*;
+    /// use concrete_core::commons::crypto::*;
+    /// let secret_key =
+    ///     GlweSecretKey::tensor_product_from_container(vec![0 as u8; 11 * 256], PolynomialSize(11));
+    /// assert_eq!(secret_key.key_size(), GlweDimension(256));
+    /// assert_eq!(secret_key.polynomial_size(), PolynomialSize(11));
+    /// ```
+    pub fn tensor_product_from_container(cont: Cont, poly_size: PolynomialSize) -> Self
     where
         Cont: AsRefSlice,
     {

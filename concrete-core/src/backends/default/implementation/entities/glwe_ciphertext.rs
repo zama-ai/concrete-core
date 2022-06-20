@@ -7,6 +7,7 @@ use crate::specification::entities::markers::{BinaryKeyDistribution, GlweCiphert
 use crate::specification::entities::{AbstractEntity, GlweCiphertextEntity};
 
 use crate::commons::crypto::glwe::GlweCiphertext as ImplGlweCiphertext;
+use crate::prelude::markers::TensorProductKeyDistribution;
 
 /// A structure representing a GLWE ciphertext with 32 bits of precision.
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
@@ -40,6 +41,50 @@ impl AbstractEntity for GlweCiphertext64 {
 
 impl GlweCiphertextEntity for GlweCiphertext64 {
     type KeyDistribution = BinaryKeyDistribution;
+
+    fn glwe_dimension(&self) -> GlweDimension {
+        self.0.size().to_glwe_dimension()
+    }
+
+    fn polynomial_size(&self) -> PolynomialSize {
+        self.0.polynomial_size()
+    }
+}
+
+/// A structure representing a GLWE ciphertext which is the result of a tensor product with 32 bits
+/// of precision.
+#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct GlweTensorProductCiphertext32(pub(crate) ImplGlweCiphertext<Vec<u32>>);
+
+impl AbstractEntity for GlweTensorProductCiphertext32 {
+    type Kind = GlweCiphertextKind;
+}
+
+impl GlweCiphertextEntity for GlweTensorProductCiphertext32 {
+    type KeyDistribution = TensorProductKeyDistribution;
+
+    fn glwe_dimension(&self) -> GlweDimension {
+        self.0.size().to_glwe_dimension()
+    }
+
+    fn polynomial_size(&self) -> PolynomialSize {
+        self.0.polynomial_size()
+    }
+}
+
+/// A structure representing a GLWE ciphertext which is the result of a tensor product with 64 bits
+/// of precision.
+#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct GlweTensorProductCiphertext64(pub(crate) ImplGlweCiphertext<Vec<u64>>);
+
+impl AbstractEntity for GlweTensorProductCiphertext64 {
+    type Kind = GlweCiphertextKind;
+}
+
+impl GlweCiphertextEntity for GlweTensorProductCiphertext64 {
+    type KeyDistribution = TensorProductKeyDistribution;
 
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.size().to_glwe_dimension()

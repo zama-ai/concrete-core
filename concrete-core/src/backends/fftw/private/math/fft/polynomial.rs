@@ -319,6 +319,18 @@ impl<Cont> FourierPolynomial<Cont> {
             result_1, result_2, poly_a_1, poly_a_2, poly_b, poly_c_1, poly_c_2, poly_d,
         );
     }
+
+    pub fn copy_polynomial_content<C1>(&mut self, input: &FourierPolynomial<C1>)
+    where
+        Self: AsMutTensor<Element = Complex64>,
+        FourierPolynomial<C1>: AsRefTensor<Element = Complex64>,
+        Cont: AsMutSlice,
+    {
+        for (output_coef, &input_coef) in self.coefficient_iter_mut().zip(input.coefficient_iter())
+        {
+            *output_coef = input_coef;
+        }
+    }
 }
 
 #[allow(unused)]
