@@ -35,6 +35,9 @@ doc = []
 # A pure-rust backend. Included by default in the build.
 backend_default = ["concrete-csprng/generator_soft"]
 
+# Enables the parallel engine in default backend.
+backend_default_parallel = ["__commons_parallel"]
+
 # Enable the x86_64 specific accelerated implementation of the random generator for the default
 # backend
 backend_default_generator_x86_64_aesni = ["concrete-csprng/generator_x86_64_aesni"]
@@ -44,9 +47,10 @@ backend_fftw = [
     "concrete-fftw"
 ]
 
+__commons_parallel = ["rayon", "concrete-csprng/parallel"]
+
 seeder_unix = ["concrete-csprng/seeder_unix"]
 seeder_x86_64_rdseed = ["concrete-csprng/seeder_x86_64_rdseed"]
-parallel = ["rayon", "concrete-csprng/parallel"]
 serde_serialize = ["serde", "serde/derive", "concrete-commons/serde_serialize",
     "concrete-fftw/serialize"]
 

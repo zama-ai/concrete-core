@@ -77,7 +77,7 @@ pub unsafe extern "C" fn destroy_default_engine_unchecked(engine: *mut DefaultEn
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-#[cfg(feature = "parallel")]
+#[cfg(feature = "backend_default_parallel")]
 pub unsafe extern "C" fn new_default_parallel_engine(
     seeder_builder: *mut SeederBuilder,
     result: *mut *mut DefaultParallelEngine,
@@ -101,7 +101,7 @@ pub unsafe extern "C" fn new_default_parallel_engine(
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
 /// [`new_default_parallel_engine`]
 #[no_mangle]
-#[cfg(feature = "parallel")]
+#[cfg(feature = "backend_default_parallel")]
 pub unsafe extern "C" fn new_default_parallel_engine_unchecked(
     seeder_builder: *mut SeederBuilder,
     result: *mut *mut DefaultParallelEngine,
@@ -121,7 +121,7 @@ pub unsafe extern "C" fn new_default_parallel_engine_unchecked(
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-#[cfg(feature = "parallel")]
+#[cfg(feature = "backend_default_parallel")]
 pub unsafe extern "C" fn destroy_default_parallel_engine(
     engine: *mut DefaultParallelEngine,
 ) -> c_int {
@@ -136,7 +136,7 @@ pub unsafe extern "C" fn destroy_default_parallel_engine(
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
 /// [`destroy_default_parallel_engine`]
 #[no_mangle]
-#[cfg(feature = "parallel")]
+#[cfg(feature = "backend_default_parallel")]
 pub unsafe extern "C" fn destroy_default_parallel_engine_unchecked(
     engine: *mut DefaultParallelEngine,
 ) -> c_int {

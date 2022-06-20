@@ -13,7 +13,7 @@ use concrete_commons::numeric::Numeric;
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
 };
-#[cfg(feature = "parallel")]
+#[cfg(feature = "__commons_parallel")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
 
 #[cfg(feature = "serde_serialize")]
@@ -450,7 +450,7 @@ impl<Cont> StandardGgswCiphertext<Cont> {
     /// assert!(ggsw.as_tensor().iter().all(|a| *a == 9));
     /// assert_eq!(ggsw.level_matrix_iter_mut().count(), 3);
     /// ```
-    #[cfg(feature = "parallel")]
+    #[cfg(feature = "__commons_parallel")]
     pub fn par_level_matrix_iter_mut(
         &mut self,
     ) -> impl IndexedParallelIterator<Item = GgswLevelMatrix<&mut [<Self as AsRefTensor>::Element]>>

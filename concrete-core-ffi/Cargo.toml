@@ -25,8 +25,8 @@ default = []
 doc = [
     "backend_default",
     "backend_default_generator_x86_64_aesni",
+    "backend_default_parallel",
     "backend_fftw",
-    "parallel",
     "seeder_unix",
     "seeder_x86_64_rdseed",
     "serde_serialize",
@@ -44,7 +44,7 @@ backend_default_generator_x86_64_aesni = [
 backend_fftw = ["concrete-core/backend_fftw"]
 
 # Multithreaded key generation
-parallel = ["concrete-core/parallel"]
+backend_default_parallel = ["concrete-core/backend_default_parallel"]
 
 # Unix specific seeder
 seeder_unix = ["concrete-core/seeder_unix"]

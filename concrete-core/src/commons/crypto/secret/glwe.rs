@@ -10,7 +10,7 @@ use crate::commons::crypto::secret::generators::{
     EncryptionRandomGenerator, SecretRandomGenerator,
 };
 use crate::commons::math::polynomial::PolynomialList;
-#[cfg(feature = "parallel")]
+#[cfg(feature = "__commons_parallel")]
 use crate::commons::math::random::ParallelByteRandomGenerator;
 use crate::commons::math::random::{ByteRandomGenerator, Gaussian, RandomGenerable};
 use crate::commons::math::torus::UnsignedTorus;
@@ -20,7 +20,7 @@ use concrete_commons::key_kinds::{
 };
 use concrete_commons::numeric::Numeric;
 use concrete_commons::parameters::{GlweDimension, PlaintextCount, PolynomialSize};
-#[cfg(feature = "parallel")]
+#[cfg(feature = "__commons_parallel")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
 #[cfg(feature = "serde_serialize")]
 use serde::{Deserialize, Serialize};
@@ -900,7 +900,7 @@ where
     ///     &mut encryption_generator,
     /// );
     /// ```
-    #[cfg(feature = "parallel")]
+    #[cfg(feature = "__commons_parallel")]
     pub fn par_encrypt_constant_ggsw<OutputCont, Scalar, Gen>(
         &self,
         encrypted: &mut StandardGgswCiphertext<OutputCont>,

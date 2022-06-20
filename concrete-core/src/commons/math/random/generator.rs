@@ -5,11 +5,11 @@ use crate::commons::math::random::{
 use crate::commons::math::tensor::{AsMutSlice, AsMutTensor, Tensor};
 use concrete_commons::numeric::{FloatingPoint, Numeric};
 use concrete_csprng::generators::{BytesPerChild, ChildrenCount, ForkError};
-#[cfg(feature = "parallel")]
+#[cfg(feature = "__commons_parallel")]
 use rayon::prelude::*;
 use std::convert::TryInto;
 
-#[cfg(feature = "parallel")]
+#[cfg(feature = "__commons_parallel")]
 pub use concrete_csprng::generators::ParallelRandomGenerator as ParallelByteRandomGenerator;
 pub use concrete_csprng::generators::RandomGenerator as ByteRandomGenerator;
 pub use concrete_csprng::seeders::{Seed, Seeder};
@@ -614,7 +614,7 @@ impl<G: ByteRandomGenerator> RandomGenerator<G> {
     }
 }
 
-#[cfg(feature = "parallel")]
+#[cfg(feature = "__commons_parallel")]
 impl<G: ParallelByteRandomGenerator> RandomGenerator<G> {
     /// Tries to fork the current generator into `n_child` generator bounded to `bytes_per_child`,
     /// as a parallel iterator.

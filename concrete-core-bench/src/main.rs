@@ -18,7 +18,7 @@ fn main() {
     // We instantiate the benchmarks for different backends depending on the feature flag activated.
     #[cfg(feature = "backend_default")]
     default::bench();
-    #[cfg(all(feature = "backend_default", feature = "parallel"))]
+    #[cfg(all(feature = "backend_default", feature = "backend_default_parallel"))]
     default::bench_parallel();
     #[cfg(feature = "backend_fftw")]
     fftw::bench();
