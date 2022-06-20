@@ -134,7 +134,7 @@ __global__ void device_bootstrap_amortized(
 
   divide_by_monomial_negacyclic_inplace<Torus, params::opt,
       params::degree / params::opt>(
-      accumulator_mask, block_lut_vector, b_hat, true);
+      accumulator_mask, block_lut_vector, b_hat, false);
 
   divide_by_monomial_negacyclic_inplace<Torus, params::opt,
       params::degree / params::opt>(

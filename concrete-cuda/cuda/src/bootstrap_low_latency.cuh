@@ -78,10 +78,14 @@ mul_trgsw_trlwe(Torus *accumulator,
   auto first_processed_bsk = (blockIdx.y == 0) ? bsk_mask_slice : bsk_body_slice;
   auto second_processed_bsk = (blockIdx.y == 0) ? bsk_body_slice : bsk_mask_slice;
 
-  auto first_processed_acc = (blockIdx.y == 0) ? mask_join_buffer : body_join_buffer;
-  auto second_processed_acc = (blockIdx.y == 0) ? body_join_buffer : mask_join_buffer;
+  auto first_processed_acc = (blockIdx.y == 0) ?
+      &mask_join_buffer[params::degree / 2 * blockIdx.x] :
+      &body_join_buffer[params::degree / 2 * blockIdx.x];
+  auto second_processed_acc = (blockIdx.y == 0) ?
+      &body_join_buffer[params::degree / 2 * blockIdx.x] :
+      &mask_join_buffer[params::degree / 2 * blockIdx.x];
 
-  int tid = 0;
+  int tid = threadIdx.x;
 
   //first product
   for(int i = 0; i < params::opt / 2; i++) {
@@ -90,7 +94,7 @@ mul_trgsw_trlwe(Torus *accumulator,
   }
 
   grid.sync();
-  tid = 0;
+  tid = threadIdx.x;
   //second product
     for(int i = 0; i < params::opt / 2; i++) {
         second_processed_acc[tid] += fft[tid] * second_processed_bsk.m_values[tid];
@@ -107,7 +111,7 @@ mul_trgsw_trlwe(Torus *accumulator,
   auto src_acc =  (blockIdx.y == 0) ? mask_join_buffer : body_join_buffer;
 
   // copy first product into fft buffer
-  tid = 0;
+  tid = threadIdx.x;
   for (int i = 0; i < params::opt / 2; i++) {
       fft[tid] = src_acc[tid];
       tid += params::degree / params::opt;
@@ -117,9 +121,9 @@ mul_trgsw_trlwe(Torus *accumulator,
   // accumulate rest of the products into fft buffer
   for (int l = 1; l < gridDim.x; l++) {
       auto cur_src_acc = &src_acc[l * params::degree / 2];
-      tid = 0;
+      tid = threadIdx.x;
       for (int i = 0; i < params::opt / 2; i++) {
-          fft[tid] = cur_src_acc[tid];
+          fft[tid] += cur_src_acc[tid];
           tid += params::degree / params::opt;
       }
   }
@@ -136,6 +140,7 @@ mul_trgsw_trlwe(Torus *accumulator,
 
   add_to_torus<Torus, params>(fft, accumulator);
 
+  __syncthreads();
 }
 
 template <typename Torus, class params>
@@ -201,7 +206,7 @@ __global__ void device_bootstrap_low_latency(
   if (blockIdx.y == 0) {
       divide_by_monomial_negacyclic_inplace<Torus, params::opt,
               params::degree / params::opt>(
-              accumulator, block_lut_vector, b_hat, true);
+              accumulator, block_lut_vector, b_hat, false);
   }
   else {
       divide_by_monomial_negacyclic_inplace<Torus, params::opt,
