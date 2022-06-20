@@ -25,7 +25,7 @@ const KARATUSBA_STOP: usize = 32;
 /// let poly = Polynomial::allocate(0 as u32, PolynomialSize(100));
 /// assert_eq!(poly.polynomial_size(), PolynomialSize(100));
 /// ```
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub struct Polynomial<Cont> {
     pub(crate) tensor: Tensor<Cont>,
 }
