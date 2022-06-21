@@ -10,6 +10,7 @@ use concrete_csprng::generators::SoftwareRandomGenerator;
 use concrete_csprng::seeders::Seeder;
 
 use crate::commons::crypto::secret::generators::{
+    DeterministicSeeder as ImplDeterministicSeeder,
     EncryptionRandomGenerator as ImplEncryptionRandomGenerator,
     SecretRandomGenerator as ImplSecretRandomGenerator,
 };
@@ -51,11 +52,14 @@ impl AbstractEngine for DefaultEngine {
     type Parameters = Box<dyn Seeder>;
 
     fn new(mut parameters: Self::Parameters) -> Result<Self, Self::EngineError> {
+        let mut deterministic_seeder =
+            ImplDeterministicSeeder::<ActivatedRandomGenerator>::new(parameters.seed());
+
         Ok(DefaultEngine {
-            secret_generator: ImplSecretRandomGenerator::new(parameters.seed()),
+            secret_generator: ImplSecretRandomGenerator::new(deterministic_seeder.seed()),
             encryption_generator: ImplEncryptionRandomGenerator::new(
-                parameters.seed(),
-                parameters.as_mut(),
+                deterministic_seeder.seed(),
+                &mut deterministic_seeder,
             ),
         })
     }
@@ -72,7 +76,10 @@ pub mod parallel {
     use concrete_csprng::generators::SoftwareRandomGenerator;
     use concrete_csprng::seeders::Seeder;
 
-    use crate::commons::crypto::secret::generators::EncryptionRandomGenerator as ImplEncryptionRandomGenerator;
+    use crate::commons::crypto::secret::generators::{
+        DeterministicSeeder as ImplDeterministicSeeder,
+        EncryptionRandomGenerator as ImplEncryptionRandomGenerator,
+    };
     use crate::specification::engines::sealed::AbstractEngineSeal;
     use crate::specification::engines::AbstractEngine;
 
@@ -111,10 +118,13 @@ pub mod parallel {
         type Parameters = Box<dyn Seeder>;
 
         fn new(mut parameters: Self::Parameters) -> Result<Self, Self::EngineError> {
+            let mut deterministic_seeder =
+                ImplDeterministicSeeder::<ActivatedRandomGenerator>::new(parameters.seed());
+
             Ok(DefaultParallelEngine {
                 encryption_generator: ImplEncryptionRandomGenerator::new(
-                    parameters.seed(),
-                    parameters.as_mut(),
+                    deterministic_seeder.seed(),
+                    &mut deterministic_seeder,
                 ),
             })
         }
