@@ -6,28 +6,30 @@ use super::*;
 pub struct Uniform;
 
 macro_rules! implement_uniform {
-    ($T:ty, $bytes:literal) => {
+    ($T:ty) => {
         impl RandomGenerable<Uniform> for $T {
             #[allow(unused)]
             fn generate_one<G: ByteRandomGenerator>(
                 generator: &mut RandomGenerator<G>,
                 distribution: Uniform,
             ) -> Self {
-                let mut buf = [0; $bytes];
+                let mut buf = [0; std::mem::size_of::<$T>()];
                 buf.iter_mut().for_each(|a| *a = generator.generate_next());
-                unsafe { *(buf.as_ptr() as *const $T) }
+                // We use from_le_bytes as most platforms are low endian, this avoids endianness
+                // issues
+                <$T>::from_le_bytes(buf)
             }
         }
     };
 }
 
-implement_uniform!(u8, 1);
-implement_uniform!(u16, 2);
-implement_uniform!(u32, 4);
-implement_uniform!(u64, 8);
-implement_uniform!(u128, 16);
-implement_uniform!(i8, 1);
-implement_uniform!(i16, 1);
-implement_uniform!(i32, 1);
-implement_uniform!(i64, 1);
-implement_uniform!(i128, 1);
+implement_uniform!(u8);
+implement_uniform!(u16);
+implement_uniform!(u32);
+implement_uniform!(u64);
+implement_uniform!(u128);
+implement_uniform!(i8);
+implement_uniform!(i16);
+implement_uniform!(i32);
+implement_uniform!(i64);
+implement_uniform!(i128);
