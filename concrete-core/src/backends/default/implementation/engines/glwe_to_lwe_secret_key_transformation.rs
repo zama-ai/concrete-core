@@ -3,10 +3,10 @@ use crate::backends::default::entities::{
     GlweSecretKey32, GlweSecretKey64, LweSecretKey32, LweSecretKey64,
 };
 use crate::specification::engines::{
-    GlweToLweSecretKeyTransmutationEngine, GlweToLweSecretKeyTransmutationEngineError,
+    GlweToLweSecretKeyTransformationEngine, GlweToLweSecretKeyTransformationEngineError,
 };
 
-impl GlweToLweSecretKeyTransmutationEngine<GlweSecretKey32, LweSecretKey32> for DefaultEngine {
+impl GlweToLweSecretKeyTransformationEngine<GlweSecretKey32, LweSecretKey32> for DefaultEngine {
     /// # Example
     ///
     /// ```
@@ -28,7 +28,7 @@ impl GlweToLweSecretKeyTransmutationEngine<GlweSecretKey32, LweSecretKey32> for 
     /// assert_eq!(glwe_secret_key.glwe_dimension(), glwe_dimension);
     /// assert_eq!(glwe_secret_key.polynomial_size(), polynomial_size);
     ///
-    /// let lwe_secret_key = engine.transmute_glwe_secret_key_to_lwe_secret_key(glwe_secret_key)?;
+    /// let lwe_secret_key = engine.transform_glwe_secret_key_to_lwe_secret_key(glwe_secret_key)?;
     /// assert_eq!(lwe_secret_key.lwe_dimension(), LweDimension(8));
     ///
     /// engine.destroy(lwe_secret_key)?;
@@ -36,14 +36,15 @@ impl GlweToLweSecretKeyTransmutationEngine<GlweSecretKey32, LweSecretKey32> for 
     /// # Ok(())
     /// # }
     /// ```
-    fn transmute_glwe_secret_key_to_lwe_secret_key(
+    fn transform_glwe_secret_key_to_lwe_secret_key(
         &mut self,
         glwe_secret_key: GlweSecretKey32,
-    ) -> Result<LweSecretKey32, GlweToLweSecretKeyTransmutationEngineError<Self::EngineError>> {
-        Ok(unsafe { self.transmute_glwe_secret_key_to_lwe_secret_key_unchecked(glwe_secret_key) })
+    ) -> Result<LweSecretKey32, GlweToLweSecretKeyTransformationEngineError<Self::EngineError>>
+    {
+        Ok(unsafe { self.transform_glwe_secret_key_to_lwe_secret_key_unchecked(glwe_secret_key) })
     }
 
-    unsafe fn transmute_glwe_secret_key_to_lwe_secret_key_unchecked(
+    unsafe fn transform_glwe_secret_key_to_lwe_secret_key_unchecked(
         &mut self,
         glwe_secret_key: GlweSecretKey32,
     ) -> LweSecretKey32 {
@@ -51,7 +52,7 @@ impl GlweToLweSecretKeyTransmutationEngine<GlweSecretKey32, LweSecretKey32> for 
     }
 }
 
-impl GlweToLweSecretKeyTransmutationEngine<GlweSecretKey64, LweSecretKey64> for DefaultEngine {
+impl GlweToLweSecretKeyTransformationEngine<GlweSecretKey64, LweSecretKey64> for DefaultEngine {
     /// # Example
     ///
     /// ```
@@ -73,7 +74,7 @@ impl GlweToLweSecretKeyTransmutationEngine<GlweSecretKey64, LweSecretKey64> for 
     /// assert_eq!(glwe_secret_key.glwe_dimension(), glwe_dimension);
     /// assert_eq!(glwe_secret_key.polynomial_size(), polynomial_size);
     ///
-    /// let lwe_secret_key = engine.transmute_glwe_secret_key_to_lwe_secret_key(glwe_secret_key)?;
+    /// let lwe_secret_key = engine.transform_glwe_secret_key_to_lwe_secret_key(glwe_secret_key)?;
     /// assert_eq!(lwe_secret_key.lwe_dimension(), LweDimension(8));
     ///
     /// engine.destroy(lwe_secret_key)?;
@@ -81,14 +82,15 @@ impl GlweToLweSecretKeyTransmutationEngine<GlweSecretKey64, LweSecretKey64> for 
     /// # Ok(())
     /// # }
     /// ```
-    fn transmute_glwe_secret_key_to_lwe_secret_key(
+    fn transform_glwe_secret_key_to_lwe_secret_key(
         &mut self,
         glwe_secret_key: GlweSecretKey64,
-    ) -> Result<LweSecretKey64, GlweToLweSecretKeyTransmutationEngineError<Self::EngineError>> {
-        Ok(unsafe { self.transmute_glwe_secret_key_to_lwe_secret_key_unchecked(glwe_secret_key) })
+    ) -> Result<LweSecretKey64, GlweToLweSecretKeyTransformationEngineError<Self::EngineError>>
+    {
+        Ok(unsafe { self.transform_glwe_secret_key_to_lwe_secret_key_unchecked(glwe_secret_key) })
     }
 
-    unsafe fn transmute_glwe_secret_key_to_lwe_secret_key_unchecked(
+    unsafe fn transform_glwe_secret_key_to_lwe_secret_key_unchecked(
         &mut self,
         glwe_secret_key: GlweSecretKey64,
     ) -> LweSecretKey64 {

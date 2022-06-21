@@ -1,7 +1,7 @@
 use crate::fixture::Fixture;
 use crate::generation::prototyping::{
     PrototypesGlweCiphertext, PrototypesGlweSecretKey, PrototypesLweCiphertext,
-    PrototypesPlaintext, PrototypesPlaintextVector, TransmutesGlweToLweSecretKeyPrototype,
+    PrototypesPlaintext, PrototypesPlaintextVector, TransformsGlweToLweSecretKeyPrototype,
 };
 use crate::generation::synthesizing::{SynthesizesGlweCiphertext, SynthesizesLweCiphertext};
 use crate::generation::{IntegerPrecision, Maker};
@@ -33,7 +33,7 @@ where
     Engine: LweCiphertextDiscardingExtractionEngine<GlweCiphertext, LweCiphertext>,
     GlweCiphertext: GlweCiphertextEntity,
     LweCiphertext: LweCiphertextEntity<KeyDistribution = GlweCiphertext::KeyDistribution>,
-    Maker: TransmutesGlweToLweSecretKeyPrototype<Precision, GlweCiphertext::KeyDistribution>
+    Maker: TransformsGlweToLweSecretKeyPrototype<Precision, GlweCiphertext::KeyDistribution>
         + SynthesizesLweCiphertext<Precision, LweCiphertext>
         + SynthesizesGlweCiphertext<Precision, GlweCiphertext>,
 {
@@ -136,7 +136,7 @@ where
         let (proto_plaintext_vector, ..) = sample_proto;
         let proto_output_ciphertext = maker.unsynthesize_lwe_ciphertext(lwe_ciphertext);
         let proto_lwe_secret_key =
-            maker.transmute_glwe_secret_key_to_lwe_secret_key(proto_glwe_secret_key);
+            maker.transform_glwe_secret_key_to_lwe_secret_key(proto_glwe_secret_key);
         let proto_output_plaintext = maker
             .decrypt_lwe_ciphertext_to_plaintext(&proto_lwe_secret_key, &proto_output_ciphertext);
         maker.destroy_glwe_ciphertext(glwe_ciphertext);

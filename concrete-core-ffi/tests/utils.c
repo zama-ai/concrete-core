@@ -67,7 +67,7 @@ SeederBuilder *get_best_seeder_unchecked() {
 }
 
 // This is not part of the C FFI but rather is a C util exposed for convenience in tests.
-int clone_transmute_lwe_secret_key_to_glwe_secret_key_u64(DefaultEngine *default_engine,
+int clone_transform_lwe_secret_key_to_glwe_secret_key_u64(DefaultEngine *default_engine,
                                                           LweSecretKey64 *output_lwe_sk,
                                                           size_t poly_size,
                                                           GlweSecretKey64 **output_glwe_sk) {
@@ -77,7 +77,7 @@ int clone_transmute_lwe_secret_key_to_glwe_secret_key_u64(DefaultEngine *default
     return 1;
   }
 
-  int glwe_sk_ok = default_engine_transmute_lwe_secret_key_to_glwe_secret_key_u64(
+  int glwe_sk_ok = default_engine_transform_lwe_secret_key_to_glwe_secret_key_u64(
       default_engine, &output_lwe_sk_clone, poly_size, output_glwe_sk);
   if (glwe_sk_ok != 0) {
     return 1;
@@ -91,7 +91,7 @@ int clone_transmute_lwe_secret_key_to_glwe_secret_key_u64(DefaultEngine *default
 }
 
 // This is not part of the C FFI but rather is a C util exposed for convenience in tests.
-int clone_transmute_lwe_secret_key_to_glwe_secret_key_unchecked_u64(
+int clone_transform_lwe_secret_key_to_glwe_secret_key_unchecked_u64(
     DefaultEngine *default_engine, LweSecretKey64 *output_lwe_sk, size_t poly_size,
     GlweSecretKey64 **output_glwe_sk) {
   LweSecretKey64 *output_lwe_sk_clone = NULL;
@@ -100,7 +100,7 @@ int clone_transmute_lwe_secret_key_to_glwe_secret_key_unchecked_u64(
     return 1;
   }
 
-  int glwe_sk_ok = default_engine_transmute_lwe_secret_key_to_glwe_secret_key_unchecked_u64(
+  int glwe_sk_ok = default_engine_transform_lwe_secret_key_to_glwe_secret_key_unchecked_u64(
       default_engine, &output_lwe_sk_clone, poly_size, output_glwe_sk);
   if (glwe_sk_ok != 0) {
     return 1;

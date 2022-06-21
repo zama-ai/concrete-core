@@ -2,7 +2,7 @@ use crate::fixture::Fixture;
 use crate::generation::prototyping::{
     PrototypesGlweCiphertext, PrototypesGlweSecretKey, PrototypesLweBootstrapKey,
     PrototypesLweCiphertext, PrototypesLweSecretKey, PrototypesPlaintext,
-    PrototypesPlaintextVector, TransmutesGlweToLweSecretKeyPrototype,
+    PrototypesPlaintextVector, TransformsGlweToLweSecretKeyPrototype,
 };
 use crate::generation::synthesizing::{
     SynthesizesGlweCiphertext, SynthesizesLweBootstrapKey, SynthesizesLweCiphertext,
@@ -56,7 +56,7 @@ where
         InputKeyDistribution = InputCiphertext::KeyDistribution,
         OutputKeyDistribution = OutputCiphertext::KeyDistribution,
     >,
-    Maker: TransmutesGlweToLweSecretKeyPrototype<Precision, OutputCiphertext::KeyDistribution>
+    Maker: TransformsGlweToLweSecretKeyPrototype<Precision, OutputCiphertext::KeyDistribution>
         + SynthesizesLweBootstrapKey<Precision, BootstrapKey>
         + SynthesizesGlweCiphertext<Precision, Accumulator>
         + SynthesizesLweCiphertext<Precision, InputCiphertext>
@@ -233,7 +233,7 @@ where
         let (proto_plaintext, ..) = sample_proto;
         let proto_output_ciphertext = maker.unsynthesize_lwe_ciphertext(output_ciphertext);
         let proto_output_lwe_secret_key =
-            maker.transmute_glwe_secret_key_to_lwe_secret_key(proto_glwe_secret_key);
+            maker.transform_glwe_secret_key_to_lwe_secret_key(proto_glwe_secret_key);
         let proto_output_plaintext = <Maker as PrototypesLweCiphertext<
             Precision,
             OutputCiphertext::KeyDistribution,
