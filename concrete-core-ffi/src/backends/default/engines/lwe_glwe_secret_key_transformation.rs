@@ -1,11 +1,11 @@
 //! Module providing entry points to the `DefaultEngine` implementations of various
-//! `LweToGlweSecretKeyTransmutationEngine` traits.
+//! `LweToGlweSecretKeyTransformationEngine` traits.
 
 use crate::utils::*;
 use concrete_core::prelude::*;
 use std::os::raw::c_int;
 
-/// Transmutate an `LweSecretKey64` into a `GlweSecretKey64`.
+/// Transform an `LweSecretKey64` into a `GlweSecretKey64`.
 ///
 /// The passed `LweSecretKey64` is consumed and cannot be accessed afterwards, the passed input
 /// pointer is set to NULL by this function.
@@ -14,7 +14,7 @@ use std::os::raw::c_int;
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_transmute_lwe_secret_key_to_glwe_secret_key_u64(
+pub unsafe extern "C" fn default_engine_transform_lwe_secret_key_to_glwe_secret_key_u64(
     engine: *mut DefaultEngine,
     lwe_secret_key: *mut *mut LweSecretKey64,
     polynomial_size: usize,
@@ -40,7 +40,7 @@ pub unsafe extern "C" fn default_engine_transmute_lwe_secret_key_to_glwe_secret_
 
         let heap_allocated_glwe_secret_key = Box::new(
             engine
-                .transmute_lwe_secret_key_to_glwe_secret_key(
+                .transform_lwe_secret_key_to_glwe_secret_key(
                     *heap_allocated_lwe_secret_key,
                     polynomial_size,
                 )
@@ -56,9 +56,9 @@ pub unsafe extern "C" fn default_engine_transmute_lwe_secret_key_to_glwe_secret_
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_engine_transmute_lwe_secret_key_to_glwe_secret_key_u64`]
+/// [`default_engine_transform_lwe_secret_key_to_glwe_secret_key_u64`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_transmute_lwe_secret_key_to_glwe_secret_key_unchecked_u64(
+pub unsafe extern "C" fn default_engine_transform_lwe_secret_key_to_glwe_secret_key_unchecked_u64(
     engine: *mut DefaultEngine,
     lwe_secret_key: *mut *mut LweSecretKey64,
     polynomial_size: usize,
@@ -78,7 +78,7 @@ pub unsafe extern "C" fn default_engine_transmute_lwe_secret_key_to_glwe_secret_
         let polynomial_size = PolynomialSize(polynomial_size);
 
         let heap_allocated_glwe_secret_key = Box::new(
-            engine.transmute_lwe_secret_key_to_glwe_secret_key_unchecked(
+            engine.transform_lwe_secret_key_to_glwe_secret_key_unchecked(
                 *heap_allocated_lwe_secret_key,
                 polynomial_size,
             ),

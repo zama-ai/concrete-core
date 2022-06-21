@@ -6,7 +6,7 @@ use crate::generation::prototyping::PrototypesLweSecretKey;
 use crate::generation::{IntegerPrecision, Maker, Precision32, Precision64};
 use concrete_commons::parameters::{GlweDimension, PolynomialSize};
 use concrete_core::prelude::markers::{BinaryKeyDistribution, KeyDistributionMarker};
-use concrete_core::prelude::{GlweSecretKeyCreationEngine, GlweToLweSecretKeyTransmutationEngine};
+use concrete_core::prelude::{GlweSecretKeyCreationEngine, GlweToLweSecretKeyTransformationEngine};
 
 /// A trait allowing to manipulate GLWE secret key prototypes.
 pub trait PrototypesGlweSecretKey<
@@ -57,41 +57,41 @@ impl PrototypesGlweSecretKey<Precision64, BinaryKeyDistribution> for Maker {
     }
 }
 
-/// A trait allowing to transmute GLWE secret key prototypes to LWE secret key prototypes.
-pub trait TransmutesGlweToLweSecretKeyPrototype<
+/// A trait allowing to transform GLWE secret key prototypes to LWE secret key prototypes.
+pub trait TransformsGlweToLweSecretKeyPrototype<
     Precision: IntegerPrecision,
     KeyDistribution: KeyDistributionMarker,
 >:
     PrototypesGlweSecretKey<Precision, KeyDistribution>
     + PrototypesLweSecretKey<Precision, KeyDistribution>
 {
-    fn transmute_glwe_secret_key_to_lwe_secret_key(
+    fn transform_glwe_secret_key_to_lwe_secret_key(
         &mut self,
         glwe_key: &Self::GlweSecretKeyProto,
     ) -> Self::LweSecretKeyProto;
 }
 
-impl TransmutesGlweToLweSecretKeyPrototype<Precision32, BinaryKeyDistribution> for Maker {
-    fn transmute_glwe_secret_key_to_lwe_secret_key(
+impl TransformsGlweToLweSecretKeyPrototype<Precision32, BinaryKeyDistribution> for Maker {
+    fn transform_glwe_secret_key_to_lwe_secret_key(
         &mut self,
         glwe_key: &Self::GlweSecretKeyProto,
     ) -> Self::LweSecretKeyProto {
         ProtoBinaryLweSecretKey32(
             self.default_engine
-                .transmute_glwe_secret_key_to_lwe_secret_key(glwe_key.0.to_owned())
+                .transform_glwe_secret_key_to_lwe_secret_key(glwe_key.0.to_owned())
                 .unwrap(),
         )
     }
 }
 
-impl TransmutesGlweToLweSecretKeyPrototype<Precision64, BinaryKeyDistribution> for Maker {
-    fn transmute_glwe_secret_key_to_lwe_secret_key(
+impl TransformsGlweToLweSecretKeyPrototype<Precision64, BinaryKeyDistribution> for Maker {
+    fn transform_glwe_secret_key_to_lwe_secret_key(
         &mut self,
         glwe_key: &Self::GlweSecretKeyProto,
     ) -> Self::LweSecretKeyProto {
         ProtoBinaryLweSecretKey64(
             self.default_engine
-                .transmute_glwe_secret_key_to_lwe_secret_key(glwe_key.0.to_owned())
+                .transform_glwe_secret_key_to_lwe_secret_key(glwe_key.0.to_owned())
                 .unwrap(),
         )
     }

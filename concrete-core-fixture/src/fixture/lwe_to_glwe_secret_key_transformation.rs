@@ -1,36 +1,36 @@
 use crate::fixture::Fixture;
 use crate::generation::prototyping::{
-    PrototypesLweSecretKey, TransmutesGlweToLweSecretKeyPrototype,
+    PrototypesLweSecretKey, TransformsGlweToLweSecretKeyPrototype,
 };
 use crate::generation::synthesizing::{SynthesizesGlweSecretKey, SynthesizesLweSecretKey};
 use crate::generation::{IntegerPrecision, Maker};
 use concrete_commons::parameters::{GlweDimension, LweDimension, PolynomialSize};
 use concrete_core::prelude::{
-    GlweSecretKeyEntity, LweSecretKeyEntity, LweToGlweSecretKeyTransmutationEngine,
+    GlweSecretKeyEntity, LweSecretKeyEntity, LweToGlweSecretKeyTransformationEngine,
 };
 
-/// A fixture for the types implementing the `LweToGlweSecretKeyTransmutationEngine` trait.
-pub struct LweToGlweSecretKeyTransmutationFixture;
+/// A fixture for the types implementing the `LweToGlweSecretKeyTransformationEngine` trait.
+pub struct LweToGlweSecretKeyTransformationFixture;
 
 #[derive(Debug)]
-pub struct LweToGlweSecretKeyTransmutationParameters {
+pub struct LweToGlweSecretKeyTransformationParameters {
     pub lwe_dimension: LweDimension,
     pub polynomial_size: PolynomialSize,
 }
 
 impl<Precision, Engine, InputSecretKey, OutputSecretKey>
     Fixture<Precision, Engine, (InputSecretKey, OutputSecretKey)>
-    for LweToGlweSecretKeyTransmutationFixture
+    for LweToGlweSecretKeyTransformationFixture
 where
     Precision: IntegerPrecision,
-    Engine: LweToGlweSecretKeyTransmutationEngine<InputSecretKey, OutputSecretKey>,
+    Engine: LweToGlweSecretKeyTransformationEngine<InputSecretKey, OutputSecretKey>,
     InputSecretKey: LweSecretKeyEntity,
     OutputSecretKey: GlweSecretKeyEntity<KeyDistribution = InputSecretKey::KeyDistribution>,
-    Maker: TransmutesGlweToLweSecretKeyPrototype<Precision, OutputSecretKey::KeyDistribution>
+    Maker: TransformsGlweToLweSecretKeyPrototype<Precision, OutputSecretKey::KeyDistribution>
         + SynthesizesGlweSecretKey<Precision, OutputSecretKey>
         + SynthesizesLweSecretKey<Precision, InputSecretKey>,
 {
-    type Parameters = LweToGlweSecretKeyTransmutationParameters;
+    type Parameters = LweToGlweSecretKeyTransformationParameters;
     type RepetitionPrototypes = ();
     type SamplePrototypes = (<Maker as PrototypesLweSecretKey<
         Precision,
@@ -47,11 +47,11 @@ where
     fn generate_parameters_iterator() -> Box<dyn Iterator<Item = Self::Parameters>> {
         Box::new(
             vec![
-                LweToGlweSecretKeyTransmutationParameters {
+                LweToGlweSecretKeyTransformationParameters {
                     lwe_dimension: LweDimension(1024),
                     polynomial_size: PolynomialSize(1024),
                 },
-                LweToGlweSecretKeyTransmutationParameters {
+                LweToGlweSecretKeyTransformationParameters {
                     lwe_dimension: LweDimension(4096),
                     polynomial_size: PolynomialSize(2048),
                 },
@@ -94,7 +94,7 @@ where
         let (sk_in,) = context;
         let polynomial_size = parameters.polynomial_size;
         let sk_out = unsafe {
-            engine.transmute_lwe_secret_key_to_glwe_secret_key_unchecked(sk_in, polynomial_size)
+            engine.transform_lwe_secret_key_to_glwe_secret_key_unchecked(sk_in, polynomial_size)
         };
         (sk_out,)
     }
@@ -117,7 +117,7 @@ where
 
         let proto_out_glwe_key = maker.unsynthesize_glwe_secret_key(sk_out);
         let proto_out_glwe_key_roundtrip_to_lwe_key =
-            maker.transmute_glwe_secret_key_to_lwe_secret_key(&proto_out_glwe_key);
+            maker.transform_glwe_secret_key_to_lwe_secret_key(&proto_out_glwe_key);
 
         // Check that the roundtripped key is equal to the input sample
         let (proto_in_lwe_key,) = sample_proto;

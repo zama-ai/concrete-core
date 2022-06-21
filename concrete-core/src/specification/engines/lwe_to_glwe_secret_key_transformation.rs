@@ -5,7 +5,7 @@ use concrete_commons::parameters::PolynomialSize;
 use crate::specification::entities::{GlweSecretKeyEntity, LweSecretKeyEntity};
 
 engine_error! {
-    LweToGlweSecretKeyTransmutationEngineError for LweToGlweSecretKeyTransmutationEngine @
+    LweToGlweSecretKeyTransformationEngineError for LweToGlweSecretKeyTransformationEngine @
     IncompatibleLweDimension => "The input key LweDimension is not compatible \
                                  with the provided PolynomialSize",
     NullPolynomialSize => "The output secret key polynomial size must be greater than zero.",
@@ -13,7 +13,7 @@ engine_error! {
                           you should prefer the LWE scheme."
 }
 
-impl<EngineError: std::error::Error> LweToGlweSecretKeyTransmutationEngineError<EngineError> {
+impl<EngineError: std::error::Error> LweToGlweSecretKeyTransformationEngineError<EngineError> {
     /// Validates the inputs
     pub fn perform_generic_checks<InputKey>(
         lwe_secret_key: &InputKey,
@@ -35,31 +35,31 @@ impl<EngineError: std::error::Error> LweToGlweSecretKeyTransmutationEngineError<
     }
 }
 
-/// A trait for engines transmuting LWE secret keys into GLWE secret keys.
+/// A trait for engines transforming LWE secret keys into GLWE secret keys.
 ///
 /// # Semantics
 ///
 /// This [pure](super#operation-semantics) operation moves the existing LWE into a fresh GLWE secret
 /// key.
-pub trait LweToGlweSecretKeyTransmutationEngine<InputKey, OutputKey>: AbstractEngine
+pub trait LweToGlweSecretKeyTransformationEngine<InputKey, OutputKey>: AbstractEngine
 where
     InputKey: LweSecretKeyEntity,
     OutputKey: GlweSecretKeyEntity<KeyDistribution = InputKey::KeyDistribution>,
 {
-    /// Does the transmutation of the LWE secret key into a GLWE secret key
-    fn transmute_lwe_secret_key_to_glwe_secret_key(
+    /// Does the transformation of the LWE secret key into a GLWE secret key
+    fn transform_lwe_secret_key_to_glwe_secret_key(
         &mut self,
         lwe_secret_key: InputKey,
         polynomial_size: PolynomialSize,
-    ) -> Result<OutputKey, LweToGlweSecretKeyTransmutationEngineError<Self::EngineError>>;
+    ) -> Result<OutputKey, LweToGlweSecretKeyTransformationEngineError<Self::EngineError>>;
 
-    /// Unsafely transmutes an LWE secret key into a GLWE secret key
+    /// Unsafely transforms an LWE secret key into a GLWE secret key
     ///
     /// # Safety
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
-    /// of [`LweToGlweSecretKeyTransmutationEngineError`].
+    /// of [`LweToGlweSecretKeyTransformationEngineError`].
     /// For safety concerns _specific_ to an engine, refer to the implementer safety section.
-    unsafe fn transmute_lwe_secret_key_to_glwe_secret_key_unchecked(
+    unsafe fn transform_lwe_secret_key_to_glwe_secret_key_unchecked(
         &mut self,
         lwe_secret_key: InputKey,
         polynomial_size: PolynomialSize,

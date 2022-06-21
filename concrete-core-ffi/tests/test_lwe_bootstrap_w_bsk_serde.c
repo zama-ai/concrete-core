@@ -77,9 +77,9 @@ void bootstrap_view_buffers_test(void) {
   GlweSecretKey64 *output_glwe_sk = NULL;
 
   // This is not part of the C FFI but rather is a C util exposed for convenience in tests.
-  int clone_transmute_ok = clone_transmute_lwe_secret_key_to_glwe_secret_key_u64(
+  int clone_transform_ok = clone_transform_lwe_secret_key_to_glwe_secret_key_u64(
       default_engine, output_lwe_sk, poly_size, &output_glwe_sk);
-  assert(clone_transmute_ok == 0);
+  assert(clone_transform_ok == 0);
 
   LweBootstrapKey64 *bsk = NULL;
   int bsk_ok = default_parallel_engine_create_lwe_bootstrap_key_u64(
@@ -252,9 +252,9 @@ void bootstrap_unchecked_view_buffers_test(void) {
   GlweSecretKey64 *output_glwe_sk = NULL;
 
   // This is not part of the C FFI but rather is a C util exposed for convenience in tests.
-  int clone_transmute_ok = clone_transmute_lwe_secret_key_to_glwe_secret_key_unchecked_u64(
+  int clone_transform_ok = clone_transform_lwe_secret_key_to_glwe_secret_key_unchecked_u64(
       default_engine, output_lwe_sk, poly_size, &output_glwe_sk);
-  assert(clone_transmute_ok == 0);
+  assert(clone_transform_ok == 0);
 
   LweBootstrapKey64 *bsk = NULL;
   int bsk_ok = default_parallel_engine_create_lwe_bootstrap_key_unchecked_u64(
@@ -431,9 +431,9 @@ void bootstrap_raw_ptr_buffers_test(void) {
   GlweSecretKey64 *output_glwe_sk = NULL;
 
   // This is not part of the C FFI but rather is a C util exposed for convenience in tests.
-  int clone_transmute_ok = clone_transmute_lwe_secret_key_to_glwe_secret_key_u64(
+  int clone_transform_ok = clone_transform_lwe_secret_key_to_glwe_secret_key_u64(
       default_engine, output_lwe_sk, poly_size, &output_glwe_sk);
-  assert(clone_transmute_ok == 0);
+  assert(clone_transform_ok == 0);
 
   LweBootstrapKey64 *bsk = NULL;
   int bsk_ok = default_parallel_engine_create_lwe_bootstrap_key_u64(
@@ -569,9 +569,9 @@ void bootstrap_unchecked_raw_ptr_buffers_test(void) {
   GlweSecretKey64 *output_glwe_sk = NULL;
 
   // This is not part of the C FFI but rather is a C util exposed for convenience in tests.
-  int clone_transmute_ok = clone_transmute_lwe_secret_key_to_glwe_secret_key_unchecked_u64(
+  int clone_transform_ok = clone_transform_lwe_secret_key_to_glwe_secret_key_unchecked_u64(
       default_engine, output_lwe_sk, poly_size, &output_glwe_sk);
-  assert(clone_transmute_ok == 0);
+  assert(clone_transform_ok == 0);
 
   LweBootstrapKey64 *bsk = NULL;
   int bsk_ok = default_parallel_engine_create_lwe_bootstrap_key_unchecked_u64(

@@ -4,10 +4,10 @@ use crate::prelude::AbstractEngine;
 use crate::specification::entities::{GlweSecretKeyEntity, LweSecretKeyEntity};
 
 engine_error! {
-    GlweToLweSecretKeyTransmutationEngineError for GlweToLweSecretKeyTransmutationEngine @
+    GlweToLweSecretKeyTransformationEngineError for GlweToLweSecretKeyTransformationEngine @
 }
 
-/// A trait for engines transmuting GLWE secret keys into LWE secret keys.
+/// A trait for engines transforming GLWE secret keys into LWE secret keys.
 ///
 /// # Semantics
 ///
@@ -15,24 +15,24 @@ engine_error! {
 /// key.
 ///
 /// # Formal Definition
-pub trait GlweToLweSecretKeyTransmutationEngine<InputKey, OutputKey>: AbstractEngine
+pub trait GlweToLweSecretKeyTransformationEngine<InputKey, OutputKey>: AbstractEngine
 where
     InputKey: GlweSecretKeyEntity,
     OutputKey: LweSecretKeyEntity<KeyDistribution = InputKey::KeyDistribution>,
 {
-    /// Does the transmutation of the GLWE secret key into an LWE secret key
-    fn transmute_glwe_secret_key_to_lwe_secret_key(
+    /// Does the transformation of the GLWE secret key into an LWE secret key
+    fn transform_glwe_secret_key_to_lwe_secret_key(
         &mut self,
         glwe_secret_key: InputKey,
-    ) -> Result<OutputKey, GlweToLweSecretKeyTransmutationEngineError<Self::EngineError>>;
+    ) -> Result<OutputKey, GlweToLweSecretKeyTransformationEngineError<Self::EngineError>>;
 
-    /// Unsafely transmutes a GLWE secret key into an LWE secret key
+    /// Unsafely transforms a GLWE secret key into an LWE secret key
     ///
     /// # Safety
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
-    /// of [`GlweToLweSecretKeyTransmutationEngineError`].
+    /// of [`GlweToLweSecretKeyTransformationEngineError`].
     /// For safety concerns _specific_ to an engine, refer to the implementer safety section.
-    unsafe fn transmute_glwe_secret_key_to_lwe_secret_key_unchecked(
+    unsafe fn transform_glwe_secret_key_to_lwe_secret_key_unchecked(
         &mut self,
         glwe_secret_key: InputKey,
     ) -> OutputKey;
