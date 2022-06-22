@@ -139,11 +139,11 @@ pub mod test_tools {
         Element: UnsignedTorus,
     {
         use crate::commons::math::tensor::Tensor;
+        use rand::distributions::{Distribution, Normal};
 
         let std_dev = dist.get_standard_dev();
         let confidence = 0.95;
         let n_slots = first.as_tensor().len();
-        let mut generator = new_random_generator();
 
         // allocate 2 slices: one for the error samples obtained, the second for fresh samples
         // according to the std_dev computed
@@ -154,8 +154,12 @@ pub mod test_tools {
             torus_modular_distance(*a, *b)
         });
 
-        // fill the theoretical sample vector according to std_dev
-        let theoretical_samples = generator.random_gaussian_tensor(n_slots, 0., std_dev);
+        // fill the theoretical sample vector according to std_dev using the rand crate
+        let mut theoretical_samples: Vec<f64> = Vec::with_capacity(n_slots);
+        let normal = Normal::new(0.0, std_dev);
+        for _i in 0..n_slots {
+            theoretical_samples.push(normal.sample(&mut rand::thread_rng()));
+        }
 
         // compute the kolmogorov smirnov test
         let result = kolmogorov_smirnov::test_f64(
@@ -163,31 +167,11 @@ pub mod test_tools {
             theoretical_samples.as_slice(),
             confidence,
         );
-
-        if result.is_rejected {
-            // compute the mean of our errors
-            let mut mean: f64 = sdk_samples.iter().sum();
-            mean /= sdk_samples.len() as f64;
-
-            // compute the variance of the errors
-            let mut sdk_variance: f64 = sdk_samples.iter().map(|x| f64::powi(x - mean, 2)).sum();
-            sdk_variance /= (sdk_samples.len() - 1) as f64;
-
-            // compute the standard deviation
-            let sdk_std_log2 = f64::log2(f64::sqrt(sdk_variance)).round();
-            let th_std_log2 = f64::log2(std_dev).round();
-
-            // test if theoretical_std_dev > sdk_std_dev
-            assert!(
-                sdk_std_log2 <= th_std_log2,
-                "Statistical test failed :
-                    -> inputs are not from the same distribution with a probability {}
-                    -> sdk_std = {} ; th_std {}.",
-                result.reject_probability,
-                sdk_std_log2,
-                th_std_log2
-            );
-        }
+        assert!(
+            !result.is_rejected,
+            "Not the same distribution with a probability of {}",
+            result.reject_probability
+        );
     }
 
     /// Returns a random plaintext count in [1;max].
