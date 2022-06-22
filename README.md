@@ -31,6 +31,7 @@ The ecosystem is composed of several crates (packages in the Rust language):
   understand the details of the implementation.
 + [`concrete-core`](concrete-core): A low-level library, useful to cryptographers who want the
   fastest implementation possible, with all the settings at their disposal.
++ [`concrete-core-ffi`](concrete-core-ffi): A prototype of a C API for `concrete-core`
 + [`concrete-boolean`](https://github.com/zama-ai/concrete/tree/main/concrete-boolean): A high-level
   library, implementing homomorphic Boolean gates, making it easy to run any kind of circuits over 
   encrypted data.
@@ -51,10 +52,12 @@ To use concrete, you will need the following things:
 The Rust compiler can be installed on __Linux__ and __macOS__ with the following command:
 
 ```bash
-curl  --tlsv1.2 -sSf https://sh.rustup.rs | sh
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
-Other rust installation methods are available on the
+You can also check [https://rustup.rs/](https://rustup.rs/) for specific installation methods for your system.
+
+All installation methods are listed on the
 [rust website](https://forge.rust-lang.org/infra/other-installation-methods.html).
 
 ### macOS
