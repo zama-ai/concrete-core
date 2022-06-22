@@ -1,7 +1,7 @@
 # Concrete Commons
 
 This crate contains types and traits to manipulate numeric types in a generic manner in the 
-[`concrete`](https://crates.io/crates/concrete) library.
+[concrete-core](https://crates.io/crates/concrete-core) library, you can find [here](../concrete-core/) in this repo.
 It also contains traits and structures to handle the computation of variance, standard deviation, etc.
 
 ## Numeric types

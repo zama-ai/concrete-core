@@ -1,7 +1,7 @@
 # Concrete Core
 
 This crate contains low-level implementations of homomorphic operators used in the
-[`concrete`](https://crates.io/crates/concrete) library.
+[`concrete`](https://crates.io/crates/concrete) library ([GitHub Repo](https://github.com/zama-ai/concrete)).
 
 ## ⚠ Warning ⚠
 
@@ -15,44 +15,73 @@ Here is a small example of how one could use `concrete-core` to perform a simple
 homomorphically:
 
 ```rust 
-// This examples shows how to multiply a secret value by a public one homomorphically. First
-// we import the proper symbols:
-use concrete_core::crypto::encoding::{RealEncoder, Cleartext, Encoder, Plaintext};
-use concrete_core::crypto::secret::LweSecretKey;
-use concrete_core::crypto::LweDimension;
-use concrete_core::crypto::lwe::LweCiphertext;
-use concrete_core::math::dispersion::LogStandardDev;
+// This examples shows how to multiply a secret value by a public one homomorphically.
+// First we import the proper symbols:
 
-// We initialize an encoder that will allow us to turn cleartext values into plaintexts.
-let encoder = RealEncoder{offset: 0., delta: 100.};
-// Our secret value will be 10.,
-let cleartext = Cleartext(10.);
-let public_multiplier = Cleartext(5);
-// We encode our cleartext
-let plaintext = encoder.encode(cleartext);
+use concrete_commons::dispersion::Variance;
+use concrete_commons::parameters::LweDimension;
+use concrete_core::prelude::*;
+use std::error::Error;
 
-// We generate a new secret key which is used to encrypt the message
-let secret_key_size = LweDimension(710);
-let secret_key = LweSecretKey::generate(secret_key_size);
+fn main() -> Result<(), Box<dyn Error>> {
+    let lwe_dimension = LweDimension(750);
+    let noise = Variance(2_f64.powf(-104.));
 
-// We allocate a ciphertext and encrypt the plaintext with a secure parameter
-let mut ciphertext = LweCiphertext::allocate(0u32, secret_key_size.to_lwe_size());
-secret_key.encrypt_lwe(
-    &mut ciphertext,
-    &plaintext,
-    LogStandardDev::from_log_standard_dev(-17.)
-);
+    // Here a hard-set encoding is applied on the input (shift by 59 bits) which corresponds here
+    // to a precision of 4 bits with an additional bit of padding (won't be used but required for
+    // PBS)
+    let raw_input = 3_u64 << 59;
 
-// We perform the homomorphic operation:
-ciphertext.update_with_scalar_mul(public_multiplier);
+    // We will multiply by 4
+    let raw_input_cleatext = 4_u64;
 
-// We decrypt the message
-let mut output_plaintext = Plaintext(0u32);
-secret_key.decrypt_lwe(&mut output_plaintext, &ciphertext);
-let output_cleartext = encoder.decode(output_plaintext);
+    // Unix seeder must be given a secret input.
+    // Here we just give it 0, which is totally unsafe.
+    const UNSAFE_SECRET: u128 = 0;
+    let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
 
-// We check that the result is as expected !
-assert_eq!((output_cleartext.0 - 50.).abs() < 0.01);
+    // We create a cleartext from the raw cleartext
+    let cleartext: Cleartext64 = engine.create_cleartext(&raw_input_cleatext)?;
+    let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
+
+    // We crate the input plaintext from the raw input
+    let input_plaintext = engine.create_plaintext(&raw_input)?;
+    let input_ciphertext = engine.encrypt_lwe_ciphertext(&key, &input_plaintext, noise)?;
+
+    // The content of the output ciphertext will be discarded, use a placeholder plaintext of 0
+    let placeholder_output_plaintext = engine.create_plaintext(&0u64)?;
+    let mut ouptut_ciphertext =
+        engine.encrypt_lwe_ciphertext(&key, &placeholder_output_plaintext, noise)?;
+
+    // Perform the multiplication, overwriting (discarding) the output ciphertext content
+    engine.discard_mul_lwe_ciphertext_cleartext(
+        &mut ouptut_ciphertext,
+        &input_ciphertext,
+        &cleartext
+    )?;
+
+    // Get the decrypted result as a plaintext and then a raw value
+    let decrypted_plaintext = engine.decrypt_lwe_ciphertext(&key, &ouptut_ciphertext)?;
+    let raw_decrypted_plaintext = engine.retrieve_plaintext(&decrypted_plaintext)?;
+
+    // Round the output for our 4 bits of precision
+    let output = raw_decrypted_plaintext >> 58;
+    let carry = output % 2;
+    let output = ((output >> 1) + carry) % (1 << 5);
+
+    // Check the high bits have the result we expect
+    assert_eq!(output, 12);
+
+    engine.destroy(cleartext)?;
+    engine.destroy(key)?;
+    engine.destroy(input_plaintext)?;
+    engine.destroy(placeholder_output_plaintext)?;
+    engine.destroy(decrypted_plaintext)?;
+    engine.destroy(input_ciphertext)?;
+    engine.destroy(ouptut_ciphertext)?;
+
+    Ok(())
+}
 ```
 
 ## Links

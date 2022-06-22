@@ -1,7 +1,7 @@
 # Concrete Noise Propagation Estimator
 
 This crate contains tools to estimate the propagation of noise in ciphertexts, for the homomorphic
-operators defined in the [`concrete`](https://crates.io/crates/concrete) library.
+operators defined in the [concrete-core](https://crates.io/crates/concrete-core) library, you can find it [here](../concrete-core/) in this repo.
 
 ## Links
 

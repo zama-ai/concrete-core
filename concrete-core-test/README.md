@@ -2,10 +2,12 @@
 
 This library contains statistical tests for the `concrete-core` library.
 
-To execute the tests:
+To execute the tests for the default backend:
 ```shell
 RUSTFLAGS="-Ctarget-cpu=native" cargo test --release --features=backend_default -- some_filters
 ```
+
+You can check the [Cargo.toml](./Cargo.toml) for more features to enable for testing different parts of `concrete-core`.
 
 ## License
 
