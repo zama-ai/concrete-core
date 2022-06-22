@@ -32,8 +32,65 @@ To instantiate an `LweCiphertextMutView32` or `LweCiphertextMutView64` you can c
 
 One current pain point of the view API is that you cannot create a mutable view and an immutable view from the same piece of memory, which is normal given Rust borrowing rules.
 
-Converting from a `LweCiphertextMutView` to a `LweCiphertextView` is possible, it requires using the `LweCiphertextConsumingRetrievalEngine` (entry point `consume_retrieve_lwe_ciphertext`) to get the underlying slice from the `LweCiphertextMutView`, and then creating a new `LweCiphertextView` using the righ variant of `LweCiphertextCreationEngine`.
+Converting from a `LweCiphertextMutView` to a `LweCiphertextView` is possible, it requires using the `LweCiphertextConsumingRetrievalEngine` (entry point `consume_retrieve_lwe_ciphertext`) to get the underlying slice from the `LweCiphertextMutView`, and then creating a new `LweCiphertextView` using the righ variant of `LweCiphertextCreationEngine`. You can learn more about `RetrievalEngines` in the [next section](#retrieving-the-container-of-a-ciphertext).
 
 Converting from `MutView` to `View` is an operation you are very likely to perform if you first write output data in a mutable memory zone and then want to use that same memory zone as an immutable input to another computation.
 
 The conversion from `View` to `MutView` is not possible without unsafe code (using some potentially dangerous Rust primitives) and can very easily generate unsound code that does not comply with Rust borrowing rules. Use at your own risk.
+
+## Retrieving the container of a ciphertext
+
+As quickly touched upon in the previous section, it is possible for some ciphertexts (currently the ones with views variants) to retrieve the underlying container of an entity. The retrieval engines consume the input entity and return the container it used for storing data.
+
+The view API was not primarily created for Rust developers and one of its current shortcomings is the fact it's not easy to re-use an output `MutView` to be used as an immutable input `View` to a subsequent operation.
+
+It is possible to do that by using the retrieval engines. The following example is taken from a docstring of `concrete-core` to see how to perform the `MutView` -> `View` transformation using the retrieval engine:
+
+```rust
+use concrete_commons::dispersion::Variance;
+use concrete_commons::parameters::LweDimension;
+use concrete_core::prelude::*;
+use std::error::Error;
+
+fn main() -> Result<(), Box<dyn Error>> {
+    // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    let lwe_dimension = LweDimension(2);
+
+    // Here a hard-set encoding is applied (shift by 50 bits)
+    let input = 3_u64 << 50;
+    let noise = Variance(2_f64.powf(-25.));
+
+    // Unix seeder must be given a secret input.
+    // Here we just give it 0, which is totally unsafe.
+    const UNSAFE_SECRET: u128 = 0;
+    let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+
+    // Crate an LWE secret key
+    let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
+
+    // Prepare the plaintext
+    let plaintext = engine.create_plaintext(&input)?;
+
+    // Prepare the container and create an LWE ciphertext mut view
+    let mut raw_ciphertext = vec![0_u64; key.lwe_dimension().to_lwe_size().0];
+    let mut ciphertext_mut_view: LweCiphertextMutView64 =
+        engine.create_lwe_ciphertext(&mut raw_ciphertext[..])?;
+
+    // Perform the encryption
+    engine.discard_encrypt_lwe_ciphertext(&key, &mut ciphertext_mut_view, &plaintext, noise)?;
+
+    // Convert MutView to View by retrieving the mutable slice and passing it as immutable to
+    // create_lwe_ciphertext
+    let raw_ciphertext = engine.consume_retrieve_lwe_ciphertext(ciphertext_mut_view)?;
+    let ciphertext_view: LweCiphertextView64 = engine.create_lwe_ciphertext(&raw_ciphertext[..])?;
+    let decrypted_plaintext = engine.decrypt_lwe_ciphertext(&key, &ciphertext_view)?;
+
+    // Destroy entities
+    engine.destroy(key)?;
+    engine.destroy(plaintext)?;
+    engine.destroy(ciphertext_view)?;
+    engine.destroy(decrypted_plaintext)?;
+
+    Ok(())
+}
+```
