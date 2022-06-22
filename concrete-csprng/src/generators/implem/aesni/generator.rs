@@ -88,7 +88,7 @@ mod test {
     }
 
     #[test]
-    fn test_uniformity() {
+    fn test_roughly_uniform() {
         generator_generic_test::test_roughly_uniform::<AesniRandomGenerator>();
     }
 

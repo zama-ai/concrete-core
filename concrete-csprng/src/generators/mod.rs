@@ -159,7 +159,7 @@ pub mod generator_generic_test {
         // This value was tuned to make the test pass on an arguably correct state of
         // implementation. 10^-4 precision is arguably pretty fine for this rough test, but it would
         // be interesting to improve this test.
-        let precision = 10f64.powi(-4);
+        let precision = 10f64.powi(-3);
 
         for _ in 0..REPEATS {
             // We instantiate a new generator.
