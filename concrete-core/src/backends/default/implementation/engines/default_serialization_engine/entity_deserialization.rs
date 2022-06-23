@@ -11,7 +11,7 @@ use crate::commons::crypto::glwe::{
 };
 use crate::commons::crypto::lwe::{
     LweCiphertext as ImplLweCiphertext, LweKeyswitchKey as ImplLweKeyswitchKey,
-    LweList as ImplLweList,
+    LweList as ImplLweList, LweSeededCiphertext as ImplLweSeededCiphertext,
 };
 use crate::commons::crypto::secret::{
     GlweSecretKey as ImplGlweSecretKey, LweSecretKey as ImplLweSecretKey,
@@ -29,10 +29,11 @@ use crate::prelude::{
     LweCiphertext64, LweCiphertext64Version, LweCiphertextVector32, LweCiphertextVector32Version,
     LweCiphertextVector64, LweCiphertextVector64Version, LweKeyswitchKey32,
     LweKeyswitchKey32Version, LweKeyswitchKey64, LweKeyswitchKey64Version, LweSecretKey32,
-    LweSecretKey32Version, LweSecretKey64, LweSecretKey64Version, PackingKeyswitchKey32,
-    PackingKeyswitchKey32Version, PackingKeyswitchKey64, PackingKeyswitchKey64Version, Plaintext32,
-    Plaintext32Version, Plaintext64, Plaintext64Version, PlaintextVector32,
-    PlaintextVector32Version, PlaintextVector64, PlaintextVector64Version,
+    LweSecretKey32Version, LweSecretKey64, LweSecretKey64Version, LweSeededCiphertext32,
+    LweSeededCiphertext32Version, LweSeededCiphertext64, LweSeededCiphertext64Version,
+    PackingKeyswitchKey32, PackingKeyswitchKey32Version, PackingKeyswitchKey64,
+    PackingKeyswitchKey64Version, Plaintext32, Plaintext32Version, Plaintext64, Plaintext64Version,
+    PlaintextVector32, PlaintextVector32Version, PlaintextVector64, PlaintextVector64Version,
 };
 use concrete_commons::key_kinds::BinaryKeyKind;
 use serde::Deserialize;
@@ -1562,7 +1563,149 @@ impl EntityDeserializationEngine<&[u8], LweSecretKey64> for DefaultSerialization
 
 /// # Description:
 /// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
-/// operates on 32 bits integers. It deserializes a packing keyswitch key entity.
+/// operates on 32 bits integers. It deserializes a seeded LWE ciphertext entity.
+impl EntityDeserializationEngine<&[u8], LweSeededCiphertext32> for DefaultSerializationEngine {
+    /// # Example:
+    /// ```
+    /// use concrete_commons::dispersion::Variance;
+    /// use concrete_commons::parameters::LweDimension;
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let lwe_dimension = LweDimension(2);
+    /// // Here a hard-set encoding is applied (shift by 20 bits)
+    /// let input = 3_u32 << 20;
+    /// let noise = Variance(2_f64.powf(-25.));
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext(&input)?;
+    ///
+    /// let ciphertext: LweSeededCiphertext32 =
+    ///     engine.encrypt_lwe_seeded_ciphertext(&key, &plaintext, noise)?;
+    ///
+    /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
+    /// let serialized = serialization_engine.serialize(&ciphertext)?;
+    /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
+    /// assert_eq!(ciphertext, recovered);
+    ///
+    /// engine.destroy(key)?;
+    /// engine.destroy(plaintext)?;
+    /// engine.destroy(ciphertext)?;
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn deserialize(
+        &mut self,
+        serialized: &[u8],
+    ) -> Result<LweSeededCiphertext32, EntityDeserializationError<Self::EngineError>> {
+        #[derive(Deserialize)]
+        struct DeserializableLweSeededCiphertext32 {
+            version: LweSeededCiphertext32Version,
+            inner: ImplLweSeededCiphertext<u32>,
+        }
+        let deserialized: DeserializableLweSeededCiphertext32 = bincode::deserialize(serialized)
+            .map_err(DefaultSerializationError::Deserialization)
+            .map_err(EntityDeserializationError::Engine)?;
+        match deserialized {
+            DeserializableLweSeededCiphertext32 {
+                version: LweSeededCiphertext32Version::Unsupported,
+                ..
+            } => Err(EntityDeserializationError::Engine(
+                DefaultSerializationError::UnsupportedVersion,
+            )),
+            DeserializableLweSeededCiphertext32 {
+                version: LweSeededCiphertext32Version::V0,
+                inner,
+            } => Ok(LweSeededCiphertext32(inner)),
+        }
+    }
+
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> LweSeededCiphertext32 {
+        self.deserialize(serialized).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
+/// operates on 64 bits integers. It deserializes a seeded LWE ciphertext entity.
+impl EntityDeserializationEngine<&[u8], LweSeededCiphertext64> for DefaultSerializationEngine {
+    /// # Example:
+    /// ```
+    /// use concrete_commons::dispersion::Variance;
+    /// use concrete_commons::parameters::LweDimension;
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let lwe_dimension = LweDimension(2);
+    /// // Here a hard-set encoding is applied (shift by 50 bits)
+    /// let input = 3_u64 << 50;
+    /// let noise = Variance(2_f64.powf(-25.));
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext(&input)?;
+    ///
+    /// let ciphertext: LweSeededCiphertext64 =
+    ///     engine.encrypt_lwe_seeded_ciphertext(&key, &plaintext, noise)?;
+    ///
+    /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
+    /// let serialized = serialization_engine.serialize(&ciphertext)?;
+    /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
+    /// assert_eq!(ciphertext, recovered);
+    ///
+    /// engine.destroy(key)?;
+    /// engine.destroy(plaintext)?;
+    /// engine.destroy(ciphertext)?;
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn deserialize(
+        &mut self,
+        serialized: &[u8],
+    ) -> Result<LweSeededCiphertext64, EntityDeserializationError<Self::EngineError>> {
+        #[derive(Deserialize)]
+        struct DeserializableLweSeededCiphertext64 {
+            version: LweSeededCiphertext64Version,
+            inner: ImplLweSeededCiphertext<u64>,
+        }
+        let deserialized: DeserializableLweSeededCiphertext64 = bincode::deserialize(serialized)
+            .map_err(DefaultSerializationError::Deserialization)
+            .map_err(EntityDeserializationError::Engine)?;
+        match deserialized {
+            DeserializableLweSeededCiphertext64 {
+                version: LweSeededCiphertext64Version::Unsupported,
+                ..
+            } => Err(EntityDeserializationError::Engine(
+                DefaultSerializationError::UnsupportedVersion,
+            )),
+            DeserializableLweSeededCiphertext64 {
+                version: LweSeededCiphertext64Version::V0,
+                inner,
+            } => Ok(LweSeededCiphertext64(inner)),
+        }
+    }
+
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> LweSeededCiphertext64 {
+        self.deserialize(serialized).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
+/// operates on 32 bits integers. It serializes a packing keyswitch key entity.
 impl EntityDeserializationEngine<&[u8], PackingKeyswitchKey32> for DefaultSerializationEngine {
     /// # Example:
     /// ```
