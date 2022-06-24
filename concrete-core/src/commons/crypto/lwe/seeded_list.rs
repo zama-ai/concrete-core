@@ -240,6 +240,25 @@ impl<Cont> LweSeededList<Cont> {
             .map(|scalar| unsafe { std::mem::transmute(scalar) })
     }
 
+    pub fn expand_into_with_existing_generator<OutCont, Scalar, Gen>(
+        self,
+        output: &mut LweList<OutCont>,
+        generator: &mut RandomGenerator<Gen>,
+    ) where
+        LweList<OutCont>: AsMutTensor<Element = Scalar>,
+        Self: AsRefTensor<Element = Scalar>,
+        Scalar: RandomGenerable<Uniform> + Numeric,
+        Gen: ByteRandomGenerator,
+    {
+        for (mut lwe_out, body_in) in output.ciphertext_iter_mut().zip(self.body_iter()) {
+            let (output_body, mut output_mask) = lwe_out.get_mut_body_and_mask();
+
+            // generate a uniformly random mask
+            generator.fill_tensor_with_random_uniform(output_mask.as_mut_tensor());
+            output_body.0 = body_in.0;
+        }
+    }
+
     /// Returns the ciphertext list as a full fledged LweList
     ///
     /// # Example
@@ -268,12 +287,6 @@ impl<Cont> LweSeededList<Cont> {
     {
         let mut generator = RandomGenerator::<Gen>::new(self.compression_seed.seed);
 
-        for (mut lwe_out, body_in) in output.ciphertext_iter_mut().zip(self.body_iter()) {
-            let (output_body, mut output_mask) = lwe_out.get_mut_body_and_mask();
-
-            // generate a uniformly random mask
-            generator.fill_tensor_with_random_uniform(output_mask.as_mut_tensor());
-            output_body.0 = body_in.0;
-        }
+        self.expand_into_with_existing_generator(output, &mut generator);
     }
 }

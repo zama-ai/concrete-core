@@ -551,6 +551,43 @@ where
         }
     }
 
+    pub fn encrypt_seeded_lwe_list_with_existing_generator<
+        OutputCont,
+        InputCont,
+        Scalar,
+        NoiseParameter,
+        Gen,
+    >(
+        &self,
+        output: &mut LweSeededList<OutputCont>,
+        encoded: &PlaintextList<InputCont>,
+        noise_parameters: NoiseParameter,
+        generator: &mut EncryptionRandomGenerator<Gen>,
+    ) where
+        Self: AsRefTensor<Element = Scalar>,
+        LweSeededList<OutputCont>: AsMutTensor<Element = Scalar>,
+        PlaintextList<InputCont>: AsRefTensor<Element = Scalar>,
+        Scalar: UnsignedTorus,
+        Gen: ByteRandomGenerator,
+        // This will be removable when https://github.com/rust-lang/rust/issues/83701 is stabilized
+        // We currently need to be able to specify concrete types for the generic type parameters
+        // which cannot be done when some arguments use the `impl Trait` pattern
+        NoiseParameter: DispersionParameter,
+    {
+        let mut mask_tensor = vec![Scalar::ZERO; self.key_size().0];
+        let mut output_mask = LweMask::from_container(mask_tensor.as_mut_slice());
+
+        for (output_body, encoded_message) in output.body_iter_mut().zip(encoded.plaintext_iter()) {
+            self.fill_lwe_mask_and_body_for_encryption(
+                output_body,
+                &mut output_mask,
+                encoded_message,
+                noise_parameters,
+                generator,
+            );
+        }
+    }
+
     /// Encrypts a list of seeded ciphertexts.
     ///
     /// # Example
@@ -619,18 +656,12 @@ where
         let mut generator =
             EncryptionRandomGenerator::<Gen>::new(output.get_compression_seed().seed, seeder);
 
-        let mut mask_tensor = vec![Scalar::ZERO; self.key_size().0];
-        let mut output_mask = LweMask::from_container(mask_tensor.as_mut_slice());
-
-        for (output_body, encoded_message) in output.body_iter_mut().zip(encoded.plaintext_iter()) {
-            self.fill_lwe_mask_and_body_for_encryption(
-                output_body,
-                &mut output_mask,
-                encoded_message,
-                noise_parameters,
-                &mut generator,
-            );
-        }
+        self.encrypt_seeded_lwe_list_with_existing_generator(
+            output,
+            encoded,
+            noise_parameters,
+            &mut generator,
+        );
     }
 
     /// Decrypts a single ciphertext.
