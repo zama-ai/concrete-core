@@ -13,6 +13,7 @@ use crate::commons::crypto::glwe::{
 use crate::commons::crypto::lwe::{
     LweCiphertext as ImplLweCiphertext, LweKeyswitchKey as ImplLweKeyswitchKey,
     LweList as ImplLweList, LweSeededCiphertext as ImplLweSeededCiphertext,
+    LweSeededList as ImplLweSeededList,
 };
 use crate::commons::crypto::secret::{
     GlweSecretKey as ImplGlweSecretKey, LweSecretKey as ImplLweSecretKey,
@@ -36,10 +37,11 @@ use crate::prelude::{
     LweKeyswitchKey32, LweKeyswitchKey32Version, LweKeyswitchKey64, LweKeyswitchKey64Version,
     LweSecretKey32, LweSecretKey32Version, LweSecretKey64, LweSecretKey64Version,
     LweSeededCiphertext32, LweSeededCiphertext32Version, LweSeededCiphertext64,
-    LweSeededCiphertext64Version, PackingKeyswitchKey32, PackingKeyswitchKey32Version,
-    PackingKeyswitchKey64, PackingKeyswitchKey64Version, Plaintext32, Plaintext32Version,
-    Plaintext64, Plaintext64Version, PlaintextVector32, PlaintextVector32Version,
-    PlaintextVector64, PlaintextVector64Version,
+    LweSeededCiphertext64Version, LweSeededCiphertextVector32, LweSeededCiphertextVector32Version,
+    LweSeededCiphertextVector64, LweSeededCiphertextVector64Version, PackingKeyswitchKey32,
+    PackingKeyswitchKey32Version, PackingKeyswitchKey64, PackingKeyswitchKey64Version, Plaintext32,
+    Plaintext32Version, Plaintext64, Plaintext64Version, PlaintextVector32,
+    PlaintextVector32Version, PlaintextVector64, PlaintextVector64Version,
 };
 use concrete_commons::key_kinds::BinaryKeyKind;
 use serde::Serialize;
@@ -2076,6 +2078,7 @@ impl EntitySerializationEngine<LweSeededCiphertext32, Vec<u8>> for DefaultSerial
     /// engine.destroy(key)?;
     /// engine.destroy(plaintext)?;
     /// engine.destroy(ciphertext)?;
+    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -2139,6 +2142,7 @@ impl EntitySerializationEngine<LweSeededCiphertext64, Vec<u8>> for DefaultSerial
     /// engine.destroy(key)?;
     /// engine.destroy(plaintext)?;
     /// engine.destroy(ciphertext)?;
+    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -2162,6 +2166,138 @@ impl EntitySerializationEngine<LweSeededCiphertext64, Vec<u8>> for DefaultSerial
     }
 
     unsafe fn serialize_unchecked(&mut self, entity: &LweSeededCiphertext64) -> Vec<u8> {
+        self.serialize(entity).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
+/// on 32 bits integers. It serializes a seeded LWE ciphertext vector entity.
+impl EntitySerializationEngine<LweSeededCiphertextVector32, Vec<u8>>
+    for DefaultSerializationEngine
+{
+    /// # Example:
+    /// ```
+    /// use concrete_commons::dispersion::Variance;
+    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let lwe_dimension = LweDimension(6);
+    /// // Here a hard-set encoding is applied (shift by 20 bits)
+    /// let input = vec![3_u32 << 20; 3];
+    /// let noise = Variance(2_f64.powf(-25.));
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector(&input)?;
+    ///
+    /// let mut ciphertext_vector: LweSeededCiphertextVector32 =
+    ///     engine.encrypt_lwe_seeded_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    ///
+    /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
+    /// let serialized = serialization_engine.serialize(&ciphertext_vector)?;
+    /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
+    /// assert_eq!(ciphertext_vector, recovered);
+    ///
+    /// engine.destroy(key)?;
+    /// engine.destroy(plaintext_vector)?;
+    /// engine.destroy(ciphertext_vector)?;
+    /// engine.destroy(recovered)?;
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn serialize(
+        &mut self,
+        entity: &LweSeededCiphertextVector32,
+    ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
+        #[derive(Serialize)]
+        struct SerializableLweSeededCiphertextVector32<'a> {
+            version: LweSeededCiphertextVector32Version,
+            inner: &'a ImplLweSeededList<Vec<u32>>,
+        }
+        let serializable = SerializableLweSeededCiphertextVector32 {
+            version: LweSeededCiphertextVector32Version::V0,
+            inner: &entity.0,
+        };
+        bincode::serialize(&serializable)
+            .map_err(DefaultSerializationError::Serialization)
+            .map_err(EntitySerializationError::Engine)
+    }
+
+    unsafe fn serialize_unchecked(&mut self, entity: &LweSeededCiphertextVector32) -> Vec<u8> {
+        self.serialize(entity).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
+/// on 64 bits integers. It serializes a seeded LWE ciphertext vector entity.
+impl EntitySerializationEngine<LweSeededCiphertextVector64, Vec<u8>>
+    for DefaultSerializationEngine
+{
+    /// # Example:
+    /// ```
+    /// use concrete_commons::dispersion::Variance;
+    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let lwe_dimension = LweDimension(6);
+    /// // Here a hard-set encoding is applied (shift by 50 bits)
+    /// let input = vec![3_u64 << 50; 3];
+    /// let noise = Variance(2_f64.powf(-25.));
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector(&input)?;
+    ///
+    /// let mut ciphertext_vector: LweSeededCiphertextVector64 =
+    ///     engine.encrypt_lwe_seeded_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    ///
+    /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
+    /// let serialized = serialization_engine.serialize(&ciphertext_vector)?;
+    /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
+    /// assert_eq!(ciphertext_vector, recovered);
+    ///
+    /// engine.destroy(key)?;
+    /// engine.destroy(plaintext_vector)?;
+    /// engine.destroy(ciphertext_vector)?;
+    /// engine.destroy(recovered)?;
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn serialize(
+        &mut self,
+        entity: &LweSeededCiphertextVector64,
+    ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
+        #[derive(Serialize)]
+        struct SerializableLweSeededCiphertextVector64<'a> {
+            version: LweSeededCiphertextVector64Version,
+            inner: &'a ImplLweSeededList<Vec<u64>>,
+        }
+        let serializable = SerializableLweSeededCiphertextVector64 {
+            version: LweSeededCiphertextVector64Version::V0,
+            inner: &entity.0,
+        };
+        bincode::serialize(&serializable)
+            .map_err(DefaultSerializationError::Serialization)
+            .map_err(EntitySerializationError::Engine)
+    }
+
+    unsafe fn serialize_unchecked(&mut self, entity: &LweSeededCiphertextVector64) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
