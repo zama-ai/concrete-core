@@ -7,8 +7,9 @@ use crate::backends::default::implementation::entities::{
     LweCiphertext32, LweCiphertext64, LweCiphertextMutView32, LweCiphertextMutView64,
     LweCiphertextVector32, LweCiphertextVector64, LweCiphertextView32, LweCiphertextView64,
     LweKeyswitchKey32, LweKeyswitchKey64, LweSecretKey32, LweSecretKey64, LweSeededCiphertext32,
-    LweSeededCiphertext64, PackingKeyswitchKey32, PackingKeyswitchKey64, Plaintext32, Plaintext64,
-    PlaintextVector32, PlaintextVector64,
+    LweSeededCiphertext64, LweSeededCiphertextVector32, LweSeededCiphertextVector64,
+    PackingKeyswitchKey32, PackingKeyswitchKey64, Plaintext32, Plaintext64, PlaintextVector32,
+    PlaintextVector64,
 };
 use crate::commons::math::tensor::AsMutTensor;
 use crate::prelude::{CleartextF64, CleartextVectorF64, FloatEncoder, FloatEncoderVector};
@@ -228,6 +229,30 @@ impl DestructionEngine<LweSeededCiphertext64> for DefaultEngine {
     }
 
     unsafe fn destroy_unchecked(&mut self, _entity: &mut LweSeededCiphertext64) {}
+}
+
+impl DestructionEngine<LweSeededCiphertextVector32> for DefaultEngine {
+    fn destroy(
+        &mut self,
+        mut entity: LweSeededCiphertextVector32,
+    ) -> Result<(), DestructionError<Self::EngineError>> {
+        unsafe { self.destroy_unchecked(&mut entity) };
+        Ok(())
+    }
+
+    unsafe fn destroy_unchecked(&mut self, _entity: &mut LweSeededCiphertextVector32) {}
+}
+
+impl DestructionEngine<LweSeededCiphertextVector64> for DefaultEngine {
+    fn destroy(
+        &mut self,
+        mut entity: LweSeededCiphertextVector64,
+    ) -> Result<(), DestructionError<Self::EngineError>> {
+        unsafe { self.destroy_unchecked(&mut entity) };
+        Ok(())
+    }
+
+    unsafe fn destroy_unchecked(&mut self, _entity: &mut LweSeededCiphertextVector64) {}
 }
 
 impl DestructionEngine<GlweCiphertext32> for DefaultEngine {
