@@ -438,6 +438,9 @@ pub use lwe_seeded_ciphertext_vector_encryption::*;
 mod lwe_seeded_keyswitch_key_creation;
 pub use lwe_seeded_keyswitch_key_creation::*;
 
+mod lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_transformation;
+pub use lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_transformation::*;
+
 mod lwe_seeded_to_lwe_ciphertext_transformation;
 pub use lwe_seeded_to_lwe_ciphertext_transformation::*;
 
