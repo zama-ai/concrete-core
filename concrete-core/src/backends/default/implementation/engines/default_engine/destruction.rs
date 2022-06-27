@@ -3,13 +3,14 @@ use crate::backends::default::implementation::entities::{
     Cleartext32, Cleartext64, CleartextVector32, CleartextVector64, GgswCiphertext32,
     GgswCiphertext64, GlweCiphertext32, GlweCiphertext64, GlweCiphertextMutView32,
     GlweCiphertextMutView64, GlweCiphertextVector32, GlweCiphertextVector64, GlweCiphertextView32,
-    GlweCiphertextView64, GlweSecretKey32, GlweSecretKey64, LweBootstrapKey32, LweBootstrapKey64,
-    LweCiphertext32, LweCiphertext64, LweCiphertextMutView32, LweCiphertextMutView64,
-    LweCiphertextVector32, LweCiphertextVector64, LweCiphertextView32, LweCiphertextView64,
-    LweKeyswitchKey32, LweKeyswitchKey64, LweSecretKey32, LweSecretKey64, LweSeededCiphertext32,
-    LweSeededCiphertext64, LweSeededCiphertextVector32, LweSeededCiphertextVector64,
-    LweSeededKeyswitchKey32, LweSeededKeyswitchKey64, PackingKeyswitchKey32, PackingKeyswitchKey64,
-    Plaintext32, Plaintext64, PlaintextVector32, PlaintextVector64,
+    GlweCiphertextView64, GlweSecretKey32, GlweSecretKey64, GlweSeededCiphertext32,
+    GlweSeededCiphertext64, LweBootstrapKey32, LweBootstrapKey64, LweCiphertext32, LweCiphertext64,
+    LweCiphertextMutView32, LweCiphertextMutView64, LweCiphertextVector32, LweCiphertextVector64,
+    LweCiphertextView32, LweCiphertextView64, LweKeyswitchKey32, LweKeyswitchKey64, LweSecretKey32,
+    LweSecretKey64, LweSeededCiphertext32, LweSeededCiphertext64, LweSeededCiphertextVector32,
+    LweSeededCiphertextVector64, LweSeededKeyswitchKey32, LweSeededKeyswitchKey64,
+    PackingKeyswitchKey32, PackingKeyswitchKey64, Plaintext32, Plaintext64, PlaintextVector32,
+    PlaintextVector64,
 };
 use crate::commons::math::tensor::AsMutTensor;
 use crate::prelude::{CleartextF64, CleartextVectorF64, FloatEncoder, FloatEncoderVector};
@@ -501,6 +502,30 @@ impl DestructionEngine<GlweSecretKey64> for DefaultEngine {
     unsafe fn destroy_unchecked(&mut self, entity: &mut GlweSecretKey64) {
         entity.0.as_mut_tensor().fill_with_element(0u64);
     }
+}
+
+impl DestructionEngine<GlweSeededCiphertext32> for DefaultEngine {
+    fn destroy(
+        &mut self,
+        mut entity: GlweSeededCiphertext32,
+    ) -> Result<(), DestructionError<Self::EngineError>> {
+        unsafe { self.destroy_unchecked(&mut entity) };
+        Ok(())
+    }
+
+    unsafe fn destroy_unchecked(&mut self, _entity: &mut GlweSeededCiphertext32) {}
+}
+
+impl DestructionEngine<GlweSeededCiphertext64> for DefaultEngine {
+    fn destroy(
+        &mut self,
+        mut entity: GlweSeededCiphertext64,
+    ) -> Result<(), DestructionError<Self::EngineError>> {
+        unsafe { self.destroy_unchecked(&mut entity) };
+        Ok(())
+    }
+
+    unsafe fn destroy_unchecked(&mut self, _entity: &mut GlweSeededCiphertext64) {}
 }
 
 impl DestructionEngine<PackingKeyswitchKey32> for DefaultEngine {
