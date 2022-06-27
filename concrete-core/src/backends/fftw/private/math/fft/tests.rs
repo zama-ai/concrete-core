@@ -78,15 +78,13 @@ fn test_two_forward_backward() {
         inp: &FourierPolynomial<AlignedVec<Complex64>>,
         corr: &BackwardCorrector<&'static [Complex64]>,
     ) {
-        for (input, (corrector, (output1, output2))) in
-            inp.as_tensor().iter().zip(
-                corr.as_tensor().iter().zip(
-                    out1.as_mut_tensor()
-                        .iter_mut()
-                        .zip(out2.as_mut_tensor().iter_mut()),
-                ),
-            )
-        {
+        for (input, (corrector, (output1, output2))) in inp.as_tensor().iter().zip(
+            corr.as_tensor().iter().zip(
+                out1.as_mut_tensor()
+                    .iter_mut()
+                    .zip(out2.as_mut_tensor().iter_mut()),
+            ),
+        ) {
             let interm = input * corrector;
             *output1 = interm.re;
             *output2 = interm.im;
