@@ -1,5 +1,6 @@
 use crate::backends::default::implementation::engines::DefaultEngine;
 use crate::backends::default::implementation::entities::{Cleartext32, Cleartext64};
+use crate::prelude::CleartextF64;
 use crate::specification::engines::{CleartextRetrievalEngine, CleartextRetrievalError};
 
 /// # Description:
@@ -72,6 +73,43 @@ impl CleartextRetrievalEngine<Cleartext64, u64> for DefaultEngine {
     }
 
     unsafe fn retrieve_cleartext_unchecked(&mut self, cleartext: &Cleartext64) -> u64 {
+        cleartext.0 .0
+    }
+}
+
+/// # Description:
+/// Implementation of [`CleartextRetrievalEngine`] for [`DefaultEngine`] that operates on 64 bits
+/// floating point numbers.
+impl CleartextRetrievalEngine<CleartextF64, f64> for DefaultEngine {
+    /// # Example:
+    /// ```
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// let input: f64 = 3.0;
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let cleartext: CleartextF64 = engine.create_cleartext(&input)?;
+    /// let output: f64 = engine.retrieve_cleartext(&cleartext)?;
+    ///
+    /// assert_eq!(output, 3.0);
+    /// engine.destroy(cleartext)?;
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn retrieve_cleartext(
+        &mut self,
+        cleartext: &CleartextF64,
+    ) -> Result<f64, CleartextRetrievalError<Self::EngineError>> {
+        Ok(unsafe { self.retrieve_cleartext_unchecked(cleartext) })
+    }
+
+    unsafe fn retrieve_cleartext_unchecked(&mut self, cleartext: &CleartextF64) -> f64 {
         cleartext.0 .0
     }
 }

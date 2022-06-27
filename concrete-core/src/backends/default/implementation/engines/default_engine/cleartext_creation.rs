@@ -1,6 +1,7 @@
 use crate::backends::default::implementation::engines::DefaultEngine;
 use crate::backends::default::implementation::entities::{Cleartext32, Cleartext64};
 use crate::commons::crypto::encoding::Cleartext as ImplCleartext;
+use crate::prelude::CleartextF64;
 use crate::specification::engines::{CleartextCreationEngine, CleartextCreationError};
 
 /// # Description:
@@ -68,5 +69,39 @@ impl CleartextCreationEngine<u64, Cleartext64> for DefaultEngine {
 
     unsafe fn create_cleartext_unchecked(&mut self, input: &u64) -> Cleartext64 {
         Cleartext64(ImplCleartext(*input))
+    }
+}
+
+/// # Description:
+/// Implementation of [`CleartextCreationEngine`] for [`DefaultEngine`] that operates on 64 bits
+/// floating point numbers.
+impl CleartextCreationEngine<f64, CleartextF64> for DefaultEngine {
+    /// # Example:
+    /// ```
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// let input: f64 = 3.;
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let cleartext: CleartextF64 = engine.create_cleartext(&input)?;
+    /// engine.destroy(cleartext)?;
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn create_cleartext(
+        &mut self,
+        value: &f64,
+    ) -> Result<CleartextF64, CleartextCreationError<Self::EngineError>> {
+        Ok(unsafe { self.create_cleartext_unchecked(value) })
+    }
+
+    unsafe fn create_cleartext_unchecked(&mut self, value: &f64) -> CleartextF64 {
+        CleartextF64(ImplCleartext(*value))
     }
 }

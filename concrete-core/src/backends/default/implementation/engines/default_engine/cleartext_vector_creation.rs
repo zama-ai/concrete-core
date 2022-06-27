@@ -1,6 +1,7 @@
 use crate::backends::default::implementation::engines::DefaultEngine;
 use crate::backends::default::implementation::entities::{CleartextVector32, CleartextVector64};
 use crate::commons::crypto::encoding::CleartextList as ImplCleartextList;
+use crate::prelude::CleartextVectorF64;
 use crate::specification::engines::{CleartextVectorCreationEngine, CleartextVectorCreationError};
 
 /// # Description:
@@ -76,5 +77,43 @@ impl CleartextVectorCreationEngine<u64, CleartextVector64> for DefaultEngine {
 
     unsafe fn create_cleartext_vector_unchecked(&mut self, input: &[u64]) -> CleartextVector64 {
         CleartextVector64(ImplCleartextList::from_container(input.to_vec()))
+    }
+}
+
+/// # Description:
+/// Implementation of [`CleartextVectorCreationEngine`] for [`DefaultEngine`] that operates on 64
+/// bits floating point numbers.
+impl CleartextVectorCreationEngine<f64, CleartextVectorF64> for DefaultEngine {
+    /// # Example:
+    /// ```
+    /// use concrete_commons::parameters::CleartextCount;
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// let input = vec![3.0_f64; 100];
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let cleartext_vector: CleartextVectorF64 = engine.create_cleartext_vector(&input)?;
+    /// #
+    /// assert_eq!(cleartext_vector.cleartext_count(), CleartextCount(100));
+    /// engine.destroy(cleartext_vector)?;
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn create_cleartext_vector(
+        &mut self,
+        values: &[f64],
+    ) -> Result<CleartextVectorF64, CleartextVectorCreationError<Self::EngineError>> {
+        CleartextVectorCreationError::perform_generic_checks(values)?;
+        Ok(unsafe { self.create_cleartext_vector_unchecked(values) })
+    }
+
+    unsafe fn create_cleartext_vector_unchecked(&mut self, values: &[f64]) -> CleartextVectorF64 {
+        CleartextVectorF64(ImplCleartextList::from_container(values.to_vec()))
     }
 }

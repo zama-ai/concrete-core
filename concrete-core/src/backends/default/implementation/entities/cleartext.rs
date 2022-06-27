@@ -35,3 +35,19 @@ pub(crate) enum Cleartext64Version {
     #[serde(other)]
     Unsupported,
 }
+
+/// A structure representing a floating point cleartext with 64 bits of precision.
+#[derive(Debug, Clone, PartialEq)]
+pub struct CleartextF64(pub(crate) ImplCleartext<f64>);
+impl AbstractEntity for CleartextF64 {
+    type Kind = CleartextKind;
+}
+impl CleartextEntity for CleartextF64 {}
+
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum CleartextF64Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
+}
