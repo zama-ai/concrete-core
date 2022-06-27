@@ -1,7 +1,8 @@
 #![allow(clippy::missing_safety_doc)]
 use crate::commons::crypto::bootstrap::StandardBootstrapKey as ImplStandardBootstrapKey;
 use crate::commons::crypto::encoding::{
-    Cleartext as ImplCleartext, CleartextList as ImplCleartextList, Plaintext as ImplPlaintext,
+    Cleartext as ImplCleartext, CleartextList as ImplCleartextList,
+    FloatEncoder as ImplFloatEncoder, Plaintext as ImplPlaintext,
     PlaintextList as ImplPlaintextList,
 };
 use crate::commons::crypto::ggsw::StandardGgswCiphertext as ImplStandardGgswCiphertext;
@@ -17,10 +18,12 @@ use crate::commons::crypto::secret::{
     GlweSecretKey as ImplGlweSecretKey, LweSecretKey as ImplLweSecretKey,
 };
 use crate::prelude::{
-    Cleartext32, Cleartext32Version, Cleartext64, Cleartext64Version, CleartextVector32,
-    CleartextVector32Version, CleartextVector64, CleartextVector64Version,
+    Cleartext32, Cleartext32Version, Cleartext64, Cleartext64Version, CleartextF64,
+    CleartextF64Version, CleartextVector32, CleartextVector32Version, CleartextVector64,
+    CleartextVector64Version, CleartextVectorF64, CleartextVectorF64Version,
     DefaultSerializationEngine, DefaultSerializationError, EntityDeserializationEngine,
-    EntityDeserializationError, GgswCiphertext32, GgswCiphertext32Version, GgswCiphertext64,
+    EntityDeserializationError, FloatEncoder, FloatEncoderVector, FloatEncoderVectorVersion,
+    FloatEncoderVersion, GgswCiphertext32, GgswCiphertext32Version, GgswCiphertext64,
     GgswCiphertext64Version, GlweCiphertext32, GlweCiphertext32Version, GlweCiphertext64,
     GlweCiphertext64Version, GlweCiphertextVector32, GlweCiphertextVector32Version,
     GlweCiphertextVector64, GlweCiphertextVector64Version, GlweSecretKey32, GlweSecretKey32Version,
@@ -156,6 +159,64 @@ impl EntityDeserializationEngine<&[u8], Cleartext64> for DefaultSerializationEng
 
 /// # Description:
 /// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
+/// operates on 64 bits integers. It deserializes a floating point cleartext entity.
+impl EntityDeserializationEngine<&[u8], CleartextF64> for DefaultSerializationEngine {
+    /// # Example:
+    /// ```
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// let input: f64 = 3.;
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let cleartext: CleartextF64 = engine.create_cleartext(&input)?;
+    /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
+    /// let serialized = serialization_engine.serialize(&cleartext)?;
+    /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
+    /// assert_eq!(cleartext, recovered);
+    /// engine.destroy(cleartext)?;
+    /// engine.destroy(recovered)?;
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn deserialize(
+        &mut self,
+        serialized: &[u8],
+    ) -> Result<CleartextF64, EntityDeserializationError<Self::EngineError>> {
+        #[derive(Deserialize)]
+        struct DeserializableCleartextF64 {
+            version: CleartextF64Version,
+            inner: ImplCleartext<f64>,
+        }
+        let deserialized: DeserializableCleartextF64 = bincode::deserialize(serialized)
+            .map_err(DefaultSerializationError::Deserialization)
+            .map_err(EntityDeserializationError::Engine)?;
+        match deserialized {
+            DeserializableCleartextF64 {
+                version: CleartextF64Version::Unsupported,
+                ..
+            } => Err(EntityDeserializationError::Engine(
+                DefaultSerializationError::UnsupportedVersion,
+            )),
+            DeserializableCleartextF64 {
+                version: CleartextF64Version::V0,
+                inner,
+            } => Ok(CleartextF64(inner)),
+        }
+    }
+
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> CleartextF64 {
+        self.deserialize(serialized).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
 /// operates on 32 bits integers. It deserializes a cleartext vector entity.
 impl EntityDeserializationEngine<&[u8], CleartextVector32> for DefaultSerializationEngine {
     /// # Example:
@@ -268,6 +329,65 @@ impl EntityDeserializationEngine<&[u8], CleartextVector64> for DefaultSerializat
     }
 
     unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> CleartextVector64 {
+        self.deserialize(serialized).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
+/// operates on 64 bits integers. It deserializes a floating point cleartext vector entity.
+impl EntityDeserializationEngine<&[u8], CleartextVectorF64> for DefaultSerializationEngine {
+    /// # Example:
+    /// ```
+    /// use concrete_commons::parameters::CleartextCount;
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// let input = vec![3.0_f64; 100];
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let cleartext_vector: CleartextVectorF64 = engine.create_cleartext_vector(&input)?;
+    /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
+    /// let serialized = serialization_engine.serialize(&cleartext_vector)?;
+    /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
+    /// assert_eq!(cleartext_vector, recovered);
+    /// engine.destroy(cleartext_vector)?;
+    /// engine.destroy(recovered)?;
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn deserialize(
+        &mut self,
+        serialized: &[u8],
+    ) -> Result<CleartextVectorF64, EntityDeserializationError<Self::EngineError>> {
+        #[derive(Deserialize)]
+        struct DeserializableCleartextVectorF64 {
+            version: CleartextVectorF64Version,
+            inner: ImplCleartextList<Vec<f64>>,
+        }
+        let deserialized: DeserializableCleartextVectorF64 = bincode::deserialize(serialized)
+            .map_err(DefaultSerializationError::Deserialization)
+            .map_err(EntityDeserializationError::Engine)?;
+        match deserialized {
+            DeserializableCleartextVectorF64 {
+                version: CleartextVectorF64Version::Unsupported,
+                ..
+            } => Err(EntityDeserializationError::Engine(
+                DefaultSerializationError::UnsupportedVersion,
+            )),
+            DeserializableCleartextVectorF64 {
+                version: CleartextVectorF64Version::V0,
+                inner,
+            } => Ok(CleartextVectorF64(inner)),
+        }
+    }
+
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> CleartextVectorF64 {
         self.deserialize(serialized).unwrap()
     }
 }
@@ -2104,6 +2224,139 @@ impl EntityDeserializationEngine<&[u8], PlaintextVector64> for DefaultSerializat
     }
 
     unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> PlaintextVector64 {
+        self.deserialize(serialized).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
+/// operates on 64 bits integers. It deserializes a float encoder entity.
+impl EntityDeserializationEngine<&[u8], FloatEncoder> for DefaultSerializationEngine {
+    /// # Example:
+    /// ```
+    /// use concrete_commons::parameters::PlaintextCount;
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let encoder = engine.create_encoder(&FloatEncoderMinMaxConfig {
+    ///     min: 0.,
+    ///     max: 10.,
+    ///     nb_bit_precision: 8,
+    ///     nb_bit_padding: 1,
+    /// })?;
+    ///
+    /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
+    /// let serialized = serialization_engine.serialize(&encoder)?;
+    /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
+    /// assert_eq!(encoder, recovered);
+    ///
+    /// engine.destroy(encoder)?;
+    /// engine.destroy(recovered)?;
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn deserialize(
+        &mut self,
+        serialized: &[u8],
+    ) -> Result<FloatEncoder, EntityDeserializationError<Self::EngineError>> {
+        #[derive(Deserialize)]
+        struct DeserializableFloatEncoder {
+            version: FloatEncoderVersion,
+            inner: ImplFloatEncoder,
+        }
+        let deserialized: DeserializableFloatEncoder = bincode::deserialize(serialized)
+            .map_err(DefaultSerializationError::Deserialization)
+            .map_err(EntityDeserializationError::Engine)?;
+        match deserialized {
+            DeserializableFloatEncoder {
+                version: FloatEncoderVersion::Unsupported,
+                ..
+            } => Err(EntityDeserializationError::Engine(
+                DefaultSerializationError::UnsupportedVersion,
+            )),
+            DeserializableFloatEncoder {
+                version: FloatEncoderVersion::V0,
+                inner,
+            } => Ok(FloatEncoder(inner)),
+        }
+    }
+
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> FloatEncoder {
+        self.deserialize(serialized).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
+/// operates on 64 bits integers. It deserializes a float encoder vector entity.
+impl EntityDeserializationEngine<&[u8], FloatEncoderVector> for DefaultSerializationEngine {
+    /// # Example:
+    /// ```
+    /// use concrete_commons::parameters::PlaintextCount;
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let encoder_vector = engine.create_encoder_vector(&vec![
+    ///     FloatEncoderCenterRadiusConfig {
+    ///         center: 10.,
+    ///         radius: 5.,
+    ///         nb_bit_precision: 8,
+    ///         nb_bit_padding: 1,
+    ///     };
+    ///     1
+    /// ])?;
+    ///
+    /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
+    /// let serialized = serialization_engine.serialize(&encoder_vector)?;
+    /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
+    /// assert_eq!(encoder_vector, recovered);
+    ///
+    /// engine.destroy(encoder_vector)?;
+    /// engine.destroy(recovered)?;
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn deserialize(
+        &mut self,
+        serialized: &[u8],
+    ) -> Result<FloatEncoderVector, EntityDeserializationError<Self::EngineError>> {
+        #[derive(Deserialize)]
+        struct DeserializableFloatEncoderVector {
+            version: FloatEncoderVectorVersion,
+            inner: Vec<ImplFloatEncoder>,
+        }
+        let deserialized: DeserializableFloatEncoderVector = bincode::deserialize(serialized)
+            .map_err(DefaultSerializationError::Deserialization)
+            .map_err(EntityDeserializationError::Engine)?;
+        match deserialized {
+            DeserializableFloatEncoderVector {
+                version: FloatEncoderVectorVersion::Unsupported,
+                ..
+            } => Err(EntityDeserializationError::Engine(
+                DefaultSerializationError::UnsupportedVersion,
+            )),
+            DeserializableFloatEncoderVector {
+                version: FloatEncoderVectorVersion::V0,
+                inner,
+            } => Ok(FloatEncoderVector(inner)),
+        }
+    }
+
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> FloatEncoderVector {
         self.deserialize(serialized).unwrap()
     }
 }

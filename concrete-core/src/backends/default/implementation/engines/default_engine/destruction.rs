@@ -11,6 +11,7 @@ use crate::backends::default::implementation::entities::{
     PlaintextVector32, PlaintextVector64,
 };
 use crate::commons::math::tensor::AsMutTensor;
+use crate::prelude::{CleartextF64, CleartextVectorF64, FloatEncoder, FloatEncoderVector};
 use crate::specification::engines::{DestructionEngine, DestructionError};
 
 impl DestructionEngine<Cleartext32> for DefaultEngine {
@@ -478,5 +479,55 @@ impl DestructionEngine<PackingKeyswitchKey64> for DefaultEngine {
 
     unsafe fn destroy_unchecked(&mut self, entity: &mut PackingKeyswitchKey64) {
         entity.0.as_mut_tensor().fill_with_element(0u64);
+    }
+}
+
+impl DestructionEngine<FloatEncoder> for DefaultEngine {
+    fn destroy(
+        &mut self,
+        mut entity: FloatEncoder,
+    ) -> Result<(), DestructionError<Self::EngineError>> {
+        unsafe { self.destroy_unchecked(&mut entity) }
+        Ok(())
+    }
+
+    unsafe fn destroy_unchecked(&mut self, _entity: &mut FloatEncoder) {}
+}
+
+impl DestructionEngine<FloatEncoderVector> for DefaultEngine {
+    fn destroy(
+        &mut self,
+        mut entity: FloatEncoderVector,
+    ) -> Result<(), DestructionError<Self::EngineError>> {
+        unsafe { self.destroy_unchecked(&mut entity) }
+        Ok(())
+    }
+
+    unsafe fn destroy_unchecked(&mut self, _entity: &mut FloatEncoderVector) {}
+}
+
+impl DestructionEngine<CleartextF64> for DefaultEngine {
+    fn destroy(
+        &mut self,
+        mut entity: CleartextF64,
+    ) -> Result<(), DestructionError<Self::EngineError>> {
+        unsafe { self.destroy_unchecked(&mut entity) }
+        Ok(())
+    }
+
+    unsafe fn destroy_unchecked(&mut self, _entity: &mut CleartextF64) {}
+}
+
+impl DestructionEngine<CleartextVectorF64> for DefaultEngine {
+    fn destroy(
+        &mut self,
+        mut entity: CleartextVectorF64,
+    ) -> Result<(), DestructionError<Self::EngineError>> {
+        unsafe { self.destroy_unchecked(&mut entity) }
+        Ok(())
+    }
+
+    unsafe fn destroy_unchecked(&mut self, entity: &mut CleartextVectorF64) {
+        entity.0.as_mut_tensor().fill_with_element(0.0f64);
     }
 }

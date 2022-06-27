@@ -44,3 +44,23 @@ pub(crate) enum CleartextVector64Version {
     #[serde(other)]
     Unsupported,
 }
+
+/// A structure representing a vector floating point cleartext with 64 bits of precision.
+#[derive(Debug, Clone, PartialEq)]
+pub struct CleartextVectorF64(pub(crate) ImplCleartextList<Vec<f64>>);
+impl AbstractEntity for CleartextVectorF64 {
+    type Kind = CleartextVectorKind;
+}
+impl CleartextVectorEntity for CleartextVectorF64 {
+    fn cleartext_count(&self) -> CleartextCount {
+        self.0.count()
+    }
+}
+
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum CleartextVectorF64Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
+}
