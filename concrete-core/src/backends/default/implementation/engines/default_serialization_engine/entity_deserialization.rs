@@ -5,7 +5,10 @@ use crate::commons::crypto::encoding::{
     FloatEncoder as ImplFloatEncoder, Plaintext as ImplPlaintext,
     PlaintextList as ImplPlaintextList,
 };
-use crate::commons::crypto::ggsw::StandardGgswCiphertext as ImplStandardGgswCiphertext;
+use crate::commons::crypto::ggsw::{
+    StandardGgswCiphertext as ImplStandardGgswCiphertext,
+    StandardGgswSeededCiphertext as ImplStandardGgswSeededCiphertext,
+};
 use crate::commons::crypto::glwe::{
     GlweCiphertext as ImplGlweCiphertext, GlweList as ImplGlweList,
     GlweSeededCiphertext as ImplGlweSeededCiphertext, GlweSeededList as ImplGlweSeededList,
@@ -26,11 +29,13 @@ use crate::prelude::{
     DefaultSerializationEngine, DefaultSerializationError, EntityDeserializationEngine,
     EntityDeserializationError, FloatEncoder, FloatEncoderVector, FloatEncoderVectorVersion,
     FloatEncoderVersion, GgswCiphertext32, GgswCiphertext32Version, GgswCiphertext64,
-    GgswCiphertext64Version, GlweCiphertext32, GlweCiphertext32Version, GlweCiphertext64,
-    GlweCiphertext64Version, GlweCiphertextVector32, GlweCiphertextVector32Version,
-    GlweCiphertextVector64, GlweCiphertextVector64Version, GlweSecretKey32, GlweSecretKey32Version,
-    GlweSecretKey64, GlweSecretKey64Version, GlweSeededCiphertext32, GlweSeededCiphertext32Version,
-    GlweSeededCiphertext64, GlweSeededCiphertext64Version, GlweSeededCiphertextVector32,
+    GgswCiphertext64Version, GgswSeededCiphertext32, GgswSeededCiphertext32Version,
+    GgswSeededCiphertext64, GgswSeededCiphertext64Version, GlweCiphertext32,
+    GlweCiphertext32Version, GlweCiphertext64, GlweCiphertext64Version, GlweCiphertextVector32,
+    GlweCiphertextVector32Version, GlweCiphertextVector64, GlweCiphertextVector64Version,
+    GlweSecretKey32, GlweSecretKey32Version, GlweSecretKey64, GlweSecretKey64Version,
+    GlweSeededCiphertext32, GlweSeededCiphertext32Version, GlweSeededCiphertext64,
+    GlweSeededCiphertext64Version, GlweSeededCiphertextVector32,
     GlweSeededCiphertextVector32Version, GlweSeededCiphertextVector64,
     GlweSeededCiphertextVector64Version, LweBootstrapKey32, LweBootstrapKey32Version,
     LweBootstrapKey64, LweBootstrapKey64Version, LweCiphertext32, LweCiphertext32Version,
@@ -550,6 +555,78 @@ impl EntityDeserializationEngine<&[u8], GgswCiphertext64> for DefaultSerializati
     }
 
     unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> GgswCiphertext64 {
+        self.deserialize(serialized).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
+/// operates on 32 bits integers. It deserializes a seeded GGSW ciphertext entity.
+impl EntityDeserializationEngine<&[u8], GgswSeededCiphertext32> for DefaultSerializationEngine {
+    /// TODO
+    fn deserialize(
+        &mut self,
+        serialized: &[u8],
+    ) -> Result<GgswSeededCiphertext32, EntityDeserializationError<Self::EngineError>> {
+        #[derive(Deserialize)]
+        struct DeserializableGgswSeededCiphertext32 {
+            version: GgswSeededCiphertext32Version,
+            inner: ImplStandardGgswSeededCiphertext<Vec<u32>>,
+        }
+        let deserialized: DeserializableGgswSeededCiphertext32 = bincode::deserialize(serialized)
+            .map_err(DefaultSerializationError::Deserialization)
+            .map_err(EntityDeserializationError::Engine)?;
+        match deserialized {
+            DeserializableGgswSeededCiphertext32 {
+                version: GgswSeededCiphertext32Version::Unsupported,
+                ..
+            } => Err(EntityDeserializationError::Engine(
+                DefaultSerializationError::UnsupportedVersion,
+            )),
+            DeserializableGgswSeededCiphertext32 {
+                version: GgswSeededCiphertext32Version::V0,
+                inner,
+            } => Ok(GgswSeededCiphertext32(inner)),
+        }
+    }
+
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> GgswSeededCiphertext32 {
+        self.deserialize(serialized).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
+/// operates on 64 bits integers. It deserializes a seeded GGSW ciphertext entity.
+impl EntityDeserializationEngine<&[u8], GgswSeededCiphertext64> for DefaultSerializationEngine {
+    /// TODO
+    fn deserialize(
+        &mut self,
+        serialized: &[u8],
+    ) -> Result<GgswSeededCiphertext64, EntityDeserializationError<Self::EngineError>> {
+        #[derive(Deserialize)]
+        struct DeserializableGgswSeededCiphertext64 {
+            version: GgswSeededCiphertext64Version,
+            inner: ImplStandardGgswSeededCiphertext<Vec<u64>>,
+        }
+        let deserialized: DeserializableGgswSeededCiphertext64 = bincode::deserialize(serialized)
+            .map_err(DefaultSerializationError::Deserialization)
+            .map_err(EntityDeserializationError::Engine)?;
+        match deserialized {
+            DeserializableGgswSeededCiphertext64 {
+                version: GgswSeededCiphertext64Version::Unsupported,
+                ..
+            } => Err(EntityDeserializationError::Engine(
+                DefaultSerializationError::UnsupportedVersion,
+            )),
+            DeserializableGgswSeededCiphertext64 {
+                version: GgswSeededCiphertext64Version::V0,
+                inner,
+            } => Ok(GgswSeededCiphertext64(inner)),
+        }
+    }
+
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> GgswSeededCiphertext64 {
         self.deserialize(serialized).unwrap()
     }
 }

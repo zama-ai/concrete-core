@@ -5,7 +5,10 @@ use crate::commons::crypto::encoding::{
     FloatEncoder as ImplFloatEncoder, Plaintext as ImplPlaintext,
     PlaintextList as ImplPlaintextList,
 };
-use crate::commons::crypto::ggsw::StandardGgswCiphertext as ImplStandardGgswCiphertext;
+use crate::commons::crypto::ggsw::{
+    StandardGgswCiphertext as ImplStandardGgswCiphertext,
+    StandardGgswSeededCiphertext as ImplStandardGgswSeededCiphertext,
+};
 use crate::commons::crypto::glwe::{
     GlweCiphertext as ImplGlweCiphertext, GlweList as ImplGlweList,
     GlweSeededCiphertext as ImplGlweSeededCiphertext, GlweSeededList as ImplGlweSeededList,
@@ -26,27 +29,29 @@ use crate::prelude::{
     DefaultSerializationEngine, DefaultSerializationError, EntitySerializationEngine,
     EntitySerializationError, FloatEncoder, FloatEncoderVector, FloatEncoderVectorVersion,
     FloatEncoderVersion, GgswCiphertext32, GgswCiphertext32Version, GgswCiphertext64,
-    GgswCiphertext64Version, GlweCiphertext32, GlweCiphertext32Version, GlweCiphertext64,
-    GlweCiphertext64Version, GlweCiphertextMutView32, GlweCiphertextMutView64,
-    GlweCiphertextVector32, GlweCiphertextVector32Version, GlweCiphertextVector64,
-    GlweCiphertextVector64Version, GlweCiphertextView32, GlweCiphertextView64, GlweSecretKey32,
-    GlweSecretKey32Version, GlweSecretKey64, GlweSecretKey64Version, GlweSeededCiphertext32,
-    GlweSeededCiphertext32Version, GlweSeededCiphertext64, GlweSeededCiphertext64Version,
-    GlweSeededCiphertextVector32, GlweSeededCiphertextVector32Version,
-    GlweSeededCiphertextVector64, GlweSeededCiphertextVector64Version, LweBootstrapKey32,
-    LweBootstrapKey32Version, LweBootstrapKey64, LweBootstrapKey64Version, LweCiphertext32,
-    LweCiphertext32Version, LweCiphertext64, LweCiphertext64Version, LweCiphertextMutView32,
-    LweCiphertextMutView64, LweCiphertextVector32, LweCiphertextVector32Version,
-    LweCiphertextVector64, LweCiphertextVector64Version, LweCiphertextView32, LweCiphertextView64,
-    LweKeyswitchKey32, LweKeyswitchKey32Version, LweKeyswitchKey64, LweKeyswitchKey64Version,
-    LweSecretKey32, LweSecretKey32Version, LweSecretKey64, LweSecretKey64Version,
-    LweSeededCiphertext32, LweSeededCiphertext32Version, LweSeededCiphertext64,
-    LweSeededCiphertext64Version, LweSeededCiphertextVector32, LweSeededCiphertextVector32Version,
-    LweSeededCiphertextVector64, LweSeededCiphertextVector64Version, LweSeededKeyswitchKey32,
-    LweSeededKeyswitchKey32Version, LweSeededKeyswitchKey64, LweSeededKeyswitchKey64Version,
-    PackingKeyswitchKey32, PackingKeyswitchKey32Version, PackingKeyswitchKey64,
-    PackingKeyswitchKey64Version, Plaintext32, Plaintext32Version, Plaintext64, Plaintext64Version,
-    PlaintextVector32, PlaintextVector32Version, PlaintextVector64, PlaintextVector64Version,
+    GgswCiphertext64Version, GgswSeededCiphertext32, GgswSeededCiphertext32Version,
+    GgswSeededCiphertext64, GgswSeededCiphertext64Version, GlweCiphertext32,
+    GlweCiphertext32Version, GlweCiphertext64, GlweCiphertext64Version, GlweCiphertextMutView32,
+    GlweCiphertextMutView64, GlweCiphertextVector32, GlweCiphertextVector32Version,
+    GlweCiphertextVector64, GlweCiphertextVector64Version, GlweCiphertextView32,
+    GlweCiphertextView64, GlweSecretKey32, GlweSecretKey32Version, GlweSecretKey64,
+    GlweSecretKey64Version, GlweSeededCiphertext32, GlweSeededCiphertext32Version,
+    GlweSeededCiphertext64, GlweSeededCiphertext64Version, GlweSeededCiphertextVector32,
+    GlweSeededCiphertextVector32Version, GlweSeededCiphertextVector64,
+    GlweSeededCiphertextVector64Version, LweBootstrapKey32, LweBootstrapKey32Version,
+    LweBootstrapKey64, LweBootstrapKey64Version, LweCiphertext32, LweCiphertext32Version,
+    LweCiphertext64, LweCiphertext64Version, LweCiphertextMutView32, LweCiphertextMutView64,
+    LweCiphertextVector32, LweCiphertextVector32Version, LweCiphertextVector64,
+    LweCiphertextVector64Version, LweCiphertextView32, LweCiphertextView64, LweKeyswitchKey32,
+    LweKeyswitchKey32Version, LweKeyswitchKey64, LweKeyswitchKey64Version, LweSecretKey32,
+    LweSecretKey32Version, LweSecretKey64, LweSecretKey64Version, LweSeededCiphertext32,
+    LweSeededCiphertext32Version, LweSeededCiphertext64, LweSeededCiphertext64Version,
+    LweSeededCiphertextVector32, LweSeededCiphertextVector32Version, LweSeededCiphertextVector64,
+    LweSeededCiphertextVector64Version, LweSeededKeyswitchKey32, LweSeededKeyswitchKey32Version,
+    LweSeededKeyswitchKey64, LweSeededKeyswitchKey64Version, PackingKeyswitchKey32,
+    PackingKeyswitchKey32Version, PackingKeyswitchKey64, PackingKeyswitchKey64Version, Plaintext32,
+    Plaintext32Version, Plaintext64, Plaintext64Version, PlaintextVector32,
+    PlaintextVector32Version, PlaintextVector64, PlaintextVector64Version,
 };
 use concrete_commons::key_kinds::BinaryKeyKind;
 use serde::Serialize;
@@ -488,6 +493,62 @@ impl EntitySerializationEngine<GgswCiphertext64, Vec<u8>> for DefaultSerializati
     }
 
     unsafe fn serialize_unchecked(&mut self, entity: &GgswCiphertext64) -> Vec<u8> {
+        self.serialize(entity).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
+/// on 32 bits integers. It serializes a seeded GGSW ciphertext entity.
+impl EntitySerializationEngine<GgswSeededCiphertext32, Vec<u8>> for DefaultSerializationEngine {
+    /// TODO
+    fn serialize(
+        &mut self,
+        entity: &GgswSeededCiphertext32,
+    ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
+        #[derive(Serialize)]
+        struct SerializableGgswSeededCiphertext32<'a> {
+            version: GgswSeededCiphertext32Version,
+            inner: &'a ImplStandardGgswSeededCiphertext<Vec<u32>>,
+        }
+        let serializable = SerializableGgswSeededCiphertext32 {
+            version: GgswSeededCiphertext32Version::V0,
+            inner: &entity.0,
+        };
+        bincode::serialize(&serializable)
+            .map_err(DefaultSerializationError::Serialization)
+            .map_err(EntitySerializationError::Engine)
+    }
+
+    unsafe fn serialize_unchecked(&mut self, entity: &GgswSeededCiphertext32) -> Vec<u8> {
+        self.serialize(entity).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
+/// on 64 bits integers. It serializes a seeded GGSW ciphertext entity.
+impl EntitySerializationEngine<GgswSeededCiphertext64, Vec<u8>> for DefaultSerializationEngine {
+    /// TODO
+    fn serialize(
+        &mut self,
+        entity: &GgswSeededCiphertext64,
+    ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
+        #[derive(Serialize)]
+        struct SerializableGgswSeededCiphertext64<'a> {
+            version: GgswSeededCiphertext64Version,
+            inner: &'a ImplStandardGgswSeededCiphertext<Vec<u64>>,
+        }
+        let serializable = SerializableGgswSeededCiphertext64 {
+            version: GgswSeededCiphertext64Version::V0,
+            inner: &entity.0,
+        };
+        bincode::serialize(&serializable)
+            .map_err(DefaultSerializationError::Serialization)
+            .map_err(EntitySerializationError::Engine)
+    }
+
+    unsafe fn serialize_unchecked(&mut self, entity: &GgswSeededCiphertext64) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
