@@ -131,6 +131,7 @@ mod glwe_secret_key_creation;
 mod glwe_seeded_ciphertext_encryption;
 mod glwe_seeded_ciphertext_to_glwe_ciphertext_transformation;
 mod glwe_seeded_ciphertext_vector_encryption;
+mod glwe_seeded_vector_to_glwe_ciphertext_vector_transformation;
 mod glwe_to_lwe_secret_key_transformation;
 mod lwe_bootstrap_key_creation;
 mod lwe_ciphertext_cleartext_discarding_multiplication;
