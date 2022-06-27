@@ -74,6 +74,7 @@ test! {
     (GlweSeededCiphertextEncryptionFixture, (PlaintextVector, GlweSecretKey, GlweSeededCiphertext)),
     (GlweSeededCiphertextToGlweCiphertextTransformationFixture, (PlaintextVector, GlweSecretKey, GlweSeededCiphertext, GlweCiphertext)),
     (GlweSeededCiphertextVectorEncryptionFixture, (PlaintextVector, GlweSecretKey, GlweSeededCiphertextVector)),
+    (GlweSeededCiphertextVectorToGlweCiphertextVectorTransformationFixture, (PlaintextVector, GlweSecretKey, GlweSeededCiphertextVector, GlweCiphertextVector)),
     (GlweToLweSecretKeyTransformationFixture, (GlweSecretKey, LweSecretKey)),
     (LweCiphertextEncryptionFixture, (Plaintext, LweSecretKey, LweCiphertext)),
     (LweCiphertextZeroEncryptionFixture, (LweSecretKey, LweCiphertext)),

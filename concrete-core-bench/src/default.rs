@@ -77,6 +77,7 @@ bench! {
     (GlweSeededCiphertextEncryptionFixture, (PlaintextVector, GlweSecretKey, GlweSeededCiphertext)),
     (GlweSeededCiphertextToGlweCiphertextTransformationFixture, (PlaintextVector, GlweSecretKey, GlweSeededCiphertext, GlweCiphertext)),
     (GlweSeededCiphertextVectorEncryptionFixture, (PlaintextVector, GlweSecretKey, GlweSeededCiphertextVector)),
+    (GlweSeededCiphertextVectorToGlweCiphertextVectorTransformationFixture, (PlaintextVector, GlweSecretKey, GlweSeededCiphertextVector, GlweCiphertextVector)),
     (GlweToLweSecretKeyTransformationFixture, (GlweSecretKey, LweSecretKey)),
     (LweBootstrapKeyCreationFixture, (LweSecretKey, GlweSecretKey, LweBootstrapKey)),
     (LweCiphertextEncryptionFixture, (Plaintext, LweSecretKey, LweCiphertext)),
