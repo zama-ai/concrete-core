@@ -8,7 +8,7 @@ use crate::commons::crypto::encoding::{
 use crate::commons::crypto::ggsw::StandardGgswCiphertext as ImplStandardGgswCiphertext;
 use crate::commons::crypto::glwe::{
     GlweCiphertext as ImplGlweCiphertext, GlweList as ImplGlweList,
-    GlweSeededCiphertext as ImplGlweSeededCiphertext,
+    GlweSeededCiphertext as ImplGlweSeededCiphertext, GlweSeededList as ImplGlweSeededList,
     PackingKeyswitchKey as ImplPackingKeyswitchKey,
 };
 use crate::commons::crypto::lwe::{
@@ -30,19 +30,21 @@ use crate::prelude::{
     GlweCiphertext64Version, GlweCiphertextVector32, GlweCiphertextVector32Version,
     GlweCiphertextVector64, GlweCiphertextVector64Version, GlweSecretKey32, GlweSecretKey32Version,
     GlweSecretKey64, GlweSecretKey64Version, GlweSeededCiphertext32, GlweSeededCiphertext32Version,
-    GlweSeededCiphertext64, GlweSeededCiphertext64Version, LweBootstrapKey32,
-    LweBootstrapKey32Version, LweBootstrapKey64, LweBootstrapKey64Version, LweCiphertext32,
-    LweCiphertext32Version, LweCiphertext64, LweCiphertext64Version, LweCiphertextVector32,
-    LweCiphertextVector32Version, LweCiphertextVector64, LweCiphertextVector64Version,
-    LweKeyswitchKey32, LweKeyswitchKey32Version, LweKeyswitchKey64, LweKeyswitchKey64Version,
-    LweSecretKey32, LweSecretKey32Version, LweSecretKey64, LweSecretKey64Version,
-    LweSeededCiphertext32, LweSeededCiphertext32Version, LweSeededCiphertext64,
-    LweSeededCiphertext64Version, LweSeededCiphertextVector32, LweSeededCiphertextVector32Version,
-    LweSeededCiphertextVector64, LweSeededCiphertextVector64Version, LweSeededKeyswitchKey32,
-    LweSeededKeyswitchKey32Version, LweSeededKeyswitchKey64, LweSeededKeyswitchKey64Version,
-    PackingKeyswitchKey32, PackingKeyswitchKey32Version, PackingKeyswitchKey64,
-    PackingKeyswitchKey64Version, Plaintext32, Plaintext32Version, Plaintext64, Plaintext64Version,
-    PlaintextVector32, PlaintextVector32Version, PlaintextVector64, PlaintextVector64Version,
+    GlweSeededCiphertext64, GlweSeededCiphertext64Version, GlweSeededCiphertextVector32,
+    GlweSeededCiphertextVector32Version, GlweSeededCiphertextVector64,
+    GlweSeededCiphertextVector64Version, LweBootstrapKey32, LweBootstrapKey32Version,
+    LweBootstrapKey64, LweBootstrapKey64Version, LweCiphertext32, LweCiphertext32Version,
+    LweCiphertext64, LweCiphertext64Version, LweCiphertextVector32, LweCiphertextVector32Version,
+    LweCiphertextVector64, LweCiphertextVector64Version, LweKeyswitchKey32,
+    LweKeyswitchKey32Version, LweKeyswitchKey64, LweKeyswitchKey64Version, LweSecretKey32,
+    LweSecretKey32Version, LweSecretKey64, LweSecretKey64Version, LweSeededCiphertext32,
+    LweSeededCiphertext32Version, LweSeededCiphertext64, LweSeededCiphertext64Version,
+    LweSeededCiphertextVector32, LweSeededCiphertextVector32Version, LweSeededCiphertextVector64,
+    LweSeededCiphertextVector64Version, LweSeededKeyswitchKey32, LweSeededKeyswitchKey32Version,
+    LweSeededKeyswitchKey64, LweSeededKeyswitchKey64Version, PackingKeyswitchKey32,
+    PackingKeyswitchKey32Version, PackingKeyswitchKey64, PackingKeyswitchKey64Version, Plaintext32,
+    Plaintext32Version, Plaintext64, Plaintext64Version, PlaintextVector32,
+    PlaintextVector32Version, PlaintextVector64, PlaintextVector64Version,
 };
 use concrete_commons::key_kinds::BinaryKeyKind;
 use serde::Deserialize;
@@ -1116,6 +1118,158 @@ impl EntityDeserializationEngine<&[u8], GlweSeededCiphertext64> for DefaultSeria
     }
 
     unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> GlweSeededCiphertext64 {
+        self.deserialize(serialized).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
+/// operates on 32 bits integers. It deserializes a GLWE seeded ciphertext vector entity.
+impl EntityDeserializationEngine<&[u8], GlweSeededCiphertextVector32>
+    for DefaultSerializationEngine
+{
+    /// # Example:
+    /// ```
+    /// use concrete_commons::dispersion::Variance;
+    /// use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let glwe_dimension = GlweDimension(2);
+    /// let polynomial_size = PolynomialSize(4);
+    /// // Here a hard-set encoding is applied (shift by 20 bits)
+    /// let input = vec![3_u32 << 20; 8];
+    /// let noise = Variance(2_f64.powf(-25.));
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let key: GlweSecretKey32 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = engine.create_plaintext_vector(&input)?;
+    ///
+    /// let seeded_ciphertext_vector =
+    ///     engine.encrypt_glwe_seeded_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    ///
+    /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
+    /// let serialized = serialization_engine.serialize(&seeded_ciphertext_vector)?;
+    /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
+    /// assert_eq!(seeded_ciphertext_vector, recovered);
+    ///
+    /// engine.destroy(key)?;
+    /// engine.destroy(plaintext_vector)?;
+    /// engine.destroy(seeded_ciphertext_vector)?;
+    /// engine.destroy(recovered)?;
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn deserialize(
+        &mut self,
+        serialized: &[u8],
+    ) -> Result<GlweSeededCiphertextVector32, EntityDeserializationError<Self::EngineError>> {
+        #[derive(Deserialize)]
+        struct DeserializableGlweSeededCiphertextVector32 {
+            version: GlweSeededCiphertextVector32Version,
+            inner: ImplGlweSeededList<Vec<u32>>,
+        }
+        let deserialized: DeserializableGlweSeededCiphertextVector32 =
+            bincode::deserialize(serialized)
+                .map_err(DefaultSerializationError::Deserialization)
+                .map_err(EntityDeserializationError::Engine)?;
+        match deserialized {
+            DeserializableGlweSeededCiphertextVector32 {
+                version: GlweSeededCiphertextVector32Version::Unsupported,
+                ..
+            } => Err(EntityDeserializationError::Engine(
+                DefaultSerializationError::UnsupportedVersion,
+            )),
+            DeserializableGlweSeededCiphertextVector32 {
+                version: GlweSeededCiphertextVector32Version::V0,
+                inner,
+            } => Ok(GlweSeededCiphertextVector32(inner)),
+        }
+    }
+
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> GlweSeededCiphertextVector32 {
+        self.deserialize(serialized).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
+/// operates on 64 bits integers. It deserializes a GLWE seeded ciphertext vector entity.
+impl EntityDeserializationEngine<&[u8], GlweSeededCiphertextVector64>
+    for DefaultSerializationEngine
+{
+    /// # Example:
+    /// ```
+    /// use concrete_commons::dispersion::Variance;
+    /// use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let glwe_dimension = GlweDimension(2);
+    /// let polynomial_size = PolynomialSize(4);
+    /// // Here a hard-set encoding is applied (shift by 50 bits)
+    /// let input = vec![3_u64 << 50; 8];
+    /// let noise = Variance(2_f64.powf(-25.));
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let key: GlweSecretKey64 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = engine.create_plaintext_vector(&input)?;
+    ///
+    /// let seeded_ciphertext_vector =
+    ///     engine.encrypt_glwe_seeded_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    ///
+    /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
+    /// let serialized = serialization_engine.serialize(&seeded_ciphertext_vector)?;
+    /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
+    /// assert_eq!(seeded_ciphertext_vector, recovered);
+    ///
+    /// engine.destroy(key)?;
+    /// engine.destroy(plaintext_vector)?;
+    /// engine.destroy(seeded_ciphertext_vector)?;
+    /// engine.destroy(recovered)?;
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn deserialize(
+        &mut self,
+        serialized: &[u8],
+    ) -> Result<GlweSeededCiphertextVector64, EntityDeserializationError<Self::EngineError>> {
+        #[derive(Deserialize)]
+        struct DeserializableGlweSeededCiphertextVector64 {
+            version: GlweSeededCiphertextVector64Version,
+            inner: ImplGlweSeededList<Vec<u64>>,
+        }
+        let deserialized: DeserializableGlweSeededCiphertextVector64 =
+            bincode::deserialize(serialized)
+                .map_err(DefaultSerializationError::Deserialization)
+                .map_err(EntityDeserializationError::Engine)?;
+        match deserialized {
+            DeserializableGlweSeededCiphertextVector64 {
+                version: GlweSeededCiphertextVector64Version::Unsupported,
+                ..
+            } => Err(EntityDeserializationError::Engine(
+                DefaultSerializationError::UnsupportedVersion,
+            )),
+            DeserializableGlweSeededCiphertextVector64 {
+                version: GlweSeededCiphertextVector64Version::V0,
+                inner,
+            } => Ok(GlweSeededCiphertextVector64(inner)),
+        }
+    }
+
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> GlweSeededCiphertextVector64 {
         self.deserialize(serialized).unwrap()
     }
 }
