@@ -54,6 +54,8 @@ entity_kind_marker! {
             => "An empty type representing the GGSW ciphertext kind in the type system.",
         GgswCiphertextVectorKind
             => "An empty type representing the GGSW ciphertext vector kind in the type system.",
+        GgswSeededCiphertextKind
+            => "An empty type representing the seeded GGSW ciphertext kind in the type system.",
         GswCiphertextKind
             => "An empty type representing the GSW ciphertext kind in the type system.",
         GswCiphertextVectorKind
