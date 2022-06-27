@@ -453,6 +453,9 @@ pub use lwe_to_glwe_secret_key_transformation::*;
 mod glwe_secret_key_creation;
 pub use glwe_secret_key_creation::*;
 
+mod glwe_seeded_ciphertext_encryption;
+pub use glwe_seeded_ciphertext_encryption::*;
+
 mod glwe_to_lwe_secret_key_transformation;
 pub use glwe_to_lwe_secret_key_transformation::*;
 

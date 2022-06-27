@@ -74,6 +74,7 @@ bench! {
     (GlweCiphertextConsumingRetrievalFixture, (GlweCiphertextView, Slice)),
     (GlweCiphertextConsumingRetrievalFixture, (GlweCiphertextMutView, MutSlice)),
     (GlweSecretKeyCreationFixture, (GlweSecretKey)),
+    (GlweSeededCiphertextEncryptionFixture, (PlaintextVector, GlweSecretKey, GlweSeededCiphertext)),
     (GlweToLweSecretKeyTransformationFixture, (GlweSecretKey, LweSecretKey)),
     (LweBootstrapKeyCreationFixture, (LweSecretKey, GlweSecretKey, LweBootstrapKey)),
     (LweCiphertextEncryptionFixture, (Plaintext, LweSecretKey, LweCiphertext)),
