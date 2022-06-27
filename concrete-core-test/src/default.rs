@@ -73,6 +73,7 @@ test! {
     (GlweCiphertextConsumingRetrievalFixture, (GlweCiphertextMutView, MutSlice)),
     (GlweSeededCiphertextEncryptionFixture, (PlaintextVector, GlweSecretKey, GlweSeededCiphertext)),
     (GlweSeededCiphertextToGlweCiphertextTransformationFixture, (PlaintextVector, GlweSecretKey, GlweSeededCiphertext, GlweCiphertext)),
+    (GlweSeededCiphertextVectorEncryptionFixture, (PlaintextVector, GlweSecretKey, GlweSeededCiphertextVector)),
     (GlweToLweSecretKeyTransformationFixture, (GlweSecretKey, LweSecretKey)),
     (LweCiphertextEncryptionFixture, (Plaintext, LweSecretKey, LweCiphertext)),
     (LweCiphertextZeroEncryptionFixture, (LweSecretKey, LweCiphertext)),
