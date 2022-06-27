@@ -1,7 +1,7 @@
 use crate::commons::crypto::encoding::{Plaintext, PlaintextList};
 use crate::commons::crypto::ggsw::StandardGgswCiphertext;
 use crate::commons::crypto::glwe::{
-    GlweBody, GlweCiphertext, GlweList, GlweMask, GlweSeededCiphertext,
+    GlweBody, GlweCiphertext, GlweList, GlweMask, GlweSeededCiphertext, GlweSeededList,
 };
 use crate::commons::crypto::secret::LweSecretKey;
 use crate::commons::math::tensor::{
@@ -488,7 +488,7 @@ where
         output_body
             .as_mut_polynomial()
             .update_with_wrapping_add_multisum(
-                &output_mask.as_mut_polynomial_list(),
+                &output_mask.as_polynomial_list(),
                 &self.as_polynomial_list(),
             );
         output_body
@@ -786,6 +786,107 @@ where
             .zip(encoded.sublist_iter(count))
         {
             self.encrypt_glwe(&mut ciphertext, &encoded, noise_parameters, generator);
+        }
+    }
+
+    /// Encrypts a list of seeded GLWE ciphertexts.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use concrete_commons::dispersion::LogStandardDev;
+    /// use concrete_commons::parameters::{CiphertextCount, GlweDimension, PolynomialSize};
+    /// use concrete_core::commons::crypto::encoding::PlaintextList;
+    /// use concrete_core::commons::crypto::glwe::{GlweCiphertext, GlweList, GlweSeededList};
+    /// use concrete_core::commons::crypto::secret::generators::{
+    ///     EncryptionRandomGenerator, SecretRandomGenerator,
+    /// };
+    /// use concrete_core::commons::crypto::secret::*;
+    /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::commons::math::random::CompressionSeed;
+    /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::{Seed, UnixSeeder};
+    /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
+    /// let secret_key = GlweSecretKey::generate_binary(
+    ///     GlweDimension(256),
+    ///     PolynomialSize(2),
+    ///     &mut secret_generator,
+    /// );
+    /// let noise = LogStandardDev::from_log_standard_dev(-25.);
+    /// let plaintexts = PlaintextList::from_container(vec![1000 as u32, 2000, 3000, 4000]);
+    /// let mut seeded_ciphertexts = GlweSeededList::allocate(
+    ///     PolynomialSize(2),
+    ///     GlweDimension(256),
+    ///     CiphertextCount(2),
+    ///     CompressionSeed { seed: Seed(42) },
+    /// );
+    /// let mut seeder = UnixSeeder::new(0);
+    /// secret_key.encrypt_seeded_glwe_list::<_, _, _, _, _, SoftwareRandomGenerator>(
+    ///     &mut seeded_ciphertexts,
+    ///     &plaintexts,
+    ///     noise,
+    ///     &mut seeder,
+    /// );
+    ///
+    /// let mut ciphertexts = GlweList::allocate(
+    ///     0 as u32,
+    ///     seeded_ciphertexts.polynomial_size(),
+    ///     seeded_ciphertexts.glwe_size().to_glwe_dimension(),
+    ///     seeded_ciphertexts.ciphertext_count(),
+    /// );
+    ///
+    /// seeded_ciphertexts.expand_into::<_, _, SoftwareRandomGenerator>(&mut ciphertexts);
+    ///
+    /// let mut decrypted = PlaintextList::from_container(vec![0 as u32, 0, 0, 0]);
+    /// secret_key.decrypt_glwe_list(&mut decrypted, &ciphertexts);
+    /// for (dec, plain) in decrypted.plaintext_iter().zip(plaintexts.plaintext_iter()) {
+    ///     let d0 = dec.0.wrapping_sub(plain.0);
+    ///     let d1 = plain.0.wrapping_sub(dec.0);
+    ///     let dist = std::cmp::min(d0, d1);
+    ///     assert!(dist < 400, "dist: {:?}", dist);
+    /// }
+    /// ```
+    pub fn encrypt_seeded_glwe_list<CiphCont, EncCont, Scalar, NoiseParameter, NoiseSeeder, Gen>(
+        &self,
+        encrypt: &mut GlweSeededList<CiphCont>,
+        encoded: &PlaintextList<EncCont>,
+        noise_parameters: NoiseParameter,
+        seeder: &mut NoiseSeeder,
+    ) where
+        Self: AsRefTensor<Element = Scalar>,
+        GlweSeededList<CiphCont>: AsMutTensor<Element = Scalar>,
+        PlaintextList<EncCont>: AsRefTensor<Element = Scalar>,
+        Scalar: UnsignedTorus,
+        for<'a> PlaintextList<&'a [Scalar]>: AsRefTensor<Element = Scalar>,
+        NoiseParameter: DispersionParameter,
+        NoiseSeeder: Seeder,
+        Gen: ByteRandomGenerator,
+    {
+        ck_dim_eq!(encrypt.ciphertext_count().0 * encrypt.polynomial_size().0 => encoded.count().0);
+        ck_dim_eq!(encrypt.glwe_dimension().0 => self.key_size().0);
+
+        let mut generator =
+            EncryptionRandomGenerator::<Gen>::new(encrypt.compression_seed().seed, seeder);
+
+        let count = PlaintextCount(encrypt.polynomial_size().0);
+        let polynomial_size = encrypt.polynomial_size();
+        for (body, encoded) in encrypt.body_iter_mut().zip(encoded.sublist_iter(count)) {
+            let masks = GlweMask {
+                tensor: Tensor::allocate(
+                    Scalar::ZERO,
+                    self.polynomial_size().0 * self.key_size().0,
+                ),
+                poly_size: polynomial_size,
+            };
+
+            self.fill_glwe_mask_and_body_for_encryption(
+                body,
+                masks,
+                &encoded,
+                noise_parameters,
+                &mut generator,
+            );
         }
     }
 
