@@ -172,6 +172,7 @@ mod lwe_ciphertext_vector_zero_encryption;
 mod lwe_ciphertext_zero_encryption;
 mod lwe_keyswitch_key_creation;
 mod lwe_secret_key_creation;
+mod lwe_seeded_bootstrap_key_creation;
 mod lwe_seeded_ciphertext_encryption;
 mod lwe_seeded_ciphertext_vector_encryption;
 mod lwe_seeded_ciphertext_vector_to_lwe_ciphertext_vector_transformation;

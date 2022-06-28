@@ -36,7 +36,16 @@ type ActivatedRandomGenerator = AesniRandomGenerator;
 type ActivatedRandomGenerator = SoftwareRandomGenerator;
 
 pub struct DefaultParallelEngine {
+    /// A structure containing two CSPRNGs to generate material for encryption like public masks
+    /// and secret errors.
+    ///
+    /// The [`ImplEncryptionRandomGenerator`] contains two CSPRNGs, one publicly seeded used to
+    /// generate mask coefficients and one privately seeded used to generate errors during
+    /// encryption.
     pub(crate) encryption_generator: ImplEncryptionRandomGenerator<ActivatedRandomGenerator>,
+    /// A seeder that can be called to generate 128 bits seeds, useful to create new
+    /// [`ImplEncryptionRandomGenerator`] to encrypt seeded types.
+    seeder: ImplDeterministicSeeder<ActivatedRandomGenerator>,
 }
 
 impl AbstractEngineSeal for DefaultParallelEngine {}
@@ -55,8 +64,10 @@ impl AbstractEngine for DefaultParallelEngine {
                 deterministic_seeder.seed(),
                 &mut deterministic_seeder,
             ),
+            seeder: deterministic_seeder,
         })
     }
 }
 
 mod lwe_bootstrap_key_creation;
+mod lwe_seeded_bootstrap_key_creation;
