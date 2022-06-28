@@ -432,6 +432,9 @@ pub use lwe_secret_key_creation::*;
 mod lwe_seeded_bootstrap_key_creation;
 pub use lwe_seeded_bootstrap_key_creation::*;
 
+mod lwe_seeded_bootstrap_key_to_lwe_bootstrap_key_transformation;
+pub use lwe_seeded_bootstrap_key_to_lwe_bootstrap_key_transformation::*;
+
 mod lwe_seeded_ciphertext_encryption;
 pub use lwe_seeded_ciphertext_encryption::*;
 
