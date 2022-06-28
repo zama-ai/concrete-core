@@ -1,11 +1,13 @@
+use super::StandardBootstrapKey;
 use crate::commons::crypto::encoding::Plaintext;
-use crate::commons::crypto::ggsw::StandardGgswCiphertext;
+use crate::commons::crypto::ggsw::StandardGgswSeededCiphertext;
 use crate::commons::crypto::secret::generators::EncryptionRandomGenerator;
 use crate::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
-use crate::commons::math::polynomial::Polynomial;
-use crate::commons::math::random::ByteRandomGenerator;
 #[cfg(feature = "__commons_parallel")]
 use crate::commons::math::random::ParallelByteRandomGenerator;
+use crate::commons::math::random::{
+    ByteRandomGenerator, CompressionSeed, RandomGenerable, RandomGenerator, Seeder, Uniform,
+};
 use crate::commons::math::tensor::{
     ck_dim_div, ck_dim_eq, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
@@ -22,22 +24,23 @@ use rayon::{iter::IndexedParallelIterator, prelude::*};
 #[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
 
-/// A bootstrapping key represented in the standard domain.
+/// A seeded bootstrapping key represented in the standard domain.
 #[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct StandardBootstrapKey<Cont> {
+pub struct StandardSeededBootstrapKey<Cont> {
     tensor: Tensor<Cont>,
     poly_size: PolynomialSize,
-    rlwe_size: GlweSize,
+    glwe_size: GlweSize,
     decomp_level: DecompositionLevelCount,
     decomp_base_log: DecompositionBaseLog,
+    compression_seed: CompressionSeed,
 }
 
-tensor_traits!(StandardBootstrapKey);
+tensor_traits!(StandardSeededBootstrapKey);
 
-impl<Scalar> StandardBootstrapKey<Vec<Scalar>> {
-    /// Allocates a new bootstrapping key in the standard domain whose polynomials coefficients are
-    /// all `value`.
+impl<Scalar> StandardSeededBootstrapKey<Vec<Scalar>> {
+    /// Allocates a new seeded bootstrapping key in the standard domain whose polynomials
+    /// coefficients are all `value`.
     ///
     /// # Example
     ///
@@ -45,51 +48,53 @@ impl<Scalar> StandardBootstrapKey<Vec<Scalar>> {
     /// use concrete_commons::parameters::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
-    /// let bsk = StandardBootstrapKey::allocate(
-    ///     9u32,
+    /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
+    /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// let bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
     ///     GlweSize(7),
     ///     PolynomialSize(9),
     ///     DecompositionLevelCount(3),
     ///     DecompositionBaseLog(5),
     ///     LweDimension(4),
+    ///     CompressionSeed { seed: Seed(42) },
     /// );
     /// assert_eq!(bsk.polynomial_size(), PolynomialSize(9));
     /// assert_eq!(bsk.glwe_size(), GlweSize(7));
     /// assert_eq!(bsk.level_count(), DecompositionLevelCount(3));
     /// assert_eq!(bsk.base_log(), DecompositionBaseLog(5));
     /// assert_eq!(bsk.key_size(), LweDimension(4));
+    /// assert_eq!(bsk.compression_seed(), CompressionSeed { seed: Seed(42) });
     /// ```
     pub fn allocate(
-        value: Scalar,
-        rlwe_size: GlweSize,
+        glwe_size: GlweSize,
         poly_size: PolynomialSize,
         decomp_level: DecompositionLevelCount,
         decomp_base_log: DecompositionBaseLog,
         key_size: LweDimension,
-    ) -> StandardBootstrapKey<Vec<Scalar>>
+        compression_seed: CompressionSeed,
+    ) -> Self
     where
         Scalar: UnsignedTorus,
     {
-        StandardBootstrapKey {
+        StandardSeededBootstrapKey {
             tensor: Tensor::from_container(vec![
-                value;
-                key_size.0
+                Scalar::ZERO;
+                2 * key_size.0
                     * decomp_level.0
-                    * rlwe_size.0
-                    * rlwe_size.0
+                    * glwe_size.0
                     * poly_size.0
             ]),
             decomp_level,
             decomp_base_log,
-            rlwe_size,
+            glwe_size,
             poly_size,
+            compression_seed,
         }
     }
 }
 
-impl<Cont> StandardBootstrapKey<Cont> {
-    /// Creates a bootstrapping key from an existing container of values.
+impl<Cont> StandardSeededBootstrapKey<Cont> {
+    /// Creates a seeded bootstrapping key from an existing container of values.
     ///
     /// # Example
     ///
@@ -97,20 +102,31 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// use concrete_commons::parameters::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
-    /// let vector = vec![0u32; 10 * 5 * 4 * 4 * 15];
-    /// let bsk = StandardBootstrapKey::from_container(
-    ///     vector.as_slice(),
-    ///     GlweSize(4),
-    ///     PolynomialSize(10),
-    ///     DecompositionLevelCount(5),
-    ///     DecompositionBaseLog(4),
+    /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
+    /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    ///
+    /// let key_size = LweDimension(4);
+    /// let decomp_level = DecompositionLevelCount(3);
+    /// let decomp_base_log = DecompositionBaseLog(5);
+    /// let glwe_size = GlweSize(7);
+    /// let poly_size = PolynomialSize(9);
+    ///
+    /// let container = vec![0u32; 2 * key_size.0 * decomp_level.0 * glwe_size.0 * poly_size.0];
+    ///
+    /// let bsk = StandardSeededBootstrapKey::from_container(
+    ///     container,
+    ///     glwe_size,
+    ///     poly_size,
+    ///     decomp_level,
+    ///     decomp_base_log,
+    ///     CompressionSeed { seed: Seed(42) },
     /// );
-    /// assert_eq!(bsk.polynomial_size(), PolynomialSize(10));
-    /// assert_eq!(bsk.glwe_size(), GlweSize(4));
-    /// assert_eq!(bsk.level_count(), DecompositionLevelCount(5));
-    /// assert_eq!(bsk.base_log(), DecompositionBaseLog(4));
-    /// assert_eq!(bsk.key_size(), LweDimension(15));
+    /// assert_eq!(bsk.polynomial_size(), PolynomialSize(9));
+    /// assert_eq!(bsk.glwe_size(), GlweSize(7));
+    /// assert_eq!(bsk.level_count(), DecompositionLevelCount(3));
+    /// assert_eq!(bsk.base_log(), DecompositionBaseLog(5));
+    /// assert_eq!(bsk.key_size(), LweDimension(4));
+    /// assert_eq!(bsk.compression_seed(), CompressionSeed { seed: Seed(42) });
     /// ```
     pub fn from_container<Coef>(
         cont: Cont,
@@ -118,7 +134,8 @@ impl<Cont> StandardBootstrapKey<Cont> {
         poly_size: PolynomialSize,
         decomp_level: DecompositionLevelCount,
         decomp_base_log: DecompositionBaseLog,
-    ) -> StandardBootstrapKey<Cont>
+        compression_seed: CompressionSeed,
+    ) -> Self
     where
         Cont: AsRefSlice<Element = Coef>,
         Coef: UnsignedTorus,
@@ -126,20 +143,22 @@ impl<Cont> StandardBootstrapKey<Cont> {
         let tensor = Tensor::from_container(cont);
         ck_dim_div!(tensor.len() =>
             decomp_level.0,
-            glwe_size.0 * glwe_size.0,
-            poly_size.0
+            glwe_size.0,
+            poly_size.0,
+            2
         );
-        StandardBootstrapKey {
+        StandardSeededBootstrapKey {
             tensor,
-            rlwe_size: glwe_size,
+            glwe_size,
             poly_size,
             decomp_level,
             decomp_base_log,
+            compression_seed,
         }
     }
 
-    /// Generate a new bootstrap key from the input parameters, and fills the current container
-    /// with it.
+    /// Generate a new seeded bootstrap key from the input parameters, and fills the current
+    /// container with it.
     ///
     /// # Example
     ///
@@ -148,52 +167,57 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// use concrete_commons::parameters::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
+    /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
     /// use concrete_core::commons::crypto::secret::generators::{
     ///     EncryptionRandomGenerator, SecretRandomGenerator,
     /// };
     /// use concrete_core::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
+    /// use concrete_core::commons::math::random::CompressionSeed;
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
-    /// let mut encryption_generator =
-    ///     EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0), &mut UnixSeeder::new(0));
+    /// let mut seeder = UnixSeeder::new(0);
     ///
     /// let (lwe_dim, glwe_dim, poly_size) = (LweDimension(4), GlweDimension(6), PolynomialSize(9));
     /// let (dec_lc, dec_bl) = (DecompositionLevelCount(3), DecompositionBaseLog(5));
-    /// let mut bsk = StandardBootstrapKey::allocate(
-    ///     9u32,
+    /// let mut bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
     ///     glwe_dim.to_glwe_size(),
     ///     poly_size,
     ///     dec_lc,
     ///     dec_bl,
     ///     lwe_dim,
+    ///     CompressionSeed { seed: Seed(42) },
     /// );
     /// let lwe_sk = LweSecretKey::generate_binary(lwe_dim, &mut secret_generator);
     /// let glwe_sk = GlweSecretKey::generate_binary(glwe_dim, poly_size, &mut secret_generator);
-    /// bsk.fill_with_new_key(
+    /// bsk.fill_with_new_key::<_, _, _, _, _, SoftwareRandomGenerator>(
     ///     &lwe_sk,
     ///     &glwe_sk,
     ///     LogStandardDev::from_log_standard_dev(-15.),
-    ///     &mut encryption_generator,
+    ///     &mut seeder,
     /// );
     /// ```
-    pub fn fill_with_new_key<LweCont, RlweCont, Scalar, Gen>(
+    pub fn fill_with_new_key<LweCont, GlweCont, Scalar, NoiseParameters, NoiseSeeder, Gen>(
         &mut self,
         lwe_secret_key: &LweSecretKey<BinaryKeyKind, LweCont>,
-        glwe_secret_key: &GlweSecretKey<BinaryKeyKind, RlweCont>,
-        noise_parameters: impl DispersionParameter,
-        generator: &mut EncryptionRandomGenerator<Gen>,
+        glwe_secret_key: &GlweSecretKey<BinaryKeyKind, GlweCont>,
+        noise_parameters: NoiseParameters,
+        seeder: &mut NoiseSeeder,
     ) where
         Self: AsMutTensor<Element = Scalar>,
         LweSecretKey<BinaryKeyKind, LweCont>: AsRefTensor<Element = Scalar>,
-        GlweSecretKey<BinaryKeyKind, RlweCont>: AsRefTensor<Element = Scalar>,
+        GlweSecretKey<BinaryKeyKind, GlweCont>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
+        NoiseParameters: DispersionParameter,
+        NoiseSeeder: Seeder,
         Gen: ByteRandomGenerator,
     {
         ck_dim_eq!(self.key_size().0 => lwe_secret_key.key_size().0);
         self.as_mut_tensor()
             .fill_with_element(<Scalar as Numeric>::ZERO);
+
+        let mut generator =
+            EncryptionRandomGenerator::<Gen>::new(self.compression_seed().seed, seeder);
 
         let gen_iter = generator
             .fork_bsk_to_ggsw::<Scalar>(
@@ -204,14 +228,14 @@ impl<Cont> StandardBootstrapKey<Cont> {
             )
             .unwrap();
 
-        for zip_args!(mut rgsw, sk_scalar, mut generator) in zip!(
+        for zip_args!(mut ggsw, sk_scalar, mut generator) in zip!(
             self.ggsw_iter_mut(),
             lwe_secret_key.as_tensor().iter(),
             gen_iter
         ) {
             let encoded = Plaintext(*sk_scalar);
-            glwe_secret_key.encrypt_constant_ggsw(
-                &mut rgsw,
+            glwe_secret_key.encrypt_constant_seeded_ggsw_with_existing_generator(
+                &mut ggsw,
                 &encoded,
                 noise_parameters,
                 &mut generator,
@@ -228,62 +252,66 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// gate.
     ///
     /// # Example
-    ///
     /// ```
     /// use concrete_commons::dispersion::LogStandardDev;
     /// use concrete_commons::parameters::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
+    /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
     /// use concrete_core::commons::crypto::secret::generators::{
     ///     EncryptionRandomGenerator, SecretRandomGenerator,
     /// };
     /// use concrete_core::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
+    /// use concrete_core::commons::math::random::CompressionSeed;
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::{Seed, UnixSeeder};
-    ///
     /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
-    /// let mut encryption_generator =
-    ///     EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0), &mut UnixSeeder::new(0));
+    /// let mut seeder = UnixSeeder::new(0);
+    ///
     /// let (lwe_dim, glwe_dim, poly_size) = (LweDimension(4), GlweDimension(6), PolynomialSize(9));
     /// let (dec_lc, dec_bl) = (DecompositionLevelCount(3), DecompositionBaseLog(5));
-    /// let mut bsk = StandardBootstrapKey::allocate(
-    ///     9u32,
+    /// let mut bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
     ///     glwe_dim.to_glwe_size(),
     ///     poly_size,
     ///     dec_lc,
     ///     dec_bl,
     ///     lwe_dim,
+    ///     CompressionSeed { seed: Seed(42) },
     /// );
     /// let lwe_sk = LweSecretKey::generate_binary(lwe_dim, &mut secret_generator);
     /// let glwe_sk = GlweSecretKey::generate_binary(glwe_dim, poly_size, &mut secret_generator);
-    /// let mut secret_generator =
-    ///     EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0), &mut UnixSeeder::new(0));
-    /// bsk.par_fill_with_new_key(
+    /// bsk.par_fill_with_new_key::<_, _, _, _, _, SoftwareRandomGenerator>(
     ///     &lwe_sk,
     ///     &glwe_sk,
     ///     LogStandardDev::from_log_standard_dev(-15.),
-    ///     &mut secret_generator,
+    ///     &mut seeder,
     /// );
     /// ```
     #[cfg(feature = "__commons_parallel")]
-    pub fn par_fill_with_new_key<LweCont, RlweCont, Scalar, Gen>(
+    pub fn par_fill_with_new_key<LweCont, GlweCont, Scalar, NoiseParameters, NoiseSeeder, Gen>(
         &mut self,
         lwe_secret_key: &LweSecretKey<BinaryKeyKind, LweCont>,
-        glwe_secret_key: &GlweSecretKey<BinaryKeyKind, RlweCont>,
-        noise_parameters: impl DispersionParameter + Sync + Send,
-        generator: &mut EncryptionRandomGenerator<Gen>,
+        glwe_secret_key: &GlweSecretKey<BinaryKeyKind, GlweCont>,
+        noise_parameters: NoiseParameters,
+        seeder: &mut NoiseSeeder,
     ) where
         Self: AsMutTensor<Element = Scalar>,
         LweSecretKey<BinaryKeyKind, LweCont>: AsRefTensor<Element = Scalar>,
-        GlweSecretKey<BinaryKeyKind, RlweCont>: AsRefTensor<Element = Scalar>,
+        GlweSecretKey<BinaryKeyKind, GlweCont>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus + Sync + Send,
-        RlweCont: Sync,
+        GlweCont: Sync + Send,
+        Cont: Sync + Send,
+        NoiseParameters: DispersionParameter + Sync + Send,
+        NoiseSeeder: Seeder + Sync + Send,
         Gen: ParallelByteRandomGenerator,
     {
         ck_dim_eq!(self.key_size().0 => lwe_secret_key.key_size().0);
         self.as_mut_tensor()
             .fill_with_element(<Scalar as Numeric>::ZERO);
+
+        let mut generator =
+            EncryptionRandomGenerator::<Gen>::new(self.compression_seed().seed, seeder);
+
         let gen_iter = generator
             .par_fork_bsk_to_ggsw::<Scalar>(
                 lwe_secret_key.key_size(),
@@ -292,83 +320,19 @@ impl<Cont> StandardBootstrapKey<Cont> {
                 self.poly_size,
             )
             .unwrap();
+
         self.par_ggsw_iter_mut()
             .zip(lwe_secret_key.as_tensor().par_iter())
             .zip(gen_iter)
-            .for_each(|((mut rgsw, sk_scalar), mut generator)| {
+            .for_each(|((mut ggsw, sk_scalar), mut generator)| {
                 let encoded = Plaintext(*sk_scalar);
-                glwe_secret_key.par_encrypt_constant_ggsw(
-                    &mut rgsw,
+                glwe_secret_key.par_encrypt_constant_seeded_ggsw_with_existing_generator(
+                    &mut ggsw,
                     &encoded,
                     noise_parameters,
                     &mut generator,
                 );
             });
-    }
-
-    /// Generate a new bootstrap key from the input parameters, and fills the current container
-    /// with it.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use concrete_commons::dispersion::LogStandardDev;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-    /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
-    /// use concrete_core::commons::crypto::secret::generators::{
-    ///     EncryptionRandomGenerator, SecretRandomGenerator,
-    /// };
-    /// use concrete_core::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
-    /// use concrete_csprng::generators::SoftwareRandomGenerator;
-    /// use concrete_csprng::seeders::{Seed, UnixSeeder};
-    ///
-    /// let (lwe_dim, glwe_dim, poly_size) = (LweDimension(4), GlweDimension(6), PolynomialSize(9));
-    /// let (dec_lc, dec_bl) = (DecompositionLevelCount(3), DecompositionBaseLog(5));
-    /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
-    /// let mut encryption_generator =
-    ///     EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0), &mut UnixSeeder::new(0));
-    /// let mut bsk = StandardBootstrapKey::allocate(
-    ///     9u32,
-    ///     glwe_dim.to_glwe_size(),
-    ///     poly_size,
-    ///     dec_lc,
-    ///     dec_bl,
-    ///     lwe_dim,
-    /// );
-    /// let lwe_sk = LweSecretKey::generate_binary(lwe_dim, &mut secret_generator);
-    /// let glwe_sk = GlweSecretKey::generate_binary(glwe_dim, poly_size, &mut secret_generator);
-    /// bsk.fill_with_new_trivial_key(
-    ///     &lwe_sk,
-    ///     &glwe_sk,
-    ///     LogStandardDev::from_log_standard_dev(-15.),
-    ///     &mut encryption_generator,
-    /// );
-    /// ```
-    pub fn fill_with_new_trivial_key<LweCont, RlweCont, Scalar, Gen>(
-        &mut self,
-        lwe_secret_key: &LweSecretKey<BinaryKeyKind, LweCont>,
-        rlwe_secret_key: &GlweSecretKey<BinaryKeyKind, RlweCont>,
-        noise_parameters: impl DispersionParameter,
-        generator: &mut EncryptionRandomGenerator<Gen>,
-    ) where
-        Self: AsMutTensor<Element = Scalar>,
-        LweSecretKey<BinaryKeyKind, LweCont>: AsRefTensor<Element = Scalar>,
-        GlweSecretKey<BinaryKeyKind, RlweCont>: AsRefTensor<Element = Scalar>,
-        Scalar: UnsignedTorus,
-        Gen: ByteRandomGenerator,
-    {
-        ck_dim_eq!(self.key_size().0 => lwe_secret_key.key_size().0);
-        for (mut rgsw, sk_scalar) in self.ggsw_iter_mut().zip(lwe_secret_key.as_tensor().iter()) {
-            let encoded = Plaintext(*sk_scalar);
-            rlwe_secret_key.trivial_encrypt_constant_ggsw(
-                &mut rgsw,
-                &encoded,
-                noise_parameters,
-                generator,
-            );
-        }
     }
 
     /// Returns the size of the polynomials used in the bootstrapping key.
@@ -379,15 +343,17 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// use concrete_commons::parameters::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
-    /// let bsk = StandardBootstrapKey::allocate(
-    ///     9u32,
+    /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
+    /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// let bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
     ///     GlweSize(7),
     ///     PolynomialSize(9),
     ///     DecompositionLevelCount(3),
     ///     DecompositionBaseLog(5),
     ///     LweDimension(4),
+    ///     CompressionSeed { seed: Seed(42) },
     /// );
+    ///
     /// assert_eq!(bsk.polynomial_size(), PolynomialSize(9));
     /// ```
     pub fn polynomial_size(&self) -> PolynomialSize {
@@ -402,38 +368,41 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// use concrete_commons::parameters::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
-    /// let bsk = StandardBootstrapKey::allocate(
-    ///     9u32,
+    /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
+    /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// let bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
     ///     GlweSize(7),
     ///     PolynomialSize(9),
     ///     DecompositionLevelCount(3),
     ///     DecompositionBaseLog(5),
     ///     LweDimension(4),
+    ///     CompressionSeed { seed: Seed(42) },
     /// );
+    ///
     /// assert_eq!(bsk.glwe_size(), GlweSize(7));
     /// ```
     pub fn glwe_size(&self) -> GlweSize {
-        self.rlwe_size
+        self.glwe_size
     }
 
     /// Returns the number of levels used to decompose the key bits.
     ///
     /// # Example
-    ///
     /// ```
     /// use concrete_commons::parameters::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
-    /// let bsk = StandardBootstrapKey::allocate(
-    ///     9u32,
+    /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
+    /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// let bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
     ///     GlweSize(7),
     ///     PolynomialSize(9),
     ///     DecompositionLevelCount(3),
     ///     DecompositionBaseLog(5),
     ///     LweDimension(4),
+    ///     CompressionSeed { seed: Seed(42) },
     /// );
+    ///
     /// assert_eq!(bsk.level_count(), DecompositionLevelCount(3));
     /// ```
     pub fn level_count(&self) -> DecompositionLevelCount {
@@ -443,20 +412,21 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// Returns the logarithm of the base used to decompose the key bits.
     ///
     /// # Example
-    ///
     /// ```
     /// use concrete_commons::parameters::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
-    /// let bsk = StandardBootstrapKey::allocate(
-    ///     9u32,
+    /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
+    /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// let bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
     ///     GlweSize(7),
     ///     PolynomialSize(9),
     ///     DecompositionLevelCount(3),
     ///     DecompositionBaseLog(5),
     ///     LweDimension(4),
+    ///     CompressionSeed { seed: Seed(42) },
     /// );
+    ///
     /// assert_eq!(bsk.base_log(), DecompositionBaseLog(5));
     /// ```
     pub fn base_log(&self) -> DecompositionBaseLog {
@@ -466,20 +436,21 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// Returns the size of the LWE encrypted key.
     ///
     /// # Example
-    ///
     /// ```
     /// use concrete_commons::parameters::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
-    /// let bsk = StandardBootstrapKey::allocate(
-    ///     9u32,
+    /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
+    /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// let bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
     ///     GlweSize(7),
     ///     PolynomialSize(9),
     ///     DecompositionLevelCount(3),
     ///     DecompositionBaseLog(5),
     ///     LweDimension(4),
+    ///     CompressionSeed { seed: Seed(42) },
     /// );
+    ///
     /// assert_eq!(bsk.key_size(), LweDimension(4));
     /// ```
     pub fn key_size(&self) -> LweDimension
@@ -488,16 +459,17 @@ impl<Cont> StandardBootstrapKey<Cont> {
     {
         ck_dim_div!(self.as_tensor().len() =>
             self.poly_size.0,
-            self.rlwe_size.0 * self.rlwe_size.0,
-            self.decomp_level.0
+            self.glwe_size.0,
+            self.decomp_level.0,
+            2
         );
         LweDimension(
             self.as_tensor().len()
-                / (self.rlwe_size.0 * self.rlwe_size.0 * self.poly_size.0 * self.decomp_level.0),
+                / (2 * self.glwe_size.0 * self.poly_size.0 * self.decomp_level.0),
         )
     }
 
-    /// Returns an iterator over the borrowed GGSW ciphertext composing the key.
+    /// Returns the compression seed used for the seeded entity.
     ///
     /// # Example
     ///
@@ -505,14 +477,39 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// use concrete_commons::parameters::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
-    /// let bsk = StandardBootstrapKey::allocate(
-    ///     9u32,
+    /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
+    /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// let bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
     ///     GlweSize(7),
     ///     PolynomialSize(9),
     ///     DecompositionLevelCount(3),
     ///     DecompositionBaseLog(5),
     ///     LweDimension(4),
+    ///     CompressionSeed { seed: Seed(42) },
+    /// );
+    ///
+    /// assert_eq!(bsk.compression_seed(), CompressionSeed { seed: Seed(42) });
+    /// ```
+    pub fn compression_seed(&self) -> CompressionSeed {
+        self.compression_seed
+    }
+
+    /// Returns an iterator over the borrowed seeded GGSW ciphertext composing the key.
+    ///
+    /// # Example
+    /// ```
+    /// use concrete_commons::parameters::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
+    /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
+    /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// let bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
+    ///     GlweSize(7),
+    ///     PolynomialSize(9),
+    ///     DecompositionLevelCount(3),
+    ///     DecompositionBaseLog(5),
+    ///     LweDimension(4),
+    ///     CompressionSeed { seed: Seed(42) },
     /// );
     /// for ggsw in bsk.ggsw_iter() {
     ///     assert_eq!(ggsw.polynomial_size(), PolynomialSize(9));
@@ -523,198 +520,205 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// ```
     pub fn ggsw_iter(
         &self,
-    ) -> impl Iterator<Item = StandardGgswCiphertext<&[<Self as AsRefTensor>::Element]>>
+    ) -> impl Iterator<Item = StandardGgswSeededCiphertext<&[<Self as AsRefTensor>::Element]>>
     where
         Self: AsRefTensor,
     {
-        let chunks_size =
-            self.rlwe_size.0 * self.rlwe_size.0 * self.poly_size.0 * self.decomp_level.0;
-        let rlwe_size = self.rlwe_size;
+        let chunks_size = 2 * self.glwe_size.0 * self.poly_size.0 * self.decomp_level.0;
+        let glwe_size = self.glwe_size;
         let poly_size = self.poly_size;
         let base_log = self.decomp_base_log;
+        let compression_seed = self.compression_seed;
         self.as_tensor()
             .subtensor_iter(chunks_size)
             .map(move |tensor| {
-                StandardGgswCiphertext::from_container(
+                StandardGgswSeededCiphertext::from_container(
                     tensor.into_container(),
-                    rlwe_size,
                     poly_size,
+                    glwe_size,
                     base_log,
+                    compression_seed,
                 )
             })
     }
 
-    /// Returns a parallel iterator over the mutably borrowed GGSW ciphertext composing the
+    /// Returns a parallel iterator over the mutably borrowed seeded GGSW ciphertext composing the
     /// key.
     ///
     /// # Notes
     ///
-    /// This iterator is hidden behind the "parallel" feature gate.
+    /// This iterator is hidden behind the "__commons_parallel" feature gate.
     ///
     /// # Example
-    ///
     /// ```
     /// use concrete_commons::parameters::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
+    /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
+    /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
     /// use rayon::iter::ParallelIterator;
-    /// let mut bsk = StandardBootstrapKey::allocate(
-    ///     9u32,
+    /// let mut bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
     ///     GlweSize(7),
     ///     PolynomialSize(9),
     ///     DecompositionLevelCount(3),
     ///     DecompositionBaseLog(5),
     ///     LweDimension(4),
+    ///     CompressionSeed { seed: Seed(42) },
     /// );
     /// bsk.par_ggsw_iter_mut().for_each(|mut ggsw| {
-    ///     ggsw.as_mut_tensor().fill_with_element(0);
+    ///     ggsw.as_mut_tensor().fill_with_element(1);
     /// });
-    /// assert!(bsk.as_tensor().iter().all(|a| *a == 0));
+    /// assert!(bsk.as_tensor().iter().all(|a| *a == 1));
     /// assert_eq!(bsk.ggsw_iter_mut().count(), 4);
     /// ```
     #[cfg(feature = "__commons_parallel")]
     pub fn par_ggsw_iter_mut(
         &mut self,
-    ) -> impl IndexedParallelIterator<Item = StandardGgswCiphertext<&mut [<Self as AsRefTensor>::Element]>>
+    ) -> impl IndexedParallelIterator<
+        Item = StandardGgswSeededCiphertext<&mut [<Self as AsRefTensor>::Element]>,
+    >
     where
         Self: AsMutTensor,
         <Self as AsRefTensor>::Element: Sync + Send,
+        Cont: Sync + Send,
     {
-        let chunks_size =
-            self.rlwe_size.0 * self.rlwe_size.0 * self.poly_size.0 * self.decomp_level.0;
-        let rlwe_size = self.rlwe_size;
+        let chunks_size = 2 * self.glwe_size.0 * self.poly_size.0 * self.decomp_level.0;
+        let glwe_size = self.glwe_size;
         let poly_size = self.poly_size;
         let base_log = self.decomp_base_log;
+        let compression_seed = self.compression_seed;
 
         self.as_mut_tensor()
             .par_subtensor_iter_mut(chunks_size)
             .map(move |tensor| {
-                StandardGgswCiphertext::from_container(
+                StandardGgswSeededCiphertext::from_container(
                     tensor.into_container(),
-                    rlwe_size,
                     poly_size,
+                    glwe_size,
                     base_log,
+                    compression_seed,
                 )
             })
     }
 
-    /// Returns an iterator over the mutably borrowed GGSW ciphertext composing the key.
+    /// Returns an iterator over the mutably borrowed seeded GGSW ciphertext composing the key.
     ///
     /// # Example
-    ///
+    /// # Example
     /// ```
     /// use concrete_commons::parameters::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
+    /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
+    /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
-    /// let mut bsk = StandardBootstrapKey::allocate(
-    ///     9u32,
+    /// use rayon::iter::ParallelIterator;
+    /// let mut bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
     ///     GlweSize(7),
     ///     PolynomialSize(9),
     ///     DecompositionLevelCount(3),
     ///     DecompositionBaseLog(5),
     ///     LweDimension(4),
+    ///     CompressionSeed { seed: Seed(42) },
     /// );
     /// for mut ggsw in bsk.ggsw_iter_mut() {
-    ///     ggsw.as_mut_tensor().fill_with_element(0);
+    ///     ggsw.as_mut_tensor().fill_with_element(1);
     /// }
-    /// assert!(bsk.as_tensor().iter().all(|a| *a == 0));
+    /// assert!(bsk.as_tensor().iter().all(|a| *a == 1));
     /// assert_eq!(bsk.ggsw_iter_mut().count(), 4);
     /// ```
     pub fn ggsw_iter_mut(
         &mut self,
-    ) -> impl Iterator<Item = StandardGgswCiphertext<&mut [<Self as AsRefTensor>::Element]>>
+    ) -> impl Iterator<Item = StandardGgswSeededCiphertext<&mut [<Self as AsRefTensor>::Element]>>
     where
         Self: AsMutTensor,
     {
-        let chunks_size =
-            self.rlwe_size.0 * self.rlwe_size.0 * self.poly_size.0 * self.decomp_level.0;
-        let rlwe_size = self.rlwe_size;
+        let chunks_size = 2 * self.glwe_size.0 * self.poly_size.0 * self.decomp_level.0;
+        let glwe_size = self.glwe_size;
         let poly_size = self.poly_size;
         let base_log = self.decomp_base_log;
+        let compression_seed = self.compression_seed;
         self.as_mut_tensor()
             .subtensor_iter_mut(chunks_size)
             .map(move |tensor| {
-                StandardGgswCiphertext::from_container(
+                StandardGgswSeededCiphertext::from_container(
                     tensor.into_container(),
-                    rlwe_size,
                     poly_size,
+                    glwe_size,
                     base_log,
+                    compression_seed,
                 )
             })
     }
 
-    /// Returns an iterator over borrowed polynomials composing the key.
+    /// Returns the key as a full fledged StandardBootstrapKey
     ///
     /// # Example
     ///
     /// ```
+    /// use concrete_commons::dispersion::LogStandardDev;
     /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize, LweDimension,
+    ///     PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
-    /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
-    /// let bsk = StandardBootstrapKey::allocate(
-    ///     9u32,
-    ///     GlweSize(7),
-    ///     PolynomialSize(256),
-    ///     DecompositionLevelCount(3),
-    ///     DecompositionBaseLog(5),
-    ///     LweDimension(4),
+    /// use concrete_core::commons::crypto::bootstrap::{
+    ///     StandardBootstrapKey, StandardSeededBootstrapKey,
+    /// };
+    /// use concrete_core::commons::crypto::secret::generators::{
+    ///     EncryptionRandomGenerator, SecretRandomGenerator,
+    /// };
+    /// use concrete_core::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
+    /// use concrete_core::commons::math::random::CompressionSeed;
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::{Seed, UnixSeeder};
+    /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
+    /// let mut seeder = UnixSeeder::new(0);
+    ///
+    /// let (lwe_dim, glwe_dim, poly_size) = (LweDimension(4), GlweDimension(6), PolynomialSize(9));
+    /// let (dec_lc, dec_bl) = (DecompositionLevelCount(3), DecompositionBaseLog(5));
+    /// let mut seeded_bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
+    ///     glwe_dim.to_glwe_size(),
+    ///     poly_size,
+    ///     dec_lc,
+    ///     dec_bl,
+    ///     lwe_dim,
+    ///     CompressionSeed { seed: Seed(42) },
     /// );
-    /// for poly in bsk.poly_iter() {
-    ///     assert_eq!(poly.polynomial_size(), PolynomialSize(256));
-    /// }
-    /// assert_eq!(bsk.poly_iter().count(), 7 * 7 * 3 * 4)
+    /// let lwe_sk = LweSecretKey::generate_binary(lwe_dim, &mut secret_generator);
+    /// let glwe_sk = GlweSecretKey::generate_binary(glwe_dim, poly_size, &mut secret_generator);
+    /// seeded_bsk.fill_with_new_key::<_, _, _, _, _, SoftwareRandomGenerator>(
+    ///     &lwe_sk,
+    ///     &glwe_sk,
+    ///     LogStandardDev::from_log_standard_dev(-15.),
+    ///     &mut seeder,
+    /// );
+    ///
+    /// // expansion of the bootstrapping key
+    /// let mut coef_bsk_expanded = StandardBootstrapKey::allocate(
+    ///     0u32,
+    ///     glwe_dim.to_glwe_size(),
+    ///     poly_size,
+    ///     dec_lc,
+    ///     dec_bl,
+    ///     lwe_dim,
+    /// );
+    /// seeded_bsk.expand_into::<_, _, SoftwareRandomGenerator>(&mut coef_bsk_expanded);
     /// ```
-    pub fn poly_iter(&self) -> impl Iterator<Item = Polynomial<&[<Self as AsRefTensor>::Element]>>
+    pub fn expand_into<Scalar, OutCont, Gen>(self, output: &mut StandardBootstrapKey<OutCont>)
     where
-        Self: AsRefTensor,
-        <Self as AsRefTensor>::Element: UnsignedTorus,
+        Scalar: Copy + RandomGenerable<Uniform> + Numeric,
+        StandardBootstrapKey<OutCont>: AsMutTensor<Element = Scalar>,
+        Self: AsRefTensor<Element = Scalar>,
+        Gen: ByteRandomGenerator,
     {
-        let poly_size = self.poly_size.0;
-        self.as_tensor()
-            .subtensor_iter(poly_size)
-            .map(|chunk| Polynomial::from_container(chunk.into_container()))
-    }
+        let mut generator = RandomGenerator::<Gen>::new(self.compression_seed().seed);
 
-    /// Returns an iterator over mutably borrowed polynomials composing the key.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
-    /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
-    /// let mut bsk = StandardBootstrapKey::allocate(
-    ///     9u32,
-    ///     GlweSize(7),
-    ///     PolynomialSize(256),
-    ///     DecompositionLevelCount(3),
-    ///     DecompositionBaseLog(5),
-    ///     LweDimension(4),
-    /// );
-    /// for mut poly in bsk.poly_iter_mut() {
-    ///     poly.as_mut_tensor().fill_with_element(0u32);
-    /// }
-    /// assert!(bsk.as_tensor().iter().all(|a| *a == 0));
-    /// assert_eq!(bsk.poly_iter_mut().count(), 7 * 7 * 3 * 4)
-    /// ```
-    pub fn poly_iter_mut(
-        &mut self,
-    ) -> impl Iterator<Item = Polynomial<&mut [<Self as AsMutTensor>::Element]>>
-    where
-        Self: AsMutTensor,
-        <Self as AsMutTensor>::Element: UnsignedTorus,
-    {
-        let poly_size = self.poly_size.0;
-        self.as_mut_tensor()
-            .subtensor_iter_mut(poly_size)
-            .map(|chunk| Polynomial::from_container(chunk.into_container()))
+        output
+            .ggsw_iter_mut()
+            .zip(self.ggsw_iter())
+            .for_each(|(mut ggsw_out, ggsw_in)| {
+                ggsw_in.expand_into_with_existing_generator(&mut ggsw_out, &mut generator);
+            });
     }
 }
