@@ -429,6 +429,9 @@ pub use lwe_keyswitch_key_creation::*;
 mod lwe_secret_key_creation;
 pub use lwe_secret_key_creation::*;
 
+mod lwe_seeded_bootstrap_key_creation;
+pub use lwe_seeded_bootstrap_key_creation::*;
+
 mod lwe_seeded_ciphertext_encryption;
 pub use lwe_seeded_ciphertext_encryption::*;
 

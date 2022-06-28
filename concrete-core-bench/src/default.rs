@@ -132,6 +132,7 @@ bench! {
     (LweCiphertextConsumingRetrievalFixture, (LweCiphertextMutView, MutSlice)),
     (LweKeyswitchKeyCreationFixture, (LweSecretKey, LweSecretKey, LweKeyswitchKey)),
     (LweSecretKeyCreationFixture, (LweSecretKey)),
+    (LweSeededBootstrapKeyCreationFixture, (LweSecretKey, GlweSecretKey, LweSeededBootstrapKey)),
     (LweSeededCiphertextEncryptionFixture, (Plaintext, LweSecretKey, LweSeededCiphertext)),
     (LweSeededToLweCiphertextTransformationFixture, (Plaintext, LweSecretKey, LweSeededCiphertext, LweCiphertext)),
     (LweSeededCiphertextVectorEncryptionFixture, (PlaintextVector, LweSecretKey, LweSeededCiphertextVector)),
@@ -177,5 +178,6 @@ macro_rules! bench_parallel {
 
 #[cfg(feature = "backend_default_parallel")]
 bench_parallel! {
-    (LweBootstrapKeyCreationFixture, (LweSecretKey, GlweSecretKey, LweBootstrapKey))
+    (LweBootstrapKeyCreationFixture, (LweSecretKey, GlweSecretKey, LweBootstrapKey)),
+    (LweSeededBootstrapKeyCreationFixture, (LweSecretKey, GlweSecretKey, LweSeededBootstrapKey))
 }
