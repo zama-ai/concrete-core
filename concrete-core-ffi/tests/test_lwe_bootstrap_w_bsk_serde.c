@@ -49,6 +49,12 @@ void bootstrap_view_buffers_test(void) {
   int default_parallel_engine_ok = new_default_parallel_engine(builder, &default_parallel_engine);
   assert(default_parallel_engine_ok == 0);
 
+  DefaultSerializationEngine *default_serialization_engine = NULL;
+
+  int default_serialization_engine_ok =
+      new_default_serialization_engine(&default_serialization_engine);
+  assert(default_serialization_engine_ok == 0);
+
   FftwEngine *fftw_engine = NULL;
 
   int fftw_engine_ok = new_fftw_engine(&fftw_engine);
@@ -86,9 +92,28 @@ void bootstrap_view_buffers_test(void) {
       default_engine, output_lwe_sk, poly_size, &output_glwe_sk);
   assert(clone_transform_ok == 0);
 
+  LweSeededBootstrapKey64 *seeded_bsk = NULL;
+  int seeded_bsk_ok = default_parallel_engine_create_lwe_seeded_bootstrap_key_u64(
+      default_parallel_engine, input_lwe_sk, output_glwe_sk, base_log, level, pbs_variance,
+      &seeded_bsk);
+  assert(seeded_bsk_ok == 0);
+
+  // Test BSK Serialization/Deserialization
+  Buffer seeded_bsk_buffer = {.pointer = NULL, .length = 0};
+  int seeded_bsk_ser_ok = default_serialization_engine_serialize_lwe_seeded_bootstrap_key_u64(
+      default_serialization_engine, seeded_bsk, &seeded_bsk_buffer);
+  assert(seeded_bsk_ser_ok == 0);
+
+  BufferView seeded_buffer_view = {.pointer = seeded_bsk_buffer.pointer,
+                                   .length = seeded_bsk_buffer.length};
+  LweSeededBootstrapKey64 *deser_seeded_bsk = NULL;
+  int seeded_bsk_deser_ok = default_serialization_engine_deserialize_lwe_seeded_bootstrap_key_u64(
+      default_serialization_engine, seeded_buffer_view, &deser_seeded_bsk);
+  assert(seeded_bsk_deser_ok == 0);
+
   LweBootstrapKey64 *bsk = NULL;
-  int bsk_ok = default_parallel_engine_create_lwe_bootstrap_key_u64(
-      default_parallel_engine, input_lwe_sk, output_glwe_sk, base_log, level, pbs_variance, &bsk);
+  int bsk_ok = default_engine_transform_lwe_seeded_bootstrap_key_to_lwe_bootstrap_key_u64(
+      default_engine, &deser_seeded_bsk, &bsk);
   assert(bsk_ok == 0);
 
   FftwFourierLweBootstrapKey64 *fbsk = NULL;
@@ -99,13 +124,13 @@ void bootstrap_view_buffers_test(void) {
   // Test BSK Serialization/Deserialization
   Buffer fbsk_buffer = {.pointer = NULL, .length = 0};
   int fbsk_ser_ok = fftw_serialization_engine_serialize_fftw_fourier_lwe_bootstrap_key_u64(
-          fftw_serialization_engine, fbsk, &fbsk_buffer);
+      fftw_serialization_engine, fbsk, &fbsk_buffer);
   assert(fbsk_ser_ok == 0);
 
   BufferView fbsk_buffer_view = {.pointer = fbsk_buffer.pointer, .length = fbsk_buffer.length};
   FftwFourierLweBootstrapKey64 *deser_fbsk = NULL;
   int fbsk_deser_ok = fftw_serialization_engine_deserialize_fftw_fourier_lwe_bootstrap_key_u64(
-          fftw_serialization_engine, fbsk_buffer_view, &deser_fbsk);
+      fftw_serialization_engine, fbsk_buffer_view, &deser_fbsk);
   assert(fbsk_deser_ok == 0);
 
   // We generate the ciphertexts
@@ -197,6 +222,7 @@ void bootstrap_view_buffers_test(void) {
   default_engine_destroy_lwe_secret_key_u64(default_engine, output_lwe_sk);
   default_engine_destroy_glwe_secret_key_u64(default_engine, output_glwe_sk);
   default_engine_destroy_lwe_bootstrap_key_u64(default_engine, bsk);
+  default_engine_destroy_lwe_seeded_bootstrap_key_u64(default_engine, seeded_bsk);
   default_engine_destroy_lwe_ciphertext_view_u64(default_engine, input_ct_as_view);
   default_engine_destroy_lwe_ciphertext_mut_view_u64(default_engine, input_ct_as_mut_view);
   default_engine_destroy_lwe_ciphertext_view_u64(default_engine, output_ct_as_view);
@@ -207,6 +233,7 @@ void bootstrap_view_buffers_test(void) {
   fftw_engine_destroy_fftw_fourier_lwe_bootstrap_key_u64(fftw_engine, deser_fbsk);
   destroy_fftw_serialization_engine(fftw_serialization_engine);
   destroy_default_parallel_engine(default_parallel_engine);
+  destroy_default_serialization_engine(default_serialization_engine);
   destroy_default_engine(default_engine);
   destroy_fftw_engine(fftw_engine);
   destroy_seeder_builder(builder);
@@ -231,6 +258,12 @@ void bootstrap_unchecked_view_buffers_test(void) {
   int default_parallel_engine_ok =
       new_default_parallel_engine_unchecked(builder, &default_parallel_engine);
   assert(default_parallel_engine_ok == 0);
+
+  DefaultSerializationEngine *default_serialization_engine = NULL;
+
+  int default_serialization_engine_ok =
+      new_default_serialization_engine_unchecked(&default_serialization_engine);
+  assert(default_serialization_engine_ok == 0);
 
   FftwEngine *fftw_engine = NULL;
 
@@ -269,9 +302,30 @@ void bootstrap_unchecked_view_buffers_test(void) {
       default_engine, output_lwe_sk, poly_size, &output_glwe_sk);
   assert(clone_transform_ok == 0);
 
+  LweSeededBootstrapKey64 *seeded_bsk = NULL;
+  int seeded_bsk_ok = default_parallel_engine_create_lwe_seeded_bootstrap_key_unchecked_u64(
+      default_parallel_engine, input_lwe_sk, output_glwe_sk, base_log, level, pbs_variance,
+      &seeded_bsk);
+  assert(seeded_bsk_ok == 0);
+
+  // Test BSK Serialization/Deserialization
+  Buffer seeded_bsk_buffer = {.pointer = NULL, .length = 0};
+  int seeded_bsk_ser_ok =
+      default_serialization_engine_serialize_lwe_seeded_bootstrap_key_unchecked_u64(
+          default_serialization_engine, seeded_bsk, &seeded_bsk_buffer);
+  assert(seeded_bsk_ser_ok == 0);
+
+  BufferView seeded_buffer_view = {.pointer = seeded_bsk_buffer.pointer,
+                                   .length = seeded_bsk_buffer.length};
+  LweSeededBootstrapKey64 *deser_seeded_bsk = NULL;
+  int seeded_bsk_deser_ok =
+      default_serialization_engine_deserialize_lwe_seeded_bootstrap_key_unchecked_u64(
+          default_serialization_engine, seeded_buffer_view, &deser_seeded_bsk);
+  assert(seeded_bsk_deser_ok == 0);
+
   LweBootstrapKey64 *bsk = NULL;
-  int bsk_ok = default_parallel_engine_create_lwe_bootstrap_key_unchecked_u64(
-      default_parallel_engine, input_lwe_sk, output_glwe_sk, base_log, level, pbs_variance, &bsk);
+  int bsk_ok = default_engine_transform_lwe_seeded_bootstrap_key_to_lwe_bootstrap_key_unchecked_u64(
+      default_engine, &deser_seeded_bsk, &bsk);
   assert(bsk_ok == 0);
 
   FftwFourierLweBootstrapKey64 *fbsk = NULL;
@@ -282,7 +336,8 @@ void bootstrap_unchecked_view_buffers_test(void) {
 
   // Test BSK Serialization/Deserialization
   Buffer fbsk_buffer = {.pointer = NULL, .length = 0};
-  int fbsk_ser_ok = fftw_serialization_engine_serialize_fftw_fourier_lwe_bootstrap_key_u64(
+  int fbsk_ser_ok =
+      fftw_serialization_engine_serialize_fftw_fourier_lwe_bootstrap_key_unchecked_u64(
           fftw_serialization_engine, fbsk, &fbsk_buffer);
   assert(fbsk_ser_ok == 0);
 
@@ -290,7 +345,7 @@ void bootstrap_unchecked_view_buffers_test(void) {
   FftwFourierLweBootstrapKey64 *deser_fbsk = NULL;
   int fbsk_deser_ok =
       fftw_serialization_engine_deserialize_fftw_fourier_lwe_bootstrap_key_unchecked_u64(
-              fftw_serialization_engine, fbsk_buffer_view, &deser_fbsk);
+          fftw_serialization_engine, fbsk_buffer_view, &deser_fbsk);
   assert(fbsk_deser_ok == 0);
 
   // We generate the ciphertexts
@@ -382,6 +437,7 @@ void bootstrap_unchecked_view_buffers_test(void) {
   default_engine_destroy_lwe_secret_key_unchecked_u64(default_engine, output_lwe_sk);
   default_engine_destroy_glwe_secret_key_unchecked_u64(default_engine, output_glwe_sk);
   default_engine_destroy_lwe_bootstrap_key_unchecked_u64(default_engine, bsk);
+  default_engine_destroy_lwe_seeded_bootstrap_key_unchecked_u64(default_engine, seeded_bsk);
   default_engine_destroy_lwe_ciphertext_view_unchecked_u64(default_engine, input_ct_as_view);
   default_engine_destroy_lwe_ciphertext_mut_view_unchecked_u64(default_engine,
                                                                input_ct_as_mut_view);
@@ -395,6 +451,7 @@ void bootstrap_unchecked_view_buffers_test(void) {
   fftw_engine_destroy_fftw_fourier_lwe_bootstrap_key_unchecked_u64(fftw_engine, deser_fbsk);
   destroy_fftw_serialization_engine_unchecked(fftw_serialization_engine);
   destroy_default_parallel_engine_unchecked(default_parallel_engine);
+  destroy_default_serialization_engine_unchecked(default_serialization_engine);
   destroy_default_engine_unchecked(default_engine);
   destroy_fftw_engine_unchecked(fftw_engine);
   destroy_seeder_builder_unchecked(builder);
@@ -418,6 +475,12 @@ void bootstrap_raw_ptr_buffers_test(void) {
 
   int default_parallel_engine_ok = new_default_parallel_engine(builder, &default_parallel_engine);
   assert(default_parallel_engine_ok == 0);
+
+  DefaultSerializationEngine *default_serialization_engine = NULL;
+
+  int default_serialization_engine_ok =
+      new_default_serialization_engine(&default_serialization_engine);
+  assert(default_serialization_engine_ok == 0);
 
   FftwEngine *fftw_engine = NULL;
 
@@ -456,9 +519,28 @@ void bootstrap_raw_ptr_buffers_test(void) {
       default_engine, output_lwe_sk, poly_size, &output_glwe_sk);
   assert(clone_transform_ok == 0);
 
+  LweSeededBootstrapKey64 *seeded_bsk = NULL;
+  int seeded_bsk_ok = default_parallel_engine_create_lwe_seeded_bootstrap_key_u64(
+      default_parallel_engine, input_lwe_sk, output_glwe_sk, base_log, level, pbs_variance,
+      &seeded_bsk);
+  assert(seeded_bsk_ok == 0);
+
+  // Test BSK Serialization/Deserialization
+  Buffer seeded_bsk_buffer = {.pointer = NULL, .length = 0};
+  int seeded_bsk_ser_ok = default_serialization_engine_serialize_lwe_seeded_bootstrap_key_u64(
+      default_serialization_engine, seeded_bsk, &seeded_bsk_buffer);
+  assert(seeded_bsk_ser_ok == 0);
+
+  BufferView seeded_buffer_view = {.pointer = seeded_bsk_buffer.pointer,
+                                   .length = seeded_bsk_buffer.length};
+  LweSeededBootstrapKey64 *deser_seeded_bsk = NULL;
+  int seeded_bsk_deser_ok = default_serialization_engine_deserialize_lwe_seeded_bootstrap_key_u64(
+      default_serialization_engine, seeded_buffer_view, &deser_seeded_bsk);
+  assert(seeded_bsk_deser_ok == 0);
+
   LweBootstrapKey64 *bsk = NULL;
-  int bsk_ok = default_parallel_engine_create_lwe_bootstrap_key_u64(
-      default_parallel_engine, input_lwe_sk, output_glwe_sk, base_log, level, pbs_variance, &bsk);
+  int bsk_ok = default_engine_transform_lwe_seeded_bootstrap_key_to_lwe_bootstrap_key_u64(
+      default_engine, &deser_seeded_bsk, &bsk);
   assert(bsk_ok == 0);
 
   FftwFourierLweBootstrapKey64 *fbsk = NULL;
@@ -469,13 +551,13 @@ void bootstrap_raw_ptr_buffers_test(void) {
   // Test BSK Serialization/Deserialization
   Buffer fbsk_buffer = {.pointer = NULL, .length = 0};
   int fbsk_ser_ok = fftw_serialization_engine_serialize_fftw_fourier_lwe_bootstrap_key_u64(
-          fftw_serialization_engine, fbsk, &fbsk_buffer);
+      fftw_serialization_engine, fbsk, &fbsk_buffer);
   assert(fbsk_ser_ok == 0);
 
   BufferView fbsk_buffer_view = {.pointer = fbsk_buffer.pointer, .length = fbsk_buffer.length};
   FftwFourierLweBootstrapKey64 *deser_fbsk = NULL;
   int fbsk_deser_ok = fftw_serialization_engine_deserialize_fftw_fourier_lwe_bootstrap_key_u64(
-          fftw_serialization_engine, fbsk_buffer_view, &deser_fbsk);
+      fftw_serialization_engine, fbsk_buffer_view, &deser_fbsk);
   assert(fbsk_deser_ok == 0);
 
   // We generate the ciphertexts
@@ -536,10 +618,12 @@ void bootstrap_raw_ptr_buffers_test(void) {
   default_engine_destroy_lwe_secret_key_u64(default_engine, output_lwe_sk);
   default_engine_destroy_glwe_secret_key_u64(default_engine, output_glwe_sk);
   default_engine_destroy_lwe_bootstrap_key_u64(default_engine, bsk);
+  default_engine_destroy_lwe_seeded_bootstrap_key_u64(default_engine, seeded_bsk);
   fftw_engine_destroy_fftw_fourier_lwe_bootstrap_key_u64(fftw_engine, fbsk);
   fftw_engine_destroy_fftw_fourier_lwe_bootstrap_key_u64(fftw_engine, deser_fbsk);
   destroy_fftw_serialization_engine(fftw_serialization_engine);
   destroy_default_parallel_engine(default_parallel_engine);
+  destroy_default_serialization_engine(default_serialization_engine);
   destroy_default_engine(default_engine);
   destroy_fftw_engine(fftw_engine);
   destroy_seeder_builder(builder);
@@ -564,6 +648,12 @@ void bootstrap_unchecked_raw_ptr_buffers_test(void) {
   int default_parallel_engine_ok =
       new_default_parallel_engine_unchecked(builder, &default_parallel_engine);
   assert(default_parallel_engine_ok == 0);
+
+  DefaultSerializationEngine *default_serialization_engine = NULL;
+
+  int default_serialization_engine_ok =
+      new_default_serialization_engine_unchecked(&default_serialization_engine);
+  assert(default_serialization_engine_ok == 0);
 
   FftwEngine *fftw_engine = NULL;
 
@@ -602,9 +692,30 @@ void bootstrap_unchecked_raw_ptr_buffers_test(void) {
       default_engine, output_lwe_sk, poly_size, &output_glwe_sk);
   assert(clone_transform_ok == 0);
 
+  LweSeededBootstrapKey64 *seeded_bsk = NULL;
+  int seeded_bsk_ok = default_parallel_engine_create_lwe_seeded_bootstrap_key_unchecked_u64(
+      default_parallel_engine, input_lwe_sk, output_glwe_sk, base_log, level, pbs_variance,
+      &seeded_bsk);
+  assert(seeded_bsk_ok == 0);
+
+  // Test BSK Serialization/Deserialization
+  Buffer seeded_bsk_buffer = {.pointer = NULL, .length = 0};
+  int seeded_bsk_ser_ok =
+      default_serialization_engine_serialize_lwe_seeded_bootstrap_key_unchecked_u64(
+          default_serialization_engine, seeded_bsk, &seeded_bsk_buffer);
+  assert(seeded_bsk_ser_ok == 0);
+
+  BufferView seeded_buffer_view = {.pointer = seeded_bsk_buffer.pointer,
+                                   .length = seeded_bsk_buffer.length};
+  LweSeededBootstrapKey64 *deser_seeded_bsk = NULL;
+  int seeded_bsk_deser_ok =
+      default_serialization_engine_deserialize_lwe_seeded_bootstrap_key_unchecked_u64(
+          default_serialization_engine, seeded_buffer_view, &deser_seeded_bsk);
+  assert(seeded_bsk_deser_ok == 0);
+
   LweBootstrapKey64 *bsk = NULL;
-  int bsk_ok = default_parallel_engine_create_lwe_bootstrap_key_unchecked_u64(
-      default_parallel_engine, input_lwe_sk, output_glwe_sk, base_log, level, pbs_variance, &bsk);
+  int bsk_ok = default_engine_transform_lwe_seeded_bootstrap_key_to_lwe_bootstrap_key_unchecked_u64(
+      default_engine, &deser_seeded_bsk, &bsk);
   assert(bsk_ok == 0);
 
   FftwFourierLweBootstrapKey64 *fbsk = NULL;
@@ -616,14 +727,14 @@ void bootstrap_unchecked_raw_ptr_buffers_test(void) {
   // Test BSK Serialization/Deserialization
   Buffer fbsk_buffer = {.pointer = NULL, .length = 0};
   int fbsk_ser_ok = fftw_serialization_engine_serialize_fftw_fourier_lwe_bootstrap_key_u64(
-          fftw_serialization_engine, fbsk, &fbsk_buffer);
+      fftw_serialization_engine, fbsk, &fbsk_buffer);
   assert(fbsk_ser_ok == 0);
 
   BufferView fbsk_buffer_view = {.pointer = fbsk_buffer.pointer, .length = fbsk_buffer.length};
   FftwFourierLweBootstrapKey64 *deser_fbsk = NULL;
   int fbsk_deser_ok =
       fftw_serialization_engine_deserialize_fftw_fourier_lwe_bootstrap_key_unchecked_u64(
-              fftw_serialization_engine, fbsk_buffer_view, &deser_fbsk);
+          fftw_serialization_engine, fbsk_buffer_view, &deser_fbsk);
   assert(fbsk_deser_ok == 0);
 
   // We generate the ciphertexts
@@ -684,10 +795,12 @@ void bootstrap_unchecked_raw_ptr_buffers_test(void) {
   default_engine_destroy_lwe_secret_key_unchecked_u64(default_engine, output_lwe_sk);
   default_engine_destroy_glwe_secret_key_unchecked_u64(default_engine, output_glwe_sk);
   default_engine_destroy_lwe_bootstrap_key_unchecked_u64(default_engine, bsk);
+  default_engine_destroy_lwe_seeded_bootstrap_key_unchecked_u64(default_engine, seeded_bsk);
   fftw_engine_destroy_fftw_fourier_lwe_bootstrap_key_unchecked_u64(fftw_engine, fbsk);
   fftw_engine_destroy_fftw_fourier_lwe_bootstrap_key_unchecked_u64(fftw_engine, deser_fbsk);
-    destroy_fftw_serialization_engine_unchecked(fftw_serialization_engine);
+  destroy_fftw_serialization_engine_unchecked(fftw_serialization_engine);
   destroy_default_parallel_engine_unchecked(default_parallel_engine);
+  destroy_default_serialization_engine_unchecked(default_serialization_engine);
   destroy_default_engine_unchecked(default_engine);
   destroy_fftw_engine_unchecked(fftw_engine);
   destroy_seeder_builder_unchecked(builder);

@@ -5,7 +5,7 @@ use crate::utils::{
 };
 use concrete_core::prelude::{
     DefaultSerializationEngine, EntitySerializationEngine, LweKeyswitchKey64, LweSecretKey64,
-    LweSeededKeyswitchKey64,
+    LweSeededBootstrapKey64, LweSeededKeyswitchKey64,
 };
 use std::os::raw::c_int;
 
@@ -107,17 +107,17 @@ pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_keyswitch_ke
 #[no_mangle]
 pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_seeded_keyswitch_key_u64(
     engine: *mut DefaultSerializationEngine,
-    keyswitch_key: *const LweSeededKeyswitchKey64,
+    seeded_keyswitch_key: *const LweSeededKeyswitchKey64,
     result: *mut Buffer,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(result).unwrap();
 
         let engine = get_mut_checked(engine).unwrap();
-        let keyswitch_key = get_ref_checked(keyswitch_key).unwrap();
+        let seeded_keyswitch_key = get_ref_checked(seeded_keyswitch_key).unwrap();
 
         let buffer: Buffer = engine
-            .serialize(keyswitch_key)
+            .serialize(seeded_keyswitch_key)
             .or_else(engine_error_as_readable_string)
             .unwrap()
             .into();
@@ -131,16 +131,61 @@ pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_seeded_keysw
 #[no_mangle]
 pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_seeded_keyswitch_key_unchecked_u64(
     engine: *mut DefaultSerializationEngine,
-    keyswitch_key: *const LweSeededKeyswitchKey64,
+    seeded_keyswitch_key: *const LweSeededKeyswitchKey64,
+    result: *mut Buffer,
+) -> c_int {
+    catch_panic(|| {
+        let engine = &mut (*engine);
+        let seeded_keyswitch_key = &(*seeded_keyswitch_key);
+
+        let buffer: Buffer = engine.serialize_unchecked(seeded_keyswitch_key).into();
+
+        *result = buffer;
+    })
+}
+
+/// Serializes a `LweSeededBootstrapKey64`.
+///
+/// Refer to `concrete-core` implementation for detailed documentation.
+///
+/// This function is [checked](crate#safety-checked-and-unchecked-functions).
+#[no_mangle]
+pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_seeded_bootstrap_key_u64(
+    engine: *mut DefaultSerializationEngine,
+    seeded_bootstrap_key: *const LweSeededBootstrapKey64,
     result: *mut Buffer,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(result).unwrap();
 
         let engine = get_mut_checked(engine).unwrap();
-        let keyswitch_key = get_ref_checked(keyswitch_key).unwrap();
 
-        let buffer: Buffer = engine.serialize_unchecked(keyswitch_key).into();
+        let seeded_bootstrap_key = get_ref_checked(seeded_bootstrap_key).unwrap();
+
+        let buffer: Buffer = engine
+            .serialize(seeded_bootstrap_key)
+            .or_else(engine_error_as_readable_string)
+            .unwrap()
+            .into();
+
+        *result = buffer;
+    })
+}
+
+/// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
+/// [`default_serialization_engine_serialize_lwe_seeded_bootstrap_key_u64`]
+#[no_mangle]
+pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_seeded_bootstrap_key_unchecked_u64(
+    engine: *mut DefaultSerializationEngine,
+    seeded_bootstrap_key: *const LweSeededBootstrapKey64,
+    result: *mut Buffer,
+) -> c_int {
+    catch_panic(|| {
+        let engine = &mut (*engine);
+
+        let seeded_bootstrap_key = &(*seeded_bootstrap_key);
+
+        let buffer: Buffer = engine.serialize_unchecked(seeded_bootstrap_key).into();
 
         *result = buffer;
     })
