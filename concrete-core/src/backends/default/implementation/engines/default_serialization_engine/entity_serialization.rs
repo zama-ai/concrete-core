@@ -1,5 +1,8 @@
 #![allow(clippy::missing_safety_doc)]
-use crate::commons::crypto::bootstrap::StandardBootstrapKey as ImplStandardBootstrapKey;
+use crate::commons::crypto::bootstrap::{
+    StandardBootstrapKey as ImplStandardBootstrapKey,
+    StandardSeededBootstrapKey as ImplStandardSeededBootstrapKey,
+};
 use crate::commons::crypto::encoding::{
     Cleartext as ImplCleartext, CleartextList as ImplCleartextList,
     FloatEncoder as ImplFloatEncoder, Plaintext as ImplPlaintext,
@@ -44,14 +47,15 @@ use crate::prelude::{
     LweCiphertextVector32, LweCiphertextVector32Version, LweCiphertextVector64,
     LweCiphertextVector64Version, LweCiphertextView32, LweCiphertextView64, LweKeyswitchKey32,
     LweKeyswitchKey32Version, LweKeyswitchKey64, LweKeyswitchKey64Version, LweSecretKey32,
-    LweSecretKey32Version, LweSecretKey64, LweSecretKey64Version, LweSeededCiphertext32,
-    LweSeededCiphertext32Version, LweSeededCiphertext64, LweSeededCiphertext64Version,
-    LweSeededCiphertextVector32, LweSeededCiphertextVector32Version, LweSeededCiphertextVector64,
-    LweSeededCiphertextVector64Version, LweSeededKeyswitchKey32, LweSeededKeyswitchKey32Version,
-    LweSeededKeyswitchKey64, LweSeededKeyswitchKey64Version, PackingKeyswitchKey32,
-    PackingKeyswitchKey32Version, PackingKeyswitchKey64, PackingKeyswitchKey64Version, Plaintext32,
-    Plaintext32Version, Plaintext64, Plaintext64Version, PlaintextVector32,
-    PlaintextVector32Version, PlaintextVector64, PlaintextVector64Version,
+    LweSecretKey32Version, LweSecretKey64, LweSecretKey64Version, LweSeededBootstrapKey32,
+    LweSeededBootstrapKey32Version, LweSeededBootstrapKey64, LweSeededBootstrapKey64Version,
+    LweSeededCiphertext32, LweSeededCiphertext32Version, LweSeededCiphertext64,
+    LweSeededCiphertext64Version, LweSeededCiphertextVector32, LweSeededCiphertextVector32Version,
+    LweSeededCiphertextVector64, LweSeededCiphertextVector64Version, LweSeededKeyswitchKey32,
+    LweSeededKeyswitchKey32Version, LweSeededKeyswitchKey64, LweSeededKeyswitchKey64Version,
+    PackingKeyswitchKey32, PackingKeyswitchKey32Version, PackingKeyswitchKey64,
+    PackingKeyswitchKey64Version, Plaintext32, Plaintext32Version, Plaintext64, Plaintext64Version,
+    PlaintextVector32, PlaintextVector32Version, PlaintextVector64, PlaintextVector64Version,
 };
 use concrete_commons::key_kinds::BinaryKeyKind;
 use serde::Serialize;
@@ -2370,6 +2374,137 @@ impl EntitySerializationEngine<LweSecretKey64, Vec<u8>> for DefaultSerialization
     }
 
     unsafe fn serialize_unchecked(&mut self, entity: &LweSecretKey64) -> Vec<u8> {
+        self.serialize(entity).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
+/// on 32 bits integers. It serializes a seeded LWE bootstrap key entity.
+impl EntitySerializationEngine<LweSeededBootstrapKey32, Vec<u8>> for DefaultSerializationEngine {
+    /// # Example:
+    /// ```
+    /// use concrete_commons::dispersion::Variance;
+    /// use concrete_commons::parameters::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    /// };
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let (lwe_dim, glwe_dim, poly_size) = (LweDimension(4), GlweDimension(6), PolynomialSize(256));
+    /// let (dec_lc, dec_bl) = (DecompositionLevelCount(3), DecompositionBaseLog(5));
+    /// let noise = Variance(2_f64.powf(-25.));
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let lwe_sk: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dim)?;
+    /// let glwe_sk: GlweSecretKey32 = engine.create_glwe_secret_key(glwe_dim, poly_size)?;
+    ///
+    /// let bsk: LweSeededBootstrapKey32 =
+    ///     engine.create_lwe_seeded_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
+    ///
+    /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
+    /// let serialized = serialization_engine.serialize(&bsk)?;
+    /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
+    ///
+    /// assert_eq!(bsk, recovered);
+    ///
+    /// engine.destroy(lwe_sk)?;
+    /// engine.destroy(glwe_sk)?;
+    /// engine.destroy(recovered)?;
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn serialize(
+        &mut self,
+        entity: &LweSeededBootstrapKey32,
+    ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
+        #[derive(Serialize)]
+        struct SerializableLweSeededBootstrapKey32<'a> {
+            version: LweSeededBootstrapKey32Version,
+            inner: &'a ImplStandardSeededBootstrapKey<Vec<u32>>,
+        }
+        let serializable = SerializableLweSeededBootstrapKey32 {
+            version: LweSeededBootstrapKey32Version::V0,
+            inner: &entity.0,
+        };
+        bincode::serialize(&serializable)
+            .map_err(DefaultSerializationError::Serialization)
+            .map_err(EntitySerializationError::Engine)
+    }
+
+    unsafe fn serialize_unchecked(&mut self, entity: &LweSeededBootstrapKey32) -> Vec<u8> {
+        self.serialize(entity).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
+/// on 64 bits integers. It serializes a seeded LWE bootstrap key entity.
+impl EntitySerializationEngine<LweSeededBootstrapKey64, Vec<u8>> for DefaultSerializationEngine {
+    /// # Example:
+    /// # Example:
+    /// ```
+    /// use concrete_commons::dispersion::Variance;
+    /// use concrete_commons::parameters::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    /// };
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let (lwe_dim, glwe_dim, poly_size) = (LweDimension(4), GlweDimension(6), PolynomialSize(256));
+    /// let (dec_lc, dec_bl) = (DecompositionLevelCount(3), DecompositionBaseLog(5));
+    /// let noise = Variance(2_f64.powf(-25.));
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let lwe_sk: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dim)?;
+    /// let glwe_sk: GlweSecretKey64 = engine.create_glwe_secret_key(glwe_dim, poly_size)?;
+    ///
+    /// let bsk: LweSeededBootstrapKey64 =
+    ///     engine.create_lwe_seeded_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
+    ///
+    /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
+    /// let serialized = serialization_engine.serialize(&bsk)?;
+    /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
+    ///
+    /// assert_eq!(bsk, recovered);
+    ///
+    /// engine.destroy(lwe_sk)?;
+    /// engine.destroy(glwe_sk)?;
+    /// engine.destroy(recovered)?;
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn serialize(
+        &mut self,
+        entity: &LweSeededBootstrapKey64,
+    ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
+        #[derive(Serialize)]
+        struct SerializableLweSeededBootstrapKey64<'a> {
+            version: LweSeededBootstrapKey64Version,
+            inner: &'a ImplStandardSeededBootstrapKey<Vec<u64>>,
+        }
+        let serializable = SerializableLweSeededBootstrapKey64 {
+            version: LweSeededBootstrapKey64Version::V0,
+            inner: &entity.0,
+        };
+        bincode::serialize(&serializable)
+            .map_err(DefaultSerializationError::Serialization)
+            .map_err(EntitySerializationError::Engine)
+    }
+
+    unsafe fn serialize_unchecked(&mut self, entity: &LweSeededBootstrapKey64) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
