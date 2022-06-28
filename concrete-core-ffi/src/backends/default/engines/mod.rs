@@ -235,6 +235,8 @@ pub mod lwe_ciphertext_plaintext_discarding_addition;
 pub mod lwe_glwe_secret_key_transformation;
 pub mod lwe_keyswitch_key_creation;
 pub mod lwe_secret_key_creation;
+pub mod lwe_seeded_keyswitch_key_creation;
+pub mod lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_transformation;
 
 pub use destruction::*;
 #[cfg(feature = "backend_default_serialization")]
@@ -255,3 +257,5 @@ pub use lwe_ciphertext_plaintext_discarding_addition::*;
 pub use lwe_glwe_secret_key_transformation::*;
 pub use lwe_keyswitch_key_creation::*;
 pub use lwe_secret_key_creation::*;
+pub use lwe_seeded_keyswitch_key_creation::*;
+pub use lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_transformation::*;

@@ -17,7 +17,8 @@ void keyswitch_view_buffers_test(void) {
 
   DefaultSerializationEngine *default_serialization_engine = NULL;
 
-  int default_serialization_engine_ok = new_default_serialization_engine(&default_serialization_engine);
+  int default_serialization_engine_ok =
+      new_default_serialization_engine(&default_serialization_engine);
   assert(default_serialization_engine_ok == 0);
 
   double ksk_variance = 0.000000000000000001;
@@ -37,21 +38,39 @@ void keyswitch_view_buffers_test(void) {
   sk_ok = default_engine_create_lwe_secret_key_u64(engine, input_lwe_dimension, &output_sk);
   assert(sk_ok == 0);
 
+  LweSeededKeyswitchKey64 *seeded_ksk = NULL;
+  int seeded_ksk_ok = default_engine_create_lwe_seeded_keyswitch_key_u64(
+      engine, input_sk, output_sk, level, base_log, ksk_variance, &seeded_ksk);
+  assert(seeded_ksk_ok == 0);
+
+  // Test seeded KSK Serialization/Deserialization
+  Buffer seeded_ksk_buffer = {.pointer = NULL, .length = 0};
+  int seeded_ksk_ser_ok = default_serialization_engine_serialize_lwe_seeded_keyswitch_key_u64(
+      default_serialization_engine, seeded_ksk, &seeded_ksk_buffer);
+  assert(seeded_ksk_ser_ok == 0);
+
+  BufferView seeded_ksk_buffer_view = {.pointer = seeded_ksk_buffer.pointer,
+                                       .length = seeded_ksk_buffer.length};
+  LweSeededKeyswitchKey64 *deser_seeded_ksk = NULL;
+  int seeded_ksk_deser_ok = default_serialization_engine_deserialize_lwe_seeded_keyswitch_key_u64(
+      default_serialization_engine, seeded_ksk_buffer_view, &deser_seeded_ksk);
+  assert(seeded_ksk_deser_ok == 0);
+
   LweKeyswitchKey64 *ksk = NULL;
-  int ksk_ok = default_engine_create_lwe_keyswitch_key_u64(engine, input_sk, output_sk, level,
-                                                           base_log, ksk_variance, &ksk);
+  int ksk_ok = default_engine_transform_lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_u64(
+      engine, &deser_seeded_ksk, &ksk);
   assert(ksk_ok == 0);
 
   // Test KSK Serialization/Deserialization
   Buffer ksk_buffer = {.pointer = NULL, .length = 0};
   int ksk_ser_ok = default_serialization_engine_serialize_lwe_keyswitch_key_u64(
-          default_serialization_engine, ksk, &ksk_buffer);
+      default_serialization_engine, ksk, &ksk_buffer);
   assert(ksk_ser_ok == 0);
 
   BufferView ksk_buffer_view = {.pointer = ksk_buffer.pointer, .length = ksk_buffer.length};
   LweKeyswitchKey64 *deser_ksk = NULL;
   int ksk_deser_ok = default_serialization_engine_deserialize_lwe_keyswitch_key_u64(
-          default_serialization_engine, ksk_buffer_view, &deser_ksk);
+      default_serialization_engine, ksk_buffer_view, &deser_ksk);
   assert(ksk_deser_ok == 0);
 
   // We generate the texts
@@ -111,6 +130,7 @@ void keyswitch_view_buffers_test(void) {
   default_engine_destroy_lwe_secret_key_u64(engine, output_sk);
   default_engine_destroy_lwe_keyswitch_key_u64(engine, ksk);
   default_engine_destroy_lwe_keyswitch_key_u64(engine, deser_ksk);
+  default_engine_destroy_lwe_seeded_keyswitch_key_u64(engine, seeded_ksk);
   default_engine_destroy_lwe_ciphertext_view_u64(engine, input_ct_as_view);
   default_engine_destroy_lwe_ciphertext_mut_view_u64(engine, input_ct_as_mut_view);
   default_engine_destroy_lwe_ciphertext_view_u64(engine, output_ct_as_view);
@@ -134,7 +154,8 @@ void keyswitch_unchecked_view_buffers_test(void) {
 
   DefaultSerializationEngine *default_serialization_engine = NULL;
 
-  int default_serialization_engine_ok = new_default_serialization_engine(&default_serialization_engine);
+  int default_serialization_engine_ok =
+      new_default_serialization_engine(&default_serialization_engine);
   assert(default_serialization_engine_ok == 0);
 
   double ksk_variance = 0.000000000000000001;
@@ -156,23 +177,42 @@ void keyswitch_unchecked_view_buffers_test(void) {
       default_engine_create_lwe_secret_key_unchecked_u64(engine, input_lwe_dimension, &output_sk);
   assert(sk_ok == 0);
 
+  LweSeededKeyswitchKey64 *seeded_ksk = NULL;
+  int seeded_ksk_ok = default_engine_create_lwe_seeded_keyswitch_key_unchecked_u64(
+      engine, input_sk, output_sk, level, base_log, ksk_variance, &seeded_ksk);
+  assert(seeded_ksk_ok == 0);
+
+  // Test seeded KSK Serialization/Deserialization
+  Buffer seeded_ksk_buffer = {.pointer = NULL, .length = 0};
+  int seeded_ksk_ser_ok =
+      default_serialization_engine_serialize_lwe_seeded_keyswitch_key_unchecked_u64(
+          default_serialization_engine, seeded_ksk, &seeded_ksk_buffer);
+  assert(seeded_ksk_ser_ok == 0);
+
+  BufferView seeded_ksk_buffer_view = {.pointer = seeded_ksk_buffer.pointer,
+                                       .length = seeded_ksk_buffer.length};
+  LweSeededKeyswitchKey64 *deser_seeded_ksk = NULL;
+  int seeded_ksk_deser_ok =
+      default_serialization_engine_deserialize_lwe_seeded_keyswitch_key_unchecked_u64(
+          default_serialization_engine, seeded_ksk_buffer_view, &deser_seeded_ksk);
+  assert(seeded_ksk_deser_ok == 0);
+
   LweKeyswitchKey64 *ksk = NULL;
-  int ksk_ok = default_engine_create_lwe_keyswitch_key_unchecked_u64(
-      engine, input_sk, output_sk, level, base_log, ksk_variance, &ksk);
+  int ksk_ok = default_engine_transform_lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_unchecked_u64(
+      engine, &deser_seeded_ksk, &ksk);
   assert(ksk_ok == 0);
 
   // Test KSK Serialization/Deserialization
   Buffer ksk_buffer = {.pointer = NULL, .length = 0};
   int ksk_ser_ok = default_serialization_engine_serialize_lwe_keyswitch_key_u64(
-          default_serialization_engine, ksk, &ksk_buffer);
+      default_serialization_engine, ksk, &ksk_buffer);
   assert(ksk_ser_ok == 0);
 
   BufferView ksk_buffer_view = {.pointer = ksk_buffer.pointer, .length = ksk_buffer.length};
   LweKeyswitchKey64 *deser_ksk = NULL;
   int ksk_deser_ok = default_serialization_engine_deserialize_lwe_keyswitch_key_u64(
-          default_serialization_engine, ksk_buffer_view, &deser_ksk);
+      default_serialization_engine, ksk_buffer_view, &deser_ksk);
   assert(ksk_deser_ok == 0);
-
 
   // We generate the texts
   uint64_t *input_ct_buffer =
@@ -231,6 +271,7 @@ void keyswitch_unchecked_view_buffers_test(void) {
   default_engine_destroy_lwe_secret_key_unchecked_u64(engine, output_sk);
   default_engine_destroy_lwe_keyswitch_key_unchecked_u64(engine, ksk);
   default_engine_destroy_lwe_keyswitch_key_unchecked_u64(engine, deser_ksk);
+  default_engine_destroy_lwe_seeded_keyswitch_key_unchecked_u64(engine, seeded_ksk);
   default_engine_destroy_lwe_ciphertext_view_unchecked_u64(engine, input_ct_as_view);
   default_engine_destroy_lwe_ciphertext_mut_view_unchecked_u64(engine, input_ct_as_mut_view);
   default_engine_destroy_lwe_ciphertext_view_unchecked_u64(engine, output_ct_as_view);
@@ -254,7 +295,8 @@ void keyswitch_raw_ptr_buffers_test(void) {
 
   DefaultSerializationEngine *default_serialization_engine = NULL;
 
-  int default_serialization_engine_ok = new_default_serialization_engine(&default_serialization_engine);
+  int default_serialization_engine_ok =
+      new_default_serialization_engine(&default_serialization_engine);
   assert(default_serialization_engine_ok == 0);
 
   double ksk_variance = 0.000000000000000001;
@@ -274,21 +316,38 @@ void keyswitch_raw_ptr_buffers_test(void) {
   sk_ok = default_engine_create_lwe_secret_key_u64(engine, input_lwe_dimension, &output_sk);
   assert(sk_ok == 0);
 
-  LweKeyswitchKey64 *ksk = NULL;
-  int ksk_ok = default_engine_create_lwe_keyswitch_key_u64(engine, input_sk, output_sk, level,
-                                                           base_log, ksk_variance, &ksk);
-  assert(ksk_ok == 0);
+  LweSeededKeyswitchKey64 *seeded_ksk = NULL;
+  int seeded_ksk_ok = default_engine_create_lwe_seeded_keyswitch_key_u64(
+      engine, input_sk, output_sk, level, base_log, ksk_variance, &seeded_ksk);
+  assert(seeded_ksk_ok == 0);
 
+  // Test seeded KSK Serialization/Deserialization
+  Buffer seeded_ksk_buffer = {.pointer = NULL, .length = 0};
+  int seeded_ksk_ser_ok = default_serialization_engine_serialize_lwe_seeded_keyswitch_key_u64(
+      default_serialization_engine, seeded_ksk, &seeded_ksk_buffer);
+  assert(seeded_ksk_ser_ok == 0);
+
+  BufferView seeded_ksk_buffer_view = {.pointer = seeded_ksk_buffer.pointer,
+                                       .length = seeded_ksk_buffer.length};
+  LweSeededKeyswitchKey64 *deser_seeded_ksk = NULL;
+  int seeded_ksk_deser_ok = default_serialization_engine_deserialize_lwe_seeded_keyswitch_key_u64(
+      default_serialization_engine, seeded_ksk_buffer_view, &deser_seeded_ksk);
+  assert(seeded_ksk_deser_ok == 0);
+
+  LweKeyswitchKey64 *ksk = NULL;
+  int ksk_ok = default_engine_transform_lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_u64(
+      engine, &deser_seeded_ksk, &ksk);
+  assert(ksk_ok == 0);
   // Test KSK Serialization/Deserialization
   Buffer ksk_buffer = {.pointer = NULL, .length = 0};
   int ksk_ser_ok = default_serialization_engine_serialize_lwe_keyswitch_key_u64(
-          default_serialization_engine, ksk, &ksk_buffer);
+      default_serialization_engine, ksk, &ksk_buffer);
   assert(ksk_ser_ok == 0);
 
   BufferView ksk_buffer_view = {.pointer = ksk_buffer.pointer, .length = ksk_buffer.length};
   LweKeyswitchKey64 *deser_ksk = NULL;
   int ksk_deser_ok = default_serialization_engine_deserialize_lwe_keyswitch_key_u64(
-          default_serialization_engine, ksk_buffer_view, &deser_ksk);
+      default_serialization_engine, ksk_buffer_view, &deser_ksk);
   assert(ksk_deser_ok == 0);
 
   // We generate the texts
@@ -328,6 +387,7 @@ void keyswitch_raw_ptr_buffers_test(void) {
   default_engine_destroy_lwe_secret_key_u64(engine, output_sk);
   default_engine_destroy_lwe_keyswitch_key_u64(engine, ksk);
   default_engine_destroy_lwe_keyswitch_key_u64(engine, deser_ksk);
+  default_engine_destroy_lwe_seeded_keyswitch_key_u64(engine, seeded_ksk);
   destroy_default_serialization_engine(default_serialization_engine);
   destroy_default_engine(engine);
   destroy_seeder_builder(builder);
@@ -347,7 +407,8 @@ void keyswitch_unchecked_raw_ptr_buffers_test(void) {
 
   DefaultSerializationEngine *default_serialization_engine = NULL;
 
-  int default_serialization_engine_ok = new_default_serialization_engine(&default_serialization_engine);
+  int default_serialization_engine_ok =
+      new_default_serialization_engine(&default_serialization_engine);
   assert(default_serialization_engine_ok == 0);
 
   double ksk_variance = 0.000000000000000001;
@@ -369,21 +430,41 @@ void keyswitch_unchecked_raw_ptr_buffers_test(void) {
       default_engine_create_lwe_secret_key_unchecked_u64(engine, input_lwe_dimension, &output_sk);
   assert(sk_ok == 0);
 
+  LweSeededKeyswitchKey64 *seeded_ksk = NULL;
+  int seeded_ksk_ok = default_engine_create_lwe_seeded_keyswitch_key_unchecked_u64(
+      engine, input_sk, output_sk, level, base_log, ksk_variance, &seeded_ksk);
+  assert(seeded_ksk_ok == 0);
+
+  // Test seeded KSK Serialization/Deserialization
+  Buffer seeded_ksk_buffer = {.pointer = NULL, .length = 0};
+  int seeded_ksk_ser_ok =
+      default_serialization_engine_serialize_lwe_seeded_keyswitch_key_unchecked_u64(
+          default_serialization_engine, seeded_ksk, &seeded_ksk_buffer);
+  assert(seeded_ksk_ser_ok == 0);
+
+  BufferView seeded_ksk_buffer_view = {.pointer = seeded_ksk_buffer.pointer,
+                                       .length = seeded_ksk_buffer.length};
+  LweSeededKeyswitchKey64 *deser_seeded_ksk = NULL;
+  int seeded_ksk_deser_ok =
+      default_serialization_engine_deserialize_lwe_seeded_keyswitch_key_unchecked_u64(
+          default_serialization_engine, seeded_ksk_buffer_view, &deser_seeded_ksk);
+  assert(seeded_ksk_deser_ok == 0);
+
   LweKeyswitchKey64 *ksk = NULL;
-  int ksk_ok = default_engine_create_lwe_keyswitch_key_unchecked_u64(
-      engine, input_sk, output_sk, level, base_log, ksk_variance, &ksk);
+  int ksk_ok = default_engine_transform_lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_unchecked_u64(
+      engine, &deser_seeded_ksk, &ksk);
   assert(ksk_ok == 0);
 
   // Test KSK Serialization/Deserialization
   Buffer ksk_buffer = {.pointer = NULL, .length = 0};
   int ksk_ser_ok = default_serialization_engine_serialize_lwe_keyswitch_key_u64(
-          default_serialization_engine, ksk, &ksk_buffer);
+      default_serialization_engine, ksk, &ksk_buffer);
   assert(ksk_ser_ok == 0);
 
   BufferView ksk_buffer_view = {.pointer = ksk_buffer.pointer, .length = ksk_buffer.length};
   LweKeyswitchKey64 *deser_ksk = NULL;
   int ksk_deser_ok = default_serialization_engine_deserialize_lwe_keyswitch_key_u64(
-          default_serialization_engine, ksk_buffer_view, &deser_ksk);
+      default_serialization_engine, ksk_buffer_view, &deser_ksk);
   assert(ksk_deser_ok == 0);
 
   // We generate the texts
@@ -423,6 +504,7 @@ void keyswitch_unchecked_raw_ptr_buffers_test(void) {
   default_engine_destroy_lwe_secret_key_unchecked_u64(engine, output_sk);
   default_engine_destroy_lwe_keyswitch_key_unchecked_u64(engine, ksk);
   default_engine_destroy_lwe_keyswitch_key_unchecked_u64(engine, deser_ksk);
+  default_engine_destroy_lwe_seeded_keyswitch_key_unchecked_u64(engine, seeded_ksk);
   destroy_default_serialization_engine_unchecked(default_serialization_engine);
   destroy_default_engine_unchecked(engine);
   destroy_seeder_builder_unchecked(builder);

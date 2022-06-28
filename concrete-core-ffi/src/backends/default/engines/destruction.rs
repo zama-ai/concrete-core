@@ -299,6 +299,48 @@ pub unsafe extern "C" fn default_engine_destroy_lwe_keyswitch_key_unchecked_u64(
     })
 }
 
+/// Destroy an `LweSeededKeyswitchKey64`.
+///
+/// Refer to `concrete-core` implementation for detailed documentation.
+///
+/// This function is [checked](crate#safety-checked-and-unchecked-functions).
+#[no_mangle]
+pub unsafe extern "C" fn default_engine_destroy_lwe_seeded_keyswitch_key_u64(
+    engine: *mut DefaultEngine,
+    seeded_keyswitch_key: *mut LweSeededKeyswitchKey64,
+) -> c_int {
+    catch_panic(|| {
+        check_ptr_is_non_null_and_aligned(seeded_keyswitch_key).unwrap();
+
+        let engine = get_mut_checked(engine).unwrap();
+
+        // Reconstruct the box, so that the memory is dropped at the end of the scope
+        let mut seeded_keyswitch_key = Box::from_raw(seeded_keyswitch_key);
+
+        // Here we use the unchecked version to process the memory of the underlying boxed object
+        // Otherwise we may be moving out of the box through a clone and the original memory may not
+        // be properly zeroed out.
+        engine.destroy_unchecked(seeded_keyswitch_key.as_mut());
+    })
+}
+
+/// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
+/// [`default_engine_destroy_lwe_seeded_keyswitch_key_u64`]
+#[no_mangle]
+pub unsafe extern "C" fn default_engine_destroy_lwe_seeded_keyswitch_key_unchecked_u64(
+    engine: *mut DefaultEngine,
+    seeded_keyswitch_key: *mut LweSeededKeyswitchKey64,
+) -> c_int {
+    catch_panic(|| {
+        let engine = &mut (*engine);
+
+        // Reconstruct the box, so that the memory is dropped at the end of the scope
+        let mut seeded_keyswitch_key = Box::from_raw(seeded_keyswitch_key);
+
+        engine.destroy_unchecked(seeded_keyswitch_key.as_mut());
+    })
+}
+
 /// Destroy an `LweBootstrapKey64`.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
