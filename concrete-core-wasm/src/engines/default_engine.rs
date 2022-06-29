@@ -19,6 +19,44 @@ impl DefaultEngine {
         wrap!(DefaultEngine, core::DefaultEngine::new(Box::new(seeder)))
     }
 
+    pub fn create_plaintext_64(&mut self, input: u64) -> JsResult<Plaintext64> {
+        wrap!(Plaintext64, self.0.create_plaintext(&input))
+    }
+
+    pub fn create_plaintext_32(&mut self, input: u32) -> JsResult<Plaintext32> {
+        wrap!(Plaintext32, self.0.create_plaintext(&input))
+    }
+
+    pub fn create_plaintext_vector_64(&mut self, input: Vec<u64>) -> JsResult<PlaintextVector64> {
+        wrap!(
+            PlaintextVector64,
+            self.0.create_plaintext_vector(input.as_slice())
+        )
+    }
+
+    pub fn create_plaintext_vector_32(&mut self, input: Vec<u32>) -> JsResult<PlaintextVector32> {
+        wrap!(
+            PlaintextVector32,
+            self.0.create_plaintext_vector(input.as_slice())
+        )
+    }
+
+    pub fn retrieve_plaintext_64(&mut self, input: Plaintext64) -> JsResult<u64> {
+        jserr!(self.0.retrieve_plaintext(&input.0))
+    }
+
+    pub fn retrieve_plaintext_32(&mut self, input: Plaintext64) -> JsResult<u64> {
+        jserr!(self.0.retrieve_plaintext(&input.0))
+    }
+
+    pub fn retrieve_plaintext_vector_64(&mut self, input: PlaintextVector64) -> JsResult<Vec<u64>> {
+        jserr!(self.0.retrieve_plaintext_vector(&input.0))
+    }
+
+    pub fn retrieve_plaintext_vector_32(&mut self, input: PlaintextVector32) -> JsResult<Vec<u32>> {
+        jserr!(self.0.retrieve_plaintext_vector(&input.0))
+    }
+
     pub fn create_cleartext_f64(&mut self, input: f64) -> JsResult<CleartextF64> {
         wrap!(CleartextF64, self.0.create_cleartext(&input))
     }
@@ -496,6 +534,64 @@ impl DefaultEngine {
         wrap!(
             PlaintextVector64,
             self.0.decrypt_glwe_ciphertext_vector(&key.0, &input.0)
+        )
+    }
+
+    pub fn consume_retrieve_lwe_ciphertext_64(
+        &mut self,
+        input: LweCiphertext64,
+    ) -> JsResult<Vec<u64>> {
+        jserr!(self.0.consume_retrieve_lwe_ciphertext(input.0))
+    }
+
+    pub fn consume_retrieve_lwe_ciphertext_32(
+        &mut self,
+        input: LweCiphertext32,
+    ) -> JsResult<Vec<u32>> {
+        jserr!(self.0.consume_retrieve_lwe_ciphertext(input.0))
+    }
+
+    pub fn create_lwe_ciphertext_32(&mut self, input: Vec<u32>) -> JsResult<LweCiphertext32> {
+        wrap!(LweCiphertext32, self.0.create_lwe_ciphertext(input))
+    }
+
+    pub fn create_lwe_ciphertext_64(&mut self, input: Vec<u64>) -> JsResult<LweCiphertext64> {
+        wrap!(LweCiphertext64, self.0.create_lwe_ciphertext(input))
+    }
+
+    pub fn consume_retrieve_lwe_ciphertext_vector_64(
+        &mut self,
+        input: LweCiphertextVector64,
+    ) -> JsResult<Vec<u64>> {
+        jserr!(self.0.consume_retrieve_lwe_ciphertext_vector(input.0))
+    }
+
+    pub fn consume_retrieve_lwe_ciphertext_vector_32(
+        &mut self,
+        input: LweCiphertextVector32,
+    ) -> JsResult<Vec<u32>> {
+        jserr!(self.0.consume_retrieve_lwe_ciphertext_vector(input.0))
+    }
+
+    pub fn create_lwe_ciphertext_vector_64(
+        &mut self,
+        input: Vec<u64>,
+        lwe_dimension: LweDimension,
+    ) -> JsResult<LweCiphertextVector64> {
+        wrap!(
+            LweCiphertextVector64,
+            self.0.create_lwe_ciphertext_vector(input, lwe_dimension.0)
+        )
+    }
+
+    pub fn create_lwe_ciphertext_vector_32(
+        &mut self,
+        input: Vec<u32>,
+        lwe_dimension: LweDimension,
+    ) -> JsResult<LweCiphertextVector32> {
+        wrap!(
+            LweCiphertextVector32,
+            self.0.create_lwe_ciphertext_vector(input, lwe_dimension.0)
         )
     }
 }
