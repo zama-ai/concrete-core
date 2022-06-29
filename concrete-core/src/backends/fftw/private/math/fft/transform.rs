@@ -726,16 +726,16 @@ fn regular_convert_forward_single_torus<InCont, Coef>(
     Polynomial<InCont>: AsRefTensor<Element = Coef>,
     Coef: UnsignedTorus,
 {
-    ck_dim_eq!(inp.as_tensor().len() => corr.as_tensor().len(), out.as_tensor().len());
-    for (input, (corrector, output)) in inp
+    // ck_dim_eq!(inp.as_tensor().len() => corr.as_tensor().len(), out.as_tensor().len());
+    for (input, output) in inp
         .as_tensor()
         .iter()
-        .zip(corr.as_tensor().iter().zip(out.as_mut_tensor().iter_mut()))
+        .zip(out.as_mut_tensor().iter_mut())
     {
         // Don't you dare remove this cast
         // It reduces the FFT noise by up to 5 bits
         let a: f64 = input.into_signed().cast_into() * (2f64.powi(-(Coef::BITS as i32)));
-        *output = Complex64::new(a, 0.) * corrector;
+        *output = Complex64::new(a, 0.);
     }
 }
 
@@ -755,16 +755,16 @@ fn regular_convert_forward_two_torus<InCont1, InCont2, Coef>(
         out.as_tensor().len(),
         inp2.as_tensor().len()
     );
-    for (input_1, (input_2, (corrector, output))) in inp1.as_tensor().iter().zip(
+    for (input_1, (input_2,  output)) in inp1.as_tensor().iter().zip(
         inp2.as_tensor()
             .iter()
-            .zip(corr.as_tensor().iter().zip(out.as_mut_tensor().iter_mut())),
+            .zip(out.as_mut_tensor().iter_mut()),
     ) {
         // Don't you dare remove this cast
         // It reduces the FFT noise by up to 5 bits
         let a: f64 = input_1.into_signed().cast_into() * (2f64.powi(-(Coef::BITS as i32)));
         let b: f64 = input_2.into_signed().cast_into() * (2f64.powi(-(Coef::BITS as i32)));
-        *output = Complex64::new(a, b) * corrector;
+        *output = Complex64::new(a, b) ;
     }
 }
 
@@ -777,13 +777,13 @@ fn regular_convert_forward_single_integer<InCont, Coef>(
     Coef: UnsignedInteger,
 {
     ck_dim_eq!(inp.as_tensor().len() => corr.as_tensor().len(), out.as_tensor().len());
-    for (input, (corrector, output)) in inp
+    for (input, output) in inp
         .as_tensor()
         .iter()
-        .zip(corr.as_tensor().iter().zip(out.as_mut_tensor().iter_mut()))
+        .zip(out.as_mut_tensor().iter_mut())
     {
         let val: f64 = (*input).into_signed().cast_into();
-        *output = Complex64::new(val, 0.) * corrector;
+        *output = Complex64::new(val, 0.);
     }
 }
 
@@ -803,14 +803,14 @@ fn regular_convert_forward_two_integer<InCont1, InCont2, Coef>(
         out.as_tensor().len(),
         inp2.as_tensor().len()
     );
-    for (input_1, (input_2, (corrector, output))) in inp1.as_tensor().iter().zip(
+    for (input_1, (input_2, output)) in inp1.as_tensor().iter().zip(
         inp2.as_tensor()
             .iter()
-            .zip(corr.as_tensor().iter().zip(out.as_mut_tensor().iter_mut())),
+            .zip(out.as_mut_tensor().iter_mut()),
     ) {
         let re: f64 = (*input_1).into_signed().cast_into();
         let im: f64 = (*input_2).into_signed().cast_into();
-        *output = Complex64::new(re, im) * corrector;
+        *output = Complex64::new(re, im) ;
     }
 }
 
@@ -823,12 +823,12 @@ fn regular_convert_add_backward_single_torus<OutCont, Coef>(
     Coef: UnsignedTorus,
 {
     ck_dim_eq!(inp.as_tensor().len() => corr.as_tensor().len(), out.as_tensor().len());
-    for (input, (corrector, output)) in inp
+    for (input, output) in inp
         .as_tensor()
         .iter()
-        .zip(corr.as_tensor().iter().zip(out.as_mut_tensor().iter_mut()))
+        .zip(out.as_mut_tensor().iter_mut())
     {
-        let interm = (input * corrector).re;
+        let interm = (input ).re;
         *output = output.wrapping_add(Coef::from_torus(interm));
     }
 }
@@ -842,12 +842,12 @@ fn regular_convert_backward_single_torus<OutCont, Coef>(
     Coef: UnsignedTorus,
 {
     ck_dim_eq!(inp.as_tensor().len() => corr.as_tensor().len(), out.as_tensor().len());
-    for (input, (corrector, output)) in inp
+    for (input, output) in inp
         .as_tensor()
         .iter()
-        .zip(corr.as_tensor().iter().zip(out.as_mut_tensor().iter_mut()))
+        .zip(out.as_mut_tensor().iter_mut())
     {
-        let interm = (input * corrector).re;
+        let interm = input.re;
         *output = Coef::from_torus(interm);
     }
 }
@@ -861,10 +861,10 @@ fn regular_convert_add_backward_single_integer<OutCont, Coef>(
     Coef: UnsignedInteger,
 {
     ck_dim_eq!(inp.as_tensor().len() => corr.as_tensor().len(), out.as_tensor().len());
-    for (input, (corrector, output)) in inp
+    for (input, output) in inp
         .as_tensor()
         .iter()
-        .zip(corr.as_tensor().iter().zip(out.as_mut_tensor().iter_mut()))
+        .zip(out.as_mut_tensor().iter_mut())
     {
         let interm = (input * corrector).re;
         let out: Coef::Signed = interm.round().cast_into();
@@ -888,12 +888,11 @@ fn regular_convert_add_backward_two_torus<OutCont1, OutCont2, Coef>(
         inp.as_tensor().len(),
         out2.as_tensor().len()
     );
-    for (output_1, (output_2, (corrector, input))) in out1.as_mut_tensor().iter_mut().zip(
+    for (output_1, (output_2, input)) in out1.as_mut_tensor().iter_mut().zip(
         out2.as_mut_tensor()
             .iter_mut()
-            .zip(corr.as_tensor().iter().zip(inp.as_tensor().iter())),
-    ) {
-        let interm = input * corrector;
+            .zip(inp.as_tensor().iter())){
+        let interm = input ;
         let re_interm = interm.re;
         let im_interm = interm.im;
         *output_1 = output_1.wrapping_add(Coef::from_torus(re_interm));
@@ -917,12 +916,12 @@ fn regular_convert_backward_two_torus<OutCont1, OutCont2, Coef>(
         inp.as_tensor().len(),
         out2.as_tensor().len()
     );
-    for (output_1, (output_2, (corrector, input))) in out1.as_mut_tensor().iter_mut().zip(
+    for (output_1, (output_2, input)) in out1.as_mut_tensor().iter_mut().zip(
         out2.as_mut_tensor()
             .iter_mut()
-            .zip(corr.as_tensor().iter().zip(inp.as_tensor().iter())),
+            .zip(inp.as_tensor().iter()),
     ) {
-        let interm = input * corrector;
+        let interm = input;
         let re_interm = interm.re;
         let im_interm = interm.im;
         *output_1 = Coef::from_torus(re_interm);
@@ -946,12 +945,12 @@ fn regular_convert_add_backward_two_integer<OutCont1, OutCont2, Coef>(
         inp.as_tensor().len(),
         out2.as_tensor().len()
     );
-    for (output_1, (output_2, (corrector, input))) in out1.as_mut_tensor().iter_mut().zip(
+    for (output_1, (output_2, input)) in out1.as_mut_tensor().iter_mut().zip(
         out2.as_mut_tensor()
             .iter_mut()
-            .zip(corr.as_tensor().iter().zip(inp.as_tensor().iter())),
-    ) {
-        let interm = input * corrector;
+            .zip(corr.as_tensor().iter().zip(inp.as_tensor().iter())))
+     {
+        let interm = input;
         let out_1: Coef::Signed = interm.re.round().cast_into();
         let out_2: Coef::Signed = interm.im.round().cast_into();
         *output_1 = output_1.wrapping_add(out_1.into_unsigned());
