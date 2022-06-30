@@ -27,6 +27,8 @@ fn main() {
     fftw::bench();
     #[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
     cuda::bench();
+    #[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
+    cuda::bench_amortized();
 
     // We launch the benchmarks.
     criterion::Criterion::default()
