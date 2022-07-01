@@ -44,10 +44,8 @@ pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_secret_key_u
     result: *mut Buffer,
 ) -> c_int {
     catch_panic(|| {
-        check_ptr_is_non_null_and_aligned(result).unwrap();
-
-        let engine = get_mut_checked(engine).unwrap();
-        let secret_key = get_ref_checked(secret_key).unwrap();
+        let engine = &mut (*engine);
+        let secret_key = &(*secret_key);
 
         let buffer: Buffer = engine.serialize_unchecked(secret_key).into();
 
@@ -91,10 +89,8 @@ pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_keyswitch_ke
     result: *mut Buffer,
 ) -> c_int {
     catch_panic(|| {
-        check_ptr_is_non_null_and_aligned(result).unwrap();
-
-        let engine = get_mut_checked(engine).unwrap();
-        let keyswitch_key = get_ref_checked(keyswitch_key).unwrap();
+        let engine = &mut (*engine);
+        let keyswitch_key = &(*keyswitch_key);
 
         let buffer: Buffer = engine.serialize_unchecked(keyswitch_key).into();
 
