@@ -44,10 +44,8 @@ pub unsafe extern "C" fn fftw_serialization_engine_serialize_fftw_fourier_lwe_bo
     result: *mut Buffer,
 ) -> c_int {
     catch_panic(|| {
-        check_ptr_is_non_null_and_aligned(result).unwrap();
-
-        let engine = get_mut_checked(engine).unwrap();
-        let bootstrap_key = get_ref_checked(bootstrap_key).unwrap();
+        let engine = &mut (*engine);
+        let bootstrap_key = &(*bootstrap_key);
 
         let buffer: Buffer = engine.serialize_unchecked(bootstrap_key).into();
 

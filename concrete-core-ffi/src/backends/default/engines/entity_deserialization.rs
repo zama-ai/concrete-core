@@ -46,13 +46,11 @@ pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_secret_key
     result: *mut *mut LweSecretKey64,
 ) -> c_int {
     catch_panic(|| {
-        check_ptr_is_non_null_and_aligned(result).unwrap();
-
         // First fill the result with a null ptr so that if we fail and the return code is not
         // checked, then any access to the result pointer will segfault (mimics malloc on failure)
         *result = std::ptr::null_mut();
 
-        let engine = get_mut_checked(engine).unwrap();
+        let engine = &mut (*engine);
         let secret_key: LweSecretKey64 = engine.deserialize_unchecked(buffer.into());
 
         *result = Box::into_raw(Box::new(secret_key));
@@ -97,13 +95,11 @@ pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_keyswitch_
     result: *mut *mut LweKeyswitchKey64,
 ) -> c_int {
     catch_panic(|| {
-        check_ptr_is_non_null_and_aligned(result).unwrap();
-
         // First fill the result with a null ptr so that if we fail and the return code is not
         // checked, then any access to the result pointer will segfault (mimics malloc on failure)
         *result = std::ptr::null_mut();
 
-        let engine = get_mut_checked(engine).unwrap();
+        let engine = &mut (*engine);
 
         let keyswitch_key: LweKeyswitchKey64 = engine.deserialize_unchecked(buffer.into());
 
