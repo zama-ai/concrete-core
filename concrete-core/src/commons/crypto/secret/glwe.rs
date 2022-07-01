@@ -929,10 +929,11 @@ where
             .par_level_matrix_iter_mut()
             .zip(generators)
             .for_each(move |(mut matrix, mut generator)| {
-                let decomposition = encoded.0
-                    * (Scalar::ONE
+                let decomposition = encoded.0.wrapping_mul(
+                    Scalar::ONE
                         << (<Scalar as Numeric>::BITS
-                            - (base_log.0 * (matrix.decomposition_level().0))));
+                            - (base_log.0 * (matrix.decomposition_level().0))),
+                );
                 let gen_iter = generator
                     .par_fork_ggsw_level_to_glwe::<Scalar>(
                         self.key_size().to_glwe_size(),
@@ -1020,10 +1021,11 @@ where
         }
         let base_log = encrypted.decomposition_base_log();
         for mut matrix in encrypted.level_matrix_iter_mut() {
-            let decomposition = encoded.0
-                * (Scalar::ONE
+            let decomposition = encoded.0.wrapping_mul(
+                Scalar::ONE
                     << (<Scalar as Numeric>::BITS
-                        - (base_log.0 * (matrix.decomposition_level().0))));
+                        - (base_log.0 * (matrix.decomposition_level().0))),
+            );
             // We iterate over the rowe of the level matrix
             for (index, row) in matrix.row_iter_mut().enumerate() {
                 let rlwe_ct = row.into_glwe();
