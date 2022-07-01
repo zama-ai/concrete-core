@@ -5,7 +5,7 @@ use crate::specification::entities::markers::{BinaryKeyDistribution, LweKeyswitc
 use crate::specification::entities::{AbstractEntity, LweKeyswitchKeyEntity};
 
 /// A structure representing a keyswitch key for 32 bits precision ciphertexts on the GPU.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct CudaLweKeyswitchKey32(pub(crate) CudaLweKeyswitchKey<u32>);
 
 impl AbstractEntity for CudaLweKeyswitchKey32 {
@@ -34,7 +34,7 @@ impl LweKeyswitchKeyEntity for CudaLweKeyswitchKey32 {
 }
 
 /// A structure representing a  keyswitch key for 64 bits precision ciphertexts on the GPU.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct CudaLweKeyswitchKey64(pub(crate) CudaLweKeyswitchKey<u64>);
 
 impl AbstractEntity for CudaLweKeyswitchKey64 {

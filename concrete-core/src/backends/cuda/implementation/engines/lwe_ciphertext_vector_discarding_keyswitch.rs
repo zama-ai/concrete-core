@@ -115,6 +115,7 @@ impl
         input: &CudaLweCiphertextVector32,
         ksk: &CudaLweKeyswitchKey32,
     ) -> Result<(), LweCiphertextVectorDiscardingKeyswitchError<CudaError>> {
+        LweCiphertextVectorDiscardingKeyswitchError::perform_generic_checks(output, input, ksk)?;
         unsafe { self.discard_keyswitch_lwe_ciphertext_vector_unchecked(output, input, ksk) };
         Ok(())
     }
@@ -244,6 +245,7 @@ impl
         input: &CudaLweCiphertextVector64,
         ksk: &CudaLweKeyswitchKey64,
     ) -> Result<(), LweCiphertextVectorDiscardingKeyswitchError<CudaError>> {
+        LweCiphertextVectorDiscardingKeyswitchError::perform_generic_checks(output, input, ksk)?;
         unsafe { self.discard_keyswitch_lwe_ciphertext_vector_unchecked(output, input, ksk) };
         Ok(())
     }

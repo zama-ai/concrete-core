@@ -7,7 +7,7 @@ use crate::specification::entities::markers::{BinaryKeyDistribution, LweBootstra
 use crate::specification::entities::{AbstractEntity, LweBootstrapKeyEntity};
 
 /// A structure representing a Fourier bootstrap key for 32 bits precision ciphertexts on the GPU.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct CudaFourierLweBootstrapKey32(pub(crate) CudaBootstrapKey<u32>);
 
 impl AbstractEntity for CudaFourierLweBootstrapKey32 {
@@ -40,7 +40,7 @@ impl LweBootstrapKeyEntity for CudaFourierLweBootstrapKey32 {
 }
 
 /// A structure representing a Fourier bootstrap key for 64 bits precision ciphertexts on the GPU.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct CudaFourierLweBootstrapKey64(pub(crate) CudaBootstrapKey<u64>);
 
 impl AbstractEntity for CudaFourierLweBootstrapKey64 {

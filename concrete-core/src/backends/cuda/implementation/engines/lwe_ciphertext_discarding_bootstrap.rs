@@ -8,9 +8,7 @@ use crate::backends::cuda::private::device::GpuIndex;
 use crate::specification::engines::{
     LweCiphertextDiscardingBootstrapEngine, LweCiphertextDiscardingBootstrapError,
 };
-use crate::specification::entities::{
-    GlweCiphertextEntity, LweBootstrapKeyEntity, LweCiphertextEntity,
-};
+use crate::specification::entities::{LweBootstrapKeyEntity, LweCiphertextEntity};
 
 impl From<CudaError> for LweCiphertextDiscardingBootstrapError<CudaError> {
     fn from(err: CudaError) -> Self {
@@ -126,18 +124,7 @@ impl
         acc: &CudaGlweCiphertext32,
         bsk: &CudaFourierLweBootstrapKey32,
     ) -> Result<(), LweCiphertextDiscardingBootstrapError<CudaError>> {
-        if input.lwe_dimension() != bsk.input_lwe_dimension() {
-            return Err(LweCiphertextDiscardingBootstrapError::InputLweDimensionMismatch);
-        }
-        if acc.polynomial_size() != bsk.polynomial_size() {
-            return Err(LweCiphertextDiscardingBootstrapError::AccumulatorPolynomialSizeMismatch);
-        }
-        if acc.glwe_dimension() != bsk.glwe_dimension() {
-            return Err(LweCiphertextDiscardingBootstrapError::AccumulatorGlweDimensionMismatch);
-        }
-        if output.lwe_dimension() != bsk.output_lwe_dimension() {
-            return Err(LweCiphertextDiscardingBootstrapError::OutputLweDimensionMismatch);
-        }
+        LweCiphertextDiscardingBootstrapError::perform_generic_checks(output, input, acc, bsk)?;
         let poly_size = bsk.0.polynomial_size().0;
         check_poly_size!(poly_size);
         unsafe { self.discard_bootstrap_lwe_ciphertext_unchecked(output, input, acc, bsk) };
@@ -282,21 +269,10 @@ impl
         acc: &CudaGlweCiphertext64,
         bsk: &CudaFourierLweBootstrapKey64,
     ) -> Result<(), LweCiphertextDiscardingBootstrapError<CudaError>> {
-        if input.lwe_dimension() != bsk.input_lwe_dimension() {
-            return Err(LweCiphertextDiscardingBootstrapError::InputLweDimensionMismatch);
-        }
-        if acc.polynomial_size() != bsk.polynomial_size() {
-            return Err(LweCiphertextDiscardingBootstrapError::AccumulatorPolynomialSizeMismatch);
-        }
-        if acc.glwe_dimension() != bsk.glwe_dimension() {
-            return Err(LweCiphertextDiscardingBootstrapError::AccumulatorGlweDimensionMismatch);
-        }
-        if output.lwe_dimension() != bsk.output_lwe_dimension() {
-            return Err(LweCiphertextDiscardingBootstrapError::OutputLweDimensionMismatch);
-        }
-        unsafe { self.discard_bootstrap_lwe_ciphertext_unchecked(output, input, acc, bsk) };
+        LweCiphertextDiscardingBootstrapError::perform_generic_checks(output, input, acc, bsk)?;
         let poly_size = bsk.0.polynomial_size().0;
         check_poly_size!(poly_size);
+        unsafe { self.discard_bootstrap_lwe_ciphertext_unchecked(output, input, acc, bsk) };
         Ok(())
     }
 
