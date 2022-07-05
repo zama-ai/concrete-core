@@ -48,39 +48,24 @@ pub fn project_root() -> PathBuf {
         .to_path_buf()
 }
 
-pub fn get_nightly_toolchain() -> Result<&'static str, Error> {
+pub fn get_nightly_toolchain() -> Result<String, Error> {
+    // Check if nightly toolchain is properly installed
+    execute(
+        "make check_tasks_rust_toolchain",
+        None,
+        Some(&project_root()),
+    )
+    .expect("Tasks toolchain is not installed. Please run: make install_tasks_rust_toolchain\n\n");
+
+    let toolchain_txt = project_root().join("concrete-tasks/toolchain.txt");
+    let content = std::fs::read_to_string(toolchain_txt).unwrap();
+    let (toolchain_base, _) = content.split_once('\n').unwrap();
+    let toolchain_arg = format!("+{}", toolchain_base);
+
     if cfg!(target_os = "macos") {
-        // Here we are on mac OS, but we don't yet know if it's an x86 or M1 CPU.
-        // The issue is that with the toolchain override recommended to build concrete, we need to
-        // check with uname at runtime if we are running on an M1 CPU as rosetta2 fakes CPU
-        // informations (for good reasons)
-        let mut command = Command::new("sh");
-        command.arg("-c").arg("uname -a");
-        let output = command.output()?;
-        if !output.status.success() {
-            Err(Error::new(
-                ErrorKind::Other,
-                "Command exited with nonzero status.",
-            ))
-        } else {
-            let uname_output_as_str = std::str::from_utf8(&output.stdout).unwrap();
-            let uname_output_lower = uname_output_as_str.to_lowercase();
-
-            // See here for M1 sample uname output:
-            // https://developer.apple.com/forums/thread/668206
-            // The ARM64 part is present both under rosetta2 and native calls.
-
-            let is_arm64 = uname_output_lower.contains("arm64");
-
-            // For now we don't support native M1 compilation, so ask to use the x86_64 toolchain.
-            if is_arm64 {
-                Ok("+nightly-x86_64-apple-darwin")
-            } else {
-                // Otherwise it's an x86 mac so just keep the default nightly toolchain
-                Ok("+nightly")
-            }
-        }
+        // For now we don't support Apple Silicon, always use the x86_64 toolchain for tasks
+        Ok(format!("{}-x86_64-apple-darwin", toolchain_arg))
     } else {
-        Ok("+nightly")
+        Ok(toolchain_arg)
     }
 }
