@@ -1,4 +1,4 @@
-# Tutorial: how to create your own backend?
+# How to create your own backend
 
 Everything's been made easy for anyone to create their own backend in `concrete-core`!
 Implementations targeting specific hardware are thus easy to plug with Concrete. The main steps to

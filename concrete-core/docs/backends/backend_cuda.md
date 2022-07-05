@@ -4,6 +4,7 @@ This backend implements Cuda accelerated versions of the bootstrap and the keysw
 It also implements conversion engines to be able to transfer data to the GPU and back to the CPU.
 
 ## Dependencies
+
 This backend relies on Cuda acceleration, it thus requires having the Cuda drivers and toolkit installed.
 You'll need [nvcc](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html) >= 10.0, [gcc](https://gcc.gnu.org/) >= 8.0 and [cmake](https://cmake.org/) >= 3.8.
 
