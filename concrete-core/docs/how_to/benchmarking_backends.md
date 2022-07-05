@@ -1,4 +1,4 @@
-# Tutorial: How to benchmark your backend.
+# How to benchmark your backend
 
 Once you've implemented and tested your backend, you're ready to start benchmarking it.
 The `concrete-core-bench` crate has been developed for this purpose.
@@ -72,12 +72,12 @@ Should now yield:
 
 ```
 Running `target/release/concrete-core-bench --bench Conversion`
-impl LweCiphertextVectorConversionEngine<GpuLweCiphertextVector32,LweCiphertextVector32> for GpuEn...                                                                             
+impl LweCiphertextVectorConversionEngine<GpuLweCiphertextVector32,LweCiphertextVector32> for GpuEn...
                         time:   [46.375 us 48.507 us 51.034 us]
 Found 9 outliers among 100 measurements (9.00%)
   7 (7.00%) high mild
   2 (2.00%) high severe
-impl LweCiphertextVectorConversionEngine<GpuLweCiphertextVector32,LweCiphertextVector32> for GpuEn... #2                                                                            
+impl LweCiphertextVectorConversionEngine<GpuLweCiphertextVector32,LweCiphertextVector32> for GpuEn... #2
                         time:   [108.45 us 111.37 us 114.60 us]
 Found 13 outliers among 100 measurements (13.00%)
   4 (4.00%) high mild

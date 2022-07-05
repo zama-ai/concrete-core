@@ -14,7 +14,7 @@ crate should have your back.
 Here is a small example of how one could use `concrete-core` to perform a simple operation
 homomorphically:
 
-```rust 
+```rust
 // This examples shows how to multiply a secret value by a public one homomorphically.
 // First we import the proper symbols:
 
@@ -88,6 +88,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 - [TFHE](https://eprint.iacr.org/2018/421.pdf)
 - [concrete-core-1.0.0-alpha release](https://community.zama.ai/t/concrete-core-v1-0-0-alpha/120)
+- [concrete-core-1.0.0-beta release](https://www.zama.ai/post/announcing-concrete-core-v1-0-beta)
 
 ## License
 

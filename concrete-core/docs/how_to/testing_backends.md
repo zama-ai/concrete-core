@@ -1,4 +1,4 @@
-# Tutorial: How to test your backend.
+# How to test your backend
 
 Once you've implemented your backend, the first thing you need to do is to test it.
 The `concrete-core-test` crate has been developed for this purpose. It relies on

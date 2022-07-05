@@ -14,9 +14,9 @@ On the other hand some engines require to have an already allocated ciphertext e
 
 ## Entities borrowing their memory
 
-WARNING:
-
+{% hint style="warning" %}
 We would advise against using the view API if you don't need it. The reason being that the original goal was to provide functionality required by the `concrete-compiler`. This means that the view API is currently not as extensively supported in existing engines as the historical owned memory API.
+{% endhint %}
 
 There are cases where you may want to allocate memory ahead of time or manage memory allocation in a manual way and give pieces of that memory to certain ciphertext entities.
 
