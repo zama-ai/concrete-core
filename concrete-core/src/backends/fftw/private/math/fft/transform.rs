@@ -499,7 +499,7 @@ impl Fft {
 
         // We convert the data to real and fill the temporary buffer
         convert_function(
-            &mut *self.buffer.borrow_mut(),
+            &mut self.buffer.borrow_mut(),
             poly,
             &self.correctors.forward,
         );
@@ -537,7 +537,7 @@ impl Fft {
         );
 
         convert_function(
-            &mut *self.buffer.borrow_mut(),
+            &mut self.buffer.borrow_mut(),
             poly_1,
             poly_2,
             &self.correctors.forward,
@@ -584,7 +584,7 @@ impl Fft {
         );
 
         // We fill the polynomial with the conversion function
-        convert_function(poly, &*self.buffer.borrow(), &self.correctors.backward)
+        convert_function(poly, &self.buffer.borrow(), &self.correctors.backward)
     }
 
     pub(super) fn backward_two<OutCont1, OutCont2, InCont1, InCont2, Coef>(
@@ -641,7 +641,7 @@ impl Fft {
         convert_function(
             poly_1,
             poly_2,
-            &*self.buffer.borrow(),
+            &self.buffer.borrow(),
             &self.correctors.backward,
         )
     }
