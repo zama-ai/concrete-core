@@ -5,14 +5,15 @@ use crate::backends::default::entities::{
 };
 use crate::commons::crypto::lwe::LweCiphertext as ImplLweCiphertext;
 use crate::specification::engines::{
-    LweSeededToLweCiphertextTransformationEngine, LweSeededToLweCiphertextTransformationEngineError,
+    LweSeededCiphertextToLweCiphertextTransformationEngine,
+    LweSeededCiphertextToLweCiphertextTransformationEngineError,
 };
 use crate::specification::entities::LweSeededCiphertextEntity;
 
 /// # Description:
-/// Implementation of [`LweSeededToLweCiphertextTransformationEngine`] for [`DefaultEngine`] that
-/// operates on 32 bits integers.
-impl LweSeededToLweCiphertextTransformationEngine<LweSeededCiphertext32, LweCiphertext32>
+/// Implementation of [`LweSeededCiphertextToLweCiphertextTransformationEngine`] for
+/// [`DefaultEngine`] that operates on 32 bits integers.
+impl LweSeededCiphertextToLweCiphertextTransformationEngine<LweSeededCiphertext32, LweCiphertext32>
     for DefaultEngine
 {
     /// # Example:
@@ -51,8 +52,10 @@ impl LweSeededToLweCiphertextTransformationEngine<LweSeededCiphertext32, LweCiph
     fn transform_lwe_seeded_ciphertext_to_lwe_ciphertext(
         &mut self,
         lwe_seeded_ciphertext: LweSeededCiphertext32,
-    ) -> Result<LweCiphertext32, LweSeededToLweCiphertextTransformationEngineError<Self::EngineError>>
-    {
+    ) -> Result<
+        LweCiphertext32,
+        LweSeededCiphertextToLweCiphertextTransformationEngineError<Self::EngineError>,
+    > {
         Ok(unsafe {
             self.transform_lwe_seeded_ciphertext_to_lwe_ciphertext_unchecked(lwe_seeded_ciphertext)
         })
@@ -73,9 +76,9 @@ impl LweSeededToLweCiphertextTransformationEngine<LweSeededCiphertext32, LweCiph
 }
 
 /// # Description:
-/// Implementation of [`LweSeededToLweCiphertextTransformationEngine`] for [`DefaultEngine`] that
-/// operates on 64 bits integers.
-impl LweSeededToLweCiphertextTransformationEngine<LweSeededCiphertext64, LweCiphertext64>
+/// Implementation of [`LweSeededCiphertextToLweCiphertextTransformationEngine`] for
+/// [`DefaultEngine`] that operates on 64 bits integers.
+impl LweSeededCiphertextToLweCiphertextTransformationEngine<LweSeededCiphertext64, LweCiphertext64>
     for DefaultEngine
 {
     /// # Example:
@@ -114,8 +117,10 @@ impl LweSeededToLweCiphertextTransformationEngine<LweSeededCiphertext64, LweCiph
     fn transform_lwe_seeded_ciphertext_to_lwe_ciphertext(
         &mut self,
         lwe_seeded_ciphertext: LweSeededCiphertext64,
-    ) -> Result<LweCiphertext64, LweSeededToLweCiphertextTransformationEngineError<Self::EngineError>>
-    {
+    ) -> Result<
+        LweCiphertext64,
+        LweSeededCiphertextToLweCiphertextTransformationEngineError<Self::EngineError>,
+    > {
         Ok(unsafe {
             self.transform_lwe_seeded_ciphertext_to_lwe_ciphertext_unchecked(lwe_seeded_ciphertext)
         })

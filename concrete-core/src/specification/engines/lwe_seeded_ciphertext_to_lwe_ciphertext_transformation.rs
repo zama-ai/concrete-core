@@ -4,7 +4,8 @@ use crate::prelude::AbstractEngine;
 use crate::specification::entities::{LweCiphertextEntity, LweSeededCiphertextEntity};
 
 engine_error! {
-    LweSeededToLweCiphertextTransformationEngineError for LweSeededToLweCiphertextTransformationEngine @
+    LweSeededCiphertextToLweCiphertextTransformationEngineError for
+    LweSeededCiphertextToLweCiphertextTransformationEngine @
 }
 
 /// A trait for engines transforming LWE seeded ciphertexts into LWE ciphertexts.
@@ -30,11 +31,11 @@ engine_error! {
 /// 1. uniformly sample $n$ integers in $\mathbb{Z}\_q$ from $G$ with the seed
 /// $\mathsf{seed}\in\mathcal{S}$ and store them in $\vec{a}\in\mathbb{Z}^n\_q$
 /// 2. output $\left( \vec{a} , b\right)$
-pub trait LweSeededToLweCiphertextTransformationEngine<InputCiphertext, OutputCiphertext>:
+pub trait LweSeededCiphertextToLweCiphertextTransformationEngine<InputCiphertext, OutputCiphertext>:
     AbstractEngine
 where
     InputCiphertext: LweSeededCiphertextEntity,
-    OutputCiphertext: LweCiphertextEntity,
+    OutputCiphertext: LweCiphertextEntity<KeyDistribution = InputCiphertext::KeyDistribution>,
 {
     /// Does the transformation of the LWE seeded ciphertext into an LWE ciphertext
     fn transform_lwe_seeded_ciphertext_to_lwe_ciphertext(
@@ -42,14 +43,14 @@ where
         lwe_seeded_ciphertext: InputCiphertext,
     ) -> Result<
         OutputCiphertext,
-        LweSeededToLweCiphertextTransformationEngineError<Self::EngineError>,
+        LweSeededCiphertextToLweCiphertextTransformationEngineError<Self::EngineError>,
     >;
 
     /// Unsafely transforms an LWE seeded ciphertext into an LWE ciphertext
     ///
     /// # Safety
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
-    /// of [`LweSeededToLweCiphertextTransformationEngineError`].
+    /// of [`LweSeededCiphertextToLweCiphertextTransformationEngineError`].
     /// For safety concerns _specific_ to an engine, refer to the implementer safety section.
     unsafe fn transform_lwe_seeded_ciphertext_to_lwe_ciphertext_unchecked(
         &mut self,

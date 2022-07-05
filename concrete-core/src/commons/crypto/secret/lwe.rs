@@ -464,7 +464,7 @@ where
         // Create the generator for the encryption, seed it with the output seed, pass a seeder so
         // that the noise generator is seeded with a private seed
         let mut generator =
-            EncryptionRandomGenerator::<Gen>::new(output.get_compression_seed().seed, seeder);
+            EncryptionRandomGenerator::<Gen>::new(output.compression_seed().seed, seeder);
 
         let mut output_mask = LweMask::from_container(vec![Scalar::ZERO; self.key_size().0]);
         let output_body = output.get_mut_body();

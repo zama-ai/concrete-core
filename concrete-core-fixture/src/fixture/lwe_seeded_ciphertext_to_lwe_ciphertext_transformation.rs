@@ -14,24 +14,26 @@ use concrete_commons::dispersion::Variance;
 use concrete_commons::parameters::LweDimension;
 use concrete_core::prelude::{
     LweCiphertextEntity, LweSecretKeyEntity, LweSeededCiphertextEntity,
-    LweSeededToLweCiphertextTransformationEngine, PlaintextEntity,
+    LweSeededCiphertextToLweCiphertextTransformationEngine, PlaintextEntity,
 };
 
-/// A fixture for the types implementing the `LweSeededToLweCiphertextTransformationEngine` trait.
-pub struct LweSeededToLweCiphertextTransformationFixture;
+/// A fixture for the types implementing the
+/// `LweSeededCiphertextToLweCiphertextTransformationEngine` trait.
+pub struct LweSeededCiphertextToLweCiphertextTransformationFixture;
 
 #[derive(Debug)]
-pub struct LweSeededToLweCiphertextTransformationParameters {
+pub struct LweSeededCiphertextToLweCiphertextTransformationParameters {
     pub noise: Variance,
     pub lwe_dimension: LweDimension,
 }
 
 impl<Precision, Engine, Plaintext, SecretKey, InputCiphertext, OutputCiphertext>
     Fixture<Precision, Engine, (Plaintext, SecretKey, InputCiphertext, OutputCiphertext)>
-    for LweSeededToLweCiphertextTransformationFixture
+    for LweSeededCiphertextToLweCiphertextTransformationFixture
 where
     Precision: IntegerPrecision,
-    Engine: LweSeededToLweCiphertextTransformationEngine<InputCiphertext, OutputCiphertext>,
+    Engine:
+        LweSeededCiphertextToLweCiphertextTransformationEngine<InputCiphertext, OutputCiphertext>,
     Plaintext: PlaintextEntity,
     SecretKey: LweSecretKeyEntity,
     InputCiphertext: LweSeededCiphertextEntity<KeyDistribution = SecretKey::KeyDistribution>,
@@ -41,7 +43,7 @@ where
         + SynthesizesLweSeededCiphertext<Precision, InputCiphertext>
         + SynthesizesLweCiphertext<Precision, OutputCiphertext>,
 {
-    type Parameters = LweSeededToLweCiphertextTransformationParameters;
+    type Parameters = LweSeededCiphertextToLweCiphertextTransformationParameters;
     type RepetitionPrototypes = (
         <Maker as PrototypesLweSecretKey<Precision, SecretKey::KeyDistribution>>::LweSecretKeyProto,
     );
@@ -56,27 +58,27 @@ where
     fn generate_parameters_iterator() -> Box<dyn Iterator<Item = Self::Parameters>> {
         Box::new(
             vec![
-                LweSeededToLweCiphertextTransformationParameters {
+                LweSeededCiphertextToLweCiphertextTransformationParameters {
                     noise: Variance(0.00000001),
                     lwe_dimension: LweDimension(100),
                 },
-                LweSeededToLweCiphertextTransformationParameters {
+                LweSeededCiphertextToLweCiphertextTransformationParameters {
                     noise: Variance(0.00000001),
                     lwe_dimension: LweDimension(300),
                 },
-                LweSeededToLweCiphertextTransformationParameters {
+                LweSeededCiphertextToLweCiphertextTransformationParameters {
                     noise: Variance(0.00000001),
                     lwe_dimension: LweDimension(600),
                 },
-                LweSeededToLweCiphertextTransformationParameters {
+                LweSeededCiphertextToLweCiphertextTransformationParameters {
                     noise: Variance(0.00000001),
                     lwe_dimension: LweDimension(1000),
                 },
-                LweSeededToLweCiphertextTransformationParameters {
+                LweSeededCiphertextToLweCiphertextTransformationParameters {
                     noise: Variance(0.00000001),
                     lwe_dimension: LweDimension(3000),
                 },
-                LweSeededToLweCiphertextTransformationParameters {
+                LweSeededCiphertextToLweCiphertextTransformationParameters {
                     noise: Variance(0.00000001),
                     lwe_dimension: LweDimension(6000),
                 },
