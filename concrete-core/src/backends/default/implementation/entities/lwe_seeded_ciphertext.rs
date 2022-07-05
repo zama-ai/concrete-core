@@ -20,7 +20,7 @@ impl LweSeededCiphertextEntity for LweSeededCiphertext32 {
     }
 
     fn compression_seed(&self) -> CompressionSeed {
-        self.0.get_compression_seed()
+        self.0.compression_seed()
     }
 }
 
@@ -46,7 +46,7 @@ impl LweSeededCiphertextEntity for LweSeededCiphertext64 {
     }
 
     fn compression_seed(&self) -> CompressionSeed {
-        self.0.get_compression_seed()
+        self.0.compression_seed()
     }
 }
 

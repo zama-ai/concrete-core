@@ -9,7 +9,7 @@ use crate::generation::{IntegerPrecision, Maker, Precision32, Precision64};
 use concrete_commons::dispersion::Variance;
 use concrete_core::prelude::markers::{BinaryKeyDistribution, KeyDistributionMarker};
 use concrete_core::prelude::{
-    LweSeededCiphertextEncryptionEngine, LweSeededToLweCiphertextTransformationEngine,
+    LweSeededCiphertextEncryptionEngine, LweSeededCiphertextToLweCiphertextTransformationEngine,
 };
 
 /// A trait allowing to manipulate LWE ciphertext prototypes.

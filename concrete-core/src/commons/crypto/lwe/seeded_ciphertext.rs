@@ -35,7 +35,7 @@ impl<Scalar: Numeric> LweSeededCiphertext<Scalar> {
     /// let ciphertext = LweSeededCiphertext::allocate(LweDimension(3), compression_seed);
     /// assert_eq!(*ciphertext.get_body(), LweBody(0_u8));
     /// assert_eq!(ciphertext.lwe_size(), LweSize(4));
-    /// assert_eq!(ciphertext.get_compression_seed(), compression_seed);
+    /// assert_eq!(ciphertext.compression_seed(), compression_seed);
     /// ```
     pub fn allocate(lwe_dimension: LweDimension, seed: CompressionSeed) -> Self {
         Self::from_scalar(Scalar::ZERO, lwe_dimension, seed)
@@ -55,7 +55,7 @@ impl<Scalar: Numeric> LweSeededCiphertext<Scalar> {
     /// let ciphertext = LweSeededCiphertext::from_scalar(0_u8, LweDimension(3), compression_seed);
     /// assert_eq!(*ciphertext.get_body(), LweBody(0_u8));
     /// assert_eq!(ciphertext.lwe_size(), LweSize(4));
-    /// assert_eq!(ciphertext.get_compression_seed(), compression_seed);
+    /// assert_eq!(ciphertext.compression_seed(), compression_seed);
     /// ```
     pub fn from_scalar(value: Scalar, lwe_dimension: LweDimension, seed: CompressionSeed) -> Self {
         Self {
@@ -136,9 +136,9 @@ impl<Scalar: Numeric> LweSeededCiphertext<Scalar> {
     /// let compression_seed = CompressionSeed { seed: Seed(42) };
     ///
     /// let ciphertext = LweSeededCiphertext::from_scalar(0_u8, LweDimension(3), compression_seed);
-    /// assert_eq!(ciphertext.get_compression_seed(), compression_seed);
+    /// assert_eq!(ciphertext.compression_seed(), compression_seed);
     /// ```
-    pub fn get_compression_seed(&self) -> CompressionSeed {
+    pub fn compression_seed(&self) -> CompressionSeed {
         self.compression_seed
     }
 

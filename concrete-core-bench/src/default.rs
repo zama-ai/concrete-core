@@ -135,7 +135,7 @@ bench! {
     (LweSeededBootstrapKeyCreationFixture, (LweSecretKey, GlweSecretKey, LweSeededBootstrapKey)),
     (LweSeededBootstrapKeyToLweBootstrapKeyTransformationFixture, (LweSecretKey, GlweSecretKey, LweSeededBootstrapKey, LweBootstrapKey)),
     (LweSeededCiphertextEncryptionFixture, (Plaintext, LweSecretKey, LweSeededCiphertext)),
-    (LweSeededToLweCiphertextTransformationFixture, (Plaintext, LweSecretKey, LweSeededCiphertext, LweCiphertext)),
+    (LweSeededCiphertextToLweCiphertextTransformationFixture, (Plaintext, LweSecretKey, LweSeededCiphertext, LweCiphertext)),
     (LweSeededCiphertextVectorEncryptionFixture, (PlaintextVector, LweSecretKey, LweSeededCiphertextVector)),
     (LweSeededCiphertextVectorToLweCiphertextVectorTransformationFixture, (PlaintextVector, LweSecretKey, LweSeededCiphertextVector, LweCiphertextVector)),
     (LweSeededKeyswitchKeyCreationFixture, (LweSecretKey, LweSecretKey, LweSeededKeyswitchKey)),
