@@ -48,6 +48,11 @@ macro_rules! cmd {
 // -------------------------------------------------------------------------------------------------
 
 fn main() -> Result<(), std::io::Error> {
+    // This is to manage rustup 1.25 which apparently now chooses to fix RUSTC and RUSTDOC...
+    // Breaking xtask-like workflows
+    std::env::remove_var("RUSTC");
+    std::env::remove_var("RUSTDOC");
+
     // We check whether the current os is supported
     if !(OS == "linux" || OS == "macos") {
         panic!("Concrete tasks are only supported on linux and macos.")

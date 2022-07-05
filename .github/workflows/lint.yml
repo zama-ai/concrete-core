@@ -10,12 +10,9 @@ jobs:
     
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: nightly
-          components: rustfmt
-          override: true
+      - name: Install Rust for tasks
+        run: |
+          make install_tasks_rust_toolchain
       - name: Run rustfmt
         run: cargo xtask check_fmt
 
@@ -25,12 +22,9 @@ jobs:
     
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: nightly
-          components: clippy
-          override: true
+      - name: Install Rust for tasks
+        run: |
+          make install_tasks_rust_toolchain
       - name: Run clippy
         run: cargo xtask check_clippy
 
@@ -40,11 +34,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: nightly
-          components: rustfmt
-          override: true
+      - name: Install Rust for tasks
+        run: |
+          make install_tasks_rust_toolchain
       - name: Builds doc
         run: cargo xtask check_doc
