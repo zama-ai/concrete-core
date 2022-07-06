@@ -1,6 +1,7 @@
 # Compile and test project on an AWS instance
-name: AWS tests
+name: AWS tests on GPU
 
+# This workflow is meant to be run via Zama CI bot Slab.
 on:
   workflow_dispatch:
     inputs:
@@ -24,7 +25,7 @@ env:
 jobs:
   run-tests-linux:
     concurrency:
-      group: ${{ github.ref }}
+      group: ${{ github.ref }}_${{ github.event.inputs.instance_image_id }}_${{ github.event.inputs.instance_type }}
       cancel-in-progress: true
     name: Test code in EC2
     runs-on: ${{ github.event.inputs.runner_name }}
@@ -50,19 +51,19 @@ jobs:
       - name: Set up home
         run: |
           echo "HOME=/home/ubuntu" >> "${GITHUB_ENV}"
-    - name: Export CUDA variables
-      run: |
-        echo "CUDA_PATH=$CUDA_PATH" >> $GITHUB_ENV
-        echo "$CUDA_PATH/bin" >> $GITHUB_PATH
-        echo "LD_LIBRARY_PATH=$CUDA_PATH/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
-    # Specify the correct host compilers
-    - name: Export gcc and g++ variables
-      run: |
-        echo "CC=/usr/bin/gcc-${{ matrix.gcc }}" >> $GITHUB_ENV
-        echo "CXX=/usr/bin/g++-${{ matrix.gcc }}" >> $GITHUB_ENV
-        echo "CUDAHOSTCXX=/usr/bin/g++-${{ matrix.gcc }}" >> $GITHUB_ENV
-        echo "CUDACXX=/usr/local/cuda-${{ matrix.cuda }}/bin/nvcc" >> $GITHUB_ENV
-        echo "HOME=/home/ubuntu" >> $GITHUB_ENV
+      - name: Export CUDA variables
+        run: |
+          echo "CUDA_PATH=$CUDA_PATH" >> $GITHUB_ENV
+          echo "$CUDA_PATH/bin" >> $GITHUB_PATH
+          echo "LD_LIBRARY_PATH=$CUDA_PATH/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+      # Specify the correct host compilers
+      - name: Export gcc and g++ variables
+        run: |
+          echo "CC=/usr/bin/gcc-${{ matrix.gcc }}" >> $GITHUB_ENV
+          echo "CXX=/usr/bin/g++-${{ matrix.gcc }}" >> $GITHUB_ENV
+          echo "CUDAHOSTCXX=/usr/bin/g++-${{ matrix.gcc }}" >> $GITHUB_ENV
+          echo "CUDACXX=/usr/local/cuda-${{ matrix.cuda }}/bin/nvcc" >> $GITHUB_ENV
+          echo "HOME=/home/ubuntu" >> $GITHUB_ENV
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
@@ -77,6 +78,7 @@ jobs:
       - name: Run concrete tests
         run: |
           RUSTFLAGS="-Ctarget-cpu=native" cargo test --release --no-fail-fast --features=backend_cuda -p concrete-core-test -- --test-threads 1
+
       - name: Slack Notification
         if: ${{ always() }}
         continue-on-error: true
@@ -85,6 +87,6 @@ jobs:
           SLACK_COLOR: ${{ job.status }}
           SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
           SLACK_ICON: https://pbs.twimg.com/profile_images/1274014582265298945/OjBKP9kn_400x400.png
-          SLACK_MESSAGE: "(Slab ci-bot beta) AWS tests finished with status ${{ job.status }}. (${{ env.ACTION_RUN_URL }})"
+          SLACK_MESSAGE: "(Slab ci-bot beta) AWS tests GPU finished with status ${{ job.status }}. (${{ env.ACTION_RUN_URL }})"
           SLACK_USERNAME: ${{ secrets.BOT_USERNAME }}
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
