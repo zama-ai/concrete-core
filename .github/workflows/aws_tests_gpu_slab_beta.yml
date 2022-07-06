@@ -76,7 +76,7 @@ jobs:
 
       - name: Test concrete-core with cuda backend
         run: |
-         cargo xtask test_cuda
+         cargo xtask test_cudaw
 
       - name: Slack Notification
         if: ${{ always() }}
