@@ -1,19 +1,15 @@
----
-description: >-
-  ⭐️ Star the repo on Github | 🗣 Community support forum | 📁 Contribute to the
-  project
----
+#  What is Concrete-core?
 
-# Concrete Core
+⭐️ [Star the repo on Github](https://github.com/zama-ai/concrete-core) | 🗣 [Community support forum](https://community.zama.ai/c/concrete-lib) | 📁 [Contribute to the project](https://github.com/zama-ai/concrete-core#contributing)
 
- Welcome to the `concrete-core` documentation!
+![](_static/Zama.png)
 
  This library contains a set of low-level primitives which can be used to implement *Fully
  Homomorphically Encrypted* (FHE) programs. In a nutshell, fully homomorphic encryption makes it
  possible to perform arbitrary computations over encrypted data. With FHE, you can perform
  computations without putting your trust in third-party computation providers.
 
- # Audience
+## Audience
 
  This library is geared towards people who already know their way around FHE. It gives the user
  freedom of choice over a breadth of parameters, which can lead to less than 128 bits of security
@@ -23,7 +19,7 @@ description: >-
  propose a safer API. To see which one best suits your needs, see the
  [concrete homepage](https://zama.ai/concrete).
 
- # Architecture
+## Architecture
 
  `concrete-core` is a modular library which makes it possible to use different backends to
  perform FHE operations. Its design revolves around two modules:
@@ -35,7 +31,7 @@ description: >-
  These different backends can be activated by feature flags, each making use of different
  hardware or system libraries to make the operations faster. Check the [Rust documentation](https://docs.rs/concrete-core/1.0.0-gamma/concrete_core) for a full description of supported backends, engines and entities.
 
- # Activating backends
+## Activating backends
 
  The different backends can be activated using the feature flags `backend_*`. The `backend_default`
  contains an engine executing operations on CPUs. It is activated by default.
@@ -129,5 +125,5 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 ## License
 
-This software is distributed under the BSD-3-Clause-Clear license. If you have any questions, 
+This software is distributed under the BSD-3-Clause-Clear license. If you have any questions,
 please contact us at `hello@zama.ai`.
