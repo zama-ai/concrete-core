@@ -24,7 +24,7 @@ env:
 jobs:
   run-tests-linux:
     concurrency:
-      group: ${{ github.ref }}
+      group: ${{ github.ref }}_${{ github.event.inputs.instance_image_id }}_${{ github.event.inputs.instance_type }}
       cancel-in-progress: true
     name: Test code in EC2
     runs-on: ${{ github.event.inputs.runner_name }}
