@@ -148,6 +148,7 @@ int main(void) {
 
 - [TFHE](https://eprint.iacr.org/2018/421.pdf)
 - [concrete-core-1.0.0-alpha release](https://community.zama.ai/t/concrete-core-v1-0-0-alpha/120)
+- [concrete-core-1.0.0-beta release](https://www.zama.ai/post/announcing-concrete-core-v1-0-beta)
 
 ## License
 
