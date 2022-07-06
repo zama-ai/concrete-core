@@ -1,5 +1,5 @@
 [package]
-name = "concrete-core"
+name = "concrete-core-experimental"
 version = "1.0.0-delta"
 edition = "2021"
 authors = ["D. Ligier", "J.B. Orfila", "A. Péré", "S. Tap", "Zama team"]
