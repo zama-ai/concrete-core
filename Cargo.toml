@@ -6,17 +6,17 @@ members = [
     "concrete-csprng",
     "concrete-commons",
     "concrete-tasks",
-    "concrete-core-bench",
-    "concrete-core-ffi",
-    "concrete-core-fixture",
-    "concrete-core-test",
-    "concrete-core-wasm",
-    "concrete-cuda",
+#    "concrete-core-bench",
+#    "concrete-core-ffi",
+#    "concrete-core-fixture",
+#    "concrete-core-test",
+#    "concrete-core-wasm",
+#    "concrete-cuda",
 ]
 
 [patch.crates-io]
 concrete-npe = { path = "concrete-npe" }
-concrete-core = { path = "concrete-core" }
+concrete-core = { package = "concrete-core-experimental", path = "concrete-core" }
 concrete-csprng = { path = "concrete-csprng" }
 concrete-commons = { path = "concrete-commons" }
 concrete-cuda = { path = "concrete-cuda" }
