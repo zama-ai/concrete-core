@@ -16,6 +16,10 @@ backend_fftw = [
     "concrete-core/backend_fftw",
     "concrete-core-fixture/backend_fftw",
 ]
+backend_fftw_parallel = [
+    "concrete-core/backend_fftw_parallel",
+    "concrete-core-fixture/backend_fftw_parallel"
+]
 backend_cuda = [
     "concrete-core/backend_cuda", 
     "concrete-core-fixture/backend_cuda",

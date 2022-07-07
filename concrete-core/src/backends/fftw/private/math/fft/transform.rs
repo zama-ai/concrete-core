@@ -1,4 +1,3 @@
-use std::cell::RefCell;
 use std::slice;
 
 use concrete_fftw::array::AlignedVec;
@@ -24,7 +23,6 @@ use super::{Complex64, Correctors, FourierPolynomial};
 pub struct Fft {
     plans: Plans,
     correctors: Correctors,
-    buffer: RefCell<FourierPolynomial<AlignedVec<Complex64>>>,
 }
 
 impl Fft {
@@ -46,15 +44,10 @@ impl Fft {
             size.0
         );
         let plans = Plans::new(size);
-        let buffer = RefCell::new(FourierPolynomial::allocate(
-            Complex64::new(0., 0.),
-            PolynomialSize(size.0),
-        ));
         let correctors = Correctors::new(size.0);
         Fft {
             plans,
             correctors,
-            buffer,
         }
     }
 
@@ -72,101 +65,26 @@ impl Fft {
         self.plans.polynomial_size()
     }
 
-    /// Performs the forward fourier transform of the `poly` polynomial, viewed as a polynomial of
-    /// torus coefficients, and stores the result in `fourier_poly`.
-    ///
-    /// # Note
-    ///
-    /// It should be noted that this method is subotpimal, as it only uses half of the computational
-    /// power of the transformer. For a faster approach, you should consider processing the
-    /// polynomials two by two with the [`Fft::forward_two_as_torus`] method.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use concrete_commons::parameters::PolynomialSize;
-    /// use concrete_core::backends::fftw::private::math::fft::{Complex64, Fft, FourierPolynomial};
-    /// use concrete_core::commons::math::polynomial::Polynomial;
-    /// use concrete_core::commons::math::random::RandomGenerator;
-    /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
-    /// use concrete_csprng::generators::SoftwareRandomGenerator;
-    /// use concrete_csprng::seeders::Seed;
-    /// let mut generator = RandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
-    /// let mut fft = Fft::new(PolynomialSize(256));
-    /// let mut fourier_poly = FourierPolynomial::allocate(Complex64::new(0., 0.), PolynomialSize(256));
-    /// let mut poly = Polynomial::allocate(0u32, PolynomialSize(256));
-    /// generator.fill_tensor_with_random_uniform(&mut poly);
-    /// fft.forward_as_torus(&mut fourier_poly, &poly);
-    /// let mut out = Polynomial::allocate(0u32, PolynomialSize(256));
-    /// fft.add_backward_as_torus(&mut out, &mut fourier_poly);
-    /// out.as_tensor()
-    ///     .iter()
-    ///     .zip(poly.as_tensor().iter())
-    ///     .for_each(|(output, expected)| assert_eq!(*output, *expected));
-    /// ```
     pub fn forward_as_torus<OutCont, InCont, Coef>(
         &self,
         fourier_poly: &mut FourierPolynomial<OutCont>,
         poly: &Polynomial<InCont>,
+        buffer: &mut FourierPolynomial<AlignedVec<Complex64>>,
     ) where
         FourierPolynomial<OutCont>: AsMutTensor<Element = Complex64>,
         Polynomial<InCont>: AsRefTensor<Element = Coef>,
         Coef: UnsignedTorus,
     {
-        self.forward(fourier_poly, poly, regular_convert_forward_single_torus);
+        self.forward(fourier_poly, poly, regular_convert_forward_single_torus, buffer);
     }
 
-    /// Performs the forward fourier transform of the `poly_1` and `poly_2` polynomials, viewed
-    /// as polynomials of torus coefficients, and stores the result in `fourier_poly_1` and
-    /// `fourier_poly_2`.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use concrete_commons::parameters::PolynomialSize;
-    /// use concrete_core::backends::fftw::private::math::fft::{Complex64, Fft, FourierPolynomial};
-    /// use concrete_core::commons::math::polynomial::Polynomial;
-    /// use concrete_core::commons::math::random::RandomGenerator;
-    /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
-    /// use concrete_csprng::generators::SoftwareRandomGenerator;
-    /// use concrete_csprng::seeders::Seed;
-    ///
-    /// let mut generator = RandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
-    /// let mut fft = Fft::new(PolynomialSize(256));
-    /// let mut fourier_poly_1 =
-    ///     FourierPolynomial::allocate(Complex64::new(0., 0.), PolynomialSize(256));
-    /// let mut fourier_poly_2 =
-    ///     FourierPolynomial::allocate(Complex64::new(0., 0.), PolynomialSize(256));
-    /// let mut poly_1 = Polynomial::allocate(0u32, PolynomialSize(256));
-    /// let mut poly_2 = Polynomial::allocate(0u32, PolynomialSize(256));
-    /// generator.fill_tensor_with_random_uniform(&mut poly_1);
-    /// generator.fill_tensor_with_random_uniform(&mut poly_2);
-    /// fft.forward_two_as_torus(&mut fourier_poly_1, &mut fourier_poly_2, &poly_1, &poly_2);
-    /// let mut out_1 = Polynomial::allocate(0u32, PolynomialSize(256));
-    /// let mut out_2 = Polynomial::allocate(0u32, PolynomialSize(256));
-    /// fft.add_backward_two_as_torus(
-    ///     &mut out_1,
-    ///     &mut out_2,
-    ///     &mut fourier_poly_1,
-    ///     &mut fourier_poly_2,
-    /// );
-    /// out_1
-    ///     .as_tensor()
-    ///     .iter()
-    ///     .zip(poly_1.as_tensor().iter())
-    ///     .for_each(|(out, exp)| assert_eq!(out, exp));
-    /// out_2
-    ///     .as_tensor()
-    ///     .iter()
-    ///     .zip(poly_2.as_tensor().iter())
-    ///     .for_each(|(out, exp)| assert_eq!(out, exp));
-    /// ```
     pub fn forward_two_as_torus<InCont1, InCont2, OutCont1, OutCont2, Coef>(
         &self,
         fourier_poly_1: &mut FourierPolynomial<OutCont1>,
         fourier_poly_2: &mut FourierPolynomial<OutCont2>,
         poly_1: &Polynomial<InCont1>,
         poly_2: &Polynomial<InCont2>,
+        buffer: &mut FourierPolynomial<AlignedVec<Complex64>>,
     ) where
         Polynomial<InCont1>: AsRefTensor<Element = Coef>,
         Polynomial<InCont2>: AsRefTensor<Element = Coef>,
@@ -186,105 +104,30 @@ impl Fft {
             poly_1,
             poly_2,
             regular_convert_forward_two_torus,
+            buffer,
         );
     }
 
-    /// Performs the forward fourier transform of the `poly` polynomial, viewed as a polynomial of
-    /// integer coefficients, and stores the result in `fourier_poly`.
-    ///
-    /// # Note
-    ///
-    /// It should be noted that this method is subotpimal, as it only uses half of the computational
-    /// power of the transformer. For a faster approach, you should consider processing the
-    /// polynomials two by two with the [`Fft::forward_two_as_integer`] method.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use concrete_commons::numeric::UnsignedInteger;
-    /// use concrete_commons::parameters::PolynomialSize;
-    /// use concrete_core::backends::fftw::private::math::fft::{Complex64, Fft, FourierPolynomial};
-    /// use concrete_core::commons::math::polynomial::Polynomial;
-    /// use concrete_core::commons::math::random::RandomGenerator;
-    /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
-    /// use concrete_csprng::generators::SoftwareRandomGenerator;
-    /// use concrete_csprng::seeders::Seed;
-    /// let mut generator = RandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
-    /// let mut fft = Fft::new(PolynomialSize(256));
-    /// let mut fourier_poly = FourierPolynomial::allocate(Complex64::new(0., 0.), PolynomialSize(256));
-    /// let mut poly = Polynomial::allocate(0u32, PolynomialSize(256));
-    /// generator.fill_tensor_with_random_uniform(&mut poly);
-    /// fft.forward_as_integer(&mut fourier_poly, &poly);
-    /// let mut out = Polynomial::allocate(0u32, PolynomialSize(256));
-    /// fft.add_backward_as_integer(&mut out, &mut fourier_poly);
-    /// out.as_tensor()
-    ///     .iter()
-    ///     .zip(poly.as_tensor().iter())
-    ///     .for_each(|(out, exp)| assert_eq!(*out, *exp));
-    /// ```
     pub fn forward_as_integer<OutCont, InCont, Coef>(
         &self,
         fourier_poly: &mut FourierPolynomial<OutCont>,
         poly: &Polynomial<InCont>,
+        buffer: &mut FourierPolynomial<AlignedVec<Complex64>>,
     ) where
         FourierPolynomial<OutCont>: AsMutTensor<Element = Complex64>,
         Polynomial<InCont>: AsRefTensor<Element = Coef>,
         Coef: UnsignedInteger,
     {
-        self.forward(fourier_poly, poly, regular_convert_forward_single_integer);
+        self.forward(fourier_poly, poly, regular_convert_forward_single_integer, buffer);
     }
 
-    /// Performs the forward fourier transform of the `poly_1` and `poly_2` polynomials, viewed
-    /// as polynomials of integer coefficients, and stores the result in `fourier_poly_1` and
-    /// `fourier_poly_2`.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use concrete_commons::numeric::UnsignedInteger;
-    /// use concrete_commons::parameters::PolynomialSize;
-    /// use concrete_core::backends::fftw::private::math::fft::{Complex64, Fft, FourierPolynomial};
-    /// use concrete_core::commons::math::polynomial::Polynomial;
-    /// use concrete_core::commons::math::random::RandomGenerator;
-    /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
-    /// use concrete_csprng::generators::SoftwareRandomGenerator;
-    /// use concrete_csprng::seeders::Seed;
-    /// let mut generator = RandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
-    /// let mut fft = Fft::new(PolynomialSize(256));
-    /// let mut fourier_poly_1 =
-    ///     FourierPolynomial::allocate(Complex64::new(0., 0.), PolynomialSize(256));
-    /// let mut fourier_poly_2 =
-    ///     FourierPolynomial::allocate(Complex64::new(0., 0.), PolynomialSize(256));
-    /// let mut poly_1 = Polynomial::allocate(0u32, PolynomialSize(256));
-    /// let mut poly_2 = Polynomial::allocate(0u32, PolynomialSize(256));
-    /// generator.fill_tensor_with_random_uniform(&mut poly_1);
-    /// generator.fill_tensor_with_random_uniform(&mut poly_2);
-    /// fft.forward_two_as_integer(&mut fourier_poly_1, &mut fourier_poly_2, &poly_1, &poly_2);
-    /// let mut out_1 = Polynomial::allocate(0u32, PolynomialSize(256));
-    /// let mut out_2 = Polynomial::allocate(0u32, PolynomialSize(256));
-    /// fft.add_backward_two_as_integer(
-    ///     &mut out_1,
-    ///     &mut out_2,
-    ///     &mut fourier_poly_1,
-    ///     &mut fourier_poly_2,
-    /// );
-    /// out_1
-    ///     .as_tensor()
-    ///     .iter()
-    ///     .zip(poly_1.as_tensor().iter())
-    ///     .for_each(|(out, exp)| assert_eq!(out, exp));
-    /// out_2
-    ///     .as_tensor()
-    ///     .iter()
-    ///     .zip(poly_2.as_tensor().iter())
-    ///     .for_each(|(out, exp)| assert_eq!(out, exp));
-    /// ```
     pub fn forward_two_as_integer<InCont1, InCont2, OutCont1, OutCont2, Coef>(
         &self,
         fourier_poly_1: &mut FourierPolynomial<OutCont1>,
         fourier_poly_2: &mut FourierPolynomial<OutCont2>,
         poly_1: &Polynomial<InCont1>,
         poly_2: &Polynomial<InCont2>,
+        buffer: &mut FourierPolynomial<AlignedVec<Complex64>>,
     ) where
         Polynomial<InCont1>: AsRefTensor<Element = Coef>,
         Polynomial<InCont2>: AsRefTensor<Element = Coef>,
@@ -304,23 +147,15 @@ impl Fft {
             poly_1,
             poly_2,
             regular_convert_forward_two_integer,
+            buffer,
         );
     }
 
-    /// Performs the backward fourier transform of the `fourier_poly` polynomial, viewed as a
-    /// polynomial of torus coefficients, and adds the result to `poly`.
-    ///
-    /// See [`Fft::forward_as_torus`] for an example.
-    ///
-    /// # Note
-    ///
-    /// It should be noted that this method is subotpimal, as it only uses half of the computational
-    /// power of the transformer. For a faster approach, you should consider processing the
-    /// polynomials two by two with the [`Fft::add_backward_two_as_torus`] method.
     pub fn add_backward_as_torus<OutCont, InCont, Coef>(
         &self,
         poly: &mut Polynomial<OutCont>,
         fourier_poly: &mut FourierPolynomial<InCont>,
+        buffer: &mut FourierPolynomial<AlignedVec<Complex64>>,
     ) where
         Polynomial<OutCont>: AsMutTensor<Element = Coef>,
         FourierPolynomial<InCont>: AsMutTensor<Element = Complex64>,
@@ -331,6 +166,7 @@ impl Fft {
             poly,
             fourier_poly,
             regular_convert_add_backward_single_torus,
+            buffer,
         );
     }
 
@@ -348,29 +184,21 @@ impl Fft {
         &self,
         poly: &mut Polynomial<OutCont>,
         fourier_poly: &mut FourierPolynomial<InCont>,
+        buffer: &mut FourierPolynomial<AlignedVec<Complex64>>,
     ) where
         Polynomial<OutCont>: AsMutTensor<Element = Coef>,
         FourierPolynomial<InCont>: AsMutTensor<Element = Complex64>,
         Coef: UnsignedTorus,
     {
         ck_dim_eq!(self.polynomial_size().0 => fourier_poly.polynomial_size().0, poly.polynomial_size().0);
-        self.backward(poly, fourier_poly, regular_convert_backward_single_torus);
+        self.backward(poly, fourier_poly, regular_convert_backward_single_torus, buffer);
     }
 
-    /// Performs the backward fourier transform of the `fourier_poly` polynomial, viewed as a
-    /// polynomial of integer coefficients, and adds the result to `poly`.
-    ///
-    /// See [`Fft::forward_as_integer`] for an example.
-    ///
-    /// # Note
-    ///
-    /// It should be noted that this method is subotpimal, as it only uses half of the computational
-    /// power of the transformer. For a faster approach, you should consider processing the
-    /// polynomials two by two with the [`Fft::add_backward_two_as_integer`] method.
     pub fn add_backward_as_integer<OutCont, InCont, Coef>(
         &self,
         poly: &mut Polynomial<OutCont>,
         fourier_poly: &mut FourierPolynomial<InCont>,
+        buffer: &mut FourierPolynomial<AlignedVec<Complex64>>,
     ) where
         Polynomial<OutCont>: AsMutTensor<Element = Coef>,
         FourierPolynomial<InCont>: AsMutTensor<Element = Complex64>,
@@ -381,6 +209,7 @@ impl Fft {
             poly,
             fourier_poly,
             regular_convert_add_backward_single_integer,
+            buffer,
         );
     }
 
@@ -395,6 +224,7 @@ impl Fft {
         poly_2: &mut Polynomial<OutCont2>,
         fourier_poly_1: &mut FourierPolynomial<InCont1>,
         fourier_poly_2: &mut FourierPolynomial<InCont2>,
+        buffer: &mut FourierPolynomial<AlignedVec<Complex64>>,
     ) where
         Polynomial<OutCont1>: AsMutTensor<Element = Coef>,
         Polynomial<OutCont2>: AsMutTensor<Element = Coef>,
@@ -414,6 +244,7 @@ impl Fft {
             fourier_poly_1,
             fourier_poly_2,
             regular_convert_add_backward_two_torus,
+            buffer,
         );
     }
 
@@ -427,6 +258,7 @@ impl Fft {
         poly_2: &mut Polynomial<OutCont2>,
         fourier_poly_1: &mut FourierPolynomial<InCont1>,
         fourier_poly_2: &mut FourierPolynomial<InCont2>,
+        buffer: &mut FourierPolynomial<AlignedVec<Complex64>>,
     ) where
         Polynomial<OutCont1>: AsMutTensor<Element = Coef>,
         Polynomial<OutCont2>: AsMutTensor<Element = Coef>,
@@ -446,6 +278,7 @@ impl Fft {
             fourier_poly_1,
             fourier_poly_2,
             regular_convert_backward_two_torus,
+            buffer,
         );
     }
 
@@ -460,6 +293,7 @@ impl Fft {
         poly_2: &mut Polynomial<OutCont2>,
         fourier_poly_1: &mut FourierPolynomial<InCont1>,
         fourier_poly_2: &mut FourierPolynomial<InCont2>,
+        buffer: &mut FourierPolynomial<AlignedVec<Complex64>>,
     ) where
         Polynomial<OutCont1>: AsMutTensor<Element = Coef>,
         Polynomial<OutCont2>: AsMutTensor<Element = Coef>,
@@ -479,6 +313,7 @@ impl Fft {
             fourier_poly_1,
             fourier_poly_2,
             regular_convert_add_backward_two_integer,
+            buffer,
         );
     }
 
@@ -491,6 +326,7 @@ impl Fft {
             &Polynomial<InCont>,
             &ForwardCorrector<&'static [Complex64]>,
         ),
+        buffer: &mut FourierPolynomial<AlignedVec<Complex64>>,
     ) where
         Polynomial<InCont>: AsRefTensor<Element = Coef>,
         FourierPolynomial<OutCont>: AsMutTensor<Element = Complex64>,
@@ -499,14 +335,14 @@ impl Fft {
 
         // We convert the data to real and fill the temporary buffer
         convert_function(
-            &mut self.buffer.borrow_mut(),
+            buffer,
             poly,
             &self.correctors.forward,
         );
 
         // We perform the forward fft
         self.plans.forward(
-            self.buffer.borrow().as_tensor().as_slice(),
+            buffer.as_tensor().as_slice(),
             fourier_poly.as_mut_tensor().as_mut_slice(),
         );
     }
@@ -523,6 +359,7 @@ impl Fft {
             &Polynomial<InCont2>,
             &ForwardCorrector<&'static [Complex64]>,
         ),
+        buffer: &mut FourierPolynomial<AlignedVec<Complex64>>,
     ) where
         Polynomial<InCont1>: AsRefTensor<Element = Coef>,
         Polynomial<InCont2>: AsRefTensor<Element = Coef>,
@@ -537,7 +374,7 @@ impl Fft {
         );
 
         convert_function(
-            &mut self.buffer.borrow_mut(),
+            buffer,
             poly_1,
             poly_2,
             &self.correctors.forward,
@@ -545,7 +382,7 @@ impl Fft {
 
         // We perform the forward on the first fourier polynomial.
         self.plans.forward(
-            self.buffer.borrow().as_tensor().as_slice(),
+            buffer.as_tensor().as_slice(),
             fourier_poly_1.as_mut_tensor().as_mut_slice(),
         );
 
@@ -566,6 +403,7 @@ impl Fft {
             &FourierPolynomial<AlignedVec<Complex64>>,
             &BackwardCorrector<&'static [Complex64]>,
         ),
+        buffer: &mut FourierPolynomial<AlignedVec<Complex64>>,
     ) where
         Polynomial<OutCont>: AsMutTensor<Element = Coef>,
         FourierPolynomial<InCont>: AsMutTensor<Element = Complex64>,
@@ -580,11 +418,11 @@ impl Fft {
         // We perform the backward fft
         self.plans.backward(
             fourier_poly.as_tensor().as_slice(),
-            self.buffer.borrow_mut().as_mut_tensor().as_mut_slice(),
+            buffer.as_mut_tensor().as_mut_slice(),
         );
 
         // We fill the polynomial with the conversion function
-        convert_function(poly, &self.buffer.borrow(), &self.correctors.backward)
+        convert_function(poly, buffer, &self.correctors.backward)
     }
 
     pub(super) fn backward_two<OutCont1, OutCont2, InCont1, InCont2, Coef>(
@@ -599,6 +437,7 @@ impl Fft {
             &FourierPolynomial<AlignedVec<Complex64>>,
             &BackwardCorrector<&'static [Complex64]>,
         ),
+        buffer: &mut FourierPolynomial<AlignedVec<Complex64>>,
     ) where
         Polynomial<OutCont1>: AsMutTensor<Element = Coef>,
         Polynomial<OutCont2>: AsMutTensor<Element = Coef>,
@@ -635,13 +474,13 @@ impl Fft {
         // We perform the backward fft
         self.plans.backward(
             fourier_poly_1.as_tensor().as_slice(),
-            self.buffer.borrow_mut().as_mut_tensor().as_mut_slice(),
+            buffer.as_mut_tensor().as_mut_slice(),
         );
 
         convert_function(
             poly_1,
             poly_2,
-            &self.buffer.borrow(),
+            buffer,
             &self.correctors.backward,
         )
     }

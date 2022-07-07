@@ -25,6 +25,8 @@ fn main() {
     default::bench_parallel();
     #[cfg(feature = "backend_fftw")]
     fftw::bench();
+    #[cfg(all(feature = "backend_fftw", feature = "backend_fftw_parallel"))]
+    fftw::bench_parallel();
     #[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
     cuda::bench();
     #[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]

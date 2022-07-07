@@ -43,3 +43,41 @@ test! {
     (GlweCiphertextsGgswCiphertextFusingCmuxFixture, (GlweCiphertext, GlweCiphertext,
         FftwFourierGgswCiphertext))
 }
+
+#[cfg(feature = "backend_fftw_parallel")]
+macro_rules! test_parallel {
+    ($fixture: ident, $precision: ident, ($($types:ident),+)) => {
+        paste!{
+            #[test]
+            fn [< test_ $fixture:snake _ $precision:snake _ $($types:snake)_+ >]() {
+                let mut maker = Maker::default();
+                let mut engine = FftwParallelEngine::new(()).unwrap();
+                let test_result =
+                    <$fixture as Fixture<
+                        $precision,
+                        FftwParallelEngine,
+                        ($($types,)+),
+                    >>::stress_all_parameters(&mut maker, &mut engine, REPETITIONS, SAMPLE_SIZE);
+                assert!(test_result);
+            }
+        }
+    };
+    ($(($fixture: ident, ($($types:ident),+))),+) => {
+        $(
+            paste!{
+                test!{$fixture, Precision32, ($([< $types 32 >]),+)}
+                test!{$fixture, Precision64, ($([< $types 64 >]),+)}
+            }
+        )+
+    };
+}
+
+#[cfg(feature = "backend_fftw_parallel")]
+test_parallel! {
+    (LweCiphertextVectorDiscardingBootstrapFixture1, (FftwFourierLweBootstrapKey,
+        FftwGlweCiphertextVector,
+        FftwLweCiphertextVector, FftwLweCiphertextVector)),
+    (LweCiphertextVectorDiscardingBootstrapFixture2, (FftwFourierLweBootstrapKey,
+        FftwGlweCiphertextVector,
+        FftwLweCiphertextVector, FftwLweCiphertextVector))
+}

@@ -144,13 +144,14 @@ impl<Cont, Scalar: UnsignedTorus> FourierGlweCiphertext<Cont, Scalar> {
     {
         // We retrieve a buffer for the fft.
         let fft_buffer = &mut buffers.fft_buffers.first_buffer;
+        let third_fft_buffer = &mut buffers.fft_buffers.third_buffer;
         let fft = &mut buffers.fft_buffers.fft;
 
         // We move every polynomial to the fourier domain.
         let poly_list = glwe.as_polynomial_list();
         let iterator = self.polynomial_iter_mut().zip(poly_list.polynomial_iter());
         for (mut fourier_poly, coef_poly) in iterator {
-            fft.forward_as_torus(fft_buffer, &coef_poly);
+            fft.forward_as_torus(fft_buffer, &coef_poly, third_fft_buffer);
             fourier_poly
                 .as_mut_tensor()
                 .fill_with_one((fft_buffer).as_tensor(), |a| *a);
@@ -189,6 +190,7 @@ impl<Cont, Scalar: UnsignedTorus> FourierGlweCiphertext<Cont, Scalar> {
     {
         // We get the fft to use from the passed buffers
         let fft = &mut buffers.fft_buffers.fft;
+        let third_fft_buffer = &mut buffers.fft_buffers.third_buffer;
 
         // Output buffer is large enough to hold self which is a FourierGlweCiphertext
         let input_fourier_polynomials_buffer = &mut buffers.fft_buffers.output_buffer;
@@ -211,7 +213,7 @@ impl<Cont, Scalar: UnsignedTorus> FourierGlweCiphertext<Cont, Scalar> {
             .zip(input_fourier_polynomials_list);
 
         for (mut coef_poly, mut fourier_poly) in iterator {
-            fft.backward_as_torus(&mut coef_poly, &mut fourier_poly);
+            fft.backward_as_torus(&mut coef_poly, &mut fourier_poly, third_fft_buffer);
         }
     }
 

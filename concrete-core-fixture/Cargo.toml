@@ -17,6 +17,7 @@ paste = "1.0"
 # No backend_default feature as it's required for all tests to work, so always enabled
 backend_fftw = ["concrete-core/backend_fftw"]
 backend_default_parallel = ["concrete-core/backend_default_parallel"]
+backend_fftw_parallel = ["backend_fftw", "concrete-core/backend_fftw_parallel"]
 backend_cuda = ["concrete-core/backend_cuda", "concrete-cuda"]
 _ci_do_not_compile = []
 

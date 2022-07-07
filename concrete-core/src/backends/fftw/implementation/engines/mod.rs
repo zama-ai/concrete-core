@@ -7,3 +7,8 @@ pub use fftw_engine::*;
 mod fftw_serialization_engine;
 #[cfg(feature = "backend_fftw_serialization")]
 pub use fftw_serialization_engine::*;
+
+#[cfg(feature = "backend_fftw_parallel")]
+mod fftw_parallel_engine;
+#[cfg(feature = "backend_fftw_parallel")]
+pub use fftw_parallel_engine::*;

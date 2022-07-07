@@ -57,6 +57,8 @@ pub struct Maker {
     default_parallel_engine: DefaultParallelEngine,
     #[cfg(feature = "backend_fftw")]
     fftw_engine: concrete_core::backends::fftw::engines::FftwEngine,
+    #[cfg(feature = "backend_fftw_parallel")]
+    fftw_parallel_engine: concrete_core::backends::fftw::engines::FftwParallelEngine,
     #[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
     cuda_engine: concrete_core::backends::cuda::engines::CudaEngine,
 }
@@ -69,6 +71,9 @@ impl Default for Maker {
                 .unwrap(),
             #[cfg(feature = "backend_fftw")]
             fftw_engine: concrete_core::backends::fftw::engines::FftwEngine::new(()).unwrap(),
+            #[cfg(feature = "backend_fftw_parallel")]
+            fftw_parallel_engine: concrete_core::backends::fftw::engines::FftwParallelEngine::new
+                (()).unwrap(),
             #[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
             cuda_engine: concrete_core::backends::cuda::engines::CudaEngine::new(()).unwrap(),
         }

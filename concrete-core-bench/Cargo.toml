@@ -21,6 +21,10 @@ backend_default_parallel = [
     "concrete-core/backend_default_parallel",
     "concrete-core-fixture/backend_default_parallel"
 ]
+backend_fftw_parallel = [
+    "concrete-core/backend_fftw_parallel",
+    "concrete-core-fixture/backend_fftw_parallel"
+]
 backend_cuda = ["concrete-core/backend_cuda", "concrete-core-fixture/backend_cuda"]
 _ci_do_not_compile = ["concrete-core/_ci_do_not_compile", "concrete-core-fixture/_ci_do_not_compile"]
 
