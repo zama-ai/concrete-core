@@ -87,8 +87,10 @@ fn main() -> Result<(), Box<dyn Error>> {
 ## Links
 
 - [TFHE](https://eprint.iacr.org/2018/421.pdf)
-- [concrete-core-1.0.0-alpha release](https://community.zama.ai/t/concrete-core-v1-0-0-alpha/120)
-- [concrete-core-1.0.0-beta release](https://www.zama.ai/post/announcing-concrete-core-v1-0-beta)
+- [User documentation](https://docs.zama.ai/concrete-core)
+- [Concrete-core V1.0.0-alpha release](https://community.zama.ai/t/concrete-core-v1-0-0-alpha/120)
+- [Concrete-core V1.0.0-beta release](https://www.zama.ai/post/announcing-concrete-core-v1-0-beta)
+- [Concrete-core V1.0.0-gamma release](https://community.zama.ai/t/concrete-core-v1-0-0-gamma-with-gpu-acceleration/234)
 
 ## License
 
