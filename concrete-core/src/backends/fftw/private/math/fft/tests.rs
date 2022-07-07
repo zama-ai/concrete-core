@@ -37,17 +37,26 @@ fn test_single_forward_backward() {
             *output = (input * corrector).re;
         }
     }
+
     let mut generator = new_random_generator();
+
     for _ in 0..100 {
         for size in &ALLOWED_POLY_SIZE {
             let fft = Fft::new(PolynomialSize(*size));
+
+            let mut buffer =
+                FourierPolynomial::allocate(Complex64::new(0., 0.), PolynomialSize(*size));
             let mut poly = Polynomial::allocate(f64::ZERO, PolynomialSize(*size));
+
             generator.fill_tensor_with_random_gaussian(&mut poly, 0., 1.);
+
             let mut fourier_poly =
                 FourierPolynomial::allocate(Complex64::new(0., 0.), PolynomialSize(*size));
-            fft.forward(&mut fourier_poly, &poly, fw_conv);
+
+            fft.forward(&mut fourier_poly, &poly, fw_conv, &mut buffer);
             let mut out = Polynomial::allocate(f64::ZERO, PolynomialSize(*size));
-            fft.backward(&mut out, &mut fourier_poly, bw_conv);
+            fft.backward(&mut out, &mut fourier_poly, bw_conv, &mut buffer);
+
             poly.as_tensor()
                 .iter()
                 .zip(out.as_tensor().iter())
@@ -94,20 +103,27 @@ fn test_two_forward_backward() {
     for _ in 0..100 {
         for size in &ALLOWED_POLY_SIZE {
             let fft = Fft::new(PolynomialSize(*size));
+
             let mut poly1 = Polynomial::allocate(f64::ZERO, PolynomialSize(*size));
             generator.fill_tensor_with_random_gaussian(&mut poly1, 0., 1.);
             let mut poly2 = Polynomial::allocate(f64::ZERO, PolynomialSize(*size));
             generator.fill_tensor_with_random_gaussian(&mut poly2, 0., 1.);
+
             let mut fourier_poly_1 =
                 FourierPolynomial::allocate(Complex64::new(0., 0.), PolynomialSize(*size));
             let mut fourier_poly_2 =
                 FourierPolynomial::allocate(Complex64::new(0., 0.), PolynomialSize(*size));
+
+            let mut buffer =
+                FourierPolynomial::allocate(Complex64::new(0., 0.), PolynomialSize(*size));
+
             fft.forward_two(
                 &mut fourier_poly_1,
                 &mut fourier_poly_2,
                 &poly1,
                 &poly2,
                 fw_conv,
+                &mut buffer,
             );
             let mut out1 = Polynomial::allocate(f64::ZERO, PolynomialSize(*size));
             let mut out2 = Polynomial::allocate(f64::ZERO, PolynomialSize(*size));
@@ -117,6 +133,7 @@ fn test_two_forward_backward() {
                 &mut fourier_poly_1,
                 &mut fourier_poly_2,
                 bw_conv,
+                &mut buffer,
             );
             poly1
                 .as_tensor()
