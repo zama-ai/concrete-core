@@ -55,7 +55,14 @@ impl<EngineError: std::error::Error> GlweCiphertextLeveledMultiplicationError<En
 /// ciphertexts, using a relinearization key `rlk` and a scaling factor `scaling_factor`.
 ///
 /// # Formal Definition
-/// // TODO
+/// This function takes as input two
+/// [GLWE ciphertexts](`crate::specification::entities::GlweCiphertextEntity`) $c\_1$ and $c\_2$,
+/// which encrypt $m_1$ and $m_2$ respectively, a
+/// [relinearization key](`crate::specification::entities::GlweRelinearizationKeyEntity) $RLK$, and
+/// a scaling factor `scale`, and outputs a new
+/// [GLWE ciphertexts](`crate::specification::entities::GlweCiphertextEntity`) $c$ which contains
+/// an encryption of $(m\_1 m\_2)/scale$.
+
 pub trait GlweCiphertextLeveledMultiplicationEngine<GlweInput, RelinearizationKey, Output>:
     AbstractEngine
 where
