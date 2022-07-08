@@ -15,7 +15,7 @@ use crate::backends::default::implementation::entities::{
     Plaintext64, PlaintextVector32, PlaintextVector64,
 };
 use crate::commons::math::tensor::AsMutTensor;
-use crate::prelude::{CleartextF64, CleartextVectorF64, FloatEncoder, FloatEncoderVector};
+use crate::prelude::{CleartextF64, CleartextVectorF64, FloatEncoder, FloatEncoderVector, FftwStandardGlweRelinearizationKey32};
 use crate::specification::engines::{DestructionEngine, DestructionError};
 
 impl DestructionEngine<Cleartext32> for DefaultEngine {
@@ -306,6 +306,7 @@ impl DestructionEngine<GlweCiphertext64> for DefaultEngine {
     unsafe fn destroy_unchecked(&mut self, _entity: &mut GlweCiphertext64) {}
 }
 
+// TODO: we may need to remove this DestructionEngine
 impl DestructionEngine<GlweTensorProductCiphertext32> for DefaultEngine {
     fn destroy(
         &mut self,
@@ -317,7 +318,7 @@ impl DestructionEngine<GlweTensorProductCiphertext32> for DefaultEngine {
 
     unsafe fn destroy_unchecked(&mut self, _entity: &mut GlweTensorProductCiphertext32) {}
 }
-
+// TODO: we may need to remove this DestructionEngine
 impl DestructionEngine<GlweTensorProductCiphertext64> for DefaultEngine {
     fn destroy(
         &mut self,
