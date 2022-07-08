@@ -3,7 +3,7 @@ use crate::backends::cuda::implementation::entities::{CudaGlweCiphertext32, Cuda
 use crate::backends::cuda::private::crypto::glwe::ciphertext::CudaGlweCiphertext;
 use crate::commons::crypto::glwe::GlweCiphertext;
 use crate::commons::math::tensor::{AsRefSlice, AsRefTensor};
-use crate::prelude::{GlweCiphertext32, GlweCiphertext64};
+use crate::prelude::{GlweCiphertext32, GlweCiphertext64, GlweCiphertextView64};
 use crate::specification::engines::{
     GlweCiphertextConversionEngine, GlweCiphertextConversionError,
 };
@@ -294,5 +294,88 @@ impl GlweCiphertextConversionEngine<CudaGlweCiphertext64, GlweCiphertext64> for 
             output,
             input.polynomial_size(),
         ))
+    }
+}
+
+/// # Description
+/// Convert a view of a GLWE ciphertext with 64 bits of precision from CPU to GPU 0.
+impl GlweCiphertextConversionEngine<GlweCiphertextView64<'_>, CudaGlweCiphertext64> for CudaEngine {
+    /// # Example
+    /// ```
+    /// use concrete_commons::dispersion::Variance;
+    /// use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// use std::task::Poll;
+    /// let glwe_dimension = GlweDimension(2);
+    /// let polynomial_size = PolynomialSize(3);
+    /// // Here a hard-set encoding is applied (shift by 20 bits)
+    /// let input = vec![3_u64 << 20; 3];
+    /// let noise = Variance(2_f64.powf(-50.));
+    ///
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let h_key: GlweSecretKey64 =
+    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let h_plaintext_vector: PlaintextVector64 = default_engine.create_plaintext_vector(&input)?;
+    /// let mut h_ciphertext: GlweCiphertext64 =
+    ///     default_engine.encrypt_glwe_ciphertext(&h_key, &h_plaintext_vector, noise)?;
+    /// let h_raw_ciphertext: Vec<u64> =
+    ///     default_engine.consume_retrieve_glwe_ciphertext(h_ciphertext)?;
+    /// let mut h_view_ciphertext: GlweCiphertextView64 =
+    ///     default_engine.create_glwe_ciphertext(h_raw_ciphertext.as_slice(), polynomial_size)?;
+    ///
+    /// let mut cuda_engine = CudaEngine::new(())?;
+    /// let d_ciphertext: CudaGlweCiphertext64 =
+    ///     cuda_engine.convert_glwe_ciphertext(&h_view_ciphertext)?;
+    /// let h_output_ciphertext: GlweCiphertext64 =
+    ///     cuda_engine.convert_glwe_ciphertext(&d_ciphertext)?;
+    ///
+    /// // Extracts the internal container
+    /// let h_raw_output_ciphertext: Vec<u64> =
+    ///     default_engine.consume_retrieve_glwe_ciphertext(h_output_ciphertext)?;
+    ///
+    /// assert_eq!(d_ciphertext.glwe_dimension(), glwe_dimension);
+    /// assert_eq!(d_ciphertext.polynomial_size(), polynomial_size);
+    /// assert_eq!(h_raw_ciphertext, h_raw_output_ciphertext);
+    ///
+    /// default_engine.destroy(h_key)?;
+    /// default_engine.destroy(h_plaintext_vector)?;
+    /// default_engine.destroy(h_view_ciphertext)?;
+    /// cuda_engine.destroy(d_ciphertext)?;
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn convert_glwe_ciphertext(
+        &mut self,
+        input: &GlweCiphertextView64,
+    ) -> Result<CudaGlweCiphertext64, GlweCiphertextConversionError<CudaError>> {
+        let stream = &self.streams[0];
+        let data_per_gpu = input.glwe_dimension().to_glwe_size().0 * input.polynomial_size().0;
+        let size = data_per_gpu as u64 * std::mem::size_of::<u64>() as u64;
+        stream.check_device_memory(size)?;
+        Ok(unsafe { self.convert_glwe_ciphertext_unchecked(input) })
+    }
+
+    unsafe fn convert_glwe_ciphertext_unchecked(
+        &mut self,
+        input: &GlweCiphertextView64,
+    ) -> CudaGlweCiphertext64 {
+        // Copy the entire input vector over all GPUs
+        let data_per_gpu = input.glwe_dimension().to_glwe_size().0 * input.polynomial_size().0;
+        let stream = &self.streams[0];
+        let d_ptr = stream.malloc::<u64>(data_per_gpu as u32);
+        let input_slice = input.0.as_tensor().as_slice();
+        stream.copy_to_gpu::<u64>(d_ptr, input_slice);
+        CudaGlweCiphertext64(CudaGlweCiphertext::<u64> {
+            d_ptr: CudaGlweCiphertextPointer(d_ptr),
+            glwe_dimension: input.glwe_dimension(),
+            polynomial_size: input.polynomial_size(),
+            _phantom: Default::default(),
+        })
     }
 }
