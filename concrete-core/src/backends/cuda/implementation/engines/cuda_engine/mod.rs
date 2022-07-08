@@ -91,6 +91,7 @@ macro_rules! check_poly_size {
 }
 
 mod glwe_ciphertext_conversion;
+mod glwe_ciphertext_discarding_conversion;
 mod glwe_ciphertext_vector_conversion;
 mod lwe_bootstrap_key_conversion;
 mod lwe_ciphertext_conversion;
