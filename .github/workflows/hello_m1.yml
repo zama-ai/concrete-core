@@ -1,0 +1,13 @@
+name: hello m1 workflow
+on:
+  pull_request:
+
+jobs:
+  hello_m1:
+    runs-on: ["self-hosted", "m1mac"]
+    steps:
+      - name: Shell in M1
+        run: |
+          uname -a
+          echo "Hello world!"
+
