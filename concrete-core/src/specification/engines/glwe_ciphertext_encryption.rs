@@ -41,8 +41,7 @@ impl<EngineError: std::error::Error> GlweCiphertextEncryptionError<EngineError> 
 /// ###### inputs:
 /// - $\mathsf{PT}\in\mathcal{R}\_q$: a plaintext
 /// - $\vec{S} \in\mathcal{R}\_q^k$: a secret key
-/// - $\mathcal{D\_{\sigma^2,\mu}}$: a normal distribution of variance $\sigma^2$ and a mean of
-///   $\mu$
+/// - $\mathcal{D\_{\sigma^2,\mu}}$: a normal distribution of variance $\sigma^2$ and mean $\mu$
 ///
 /// ###### outputs:
 /// - $\mathsf{CT} = \left( \vec{A} , B \right) \in \mathsf{GLWE}\_{\vec{S}}( \mathsf{PT} )\subseteq
