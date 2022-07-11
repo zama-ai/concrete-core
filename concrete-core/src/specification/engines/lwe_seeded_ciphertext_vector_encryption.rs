@@ -19,7 +19,29 @@ engine_error! {
 ///
 /// # Formal Definition
 ///
-/// cf [`here`](`crate::specification::engines::LweSeededCiphertextEncryptionEngine`)
+/// ## Seeded LWE vector encryption
+/// ###### inputs:
+/// - $\vec{\mathsf{pt}}\in\mathbb{Z}\_q^t$: a plaintext vector
+/// - $\vec{s}\in\mathbb{Z}\_q^n$: a secret key
+/// - $\mathsf{seed} \in\mathcal{S}$: a public seed
+/// - $G$: a CSPRNG working with seeds from $\mathcal{S}$
+/// - $\mathcal{D}\_{\sigma^2,\mu}$: a normal distribution of variance $\sigma^2$ and mean $\mu$
+///
+/// ###### outputs:
+/// - $\vec{\tilde{\mathsf{ct}}} = \left( \mathsf{seed} , \vec{b}\right) \in
+///   \mathsf{SeededLWEVector}^{n, t}\_{\vec{s}, G}(
+///  \vec{\mathsf{pt}})\subseteq \mathcal{S}\times \mathbb{Z}\_q^t$: a seeded LWE ciphertext vector
+///
+/// ###### algorithm:
+/// 1. let $\vec{b} \in \mathbb{Z}\_q^t$
+/// 2. Seed $G$ with the seed $\mathsf{seed}\in\mathcal{S}$
+/// 3. for each $(b\_i, \mathsf{pt\_i})$ in $(\vec{b}, \vec{\mathsf{pt}})$
+///     - uniformly sample $n$ integers in $\mathbb{Z}\_q$ from $G$ and store them in
+/// $\vec{a}\in\mathbb{Z}^n\_q$
+///     - sample an integer error term $e \hookleftarrow\mathcal{D}\_{\sigma^2,\mu}$
+///     - compute $b\_i = \left\langle \vec{a} , \vec{s} \right\rangle + \mathsf{pt\_i} + e
+/// \in\mathbb{Z}\_q$
+/// 4. output $\left( \mathsf{seed} , \vec{b}\right)$
 pub trait LweSeededCiphertextVectorEncryptionEngine<SecretKey, PlaintextVector, CiphertextVector>:
     AbstractEngine
 where
