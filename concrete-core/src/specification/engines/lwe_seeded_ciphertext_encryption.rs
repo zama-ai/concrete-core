@@ -19,7 +19,7 @@ engine_error! {
 ///
 /// # Formal Definition
 ///
-/// ## LWE Encryption
+/// ## Seeded LWE Encryption
 /// ###### inputs:
 /// - $\mathsf{pt}\in\mathbb{Z}\_q$: a plaintext
 /// - $\vec{s}\in\mathbb{Z}\_q^n$: a secret key
