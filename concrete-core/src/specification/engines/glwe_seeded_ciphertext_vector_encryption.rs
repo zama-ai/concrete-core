@@ -38,7 +38,30 @@ impl<EngineError: std::error::Error> GlweSeededCiphertextVectorEncryptionError<E
 ///
 /// # Formal Definition
 ///
-/// cf [`here`](`crate::specification::engines::GlweSeededCiphertextEncryptionEngine`)
+/// ## Seeded GLWE vector encryption
+/// ###### inputs:
+/// - $\vec{\mathsf{PT}}\in\mathcal{R}\_q^t$: a plaintext vector
+/// - $\vec{S} \in\mathcal{R}\_q^k$: a secret key
+/// - $\mathsf{seed} \in\mathcal{S}$: a public seed
+/// - $G$: a CSPRNG working with seeds from $\mathcal{S}$
+/// - $\mathcal{D}\_{\sigma^2,\mu}$: a normal distribution of variance $\sigma^2$ and a mean $\mu$
+///
+/// ###### outputs:
+/// - $\vec{\tilde{\mathsf{CT}}} = \left( \mathsf{seed} , \vec{\tilde{B}} \right) \in
+///   \mathsf{SeededGLWEVector}^{k,t}\_{\vec{S}, G}( \vec{\mathsf{PT}} )\subseteq \mathcal{S}\times
+///   \mathcal{R}\_q^t$: a seeded GLWE ciphertext vector
+///
+/// ###### algorithm:
+/// 1. let $\vec{B} \in \mathcal{R}\_q^t$
+/// 2. Seed $G$ with the seed $\mathsf{seed}\in\mathcal{S}$
+/// 3. for each $(B\_i, \mathsf{PT\_i})$ in $(\vec{B}, \vec{\mathsf{PT}})$
+///     - uniformly sample each coefficient of the polynomial vector $\vec{A}\in\mathcal{R}^k\_q$
+///       from $G$
+///     - sample each integer error coefficient of an error polynomial $E\in\mathcal{R}\_q$ from
+///       $\mathcal{D\_{\sigma^2,\mu}}$
+///     - compute $B\_i = \left\langle \vec{A} , \vec{S} \right\rangle + \mathsf{PT} + E
+/// \in\mathcal{R}\_q$
+/// 4. output $\left( \mathsf{seed} , \vec{B}\right)$
 pub trait GlweSeededCiphertextVectorEncryptionEngine<SecretKey, PlaintextVector, CiphertextVector>:
     AbstractEngine
 where
