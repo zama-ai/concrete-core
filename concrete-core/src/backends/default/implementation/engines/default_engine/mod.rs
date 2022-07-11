@@ -104,7 +104,6 @@ mod cleartext_vector_creation;
 mod cleartext_vector_discarding_retrieval;
 mod cleartext_vector_encoding;
 mod cleartext_vector_retrieval;
-mod destruction;
 mod encoder_creation;
 mod encoder_vector_creation;
 mod ggsw_ciphertext_scalar_discarding_encryption;
