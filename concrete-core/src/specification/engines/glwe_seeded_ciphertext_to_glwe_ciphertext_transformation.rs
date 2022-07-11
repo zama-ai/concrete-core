@@ -17,7 +17,19 @@ engine_error! {
 /// # Formal Definition
 ///
 /// ## GLWE seeded ciphertext to GLWE ciphertext transformation
-/// TODO
+/// ###### inputs:
+/// - $G$: a CSPRNG working with seeds from $\mathcal{S}$
+/// - $\tilde{\mathsf{CT}} = \left( \mathsf{seed} , B \right) \in \mathsf{SeededGLWE}^k\_{\vec{S},
+///   G}( \mathsf{PT} )\subseteq \mathcal{S}\times \mathcal{R}\_q^{k+1}$: a seeded GLWE ciphertext
+///
+/// ###### outputs:
+/// - $\mathsf{CT} = \left( \vec{A} , B \right) \in \mathsf{GLWE}\_{\vec{S}}( \mathsf{PT} )\subseteq
+///   \mathcal{R}\_q^{k+1}$: a GLWE ciphertext
+///
+/// ###### algorithm:
+/// 1. uniformly sample each coefficient of the polynomial vector $\vec{A}\in\mathcal{R}^k\_q$ from
+/// $G$ with the seed $\mathsf{seed}\in\mathcal{S}$
+/// 2. output $\left( \vec{A} , B \right)$
 pub trait GlweSeededCiphertextToGlweCiphertextTransformationEngine<
     InputCiphertext,
     OutputCiphertext,
