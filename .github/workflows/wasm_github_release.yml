@@ -1,0 +1,83 @@
+name: concrete-core-wasm GitHub release
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  OUTPUT_BUILD_DIR: "target/release/"
+
+jobs:
+  build-linux:
+    name: Build concrete-core-wasm on Linux
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build concrete-core-wasm with wasm-pack
+        run: |
+          
+          # Install wasm pack
+          cargo install wasm-pack 
+          
+          # Move to the concrete-core-wasm folder
+          cd concrete-core-wasm
+          
+          # Use cargo metadata to emit all metadata in json form, format version is recommended
+          # for compatibility. Then use the jq (r: raw string, c: condensed) filter which does:
+          # Iterate over json["packages"] as array, select the package named "concrete-core-wasm"
+          # and output its version
+          CONCRETE_CORE_WASM_VERSION="$(cargo metadata --format-version 1 |
+            jq -rc '.packages[] | select(.name=="concrete-core-wasm") | .version')"
+
+          echo "concrete-core-wasm version: ${CONCRETE_CORE_WASM_VERSION}"
+          
+          # Create a temporary directory and a raw artifacts dir in it
+          TMP_DIR="$(mktemp -d)"
+          RAW_ARTIFACTS_DIR="${TMP_DIR}/raw_artifacts"
+          mkdir -p "${RAW_ARTIFACTS_DIR}"
+
+          echo "TO_UPLOAD=${TMP_DIR}/*" >> "${GITHUB_ENV}"
+          
+          echo "Build artifacts:"
+          wasm-pack build --release --target=nodejs -d "${RAW_ARTIFACTS_DIR}/nodejs"
+          wasm-pack build --release --target=bundler -d "${RAW_ARTIFACTS_DIR}/bundler"
+          wasm-pack build --release --target=web -d "${RAW_ARTIFACTS_DIR}/web"
+          wasm-pack build --release --target=no-modules -d "${RAW_ARTIFACTS_DIR}/no-modules"
+
+
+          OUTPUT_TARBALL="${TMP_DIR}/concrete-core-wasm_${CONCRETE_CORE_WASM_VERSION}_wasm.tar.gz"
+          OUTPUT_ZIP="${TMP_DIR}/concrete-core-wasm_${CONCRETE_CORE_WASM_VERSION}_wasm.zip"
+
+          # Goto TMP_DIR first then RAW_ARTIFACTS_DIR
+          pushd "${TMP_DIR}"
+          pushd "${RAW_ARTIFACTS_DIR}"
+
+          # Create archives
+          echo "Creating tarball..."
+          tar -cvzf "${OUTPUT_TARBALL}" ./*
+
+          echo "Creating zip archive..."
+          zip -r "${OUTPUT_ZIP}" ./*
+
+          # Return to TMP_DIR
+          popd
+          # Create the sha256 for both archives
+          ls concrete-core-wasm* | sort | xargs shasum -a 256 -b > sha256_wasm.txt
+
+          # Remove the copies to make our lives easier when packaging artifacts
+          rm -rf "${RAW_ARTIFACTS_DIR}"
+
+          ls
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: wasm
+          path: ${{ env.TO_UPLOAD }}
