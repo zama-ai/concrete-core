@@ -83,7 +83,6 @@ impl AbstractEngine for FftwEngine {
     }
 }
 
-mod destruction;
 mod ggsw_ciphertext_conversion;
 mod ggsw_ciphertext_discarding_conversion;
 mod glwe_ciphertext_conversion;

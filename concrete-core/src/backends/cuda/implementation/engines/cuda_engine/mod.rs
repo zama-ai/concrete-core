@@ -90,7 +90,6 @@ macro_rules! check_poly_size {
     };
 }
 
-mod destruction;
 mod glwe_ciphertext_conversion;
 mod glwe_ciphertext_vector_conversion;
 mod lwe_bootstrap_key_conversion;
