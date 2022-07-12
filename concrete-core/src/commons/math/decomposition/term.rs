@@ -8,8 +8,8 @@ use std::fmt::Debug;
 
 /// A member of the decomposition.
 ///
-/// If we decompose a value $\theta$ as a sum $\sum_{i=1}^l\tilde{\theta}_i\frac{q}{B^i}$, this
-/// represents a $\tilde{\theta}_i$.
+/// If we decompose a value $\theta$ as a sum $\sum\_{i=1}^l\tilde{\theta}\_i\frac{q}{B^i}$, this
+/// represents a $\tilde{\theta}\_i$.
 #[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct DecompositionTerm<T>
@@ -40,8 +40,8 @@ where
 
     /// Turns this term into a summand.
     ///
-    /// If our member represents one $\tilde{\theta}_i$ of the decomposition, this method returns
-    /// $\tilde{\theta}_i\frac{q}{B^i}$.
+    /// If our member represents one $\tilde{\theta}\_i$ of the decomposition, this method returns
+    /// $\tilde{\theta}\_i\frac{q}{B^i}$.
     ///
     /// # Example
     ///
@@ -60,7 +60,7 @@ where
 
     /// Returns the value of the term.
     ///
-    /// If our member represents one $\tilde{\theta}_i$, this returns its actual value.
+    /// If our member represents one $\tilde{\theta}\_i$, this returns its actual value.
     ///
     /// # Example
     ///
@@ -78,7 +78,7 @@ where
 
     /// Returns the level of the term.
     ///
-    /// If our member represents one $\tilde{\theta}_i$, this returns the value of $i$.
+    /// If our member represents one $\tilde{\theta}\_i$, this returns the value of $i$.
     ///
     /// # Example
     ///
@@ -97,9 +97,9 @@ where
 
 /// A tensor whose elements are the terms of the decomposition of another tensor.
 ///
-/// If we decompose each elements of a set of values $(\theta^{(a)})_{a\in\mathbb{N}}$ as a set of
-/// sums $(\sum_{i=1}^l\tilde{\theta}^{(a)}_i\frac{q}{B^i})_{a\in\mathbb{N}}$, this represents a set
-/// of $(\tilde{\theta}^{(a)}_i)_{a\in\mathbb{N}}$.
+/// If we decompose each elements of a set of values $(\theta^{(a)})\_{a\in\mathbb{N}}$ as a set of
+/// sums $(\sum\_{i=1}^l\tilde{\theta}^{(a)}\_i\frac{q}{B^i})\_{a\in\mathbb{N}}$, this represents a
+/// set of $(\tilde{\theta}^{(a)}\_i)\_{a\in\mathbb{N}}$.
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct DecompositionTermTensor<'a, Scalar>
 where
@@ -129,9 +129,9 @@ where
 
     /// Fills the output tensor with the terms turned to summands.
     ///
-    /// If our term tensor represents a set of $(\tilde{\theta}^{(a)}_i)_{a\in\mathbb{N}}$ of the
+    /// If our term tensor represents a set of $(\tilde{\theta}^{(a)}\_i)\_{a\in\mathbb{N}}$ of the
     /// decomposition, this method fills the output tensor with a set of
-    /// $(\tilde{\theta}^{(a)}_i\frac{q}{B^i})_{a\in\mathbb{N}}$.
+    /// $(\tilde{\theta}^{(a)}\_i\frac{q}{B^i})\_{a\in\mathbb{N}}$.
     ///
     /// # Example
     ///

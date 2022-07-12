@@ -341,7 +341,7 @@ impl<Cont> LweList<Cont> {
     ///
     /// Said differently, this function fills `self` with:
     /// $$
-    /// bias\[i\] + \sum_j input_list\[i\]\[j\] * weights\[i\]\[j\]
+    /// bias\[i\] + \sum\_j input\_list\[i\]\[j\] * weights\[i\]\[j\]
     /// $$
     ///
     /// # Example

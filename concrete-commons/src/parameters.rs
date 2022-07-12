@@ -109,7 +109,7 @@ impl GlweDimension {
 
 /// The number of coefficients of a polynomial.
 ///
-/// Assuming a polynomial $a_0 + a_1X + /dots + a_{N-1}X^{N-1}$, this returns $N$.
+/// Assuming a polynomial $a\_0 + a\_1X + /dots + a\_{N-1}X^{N-1}$, this returns $N$.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 pub struct PolynomialSize(pub usize);
@@ -123,7 +123,7 @@ impl PolynomialSize {
 
 /// The logarithm of the number of coefficients of a polynomial.
 ///
-/// Assuming a polynomial $a_0 + a_1X + /dots + a_{N-1}X^{N-1}$, this returns $\log_2(N)$.
+/// Assuming a polynomial $a\_0 + a\_1X + /dots + a\_{N-1}X^{N-1}$, this returns $\log\_2(N)$.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 pub struct PolynomialSizeLog(pub usize);

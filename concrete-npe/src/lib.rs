@@ -13,9 +13,9 @@
 //! Chillotti, Damien Ligier, Jean-Baptiste Orfila and Samuel Tap*.
 //!
 //! # Quick Example
-//! The following piece of code shows how to obtain the variance $\sigma_{add}$ of the noise
+//! The following piece of code shows how to obtain the variance $\sigma\_{add}$ of the noise
 //! after a simulated homomorphic addition between two ciphertexts which have variances
-//! $\sigma_{ct_1}$ and $\sigma_{ct_2}$, respectively.
+//! $\sigma\_{ct\_1}$ and $\sigma\_{ct\_2}$, respectively.
 //!
 //! # Example:
 //! ```rust

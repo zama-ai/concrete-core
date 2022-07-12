@@ -144,7 +144,7 @@ where
     ///
     /// # Warning
     ///
-    /// The returned iterator yields the terms $\tilde{\theta}_i$ in order of decreasing $i$.
+    /// The returned iterator yields the terms $\tilde{\theta}\_i$ in order of decreasing $i$.
     ///
     /// # Example
     ///
@@ -176,8 +176,8 @@ where
 
     /// Recomposes a decomposed value by summing all the terms.
     ///
-    /// If the input iterator yields $\tilde{\theta}_i$, this returns
-    /// $\sum_{i=1}^l\tilde{\theta}_i\frac{q}{B^i}$.
+    /// If the input iterator yields $\tilde{\theta}\_i$, this returns
+    /// $\sum\_{i=1}^l\tilde{\theta}\_i\frac{q}{B^i}$.
     ///
     /// # Example
     ///
@@ -206,8 +206,8 @@ where
     ///
     /// # Warning
     ///
-    /// The returned iterator yields the terms $(\tilde{\theta}^{(a)}_i)_{a\in\mathbb{N}}$ in order
-    /// of decreasing $i$.
+    /// The returned iterator yields the terms $(\tilde{\theta}^{(a)}\_i)\_{a\in\mathbb{N}}$ in
+    /// order of decreasing $i$.
     ///
     /// # Example
     ///
