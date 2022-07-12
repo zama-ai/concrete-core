@@ -20,7 +20,26 @@ engine_error! {
 /// # Formal Definition
 ///
 /// ## GLWE seeded ciphertext vector to GLWE ciphertext vector transformation
-/// TODO
+/// ###### inputs:
+/// - $G$: a CSPRNG working with seeds from $\mathcal{S}$
+/// - $\vec{\tilde{\mathsf{CT}}} = \left( \mathsf{seed} , \vec{\tilde{B}} \right) \in
+///   \mathsf{SeededGLWEVector}^{k,t}\_{\vec{S}, G}( \vec{\mathsf{PT}} )\subseteq \mathcal{S}\times
+///   \mathcal{R}\_q^t$: a seeded GLWE ciphertext vector
+///
+/// ###### outputs:
+/// - $\vec{\mathsf{CT}} = \vec{\left( \vec{A} , B \right)} \in \mathsf{GLWEVector}^{k,t}\_{\vec{S}}
+///   (\vec{\mathsf{PT}} )\subseteq {\mathcal{R}\_q^{k+1}}^t$: a GLWE ciphertext vector
+///
+/// ###### algorithm:
+/// 1. let $\vec{\mathsf{CT}} = \vec{\left( \vec{A} , B \right)} \in
+/// \mathsf{GLWEVector}^{k,t}\_{\vec{S}} (\vec{\mathsf{PT}} )\subseteq {\mathcal{R}\_q^{k+1}}^t$
+/// 2. Seed $G$ with the seed $\mathsf{seed}\in\mathcal{S}$
+/// 3. for each $(\left( \vec{A\_i}, B\_i\right) , \tilde{B\_i})$ in $(\vec{\left( \vec{A} ,
+/// B\right)}, \vec{\tilde{B}})$
+///     - uniformly sample each coefficient of the polynomial vector $\vec{A\_i}\in\mathcal{R}^k\_q$
+///       from $G$
+///     - set $B\_i = \tilde{B\_i}$
+/// 4. output $\vec{\left( \vec{A} , B\right)}$
 pub trait GlweSeededCiphertextVectorToGlweCiphertextVectorTransformationEngine<
     InputCiphertextVector,
     OutputCiphertextVector,
