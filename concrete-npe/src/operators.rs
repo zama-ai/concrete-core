@@ -83,8 +83,8 @@ where
 }
 
 /// Computes the dispersion of a multisum between
-/// uncorrelated ciphertexts and scalar weights $w_i$ i.e.,  $\sigma_{out}^2 = \sum_i w_i^2 *
-/// \sigma_i^2$.
+/// uncorrelated ciphertexts and scalar weights $w\_i$ i.e.,  $\sigma\_{out}^2 = \sum\_i w\_i^2 *
+/// \sigma\_i^2$.
 /// # Example
 /// ```rust
 /// use concrete_commons::dispersion::Variance;

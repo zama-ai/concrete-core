@@ -23,12 +23,12 @@ use serde::{Deserialize, Serialize};
 /// A keyswitching key allows to change the key of a cipher text. Lets assume the following
 /// elements:
 ///
-/// + The input key $s_{in}$ is composed of $n$ bits
-/// + The output key $s_{out}$ is composed of $m$ bits
+/// + The input key $s\_{in}$ is composed of $n$ bits
+/// + The output key $s\_{out}$ is composed of $m$ bits
 ///
-/// The keyswitch key will be composed of $m$ encryptions of each bits of the $s_{out}$ key, under
-/// the key $s_{in}$; encryptions which will be stored as their decomposition over a given basis
-/// $B_{ks}\in\mathbb{N}$, up to a level $l_{ks}\in\mathbb{N}$.
+/// The keyswitch key will be composed of $m$ encryptions of each bits of the $s\_{out}$ key, under
+/// the key $s\_{in}$; encryptions which will be stored as their decomposition over a given basis
+/// $B\_{ks}\in\mathbb{N}$, up to a level $l\_{ks}\in\mathbb{N}$.
 #[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LweKeyswitchKey<Cont> {

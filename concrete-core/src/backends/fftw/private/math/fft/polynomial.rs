@@ -134,7 +134,7 @@ impl<Cont> FourierPolynomial<Cont> {
     /// Adds the result of the element-wise product of two polynomials to $(self.len()/2)+2$
     /// elements of the current polynomial:
     /// $$
-    /// self\[i\] = self\[i\] + poly_1\[i\] * poly_2\[i\]
+    /// self\[i\] = self\[i\] + poly\_1\[i\] * poly\_2\[i\]
     /// $$
     ///
     /// # Example
@@ -176,7 +176,7 @@ impl<Cont> FourierPolynomial<Cont> {
     /// of the element-wise product of `poly_3` with `poly_4`, to $(self.len()/2)+2$ elements of
     /// the current polynomial:
     /// $$
-    /// self\[i\] = self\[i\] + poly_1\[i\] * poly_2\[i\] + poly_3\[i\] * poly_4\[i\]
+    /// self\[i\] = self\[i\] + poly\_1\[i\] * poly\_2\[i\] + poly\_3\[i\] * poly\_4\[i\]
     /// $$
     ///
     /// # Example
@@ -229,8 +229,9 @@ impl<Cont> FourierPolynomial<Cont> {
     /// Updates two polynomials with the following operation:
     ///
     /// $$
-    /// result_1\[i\]=result_1\[i\]+poly_{a_1}\[i\]*poly_b\[i\]+poly_{c_1}\[i\]*poly_d\[i\]\\\\
-    /// result_2\[i\]=result_2\[i\]+poly_{a_2}\[i\]*poly_b\[i\]+poly_{c_2}\[i\]*poly_d\[i\]
+    /// result\_1\[i\]
+    /// =result\_1\[i\]+poly\_{a\_1}\[i\]*poly\_b\[i\]+poly\_{c\_1}\[i\]*poly\_d\[i\]\\\\
+    /// result\_2\[i\]=result\_2\[i\]+poly\_{a\_2}\[i\]*poly\_b\[i\]+poly\_{c\_2}\[i\]*poly\_d\[i\]
     /// $$
     ///
     /// # Example

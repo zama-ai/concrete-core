@@ -316,7 +316,7 @@ impl<Cont> LweCiphertext<Cont> {
     ///
     /// Said differently, this function fills `self` with:
     /// $$
-    /// bias + \sum_i input_list\[i\] * weights\[i\]
+    /// bias + \sum\_i input\_list\[i\] * weights\[i\]
     /// $$
     ///
     /// # Example

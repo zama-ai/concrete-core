@@ -14,7 +14,7 @@ const KARATUSBA_STOP: usize = 32;
 
 /// A dense polynomial.
 ///
-/// This type represent a dense polynomial in $\mathbb{Z}_{2^q}\[X\] / <X^N + 1>$, composed of $N$
+/// This type represent a dense polynomial in $\mathbb{Z}\_{2^q}\[X\] / <X^N + 1>$, composed of $N$
 /// integer coefficients encoded on $q$ bits.
 ///
 ///  # Example:
@@ -400,10 +400,10 @@ impl<Cont> Polynomial<Cont> {
     /// Adds the sum of the element-wise product between two lists of integer polynomial to the
     /// current polynomial.
     ///
-    /// I.e., if the current polynomial is $C(X)$, for a collection of polynomials $(P_i(X)))_i$
-    /// and another collection of polynomials $(B_i(X))_i$ we perform the operation:
+    /// I.e., if the current polynomial is $C(X)$, for a collection of polynomials $(P\_i(X)))\_i$
+    /// and another collection of polynomials $(B\_i(X))\_i$ we perform the operation:
     /// $$
-    /// C(X) := C(X) + \sum_i P_i(X) \times B_i(X) mod (X^N + 1)
+    /// C(X) := C(X) + \sum\_i P\_i(X) \times B\_i(X) mod (X^N + 1)
     /// $$
     ///
     /// # Example
@@ -448,10 +448,10 @@ impl<Cont> Polynomial<Cont> {
     /// Subtracts the sum of the element-wise product between two lists of integer polynomials,
     /// to the current polynomial.
     ///
-    /// I.e., if the current polynomial is $C(X)$, for two lists of polynomials $(P_i(X)))_i$ and
-    /// $(B_i(X))_i$ we perform the operation:
+    /// I.e., if the current polynomial is $C(X)$, for two lists of polynomials $(P\_i(X)))\_i$ and
+    /// $(B\_i(X))\_i$ we perform the operation:
     /// $$
-    /// C(X) := C(X) + \sum_i P_i(X) \times B_i(X) mod (X^N + 1)
+    /// C(X) := C(X) + \sum\_i P\_i(X) \times B\_i(X) mod (X^N + 1)
     /// $$
     ///
     /// # Example

@@ -148,7 +148,7 @@ pub trait KeyDispersion: KeyKind {
 
     /// Returns the variance of the
     /// coefficients of a polynomial key resulting from the multiplication of two polynomial keys
-    /// of the same key kind ($S_i \cdot S_j$ with $i,j$ different).
+    /// of the same key kind ($S\_i \cdot S\_j$ with $i,j$ different).
     /// # Example
     ///```rust
     /// use concrete_commons::dispersion::*;
@@ -172,7 +172,7 @@ pub trait KeyDispersion: KeyKind {
 
     /// Returns the mean expectation of
     /// the coefficients of a polynomial key resulting from the multiplication of two polynomial
-    /// keys of the same key kind ($S_i \cdot S_j$ with $i,j$ different).
+    /// keys of the same key kind ($S\_i \cdot S\_j$ with $i,j$ different).
     /// # Example
     ///```rust
     /// use concrete_commons::dispersion::*;
