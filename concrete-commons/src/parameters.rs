@@ -182,3 +182,9 @@ pub struct LutCountLog(pub usize);
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 pub struct ModulusSwitchOffset(pub usize);
+
+/// The base 2 logarithm of the scaling factor (generally written $\Delta$) used to store the
+/// message in the MSB of ciphertexts.
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+pub struct DeltaLog(pub usize);
