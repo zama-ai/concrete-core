@@ -83,10 +83,11 @@ We're now ready to execute the bootstrap over the input, relying on FFTW:
     fftw_engine.discard_bootstrap_lwe_ciphertext(&mut output_ciphertext, &input, &acc,
                                                  &fourier_bsk).unwrap();
 ```
-In order to decrypt the output, we have to create the output LWE secret key by transmuting the GLWE secret key that was used to create the bootstrap key.
+In order to decrypt the output, we have to create the output LWE secret key by transforming the 
+GLWE secret key that was used to create the bootstrap key.
 Then we can decrypt the result of the bootstrap:
 ```rust
-    let lwe_sk_output: LweSecretKey64 = engine.transmute_glwe_secret_key_to_lwe_secret_key
+    let lwe_sk_output: LweSecretKey64 = engine.transform_glwe_secret_key_to_lwe_secret_key
     (glwe_sk).unwrap();
     let output = engine.decrypt_lwe_ciphertext(&lwe_sk_output, &output_ciphertext).unwrap();
 ```
