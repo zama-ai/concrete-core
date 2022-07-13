@@ -213,7 +213,7 @@ impl<Cont> LweList<Cont> {
     /// ```
     pub fn ciphertext_iter(
         &self,
-    ) -> impl Iterator<Item = LweCiphertext<&[<Self as AsRefTensor>::Element]>>
+    ) -> impl DoubleEndedIterator<Item = LweCiphertext<&[<Self as AsRefTensor>::Element]>>
     where
         Self: AsRefTensor,
     {
@@ -244,7 +244,7 @@ impl<Cont> LweList<Cont> {
     /// ```
     pub fn ciphertext_iter_mut(
         &mut self,
-    ) -> impl Iterator<Item = LweCiphertext<&mut [<Self as AsMutTensor>::Element]>>
+    ) -> impl DoubleEndedIterator<Item = LweCiphertext<&mut [<Self as AsMutTensor>::Element]>>
     where
         Self: AsMutTensor,
     {

@@ -5,3 +5,4 @@
 pub mod bootstrap;
 pub mod ggsw;
 pub mod glwe;
+pub mod wop_pbs;
