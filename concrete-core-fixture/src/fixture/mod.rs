@@ -496,3 +496,6 @@ pub use lwe_ciphertext_vector_glwe_ciphertext_discarding_packing_keyswitch::*;
 
 mod glwe_ciphertext_conversion;
 pub use glwe_ciphertext_conversion::*;
+
+mod glwe_relinearization_key_creation;
+pub use glwe_relinearization_key_creation::*;
