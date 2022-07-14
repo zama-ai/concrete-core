@@ -6,6 +6,7 @@ mod container;
 mod ggsw_ciphertext;
 mod glwe_ciphertext;
 mod glwe_ciphertext_vector;
+mod glwe_relinearization_key;
 mod glwe_secret_key;
 mod glwe_seeded_ciphertext;
 mod glwe_seeded_ciphertext_vector;
@@ -22,12 +23,14 @@ mod packing_keyswitch_key;
 mod plaintext;
 mod plaintext_vector;
 
+
 pub use cleartext::*;
 pub use cleartext_vector::*;
 pub use container::*;
 pub use ggsw_ciphertext::*;
 pub use glwe_ciphertext::*;
 pub use glwe_ciphertext_vector::*;
+pub use glwe_relinearization_key::*;
 pub use glwe_secret_key::*;
 pub use glwe_seeded_ciphertext::*;
 pub use glwe_seeded_ciphertext_vector::*;
