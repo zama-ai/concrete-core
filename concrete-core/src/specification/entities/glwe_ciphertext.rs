@@ -16,7 +16,7 @@ use concrete_commons::parameters::{GlweDimension, PolynomialSize};
 ///
 /// ## GLWE Ciphertext
 ///
-/// A GLWE ciphretext is an encryption of a polynomial plaintext.
+/// A GLWE ciphertext is an encryption of a polynomial plaintext.
 /// It is secure under the hardness assumption called General Learning With Errors (GLWE).
 /// It is a generalization of both
 /// [`LWE ciphertexts`](`crate::specification::entities::LweCiphertextEntity`) and RLWE ciphertexts.
