@@ -17,7 +17,7 @@ mod backend_default {
     use crate::generation::prototypes::{ProtoBinaryLweSecretKey32, ProtoBinaryLweSecretKey64};
     use crate::generation::synthesizing::SynthesizesLweSecretKey;
     use crate::generation::{Maker, Precision32, Precision64};
-    use concrete_core::prelude::{DestructionEngine, LweSecretKey32, LweSecretKey64};
+    use concrete_core::prelude::{LweSecretKey32, LweSecretKey64};
 
     impl SynthesizesLweSecretKey<Precision32, LweSecretKey32> for Maker {
         fn synthesize_lwe_secret_key(
@@ -34,9 +34,7 @@ mod backend_default {
             ProtoBinaryLweSecretKey32(entity)
         }
 
-        fn destroy_lwe_secret_key(&mut self, entity: LweSecretKey32) {
-            self.default_engine.destroy(entity).unwrap();
-        }
+        fn destroy_lwe_secret_key(&mut self, _entity: LweSecretKey32) {}
     }
 
     impl SynthesizesLweSecretKey<Precision64, LweSecretKey64> for Maker {
@@ -54,8 +52,6 @@ mod backend_default {
             ProtoBinaryLweSecretKey64(entity)
         }
 
-        fn destroy_lwe_secret_key(&mut self, entity: LweSecretKey64) {
-            self.default_engine.destroy(entity).unwrap();
-        }
+        fn destroy_lwe_secret_key(&mut self, _entity: LweSecretKey64) {}
     }
 }

@@ -28,9 +28,7 @@ mod backend_default {
     };
     use crate::generation::synthesizing::SynthesizesLweSeededKeyswitchKey;
     use crate::generation::{Maker, Precision32, Precision64};
-    use concrete_core::prelude::{
-        DestructionEngine, LweSeededKeyswitchKey32, LweSeededKeyswitchKey64,
-    };
+    use concrete_core::prelude::{LweSeededKeyswitchKey32, LweSeededKeyswitchKey64};
 
     impl SynthesizesLweSeededKeyswitchKey<Precision32, LweSeededKeyswitchKey32> for Maker {
         fn synthesize_lwe_seeded_keyswitch_key(
@@ -47,9 +45,7 @@ mod backend_default {
             ProtoBinaryBinaryLweSeededKeyswitchKey32(entity)
         }
 
-        fn destroy_lwe_seeded_keyswitch_key(&mut self, entity: LweSeededKeyswitchKey32) {
-            self.default_engine.destroy(entity).unwrap();
-        }
+        fn destroy_lwe_seeded_keyswitch_key(&mut self, _entity: LweSeededKeyswitchKey32) {}
     }
 
     impl SynthesizesLweSeededKeyswitchKey<Precision64, LweSeededKeyswitchKey64> for Maker {
@@ -67,8 +63,6 @@ mod backend_default {
             ProtoBinaryBinaryLweSeededKeyswitchKey64(entity)
         }
 
-        fn destroy_lwe_seeded_keyswitch_key(&mut self, entity: LweSeededKeyswitchKey64) {
-            self.default_engine.destroy(entity).unwrap();
-        }
+        fn destroy_lwe_seeded_keyswitch_key(&mut self, _entity: LweSeededKeyswitchKey64) {}
     }
 }

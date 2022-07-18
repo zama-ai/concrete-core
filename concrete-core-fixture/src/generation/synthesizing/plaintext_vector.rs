@@ -23,7 +23,7 @@ mod backend_default {
     use crate::generation::prototypes::{ProtoPlaintextVector32, ProtoPlaintextVector64};
     use crate::generation::synthesizing::SynthesizesPlaintextVector;
     use crate::generation::{Maker, Precision32, Precision64};
-    use concrete_core::prelude::{DestructionEngine, PlaintextVector32, PlaintextVector64};
+    use concrete_core::prelude::{PlaintextVector32, PlaintextVector64};
 
     impl SynthesizesPlaintextVector<Precision32, PlaintextVector32> for Maker {
         fn synthesize_plaintext_vector(
@@ -40,9 +40,7 @@ mod backend_default {
             ProtoPlaintextVector32(entity)
         }
 
-        fn destroy_plaintext_vector(&mut self, entity: PlaintextVector32) {
-            self.default_engine.destroy(entity).unwrap();
-        }
+        fn destroy_plaintext_vector(&mut self, _entity: PlaintextVector32) {}
     }
 
     impl SynthesizesPlaintextVector<Precision64, PlaintextVector64> for Maker {
@@ -60,8 +58,6 @@ mod backend_default {
             ProtoPlaintextVector64(entity)
         }
 
-        fn destroy_plaintext_vector(&mut self, entity: PlaintextVector64) {
-            self.default_engine.destroy(entity).unwrap();
-        }
+        fn destroy_plaintext_vector(&mut self, _entity: PlaintextVector64) {}
     }
 }

@@ -29,7 +29,7 @@ mod backend_default {
     };
     use crate::generation::synthesizing::SynthesizesLweBootstrapKey;
     use crate::generation::{Maker, Precision32, Precision64};
-    use concrete_core::prelude::{DestructionEngine, LweBootstrapKey32, LweBootstrapKey64};
+    use concrete_core::prelude::{LweBootstrapKey32, LweBootstrapKey64};
 
     impl SynthesizesLweBootstrapKey<Precision32, LweBootstrapKey32> for Maker {
         fn synthesize_lwe_bootstrap_key(
@@ -46,9 +46,7 @@ mod backend_default {
             ProtoBinaryBinaryLweBootstrapKey32(entity)
         }
 
-        fn destroy_lwe_bootstrap_key(&mut self, entity: LweBootstrapKey32) {
-            self.default_engine.destroy(entity).unwrap();
-        }
+        fn destroy_lwe_bootstrap_key(&mut self, _entity: LweBootstrapKey32) {}
     }
 
     impl SynthesizesLweBootstrapKey<Precision64, LweBootstrapKey64> for Maker {
@@ -66,9 +64,7 @@ mod backend_default {
             ProtoBinaryBinaryLweBootstrapKey64(entity)
         }
 
-        fn destroy_lwe_bootstrap_key(&mut self, entity: LweBootstrapKey64) {
-            self.default_engine.destroy(entity).unwrap();
-        }
+        fn destroy_lwe_bootstrap_key(&mut self, _entity: LweBootstrapKey64) {}
     }
 }
 
@@ -77,8 +73,7 @@ mod backend_fftw {
     use crate::generation::synthesizing::SynthesizesLweBootstrapKey;
     use crate::generation::{Maker, Precision32, Precision64};
     use concrete_core::prelude::{
-        DestructionEngine, FftwFourierLweBootstrapKey32, FftwFourierLweBootstrapKey64,
-        LweBootstrapKeyConversionEngine,
+        FftwFourierLweBootstrapKey32, FftwFourierLweBootstrapKey64, LweBootstrapKeyConversionEngine,
     };
 
     impl SynthesizesLweBootstrapKey<Precision32, FftwFourierLweBootstrapKey32> for Maker {
@@ -98,9 +93,7 @@ mod backend_fftw {
             todo!()
         }
 
-        fn destroy_lwe_bootstrap_key(&mut self, entity: FftwFourierLweBootstrapKey32) {
-            self.fftw_engine.destroy(entity).unwrap();
-        }
+        fn destroy_lwe_bootstrap_key(&mut self, _entity: FftwFourierLweBootstrapKey32) {}
     }
 
     impl SynthesizesLweBootstrapKey<Precision64, FftwFourierLweBootstrapKey64> for Maker {
@@ -120,9 +113,7 @@ mod backend_fftw {
             todo!()
         }
 
-        fn destroy_lwe_bootstrap_key(&mut self, entity: FftwFourierLweBootstrapKey64) {
-            self.fftw_engine.destroy(entity).unwrap();
-        }
+        fn destroy_lwe_bootstrap_key(&mut self, _entity: FftwFourierLweBootstrapKey64) {}
     }
 }
 
@@ -131,8 +122,7 @@ mod backend_cuda {
     use crate::generation::synthesizing::SynthesizesLweBootstrapKey;
     use crate::generation::{Maker, Precision32, Precision64};
     use concrete_core::prelude::{
-        CudaFourierLweBootstrapKey32, CudaFourierLweBootstrapKey64, DestructionEngine,
-        LweBootstrapKeyConversionEngine,
+        CudaFourierLweBootstrapKey32, CudaFourierLweBootstrapKey64, LweBootstrapKeyConversionEngine,
     };
 
     impl SynthesizesLweBootstrapKey<Precision32, CudaFourierLweBootstrapKey32> for Maker {
@@ -155,9 +145,7 @@ mod backend_cuda {
             );
         }
 
-        fn destroy_lwe_bootstrap_key(&mut self, entity: CudaFourierLweBootstrapKey32) {
-            self.cuda_engine.destroy(entity).unwrap();
-        }
+        fn destroy_lwe_bootstrap_key(&mut self, _entity: CudaFourierLweBootstrapKey32) {}
     }
 
     impl SynthesizesLweBootstrapKey<Precision64, CudaFourierLweBootstrapKey64> for Maker {
@@ -180,8 +168,6 @@ mod backend_cuda {
             );
         }
 
-        fn destroy_lwe_bootstrap_key(&mut self, entity: CudaFourierLweBootstrapKey64) {
-            self.cuda_engine.destroy(entity).unwrap();
-        }
+        fn destroy_lwe_bootstrap_key(&mut self, _entity: CudaFourierLweBootstrapKey64) {}
     }
 }

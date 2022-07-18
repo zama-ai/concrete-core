@@ -29,9 +29,7 @@ mod backend_default {
     };
     use crate::generation::synthesizing::SynthesizesLweSeededBootstrapKey;
     use crate::generation::{Maker, Precision32, Precision64};
-    use concrete_core::prelude::{
-        DestructionEngine, LweSeededBootstrapKey32, LweSeededBootstrapKey64,
-    };
+    use concrete_core::prelude::{LweSeededBootstrapKey32, LweSeededBootstrapKey64};
 
     impl SynthesizesLweSeededBootstrapKey<Precision32, LweSeededBootstrapKey32> for Maker {
         fn synthesize_lwe_seeded_bootstrap_key(
@@ -48,9 +46,7 @@ mod backend_default {
             ProtoBinaryBinaryLweSeededBootstrapKey32(entity)
         }
 
-        fn destroy_lwe_seeded_bootstrap_key(&mut self, entity: LweSeededBootstrapKey32) {
-            self.default_engine.destroy(entity).unwrap();
-        }
+        fn destroy_lwe_seeded_bootstrap_key(&mut self, _entity: LweSeededBootstrapKey32) {}
     }
 
     impl SynthesizesLweSeededBootstrapKey<Precision64, LweSeededBootstrapKey64> for Maker {
@@ -68,8 +64,6 @@ mod backend_default {
             ProtoBinaryBinaryLweSeededBootstrapKey64(entity)
         }
 
-        fn destroy_lwe_seeded_bootstrap_key(&mut self, entity: LweSeededBootstrapKey64) {
-            self.default_engine.destroy(entity).unwrap();
-        }
+        fn destroy_lwe_seeded_bootstrap_key(&mut self, _entity: LweSeededBootstrapKey64) {}
     }
 }

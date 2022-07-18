@@ -28,7 +28,7 @@ mod backend_default {
     };
     use crate::generation::synthesizing::SynthesizesPackingKeyswitchKey;
     use crate::generation::{Maker, Precision32, Precision64};
-    use concrete_core::prelude::{DestructionEngine, PackingKeyswitchKey32, PackingKeyswitchKey64};
+    use concrete_core::prelude::{PackingKeyswitchKey32, PackingKeyswitchKey64};
 
     impl SynthesizesPackingKeyswitchKey<Precision32, PackingKeyswitchKey32> for Maker {
         fn synthesize_packing_keyswitch_key(
@@ -45,9 +45,7 @@ mod backend_default {
             ProtoBinaryBinaryPackingKeyswitchKey32(entity)
         }
 
-        fn destroy_packing_keyswitch_key(&mut self, entity: PackingKeyswitchKey32) {
-            self.default_engine.destroy(entity).unwrap();
-        }
+        fn destroy_packing_keyswitch_key(&mut self, _entity: PackingKeyswitchKey32) {}
     }
 
     impl SynthesizesPackingKeyswitchKey<Precision64, PackingKeyswitchKey64> for Maker {
@@ -65,8 +63,6 @@ mod backend_default {
             ProtoBinaryBinaryPackingKeyswitchKey64(entity)
         }
 
-        fn destroy_packing_keyswitch_key(&mut self, entity: PackingKeyswitchKey64) {
-            self.default_engine.destroy(entity).unwrap();
-        }
+        fn destroy_packing_keyswitch_key(&mut self, _entity: PackingKeyswitchKey64) {}
     }
 }

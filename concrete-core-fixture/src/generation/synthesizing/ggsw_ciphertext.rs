@@ -21,7 +21,7 @@ mod backend_default {
     use crate::generation::prototypes::{ProtoBinaryGgswCiphertext32, ProtoBinaryGgswCiphertext64};
     use crate::generation::synthesizing::SynthesizesGgswCiphertext;
     use crate::generation::{Maker, Precision32, Precision64};
-    use concrete_core::prelude::{DestructionEngine, GgswCiphertext32, GgswCiphertext64};
+    use concrete_core::prelude::{GgswCiphertext32, GgswCiphertext64};
 
     impl SynthesizesGgswCiphertext<Precision32, GgswCiphertext32> for Maker {
         fn synthesize_ggsw_ciphertext(
@@ -38,9 +38,7 @@ mod backend_default {
             ProtoBinaryGgswCiphertext32(entity)
         }
 
-        fn destroy_ggsw_ciphertext(&mut self, entity: GgswCiphertext32) {
-            self.default_engine.destroy(entity).unwrap();
-        }
+        fn destroy_ggsw_ciphertext(&mut self, _entity: GgswCiphertext32) {}
     }
 
     impl SynthesizesGgswCiphertext<Precision64, GgswCiphertext64> for Maker {
@@ -58,9 +56,7 @@ mod backend_default {
             ProtoBinaryGgswCiphertext64(entity)
         }
 
-        fn destroy_ggsw_ciphertext(&mut self, entity: GgswCiphertext64) {
-            self.default_engine.destroy(entity).unwrap();
-        }
+        fn destroy_ggsw_ciphertext(&mut self, _entity: GgswCiphertext64) {}
     }
 }
 
@@ -69,8 +65,7 @@ mod backend_fftw {
     use crate::generation::synthesizing::SynthesizesGgswCiphertext;
     use crate::generation::{Maker, Precision32, Precision64};
     use concrete_core::prelude::{
-        DestructionEngine, FftwFourierGgswCiphertext32, FftwFourierGgswCiphertext64,
-        GgswCiphertextConversionEngine,
+        FftwFourierGgswCiphertext32, FftwFourierGgswCiphertext64, GgswCiphertextConversionEngine,
     };
 
     impl SynthesizesGgswCiphertext<Precision32, FftwFourierGgswCiphertext32> for Maker {
@@ -91,9 +86,7 @@ mod backend_fftw {
             unimplemented!("The backward fourier conversion was not yet implemented");
         }
 
-        fn destroy_ggsw_ciphertext(&mut self, entity: FftwFourierGgswCiphertext32) {
-            self.fftw_engine.destroy(entity).unwrap();
-        }
+        fn destroy_ggsw_ciphertext(&mut self, _entity: FftwFourierGgswCiphertext32) {}
     }
 
     impl SynthesizesGgswCiphertext<Precision64, FftwFourierGgswCiphertext64> for Maker {
@@ -114,8 +107,6 @@ mod backend_fftw {
             unimplemented!("The backward fourier conversion was not yet implemented");
         }
 
-        fn destroy_ggsw_ciphertext(&mut self, entity: FftwFourierGgswCiphertext64) {
-            self.fftw_engine.destroy(entity).unwrap();
-        }
+        fn destroy_ggsw_ciphertext(&mut self, _entity: FftwFourierGgswCiphertext64) {}
     }
 }

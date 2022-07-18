@@ -21,7 +21,7 @@ mod backend_default {
     use crate::generation::prototypes::{ProtoBinaryGlweCiphertext32, ProtoBinaryGlweCiphertext64};
     use crate::generation::synthesizing::SynthesizesGlweCiphertext;
     use crate::generation::{Maker, Precision32, Precision64};
-    use concrete_core::prelude::{DestructionEngine, GlweCiphertext32, GlweCiphertext64};
+    use concrete_core::prelude::{GlweCiphertext32, GlweCiphertext64};
 
     impl SynthesizesGlweCiphertext<Precision32, GlweCiphertext32> for Maker {
         fn synthesize_glwe_ciphertext(
@@ -38,9 +38,7 @@ mod backend_default {
             ProtoBinaryGlweCiphertext32(entity)
         }
 
-        fn destroy_glwe_ciphertext(&mut self, entity: GlweCiphertext32) {
-            self.default_engine.destroy(entity).unwrap();
-        }
+        fn destroy_glwe_ciphertext(&mut self, _entity: GlweCiphertext32) {}
     }
 
     impl SynthesizesGlweCiphertext<Precision64, GlweCiphertext64> for Maker {
@@ -58,9 +56,7 @@ mod backend_default {
             ProtoBinaryGlweCiphertext64(entity)
         }
 
-        fn destroy_glwe_ciphertext(&mut self, entity: GlweCiphertext64) {
-            self.default_engine.destroy(entity).unwrap();
-        }
+        fn destroy_glwe_ciphertext(&mut self, _entity: GlweCiphertext64) {}
     }
 
     use concrete_core::prelude::{
@@ -261,8 +257,7 @@ mod backend_fftw {
     use crate::generation::synthesizing::SynthesizesGlweCiphertext;
     use crate::generation::{Maker, Precision32, Precision64};
     use concrete_core::prelude::{
-        DestructionEngine, FftwFourierGlweCiphertext32, FftwFourierGlweCiphertext64,
-        GlweCiphertextConversionEngine,
+        FftwFourierGlweCiphertext32, FftwFourierGlweCiphertext64, GlweCiphertextConversionEngine,
     };
 
     impl SynthesizesGlweCiphertext<Precision32, FftwFourierGlweCiphertext32> for Maker {
@@ -280,13 +275,10 @@ mod backend_fftw {
             entity: FftwFourierGlweCiphertext32,
         ) -> Self::GlweCiphertextProto {
             let proto = self.fftw_engine.convert_glwe_ciphertext(&entity).unwrap();
-            self.fftw_engine.destroy(entity).unwrap();
             ProtoBinaryGlweCiphertext32(proto)
         }
 
-        fn destroy_glwe_ciphertext(&mut self, entity: FftwFourierGlweCiphertext32) {
-            self.fftw_engine.destroy(entity).unwrap();
-        }
+        fn destroy_glwe_ciphertext(&mut self, _entity: FftwFourierGlweCiphertext32) {}
     }
 
     impl SynthesizesGlweCiphertext<Precision64, FftwFourierGlweCiphertext64> for Maker {
@@ -304,13 +296,10 @@ mod backend_fftw {
             entity: FftwFourierGlweCiphertext64,
         ) -> Self::GlweCiphertextProto {
             let proto = self.fftw_engine.convert_glwe_ciphertext(&entity).unwrap();
-            self.fftw_engine.destroy(entity).unwrap();
             ProtoBinaryGlweCiphertext64(proto)
         }
 
-        fn destroy_glwe_ciphertext(&mut self, entity: FftwFourierGlweCiphertext64) {
-            self.fftw_engine.destroy(entity).unwrap();
-        }
+        fn destroy_glwe_ciphertext(&mut self, _entity: FftwFourierGlweCiphertext64) {}
     }
 }
 
@@ -320,8 +309,7 @@ mod backend_cuda {
     use crate::generation::synthesizing::SynthesizesGlweCiphertext;
     use crate::generation::{Maker, Precision32, Precision64};
     use concrete_core::prelude::{
-        CudaGlweCiphertext32, CudaGlweCiphertext64, DestructionEngine,
-        GlweCiphertextConversionEngine,
+        CudaGlweCiphertext32, CudaGlweCiphertext64, GlweCiphertextConversionEngine,
     };
 
     impl SynthesizesGlweCiphertext<Precision32, CudaGlweCiphertext32> for Maker {
@@ -339,13 +327,10 @@ mod backend_cuda {
             entity: CudaGlweCiphertext32,
         ) -> Self::GlweCiphertextProto {
             let proto = self.cuda_engine.convert_glwe_ciphertext(&entity).unwrap();
-            self.cuda_engine.destroy(entity).unwrap();
             ProtoBinaryGlweCiphertext32(proto)
         }
 
-        fn destroy_glwe_ciphertext(&mut self, entity: CudaGlweCiphertext32) {
-            self.cuda_engine.destroy(entity).unwrap();
-        }
+        fn destroy_glwe_ciphertext(&mut self, _entity: CudaGlweCiphertext32) {}
     }
 
     impl SynthesizesGlweCiphertext<Precision64, CudaGlweCiphertext64> for Maker {
@@ -363,12 +348,9 @@ mod backend_cuda {
             entity: CudaGlweCiphertext64,
         ) -> Self::GlweCiphertextProto {
             let proto = self.cuda_engine.convert_glwe_ciphertext(&entity).unwrap();
-            self.cuda_engine.destroy(entity).unwrap();
             ProtoBinaryGlweCiphertext64(proto)
         }
 
-        fn destroy_glwe_ciphertext(&mut self, entity: CudaGlweCiphertext64) {
-            self.cuda_engine.destroy(entity).unwrap();
-        }
+        fn destroy_glwe_ciphertext(&mut self, entity: CudaGlweCiphertext64) {}
     }
 }

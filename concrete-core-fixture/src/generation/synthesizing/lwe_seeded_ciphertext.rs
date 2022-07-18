@@ -25,7 +25,7 @@ mod backend_default {
     };
     use crate::generation::synthesizing::SynthesizesLweSeededCiphertext;
     use crate::generation::{Maker, Precision32, Precision64};
-    use concrete_core::prelude::{DestructionEngine, LweSeededCiphertext32, LweSeededCiphertext64};
+    use concrete_core::prelude::{LweSeededCiphertext32, LweSeededCiphertext64};
 
     impl SynthesizesLweSeededCiphertext<Precision32, LweSeededCiphertext32> for Maker {
         fn synthesize_lwe_seeded_ciphertext(
@@ -42,9 +42,7 @@ mod backend_default {
             ProtoBinaryLweSeededCiphertext32(entity)
         }
 
-        fn destroy_lwe_seeded_ciphertext(&mut self, entity: LweSeededCiphertext32) {
-            self.default_engine.destroy(entity).unwrap();
-        }
+        fn destroy_lwe_seeded_ciphertext(&mut self, _entity: LweSeededCiphertext32) {}
     }
 
     impl SynthesizesLweSeededCiphertext<Precision64, LweSeededCiphertext64> for Maker {
@@ -62,8 +60,6 @@ mod backend_default {
             ProtoBinaryLweSeededCiphertext64(entity)
         }
 
-        fn destroy_lwe_seeded_ciphertext(&mut self, entity: LweSeededCiphertext64) {
-            self.default_engine.destroy(entity).unwrap();
-        }
+        fn destroy_lwe_seeded_ciphertext(&mut self, _entity: LweSeededCiphertext64) {}
     }
 }
