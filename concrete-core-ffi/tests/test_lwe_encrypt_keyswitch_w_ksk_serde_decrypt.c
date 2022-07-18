@@ -126,15 +126,15 @@ void keyswitch_view_buffers_test(void) {
   assert(rel_error < 0.01);
 
   // We deallocate the objects
-  default_engine_destroy_lwe_secret_key_u64(engine, input_sk);
-  default_engine_destroy_lwe_secret_key_u64(engine, output_sk);
-  default_engine_destroy_lwe_keyswitch_key_u64(engine, ksk);
-  default_engine_destroy_lwe_keyswitch_key_u64(engine, deser_ksk);
-  default_engine_destroy_lwe_seeded_keyswitch_key_u64(engine, seeded_ksk);
-  default_engine_destroy_lwe_ciphertext_view_u64(engine, input_ct_as_view);
-  default_engine_destroy_lwe_ciphertext_mut_view_u64(engine, input_ct_as_mut_view);
-  default_engine_destroy_lwe_ciphertext_view_u64(engine, output_ct_as_view);
-  default_engine_destroy_lwe_ciphertext_mut_view_u64(engine, output_ct_as_mut_view);
+  destroy_lwe_secret_key_u64( input_sk);
+  destroy_lwe_secret_key_u64( output_sk);
+  destroy_lwe_keyswitch_key_u64( ksk);
+  destroy_lwe_keyswitch_key_u64( deser_ksk);
+  destroy_lwe_seeded_keyswitch_key_u64( seeded_ksk);
+  destroy_lwe_ciphertext_view_u64( input_ct_as_view);
+  destroy_lwe_ciphertext_mut_view_u64( input_ct_as_mut_view);
+  destroy_lwe_ciphertext_view_u64( output_ct_as_view);
+  destroy_lwe_ciphertext_mut_view_u64( output_ct_as_mut_view);
   destroy_default_serialization_engine(default_serialization_engine);
   destroy_default_engine(engine);
   destroy_seeder_builder(builder);
@@ -267,15 +267,15 @@ void keyswitch_unchecked_view_buffers_test(void) {
   assert(rel_error < 0.01);
 
   // We deallocate the objects
-  default_engine_destroy_lwe_secret_key_unchecked_u64(engine, input_sk);
-  default_engine_destroy_lwe_secret_key_unchecked_u64(engine, output_sk);
-  default_engine_destroy_lwe_keyswitch_key_unchecked_u64(engine, ksk);
-  default_engine_destroy_lwe_keyswitch_key_unchecked_u64(engine, deser_ksk);
-  default_engine_destroy_lwe_seeded_keyswitch_key_unchecked_u64(engine, seeded_ksk);
-  default_engine_destroy_lwe_ciphertext_view_unchecked_u64(engine, input_ct_as_view);
-  default_engine_destroy_lwe_ciphertext_mut_view_unchecked_u64(engine, input_ct_as_mut_view);
-  default_engine_destroy_lwe_ciphertext_view_unchecked_u64(engine, output_ct_as_view);
-  default_engine_destroy_lwe_ciphertext_mut_view_unchecked_u64(engine, output_ct_as_mut_view);
+  destroy_lwe_secret_key_unchecked_u64( input_sk);
+  destroy_lwe_secret_key_unchecked_u64( output_sk);
+  destroy_lwe_keyswitch_key_unchecked_u64( ksk);
+  destroy_lwe_keyswitch_key_unchecked_u64( deser_ksk);
+  destroy_lwe_seeded_keyswitch_key_unchecked_u64( seeded_ksk);
+  destroy_lwe_ciphertext_view_unchecked_u64( input_ct_as_view);
+  destroy_lwe_ciphertext_mut_view_unchecked_u64( input_ct_as_mut_view);
+  destroy_lwe_ciphertext_view_unchecked_u64( output_ct_as_view);
+  destroy_lwe_ciphertext_mut_view_unchecked_u64( output_ct_as_mut_view);
   destroy_default_serialization_engine_unchecked(default_serialization_engine);
   destroy_default_engine_unchecked(engine);
   destroy_seeder_builder_unchecked(builder);
@@ -383,11 +383,11 @@ void keyswitch_raw_ptr_buffers_test(void) {
   assert(rel_error < 0.01);
 
   // We deallocate the objects
-  default_engine_destroy_lwe_secret_key_u64(engine, input_sk);
-  default_engine_destroy_lwe_secret_key_u64(engine, output_sk);
-  default_engine_destroy_lwe_keyswitch_key_u64(engine, ksk);
-  default_engine_destroy_lwe_keyswitch_key_u64(engine, deser_ksk);
-  default_engine_destroy_lwe_seeded_keyswitch_key_u64(engine, seeded_ksk);
+  destroy_lwe_secret_key_u64( input_sk);
+  destroy_lwe_secret_key_u64( output_sk);
+  destroy_lwe_keyswitch_key_u64( ksk);
+  destroy_lwe_keyswitch_key_u64( deser_ksk);
+  destroy_lwe_seeded_keyswitch_key_u64( seeded_ksk);
   destroy_default_serialization_engine(default_serialization_engine);
   destroy_default_engine(engine);
   destroy_seeder_builder(builder);
@@ -500,11 +500,11 @@ void keyswitch_unchecked_raw_ptr_buffers_test(void) {
   assert(rel_error < 0.01);
 
   // We deallocate the objects
-  default_engine_destroy_lwe_secret_key_unchecked_u64(engine, input_sk);
-  default_engine_destroy_lwe_secret_key_unchecked_u64(engine, output_sk);
-  default_engine_destroy_lwe_keyswitch_key_unchecked_u64(engine, ksk);
-  default_engine_destroy_lwe_keyswitch_key_unchecked_u64(engine, deser_ksk);
-  default_engine_destroy_lwe_seeded_keyswitch_key_unchecked_u64(engine, seeded_ksk);
+  destroy_lwe_secret_key_unchecked_u64( input_sk);
+  destroy_lwe_secret_key_unchecked_u64( output_sk);
+  destroy_lwe_keyswitch_key_unchecked_u64( ksk);
+  destroy_lwe_keyswitch_key_unchecked_u64( deser_ksk);
+  destroy_lwe_seeded_keyswitch_key_unchecked_u64( seeded_ksk);
   destroy_default_serialization_engine_unchecked(default_serialization_engine);
   destroy_default_engine_unchecked(engine);
   destroy_seeder_builder_unchecked(builder);

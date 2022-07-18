@@ -218,19 +218,19 @@ void bootstrap_view_buffers_test(void) {
   assert(rel_error < 0.01);
 
   // We deallocate the objects
-  default_engine_destroy_lwe_secret_key_u64(default_engine, input_lwe_sk);
-  default_engine_destroy_lwe_secret_key_u64(default_engine, output_lwe_sk);
-  default_engine_destroy_glwe_secret_key_u64(default_engine, output_glwe_sk);
-  default_engine_destroy_lwe_bootstrap_key_u64(default_engine, bsk);
-  default_engine_destroy_lwe_seeded_bootstrap_key_u64(default_engine, seeded_bsk);
-  default_engine_destroy_lwe_ciphertext_view_u64(default_engine, input_ct_as_view);
-  default_engine_destroy_lwe_ciphertext_mut_view_u64(default_engine, input_ct_as_mut_view);
-  default_engine_destroy_lwe_ciphertext_view_u64(default_engine, output_ct_as_view);
-  default_engine_destroy_lwe_ciphertext_mut_view_u64(default_engine, output_ct_as_mut_view);
-  default_engine_destroy_glwe_ciphertext_view_u64(default_engine, accumulator_as_view);
-  default_engine_destroy_glwe_ciphertext_mut_view_u64(default_engine, accumulator_as_mut_view);
-  fftw_engine_destroy_fftw_fourier_lwe_bootstrap_key_u64(fftw_engine, fbsk);
-  fftw_engine_destroy_fftw_fourier_lwe_bootstrap_key_u64(fftw_engine, deser_fbsk);
+  destroy_lwe_secret_key_u64( input_lwe_sk);
+  destroy_lwe_secret_key_u64( output_lwe_sk);
+  destroy_glwe_secret_key_u64( output_glwe_sk);
+  destroy_lwe_bootstrap_key_u64( bsk);
+  destroy_lwe_seeded_bootstrap_key_u64( seeded_bsk);
+  destroy_lwe_ciphertext_view_u64( input_ct_as_view);
+  destroy_lwe_ciphertext_mut_view_u64( input_ct_as_mut_view);
+  destroy_lwe_ciphertext_view_u64( output_ct_as_view);
+  destroy_lwe_ciphertext_mut_view_u64( output_ct_as_mut_view);
+  destroy_glwe_ciphertext_view_u64( accumulator_as_view);
+  destroy_glwe_ciphertext_mut_view_u64( accumulator_as_mut_view);
+  destroy_fftw_fourier_lwe_bootstrap_key_u64( fbsk);
+  destroy_fftw_fourier_lwe_bootstrap_key_u64( deser_fbsk);
   destroy_fftw_serialization_engine(fftw_serialization_engine);
   destroy_default_parallel_engine(default_parallel_engine);
   destroy_default_serialization_engine(default_serialization_engine);
@@ -433,22 +433,19 @@ void bootstrap_unchecked_view_buffers_test(void) {
   assert(rel_error < 0.01);
 
   // We deallocate the objects
-  default_engine_destroy_lwe_secret_key_unchecked_u64(default_engine, input_lwe_sk);
-  default_engine_destroy_lwe_secret_key_unchecked_u64(default_engine, output_lwe_sk);
-  default_engine_destroy_glwe_secret_key_unchecked_u64(default_engine, output_glwe_sk);
-  default_engine_destroy_lwe_bootstrap_key_unchecked_u64(default_engine, bsk);
-  default_engine_destroy_lwe_seeded_bootstrap_key_unchecked_u64(default_engine, seeded_bsk);
-  default_engine_destroy_lwe_ciphertext_view_unchecked_u64(default_engine, input_ct_as_view);
-  default_engine_destroy_lwe_ciphertext_mut_view_unchecked_u64(default_engine,
-                                                               input_ct_as_mut_view);
-  default_engine_destroy_lwe_ciphertext_view_unchecked_u64(default_engine, output_ct_as_view);
-  default_engine_destroy_lwe_ciphertext_mut_view_unchecked_u64(default_engine,
-                                                               output_ct_as_mut_view);
-  default_engine_destroy_glwe_ciphertext_view_unchecked_u64(default_engine, accumulator_as_view);
-  default_engine_destroy_glwe_ciphertext_mut_view_unchecked_u64(default_engine,
-                                                                accumulator_as_mut_view);
-  fftw_engine_destroy_fftw_fourier_lwe_bootstrap_key_unchecked_u64(fftw_engine, fbsk);
-  fftw_engine_destroy_fftw_fourier_lwe_bootstrap_key_unchecked_u64(fftw_engine, deser_fbsk);
+  destroy_lwe_secret_key_unchecked_u64( input_lwe_sk);
+  destroy_lwe_secret_key_unchecked_u64( output_lwe_sk);
+  destroy_glwe_secret_key_unchecked_u64( output_glwe_sk);
+  destroy_lwe_bootstrap_key_unchecked_u64( bsk);
+  destroy_lwe_seeded_bootstrap_key_unchecked_u64( seeded_bsk);
+  destroy_lwe_ciphertext_view_unchecked_u64( input_ct_as_view);
+  destroy_lwe_ciphertext_mut_view_unchecked_u64(input_ct_as_mut_view);
+  destroy_lwe_ciphertext_view_unchecked_u64( output_ct_as_view);
+  destroy_lwe_ciphertext_mut_view_unchecked_u64(output_ct_as_mut_view);
+  destroy_glwe_ciphertext_view_unchecked_u64( accumulator_as_view);
+  destroy_glwe_ciphertext_mut_view_unchecked_u64(accumulator_as_mut_view);
+  destroy_fftw_fourier_lwe_bootstrap_key_unchecked_u64( fbsk);
+  destroy_fftw_fourier_lwe_bootstrap_key_unchecked_u64( deser_fbsk);
   destroy_fftw_serialization_engine_unchecked(fftw_serialization_engine);
   destroy_default_parallel_engine_unchecked(default_parallel_engine);
   destroy_default_serialization_engine_unchecked(default_serialization_engine);
@@ -614,13 +611,13 @@ void bootstrap_raw_ptr_buffers_test(void) {
   assert(rel_error < 0.01);
 
   // We deallocate the objects
-  default_engine_destroy_lwe_secret_key_u64(default_engine, input_lwe_sk);
-  default_engine_destroy_lwe_secret_key_u64(default_engine, output_lwe_sk);
-  default_engine_destroy_glwe_secret_key_u64(default_engine, output_glwe_sk);
-  default_engine_destroy_lwe_bootstrap_key_u64(default_engine, bsk);
-  default_engine_destroy_lwe_seeded_bootstrap_key_u64(default_engine, seeded_bsk);
-  fftw_engine_destroy_fftw_fourier_lwe_bootstrap_key_u64(fftw_engine, fbsk);
-  fftw_engine_destroy_fftw_fourier_lwe_bootstrap_key_u64(fftw_engine, deser_fbsk);
+  destroy_lwe_secret_key_u64( input_lwe_sk);
+  destroy_lwe_secret_key_u64( output_lwe_sk);
+  destroy_glwe_secret_key_u64( output_glwe_sk);
+  destroy_lwe_bootstrap_key_u64( bsk);
+  destroy_lwe_seeded_bootstrap_key_u64( seeded_bsk);
+  destroy_fftw_fourier_lwe_bootstrap_key_u64( fbsk);
+  destroy_fftw_fourier_lwe_bootstrap_key_u64( deser_fbsk);
   destroy_fftw_serialization_engine(fftw_serialization_engine);
   destroy_default_parallel_engine(default_parallel_engine);
   destroy_default_serialization_engine(default_serialization_engine);
@@ -791,13 +788,13 @@ void bootstrap_unchecked_raw_ptr_buffers_test(void) {
   assert(rel_error < 0.01);
 
   // We deallocate the objects
-  default_engine_destroy_lwe_secret_key_unchecked_u64(default_engine, input_lwe_sk);
-  default_engine_destroy_lwe_secret_key_unchecked_u64(default_engine, output_lwe_sk);
-  default_engine_destroy_glwe_secret_key_unchecked_u64(default_engine, output_glwe_sk);
-  default_engine_destroy_lwe_bootstrap_key_unchecked_u64(default_engine, bsk);
-  default_engine_destroy_lwe_seeded_bootstrap_key_unchecked_u64(default_engine, seeded_bsk);
-  fftw_engine_destroy_fftw_fourier_lwe_bootstrap_key_unchecked_u64(fftw_engine, fbsk);
-  fftw_engine_destroy_fftw_fourier_lwe_bootstrap_key_unchecked_u64(fftw_engine, deser_fbsk);
+  destroy_lwe_secret_key_unchecked_u64( input_lwe_sk);
+  destroy_lwe_secret_key_unchecked_u64( output_lwe_sk);
+  destroy_glwe_secret_key_unchecked_u64( output_glwe_sk);
+  destroy_lwe_bootstrap_key_unchecked_u64( bsk);
+  destroy_lwe_seeded_bootstrap_key_unchecked_u64( seeded_bsk);
+  destroy_fftw_fourier_lwe_bootstrap_key_unchecked_u64( fbsk);
+  destroy_fftw_fourier_lwe_bootstrap_key_unchecked_u64( deser_fbsk);
   destroy_fftw_serialization_engine_unchecked(fftw_serialization_engine);
   destroy_default_parallel_engine_unchecked(default_parallel_engine);
   destroy_default_serialization_engine_unchecked(default_serialization_engine);
