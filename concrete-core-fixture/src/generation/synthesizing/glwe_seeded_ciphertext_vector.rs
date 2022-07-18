@@ -27,9 +27,7 @@ mod backend_default {
     };
     use crate::generation::synthesizing::SynthesizesGlweSeededCiphertextVector;
     use crate::generation::{Maker, Precision32, Precision64};
-    use concrete_core::prelude::{
-        DestructionEngine, GlweSeededCiphertextVector32, GlweSeededCiphertextVector64,
-    };
+    use concrete_core::prelude::{GlweSeededCiphertextVector32, GlweSeededCiphertextVector64};
 
     impl SynthesizesGlweSeededCiphertextVector<Precision32, GlweSeededCiphertextVector32> for Maker {
         fn synthesize_glwe_seeded_ciphertext_vector(
@@ -46,8 +44,7 @@ mod backend_default {
             ProtoBinaryGlweSeededCiphertextVector32(entity)
         }
 
-        fn destroy_glwe_seeded_ciphertext_vector(&mut self, entity: GlweSeededCiphertextVector32) {
-            self.default_engine.destroy(entity).unwrap();
+        fn destroy_glwe_seeded_ciphertext_vector(&mut self, _entity: GlweSeededCiphertextVector32) {
         }
     }
 
@@ -66,8 +63,7 @@ mod backend_default {
             ProtoBinaryGlweSeededCiphertextVector64(entity)
         }
 
-        fn destroy_glwe_seeded_ciphertext_vector(&mut self, entity: GlweSeededCiphertextVector64) {
-            self.default_engine.destroy(entity).unwrap();
+        fn destroy_glwe_seeded_ciphertext_vector(&mut self, _entity: GlweSeededCiphertextVector64) {
         }
     }
 }

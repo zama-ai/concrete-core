@@ -17,7 +17,7 @@ mod backend_default {
     use crate::generation::prototypes::{ProtoPlaintext32, ProtoPlaintext64};
     use crate::generation::synthesizing::SynthesizesPlaintext;
     use crate::generation::{Maker, Precision32, Precision64};
-    use concrete_core::prelude::{DestructionEngine, Plaintext32, Plaintext64};
+    use concrete_core::prelude::{Plaintext32, Plaintext64};
 
     impl SynthesizesPlaintext<Precision32, Plaintext32> for Maker {
         fn synthesize_plaintext(&mut self, prototype: &Self::PlaintextProto) -> Plaintext32 {
@@ -28,9 +28,7 @@ mod backend_default {
             ProtoPlaintext32(entity)
         }
 
-        fn destroy_plaintext(&mut self, entity: Plaintext32) {
-            self.default_engine.destroy(entity).unwrap();
-        }
+        fn destroy_plaintext(&mut self, _entity: Plaintext32) {}
     }
 
     impl SynthesizesPlaintext<Precision64, Plaintext64> for Maker {
@@ -42,8 +40,6 @@ mod backend_default {
             ProtoPlaintext64(entity)
         }
 
-        fn destroy_plaintext(&mut self, entity: Plaintext64) {
-            self.default_engine.destroy(entity).unwrap();
-        }
+        fn destroy_plaintext(&mut self, _entity: Plaintext64) {}
     }
 }

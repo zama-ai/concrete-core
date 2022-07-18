@@ -28,7 +28,7 @@ mod backend_default {
     };
     use crate::generation::synthesizing::SynthesizesLweKeyswitchKey;
     use crate::generation::{Maker, Precision32, Precision64};
-    use concrete_core::prelude::{DestructionEngine, LweKeyswitchKey32, LweKeyswitchKey64};
+    use concrete_core::prelude::{LweKeyswitchKey32, LweKeyswitchKey64};
 
     impl SynthesizesLweKeyswitchKey<Precision32, LweKeyswitchKey32> for Maker {
         fn synthesize_lwe_keyswitch_key(
@@ -45,9 +45,7 @@ mod backend_default {
             ProtoBinaryBinaryLweKeyswitchKey32(entity)
         }
 
-        fn destroy_lwe_keyswitch_key(&mut self, entity: LweKeyswitchKey32) {
-            self.default_engine.destroy(entity).unwrap();
-        }
+        fn destroy_lwe_keyswitch_key(&mut self, _entity: LweKeyswitchKey32) {}
     }
 
     impl SynthesizesLweKeyswitchKey<Precision64, LweKeyswitchKey64> for Maker {
@@ -65,9 +63,7 @@ mod backend_default {
             ProtoBinaryBinaryLweKeyswitchKey64(entity)
         }
 
-        fn destroy_lwe_keyswitch_key(&mut self, entity: LweKeyswitchKey64) {
-            self.default_engine.destroy(entity).unwrap();
-        }
+        fn destroy_lwe_keyswitch_key(&mut self, _entity: LweKeyswitchKey64) {}
     }
 }
 
@@ -79,8 +75,7 @@ mod backend_cuda {
     use crate::generation::synthesizing::SynthesizesLweKeyswitchKey;
     use crate::generation::{Maker, Precision32, Precision64};
     use concrete_core::prelude::{
-        CudaLweKeyswitchKey32, CudaLweKeyswitchKey64, DestructionEngine,
-        LweKeyswitchKeyConversionEngine,
+        CudaLweKeyswitchKey32, CudaLweKeyswitchKey64, LweKeyswitchKeyConversionEngine,
     };
 
     impl SynthesizesLweKeyswitchKey<Precision32, CudaLweKeyswitchKey32> for Maker {
@@ -98,13 +93,10 @@ mod backend_cuda {
             entity: CudaLweKeyswitchKey32,
         ) -> Self::LweKeyswitchKeyProto {
             let proto = self.cuda_engine.convert_lwe_keyswitch_key(&entity).unwrap();
-            self.cuda_engine.destroy(entity).unwrap();
             ProtoBinaryBinaryLweKeyswitchKey32(proto)
         }
 
-        fn destroy_lwe_keyswitch_key(&mut self, entity: CudaLweKeyswitchKey32) {
-            self.cuda_engine.destroy(entity).unwrap();
-        }
+        fn destroy_lwe_keyswitch_key(&mut self, _entity: CudaLweKeyswitchKey32) {}
     }
 
     impl SynthesizesLweKeyswitchKey<Precision64, CudaLweKeyswitchKey64> for Maker {
@@ -122,12 +114,9 @@ mod backend_cuda {
             entity: CudaLweKeyswitchKey64,
         ) -> Self::LweKeyswitchKeyProto {
             let proto = self.cuda_engine.convert_lwe_keyswitch_key(&entity).unwrap();
-            self.cuda_engine.destroy(entity).unwrap();
             ProtoBinaryBinaryLweKeyswitchKey64(proto)
         }
 
-        fn destroy_lwe_keyswitch_key(&mut self, entity: CudaLweKeyswitchKey64) {
-            self.cuda_engine.destroy(entity).unwrap();
-        }
+        fn destroy_lwe_keyswitch_key(&mut self, _entity: CudaLweKeyswitchKey64) {}
     }
 }
