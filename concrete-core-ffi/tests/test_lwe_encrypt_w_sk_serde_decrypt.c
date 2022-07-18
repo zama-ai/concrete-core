@@ -76,10 +76,10 @@ void encrypt_decrypt_view_buffers_test(void) {
   assert(rel_error < 0.001);
 
   // We deallocate the objects
-  default_engine_destroy_lwe_secret_key_u64(engine, sk);
-  default_engine_destroy_lwe_secret_key_u64(engine, deser_sk);
-  default_engine_destroy_lwe_ciphertext_view_u64(engine, ciphertext_as_view);
-  default_engine_destroy_lwe_ciphertext_mut_view_u64(engine, ciphertext_as_mut_view);
+  destroy_lwe_secret_key_u64( sk);
+  destroy_lwe_secret_key_u64( deser_sk);
+  destroy_lwe_ciphertext_view_u64( ciphertext_as_view);
+  destroy_lwe_ciphertext_mut_view_u64( ciphertext_as_mut_view);
   destroy_seeder_builder(builder);
   destroy_default_serialization_engine(default_serialization_engine);
   destroy_default_engine(engine);
@@ -156,10 +156,10 @@ void encrypt_decrypt_unchecked_view_buffers_test(void) { // We generate the rand
   assert(rel_error < 0.001);
 
   // We deallocate the objects
-  default_engine_destroy_lwe_secret_key_unchecked_u64(engine, sk);
-  default_engine_destroy_lwe_secret_key_unchecked_u64(engine, deser_sk);
-  default_engine_destroy_lwe_ciphertext_view_unchecked_u64(engine, ciphertext_as_view);
-  default_engine_destroy_lwe_ciphertext_mut_view_unchecked_u64(engine, ciphertext_as_mut_view);
+  destroy_lwe_secret_key_unchecked_u64( sk);
+  destroy_lwe_secret_key_unchecked_u64( deser_sk);
+  destroy_lwe_ciphertext_view_unchecked_u64( ciphertext_as_view);
+  destroy_lwe_ciphertext_mut_view_unchecked_u64( ciphertext_as_mut_view);
   destroy_seeder_builder_unchecked(builder);
   destroy_default_serialization_engine_unchecked(default_serialization_engine);
   destroy_default_engine_unchecked(engine);
@@ -227,8 +227,8 @@ void encrypt_decrypt_raw_ptr_buffers_test(void) {
   assert(rel_error < 0.001);
 
   // We deallocate the objects
-  default_engine_destroy_lwe_secret_key_u64(engine, sk);
-  default_engine_destroy_lwe_secret_key_u64(engine, deser_sk);
+  destroy_lwe_secret_key_u64( sk);
+  destroy_lwe_secret_key_u64( deser_sk);
   destroy_default_serialization_engine(default_serialization_engine);
   destroy_seeder_builder(builder);
   destroy_default_engine(engine);
@@ -296,8 +296,8 @@ void encrypt_decrypt_unchecked_raw_ptr_buffers_test(void) {
   assert(rel_error < 0.001);
 
   // We deallocate the objects
-  default_engine_destroy_lwe_secret_key_unchecked_u64(engine, sk);
-  default_engine_destroy_lwe_secret_key_unchecked_u64(engine, deser_sk);
+  destroy_lwe_secret_key_unchecked_u64( sk);
+  destroy_lwe_secret_key_unchecked_u64( deser_sk);
   destroy_seeder_builder_unchecked(builder);
   destroy_default_engine_unchecked(engine);
   destroy_buffer(&sk_buffer);

@@ -125,7 +125,7 @@ pub unsafe extern "C" fn destroy_fftw_serialization_engine_unchecked(
     })
 }
 
-pub mod destruction;
+pub mod destroy;
 #[cfg(feature = "backend_fftw_serialization")]
 pub mod entity_deserialization;
 #[cfg(feature = "backend_fftw_serialization")]
@@ -133,7 +133,7 @@ pub mod entity_serialization;
 pub mod lwe_bootstrap_key_conversion;
 pub mod lwe_ciphertext_discarding_bootstrap;
 
-pub use destruction::*;
+pub use destroy::*;
 #[cfg(feature = "backend_fftw_serialization")]
 pub use entity_deserialization::*;
 #[cfg(feature = "backend_fftw_serialization")]

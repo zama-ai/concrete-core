@@ -216,7 +216,7 @@ pub unsafe extern "C" fn destroy_default_serialization_engine_unchecked(
     })
 }
 
-pub mod destruction;
+pub mod destroy;
 #[cfg(feature = "backend_default_serialization")]
 pub mod entity_deserialization;
 #[cfg(feature = "backend_default_serialization")]
@@ -240,7 +240,7 @@ pub mod lwe_seeded_bootstrap_key_to_lwe_bootstrap_key_transformation;
 pub mod lwe_seeded_keyswitch_key_creation;
 pub mod lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_transformation;
 
-pub use destruction::*;
+pub use destroy::*;
 #[cfg(feature = "backend_default_serialization")]
 pub use entity_deserialization::*;
 #[cfg(feature = "backend_default_serialization")]

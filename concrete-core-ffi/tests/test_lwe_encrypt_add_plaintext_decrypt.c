@@ -69,11 +69,11 @@ void add_plaintext_view_buffers_test(void) {
   assert(rel_error < 0.001);
 
   // We deallocate the objects
-  default_engine_destroy_lwe_secret_key_u64(engine, sk);
-  default_engine_destroy_lwe_ciphertext_view_u64(engine, input_ct_as_view);
-  default_engine_destroy_lwe_ciphertext_mut_view_u64(engine, input_ct_as_mut_view);
-  default_engine_destroy_lwe_ciphertext_view_u64(engine, output_ct_as_view);
-  default_engine_destroy_lwe_ciphertext_mut_view_u64(engine, output_ct_as_mut_view);
+  destroy_lwe_secret_key_u64( sk);
+  destroy_lwe_ciphertext_view_u64( input_ct_as_view);
+  destroy_lwe_ciphertext_mut_view_u64( input_ct_as_mut_view);
+  destroy_lwe_ciphertext_view_u64( output_ct_as_view);
+  destroy_lwe_ciphertext_mut_view_u64( output_ct_as_mut_view);
 
   destroy_default_engine(engine);
   destroy_seeder_builder(builder);
@@ -144,11 +144,11 @@ void add_plaintext_unchecked_view_buffers_test(void) {
   assert(rel_error < 0.001);
 
   // We deallocate the objects
-  default_engine_destroy_lwe_secret_key_unchecked_u64(engine, sk);
-  default_engine_destroy_lwe_ciphertext_view_unchecked_u64(engine, input_ct_as_view);
-  default_engine_destroy_lwe_ciphertext_mut_view_unchecked_u64(engine, input_ct_as_mut_view);
-  default_engine_destroy_lwe_ciphertext_view_unchecked_u64(engine, output_ct_as_view);
-  default_engine_destroy_lwe_ciphertext_mut_view_unchecked_u64(engine, output_ct_as_mut_view);
+  destroy_lwe_secret_key_unchecked_u64( sk);
+  destroy_lwe_ciphertext_view_unchecked_u64( input_ct_as_view);
+  destroy_lwe_ciphertext_mut_view_unchecked_u64( input_ct_as_mut_view);
+  destroy_lwe_ciphertext_view_unchecked_u64( output_ct_as_view);
+  destroy_lwe_ciphertext_mut_view_unchecked_u64( output_ct_as_mut_view);
 
   destroy_default_engine_unchecked(engine);
   destroy_seeder_builder_unchecked(builder);
@@ -199,7 +199,7 @@ void add_plaintext_raw_ptr_buffers_test(void) {
   assert(rel_error < 0.001);
 
   // We deallocate the objects
-  default_engine_destroy_lwe_secret_key_u64(engine, sk);
+  destroy_lwe_secret_key_u64( sk);
   destroy_default_engine(engine);
   destroy_seeder_builder(builder);
   free(input_ct_buffer);
@@ -249,7 +249,7 @@ void add_plaintext_unchecked_raw_ptr_buffers_test(void) {
   assert(rel_error < 0.001);
 
   // We deallocate the objects
-  default_engine_destroy_lwe_secret_key_unchecked_u64(engine, sk);
+  destroy_lwe_secret_key_unchecked_u64( sk);
   destroy_default_engine_unchecked(engine);
   destroy_seeder_builder_unchecked(builder);
   free(input_ct_buffer);
