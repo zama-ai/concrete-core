@@ -60,3 +60,73 @@ pub(crate) enum LweCiphertextVector64Version {
     #[serde(other)]
     Unsupported,
 }
+
+/// A structure representing a vector of LWE ciphertext views, with 64 bits of precision.
+///
+/// By _view_ here, we mean that the entity does not own the data, but immutably borrows it.
+///
+/// Notes:
+/// ------
+/// This view is not Clone as Clone for a slice is not defined. It is not Deserialize either,
+/// as Deserialize of a slice is not defined. Immutable variant.
+#[derive(Debug, PartialEq, Eq)]
+pub struct LweCiphertextVectorView64<'a>(pub(crate) ImplLweList<&'a [u64]>);
+
+impl AbstractEntity for LweCiphertextVectorView64<'_> {
+    type Kind = LweCiphertextVectorKind;
+}
+
+impl LweCiphertextVectorEntity for LweCiphertextVectorView64<'_> {
+    type KeyDistribution = BinaryKeyDistribution;
+
+    fn lwe_dimension(&self) -> LweDimension {
+        self.0.lwe_size().to_lwe_dimension()
+    }
+
+    fn lwe_ciphertext_count(&self) -> LweCiphertextCount {
+        LweCiphertextCount(self.0.count().0)
+    }
+}
+
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum LweCiphertextVectorView64Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
+}
+
+/// A structure representing a vector of LWE ciphertext views, with 64 bits of precision.
+///
+/// By _view_ here, we mean that the entity does not own the data, but mutably borrows it.
+///
+/// Notes:
+/// ------
+/// This view is not Clone as Clone for a slice is not defined. It is not Deserialize either,
+/// as Deserialize of a slice is not defined. Immutable variant.
+#[derive(Debug, PartialEq, Eq)]
+pub struct LweCiphertextVectorMutView64<'a>(pub(crate) ImplLweList<&'a mut [u64]>);
+
+impl AbstractEntity for LweCiphertextVectorMutView64<'_> {
+    type Kind = LweCiphertextVectorKind;
+}
+
+impl LweCiphertextVectorEntity for LweCiphertextVectorMutView64<'_> {
+    type KeyDistribution = BinaryKeyDistribution;
+
+    fn lwe_dimension(&self) -> LweDimension {
+        self.0.lwe_size().to_lwe_dimension()
+    }
+
+    fn lwe_ciphertext_count(&self) -> LweCiphertextCount {
+        LweCiphertextCount(self.0.count().0)
+    }
+}
+
+#[cfg(feature = "backend_default_serialization")]
+#[derive(Serialize, Deserialize)]
+pub(crate) enum LweCiphertextVectorMutView64Version {
+    V0,
+    #[serde(other)]
+    Unsupported,
+}
