@@ -12,6 +12,7 @@ use crate::specification::engines::AbstractEngine;
 #[derive(Debug)]
 pub enum FftwError {
     UnsupportedPolynomialSize,
+    ScalingFactorTooLarge
 }
 
 impl Display for FftwError {
@@ -22,6 +23,12 @@ impl Display for FftwError {
                     f,
                     "The Fftw Backend only supports polynomials of size: 512, \
                 1024, 2048, 4096, 8192, 16384."
+                )
+            }
+            FftwError::ScalingFactorTooLarge => {
+                write!(
+                    f,
+                    "The Scaling Factor used is too large"
                 )
             }
         }
