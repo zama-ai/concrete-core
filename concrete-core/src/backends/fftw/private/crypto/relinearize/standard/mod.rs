@@ -1,8 +1,6 @@
-use std::alloc::Allocator;
-use crate::commons::crypto::encoding::{Plaintext, PlaintextList};
-use crate::commons::crypto::ggsw::StandardGgswCiphertext;
+use crate::commons::crypto::encoding::{PlaintextList};
 use crate::commons::crypto::secret::generators::EncryptionRandomGenerator;
-use crate::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
+use crate::commons::crypto::secret::{GlweSecretKey};
 use crate::commons::math::polynomial::Polynomial;
 use crate::commons::math::random::ByteRandomGenerator;
 #[cfg(feature = "parallel")]
@@ -16,7 +14,7 @@ use concrete_commons::dispersion::DispersionParameter;
 use concrete_commons::key_kinds::BinaryKeyKind;
 use concrete_commons::numeric::Numeric;
 use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
 };
 
 #[cfg(feature = "parallel")]
@@ -38,7 +36,7 @@ pub struct StandardGlweRelinearizationKey<Cont> {
     decomp_base_log: DecompositionBaseLog,
 }
 
-tensor_traits!(RelinearizationKey);
+tensor_traits!(StandardGlweRelinearizationKey);
 
 impl<Scalar> StandardGlweRelinearizationKey<Vec<Scalar>> {
     /// Allocates a new relinearization key in the standard domain whose polynomials coefficients
@@ -230,7 +228,7 @@ impl<Cont> StandardGlweRelinearizationKey<Cont> {
                     // Allocate a Fourier poly for the result of the polynomial product in the 
                     // Fourier domain
                     let mut fourier_output_poly =
-                        FourierPolynomial::allocate(Complex64(0., 0.), self.poly_size);
+                        FourierPolynomial::allocate(Complex64::zero(), self.poly_size);
                     // Convert the two key polynomials to the Fourier domain at once
                     fft.forward_two_as_integer(fft_buffer_1, fft_buffer_2, poly_1, poly_2);
                     // Compute the multiplication
@@ -453,6 +451,8 @@ impl<Cont> StandardGlweRelinearizationKey<Cont> {
         // "alias" buffers to save some typing
         let fft = &mut buffers.fft_buffers.fft;
         let rounded_buffer = &mut buffers.rounded_buffer;
+        let first_fft_buffer = &mut buffers.fft_buffers.first_buffer;
+        let second_fft_buffer = &mut buffers.fft_buffers.second_buffer;
         // Decompose the input polynomial
         let decomposer_t_i =
             SignedDecomposer::new(self.decomp_base_log, self.decomposition_level_count());
@@ -529,7 +529,7 @@ impl<Cont> StandardGlweRelinearizationKey<Cont> {
         let mut j = 0;
         if i > 0 {
             for k in 1..i + 1 {
-                j += (i - k + 2);
+                j += i - k + 2;
             }
         }
         j

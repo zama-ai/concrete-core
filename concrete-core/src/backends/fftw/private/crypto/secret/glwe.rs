@@ -13,8 +13,6 @@ use crate::commons::math::random::ByteRandomGenerator;
 use crate::prelude::numeric::Numeric;
 
 /// A GLWE secret key in the Fourier Domain.
-#[cfg(feature = "serde_serialize")]
-#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FourierGlweSecretKey<Kind, Cont, Scalar>
 where
     Kind: KeyKind,
