@@ -7,7 +7,6 @@ use crate::prelude::{GlweDimension, KeyKind, PolynomialSize, TensorProductKeyKin
 use std::marker::PhantomData;
 #[cfg(feature = "serde_serialize")]
 use serde::{Deserialize, Serialize};
-use crate::commons::math::random::ByteRandomGenerator;
 
 /// A GLWE secret key in the Fourier Domain.
 pub struct FourierGlweSecretKey<Kind, Cont, Scalar>
