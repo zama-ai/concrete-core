@@ -1142,7 +1142,7 @@ where
         // Fork the encryption generator over the relinerization key levels
         let gen_iter = generator
             .fork_glev_list_to_glev_list_levels::<Scalar>(
-                encrypted.decomposition_level_count(),
+                rlk.decomposition_level_count(),
                 self.key_size().to_glwe_size(),
                 rlk.glev_count(),
                 self.poly_size,
@@ -1171,7 +1171,7 @@ where
             for ((index, row), mut generator) in matrix.row_iter_mut().enumerate().zip(gen_iter) {
                 let mut glwe_ct = row.into_glwe();
                 // Issue GLWE encryptions of the S_i * S_j encoded products
-                let decomposed_chunk = decomposition.as_tensor().as_slice().chunks(rlk
+                let mut decomposed_chunk = decomposition.as_tensor().as_slice().chunks(rlk
                     .polynomial_size().0);
                 self.encrypt_glwe(&mut glwe_ct, decomposed_chunk.next().unwrap(), noise_parameters, 
                                   &mut generator);
