@@ -79,8 +79,8 @@ for FftwEngine
             decomposition_base_log,
         );
         let buffers = self.get_fourier_u32_buffer(
-            output_bsk.polynomial_size(),
-            output_bsk.glwe_dimension().to_glwe_size(),
+            rlk.polynomial_size(),
+            rlk.glwe_dimension().to_glwe_size(),
         );
         rlk.fill_with_new_key(
             input,
@@ -162,8 +162,8 @@ for FftwEngine
             decomposition_base_log,
         );
         let buffers = self.get_fourier_u64_buffer(
-            output_bsk.polynomial_size(),
-            output_bsk.glwe_dimension().to_glwe_size(),
+            rlk.polynomial_size(),
+            rlk.glwe_dimension().to_glwe_size(),
         );
         rlk.fill_with_new_key(
             input,
