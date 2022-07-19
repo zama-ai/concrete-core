@@ -3,7 +3,6 @@ use crate::backends::fftw::private::math::fft::Complex64;
 use concrete_commons::parameters::{GlweDimension, PolynomialSize};
 use crate::specification::entities::markers::{BinaryKeyDistribution, GlweCiphertextKind};
 use crate::specification::entities::{AbstractEntity, GlweCiphertextEntity};
-use concrete_commons::parameters::{GlweDimension, PolynomialSize};
 use concrete_fftw::array::AlignedVec;
 #[cfg(feature = "backend_fftw_serialization")]
 use serde::{Deserialize, Serialize};
