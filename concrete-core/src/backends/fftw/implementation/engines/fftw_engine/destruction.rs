@@ -1,6 +1,5 @@
 use crate::backends::fftw::engines::FftwEngine;
 use crate::backends::fftw::entities::{FftwFourierGgswCiphertext32, FftwFourierGgswCiphertext64, FftwFourierGlweCiphertext32, FftwFourierGlweCiphertext64, FftwFourierLweBootstrapKey32, FftwFourierLweBootstrapKey64, FftwStandardGlweRelinearizationKey32, FftwStandardGlweRelinearizationKey64};
-use crate::prelude::{FftwFourierGlweTensorProductCiphertext32, FftwFourierGlweTensorProductCiphertext64};
 use crate::specification::engines::{DestructionEngine, DestructionError};
 
 impl DestructionEngine<FftwFourierGlweCiphertext32> for FftwEngine {
@@ -25,30 +24,6 @@ impl DestructionEngine<FftwFourierGlweCiphertext64> for FftwEngine {
     }
 
     unsafe fn destroy_unchecked(&mut self, _entity: &mut FftwFourierGlweCiphertext64) {}
-}
-
-impl DestructionEngine<FftwFourierGlweTensorProductCiphertext32> for FftwEngine {
-    fn destroy(
-        &mut self,
-        mut entity: FftwFourierGlweTensorProductCiphertext32,
-    ) -> Result<(), DestructionError<Self::EngineError>> {
-        unsafe { self.destroy_unchecked(&mut entity) };
-        Ok(())
-    }
-
-    unsafe fn destroy_unchecked(&mut self, _entity: &mut FftwFourierGlweTensorProductCiphertext32) {}
-}
-
-impl DestructionEngine<FftwFourierGlweTensorProductCiphertext64> for FftwEngine {
-    fn destroy(
-        &mut self,
-        mut entity: FftwFourierGlweTensorProductCiphertext64,
-    ) -> Result<(), DestructionError<Self::EngineError>> {
-        unsafe { self.destroy_unchecked(&mut entity) };
-        Ok(())
-    }
-
-    unsafe fn destroy_unchecked(&mut self, _entity: &mut FftwFourierGlweTensorProductCiphertext64) {}
 }
 
 impl DestructionEngine<FftwFourierGgswCiphertext32> for FftwEngine {
