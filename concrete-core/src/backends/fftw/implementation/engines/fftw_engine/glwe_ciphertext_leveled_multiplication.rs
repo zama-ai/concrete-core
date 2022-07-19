@@ -90,8 +90,8 @@ impl
     ) -> Result<FftwFourierGlweCiphertext32, 
         GlweCiphertextLeveledMultiplicationError<Self::EngineError>>
     {
-        GlweCiphertextLeveledMultiplicationError::perform_generic_checks(input1, input2)?;
-        if !ALLOWED_POLY_SIZE.contains(&glwe_input.polynomial_size().0) {
+        GlweCiphertextLeveledMultiplicationError::perform_generic_checks(input1, input2, rlk, scale)?;
+        if !ALLOWED_POLY_SIZE.contains(&input1.polynomial_size().0) {
             return Err(GlweCiphertextLeveledMultiplicationError::from(
                 FftwError::UnsupportedPolynomialSize,
             ));
@@ -207,8 +207,8 @@ GlweCiphertextLeveledMultiplicationEngine<
     ) -> Result<FftwFourierGlweCiphertext64,
         GlweCiphertextLeveledMultiplicationError<Self::EngineError>>
     {
-        GlweCiphertextLeveledMultiplicationError::perform_generic_checks(input1, input2)?;
-        if !ALLOWED_POLY_SIZE.contains(&glwe_input.polynomial_size().0) {
+        GlweCiphertextLeveledMultiplicationError::perform_generic_checks(input1, input2, rlk, scale)?;
+        if !ALLOWED_POLY_SIZE.contains(&input1.polynomial_size().0) {
             return Err(GlweCiphertextLeveledMultiplicationError::from(
                 FftwError::UnsupportedPolynomialSize,
             ));
@@ -329,7 +329,7 @@ GlweCiphertextLeveledMultiplicationEngine<
         GlweCiphertextLeveledMultiplicationError<Self::EngineError>>
     {
         GlweCiphertextLeveledMultiplicationError::perform_generic_checks(input1, input2, rlk, scale)?;
-        if !ALLOWED_POLY_SIZE.contains(&glwe_input.polynomial_size().0) {
+        if !ALLOWED_POLY_SIZE.contains(&input1.polynomial_size().0) {
             return Err(GlweCiphertextLeveledMultiplicationError::from(
                 FftwError::UnsupportedPolynomialSize,
             ));
@@ -448,7 +448,7 @@ GlweCiphertextLeveledMultiplicationEngine<
         GlweCiphertextLeveledMultiplicationError<Self::EngineError>>
     {
         GlweCiphertextLeveledMultiplicationError::perform_generic_checks(input1, input2, rlk, scale)?;
-        if !ALLOWED_POLY_SIZE.contains(&glwe_input.polynomial_size().0) {
+        if !ALLOWED_POLY_SIZE.contains(&input1.polynomial_size().0) {
             return Err(GlweCiphertextLeveledMultiplicationError::from(
                 FftwError::UnsupportedPolynomialSize,
             ));
