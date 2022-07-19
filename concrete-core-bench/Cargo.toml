@@ -15,7 +15,6 @@ criterion = "0.3.5"
 backend_default = ["concrete-core/backend_default"]
 backend_fftw = [
     "concrete-core/backend_fftw",
-    "concrete-core-fixture/backend_fftw",
 ]
 backend_default_parallel = [
     "concrete-core/backend_default_parallel",

@@ -26,47 +26,46 @@ mod backend_fftw {
     use crate::generation::synthesizing::{SynthesizesGlweRelinearizationKey};
     use crate::generation::{Maker, Precision32, Precision64};
     use concrete_core::prelude::{
-        DestructionEngine, FftwFourierGlweRelinearizationKey32, FftwFourierGlweRelinearizationKey64,
+        DestructionEngine, FftwStandardGlweRelinearizationKey32, FftwStandardGlweRelinearizationKey64,
     };
-    use concrete_core::backends::fftw::entities::{FftwFourierGlweRelinearizationKey32, FftwFourierGlweRelinearizationKey64};
-    use crate::generation::prototypes::{ProtoFourierRelinearizationKey32, ProtoFourierRelinearizationKey64};
+    use crate::generation::prototypes::{ProtoStandardRelinearizationKey32, ProtoStandardRelinearizationKey64};
 
-    impl SynthesizesGlweRelinearizationKey<Precision32, FftwFourierGlweRelinearizationKey32> for Maker {
+    impl SynthesizesGlweRelinearizationKey<Precision32, FftwStandardGlweRelinearizationKey32> for Maker {
         fn synthesize_glwe_relinearization_key(
             &mut self,
             prototype: &Self::GlweRelinearizationKeyProto,
-        ) -> FftwFourierGlweRelinearizationKey32 {
+        ) -> FftwStandardGlweRelinearizationKey32 {
             prototype.0.to_owned()
         }
 
         fn unsynthesize_glwe_relinearization_key(
             &mut self,
-            entity: FftwFourierGlweRelinearizationKey32,
+            entity: FftwStandardGlweRelinearizationKey32,
         ) -> Self::GlweRelinearizationKeyProto {
-            ProtoFourierRelinearizationKey32(entity)
+            ProtoStandardRelinearizationKey32(entity)
         }
 
-        fn destroy_glwe_relinearization_key(&mut self, entity: FftwFourierGlweRelinearizationKey32) {
+        fn destroy_glwe_relinearization_key(&mut self, entity: FftwStandardGlweRelinearizationKey32) {
             self.default_engine.destroy(entity).unwrap();
         }
     }
 
-    impl SynthesizesGlweRelinearizationKey<Precision64, FftwFourierGlweRelinearizationKey64> for Maker {
+    impl SynthesizesGlweRelinearizationKey<Precision64, FftwStandardGlweRelinearizationKey64> for Maker {
         fn synthesize_glwe_relinearization_key(
             &mut self,
             prototype: &Self::GlweRelinearizationKeyProto,
-        ) -> FftwFourierGlweRelinearizationKey64 {
+        ) -> FftwStandardGlweRelinearizationKey64 {
             prototype.0.to_owned()
         }
 
         fn unsynthesize_glwe_relinearization_key(
             &mut self,
-            entity: FftwFourierGlweRelinearizationKey64,
+            entity: FftwStandardGlweRelinearizationKey64,
         ) -> Self::GlweRelinearizationKeyProto {
-            ProtoFourierRelinearizationKey64(entity)
+            ProtoStandardRelinearizationKey64(entity)
         }
 
-        fn destroy_glwe_relinearization_key(&mut self, entity: FftwFourierGlweRelinearizationKey64) {
+        fn destroy_glwe_relinearization_key(&mut self, entity: FftwStandardGlweRelinearizationKey64) {
             self.default_engine.destroy(entity).unwrap();
         }
     }

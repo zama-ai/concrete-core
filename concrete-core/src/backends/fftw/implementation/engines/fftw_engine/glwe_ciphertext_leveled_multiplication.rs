@@ -350,7 +350,7 @@ GlweCiphertextLeveledMultiplicationEngine<
         &mut self,
         input1: &FftwFourierGlweCiphertext32,
         input2: &FftwFourierGlweCiphertext32,
-        rlk: &StandardGlweRelinearizationKey32,
+        rlk: &FftwStandardGlweRelinearizationKey32,
         scale: ScalingFactor,
     ) -> FftwFourierGlweMultiplicationCiphertext32 {
         let buffers = self.get_fourier_u32_buffer(
