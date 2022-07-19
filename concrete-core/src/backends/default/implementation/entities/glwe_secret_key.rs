@@ -5,8 +5,6 @@ use concrete_commons::key_kinds::BinaryKeyKind;
 use concrete_commons::parameters::{GlweDimension, PolynomialSize};
 #[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
-use crate::prelude::markers::TensorProductKeyDistribution;
-use crate::prelude::TensorProductKeyKind;
 
 /// A structure representing a GLWE secret key with 32 bits of precision.
 #[derive(Debug, Clone, PartialEq, Eq)]
