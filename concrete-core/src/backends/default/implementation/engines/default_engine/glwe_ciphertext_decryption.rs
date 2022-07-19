@@ -6,7 +6,6 @@ use crate::backends::default::implementation::entities::{
     PlaintextVector64,
 };
 use crate::commons::crypto::encoding::PlaintextList as ImplPlaintextList;
-use crate::prelude::{GlweTensorProductSecretKey32, GlweTensorProductSecretKey64};
 use crate::specification::engines::{
     GlweCiphertextDecryptionEngine, GlweCiphertextDecryptionError,
 };
