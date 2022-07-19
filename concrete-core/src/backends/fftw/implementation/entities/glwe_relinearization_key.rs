@@ -1,5 +1,4 @@
 use crate::backends::fftw::private::crypto::glwe::{GlweRelinearizationKey};
-use crate::backends::fftw::private::math::fft::Complex64;
 use crate::specification::entities::markers::{
     BinaryKeyDistribution, GlweRelinearizationKeyKind,
 };
@@ -7,7 +6,6 @@ use crate::specification::entities::{AbstractEntity, GlweRelinearizationKeyEntit
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
 };
-use concrete_fftw::array::AlignedVec;
 use crate::backends::fftw::private::crypto::relinearize::StandardGlweRelinearizationKey;
 
 /// A structure representing a GLWE relinearization key with 32 bits of precision in the standard
