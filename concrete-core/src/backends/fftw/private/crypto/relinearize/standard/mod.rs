@@ -209,15 +209,16 @@ impl<Cont> StandardGlweRelinearizationKey<Cont> {
         let k = self.glwe_size.to_glwe_dimension().0;
         let mut key_product_vec: Vec<Polynomial<Vec<Scalar>>> = Vec::with_capacity((k * k + k) / 2);
         for poly in key_product_vec.iter_mut() {
-           poly.allocate(Scalar::ZERO, self.poly_size);
+            let zero_poly = Polynomial::allocate(Scalar::ZERO, self.poly_size);
+            poly.allocate(Scalar::ZERO, self.poly_size);
         }
         // Fill the vector with the products S_i * S_j, following the same ordering as the one of
         // the tensor product
         // TODO optimize this so as to make less Fourier conversions
-        let mut iter_key_product_vec = key_product_vec.polynomial_iter_mut();
-        let iter_1 = glwe_secret_key.polynomial_iter();
+        let mut iter_key_product_vec = key_product_vec.iter_mut();
+        let iter_1 = glwe_secret_key.as_polynomial_list().polynomial_iter();
         for (i, poly_1) in iter_1.enumerate() {
-            let iter_2 = glwe_secret_key.polynomial_iter();
+            let iter_2 = glwe_secret_key.as_polynomial_list().polynomial_iter();
             // consumes the iterator object with enumerate()
             for (j, poly_2) in iter_2.enumerate() {
                 // The vector to encrypt is composed of the S_i S_j products with i = j or j < i
@@ -227,9 +228,9 @@ impl<Cont> StandardGlweRelinearizationKey<Cont> {
                     // Allocate a Fourier poly for the result of the polynomial product in the 
                     // Fourier domain
                     let mut fourier_output_poly =
-                        FourierPolynomial::allocate(Complex64::zero(), self.poly_size);
+                        FourierPolynomial::allocate(Complex64::new(0., 0.), self.poly_size);
                     // Convert the two key polynomials to the Fourier domain at once
-                    fft.forward_two_as_integer(fft_buffer_1, fft_buffer_2, poly_1, poly_2);
+                    fft.forward_two_as_integer(fft_buffer_1, fft_buffer_2, &poly_1, &poly_2);
                     // Compute the multiplication
                     fourier_output_poly.update_with_multiply_accumulate(&fft_buffer_1, 
                                                                         &fft_buffer_2);
@@ -242,11 +243,11 @@ impl<Cont> StandardGlweRelinearizationKey<Cont> {
         // 2. Encrypt the vector of Si * Sj products in a vector of Glev ciphertexts
         let mut encoded = PlaintextList::allocate(Scalar::ZERO, PlaintextCount(self.poly_size
             .0 * (k * k + k) / 2));
-        let mut encoded_iter = encoded.iter_mut();
+        let mut encoded_iter = encoded.plaintext_iter_mut();
         for poly in key_product_vec.iter() {
             for poly_coef in poly.coefficient_iter() {
                 let mut plaintext = encoded_iter.next().unwrap();
-                plaintext = poly_coef as Scalar;
+                plaintext = *poly_coef;
             }
         }
         glwe_secret_key.create_relinearization_key(
@@ -416,9 +417,9 @@ impl<Cont> StandardGlweRelinearizationKey<Cont> {
         where
             Self: AsRefTensor,
     {
-        let chunks_size = self.poly_size.0 * self.rlwe_size.0 * self.rlwe_size.0;
+        let chunks_size = self.poly_size.0 * self.glwe_size.0 * self.glwe_size.0;
         let poly_size = self.poly_size;
-        let rlwe_size = self.rlwe_size;
+        let glwe_size = self.glwe_size;
         let decomp_level = self.decomp_level;
         self.as_tensor()
             .subtensor_iter(chunks_size)
@@ -427,9 +428,9 @@ impl<Cont> StandardGlweRelinearizationKey<Cont> {
                 GlevListLevelMatrix::from_container(
                     tensor.into_container(),
                     poly_size,
-                    rlwe_size,
-                    GlevCount(rlwe_size.0),
-                    DecompositionLevel(decomp_level - index),
+                    glwe_size,
+                    GlevCount(glwe_size.0),
+                    DecompositionLevel(decomp_level.0 - index),
                 )
             })
     }
@@ -454,7 +455,7 @@ impl<Cont> StandardGlweRelinearizationKey<Cont> {
         let second_fft_buffer = &mut buffers.fft_buffers.second_buffer;
         // Decompose the input polynomial
         let decomposer_t_i =
-            SignedDecomposer::new(self.decomp_base_log, self.decomposition_level_count());
+            SignedDecomposer::new(self.decomp_base_log, self.decomp_level);
         decomposer_t_i.fill_tensor_with_closest_representable(rounded_buffer, &input_poly);
 
         // Perform the inner product between the RLK(i, j, l) element and the input polynomial in 
@@ -465,7 +466,7 @@ impl<Cont> StandardGlweRelinearizationKey<Cont> {
             // We retrieve the decomposition of this level.
             let t_i_decomp = decomposition_t_i.next_term().unwrap();
             // And convert it to the Fourier domain
-            let mut t_i_decomp_fourier = FourierPolynomial::allocate(Complex64::zero(), rlk
+            let mut t_i_decomp_fourier = FourierPolynomial::allocate(Complex64::new(0.,0.), rlk
                 .polynomial_size());
             fft.forward_as_torus(&mut t_i_decomp_fourier, &t_i_decomp);
             debug_assert_eq!(
