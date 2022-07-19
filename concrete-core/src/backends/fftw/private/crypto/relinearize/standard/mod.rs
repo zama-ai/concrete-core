@@ -466,7 +466,7 @@ impl<Cont> StandardGlweRelinearizationKey<Cont> {
             // We retrieve the decomposition of this level.
             let t_i_decomp = decomposition_t_i.next_term().unwrap();
             // And convert it to the Fourier domain
-            let mut t_i_decomp_fourier = FourierPolynomial::allocate(Complex64(0., 0.), rlk
+            let mut t_i_decomp_fourier = FourierPolynomial::allocate(Complex64::zero(), rlk
                 .polynomial_size());
             fft.forward_as_torus(&mut t_i_decomp_fourier, &t_i_decomp);
             debug_assert_eq!(
