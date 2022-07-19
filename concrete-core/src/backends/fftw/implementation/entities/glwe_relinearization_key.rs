@@ -29,11 +29,11 @@ impl GlweRelinearizationKeyEntity for FftwStandardGlweRelinearizationKey32 {
     }
 
     fn decomposition_level_count(&self) -> DecompositionLevelCount {
-        self.0.decomposition_level_count()
+        self.decomposition_level_count()
     }
 
     fn decomposition_base_log(&self) -> DecompositionBaseLog {
-        self.0.decomposition_base_log()
+        self.decomposition_base_log()
     }
 }
 
@@ -58,10 +58,10 @@ impl GlweRelinearizationKeyEntity for FftwStandardGlweRelinearizationKey64 {
     }
 
     fn decomposition_level_count(&self) -> DecompositionLevelCount {
-        self.0.decomposition_level_count()
+        self.decomposition_level_count()
     }
 
     fn decomposition_base_log(&self) -> DecompositionBaseLog {
-        self.0.decomposition_base_log()
+        self.decomposition_base_log()
     }
 }
