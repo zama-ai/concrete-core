@@ -1,6 +1,6 @@
 use crate::prelude::{GlweRelinearizationKeyEntity, ScalingFactor};
 use crate::specification::engines::AbstractEngine;
-use crate::specification::entities::{GgswCiphertextEntity, GlweCiphertextEntity};
+use crate::specification::entities::{GlweCiphertextEntity};
 
 use super::engine_error;
 
