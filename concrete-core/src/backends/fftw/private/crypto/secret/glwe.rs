@@ -3,14 +3,11 @@ use crate::backends::fftw::private::math::fft::{AlignedVec, Complex64, FourierPo
 use crate::commons::crypto::secret::GlweSecretKey;
 use crate::commons::math::tensor::{ck_dim_div, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, Tensor, IntoTensor};
 use crate::commons::math::torus::UnsignedTorus;
-use crate::prelude::{DispersionParameter, GlweDimension, KeyKind, PolynomialSize, TensorProductKeyKind};
+use crate::prelude::{GlweDimension, KeyKind, PolynomialSize, TensorProductKeyKind};
 use std::marker::PhantomData;
 #[cfg(feature = "serde_serialize")]
 use serde::{Deserialize, Serialize};
-use crate::commons::crypto::ggsw::StandardGgswCiphertext;
-use crate::commons::crypto::secret::generators::EncryptionRandomGenerator;
 use crate::commons::math::random::ByteRandomGenerator;
-use crate::prelude::numeric::Numeric;
 
 /// A GLWE secret key in the Fourier Domain.
 pub struct FourierGlweSecretKey<Kind, Cont, Scalar>
