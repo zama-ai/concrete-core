@@ -1142,19 +1142,19 @@ where
         // Fork the encryption generator over the relinerization key levels
         let gen_iter = generator
             .fork_glev_list_to_glev_list_levels::<Scalar>(
-                rlk.decomposition_level_count(),
+                rlk.level_count(),
                 self.key_size().to_glwe_size(),
                 rlk.glev_count(),
                 self.poly_size,
             )
             .expect("Failed to split generator into relinearization key levels");
 
-        let base_log = rlk.decomposition_base_log();
-        for (mut matrix, mut generator) in rlk.level_matrix_iter_mut().zip(gen_iter) {
+        let base_log = rlk.base_log();
+        for (mut matrix, mut generator) in rlk.level_matrix_iter().zip(gen_iter) {
             // Encode the full vector (S_0^2, S_1^2, S_0 * S_1, etc.) that's being encrypted
             let mut decomposition = PlaintextList::allocate(Scalar::ZERO, PlaintextCount(rlk
                 .glev_count().0 * self.poly_size.0)); 
-            let encoded_iter = encoded.iter();
+            let encoded_iter = encoded.plaintext_iter_mut();
             for mut decomposed in decomposition.plaintext_iter_mut() {
                 let encoded_val = encoded_iter().next().unwrap();
                 decomposed = encoded_val.0.wrapping_mul(
@@ -1173,7 +1173,7 @@ where
                 // Issue GLWE encryptions of the S_i * S_j encoded products
                 let mut decomposed_chunk = decomposition.as_tensor().as_slice().chunks(rlk
                     .polynomial_size().0);
-                self.encrypt_glwe(&mut glwe_ct, decomposed_chunk.next().unwrap(), noise_parameters, 
+                self.encrypt_glwe(&mut glwe_ct, decomposed_chunk.next().unwrap(), noise_parameters,
                                   &mut generator);
             }
         }
@@ -1204,8 +1204,7 @@ where
         ck_dim_eq!(self.polynomial_size() => encrypted.polynomial_size());
         ck_dim_eq!(self.key_size() => encrypted.glwe_size().to_glwe_dimension());
 
-        let gen_iter = generator
-            .fork_ggsw_to_ggsw_levels::<Scalar>(
+        let gen_iter = generator.fork_ggsw_to_ggsw_levels::<Scalar>(
                 encrypted.decomposition_level_count(),
                 self.key_size().to_glwe_size(),
                 self.poly_size,
