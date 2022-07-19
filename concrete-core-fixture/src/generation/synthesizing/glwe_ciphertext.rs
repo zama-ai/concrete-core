@@ -254,7 +254,7 @@ mod backend_default {
         }
     }
 }
-#[cfg(feature="backend_fftw")]
+
 mod backend_fftw {
     use crate::generation::prototypes::{ProtoBinaryGlweCiphertext32, ProtoBinaryGlweCiphertext64, ProtoTensorProductGlweCiphertext32, ProtoTensorProductGlweCiphertext64};
     use crate::generation::synthesizing::SynthesizesGlweCiphertext;

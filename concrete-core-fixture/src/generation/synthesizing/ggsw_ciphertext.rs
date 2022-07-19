@@ -64,7 +64,6 @@ mod backend_default {
     }
 }
 
-#[cfg(feature = "backend_fftw")]
 mod backend_fftw {
     use crate::generation::synthesizing::SynthesizesGgswCiphertext;
     use crate::generation::{Maker, Precision32, Precision64};

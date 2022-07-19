@@ -72,7 +72,6 @@ mod backend_default {
     }
 }
 
-#[cfg(feature = "backend_fftw")]
 mod backend_fftw {
     use crate::generation::synthesizing::SynthesizesLweBootstrapKey;
     use crate::generation::{Maker, Precision32, Precision64};
