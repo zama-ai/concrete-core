@@ -15,7 +15,7 @@ use crate::backends::default::implementation::entities::{
     Plaintext64, PlaintextVector32, PlaintextVector64,
 };
 use crate::commons::math::tensor::AsMutTensor;
-use crate::prelude::{CleartextF64, CleartextVectorF64, FloatEncoder, FloatEncoderVector, FftwStandardGlweRelinearizationKey32};
+use crate::prelude::{CleartextF64, CleartextVectorF64, FloatEncoder, FloatEncoderVector};
 use crate::specification::engines::{DestructionEngine, DestructionError};
 
 impl DestructionEngine<Cleartext32> for DefaultEngine {
