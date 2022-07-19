@@ -5,11 +5,13 @@ use crate::commons::math::tensor::{
     AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, ck_dim_div, ck_dim_eq, IntoTensor, Tensor,
 };
 use crate::commons::math::torus::UnsignedTorus;
-use concrete_commons::parameters::{GlweSize, PolynomialSize};
+use crate::commons::math::polynomial::Polynomial;
+use concrete_commons::parameters::{GlweSize, PolynomialSize, GlweDimension};
 use crate::prelude::ScalingFactor;
 use concrete_fftw::array::AlignedVec;
 #[cfg(feature = "backend_fftw_serialization")]
 use serde::{Deserialize, Serialize};
+use crate::backends::fftw::private::crypto::relinearize::StandardGlweRelinearizationKey;
 
 /// A GLWE ciphertext in the Fourier Domain.
 #[cfg_attr(feature = "backend_fftw_serialization", derive(Serialize, Deserialize))]
@@ -247,7 +249,7 @@ impl<Scalar: UnsignedTorus> FourierGlweCiphertext<AlignedVec<Complex64>, Scalar>
         glwe: &mut GlweCiphertext<InputCont>,
         buffers: &mut FourierBuffers<Scalar>,
     ) where
-        Cont: AsMutSlice<Element = Complex64>,
+        InputCont: AsMutSlice<Element = Complex64>,
         GlweCiphertext<InputCont>: AsMutTensor<Element = Scalar>,
     {
         // We get the fft to use from the passed buffers
@@ -431,14 +433,14 @@ impl<Scalar: UnsignedTorus> FourierGlweCiphertext<AlignedVec<Complex64>, Scalar>
             let t_i = self.get_tensor_product_t_index(i);
             let mut t_i_fourier_poly = self.polynomial_iter().nth(t_i).unwrap();
             let mut t_i_poly = Polynomial::allocate(Scalar::ZERO, rlk.polynomial_size());
-            fft.backward_as_torus(&mut t_i_poly, &mut t_i_fourier_poly);
+            buffers.backward_as_torus(&mut t_i_poly, &mut t_i_fourier_poly);
             rlk.compute_relinearization_product(&mut output_poly, &t_i_poly, i, i, buffers);
 
             for j in 0..i {
                 let r_ij = self.get_tensor_product_t_index(i) + j + 2;
                 let mut r_ij_fourier_poly = self.polynomial_iter().nth(r_ij).unwrap();
                 let mut r_ij_poly = Polynomial::allocate(Scalar::ZERO, rlk.polynomial_size());
-                fft.backward_as_torus(&mut r_ij_poly, &mut r_ij_fourier_poly);
+                buffers.backward_as_torus(&mut r_ij_poly, &mut r_ij_fourier_poly);
                 rlk.compute_relinearization_product(&mut output_poly, &r_ij_poly, i, j,
                                                     buffers);
             }
