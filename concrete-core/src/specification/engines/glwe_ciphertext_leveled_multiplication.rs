@@ -25,7 +25,7 @@ impl<EngineError: std::error::Error> GlweCiphertextLeveledMultiplicationError<En
     ) -> Result<(), Self>
     where
         GlweCiphertext: GlweCiphertextEntity,
-        RelinearizationKey: RelinearizationKeyEntity,
+        RelinearizationKey: GlweRelinearizationKeyEntity,
     {
         if scale.0 <= 0 {
             return Err(Self::NegativeScaleError);
