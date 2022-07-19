@@ -1,4 +1,3 @@
-use crate::backends::fftw::private::crypto::glwe::{GlweRelinearizationKey};
 use crate::specification::entities::markers::{
     BinaryKeyDistribution, GlweRelinearizationKeyKind,
 };
