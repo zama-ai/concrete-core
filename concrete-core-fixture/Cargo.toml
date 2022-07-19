@@ -5,7 +5,8 @@ edition = "2021"
 license = "BSD-3-Clause-Clear"
 
 [dependencies]
-concrete-core = { path = "../concrete-core", features = ["backend_default_parallel"] }
+concrete-core = { path = "../concrete-core", features = ["backend_default_parallel", 
+    "backend_fftw"] }
 concrete-csprng = { path = "../concrete-csprng", features = ["seeder_unix"] }
 concrete-commons = { path = "../concrete-commons" }
 concrete-npe = { path = "../concrete-npe" }
@@ -15,7 +16,7 @@ paste = "1.0"
 
 [features]
 # No backend_default feature as it's required for all tests to work, so always enabled
-backend_fftw = ["concrete-core/backend_fftw"]
+# No backend_fftw feature as it is required to create relinearization key prototypes
 backend_default_parallel = ["concrete-core/backend_default_parallel"]
 backend_cuda = ["concrete-core/backend_cuda", "concrete-cuda"]
 _ci_do_not_compile = []

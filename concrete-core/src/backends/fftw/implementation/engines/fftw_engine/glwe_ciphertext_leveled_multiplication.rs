@@ -13,7 +13,7 @@ impl From<FftwError> for GlweCiphertextLeveledMultiplicationError<FftwError> {
 }
 
 /// # Description:
-/// Implementation of [`GlweMultiplicationSameKeyEngine`] for [`FftwEngine`] that operates on 32-bit
+/// Implementation of [`GlweCiphertextLeveledMultiplicationEngine`] for [`FftwEngine`] that operates on 32-bit
 /// integer GLWE Ciphertexts.
 impl
     GlweCiphertextLeveledMultiplicationEngine<
@@ -130,7 +130,7 @@ impl
 }
 
 /// # Description:
-/// Implementation of [`GlweMultiplicationSameKeyEngine`] for [`FftwEngine`] that operates on 64-bit
+/// Implementation of [`GlweCiphertextLeveledMultiplicationEngine`] for [`FftwEngine`] that operates on 64-bit
 /// integer GLWE Ciphertexts.
 impl
 GlweCiphertextLeveledMultiplicationEngine<
@@ -247,7 +247,7 @@ GlweCiphertextLeveledMultiplicationEngine<
 }
 
 /// # Description:
-/// Implementation of [`GlweMultiplicationSameKeyEngine`] for [`FftwEngine`] that operates on 32-bit
+/// Implementation of [`GlweCiphertextLeveledMultiplicationEngine`] for [`FftwEngine`] that operates on 32-bit
 /// integer GLWE Ciphertexts in the Fourier domain.
 impl
 GlweCiphertextLeveledMultiplicationEngine<
@@ -350,7 +350,7 @@ GlweCiphertextLeveledMultiplicationEngine<
         &mut self,
         input1: &FftwFourierGlweCiphertext32,
         input2: &FftwFourierGlweCiphertext32,
-        rlk: &StandardGlweRelinearizationKey32,
+        rlk: &FftwStandardGlweRelinearizationKey32,
         scale: ScalingFactor,
     ) -> FftwFourierGlweMultiplicationCiphertext32 {
         let buffers = self.get_fourier_u32_buffer(
@@ -366,7 +366,7 @@ GlweCiphertextLeveledMultiplicationEngine<
 }
 
 /// # Description:
-/// Implementation of [`GlweMultiplicationSameKeyEngine`] for [`FftwEngine`] that operates on 64-bit
+/// Implementation of [`GlweCiphertextLeveledMultiplicationEngine`] for [`FftwEngine`] that operates on 64-bit
 /// integer GLWE Ciphertexts in the Fourier domain.
 impl
 GlweCiphertextLeveledMultiplicationEngine<

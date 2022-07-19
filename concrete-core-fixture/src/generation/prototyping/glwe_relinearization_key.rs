@@ -1,5 +1,4 @@
-use crate::generation::prototypes::{
-    GlweRelinearizationKeyPrototype, ProtoStandardRelinearizationKey32, ProtoStandardRelinearizationKey64};
+use crate::generation::prototypes::{GlweRelinearizationKeyPrototype, ProtoGlweRelinearizationKey32, ProtoGlweRelinearizationKey64,};
 use crate::generation::prototyping::glwe_secret_key::PrototypesGlweSecretKey;
 use crate::generation::{IntegerPrecision, Maker, Precision32, Precision64};
 use concrete_commons::dispersion::Variance;
@@ -8,48 +7,42 @@ use concrete_core::prelude::markers::{BinaryKeyDistribution, KeyDistributionMark
 use concrete_core::prelude::GlweRelinearizationKeyCreationEngine;
 
 /// A trait allowing to manipulate GLWE relinearization key prototypes.
-pub trait PrototypesStandardRelinearizationKey<
+pub trait PrototypesGlweRelinearizationKey<
     Precision: IntegerPrecision,
-    InputKeyDistribution: KeyDistributionMarker,
-    OutputKeyDistribution: KeyDistributionMarker,
+    KeyDistribution: KeyDistributionMarker,
 >:
-PrototypesStandardRelinearizationKey<Precision, InputKeyDistribution, OutputKeyDistribution>
-+ PrototypesGlweSecretKey<Precision, OutputKeyDistribution>
+PrototypesGlweRelinearizationKey<Precision, KeyDistribution>
++ PrototypesGlweSecretKey<Precision, KeyDistribution>
 {
-    type StandardRelinearizationKeyProto: GlweRelinearizationKeyPrototype<
+    type GlweRelinearizationKeyProto: GlweRelinearizationKeyPrototype<
         Precision = Precision,
-        InputKeyDistribution = InputKeyDistribution,
-        OutputKeyDistribution = OutputKeyDistribution,
+        InputKeyDistribution =KeyDistribution,
     >;
     fn new_glwe_relinearization_key(
         &mut self,
-        input_key: &<Self as PrototypesGlweSecretKey<Precision, InputKeyDistribution>>::GlweSecretKeyProto,
-        output_key: &Self::StandardRelinearizationKeyProto,
-        decomposition_level: DecompositionLevelCount,
+        input_key: &<Self as PrototypesGlweSecretKey<Precision, KeyDistribution>>::GlweSecretKeyProto,
         decomposition_base_log: DecompositionBaseLog,
+        decomposition_level: DecompositionLevelCount,
         noise: Variance,
-    ) -> Self::StandardRelinearizationKeyProto;
+    ) -> Self::GlweRelinearizationKeyProto;
 }
 
-impl PrototypesStandardRelinearizationKey<Precision32, BinaryKeyDistribution, BinaryKeyDistribution>
+impl PrototypesGlweRelinearizationKey<Precision32, BinaryKeyDistribution>
 for Maker
 {
-    type StandardRelinearizationKeyProto = ProtoStandardRelinearizationKey32;
+    type GlweRelinearizationKeyProto = ProtoGlweRelinearizationKey32;
 
     fn new_glwe_relinearization_key(
         &mut self,
-        input_key: &Self::LweSecretKeyProto,
-        output_key: &Self::GlweSecretKeyProto,
-        decomposition_level: DecompositionLevelCount,
+        input_key: &Self::GlweSecretKeyProto,
         decomposition_base_log: DecompositionBaseLog,
+        decomposition_level: DecompositionLevelCount,
         noise: Variance,
-    ) -> Self::LweBootstrapKeyProto {
-        ProtoStandardRelinearizationKey32(
-            // TODO: which engine?
-            self.default_engine
-                .new_glwe_relinearization_key(
+    ) -> Self::GlweRelinearizationKeyProto {
+        ProtoGlweRelinearizationKey32(
+            self.fftw_engine
+                .create_glwe_relinearization_key(
                     &input_key.0,
-                    &output_key.0,
                     decomposition_base_log,
                     decomposition_level,
                     noise,
@@ -59,25 +52,22 @@ for Maker
     }
 }
 
-impl PrototypesStandardRelinearizationKey<Precision64, BinaryKeyDistribution, BinaryKeyDistribution>
+impl PrototypesGlweRelinearizationKey<Precision64, BinaryKeyDistribution>
 for Maker
 {
-    type StandardRelinearizationKeyProto = ProtoStandardRelinearizationKey32;
+    type GlweRelinearizationKeyProto = ProtoStandardRelinearizationKey32;
 
     fn new_glwe_relinearization_key(
         &mut self,
         input_key: &Self::LweSecretKeyProto,
-        output_key: &Self::GlweSecretKeyProto,
-        decomposition_level: DecompositionLevelCount,
         decomposition_base_log: DecompositionBaseLog,
+        decomposition_level: DecompositionLevelCount,
         noise: Variance,
-    ) -> Self::LweBootstrapKeyProto {
-        ProtoStandardRelinearizationKey64(
-            // TODO: which engine?
-            self.default_engine
+    ) -> Self::GlweRelinearizationKeyProto {
+        ProtoGlweRelinearizationKey64(
+            self.fftw_engine
                 .new_glwe_relinearization_key(
                     &input_key.0,
-                    &output_key.0,
                     decomposition_base_log,
                     decomposition_level,
                     noise,

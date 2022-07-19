@@ -1,5 +1,5 @@
 use crate::fixture::Fixture;
-use crate::generation::prototyping::{PrototypesStandardRelinearizationKey, PrototypesGlweSecretKey};
+use crate::generation::prototyping::{PrototypesGlweRelinearizationKey, PrototypesGlweSecretKey};
 use crate::generation::synthesizing::{
     SynthesizesGlweSecretKey, SynthesizesGlweRelinearizationKey,
 };
@@ -15,7 +15,6 @@ pub struct GlweRelinearizationKeyCreationFixture;
 
 #[derive(Debug)]
 pub struct GlweRelinearizationKeyCreationParameters {
-    pub lwe_dimension: LweDimension,
     pub glwe_dimension: GlweDimension,
     pub polynomial_size: PolynomialSize,
     pub level: DecompositionLevelCount,
@@ -40,7 +39,7 @@ for GlweRelinearizationKeyCreationFixture
     type Parameters = GlweRelinearizationKeyCreationParameters;
     type RepetitionPrototypes = ();
     type SamplePrototypes = (
-        <Maker as PrototypesStandardRelinearizationKey<Precision, GlweSecretKey::KeyDistribution,GlweRelinearizationKey>>::StandardRelinearizationKeyProto,
+        <Maker as PrototypesGlweRelinearizationKey<Precision, GlweSecretKey::KeyDistribution,GlweRelinearizationKey>>::GlweRelinearizationKeyProto,
         <Maker as PrototypesGlweSecretKey<Precision, GlweSecretKey::KeyDistribution>>::GlweSecretKeyProto,
     );
     type PreExecutionContext = (GlweSecretKey,);
@@ -52,7 +51,6 @@ for GlweRelinearizationKeyCreationFixture
         Box::new(
             vec![
                 GlweRelinearizationKeyCreationParameters {
-                    lwe_dimension: LweDimension(630),
                     glwe_dimension: GlweDimension(1),
                     polynomial_size: PolynomialSize(1024),
                     level: DecompositionLevelCount(3),
@@ -60,7 +58,6 @@ for GlweRelinearizationKeyCreationFixture
                     noise: Variance(0.00000001),
                 },
                 GlweRelinearizationKeyCreationParameters {
-                    lwe_dimension: LweDimension(630),
                     glwe_dimension: GlweDimension(2),
                     polynomial_size: PolynomialSize(512),
                     level: DecompositionLevelCount(3),
@@ -94,7 +91,7 @@ for GlweRelinearizationKeyCreationFixture
         _repetition_proto: &Self::RepetitionPrototypes,
         sample_proto: &Self::SamplePrototypes,
     ) -> Self::PreExecutionContext {
-        let (proto_secret_key_lwe, proto_secret_key_glwe) = sample_proto;
+        let (proto_secret_key_glwe) = sample_proto;
         let synth_secret_key_glwe = maker.synthesize_glwe_secret_key(proto_secret_key_glwe);
         (synth_secret_key_glwe)
     }

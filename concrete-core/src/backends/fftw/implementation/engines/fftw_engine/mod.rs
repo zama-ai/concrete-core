@@ -92,3 +92,5 @@ mod glwe_ciphertext_ggsw_ciphertext_external_product;
 mod glwe_ciphertexts_ggsw_ciphertext_fusing_cmux;
 mod lwe_bootstrap_key_conversion;
 mod lwe_ciphertext_discarding_bootstrap;
+mod glwe_ciphertext_leveled_multiplication;
+mod glwe_relinearization_key_creation;
