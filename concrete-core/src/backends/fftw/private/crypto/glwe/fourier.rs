@@ -1,6 +1,6 @@
 use crate::backends::fftw::private::crypto::bootstrap::FourierBuffers;
 use crate::backends::fftw::private::math::fft::{Complex64, FourierPolynomial};
-use crate::commons::crypto::glwe::{GlweCiphertext, GlweList};
+use crate::commons::crypto::glwe::{GlweCiphertext};
 use crate::commons::math::tensor::{
     AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, ck_dim_div, ck_dim_eq, IntoTensor, Tensor,
 };
