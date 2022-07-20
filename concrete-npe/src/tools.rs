@@ -1,16 +1,14 @@
 use concrete_commons::dispersion::DispersionParameter;
-use concrete_commons::numeric::UnsignedInteger;
 use std::ops::Mul;
 
 /// Computes the number of bits affected by the noise with a dispersion
 /// describing a normal distribution.
-pub fn estimate_number_of_noise_bits<T, D>(dispersion: D) -> usize
+pub fn estimate_number_of_noise_bits<D>(dispersion: D, log2_modulus: u32) -> usize
 where
     D: DispersionParameter,
-    T: UnsignedInteger,
 {
     // get the standard deviation
-    let std_dev: f64 = dispersion.get_modular_standard_dev::<T>();
+    let std_dev: f64 = dispersion.get_modular_standard_dev(log2_modulus);
 
     // the constant used for the computation
     let z: f64 = 4.;
@@ -27,7 +25,7 @@ where
 /// Computes the square of the input value.
 pub(super) fn square<T>(x: T) -> T
 where
-    T: Mul<T, Output = T> + Copy,
+    T: Mul<Output = T> + Copy,
 {
     x * x
 }

@@ -1,5 +1,5 @@
 use concrete_commons::dispersion::{DispersionParameter, LogStandardDev, Variance};
-use concrete_commons::numeric::UnsignedInteger;
+use concrete_commons::numeric::{Numeric, UnsignedInteger};
 use concrete_commons::parameters::LweDimension;
 use concrete_core::prelude::{
     LweCiphertextCount, LweCiphertextVectorEntity, LweCiphertextVectorFusingSubtractionEngine,
@@ -186,11 +186,11 @@ where
         _maker: &mut Maker,
         _repetition_proto: &Self::RepetitionPrototypes,
     ) -> Self::Criteria {
-        let predicted_variance: Variance = concrete_npe::estimate_addition_noise::<
-            Precision::Raw,
-            _,
-            _,
-        >(parameters.noise, parameters.noise);
+        let predicted_variance: Variance = concrete_npe::estimate_addition_noise::<_, _>(
+            parameters.noise,
+            parameters.noise,
+            Precision::Raw::BITS as u32,
+        );
         (predicted_variance,)
     }
 
