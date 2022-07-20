@@ -77,6 +77,9 @@ jobs:
         toolchain: nightly
         override: true
         components: rustfmt, clippy
+    - name: Install Rust for tasks
+      run: |
+        make install_tasks_rust_toolchain
     - name: Clippy on cuda backend
       if: ${{ !cancelled() }}
       run: |
