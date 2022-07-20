@@ -6,16 +6,16 @@ on:
   workflow_dispatch:
     inputs:
       instance_id:
-        description: 'AWS instance ID'
+        description: "AWS instance ID"
         type: string
       instance_image_id:
-        description: 'AWS instance AMI ID'
+        description: "AWS instance AMI ID"
         type: string
       instance_type:
-        description: 'AWS EC2 instance product type'
+        description: "AWS EC2 instance product type"
         type: string
       runner_name:
-        description: 'Action runner name'
+        description: "Action runner name"
         type: string
 
 env:
@@ -70,13 +70,16 @@ jobs:
           toolchain: nightly
           override: true
           components: rustfmt, clippy
+      - name: Install Rust for tasks
+        run: |
+          make install_tasks_rust_toolchain
       - name: Clippy on cuda backend
         run: |
           cargo xtask check_clippy_cuda
 
       - name: Test concrete-core with cuda backend
         run: |
-         cargo xtask test_cuda
+          cargo xtask test_cuda
 
       - name: Slack Notification
         if: ${{ always() }}
