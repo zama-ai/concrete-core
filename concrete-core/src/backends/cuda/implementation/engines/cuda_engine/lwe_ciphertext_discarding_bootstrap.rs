@@ -4,11 +4,12 @@ use crate::backends::cuda::implementation::entities::{
     CudaFourierLweBootstrapKey32, CudaFourierLweBootstrapKey64, CudaGlweCiphertext32,
     CudaGlweCiphertext64, CudaLweCiphertext32, CudaLweCiphertext64,
 };
-use crate::backends::cuda::private::device::GpuIndex;
+use crate::backends::cuda::private::device::NumberOfSamples;
 use crate::specification::engines::{
     LweCiphertextDiscardingBootstrapEngine, LweCiphertextDiscardingBootstrapError,
 };
-use crate::specification::entities::{LweBootstrapKeyEntity, LweCiphertextEntity};
+use crate::specification::entities::LweBootstrapKeyEntity;
+use concrete_commons::parameters::LweCiphertextIndex;
 
 impl From<CudaError> for LweCiphertextDiscardingBootstrapError<CudaError> {
     fn from(err: CudaError) -> Self {
@@ -138,26 +139,24 @@ impl
         acc: &CudaGlweCiphertext32,
         bsk: &CudaFourierLweBootstrapKey32,
     ) {
-        let stream = &self.streams[0];
-        let test_vector_indexes = vec![0; 1];
-        let d_test_vector_indexes = stream.malloc::<u32>(1);
-        stream.copy_to_gpu(d_test_vector_indexes, &test_vector_indexes);
+        let stream = self.streams.first().unwrap();
+        let mut test_vector_indexes = stream.malloc::<u32>(1);
+        stream.copy_to_gpu(&mut test_vector_indexes, &[0]);
 
         stream.discard_bootstrap_low_latency_lwe_ciphertext_vector_32(
-            output.0.get_ptr().0,
-            acc.0.get_ptr().0,
-            d_test_vector_indexes,
-            input.0.get_ptr().0,
-            bsk.0.get_ptr(GpuIndex(0)).0,
-            input.lwe_dimension().0 as u32,
-            bsk.polynomial_size().0 as u32,
-            bsk.decomposition_base_log().0 as u32,
-            bsk.decomposition_level_count().0 as u32,
-            1,
-            0,
-            self.get_cuda_shared_memory() as u32,
+            &mut output.0.d_vec,
+            &acc.0.d_vec,
+            &test_vector_indexes,
+            &input.0.d_vec,
+            bsk.0.d_vecs.first().unwrap(),
+            input.0.lwe_dimension,
+            bsk.polynomial_size(),
+            bsk.decomposition_base_log(),
+            bsk.decomposition_level_count(),
+            NumberOfSamples(1),
+            LweCiphertextIndex(0),
+            self.get_cuda_shared_memory(),
         );
-        stream.drop(d_test_vector_indexes).unwrap();
     }
 }
 
@@ -283,25 +282,23 @@ impl
         acc: &CudaGlweCiphertext64,
         bsk: &CudaFourierLweBootstrapKey64,
     ) {
-        let stream = &self.streams[0];
-        let test_vector_indexes = vec![0; 1];
-        let d_test_vector_indexes = stream.malloc::<u64>(1);
-        stream.copy_to_gpu(d_test_vector_indexes, &test_vector_indexes);
+        let stream = self.streams.first().unwrap();
+        let mut test_vector_indexes = stream.malloc::<u32>(1);
+        stream.copy_to_gpu(&mut test_vector_indexes, &[0]);
 
         stream.discard_bootstrap_low_latency_lwe_ciphertext_vector_64(
-            output.0.get_ptr().0,
-            acc.0.get_ptr().0,
-            d_test_vector_indexes,
-            input.0.get_ptr().0,
-            bsk.0.get_ptr(GpuIndex(0)).0,
-            input.lwe_dimension().0 as u32,
-            bsk.polynomial_size().0 as u32,
-            bsk.decomposition_base_log().0 as u32,
-            bsk.decomposition_level_count().0 as u32,
-            1,
-            0,
-            self.get_cuda_shared_memory() as u32,
+            &mut output.0.d_vec,
+            &acc.0.d_vec,
+            &test_vector_indexes,
+            &input.0.d_vec,
+            bsk.0.d_vecs.first().unwrap(),
+            input.0.lwe_dimension,
+            bsk.polynomial_size(),
+            bsk.decomposition_base_log(),
+            bsk.decomposition_level_count(),
+            NumberOfSamples(1),
+            LweCiphertextIndex(0),
+            self.get_cuda_shared_memory(),
         );
-        stream.drop(d_test_vector_indexes).unwrap();
     }
 }

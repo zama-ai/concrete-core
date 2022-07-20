@@ -1,16 +1,15 @@
 //! Bootstrap key with Cuda.
-use crate::backends::cuda::private::device::GpuIndex;
-use crate::backends::cuda::private::pointers::CudaBootstrapKeyPointer;
+use crate::backends::cuda::private::vec::CudaVec;
 use concrete_commons::numeric::UnsignedInteger;
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
 };
 use std::marker::PhantomData;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub(crate) struct CudaBootstrapKey<T: UnsignedInteger> {
-    // Pointers to GPU data: one pointer per GPU
-    pub(crate) d_ptr_vec: Vec<CudaBootstrapKeyPointer>,
+#[derive(Debug)]
+pub(crate) struct CudaBootstrapKey<T> {
+    // Pointers to GPU data: one cuda vec per GPU
+    pub(crate) d_vecs: Vec<CudaVec<f64>>,
     // Input LWE dimension
     pub(crate) input_lwe_dimension: LweDimension,
     // Size of polynomials in the key
@@ -49,10 +48,5 @@ impl<T: UnsignedInteger> CudaBootstrapKey<T> {
     #[allow(dead_code)]
     pub(crate) fn decomposition_base_log(&self) -> DecompositionBaseLog {
         self.decomp_base_log
-    }
-
-    #[allow(dead_code)]
-    pub(crate) unsafe fn get_ptr(&self, gpu_index: GpuIndex) -> CudaBootstrapKeyPointer {
-        self.d_ptr_vec[gpu_index.0 as usize]
     }
 }

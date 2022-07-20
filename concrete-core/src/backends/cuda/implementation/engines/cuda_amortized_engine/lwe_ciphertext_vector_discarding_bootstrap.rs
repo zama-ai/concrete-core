@@ -4,11 +4,12 @@ use crate::backends::cuda::implementation::entities::{
     CudaFourierLweBootstrapKey32, CudaFourierLweBootstrapKey64, CudaGlweCiphertextVector32,
     CudaGlweCiphertextVector64, CudaLweCiphertextVector32, CudaLweCiphertextVector64,
 };
-use crate::backends::cuda::private::device::GpuIndex;
+use crate::backends::cuda::private::device::NumberOfSamples;
 use crate::specification::engines::{
     LweCiphertextVectorDiscardingBootstrapEngine, LweCiphertextVectorDiscardingBootstrapError,
 };
 use crate::specification::entities::{LweBootstrapKeyEntity, LweCiphertextVectorEntity};
+use concrete_commons::parameters::LweCiphertextIndex;
 
 /// # Description
 /// A discard bootstrap on a vector of input ciphertext vectors with 32 bits of precision.
@@ -146,39 +147,34 @@ impl
         let samples_per_gpu = input.0.lwe_ciphertext_count().0 / self.get_number_of_gpus();
 
         for gpu_index in 0..self.get_number_of_gpus() {
-            let mut samples: u32 = samples_per_gpu as u32;
+            let mut samples = samples_per_gpu;
             if gpu_index == self.get_number_of_gpus() - 1
                 && input.lwe_ciphertext_count().0 % self.get_number_of_gpus() as usize != 0
             {
-                samples += (input.lwe_ciphertext_count().0
-                    - samples_per_gpu * self.get_number_of_gpus())
-                    as u32;
+                samples +=
+                    input.lwe_ciphertext_count().0 - samples_per_gpu * self.get_number_of_gpus();
             }
-            let stream = &self.streams[gpu_index];
+            let stream = &self.streams.get(gpu_index).unwrap();
             // FIXME this is hard set at the moment because concrete-default does not support a more
             //   general API for the bootstrap
-            let mut test_vector_indexes = Vec::with_capacity(samples as usize);
-            for i in 0..samples {
-                test_vector_indexes.push(i);
-            }
-            let d_test_vector_indexes = stream.malloc::<u32>(samples);
-            stream.copy_to_gpu(d_test_vector_indexes, &test_vector_indexes);
+            let test_vector_indexes = (0..samples as u32).collect::<Vec<u32>>();
+            let mut d_test_vector_indexes = stream.malloc::<u32>(samples as u32);
+            stream.copy_to_gpu(&mut d_test_vector_indexes, test_vector_indexes.as_slice());
 
             stream.discard_bootstrap_amortized_lwe_ciphertext_vector_32(
-                output.0.get_ptr(GpuIndex(gpu_index as u32)).0,
-                acc.0.get_ptr(GpuIndex(gpu_index as u32)).0,
-                d_test_vector_indexes,
-                input.0.get_ptr(GpuIndex(gpu_index as u32)).0,
-                bsk.0.get_ptr(GpuIndex(gpu_index as u32)).0,
-                input.lwe_dimension().0 as u32,
-                bsk.polynomial_size().0 as u32,
-                bsk.decomposition_base_log().0 as u32,
-                bsk.decomposition_level_count().0 as u32,
-                samples as u32,
-                (samples_per_gpu * gpu_index) as u32,
-                self.get_cuda_shared_memory() as u32,
+                output.0.d_vecs.get_mut(gpu_index).unwrap(),
+                acc.0.d_vecs.get(gpu_index).unwrap(),
+                &d_test_vector_indexes,
+                input.0.d_vecs.get(gpu_index).unwrap(),
+                bsk.0.d_vecs.get(gpu_index).unwrap(),
+                input.0.lwe_dimension,
+                bsk.polynomial_size(),
+                bsk.decomposition_base_log(),
+                bsk.decomposition_level_count(),
+                NumberOfSamples(samples),
+                LweCiphertextIndex(samples_per_gpu * gpu_index),
+                self.get_cuda_shared_memory(),
             );
-            stream.drop(d_test_vector_indexes).unwrap();
         }
     }
 }
@@ -319,39 +315,34 @@ impl
         let samples_per_gpu = input.0.lwe_ciphertext_count().0 / self.get_number_of_gpus();
 
         for gpu_index in 0..self.get_number_of_gpus() {
-            let mut samples: u32 = samples_per_gpu as u32;
+            let mut samples = samples_per_gpu;
             if gpu_index == self.get_number_of_gpus() - 1
                 && input.lwe_ciphertext_count().0 % self.get_number_of_gpus() as usize != 0
             {
-                samples += (input.lwe_ciphertext_count().0
-                    - samples_per_gpu * self.get_number_of_gpus())
-                    as u32;
+                samples +=
+                    input.lwe_ciphertext_count().0 - samples_per_gpu * self.get_number_of_gpus();
             }
-            let stream = &self.streams[gpu_index];
+            let stream = self.streams.get(gpu_index).unwrap();
             // FIXME this is hard set at the moment because concrete-default does not support a more
             //   general API for the bootstrap
-            let mut test_vector_indexes = Vec::with_capacity(samples as usize);
-            for i in 0..samples {
-                test_vector_indexes.push(i);
-            }
-            let d_test_vector_indexes = stream.malloc::<u32>(samples);
-            stream.copy_to_gpu(d_test_vector_indexes, &test_vector_indexes);
+            let test_vector_indexes = (0..samples as u32).collect::<Vec<u32>>();
+            let mut d_test_vector_indexes = stream.malloc::<u32>(samples as u32);
+            stream.copy_to_gpu(&mut d_test_vector_indexes, test_vector_indexes.as_slice());
 
             stream.discard_bootstrap_amortized_lwe_ciphertext_vector_64(
-                output.0.get_ptr(GpuIndex(gpu_index as u32)).0,
-                acc.0.get_ptr(GpuIndex(gpu_index as u32)).0,
-                d_test_vector_indexes,
-                input.0.get_ptr(GpuIndex(gpu_index as u32)).0,
-                bsk.0.get_ptr(GpuIndex(gpu_index as u32)).0,
-                input.lwe_dimension().0 as u32,
-                bsk.polynomial_size().0 as u32,
-                bsk.decomposition_base_log().0 as u32,
-                bsk.decomposition_level_count().0 as u32,
-                samples as u32,
-                (samples_per_gpu * gpu_index) as u32,
-                self.get_cuda_shared_memory() as u32,
+                output.0.d_vecs.get_mut(gpu_index).unwrap(),
+                acc.0.d_vecs.get(gpu_index).unwrap(),
+                &d_test_vector_indexes,
+                input.0.d_vecs.get(gpu_index).unwrap(),
+                bsk.0.d_vecs.get(gpu_index).unwrap(),
+                input.0.lwe_dimension,
+                bsk.polynomial_size(),
+                bsk.decomposition_base_log(),
+                bsk.decomposition_level_count(),
+                NumberOfSamples(samples),
+                LweCiphertextIndex(samples_per_gpu * gpu_index),
+                self.get_cuda_shared_memory(),
             );
-            stream.drop(d_test_vector_indexes).unwrap();
         }
     }
 }

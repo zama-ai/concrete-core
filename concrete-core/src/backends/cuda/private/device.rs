@@ -1,11 +1,21 @@
 use crate::backends::cuda::engines::CudaError;
 use crate::backends::cuda::private::pointers::StreamPointer;
+use crate::backends::cuda::private::vec::CudaVec;
+use crate::prelude::SharedMemoryAmount;
 use concrete_commons::numeric::Numeric;
+use concrete_commons::parameters::{
+    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweCiphertextIndex, LweDimension,
+    PolynomialSize,
+};
 use concrete_cuda::cuda_bind::*;
 use std::ffi::c_void;
+use std::marker::PhantomData;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct GpuIndex(pub u32);
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct NumberOfSamples(pub usize);
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct CudaStream {
@@ -46,12 +56,18 @@ impl CudaStream {
     }
 
     /// Allocates `elements` on the GPU
-    pub(crate) fn malloc<T>(&self, elements: u32) -> *mut c_void
+    pub(crate) fn malloc<T>(&self, elements: u32) -> CudaVec<T>
     where
         T: Numeric,
     {
         let size = elements as u64 * std::mem::size_of::<T>() as u64;
-        unsafe { cuda_malloc(size, self.gpu_index().0) }
+        let ptr = unsafe { cuda_malloc(size, self.gpu_index().0) };
+        CudaVec {
+            ptr,
+            idx: self.gpu_index.0,
+            len: elements as usize,
+            _phantom: PhantomData::default(),
+        }
     }
 
     /// Copies data from slice into GPU pointer
@@ -62,13 +78,13 @@ impl CudaStream {
     /// - [CudaStream::cuda_synchronize_device] __must__ have been called before
     /// - [CudaStream::cuda_synchronize_device] __must__ be called after the copy
     /// as soon as synchronization is required
-    pub(crate) unsafe fn copy_to_gpu_async<T>(&self, dest: *mut c_void, src: &[T])
+    pub(crate) unsafe fn copy_to_gpu_async<T>(&self, dest: &mut CudaVec<T>, src: &[T])
     where
         T: Numeric,
     {
         let size = (src.len() * std::mem::size_of::<T>()) as u64;
         cuda_memcpy_async_to_gpu(
-            dest,
+            dest.as_mut_c_ptr(),
             src.as_ptr() as *const c_void,
             size,
             self.stream_handle().0,
@@ -82,7 +98,7 @@ impl CudaStream {
     ///
     /// - `dest` __must__ be a valid pointer
     /// - [CudaStream::cuda_synchronize_device] __must__ have been called before
-    pub(crate) unsafe fn copy_to_gpu<T>(&self, dest: *mut c_void, src: &[T])
+    pub(crate) unsafe fn copy_to_gpu<T>(&self, dest: &mut CudaVec<T>, src: &[T])
     where
         T: Numeric,
     {
@@ -98,14 +114,14 @@ impl CudaStream {
     /// - [CudaStream::cuda_synchronize_device] __must__ have been called before
     /// - [CudaStream::cuda_synchronize_device] __must__ be called as soon as synchronization is
     /// required
-    pub(crate) unsafe fn copy_to_cpu_async<T>(&self, dest: &mut [T], src: *const c_void)
+    pub(crate) unsafe fn copy_to_cpu_async<T>(&self, dest: &mut [T], src: &CudaVec<T>)
     where
         T: Numeric,
     {
         let size = (dest.len() * std::mem::size_of::<T>()) as u64;
         cuda_memcpy_async_to_cpu(
             dest.as_mut_ptr() as *mut c_void,
-            src,
+            src.as_c_ptr(),
             size,
             self.stream_handle().0,
             self.gpu_index().0,
@@ -118,7 +134,7 @@ impl CudaStream {
     ///
     /// - `dest` __must__ be a valid pointer
     /// - [CudaStream::cuda_synchronize_device] __must__ have been called before
-    pub(crate) unsafe fn copy_to_cpu<T>(&self, dest: &mut [T], src: *const c_void)
+    pub(crate) unsafe fn copy_to_cpu<T>(&self, dest: &mut [T], src: &CudaVec<T>)
     where
         T: Numeric,
     {
@@ -130,20 +146,6 @@ impl CudaStream {
     #[allow(dead_code)]
     pub(crate) fn synchronize_device(&self) {
         unsafe { cuda_synchronize_device(self.gpu_index().0) };
-    }
-
-    /// Drop an array
-    ///
-    /// # Safety
-    ///
-    /// - `ptr` __must__ be a valid pointer
-    pub(crate) unsafe fn drop(&self, ptr: *mut c_void) -> Result<(), CudaError> {
-        let err = cuda_drop(ptr, self.gpu_index().0);
-        match err {
-            0 => Ok(()),
-            -2 => Err(CudaError::InvalidDeviceIndex(self.gpu_index())),
-            _ => Err(CudaError::UnspecifiedDeviceError(self.gpu_index())),
-        }
     }
 
     /// Get the maximum amount of shared memory
@@ -158,30 +160,30 @@ impl CudaStream {
 
     /// Initialize twiddles
     #[allow(dead_code)]
-    pub fn initialize_twiddles(&self, polynomial_size: u32) {
-        unsafe { cuda_initialize_twiddles(polynomial_size, self.gpu_index.0) };
+    pub fn initialize_twiddles(&self, polynomial_size: PolynomialSize) {
+        unsafe { cuda_initialize_twiddles(polynomial_size.0 as u32, self.gpu_index.0) };
     }
 
     /// Convert bootstrap key
     #[allow(dead_code)]
     pub unsafe fn convert_lwe_bootstrap_key_32(
         &self,
-        dest: *mut c_void,
-        src: *mut c_void,
-        input_lwe_dim: u32,
-        glwe_dim: u32,
-        l_gadget: u32,
-        polynomial_size: u32,
+        dest: &mut CudaVec<f64>,
+        src: &[u32],
+        input_lwe_dim: LweDimension,
+        glwe_dim: GlweDimension,
+        l_gadget: DecompositionLevelCount,
+        polynomial_size: PolynomialSize,
     ) {
         cuda_convert_lwe_bootstrap_key_32(
-            dest,
-            src,
+            dest.as_mut_c_ptr(),
+            src.as_ptr() as *mut c_void,
             self.stream.0,
             self.gpu_index.0,
-            input_lwe_dim,
-            glwe_dim,
-            l_gadget,
-            polynomial_size,
+            input_lwe_dim.0 as u32,
+            glwe_dim.0 as u32,
+            l_gadget.0 as u32,
+            polynomial_size.0 as u32,
         )
     }
 
@@ -189,22 +191,22 @@ impl CudaStream {
     #[allow(dead_code)]
     pub unsafe fn convert_lwe_bootstrap_key_64(
         &self,
-        dest: *mut c_void,
-        src: *mut c_void,
-        input_lwe_dim: u32,
-        glwe_dim: u32,
-        l_gadget: u32,
-        polynomial_size: u32,
+        dest: &mut CudaVec<f64>,
+        src: &[u64],
+        input_lwe_dim: LweDimension,
+        glwe_dim: GlweDimension,
+        l_gadget: DecompositionLevelCount,
+        polynomial_size: PolynomialSize,
     ) {
         cuda_convert_lwe_bootstrap_key_64(
-            dest,
-            src,
+            dest.as_mut_c_ptr(),
+            src.as_ptr() as *mut c_void,
             self.stream.0,
             self.gpu_index.0,
-            input_lwe_dim,
-            glwe_dim,
-            l_gadget,
-            polynomial_size,
+            input_lwe_dim.0 as u32,
+            glwe_dim.0 as u32,
+            l_gadget.0 as u32,
+            polynomial_size.0 as u32,
         )
     }
 
@@ -212,34 +214,34 @@ impl CudaStream {
     #[allow(dead_code, clippy::too_many_arguments)]
     pub unsafe fn discard_bootstrap_amortized_lwe_ciphertext_vector_32(
         &self,
-        lwe_out: *mut c_void,
-        test_vector: *const c_void,
-        test_vector_indexes: *const c_void,
-        lwe_in: *const c_void,
-        bootstrapping_key: *const c_void,
-        lwe_dimension: u32,
-        polynomial_size: u32,
-        base_log: u32,
-        level: u32,
-        num_samples: u32,
-        lwe_idx: u32,
-        max_shared_memory: u32,
+        lwe_out: &mut CudaVec<u32>,
+        test_vector: &CudaVec<u32>,
+        test_vector_indexes: &CudaVec<u32>,
+        lwe_in: &CudaVec<u32>,
+        bootstrapping_key: &CudaVec<f64>,
+        lwe_dimension: LweDimension,
+        polynomial_size: PolynomialSize,
+        base_log: DecompositionBaseLog,
+        level: DecompositionLevelCount,
+        num_samples: NumberOfSamples,
+        lwe_idx: LweCiphertextIndex,
+        max_shared_memory: SharedMemoryAmount,
     ) {
         cuda_bootstrap_amortized_lwe_ciphertext_vector_32(
             self.stream.0,
-            lwe_out,
-            test_vector,
-            test_vector_indexes,
-            lwe_in,
-            bootstrapping_key,
-            lwe_dimension,
-            polynomial_size,
-            base_log,
-            level,
-            num_samples,
-            num_samples,
-            lwe_idx,
-            max_shared_memory,
+            lwe_out.as_mut_c_ptr(),
+            test_vector.as_c_ptr(),
+            test_vector_indexes.as_c_ptr(),
+            lwe_in.as_c_ptr(),
+            bootstrapping_key.as_c_ptr(),
+            lwe_dimension.0 as u32,
+            polynomial_size.0 as u32,
+            base_log.0 as u32,
+            level.0 as u32,
+            num_samples.0 as u32,
+            num_samples.0 as u32,
+            lwe_idx.0 as u32,
+            max_shared_memory.0 as u32,
         )
     }
 
@@ -247,68 +249,68 @@ impl CudaStream {
     #[allow(dead_code, clippy::too_many_arguments)]
     pub unsafe fn discard_bootstrap_amortized_lwe_ciphertext_vector_64(
         &self,
-        lwe_out: *mut c_void,
-        test_vector: *const c_void,
-        test_vector_indexes: *const c_void,
-        lwe_in: *const c_void,
-        bootstrapping_key: *const c_void,
-        lwe_dimension: u32,
-        polynomial_size: u32,
-        base_log: u32,
-        level: u32,
-        num_samples: u32,
-        lwe_idx: u32,
-        max_shared_memory: u32,
+        lwe_out: &mut CudaVec<u64>,
+        test_vector: &CudaVec<u64>,
+        test_vector_indexes: &CudaVec<u32>,
+        lwe_in: &CudaVec<u64>,
+        bootstrapping_key: &CudaVec<f64>,
+        lwe_dimension: LweDimension,
+        polynomial_size: PolynomialSize,
+        base_log: DecompositionBaseLog,
+        level: DecompositionLevelCount,
+        num_samples: NumberOfSamples,
+        lwe_idx: LweCiphertextIndex,
+        max_shared_memory: SharedMemoryAmount,
     ) {
         cuda_bootstrap_amortized_lwe_ciphertext_vector_64(
             self.stream.0,
-            lwe_out,
-            test_vector,
-            test_vector_indexes,
-            lwe_in,
-            bootstrapping_key,
-            lwe_dimension,
-            polynomial_size,
-            base_log,
-            level,
-            num_samples,
-            num_samples,
-            lwe_idx,
-            max_shared_memory,
+            lwe_out.as_mut_c_ptr(),
+            test_vector.as_c_ptr(),
+            test_vector_indexes.as_c_ptr(),
+            lwe_in.as_c_ptr(),
+            bootstrapping_key.as_c_ptr(),
+            lwe_dimension.0 as u32,
+            polynomial_size.0 as u32,
+            base_log.0 as u32,
+            level.0 as u32,
+            num_samples.0 as u32,
+            num_samples.0 as u32,
+            lwe_idx.0 as u32,
+            max_shared_memory.0 as u32,
         )
     }
     /// Discarding bootstrap on a vector of LWE ciphertexts
     #[allow(dead_code, clippy::too_many_arguments)]
     pub unsafe fn discard_bootstrap_low_latency_lwe_ciphertext_vector_32(
         &self,
-        lwe_out: *mut c_void,
-        test_vector: *const c_void,
-        test_vector_indexes: *const c_void,
-        lwe_in: *const c_void,
-        bootstrapping_key: *const c_void,
-        lwe_dimension: u32,
-        polynomial_size: u32,
-        base_log: u32,
-        level: u32,
-        num_samples: u32,
-        lwe_idx: u32,
-        max_shared_memory: u32,
+        lwe_out: &mut CudaVec<u32>,
+        test_vector: &CudaVec<u32>,
+        test_vector_indexes: &CudaVec<u32>,
+        lwe_in: &CudaVec<u32>,
+        bootstrapping_key: &CudaVec<f64>,
+        lwe_dimension: LweDimension,
+        polynomial_size: PolynomialSize,
+        base_log: DecompositionBaseLog,
+        level: DecompositionLevelCount,
+        num_samples: NumberOfSamples,
+        lwe_idx: LweCiphertextIndex,
+        max_shared_memory: SharedMemoryAmount,
     ) {
         cuda_bootstrap_low_latency_lwe_ciphertext_vector_32(
             self.stream.0,
-            lwe_out,
-            test_vector,
-            test_vector_indexes,
-            lwe_in,
-            bootstrapping_key,
-            lwe_dimension,
-            polynomial_size,
-            base_log,
-            level,
-            num_samples,
-            num_samples,
-            lwe_idx,
-            max_shared_memory,
+            lwe_out.as_mut_c_ptr(),
+            test_vector.as_c_ptr(),
+            test_vector_indexes.as_c_ptr(),
+            lwe_in.as_c_ptr(),
+            bootstrapping_key.as_c_ptr(),
+            lwe_dimension.0 as u32,
+            polynomial_size.0 as u32,
+            base_log.0 as u32,
+            level.0 as u32,
+            num_samples.0 as u32,
+            num_samples.0 as u32,
+            lwe_idx.0 as u32,
+            max_shared_memory.0 as u32,
         )
     }
 
@@ -316,34 +318,34 @@ impl CudaStream {
     #[allow(dead_code, clippy::too_many_arguments)]
     pub unsafe fn discard_bootstrap_low_latency_lwe_ciphertext_vector_64(
         &self,
-        lwe_out: *mut c_void,
-        test_vector: *const c_void,
-        test_vector_indexes: *const c_void,
-        lwe_in: *const c_void,
-        bootstrapping_key: *const c_void,
-        lwe_dimension: u32,
-        polynomial_size: u32,
-        base_log: u32,
-        level: u32,
-        num_samples: u32,
-        lwe_idx: u32,
-        max_shared_memory: u32,
+        lwe_out: &mut CudaVec<u64>,
+        test_vector: &CudaVec<u64>,
+        test_vector_indexes: &CudaVec<u32>,
+        lwe_in: &CudaVec<u64>,
+        bootstrapping_key: &CudaVec<f64>,
+        lwe_dimension: LweDimension,
+        polynomial_size: PolynomialSize,
+        base_log: DecompositionBaseLog,
+        level: DecompositionLevelCount,
+        num_samples: NumberOfSamples,
+        lwe_idx: LweCiphertextIndex,
+        max_shared_memory: SharedMemoryAmount,
     ) {
         cuda_bootstrap_low_latency_lwe_ciphertext_vector_64(
             self.stream.0,
-            lwe_out,
-            test_vector,
-            test_vector_indexes,
-            lwe_in,
-            bootstrapping_key,
-            lwe_dimension,
-            polynomial_size,
-            base_log,
-            level,
-            num_samples,
-            num_samples,
-            lwe_idx,
-            max_shared_memory,
+            lwe_out.as_mut_c_ptr(),
+            test_vector.as_c_ptr(),
+            test_vector_indexes.as_c_ptr(),
+            lwe_in.as_c_ptr(),
+            bootstrapping_key.as_c_ptr(),
+            lwe_dimension.0 as u32,
+            polynomial_size.0 as u32,
+            base_log.0 as u32,
+            level.0 as u32,
+            num_samples.0 as u32,
+            num_samples.0 as u32,
+            lwe_idx.0 as u32,
+            max_shared_memory.0 as u32,
         )
     }
 
@@ -351,25 +353,25 @@ impl CudaStream {
     #[allow(dead_code, clippy::too_many_arguments)]
     pub unsafe fn discard_keyswitch_lwe_ciphertext_vector_32(
         &self,
-        lwe_out: *mut c_void,
-        lwe_in: *const c_void,
-        input_lwe_dimension: u32,
-        output_lwe_dimension: u32,
-        keyswitch_key: *const c_void,
-        base_log: u32,
-        l_gadget: u32,
-        num_samples: u32,
+        lwe_out: &mut CudaVec<u32>,
+        lwe_in: &CudaVec<u32>,
+        input_lwe_dimension: LweDimension,
+        output_lwe_dimension: LweDimension,
+        keyswitch_key: &CudaVec<u32>,
+        base_log: DecompositionBaseLog,
+        l_gadget: DecompositionLevelCount,
+        num_samples: NumberOfSamples,
     ) {
         cuda_keyswitch_lwe_ciphertext_vector_32(
             self.stream.0,
-            lwe_out,
-            lwe_in,
-            keyswitch_key,
-            input_lwe_dimension,
-            output_lwe_dimension,
-            base_log,
-            l_gadget,
-            num_samples,
+            lwe_out.as_mut_c_ptr(),
+            lwe_in.as_c_ptr(),
+            keyswitch_key.as_c_ptr(),
+            input_lwe_dimension.0 as u32,
+            output_lwe_dimension.0 as u32,
+            base_log.0 as u32,
+            l_gadget.0 as u32,
+            num_samples.0 as u32,
         )
     }
 
@@ -377,25 +379,25 @@ impl CudaStream {
     #[allow(dead_code, clippy::too_many_arguments)]
     pub unsafe fn discard_keyswitch_lwe_ciphertext_vector_64(
         &self,
-        lwe_out: *mut c_void,
-        lwe_in: *const c_void,
-        input_lwe_dimension: u32,
-        output_lwe_dimension: u32,
-        keyswitch_key: *const c_void,
-        base_log: u32,
-        l_gadget: u32,
-        num_samples: u32,
+        lwe_out: &mut CudaVec<u64>,
+        lwe_in: &CudaVec<u64>,
+        input_lwe_dimension: LweDimension,
+        output_lwe_dimension: LweDimension,
+        keyswitch_key: &CudaVec<u64>,
+        base_log: DecompositionBaseLog,
+        l_gadget: DecompositionLevelCount,
+        num_samples: NumberOfSamples,
     ) {
         cuda_keyswitch_lwe_ciphertext_vector_64(
             self.stream.0,
-            lwe_out,
-            lwe_in,
-            keyswitch_key,
-            input_lwe_dimension,
-            output_lwe_dimension,
-            base_log,
-            l_gadget,
-            num_samples,
+            lwe_out.as_mut_c_ptr(),
+            lwe_in.as_c_ptr(),
+            keyswitch_key.as_c_ptr(),
+            input_lwe_dimension.0 as u32,
+            output_lwe_dimension.0 as u32,
+            base_log.0 as u32,
+            l_gadget.0 as u32,
+            num_samples.0 as u32,
         )
     }
 }

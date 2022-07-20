@@ -1,7 +1,6 @@
 use crate::backends::cuda::engines::{CudaEngine, CudaError};
 use crate::backends::cuda::implementation::entities::{CudaGlweCiphertext32, CudaGlweCiphertext64};
 use crate::backends::cuda::private::crypto::glwe::ciphertext::CudaGlweCiphertext;
-use crate::backends::cuda::private::pointers::CudaGlweCiphertextPointer;
 use crate::commons::crypto::glwe::GlweCiphertext;
 use crate::commons::math::tensor::{AsRefSlice, AsRefTensor};
 use crate::prelude::{GlweCiphertext32, GlweCiphertext64};
@@ -76,14 +75,13 @@ impl GlweCiphertextConversionEngine<GlweCiphertext32, CudaGlweCiphertext32> for 
         // Copy the entire input vector over all GPUs
         let data_per_gpu = input.glwe_dimension().to_glwe_size().0 * input.polynomial_size().0;
         let stream = &self.streams[0];
-        let d_ptr = stream.malloc::<u32>(data_per_gpu as u32);
+        let mut vec = stream.malloc::<u32>(data_per_gpu as u32);
         let input_slice = input.0.as_tensor().as_slice();
-        stream.copy_to_gpu::<u32>(d_ptr, input_slice);
+        stream.copy_to_gpu::<u32>(&mut vec, input_slice);
         CudaGlweCiphertext32(CudaGlweCiphertext::<u32> {
-            d_ptr: CudaGlweCiphertextPointer(d_ptr),
+            d_vec: vec,
             glwe_dimension: input.glwe_dimension(),
             polynomial_size: input.polynomial_size(),
-            _phantom: Default::default(),
         })
     }
 }
@@ -150,7 +148,7 @@ impl GlweCiphertextConversionEngine<CudaGlweCiphertext32, GlweCiphertext32> for 
         let mut output =
             vec![0u32; input.glwe_dimension().to_glwe_size().0 * input.polynomial_size().0];
         let stream = &self.streams[0];
-        stream.copy_to_cpu::<u32>(&mut output, input.0.get_ptr().0);
+        stream.copy_to_cpu::<u32>(&mut output, &input.0.d_vec);
         GlweCiphertext32(GlweCiphertext::from_container(
             output,
             input.polynomial_size(),
@@ -218,14 +216,13 @@ impl GlweCiphertextConversionEngine<GlweCiphertext64, CudaGlweCiphertext64> for 
         // Copy the entire input vector over all GPUs
         let data_per_gpu = input.glwe_dimension().to_glwe_size().0 * input.polynomial_size().0;
         let stream = &self.streams[0];
-        let d_ptr = stream.malloc::<u64>(data_per_gpu as u32);
+        let mut vec = stream.malloc::<u64>(data_per_gpu as u32);
         let input_slice = input.0.as_tensor().as_slice();
-        stream.copy_to_gpu::<u64>(d_ptr, input_slice);
+        stream.copy_to_gpu::<u64>(&mut vec, input_slice);
         CudaGlweCiphertext64(CudaGlweCiphertext::<u64> {
-            d_ptr: CudaGlweCiphertextPointer(d_ptr),
+            d_vec: vec,
             glwe_dimension: input.glwe_dimension(),
             polynomial_size: input.polynomial_size(),
-            _phantom: Default::default(),
         })
     }
 }
@@ -292,7 +289,7 @@ impl GlweCiphertextConversionEngine<CudaGlweCiphertext64, GlweCiphertext64> for 
         let mut output =
             vec![0u64; input.glwe_dimension().to_glwe_size().0 * input.polynomial_size().0];
         let stream = &self.streams[0];
-        stream.copy_to_cpu::<u64>(&mut output, input.0.get_ptr().0);
+        stream.copy_to_cpu::<u64>(&mut output, &input.0.d_vec);
         GlweCiphertext64(GlweCiphertext::from_container(
             output,
             input.polynomial_size(),

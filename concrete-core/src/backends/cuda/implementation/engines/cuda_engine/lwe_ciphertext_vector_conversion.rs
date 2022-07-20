@@ -3,8 +3,6 @@ use crate::backends::cuda::implementation::entities::{
     CudaLweCiphertextVector32, CudaLweCiphertextVector64,
 };
 use crate::backends::cuda::private::crypto::lwe::list::CudaLweList;
-use crate::backends::cuda::private::device::GpuIndex;
-use crate::backends::cuda::private::pointers::CudaLweCiphertextVectorPointer;
 use crate::commons::crypto::lwe::LweList;
 use crate::commons::math::tensor::{AsRefSlice, AsRefTensor};
 use crate::prelude::{LweCiphertextVector32, LweCiphertextVector64, LweCiphertextVectorView64};
@@ -72,8 +70,7 @@ impl LweCiphertextVectorConversionEngine<LweCiphertextVector32, CudaLweCiphertex
         input: &LweCiphertextVector32,
     ) -> Result<CudaLweCiphertextVector32, LweCiphertextVectorConversionError<CudaError>> {
         let samples_per_gpu = input.lwe_ciphertext_count().0 / self.get_number_of_gpus() as usize;
-        for gpu_index in 0..self.get_number_of_gpus() {
-            let stream = &self.streams[gpu_index];
+        for (gpu_index, stream) in self.streams.iter().enumerate() {
             let samples = self.compute_number_of_samples_lwe_ciphertext_vector(
                 samples_per_gpu,
                 input.lwe_ciphertext_count().0,
@@ -94,28 +91,27 @@ impl LweCiphertextVectorConversionEngine<LweCiphertextVector32, CudaLweCiphertex
         let samples_per_gpu = input.lwe_ciphertext_count().0 / self.get_number_of_gpus() as usize;
         let data_per_gpu = samples_per_gpu * input.lwe_dimension().to_lwe_size().0;
         let input_slice = input.0.as_tensor().as_slice();
-        let mut d_ptr_vec = Vec::with_capacity(self.get_number_of_gpus() as usize);
+        let mut vecs = Vec::with_capacity(self.get_number_of_gpus() as usize);
         for (gpu_index, chunk) in input_slice.chunks_exact(data_per_gpu).enumerate() {
             let stream = &self.streams[gpu_index];
             let mut alloc_size = data_per_gpu as u32;
             if gpu_index == self.get_number_of_gpus() - 1 {
                 alloc_size += input_slice.chunks_exact(data_per_gpu).remainder().len() as u32;
-                let d_ptr = stream.malloc::<u32>(alloc_size);
-                d_ptr_vec.push(CudaLweCiphertextVectorPointer(d_ptr));
+                let mut d_vec = stream.malloc::<u32>(alloc_size);
                 let chunk_and_remainder =
                     [chunk, input_slice.chunks_exact(data_per_gpu).remainder()].concat();
-                stream.copy_to_gpu::<u32>(d_ptr, chunk_and_remainder.as_slice());
+                stream.copy_to_gpu::<u32>(&mut d_vec, chunk_and_remainder.as_slice());
+                vecs.push(d_vec);
             } else {
-                let d_ptr = stream.malloc::<u32>(alloc_size);
-                d_ptr_vec.push(CudaLweCiphertextVectorPointer(d_ptr));
-                stream.copy_to_gpu::<u32>(d_ptr, chunk);
+                let mut d_vec = stream.malloc::<u32>(alloc_size);
+                stream.copy_to_gpu::<u32>(&mut d_vec, chunk);
+                vecs.push(d_vec);
             }
         }
         CudaLweCiphertextVector32(CudaLweList::<u32> {
-            d_ptr_vec,
+            d_vecs: vecs,
             lwe_ciphertext_count: input.lwe_ciphertext_count(),
             lwe_dimension: input.lwe_dimension(),
-            _phantom: Default::default(),
         })
     }
 }
@@ -188,17 +184,11 @@ impl LweCiphertextVectorConversionEngine<CudaLweCiphertextVector32, LweCiphertex
             vec![0u32; input.lwe_dimension().to_lwe_size().0 * input.lwe_ciphertext_count().0];
         for (gpu_index, chunks) in output.chunks_exact_mut(data_per_gpu).enumerate() {
             let stream = &self.streams[gpu_index];
-            stream.copy_to_cpu::<u32>(chunks, input.0.get_ptr(GpuIndex(gpu_index as u32)).0);
+            stream.copy_to_cpu::<u32>(chunks, input.0.d_vecs.get(gpu_index).unwrap());
         }
         let last_chunk = output.chunks_exact_mut(data_per_gpu).into_remainder();
-        let stream = &self.streams[self.get_number_of_gpus() - 1];
-        stream.copy_to_cpu::<u32>(
-            last_chunk,
-            input
-                .0
-                .get_ptr(GpuIndex(self.get_number_of_gpus() as u32 - 1))
-                .0,
-        );
+        let last_stream = &self.streams.last().unwrap();
+        last_stream.copy_to_cpu::<u32>(last_chunk, input.0.d_vecs.last().unwrap());
 
         LweCiphertextVector32(LweList::from_container(
             output,
@@ -282,28 +272,27 @@ impl LweCiphertextVectorConversionEngine<LweCiphertextVector64, CudaLweCiphertex
         let samples_per_gpu = input.lwe_ciphertext_count().0 / self.get_number_of_gpus() as usize;
         let data_per_gpu = samples_per_gpu * input.lwe_dimension().to_lwe_size().0;
         let input_slice = input.0.as_tensor().as_slice();
-        let mut d_ptr_vec = Vec::with_capacity(self.get_number_of_gpus() as usize);
+        let mut vecs = Vec::with_capacity(self.get_number_of_gpus() as usize);
         for (gpu_index, chunk) in input_slice.chunks_exact(data_per_gpu).enumerate() {
             let stream = &self.streams[gpu_index];
             let mut alloc_size = data_per_gpu as u32;
             if gpu_index == self.get_number_of_gpus() - 1 {
                 alloc_size += input_slice.chunks_exact(data_per_gpu).remainder().len() as u32;
-                let d_ptr = stream.malloc::<u64>(alloc_size);
-                d_ptr_vec.push(CudaLweCiphertextVectorPointer(d_ptr));
+                let mut d_vec = stream.malloc::<u64>(alloc_size);
                 let chunk_and_remainder =
                     [chunk, input_slice.chunks_exact(data_per_gpu).remainder()].concat();
-                stream.copy_to_gpu::<u64>(d_ptr, chunk_and_remainder.as_slice());
+                stream.copy_to_gpu::<u64>(&mut d_vec, chunk_and_remainder.as_slice());
+                vecs.push(d_vec);
             } else {
-                let d_ptr = stream.malloc::<u64>(alloc_size);
-                d_ptr_vec.push(CudaLweCiphertextVectorPointer(d_ptr));
-                stream.copy_to_gpu::<u64>(d_ptr, chunk);
+                let mut d_vec = stream.malloc::<u64>(alloc_size);
+                stream.copy_to_gpu::<u64>(&mut d_vec, chunk);
+                vecs.push(d_vec);
             }
         }
         CudaLweCiphertextVector64(CudaLweList::<u64> {
-            d_ptr_vec,
+            d_vecs: vecs,
             lwe_ciphertext_count: input.lwe_ciphertext_count(),
             lwe_dimension: input.lwe_dimension(),
-            _phantom: Default::default(),
         })
     }
 }
@@ -376,17 +365,11 @@ impl LweCiphertextVectorConversionEngine<CudaLweCiphertextVector64, LweCiphertex
             vec![0u64; input.lwe_dimension().to_lwe_size().0 * input.lwe_ciphertext_count().0];
         for (gpu_index, chunks) in output.chunks_exact_mut(data_per_gpu).enumerate() {
             let stream = &self.streams[gpu_index];
-            stream.copy_to_cpu::<u64>(chunks, input.0.get_ptr(GpuIndex(gpu_index as u32)).0);
+            stream.copy_to_cpu::<u64>(chunks, input.0.d_vecs.get(gpu_index).unwrap());
         }
         let last_chunk = output.chunks_exact_mut(data_per_gpu).into_remainder();
         let stream = &self.streams[self.get_number_of_gpus() - 1];
-        stream.copy_to_cpu::<u64>(
-            last_chunk,
-            input
-                .0
-                .get_ptr(GpuIndex(self.get_number_of_gpus() as u32 - 1))
-                .0,
-        );
+        stream.copy_to_cpu::<u64>(last_chunk, input.0.d_vecs.last().unwrap());
 
         LweCiphertextVector64(LweList::from_container(
             output,
