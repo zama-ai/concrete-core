@@ -1,10 +1,6 @@
-use std::marker::PhantomData;
-
+use crate::backends::cuda::private::vec::CudaVec;
 use concrete_commons::numeric::UnsignedInteger;
 use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
-
-use crate::backends::cuda::private::device::GpuIndex;
-use crate::backends::cuda::private::pointers::CudaGlweCiphertextVectorPointer;
 
 /// An array of GLWE ciphertexts in the GPU.
 ///
@@ -15,18 +11,16 @@ use crate::backends::cuda::private::pointers::CudaGlweCiphertextVectorPointer;
 /// for end users to actually handle GPUs, streams and partitioning on their
 /// own.
 // Fields with `d_` are data in the GPU
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug)]
 pub(crate) struct CudaGlweList<T: UnsignedInteger> {
-    // Pointers to GPU data: one pointer per GPU
-    pub(crate) d_ptr_vec: Vec<CudaGlweCiphertextVectorPointer>,
+    // Pointers to GPU data: one cuda vec per GPU
+    pub(crate) d_vecs: Vec<CudaVec<T>>,
     // Number of ciphertexts in the array
     pub(crate) glwe_ciphertext_count: GlweCiphertextCount,
     // Glwe dimension
     pub(crate) glwe_dimension: GlweDimension,
     // Polynomial size
     pub(crate) polynomial_size: PolynomialSize,
-    // Field to hold type T
-    pub(crate) _phantom: PhantomData<T>,
 }
 
 impl<T: UnsignedInteger> CudaGlweList<T> {
@@ -40,11 +34,5 @@ impl<T: UnsignedInteger> CudaGlweList<T> {
 
     pub(crate) fn polynomial_size(&self) -> PolynomialSize {
         self.polynomial_size
-    }
-
-    /// Returns a pointer to the data on a chosen GPU
-    #[allow(dead_code)]
-    pub(crate) unsafe fn get_ptr(&self, gpu_index: GpuIndex) -> CudaGlweCiphertextVectorPointer {
-        self.d_ptr_vec[gpu_index.0 as usize]
     }
 }

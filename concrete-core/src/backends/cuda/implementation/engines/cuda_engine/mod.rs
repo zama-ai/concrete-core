@@ -1,7 +1,7 @@
 use crate::backends::cuda::engines::CudaError;
 use crate::backends::cuda::private::device::{CudaStream, GpuIndex};
 use crate::prelude::sealed::AbstractEngineSeal;
-use crate::prelude::AbstractEngine;
+use crate::prelude::{AbstractEngine, SharedMemoryAmount};
 use concrete_cuda::cuda_bind::cuda_get_number_of_gpus;
 
 /// The main engine exposed by the cuda backend.
@@ -57,8 +57,8 @@ impl CudaEngine {
         &self.streams
     }
     /// Get the size of the shared memory (on device 0)
-    pub fn get_cuda_shared_memory(&self) -> usize {
-        self.max_shared_memory
+    pub fn get_cuda_shared_memory(&self) -> SharedMemoryAmount {
+        SharedMemoryAmount(self.max_shared_memory)
     }
 
     fn compute_number_of_samples_lwe_ciphertext_vector(

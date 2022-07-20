@@ -4,8 +4,6 @@ use crate::backends::cuda::implementation::entities::{
     CudaLweKeyswitchKey32, CudaLweKeyswitchKey64,
 };
 use crate::backends::cuda::private::crypto::keyswitch::CudaLweKeyswitchKey;
-use crate::backends::cuda::private::device::GpuIndex;
-use crate::backends::cuda::private::pointers::CudaLweKeyswitchKeyPointer;
 use crate::commons::crypto::lwe::LweKeyswitchKey;
 use crate::commons::math::tensor::{AsRefSlice, AsRefTensor};
 use crate::prelude::{LweKeyswitchKey32, LweKeyswitchKey64};
@@ -92,25 +90,23 @@ impl LweKeyswitchKeyConversionEngine<LweKeyswitchKey32, CudaLweKeyswitchKey32> f
         input: &LweKeyswitchKey32,
     ) -> CudaLweKeyswitchKey32 {
         // Copy the entire input vector over all GPUs
-        let mut d_ptr_vec = Vec::with_capacity(self.get_number_of_gpus() as usize);
+        let mut d_vecs = Vec::with_capacity(self.get_number_of_gpus() as usize);
 
         let data_per_gpu = input.decomposition_level_count().0
             * (input.output_lwe_dimension().0 + 1)
             * input.input_lwe_dimension().0;
         let alloc_size = data_per_gpu as u64;
-        for gpu_index in 0..self.get_number_of_gpus() {
-            let stream = &self.streams[gpu_index];
-            let d_ptr = stream.malloc::<f64>(alloc_size as u32);
-            stream.copy_to_gpu(d_ptr, input.0.as_tensor().as_slice());
-            d_ptr_vec.push(CudaLweKeyswitchKeyPointer(d_ptr));
+        for stream in self.streams.iter() {
+            let mut d_vec = stream.malloc::<u32>(alloc_size as u32);
+            stream.copy_to_gpu(&mut d_vec, input.0.as_tensor().as_slice());
+            d_vecs.push(d_vec);
         }
         CudaLweKeyswitchKey32(CudaLweKeyswitchKey::<u32> {
-            d_ptr_vec,
+            d_vecs,
             input_lwe_dimension: input.input_lwe_dimension(),
             output_lwe_dimension: input.output_lwe_dimension(),
             decomp_level: input.decomposition_level_count(),
             decomp_base_log: input.decomposition_base_log(),
-            _phantom: Default::default(),
         })
     }
 }
@@ -186,8 +182,8 @@ impl LweKeyswitchKeyConversionEngine<CudaLweKeyswitchKey32, LweKeyswitchKey32> f
 
         // Copy the data from GPU 0 back to the CPU
         let mut output = vec![0u32; data_per_gpu];
-        let stream = &self.streams[0];
-        stream.copy_to_cpu::<u32>(&mut output, input.0.get_ptr(GpuIndex(0)).0);
+        let stream = self.streams.first().unwrap();
+        stream.copy_to_cpu::<u32>(&mut output, input.0.d_vecs.first().unwrap());
 
         LweKeyswitchKey32(LweKeyswitchKey::from_container(
             output,
@@ -254,8 +250,7 @@ impl LweKeyswitchKeyConversionEngine<LweKeyswitchKey64, CudaLweKeyswitchKey64> f
         &mut self,
         input: &LweKeyswitchKey64,
     ) -> Result<CudaLweKeyswitchKey64, LweKeyswitchKeyConversionError<CudaError>> {
-        for gpu_index in 0..self.get_number_of_gpus() {
-            let stream = &self.streams[gpu_index];
+        for stream in self.streams.iter() {
             let data_per_gpu = input.decomposition_level_count().0
                 * (input.output_lwe_dimension().0 + 1)
                 * input.input_lwe_dimension().0;
@@ -270,25 +265,23 @@ impl LweKeyswitchKeyConversionEngine<LweKeyswitchKey64, CudaLweKeyswitchKey64> f
         input: &LweKeyswitchKey64,
     ) -> CudaLweKeyswitchKey64 {
         // Copy the entire input vector over all GPUs
-        let mut d_ptr_vec = Vec::with_capacity(self.get_number_of_gpus() as usize);
+        let mut d_vecs = Vec::with_capacity(self.get_number_of_gpus() as usize);
 
         let data_per_gpu = input.decomposition_level_count().0
             * (input.output_lwe_dimension().0 + 1)
             * input.input_lwe_dimension().0;
         let alloc_size = data_per_gpu as u64;
-        for gpu_index in 0..self.get_number_of_gpus() {
-            let stream = &self.streams[gpu_index];
-            let d_ptr = stream.malloc::<f64>(alloc_size as u32);
-            stream.copy_to_gpu(d_ptr, input.0.as_tensor().as_slice());
-            d_ptr_vec.push(CudaLweKeyswitchKeyPointer(d_ptr));
+        for stream in self.streams.iter() {
+            let mut d_vec = stream.malloc::<u64>(alloc_size as u32);
+            stream.copy_to_gpu(&mut d_vec, input.0.as_tensor().as_slice());
+            d_vecs.push(d_vec);
         }
         CudaLweKeyswitchKey64(CudaLweKeyswitchKey::<u64> {
-            d_ptr_vec,
+            d_vecs,
             input_lwe_dimension: input.input_lwe_dimension(),
             output_lwe_dimension: input.output_lwe_dimension(),
             decomp_level: input.decomposition_level_count(),
             decomp_base_log: input.decomposition_base_log(),
-            _phantom: Default::default(),
         })
     }
 }
@@ -360,8 +353,8 @@ impl LweKeyswitchKeyConversionEngine<CudaLweKeyswitchKey64, LweKeyswitchKey64> f
 
         // Copy the data from GPU 0 back to the CPU
         let mut output = vec![0u64; data_per_gpu];
-        let stream = &self.streams[0];
-        stream.copy_to_cpu::<u64>(&mut output, input.0.get_ptr(GpuIndex(0)).0);
+        let stream = self.streams.first().unwrap();
+        stream.copy_to_cpu::<u64>(&mut output, input.0.d_vecs.first().unwrap());
 
         LweKeyswitchKey64(LweKeyswitchKey::from_container(
             output,

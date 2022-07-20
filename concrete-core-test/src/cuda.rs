@@ -41,6 +41,8 @@ test! {
     (LweCiphertextConversionFixture, (CudaLweCiphertext, LweCiphertext)),
     (LweCiphertextVectorDiscardingKeyswitchFixture, (CudaLweKeyswitchKey, CudaLweCiphertextVector,
         CudaLweCiphertextVector)),
+    (LweCiphertextDiscardingKeyswitchFixture, (CudaLweKeyswitchKey, CudaLweCiphertext,
+        CudaLweCiphertext)),
     (LweCiphertextDiscardingBootstrapFixture1, (CudaFourierLweBootstrapKey,
         CudaGlweCiphertext,
         CudaLweCiphertext, CudaLweCiphertext)),

@@ -1,10 +1,6 @@
-use std::marker::PhantomData;
-
-use crate::backends::cuda::private::device::GpuIndex;
+use crate::backends::cuda::private::vec::CudaVec;
 use concrete_commons::numeric::UnsignedInteger;
 use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
-
-use crate::backends::cuda::private::pointers::CudaLweCiphertextVectorPointer;
 
 /// An array of LWE ciphertexts in the GPU.
 ///
@@ -22,17 +18,14 @@ use crate::backends::cuda::private::pointers::CudaLweCiphertextVectorPointer;
 ///   last GPU the same amount of ciphertexts as the others + the ciphertexts
 ///   that don't fit in case the remainder is not zero.
 
-// Fields with `d_` are data in the GPU
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug)]
 pub(crate) struct CudaLweList<T: UnsignedInteger> {
-    // Pointers to GPU data: one pointer per GPU
-    pub(crate) d_ptr_vec: Vec<CudaLweCiphertextVectorPointer>,
+    // Pointers to GPU data: one cuda vec per GPU
+    pub(crate) d_vecs: Vec<CudaVec<T>>,
     // Number of ciphertexts in the array
     pub(crate) lwe_ciphertext_count: LweCiphertextCount,
     // Lwe dimension
     pub(crate) lwe_dimension: LweDimension,
-    // Field to hold type T
-    pub(crate) _phantom: PhantomData<T>,
 }
 
 impl<T: UnsignedInteger> CudaLweList<T> {
@@ -42,11 +35,5 @@ impl<T: UnsignedInteger> CudaLweList<T> {
 
     pub(crate) fn lwe_dimension(&self) -> LweDimension {
         self.lwe_dimension
-    }
-
-    /// Returns a mut pointer to the GPU data on a chosen GPU
-    #[allow(dead_code)]
-    pub(crate) unsafe fn get_ptr(&self, gpu_index: GpuIndex) -> CudaLweCiphertextVectorPointer {
-        self.d_ptr_vec[gpu_index.0 as usize]
     }
 }

@@ -1,7 +1,6 @@
 use crate::backends::cuda::implementation::engines::{CudaEngine, CudaError};
 use crate::backends::cuda::implementation::entities::{CudaLweCiphertext32, CudaLweCiphertext64};
 use crate::backends::cuda::private::crypto::lwe::ciphertext::CudaLweCiphertext;
-use crate::backends::cuda::private::pointers::CudaLweCiphertextPointer;
 use crate::commons::crypto::lwe::LweCiphertext;
 use crate::commons::math::tensor::{AsRefSlice, AsRefTensor};
 use crate::prelude::{LweCiphertext32, LweCiphertext64};
@@ -55,7 +54,7 @@ impl LweCiphertextConversionEngine<LweCiphertext32, CudaLweCiphertext32> for Cud
         &mut self,
         input: &LweCiphertext32,
     ) -> Result<CudaLweCiphertext32, LweCiphertextConversionError<CudaError>> {
-        let stream = &self.streams[0];
+        let stream = self.streams.first().unwrap();
         let data_per_gpu = input.lwe_dimension().to_lwe_size().0;
         let size = data_per_gpu as u64 * std::mem::size_of::<u32>() as u64;
         stream.check_device_memory(size)?;
@@ -68,13 +67,12 @@ impl LweCiphertextConversionEngine<LweCiphertext32, CudaLweCiphertext32> for Cud
     ) -> CudaLweCiphertext32 {
         let alloc_size = input.lwe_dimension().to_lwe_size().0 as u32;
         let input_slice = input.0.as_tensor().as_slice();
-        let stream = &self.streams[0];
-        let d_ptr = stream.malloc::<u32>(alloc_size);
-        stream.copy_to_gpu::<u32>(d_ptr, input_slice);
+        let stream = self.streams.first().unwrap();
+        let mut vec = stream.malloc::<u32>(alloc_size);
+        stream.copy_to_gpu::<u32>(&mut vec, input_slice);
         CudaLweCiphertext32(CudaLweCiphertext::<u32> {
-            d_ptr: CudaLweCiphertextPointer(d_ptr),
+            d_vec: vec,
             lwe_dimension: input.lwe_dimension(),
-            _phantom: Default::default(),
         })
     }
 }
@@ -131,9 +129,8 @@ impl LweCiphertextConversionEngine<CudaLweCiphertext32, LweCiphertext32> for Cud
         input: &CudaLweCiphertext32,
     ) -> LweCiphertext32 {
         let mut output = vec![0_u32; input.lwe_dimension().to_lwe_size().0];
-        let stream = &self.streams[0];
-        stream.copy_to_cpu::<u32>(&mut output, input.0.get_ptr().0);
-
+        let stream = self.streams.first().unwrap();
+        stream.copy_to_cpu::<u32>(&mut output, &input.0.d_vec);
         LweCiphertext32(LweCiphertext::from_container(output))
     }
 }
@@ -179,7 +176,7 @@ impl LweCiphertextConversionEngine<LweCiphertext64, CudaLweCiphertext64> for Cud
         &mut self,
         input: &LweCiphertext64,
     ) -> Result<CudaLweCiphertext64, LweCiphertextConversionError<CudaError>> {
-        let stream = &self.streams[0];
+        let stream = self.streams.first().unwrap();
         let data_per_gpu = input.lwe_dimension().to_lwe_size().0;
         let size = data_per_gpu as u64 * std::mem::size_of::<u64>() as u64;
         stream.check_device_memory(size)?;
@@ -192,13 +189,12 @@ impl LweCiphertextConversionEngine<LweCiphertext64, CudaLweCiphertext64> for Cud
     ) -> CudaLweCiphertext64 {
         let alloc_size = input.lwe_dimension().to_lwe_size().0 as u32;
         let input_slice = input.0.as_tensor().as_slice();
-        let stream = &self.streams[0];
-        let d_ptr = stream.malloc::<u64>(alloc_size);
-        stream.copy_to_gpu::<u64>(d_ptr, input_slice);
+        let stream = self.streams.first().unwrap();
+        let mut vec = stream.malloc::<u64>(alloc_size);
+        stream.copy_to_gpu::<u64>(&mut vec, input_slice);
         CudaLweCiphertext64(CudaLweCiphertext::<u64> {
-            d_ptr: CudaLweCiphertextPointer(d_ptr),
+            d_vec: vec,
             lwe_dimension: input.lwe_dimension(),
-            _phantom: Default::default(),
         })
     }
 }
@@ -255,9 +251,8 @@ impl LweCiphertextConversionEngine<CudaLweCiphertext64, LweCiphertext64> for Cud
         input: &CudaLweCiphertext64,
     ) -> LweCiphertext64 {
         let mut output = vec![0_u64; input.lwe_dimension().to_lwe_size().0];
-        let stream = &self.streams[0];
-        stream.copy_to_cpu::<u64>(&mut output, input.0.get_ptr().0);
-
+        let stream = self.streams.first().unwrap();
+        stream.copy_to_cpu::<u64>(&mut output, &input.0.d_vec);
         LweCiphertext64(LweCiphertext::from_container(output))
     }
 }
