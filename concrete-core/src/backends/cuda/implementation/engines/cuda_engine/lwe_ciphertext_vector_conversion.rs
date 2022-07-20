@@ -7,7 +7,7 @@ use crate::backends::cuda::private::device::GpuIndex;
 use crate::backends::cuda::private::pointers::CudaLweCiphertextVectorPointer;
 use crate::commons::crypto::lwe::LweList;
 use crate::commons::math::tensor::{AsRefSlice, AsRefTensor};
-use crate::prelude::{LweCiphertextVector32, LweCiphertextVector64};
+use crate::prelude::{LweCiphertextVector32, LweCiphertextVector64, LweCiphertextVectorView64};
 use crate::specification::engines::{
     LweCiphertextVectorConversionEngine, LweCiphertextVectorConversionError,
 };
@@ -392,5 +392,112 @@ impl LweCiphertextVectorConversionEngine<CudaLweCiphertextVector64, LweCiphertex
             output,
             input.lwe_dimension().to_lwe_size(),
         ))
+    }
+}
+
+/// # Description
+/// Convert an LWE ciphertext vector with 64 bits of precision from CPU to GPU.
+///
+/// The input ciphertext vector is split over GPUs, so that each GPU contains
+/// the total amount of ciphertexts divided by the number of GPUs on the machine.
+/// The last GPU takes the remainder of the division if there is any.
+impl LweCiphertextVectorConversionEngine<LweCiphertextVectorView64<'_>, CudaLweCiphertextVector64>
+    for CudaEngine
+{
+    /// # Example
+    /// ```
+    /// use concrete_commons::dispersion::Variance;
+    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let lwe_dimension = LweDimension(6);
+    /// // Here a hard-set encoding is applied (shift by 20 bits)
+    /// let input = vec![3_u64 << 20; 3];
+    /// let noise = Variance(2_f64.powf(-25.));
+    ///
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let h_key: LweSecretKey64 = default_engine.create_lwe_secret_key(lwe_dimension)?;
+    /// let h_plaintext_vector: PlaintextVector64 = default_engine.create_plaintext_vector(&input)?;
+    /// let mut h_ciphertext_vector: LweCiphertextVector64 =
+    ///     default_engine.encrypt_lwe_ciphertext_vector(&h_key, &h_plaintext_vector, noise)?;
+    /// let lwe_ciphertext_count = h_ciphertext_vector.lwe_ciphertext_count();
+    /// let lwe_size = LweSize(h_ciphertext_vector.lwe_dimension().0 + 1);
+    ///
+    /// let h_raw_ciphertext_vector: Vec<u64> =
+    ///     default_engine.consume_retrieve_lwe_ciphertext_vector(h_ciphertext_vector)?;
+    /// let mut h_view_ciphertext_vector: LweCiphertextVectorView64 = default_engine
+    ///     .create_lwe_ciphertext_vector(h_raw_ciphertext_vector.as_slice(), lwe_size)?;
+    ///
+    /// let mut cuda_engine = CudaEngine::new(())?;
+    /// let d_ciphertext_vector: CudaLweCiphertextVector64 =
+    ///     cuda_engine.convert_lwe_ciphertext_vector(&h_view_ciphertext_vector)?;
+    ///
+    /// assert_eq!(d_ciphertext_vector.lwe_dimension(), lwe_dimension);
+    /// assert_eq!(
+    ///     d_ciphertext_vector.lwe_ciphertext_count(),
+    ///     lwe_ciphertext_count
+    /// );
+    ///
+    /// default_engine.destroy(h_key)?;
+    /// default_engine.destroy(h_plaintext_vector)?;
+    /// cuda_engine.destroy(d_ciphertext_vector);
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn convert_lwe_ciphertext_vector(
+        &mut self,
+        input: &LweCiphertextVectorView64,
+    ) -> Result<CudaLweCiphertextVector64, LweCiphertextVectorConversionError<CudaError>> {
+        let samples_per_gpu = input.lwe_ciphertext_count().0 / self.get_number_of_gpus() as usize;
+        for gpu_index in 0..self.get_number_of_gpus() {
+            let stream = &self.streams[gpu_index];
+            let samples = self.compute_number_of_samples_lwe_ciphertext_vector(
+                samples_per_gpu,
+                input.lwe_ciphertext_count().0,
+                gpu_index,
+            );
+            let data_per_gpu = samples * input.lwe_dimension().to_lwe_size().0;
+            let size = data_per_gpu as u64 * std::mem::size_of::<u64>() as u64;
+            stream.check_device_memory(size)?;
+        }
+        Ok(unsafe { self.convert_lwe_ciphertext_vector_unchecked(input) })
+    }
+
+    unsafe fn convert_lwe_ciphertext_vector_unchecked(
+        &mut self,
+        input: &LweCiphertextVectorView64,
+    ) -> CudaLweCiphertextVector64 {
+        // Split the input vector over GPUs
+        let samples_per_gpu = input.lwe_ciphertext_count().0 / self.get_number_of_gpus() as usize;
+        let data_per_gpu = samples_per_gpu * input.lwe_dimension().to_lwe_size().0;
+        let input_slice = input.0.as_tensor().as_slice();
+        let mut d_ptr_vec = Vec::with_capacity(self.get_number_of_gpus() as usize);
+        for (gpu_index, chunk) in input_slice.chunks_exact(data_per_gpu).enumerate() {
+            let stream = &self.streams[gpu_index];
+            let mut alloc_size = data_per_gpu as u32;
+            if gpu_index == self.get_number_of_gpus() - 1 {
+                alloc_size += input_slice.chunks_exact(data_per_gpu).remainder().len() as u32;
+                let d_ptr = stream.malloc::<u64>(alloc_size);
+                d_ptr_vec.push(CudaLweCiphertextVectorPointer(d_ptr));
+                let chunk_and_remainder =
+                    [chunk, input_slice.chunks_exact(data_per_gpu).remainder()].concat();
+                stream.copy_to_gpu::<u64>(d_ptr, chunk_and_remainder.as_slice());
+            } else {
+                let d_ptr = stream.malloc::<u64>(alloc_size);
+                d_ptr_vec.push(CudaLweCiphertextVectorPointer(d_ptr));
+                stream.copy_to_gpu::<u64>(d_ptr, chunk);
+            }
+        }
+        CudaLweCiphertextVector64(CudaLweList::<u64> {
+            d_ptr_vec,
+            lwe_ciphertext_count: input.lwe_ciphertext_count(),
+            lwe_dimension: input.lwe_dimension(),
+            _phantom: Default::default(),
+        })
     }
 }

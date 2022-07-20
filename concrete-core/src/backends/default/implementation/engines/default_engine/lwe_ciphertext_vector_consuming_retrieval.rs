@@ -1,0 +1,157 @@
+use crate::backends::default::implementation::engines::DefaultEngine;
+use crate::backends::default::implementation::entities::{
+    LweCiphertextVector64, LweCiphertextVectorMutView64, LweCiphertextVectorView64,
+};
+use crate::commons::math::tensor::IntoTensor;
+use crate::specification::engines::{
+    LweCiphertextVectorConsumingRetrievalEngine, LweCiphertextVectorConsumingRetrievalError,
+};
+
+/// # Description:
+/// Implementation of [`LweCiphertextVectorConsumingRetrievalEngine`] for [`DefaultEngine`] that
+/// returns the underlying slice of a [`LweCiphertextVector64`] consuming it in the process
+impl LweCiphertextVectorConsumingRetrievalEngine<LweCiphertextVector64, Vec<u64>>
+    for DefaultEngine
+{
+    /// # Example:
+    /// ```
+    /// use concrete_commons::parameters::LweSize;
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // Here we create a container outside of the engine
+    /// // Note that the size here is just for demonstration purposes and should not be chosen
+    /// // without proper security analysis for production
+    /// use concrete_core::commons::crypto::lwe::LweCiphertext;
+    /// let lwe_size = LweSize(128);
+    /// let mut original_container = vec![0_u64; lwe_size.0];
+    /// let mut owned_container = original_container.to_vec();
+    ///
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let ciphertext_vector: LweCiphertextVector64 =
+    ///     engine.create_lwe_ciphertext_vector(original_container, lwe_size)?;
+    /// let retrieved_container = engine.consume_retrieve_lwe_ciphertext_vector(ciphertext_vector)?;
+    /// assert_eq!(owned_container, retrieved_container);
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn consume_retrieve_lwe_ciphertext_vector(
+        &mut self,
+        ciphertext: LweCiphertextVector64,
+    ) -> Result<Vec<u64>, LweCiphertextVectorConsumingRetrievalError<Self::EngineError>> {
+        Ok(unsafe { self.consume_retrieve_lwe_ciphertext_vector_unchecked(ciphertext) })
+    }
+
+    unsafe fn consume_retrieve_lwe_ciphertext_vector_unchecked(
+        &mut self,
+        ciphertext: LweCiphertextVector64,
+    ) -> Vec<u64> {
+        ciphertext.0.into_tensor().into_container()
+    }
+}
+
+/// # Description:
+/// Implementation of [`LweCiphertextVectorConsumingRetrievalEngine`] for [`DefaultEngine`] that
+/// returns the underlying slice of a [`LweCiphertextVectorView64`] consuming it in the process
+impl<'data>
+    LweCiphertextVectorConsumingRetrievalEngine<LweCiphertextVectorView64<'data>, &'data [u64]>
+    for DefaultEngine
+{
+    /// # Example:
+    /// ```
+    /// use concrete_commons::parameters::LweSize;
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // Here we create a container outside of the engine
+    /// // Note that the size here is just for demonstration purposes and should not be chosen
+    /// // without proper security analysis for production
+    /// let lwe_size = LweSize(16);
+    /// let lwe_ciphertext_count = LweCiphertextCount(8);
+    /// let mut owned_container = vec![0_u64; lwe_size.0 * lwe_ciphertext_count.0];
+    ///
+    /// let slice = &owned_container[..];
+    ///
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let ciphertext_vector_view: LweCiphertextVectorView64 =
+    ///     engine.create_lwe_ciphertext_vector(slice, lwe_size)?;
+    /// let retrieved_slice = engine.consume_retrieve_lwe_ciphertext_vector(ciphertext_vector_view)?;
+    /// assert_eq!(slice, retrieved_slice);
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn consume_retrieve_lwe_ciphertext_vector(
+        &mut self,
+        ciphertext: LweCiphertextVectorView64<'data>,
+    ) -> Result<&'data [u64], LweCiphertextVectorConsumingRetrievalError<Self::EngineError>> {
+        Ok(unsafe { self.consume_retrieve_lwe_ciphertext_vector_unchecked(ciphertext) })
+    }
+
+    unsafe fn consume_retrieve_lwe_ciphertext_vector_unchecked(
+        &mut self,
+        ciphertext: LweCiphertextVectorView64<'data>,
+    ) -> &'data [u64] {
+        ciphertext.0.into_tensor().into_container()
+    }
+}
+
+/// # Description:
+/// Implementation of [`LweCiphertextVectorConsumingRetrievalEngine`] for [`DefaultEngine`] that
+/// returns the underlying slice of a [`LweCiphertextVectorMutView64`] consuming it in the process
+impl<'data>
+    LweCiphertextVectorConsumingRetrievalEngine<
+        LweCiphertextVectorMutView64<'data>,
+        &'data mut [u64],
+    > for DefaultEngine
+{
+    /// # Example:
+    /// ```
+    /// use concrete_commons::parameters::LweSize;
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // Here we create a container outside of the engine
+    /// // Note that the size here is just for demonstration purposes and should not be chosen
+    /// // without proper security analysis for production
+    /// let lwe_size = LweSize(128);
+    /// let mut owned_container = vec![0_u64; lwe_size.0];
+    ///
+    /// let slice = &mut owned_container[..];
+    /// // Required as we can't borrow a mut slice more than once
+    /// let underlying_ptr = slice.as_ptr();
+    ///
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let ciphertext_vector_view: LweCiphertextVectorMutView64 =
+    ///     engine.create_lwe_ciphertext_vector(slice, lwe_size)?;
+    /// let retrieved_slice = engine.consume_retrieve_lwe_ciphertext_vector(ciphertext_vector_view)?;
+    /// assert_eq!(underlying_ptr, retrieved_slice.as_ptr());
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn consume_retrieve_lwe_ciphertext_vector(
+        &mut self,
+        ciphertext: LweCiphertextVectorMutView64<'data>,
+    ) -> Result<&'data mut [u64], LweCiphertextVectorConsumingRetrievalError<Self::EngineError>>
+    {
+        Ok(unsafe { self.consume_retrieve_lwe_ciphertext_vector_unchecked(ciphertext) })
+    }
+
+    unsafe fn consume_retrieve_lwe_ciphertext_vector_unchecked(
+        &mut self,
+        ciphertext: LweCiphertextVectorMutView64<'data>,
+    ) -> &'data mut [u64] {
+        ciphertext.0.into_tensor().into_container()
+    }
+}

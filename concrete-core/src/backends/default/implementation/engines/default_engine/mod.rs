@@ -156,6 +156,8 @@ mod lwe_ciphertext_plaintext_fusing_addition;
 mod lwe_ciphertext_plaintext_fusing_subtraction;
 mod lwe_ciphertext_trivial_decryption;
 mod lwe_ciphertext_trivial_encryption;
+mod lwe_ciphertext_vector_consuming_retrieval;
+mod lwe_ciphertext_vector_creation;
 mod lwe_ciphertext_vector_decryption;
 mod lwe_ciphertext_vector_discarding_addition;
 mod lwe_ciphertext_vector_discarding_affine_transformation;
