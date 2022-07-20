@@ -7,7 +7,7 @@ use crate::specification::entities::markers::{BinaryKeyDistribution, LweCipherte
 use crate::specification::entities::{AbstractEntity, LweCiphertextVectorEntity};
 
 /// A structure representing a vector of LWE ciphertexts with 32 bits of precision on the GPU.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug)]
 pub struct CudaLweCiphertextVector32(pub(crate) CudaLweList<u32>);
 
 impl AbstractEntity for CudaLweCiphertextVector32 {
@@ -27,7 +27,7 @@ impl LweCiphertextVectorEntity for CudaLweCiphertextVector32 {
 }
 
 /// A structure representing a vector of LWE ciphertexts with 64 bits of precision on the GPU.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug)]
 pub struct CudaLweCiphertextVector64(pub(crate) CudaLweList<u64>);
 
 impl AbstractEntity for CudaLweCiphertextVector64 {

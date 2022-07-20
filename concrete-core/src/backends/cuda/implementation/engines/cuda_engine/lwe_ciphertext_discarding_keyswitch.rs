@@ -3,11 +3,10 @@ use crate::backends::cuda::implementation::engines::CudaEngine;
 use crate::backends::cuda::implementation::entities::{
     CudaLweCiphertext32, CudaLweCiphertext64, CudaLweKeyswitchKey32, CudaLweKeyswitchKey64,
 };
-use crate::backends::cuda::private::device::GpuIndex;
+use crate::backends::cuda::private::device::NumberOfSamples;
 use crate::specification::engines::{
     LweCiphertextDiscardingKeyswitchEngine, LweCiphertextDiscardingKeyswitchError,
 };
-use crate::specification::entities::LweCiphertextEntity;
 
 impl From<CudaError> for LweCiphertextDiscardingKeyswitchError<CudaError> {
     fn from(err: CudaError) -> Self {
@@ -119,14 +118,14 @@ impl
         let stream = &self.streams[0];
 
         stream.discard_keyswitch_lwe_ciphertext_vector_32(
-            output.0.get_ptr().0,
-            input.0.get_ptr().0,
-            input.lwe_dimension().0 as u32,
-            output.lwe_dimension().0 as u32,
-            ksk.0.get_ptr(GpuIndex(0)).0,
-            ksk.0.decomposition_base_log().0 as u32,
-            ksk.0.decomposition_level_count().0 as u32,
-            1,
+            &mut output.0.d_vec,
+            &input.0.d_vec,
+            input.0.lwe_dimension,
+            output.0.lwe_dimension,
+            ksk.0.d_vecs.first().unwrap(),
+            ksk.0.decomposition_base_log(),
+            ksk.0.decomposition_level_count(),
+            NumberOfSamples(1),
         );
     }
 }
@@ -235,14 +234,14 @@ impl
         let stream = &self.streams[0];
 
         stream.discard_keyswitch_lwe_ciphertext_vector_64(
-            output.0.get_ptr().0,
-            input.0.get_ptr().0,
-            input.lwe_dimension().0 as u32,
-            output.lwe_dimension().0 as u32,
-            ksk.0.get_ptr(GpuIndex(0)).0,
-            ksk.0.decomposition_base_log().0 as u32,
-            ksk.0.decomposition_level_count().0 as u32,
-            1,
+            &mut output.0.d_vec,
+            &input.0.d_vec,
+            input.0.lwe_dimension,
+            output.0.lwe_dimension,
+            ksk.0.d_vecs.first().unwrap(),
+            ksk.0.decomposition_base_log(),
+            ksk.0.decomposition_level_count(),
+            NumberOfSamples(1),
         );
     }
 }

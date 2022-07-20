@@ -4,14 +4,13 @@ use crate::backends::cuda::implementation::entities::{
     CudaFourierLweBootstrapKey32, CudaFourierLweBootstrapKey64,
 };
 use crate::backends::cuda::private::crypto::bootstrap::CudaBootstrapKey;
-use crate::backends::cuda::private::pointers::CudaBootstrapKeyPointer;
 use crate::commons::math::tensor::{AsRefSlice, AsRefTensor};
 use crate::prelude::{LweBootstrapKey32, LweBootstrapKey64};
 use crate::specification::engines::{
     LweBootstrapKeyConversionEngine, LweBootstrapKeyConversionError,
 };
 use crate::specification::entities::LweBootstrapKeyEntity;
-use std::ffi::c_void;
+use std::marker::PhantomData;
 
 impl From<CudaError> for LweBootstrapKeyConversionError<CudaError> {
     fn from(err: CudaError) -> Self {
@@ -74,8 +73,7 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey32, CudaFourierLweBootstrapK
     ) -> Result<CudaFourierLweBootstrapKey32, LweBootstrapKeyConversionError<CudaError>> {
         let poly_size = input.0.polynomial_size().0;
         check_poly_size!(poly_size);
-        for gpu_index in 0..self.get_number_of_gpus() {
-            let stream = &self.streams[gpu_index];
+        for stream in self.streams.iter() {
             let data_per_gpu = input.glwe_dimension().to_glwe_size().0
                 * input.glwe_dimension().to_glwe_size().0
                 * input.input_lwe_dimension().0
@@ -92,7 +90,7 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey32, CudaFourierLweBootstrapK
         input: &LweBootstrapKey32,
     ) -> CudaFourierLweBootstrapKey32 {
         // Copy the entire input vector over all GPUs
-        let mut d_ptr_vec = Vec::with_capacity(self.get_number_of_gpus() as usize);
+        let mut vecs = Vec::with_capacity(self.get_number_of_gpus() as usize);
         // TODO
         //   Check if it would be better to have GPU 0 compute the BSK and copy it back to the
         //   CPU, then copy the BSK to the other GPUs. Are we sure the BSK generated on each GPU
@@ -102,30 +100,28 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey32, CudaFourierLweBootstrapK
             * input.glwe_dimension().to_glwe_size().0
             * input.decomposition_level_count().0;
         let alloc_size = total_polynomials * input.polynomial_size().0;
-        for gpu_index in 0..self.get_number_of_gpus() {
-            let stream = &self.streams[gpu_index];
-            stream.initialize_twiddles(input.polynomial_size().0 as u32);
-            let d_ptr = stream.malloc::<f64>(alloc_size as u32);
-            d_ptr_vec.push(CudaBootstrapKeyPointer(d_ptr));
-
-            let input_ptr = input.0.as_tensor().as_slice();
+        for stream in self.streams.iter() {
+            stream.initialize_twiddles(input.polynomial_size());
+            let mut d_vec = stream.malloc::<f64>(alloc_size as u32);
+            let input_slice = input.0.as_tensor().as_slice();
             stream.convert_lwe_bootstrap_key_32(
-                d_ptr,
-                input_ptr.as_ptr() as *mut c_void,
-                input.input_lwe_dimension().0 as u32,
-                input.glwe_dimension().0 as u32,
-                input.decomposition_level_count().0 as u32,
-                input.polynomial_size().0 as u32,
+                &mut d_vec,
+                input_slice,
+                input.input_lwe_dimension(),
+                input.glwe_dimension(),
+                input.decomposition_level_count(),
+                input.polynomial_size(),
             );
+            vecs.push(d_vec);
         }
         CudaFourierLweBootstrapKey32(CudaBootstrapKey::<u32> {
-            d_ptr_vec,
+            d_vecs: vecs,
             polynomial_size: input.polynomial_size(),
             input_lwe_dimension: input.input_lwe_dimension(),
             glwe_dimension: input.glwe_dimension(),
             decomp_level: input.decomposition_level_count(),
             decomp_base_log: input.decomposition_base_log(),
-            _phantom: Default::default(),
+            _phantom: PhantomData::default(),
         })
     }
 }
@@ -185,8 +181,7 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey64, CudaFourierLweBootstrapK
     ) -> Result<CudaFourierLweBootstrapKey64, LweBootstrapKeyConversionError<CudaError>> {
         let poly_size = input.0.polynomial_size().0;
         check_poly_size!(poly_size);
-        for gpu_index in 0..self.get_number_of_gpus() {
-            let stream = &self.streams[gpu_index];
+        for stream in self.streams.iter() {
             let data_per_gpu = input.glwe_dimension().to_glwe_size().0
                 * input.glwe_dimension().to_glwe_size().0
                 * input.input_lwe_dimension().0
@@ -203,7 +198,7 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey64, CudaFourierLweBootstrapK
         input: &LweBootstrapKey64,
     ) -> CudaFourierLweBootstrapKey64 {
         // Copy the entire input vector over all GPUs
-        let mut d_ptr_vec = Vec::with_capacity(self.get_number_of_gpus() as usize);
+        let mut vecs = Vec::with_capacity(self.get_number_of_gpus() as usize);
         // TODO
         //   Check if it would be better to have GPU 0 compute the BSK and copy it back to the
         //   CPU, then copy the BSK to the other GPUs. Are we sure the BSK generated on each GPU
@@ -212,32 +207,29 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey64, CudaFourierLweBootstrapK
             * input.glwe_dimension().to_glwe_size().0
             * input.glwe_dimension().to_glwe_size().0
             * input.decomposition_level_count().0;
-
         let alloc_size = total_polynomials * input.polynomial_size().0;
-        for gpu_index in 0..self.get_number_of_gpus() {
-            let stream = &self.streams[gpu_index];
-            stream.initialize_twiddles(input.polynomial_size().0 as u32);
-            let d_ptr = stream.malloc::<f64>(alloc_size as u32);
-            d_ptr_vec.push(CudaBootstrapKeyPointer(d_ptr));
-
-            let input_ptr = input.0.as_tensor().as_slice();
+        for stream in self.streams.iter() {
+            stream.initialize_twiddles(input.polynomial_size());
+            let mut d_vec = stream.malloc::<f64>(alloc_size as u32);
+            let input_slice = input.0.as_tensor().as_slice();
             stream.convert_lwe_bootstrap_key_64(
-                d_ptr,
-                input_ptr.as_ptr() as *mut c_void,
-                input.input_lwe_dimension().0 as u32,
-                input.glwe_dimension().0 as u32,
-                input.decomposition_level_count().0 as u32,
-                input.polynomial_size().0 as u32,
+                &mut d_vec,
+                input_slice,
+                input.input_lwe_dimension(),
+                input.glwe_dimension(),
+                input.decomposition_level_count(),
+                input.polynomial_size(),
             );
+            vecs.push(d_vec);
         }
         CudaFourierLweBootstrapKey64(CudaBootstrapKey::<u64> {
-            d_ptr_vec,
+            d_vecs: vecs,
             polynomial_size: input.polynomial_size(),
             input_lwe_dimension: input.input_lwe_dimension(),
             glwe_dimension: input.glwe_dimension(),
             decomp_level: input.decomposition_level_count(),
             decomp_base_log: input.decomposition_base_log(),
-            _phantom: Default::default(),
+            _phantom: PhantomData::default(),
         })
     }
 }

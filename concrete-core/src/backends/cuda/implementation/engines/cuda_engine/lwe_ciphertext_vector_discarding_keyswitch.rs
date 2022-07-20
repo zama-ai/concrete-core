@@ -4,11 +4,10 @@ use crate::backends::cuda::implementation::entities::{
     CudaLweCiphertextVector32, CudaLweCiphertextVector64, CudaLweKeyswitchKey32,
     CudaLweKeyswitchKey64,
 };
-use crate::backends::cuda::private::device::GpuIndex;
+use crate::backends::cuda::private::device::NumberOfSamples;
 use crate::specification::engines::{
     LweCiphertextVectorDiscardingKeyswitchEngine, LweCiphertextVectorDiscardingKeyswitchError,
 };
-use crate::specification::entities::LweCiphertextVectorEntity;
 
 impl From<CudaError> for LweCiphertextVectorDiscardingKeyswitchError<CudaError> {
     fn from(err: CudaError) -> Self {
@@ -126,21 +125,21 @@ impl
         input: &CudaLweCiphertextVector32,
         ksk: &CudaLweKeyswitchKey32,
     ) {
-        let samples_per_gpu = input.0.lwe_ciphertext_count().0 / self.get_number_of_gpus();
+        let samples_per_gpu =
+            NumberOfSamples(input.0.lwe_ciphertext_count().0 / self.get_number_of_gpus());
 
         for gpu_index in 0..self.get_number_of_gpus() {
-            let samples: u32 = samples_per_gpu as u32;
-            let stream = &self.streams[gpu_index];
+            let stream = self.streams.get(gpu_index).unwrap();
 
             stream.discard_keyswitch_lwe_ciphertext_vector_32(
-                output.0.get_ptr(GpuIndex(gpu_index as u32)).0,
-                input.0.get_ptr(GpuIndex(gpu_index as u32)).0,
-                input.lwe_dimension().0 as u32,
-                output.lwe_dimension().0 as u32,
-                ksk.0.get_ptr(GpuIndex(gpu_index as u32)).0,
-                ksk.0.decomposition_base_log().0 as u32,
-                ksk.0.decomposition_level_count().0 as u32,
-                samples,
+                output.0.d_vecs.get_mut(gpu_index).unwrap(),
+                input.0.d_vecs.get(gpu_index).unwrap(),
+                input.0.lwe_dimension,
+                output.0.lwe_dimension,
+                ksk.0.d_vecs.get(gpu_index).unwrap(),
+                ksk.0.decomposition_base_log(),
+                ksk.0.decomposition_level_count(),
+                samples_per_gpu,
             );
         }
     }
@@ -256,21 +255,21 @@ impl
         input: &CudaLweCiphertextVector64,
         ksk: &CudaLweKeyswitchKey64,
     ) {
-        let samples_per_gpu = input.0.lwe_ciphertext_count().0 / self.get_number_of_gpus();
+        let samples_per_gpu =
+            NumberOfSamples(input.0.lwe_ciphertext_count().0 / self.get_number_of_gpus());
 
         for gpu_index in 0..self.get_number_of_gpus() {
-            let samples: u32 = samples_per_gpu as u32;
-            let stream = &self.streams[gpu_index];
+            let stream = self.streams.get(gpu_index).unwrap();
 
             stream.discard_keyswitch_lwe_ciphertext_vector_64(
-                output.0.get_ptr(GpuIndex(gpu_index as u32)).0,
-                input.0.get_ptr(GpuIndex(gpu_index as u32)).0,
-                input.lwe_dimension().0 as u32,
-                output.lwe_dimension().0 as u32,
-                ksk.0.get_ptr(GpuIndex(gpu_index as u32)).0,
-                ksk.0.decomposition_base_log().0 as u32,
-                ksk.0.decomposition_level_count().0 as u32,
-                samples,
+                output.0.d_vecs.get_mut(gpu_index).unwrap(),
+                input.0.d_vecs.get(gpu_index).unwrap(),
+                input.0.lwe_dimension,
+                output.0.lwe_dimension,
+                ksk.0.d_vecs.get(gpu_index).unwrap(),
+                ksk.0.decomposition_base_log(),
+                ksk.0.decomposition_level_count(),
+                samples_per_gpu,
             );
         }
     }

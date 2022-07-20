@@ -15,7 +15,7 @@ use std::fmt::Debug;
 /// An `AbstractEntity` type is nothing more than a type with an associated
 /// [`Kind`](`AbstractEntity::Kind`) marker type (implementing the [`EntityKindMarker`] trait),
 /// which encodes in the type system, the abstract nature of the object.
-pub trait AbstractEntity: Debug + PartialEq {
+pub trait AbstractEntity: Debug {
     // # Why associated types and not generic parameters ?
     //
     // With generic parameters you can have one type implement a variety of abstract entity. With

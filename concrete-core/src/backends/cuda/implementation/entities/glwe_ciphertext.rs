@@ -8,7 +8,7 @@ use crate::specification::entities::{AbstractEntity, GlweCiphertextEntity};
 
 /// A structure representing a vector of GLWE ciphertexts with 32 bits of precision on the GPU.
 /// It is used as input to the Cuda bootstrap for the array of lookup tables.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug)]
 pub struct CudaGlweCiphertext32(pub(crate) CudaGlweCiphertext<u32>);
 
 impl AbstractEntity for CudaGlweCiphertext32 {
@@ -29,7 +29,7 @@ impl GlweCiphertextEntity for CudaGlweCiphertext32 {
 
 /// A structure representing a vector of GLWE ciphertexts with 64 bits of precision on the GPU.
 /// It is used as input to the Cuda bootstrap for the array of lookup tables.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug)]
 pub struct CudaGlweCiphertext64(pub(crate) CudaGlweCiphertext<u64>);
 
 impl AbstractEntity for CudaGlweCiphertext64 {
