@@ -78,13 +78,14 @@ fn test_external_product_gsw<T: UnsignedTorus>() {
 
     // call the NPE to find the theoretical amount of noise after the bootstrap
     let output_variance =
-        npe::estimate_external_product_noise_with_binary_ggsw::<T, _, _, BinaryKeyKind>(
+        npe::estimate_external_product_noise_with_binary_ggsw::<_, _, BinaryKeyKind>(
             PolynomialSize(1),
             GlweDimension(dimension.0),
             Variance(f64::powi(std_dev.get_standard_dev(), 2)),
             Variance(f64::powi(std_dev.get_standard_dev(), 2)),
             base_log,
             level,
+            T::BITS as u32,
         );
     // we check that the obtain distribution is the same
     // as the theoretical one
@@ -144,7 +145,7 @@ fn test_cmux_0_gsw<T: UnsignedTorus>() {
     }
 
     // call the NPE to find the theoretical amount of noise after the cmux
-    let output_variance = npe::estimate_cmux_noise_with_binary_ggsw::<T, _, _, _, BinaryKeyKind>(
+    let output_variance = npe::estimate_cmux_noise_with_binary_ggsw::<_, _, _, BinaryKeyKind>(
         GlweDimension(dimension.0),
         PolynomialSize(1),
         base_log,
@@ -152,6 +153,7 @@ fn test_cmux_0_gsw<T: UnsignedTorus>() {
         Variance(f64::powi(std_dev.get_standard_dev(), 2)),
         Variance(f64::powi(std_dev.get_standard_dev(), 2)),
         Variance(f64::powi(std_dev.get_standard_dev(), 2)),
+        T::BITS as u32,
     );
     // we check that the obtain distribution is the same
     // as the theoretical one
@@ -211,7 +213,7 @@ fn test_cmux_1_gsw<T: UnsignedTorus>() {
     }
 
     // call the NPE to find the theoretical amount of noise after the bootstrap
-    let output_variance = npe::estimate_cmux_noise_with_binary_ggsw::<T, _, _, _, BinaryKeyKind>(
+    let output_variance = npe::estimate_cmux_noise_with_binary_ggsw::<_, _, _, BinaryKeyKind>(
         GlweDimension(dimension.0),
         PolynomialSize(1),
         base_log,
@@ -219,6 +221,7 @@ fn test_cmux_1_gsw<T: UnsignedTorus>() {
         Variance(f64::powi(std_dev.get_standard_dev(), 2)),
         Variance(f64::powi(std_dev.get_standard_dev(), 2)),
         Variance(f64::powi(std_dev.get_standard_dev(), 2)),
+        T::BITS as u32,
     );
     // we check that the obtain distribution is the same
     // as the theoretical one

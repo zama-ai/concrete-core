@@ -275,7 +275,7 @@ where
 {
     let k_type_id = TypeId::of::<K>();
     if k_type_id == TypeId::of::<BinaryKeyDistribution>() {
-        concrete_npe::estimate_cmux_noise_with_binary_ggsw::<T, D1, D2, D3, BinaryKeyKind>(
+        concrete_npe::estimate_cmux_noise_with_binary_ggsw::<D1, D2, D3, BinaryKeyKind>(
             glwe_mask_size,
             poly_size,
             base_log,
@@ -283,9 +283,10 @@ where
             var_output_glwe,
             var_glwe,
             var_ggsw,
+            T::BITS as u32,
         )
     } else if k_type_id == TypeId::of::<TernaryKeyDistribution>() {
-        concrete_npe::estimate_cmux_noise_with_binary_ggsw::<T, D1, D2, D3, TernaryKeyKind>(
+        concrete_npe::estimate_cmux_noise_with_binary_ggsw::<D1, D2, D3, TernaryKeyKind>(
             glwe_mask_size,
             poly_size,
             base_log,
@@ -293,9 +294,10 @@ where
             var_output_glwe,
             var_glwe,
             var_ggsw,
+            T::BITS as u32,
         )
     } else if k_type_id == TypeId::of::<GaussianKeyDistribution>() {
-        concrete_npe::estimate_cmux_noise_with_binary_ggsw::<T, D1, D2, D3, GaussianKeyKind>(
+        concrete_npe::estimate_cmux_noise_with_binary_ggsw::<D1, D2, D3, GaussianKeyKind>(
             glwe_mask_size,
             poly_size,
             base_log,
@@ -303,6 +305,7 @@ where
             var_output_glwe,
             var_glwe,
             var_ggsw,
+            T::BITS as u32,
         )
     } else {
         panic!("Unknown key distribution encountered.")

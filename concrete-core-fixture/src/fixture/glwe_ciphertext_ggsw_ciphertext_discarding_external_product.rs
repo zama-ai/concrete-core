@@ -262,31 +262,34 @@ where
 {
     let k_type_id = TypeId::of::<K>();
     if k_type_id == TypeId::of::<BinaryKeyDistribution>() {
-        concrete_npe::estimate_external_product_noise_with_binary_ggsw::<T, D1, D2, BinaryKeyKind>(
+        concrete_npe::estimate_external_product_noise_with_binary_ggsw::<D1, D2, BinaryKeyKind>(
             poly_size,
             rlwe_mask_size,
             var_glwe,
             var_ggsw,
             base_log,
             level,
+            T::BITS as u32,
         )
     } else if k_type_id == TypeId::of::<TernaryKeyDistribution>() {
-        concrete_npe::estimate_external_product_noise_with_binary_ggsw::<T, D1, D2, TernaryKeyKind>(
+        concrete_npe::estimate_external_product_noise_with_binary_ggsw::<D1, D2, TernaryKeyKind>(
             poly_size,
             rlwe_mask_size,
             var_glwe,
             var_ggsw,
             base_log,
             level,
+            T::BITS as u32,
         )
     } else if k_type_id == TypeId::of::<GaussianKeyDistribution>() {
-        concrete_npe::estimate_external_product_noise_with_binary_ggsw::<T, D1, D2, GaussianKeyKind>(
+        concrete_npe::estimate_external_product_noise_with_binary_ggsw::<D1, D2, GaussianKeyKind>(
             poly_size,
             rlwe_mask_size,
             var_glwe,
             var_ggsw,
             base_log,
             level,
+            T::BITS as u32,
         )
     } else {
         panic!("Unknown key distribution encountered.")

@@ -312,31 +312,34 @@ where
 {
     let k_type_id = TypeId::of::<K>();
     if k_type_id == TypeId::of::<BinaryKeyDistribution>() {
-        concrete_npe::estimate_pbs_noise::<T, D, BinaryKeyKind>(
+        concrete_npe::estimate_pbs_noise::<D, BinaryKeyKind>(
             lwe_mask_size,
             poly_size,
             rlwe_mask_size,
             base_log,
             level,
             dispersion_bsk,
+            T::BITS as u32,
         )
     } else if k_type_id == TypeId::of::<TernaryKeyDistribution>() {
-        concrete_npe::estimate_pbs_noise::<T, D, TernaryKeyKind>(
+        concrete_npe::estimate_pbs_noise::<D, TernaryKeyKind>(
             lwe_mask_size,
             poly_size,
             rlwe_mask_size,
             base_log,
             level,
             dispersion_bsk,
+            T::BITS as u32,
         )
     } else if k_type_id == TypeId::of::<GaussianKeyDistribution>() {
-        concrete_npe::estimate_pbs_noise::<T, D, GaussianKeyKind>(
+        concrete_npe::estimate_pbs_noise::<D, GaussianKeyKind>(
             lwe_mask_size,
             poly_size,
             rlwe_mask_size,
             base_log,
             level,
             dispersion_bsk,
+            T::BITS as u32,
         )
     } else {
         panic!("Unknown key distribution encountered.")
