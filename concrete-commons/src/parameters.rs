@@ -188,3 +188,8 @@ pub struct ModulusSwitchOffset(pub usize);
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 pub struct DeltaLog(pub usize);
+
+/// The number of bits to extract in a bit extraction.
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+pub struct ExtractedBitsCount(pub usize);
