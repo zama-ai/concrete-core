@@ -12,6 +12,7 @@ use std::sync::atomic::Ordering::Relaxed;
 mod build;
 mod check;
 mod chore;
+mod csprng_check;
 mod format_latex_doc;
 mod test;
 mod utils;
@@ -110,6 +111,42 @@ fn main() -> Result<(), std::io::Error> {
                 .about("Checks that clippy runs without warnings on the cuda backend"),
         )
         .subcommand(Command::new("check_fmt").about("Checks that rustfmt runs without warnings"))
+        .subcommand(
+            Command::new("check_csprng")
+                .about("Checks concrete-csprng behavior with statistical approach")
+                .arg(
+                    Arg::new("nist_tool_dir")
+                        .short('n')
+                        .long("nist_tool_dir")
+                        .takes_value(true)
+                        .required(true)
+                        .help("Path to NIST statistical tool directory"),
+                )
+                .arg(
+                    Arg::new("generate_duration")
+                        .short('g')
+                        .long("generate_duration")
+                        .takes_value(true)
+                        .default_value("20")
+                        .help("Execution duration, in seconds, of concrete-csprng program"),
+                )
+                .arg(
+                    Arg::new("sequence_length")
+                        .short('s')
+                        .long("sequence_length")
+                        .takes_value(true)
+                        .default_value("100000")
+                        .help("Number of bits per sequence passed to NIST tests suite"),
+                )
+                .arg(
+                    Arg::new("bitstreams")
+                        .short('b')
+                        .long("bitstreams")
+                        .takes_value(true)
+                        .default_value("100")
+                        .help("The size of the sample per key"),
+                ),
+        )
         .subcommand(Command::new("chore_format").about("Format the codebase with rustfmt"))
         .subcommand(
             Command::new("chore_format_latex_doc").about("Escape underscores in latex equations"),
@@ -118,7 +155,7 @@ fn main() -> Result<(), std::io::Error> {
         .get_matches();
 
     // We initialize the logger with proper verbosity
-    let verb = if matches.contains_id("verbose") {
+    let verb = if matches.is_present("verbose") {
         LevelFilter::Debug
     } else {
         LevelFilter::Info
@@ -132,7 +169,7 @@ fn main() -> Result<(), std::io::Error> {
     .unwrap();
 
     // We set the dry-run mode if present
-    if matches.contains_id("dry-run") {
+    if matches.is_present("dry-run") {
         DRY_RUN.store(true, Relaxed);
     }
 
@@ -206,6 +243,9 @@ fn main() -> Result<(), std::io::Error> {
     }
     if matches.subcommand_matches("check_fmt").is_some() {
         check::fmt()?;
+    }
+    if matches.subcommand_matches("check_csprng").is_some() {
+        csprng_check::check(matches.subcommand_matches("check_csprng").unwrap())?;
     }
     if matches.subcommand_matches("chore_format").is_some() {
         chore::format()?;
