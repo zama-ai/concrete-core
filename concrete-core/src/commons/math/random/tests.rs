@@ -62,7 +62,7 @@ fn test_distribution<T: UnsignedTorus>() {
     // settings
     let std_dev: f64 = f64::powi(2., -5);
     let mean: f64 = 0.;
-    let k = 1_000_000;
+    let k = 10_000_000;
     let mut generator = new_random_generator();
 
     // generates normal random
