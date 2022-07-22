@@ -80,7 +80,7 @@ for FftwEngine
         );
         let buffers = self.get_fourier_u32_buffer(
             rlk.polynomial_size(),
-            rlk.glwe_dimension().to_glwe_size(),
+            rlk.glwe_size(),
         );
         rlk.fill_with_new_key(
             input,
@@ -163,7 +163,7 @@ for FftwEngine
         );
         let buffers = self.get_fourier_u64_buffer(
             rlk.polynomial_size(),
-            rlk.glwe_dimension().to_glwe_size(),
+            rlk.glwe_size(),
         );
         rlk.fill_with_new_key(
             input,
