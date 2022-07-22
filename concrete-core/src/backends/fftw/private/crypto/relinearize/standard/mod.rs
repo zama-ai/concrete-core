@@ -210,7 +210,7 @@ impl<Cont> StandardGlweRelinearizationKey<Cont> {
         let mut key_product_vec: Vec<Polynomial<Vec<Scalar>>> = Vec::with_capacity((k * k + k) / 2);
         for poly in key_product_vec.iter_mut() {
             let zero_poly = Polynomial::allocate(Scalar::ZERO, self.poly_size);
-            poly.allocate(Scalar::ZERO, self.poly_size);
+            *poly = zero_poly;
         }
         // Fill the vector with the products S_i * S_j, following the same ordering as the one of
         // the tensor product
@@ -440,14 +440,17 @@ impl<Cont> StandardGlweRelinearizationKey<Cont> {
 
     // This function computes the product between input_poly and the (i, j) elements of the 
     // relinearization key for each decomposition level, outputting the result in output_poly
-    pub(crate) fn compute_relinearization_product (
+    pub(crate) fn compute_relinearization_product<Scalar> (
         &self,
         output_poly: &mut FourierGlweCiphertext<AlignedVec<Complex64>, Scalar>,
         input_poly: &Polynomial<Vec<Scalar>>,
         i: usize,
         j: usize,
         buffers: &mut FourierBuffers<Scalar>,
-    ) {
+    )
+    where
+        Scalar: UnsignedTorus
+    {
         // "alias" buffers to save some typing
         let fft = &mut buffers.fft_buffers.fft;
         let rounded_buffer = &mut buffers.rounded_buffer;
