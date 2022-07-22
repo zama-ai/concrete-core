@@ -19,6 +19,12 @@
 * [Testing a backend](how\_to/testing\_backends.md)
 * [Benchmarking a backend](how\_to/benchmarking\_backends.md)
 
+## Adding a new engine in a backend
+
+* [Creating a new engine](how\_to/creating\_engines.md)
+* [Testing a backend](how\_to/testing\_engines.md)
+* [Benchmarking a backend](how\_to/benchmarking\_engines.md)
+
 ## API reference
 
 * [docs.rs](https://docs.rs/concrete-core/1.0.0-gamma/concrete\_core/index.html)
