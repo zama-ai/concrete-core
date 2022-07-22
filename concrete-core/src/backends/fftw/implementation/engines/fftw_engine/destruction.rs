@@ -83,7 +83,7 @@ impl DestructionEngine<FftwStandardGlweRelinearizationKey32> for FftwEngine {
         Ok(())
     }
 
-    unsafe fn destroy_unchecked(&mut self, _entity: &mut FftwStandardGlweRelinearizationKey64) {}
+    unsafe fn destroy_unchecked(&mut self, _entity: &mut FftwStandardGlweRelinearizationKey32) {}
 }
 
 impl DestructionEngine<FftwStandardGlweRelinearizationKey64> for FftwEngine {
