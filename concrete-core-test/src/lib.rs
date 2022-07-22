@@ -12,7 +12,7 @@ pub const REPETITIONS: Repetitions = Repetitions(10);
 /// The size of the sample used to perform statistical tests.
 pub const SAMPLE_SIZE: SampleSize = SampleSize(100);
 
-#[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
+#[cfg(feature = "backend_cuda")]
 pub mod cuda;
 #[cfg(all(test, feature = "backend_default"))]
 pub mod default;

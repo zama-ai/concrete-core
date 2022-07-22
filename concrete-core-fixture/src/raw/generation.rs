@@ -1,24 +1,32 @@
 //! A module containing sampling entry points for raw integers
 use concrete_core::commons::math::random::RandomGenerator;
 use concrete_core::commons::numeric::{CastInto, UnsignedInteger};
-#[cfg(target_arch = "x86_64")]
+#[cfg(feature = "fixture_generator_x86_64_aesni")]
 use concrete_csprng::generators::AesniRandomGenerator;
-#[cfg(not(target_arch = "x86_64"))]
+#[cfg(feature = "fixture_generator_aarch64_aes")]
+use concrete_csprng::generators::ArmAesRandomGenerator;
+#[cfg(all(
+    not(feature = "fixture_generator_x86_64_aesni"),
+    not(feature = "fixture_generator_aarch64_aes")
+))]
 use concrete_csprng::generators::SoftwareRandomGenerator;
 use concrete_csprng::seeders::{Seeder, UnixSeeder};
 use std::cell::RefCell;
 use std::fmt::Debug;
 use std::ops::Range;
 
-#[cfg(target_arch = "x86_64")]
+#[cfg(feature = "fixture_generator_x86_64_aesni")]
+type ActivatedRandomGenerator = AesniRandomGenerator;
+#[cfg(feature = "fixture_generator_aarch64_aes")]
+type ActivatedRandomGenerator = ArmAesRandomGenerator;
+#[cfg(all(
+    not(feature = "fixture_generator_x86_64_aesni"),
+    not(feature = "fixture_generator_aarch64_aes")
+))]
+type ActivatedRandomGenerator = SoftwareRandomGenerator;
+
 thread_local! {
-    pub static GENERATOR: RefCell<RandomGenerator<AesniRandomGenerator>> = RefCell::new(
-        RandomGenerator::new(UnixSeeder::new(0).seed())
-    );
-}
-#[cfg(not(target_arch = "x86_64"))]
-thread_local! {
-    pub static GENERATOR: RefCell<RandomGenerator<SoftwareRandomGenerator>> = RefCell::new(
+    pub static GENERATOR: RefCell<RandomGenerator<ActivatedRandomGenerator>> = RefCell::new(
         RandomGenerator::new(UnixSeeder::new(0).seed())
     );
 }

@@ -342,7 +342,10 @@ fn regular_uhwap<C1, C2, C3>(
     }
 }
 
-#[allow(unused)]
+#[cfg(all(
+    any(target_arch = "x86", target_arch = "x86_64"),
+    target_feature = "avx2",
+))]
 fn avx2_uhwap<C1, C2, C3>(
     res: &mut FourierPolynomial<C1>,
     poly_1: &FourierPolynomial<C2>,
@@ -416,7 +419,10 @@ fn regular_uhwatp<C1, C2, C3, C4, C5>(
     }
 }
 
-#[allow(unused)]
+#[cfg(all(
+    any(target_arch = "x86", target_arch = "x86_64"),
+    target_feature = "avx2",
+))]
 fn avx2_uhwatp<C1, C2, C3, C4, C5>(
     res: &mut FourierPolynomial<C1>,
     poly_1: &FourierPolynomial<C2>,
@@ -513,7 +519,11 @@ fn regular_uthwatp<C1, C2, C3, C4, C5, C6, C7, C8>(
     }
 }
 
-#[allow(unused, clippy::too_many_arguments)]
+#[cfg(all(
+    any(target_arch = "x86", target_arch = "x86_64"),
+    target_feature = "avx2",
+))]
+#[allow(clippy::too_many_arguments)]
 fn avx2_uthwatp<C1, C2, C3, C4, C5, C6, C7, C8>(
     result_1: &mut FourierPolynomial<C1>,
     result_2: &mut FourierPolynomial<C2>,

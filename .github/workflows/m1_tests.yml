@@ -1,0 +1,48 @@
+# Compile and test project on an M1 machine
+name: M1 tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+  ACTION_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+jobs:
+  run-tests-m1:
+    concurrency:
+      group: ${{ github.ref }}_m1mac
+      cancel-in-progress: true
+    name: Test code in M1
+    runs-on: ["self-hosted", "m1mac"]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+    - name: Install Rust for tasks
+      run: |
+        make install_tasks_rust_toolchain
+    - name: Run checks
+      run: |
+        cargo xtask check_fmt
+        cargo xtask check_clippy
+        cargo xtask check_doc
+    - name: Run concrete tests
+      run: |
+        cargo xtask test
+
+    - name: Slack Notification
+      if: ${{ always() }}
+      continue-on-error: true
+      uses: rtCamp/action-slack-notify@12e36fc18b0689399306c2e0b3e0f2978b7f1ee7
+      env:
+        SLACK_COLOR: ${{ job.status }}
+        SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+        SLACK_ICON: https://pbs.twimg.com/profile_images/1274014582265298945/OjBKP9kn_400x400.png
+        SLACK_MESSAGE: "M1 tests finished with status ${{ job.status }}. (${{ env.ACTION_RUN_URL }})"
+        SLACK_USERNAME: ${{ secrets.BOT_USERNAME }}
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}

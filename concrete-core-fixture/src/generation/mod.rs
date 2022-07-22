@@ -79,7 +79,7 @@ pub struct Maker {
     fftw_engine: concrete_core::backends::fftw::engines::FftwEngine,
     #[cfg(feature = "backend_fft")]
     fft_engine: concrete_core::backends::fft::engines::FftEngine,
-    #[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
+    #[cfg(feature = "backend_cuda")]
     cuda_engine: concrete_core::backends::cuda::engines::CudaEngine,
 }
 
@@ -93,7 +93,7 @@ impl Default for Maker {
             fftw_engine: concrete_core::backends::fftw::engines::FftwEngine::new(()).unwrap(),
             #[cfg(feature = "backend_fft")]
             fft_engine: concrete_core::backends::fft::engines::FftEngine::new(()).unwrap(),
-            #[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
+            #[cfg(feature = "backend_cuda")]
             cuda_engine: concrete_core::backends::cuda::engines::CudaEngine::new(()).unwrap(),
         }
     }

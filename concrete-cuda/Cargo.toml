@@ -16,7 +16,3 @@ cmake = { version = "0.1" }
 
 [dependencies]
 thiserror = "1.0"
-
-[features]
-# A feature to disable build on github runners for the CI
-_ci_do_not_compile = []

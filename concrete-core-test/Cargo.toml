@@ -11,24 +11,49 @@ concrete-core-fixture = { path = "../concrete-core-fixture" }
 paste = "1.0"
 
 [features]
-backend_default = ["concrete-core/backend_default"]
+backend_default = [
+    "concrete-core/backend_default",
+    "concrete-core-fixture/backend_default",
+]
 backend_fftw = [
     "concrete-core/backend_fftw",
     "concrete-core-fixture/backend_fftw",
 ]
-backend_fft = [
-    "concrete-core/backend_fft",
-    "concrete-core-fixture/backend_fft",
-]
-# backend_fft_nightly_avx512 = ["concrete-core/backend_fft_nightly_avx512"]
+backend_fft = ["concrete-core/backend_fft", "concrete-core-fixture/backend_fft"]
+backend_fft_nightly_avx512 = ["concrete-core/backend_fft_nightly_avx512"]
 backend_cuda = [
     "concrete-core/backend_cuda",
     "concrete-core-fixture/backend_cuda",
 ]
-_ci_do_not_compile = ["concrete-core/_ci_do_not_compile", "concrete-core-fixture/_ci_do_not_compile"]
+backend_default_generator_x86_64_aesni = [
+    "concrete-core/backend_default_generator_x86_64_aesni",
+    "concrete-core-fixture/backend_default_generator_x86_64_aesni",
+]
+backend_default_generator_aarch64_aes = [
+    "concrete-core/backend_default_generator_aarch64_aes",
+    "concrete-core-fixture/backend_default_generator_aarch64_aes",
+]
 
-[target.'cfg(target_arch = "x86_64")'.dependencies]
-# This does nothing if backend_default is not requested by the user
-concrete-core = { path = "../concrete-core", features = [
+optimized_tests_for_x86_64 = [
+    "concrete-core-fixture/fixture_generator_x86_64_aesni",
+]
+optimized_tests_for_x86_64-cuda = ["optimized_tests_for_x86_64"]
+optimized_tests_for_aarch64 = [
+    "concrete-core-fixture/fixture_generator_aarch64_aes",
+]
+
+x86_64 = [
+    "backend_default",
+    "backend_fftw",
+    "backend_fft",
     "backend_default_generator_x86_64_aesni",
-] }
+    "optimized_tests_for_x86_64",
+]
+x86_64-cuda = ["x86_64", "backend_cuda", "optimized_tests_for_x86_64"]
+aarch64 = [
+    "backend_default",
+    "backend_fftw",
+    "backend_fft",
+    "backend_default_generator_aarch64_aes",
+    "optimized_tests_for_aarch64",
+]

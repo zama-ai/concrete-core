@@ -224,7 +224,7 @@ void bootstrap_view_buffers_test(void) {
   double expected = (double)plaintext / pow(2, SHIFT);
   double obtained = (double)output / pow(2, SHIFT);
   printf("Expected: %f, Obtained: %f\n", expected, obtained);
-  double abs_diff = abs(obtained - expected);
+  double abs_diff = fabs(obtained - expected);
   double rel_error = abs_diff / fmax(expected, obtained);
   assert(rel_error < 0.01);
 
@@ -454,7 +454,7 @@ void bootstrap_unchecked_view_buffers_test(void) {
   double expected = (double)plaintext / pow(2, SHIFT);
   double obtained = (double)output / pow(2, SHIFT);
   printf("Expected: %f, Obtained: %f\n", expected, obtained);
-  double abs_diff = abs(obtained - expected);
+  double abs_diff = fabs(obtained - expected);
   double rel_error = abs_diff / fmax(expected, obtained);
   assert(rel_error < 0.01);
 
@@ -646,7 +646,7 @@ void bootstrap_raw_ptr_buffers_test(void) {
   double expected = (double)plaintext / pow(2, SHIFT);
   double obtained = (double)output / pow(2, SHIFT);
   printf("Expected: %f, Obtained: %f\n", expected, obtained);
-  double abs_diff = abs(obtained - expected);
+  double abs_diff = fabs(obtained - expected);
   double rel_error = abs_diff / fmax(expected, obtained);
   assert(rel_error < 0.01);
 
@@ -837,7 +837,7 @@ void bootstrap_unchecked_raw_ptr_buffers_test(void) {
   double expected = (double)plaintext / pow(2, SHIFT);
   double obtained = (double)output / pow(2, SHIFT);
   printf("Expected: %f, Obtained: %f\n", expected, obtained);
-  double abs_diff = abs(obtained - expected);
+  double abs_diff = fabs(obtained - expected);
   double rel_error = abs_diff / fmax(expected, obtained);
   assert(rel_error < 0.01);
 

@@ -82,7 +82,7 @@ void encrypt_add_decrypt_view_buffers_test(void) {
   double expected = ((double)plaintext_2 + (double)plaintext_1) / pow(2, SHIFT);
   double obtained = (double)output / pow(2, SHIFT);
   printf("Comparing output. Expected %f, Obtained %f\n", expected, obtained);
-  double abs_diff = abs(obtained - expected);
+  double abs_diff = fabs(obtained - expected);
   double rel_error = abs_diff / fmax(expected, obtained);
   assert(rel_error < 0.002);
 
@@ -177,7 +177,7 @@ void encrypt_add_decrypt_unchecked_view_buffers_test(void) {
   double expected = ((double)plaintext_2 + (double)plaintext_1) / pow(2, SHIFT);
   double obtained = (double)output / pow(2, SHIFT);
   printf("Comparing output. Expected %f, Obtained %f\n", expected, obtained);
-  double abs_diff = abs(obtained - expected);
+  double abs_diff = fabs(obtained - expected);
   double rel_error = abs_diff / fmax(expected, obtained);
   assert(rel_error < 0.002);
 
@@ -242,7 +242,7 @@ void encrypt_add_decrypt_raw_ptr_buffers_test(void) {
   double expected = ((double)plaintext_2 + (double)plaintext_1) / pow(2, SHIFT);
   double obtained = (double)output / pow(2, SHIFT);
   printf("Comparing output. Expected %f, Obtained %f\n", expected, obtained);
-  double abs_diff = abs(obtained - expected);
+  double abs_diff = fabs(obtained - expected);
   double rel_error = abs_diff / fmax(expected, obtained);
   assert(rel_error < 0.002);
 
@@ -301,7 +301,7 @@ void encrypt_add_decrypt_unchecked_raw_ptr_buffers_test(void) {
   double expected = ((double)plaintext_2 + (double)plaintext_1) / pow(2, SHIFT);
   double obtained = (double)output / pow(2, SHIFT);
   printf("Comparing output. Expected %f, Obtained %f\n", expected, obtained);
-  double abs_diff = abs(obtained - expected);
+  double abs_diff = fabs(obtained - expected);
   double rel_error = abs_diff / fmax(expected, obtained);
   assert(rel_error < 0.002);
 

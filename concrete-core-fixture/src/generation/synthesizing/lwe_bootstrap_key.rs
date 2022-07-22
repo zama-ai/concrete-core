@@ -511,7 +511,7 @@ mod backend_fft {
     }
 }
 
-#[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
+#[cfg(feature = "backend_cuda")]
 mod backend_cuda {
     use crate::generation::synthesizing::SynthesizesLweBootstrapKey;
     use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};

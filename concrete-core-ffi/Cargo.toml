@@ -18,18 +18,6 @@ concrete-core = { path = "../concrete-core" }
 
 [features]
 default = []
-# Enable all features for documenting
-# This will need to be handled differently once more CPUs are supported (like M1 e.g.)
-doc = [
-    "backend_default",
-    "backend_default_generator_x86_64_aesni",
-    "backend_default_parallel",
-    "backend_default_serialization",
-    "backend_fftw",
-    "backend_fftw_serialization",
-    "seeder_unix",
-    "seeder_x86_64_rdseed",
-]
 
 # A pure-rust backend
 backend_default = ["concrete-core/backend_default"]
@@ -40,9 +28,18 @@ backend_default_generator_x86_64_aesni = [
     "concrete-core/backend_default_generator_x86_64_aesni",
 ]
 
+backend_default_generator_aarch64_aes = [
+    "concrete-core/backend_default_generator_aarch64_aes",
+]
+
 # An accelerated backend, using the `fftw` library
 backend_fftw = ["concrete-core/backend_fftw"]
 backend_fftw_serialization = ["concrete-core/backend_fftw_serialization"]
+
+# An accelerated backend, using the `concrete-fft` library.
+backend_fft = ["concrete-core/concrete-fft"]
+backend_fft_nightly_avx512 = ["concrete-core/backend_fft_nightly_avx512"]
+backend_fft_serialization = ["concrete-core/backend_fft_serialization"]
 
 # Multithreaded key generation
 backend_default_parallel = ["concrete-core/backend_default_parallel"]
@@ -52,6 +49,26 @@ seeder_unix = ["concrete-core/seeder_unix"]
 
 # x86_64 specific seeder using rdseed hardware feature
 seeder_x86_64_rdseed = ["concrete-core/seeder_x86_64_rdseed"]
+
+x86_64 = [
+    "backend_default",
+    "backend_default_generator_x86_64_aesni",
+    "backend_default_parallel",
+    "backend_default_serialization",
+    "backend_fftw",
+    "backend_fftw_serialization",
+    "seeder_unix",
+    "seeder_x86_64_rdseed",
+]
+aarch64 = [
+    "backend_default",
+    "backend_default_generator_aarch64_aes",
+    "backend_default_parallel",
+    "backend_default_serialization",
+    "backend_fftw",
+    "backend_fftw_serialization",
+    "seeder_unix",
+]
 
 [build-dependencies]
 cbindgen = "0.23"

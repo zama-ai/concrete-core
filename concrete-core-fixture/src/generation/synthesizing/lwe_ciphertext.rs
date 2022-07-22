@@ -245,7 +245,7 @@ mod backend_default {
     }
 }
 
-#[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
+#[cfg(feature = "backend_cuda")]
 mod backend_cuda {
     use crate::generation::prototypes::{ProtoBinaryLweCiphertext32, ProtoBinaryLweCiphertext64};
     use crate::generation::synthesizing::SynthesizesLweCiphertext;
