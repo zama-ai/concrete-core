@@ -296,7 +296,8 @@ impl<Cont> GlevListLevelRow<Cont> {
     /// ```rust
     /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
-    /// let level_row = GgswLevelRow::from_container(
+    /// use concrete_core::commons::crypto::glev::GlevListLevelRow;
+    /// let level_row = GlevListLevelRow::from_container(
     ///     vec![0 as u8; 10 * 7],
     ///     PolynomialSize(10),
     ///     DecompositionLevel(1),
@@ -325,7 +326,8 @@ impl<Cont> GlevListLevelRow<Cont> {
     /// ```rust
     /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
-    /// let level_row = GgswLevelRow::from_container(
+    /// use concrete_core::commons::crypto::glev::GlevListLevelRow;
+    /// let level_row = GlevListLevelRow::from_container(
     ///     vec![0 as u8; 10 * 7],
     ///     PolynomialSize(10),
     ///     DecompositionLevel(1),
@@ -347,7 +349,8 @@ impl<Cont> GlevListLevelRow<Cont> {
     /// ```rust
     /// use concrete_commons::parameters::PolynomialSize;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
-    /// let level_row = GgswLevelRow::from_container(
+    /// use concrete_core::commons::crypto::glev::GlevListLevelRow;
+    /// let level_row = GlevListLevelRow::from_container(
     ///     vec![0 as u8; 10 * 7],
     ///     PolynomialSize(10),
     ///     DecompositionLevel(1),
@@ -365,7 +368,8 @@ impl<Cont> GlevListLevelRow<Cont> {
     /// ```rust
     /// use concrete_commons::parameters::PolynomialSize;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
-    /// let level_row = GgswLevelRow::from_container(
+    /// use concrete_core::commons::crypto::glev::GlevListLevelRow;
+    /// let level_row = GlevListLevelRow::from_container(
     ///     vec![0 as u8; 10 * 7],
     ///     PolynomialSize(10),
     ///     DecompositionLevel(1),
@@ -383,7 +387,8 @@ impl<Cont> GlevListLevelRow<Cont> {
     /// ```rust
     /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
-    /// let level_row = GgswLevelRow::from_container(
+    /// use concrete_core::commons::crypto::glev::GlevListLevelRow;
+    /// let level_row = GlevListLevelRow::from_container(
     ///     vec![0 as u8; 10 * 7],
     ///     PolynomialSize(10),
     ///     DecompositionLevel(1),
