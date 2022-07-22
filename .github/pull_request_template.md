@@ -9,9 +9,9 @@
 * [ ] Tests for the changes have been added (for bug fixes / features)
 * [ ] Docs have been added / updated (for bug fixes / features)
 * [ ] The PR description links to the related issue (to link an issue, use '#XXX'.)
-* [ ] The tests on AWS have been launched and are successful (apply the `aws_test` to the PR to launch the tests on AWS)
+* [ ] The tests on AWS have been launched and are successful (comment with @slab-ci cpu_test and/or @slab-ci gpu_test to trigger the tests)
 * [ ] The draft release description has been updated
-* [ ] Check for breaking changes and add them to commit message following the conventional commit [specification][conventional-breaking]
+* [ ] Check for breaking changes (including serialization changes) and add them to commit message following the conventional commit [specification][conventional-breaking]
 
 <!--
 ### Requires: `<link_your_required_issue_here>`
