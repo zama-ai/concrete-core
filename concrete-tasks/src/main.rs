@@ -36,11 +36,44 @@ lazy_static! {
 
 #[macro_export]
 macro_rules! cmd {
+    (<$env: ident> $cmd: expr, $cwd: expr, $stdin: expr, $stderr: expr, $stdout: expr, $return_handle: expr) => {
+        $crate::utils::execute(
+            $cmd,
+            Some(&*$env),
+            Some($cwd),
+            Some($stdin),
+            Some($stderr),
+            Some($stdout),
+            $return_handle,
+        )
+    };
     (<$env: ident> $cmd: expr) => {
-        $crate::utils::execute($cmd, Some(&*$env), Some(&*$crate::ROOT_DIR))
+        match $crate::utils::execute(
+            $cmd,
+            Some(&*$env),
+            Some(&*$crate::ROOT_DIR),
+            None,
+            None,
+            None,
+            false,
+        ) {
+            Ok(_) => Ok(()),
+            Err(error) => Err(error),
+        }
     };
     ($cmd: expr) => {
-        $crate::utils::execute($cmd, None, Some(&*$crate::ROOT_DIR))
+        match $crate::utils::execute(
+            $cmd,
+            None,
+            Some(&*$crate::ROOT_DIR),
+            None,
+            None,
+            None,
+            false,
+        ) {
+            Ok(_) => Ok(()),
+            Err(error) => Err(error),
+        }
     };
 }
 
@@ -111,42 +144,7 @@ fn main() -> Result<(), std::io::Error> {
                 .about("Checks that clippy runs without warnings on the cuda backend"),
         )
         .subcommand(Command::new("check_fmt").about("Checks that rustfmt runs without warnings"))
-        .subcommand(
-            Command::new("check_csprng")
-                .about("Checks concrete-csprng behavior with statistical approach")
-                .arg(
-                    Arg::new("nist_tool_dir")
-                        .short('n')
-                        .long("nist_tool_dir")
-                        .takes_value(true)
-                        .required(true)
-                        .help("Path to NIST statistical tool directory"),
-                )
-                .arg(
-                    Arg::new("generate_duration")
-                        .short('g')
-                        .long("generate_duration")
-                        .takes_value(true)
-                        .default_value("20")
-                        .help("Execution duration, in seconds, of concrete-csprng program"),
-                )
-                .arg(
-                    Arg::new("sequence_length")
-                        .short('s')
-                        .long("sequence_length")
-                        .takes_value(true)
-                        .default_value("100000")
-                        .help("Number of bits per sequence passed to NIST tests suite"),
-                )
-                .arg(
-                    Arg::new("bitstreams")
-                        .short('b')
-                        .long("bitstreams")
-                        .takes_value(true)
-                        .default_value("100")
-                        .help("The size of the sample per key"),
-                ),
-        )
+        .subcommand(csprng_check::command_args())
         .subcommand(Command::new("chore_format").about("Format the codebase with rustfmt"))
         .subcommand(
             Command::new("chore_format_latex_doc").about("Escape underscores in latex equations"),

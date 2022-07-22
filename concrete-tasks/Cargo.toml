@@ -5,7 +5,7 @@ edition = "2021"
 categories = ["do_not_publish"]
 
 [dependencies]
-clap = { version = "=3.2.12", features = ["derive"] }
+clap = "=3.2.12"
 lazy_static = "1.4"
 log = "0.4"
 simplelog = "0.12"
