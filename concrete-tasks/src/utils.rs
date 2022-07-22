@@ -62,10 +62,42 @@ pub fn get_nightly_toolchain() -> Result<String, Error> {
     let (toolchain_base, _) = content.split_once('\n').unwrap();
     let toolchain_arg = format!("+{}", toolchain_base);
 
-    if cfg!(target_os = "macos") {
-        // For now we don't support Apple Silicon, always use the x86_64 toolchain for tasks
-        Ok(format!("{}-x86_64-apple-darwin", toolchain_arg))
+    Ok(toolchain_arg)
+}
+
+pub fn get_build_toolchain() -> Result<String, Error> {
+    // aarch64 currently requires nightly feature stdsimd for some operators
+    if cfg!(target_arch = "aarch64") {
+        get_nightly_toolchain()
+    } else if cfg!(target_arch = "x86_64") {
+        Ok("+stable".to_string())
     } else {
-        Ok(toolchain_arg)
+        // For other arch by default we use the nightly toolchain as it has a better chance of
+        // working out of the gates
+        info!(
+            "Unknown target_arch to the concrete-core project, using frozen nightly toolchain as \
+        build toolchain. Consider contributing to the project to enhance support for it."
+        );
+        get_nightly_toolchain()
     }
+}
+
+pub fn get_target_arch_feature_for_core() -> Result<&'static str, Error> {
+    if cfg!(target_arch = "x86_64") {
+        Ok("x86_64")
+    } else if cfg!(target_arch = "aarch64") {
+        Ok("aarch64")
+    } else {
+        Err(Error::new(
+            ErrorKind::Other,
+            "The current target architecture currently has no feature flag (like 'x86_64' or \
+            'aarch64' e.g.) in concrete-core and will not compile with this cargo xtask command. \
+            You can create your own feature flag for this target architecture or compile manually \
+            specifying the features you want to enable.",
+        ))
+    }
+}
+
+pub fn get_target_arch_feature_for_doc() -> Result<&'static str, Error> {
+    get_target_arch_feature_for_core()
 }

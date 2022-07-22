@@ -12,3 +12,6 @@ pub use default_parallel_engine::*;
 mod default_serialization_engine;
 #[cfg(feature = "backend_default_serialization")]
 pub use default_serialization_engine::*;
+
+mod activated_generator;
+pub use activated_generator::ActivatedRandomGenerator;

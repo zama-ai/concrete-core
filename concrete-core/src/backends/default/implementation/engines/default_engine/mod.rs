@@ -1,3 +1,4 @@
+use super::ActivatedRandomGenerator;
 use crate::commons::crypto::secret::generators::{
     DeterministicSeeder as ImplDeterministicSeeder,
     EncryptionRandomGenerator as ImplEncryptionRandomGenerator,
@@ -5,10 +6,6 @@ use crate::commons::crypto::secret::generators::{
 };
 use crate::specification::engines::sealed::AbstractEngineSeal;
 use crate::specification::engines::AbstractEngine;
-#[cfg(feature = "backend_default_generator_x86_64_aesni")]
-use concrete_csprng::generators::AesniRandomGenerator;
-#[cfg(not(feature = "backend_default_generator_x86_64_aesni"))]
-use concrete_csprng::generators::SoftwareRandomGenerator;
 use concrete_csprng::seeders::Seeder;
 use std::error::Error;
 use std::fmt::{Display, Formatter};
@@ -50,11 +47,6 @@ impl Display for DefaultError {
 }
 
 impl Error for DefaultError {}
-
-#[cfg(feature = "backend_default_generator_x86_64_aesni")]
-type ActivatedRandomGenerator = AesniRandomGenerator;
-#[cfg(not(feature = "backend_default_generator_x86_64_aesni"))]
-type ActivatedRandomGenerator = SoftwareRandomGenerator;
 
 pub struct DefaultEngine {
     /// A structure containing a single CSPRNG to generate secret key coefficients.

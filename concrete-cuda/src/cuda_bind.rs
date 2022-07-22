@@ -1,9 +1,6 @@
 use std::ffi::c_void;
 
-#[cfg_attr(
-    not(feature = "_ci_do_not_compile"),
-    link(name = "concrete_cuda", kind = "static")
-)]
+#[link(name = "concrete_cuda", kind = "static")]
 extern "C" {
 
     pub fn cuda_create_stream(gpu_index: u32) -> *mut c_void;

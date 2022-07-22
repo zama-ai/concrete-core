@@ -1,5 +1,8 @@
 use crate::cmd;
-use crate::utils::{get_nightly_toolchain, Environment};
+use crate::utils::{
+    get_nightly_toolchain, get_target_arch_feature_for_core, get_target_arch_feature_for_doc,
+    Environment,
+};
 use std::collections::HashMap;
 use std::io::Error;
 
@@ -12,13 +15,19 @@ lazy_static! {
 }
 
 pub fn doc() -> Result<(), Error> {
-    cmd!(<ENV_DOC_KATEX> &format!("cargo {} doc --features=doc --no-deps --workspace --exclude concrete-cuda", get_nightly_toolchain()?))
+    cmd!(<ENV_DOC_KATEX>
+        &format!("cargo {} doc --features {} --no-deps --workspace --exclude concrete-cuda",
+            get_nightly_toolchain()?,
+            get_target_arch_feature_for_doc()?,
+    ))
 }
 
 pub fn clippy() -> Result<(), Error> {
     cmd!(&format!(
-        "cargo {} clippy --all-targets --all-features -- --no-deps -D warnings",
-        get_nightly_toolchain()?
+        "cargo {} clippy --workspace --all-targets --exclude concrete-cuda --features {} -- \
+        --no-deps -D warnings",
+        get_nightly_toolchain()?,
+        get_target_arch_feature_for_core()?
     ))
 }
 

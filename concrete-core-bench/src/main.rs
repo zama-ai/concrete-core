@@ -16,7 +16,7 @@ mod fftw;
 #[cfg(feature = "backend_fft")]
 mod fft;
 
-#[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
+#[cfg(feature = "backend_cuda")]
 mod cuda;
 
 // The main entry point. Uses criterion as benchmark harness.
@@ -30,9 +30,9 @@ fn main() {
     fftw::bench();
     #[cfg(feature = "backend_fft")]
     fft::bench();
-    #[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
+    #[cfg(feature = "backend_cuda")]
     cuda::bench();
-    #[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
+    #[cfg(feature = "backend_cuda")]
     cuda::bench_amortized();
 
     // We launch the benchmarks.

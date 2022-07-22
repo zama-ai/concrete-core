@@ -40,7 +40,6 @@ harness = false
 
 [features]
 default = ["backend_default", "seeder_unix"]
-doc = []
 
 # A pure-rust backend. Included by default in the build.
 backend_default = ["concrete-csprng/generator_soft"]
@@ -53,7 +52,7 @@ backend_fft_serialization = [
     "aligned-vec/serde",
     "__commons_serialization",
 ]
-# backend_fft_nightly_avx512 = ["concrete-fft/nightly"]
+backend_fft_nightly_avx512 = ["concrete-fft/nightly"]
 
 # Enables the parallel engine in default backend.
 backend_default_parallel = ["__commons_parallel"]
@@ -62,6 +61,10 @@ backend_default_parallel = ["__commons_parallel"]
 # backend
 backend_default_generator_x86_64_aesni = [
     "concrete-csprng/generator_x86_64_aesni",
+]
+
+backend_default_generator_aarch64_aes = [
+    "concrete-csprng/generator_aarch64_aes",
 ]
 
 # Enable the serialization engine in the default backend.
@@ -88,11 +91,40 @@ __commons_serialization = [
     "serde",
     "serde/derive",
 ]
-_ci_do_not_compile = ["concrete-cuda/_ci_do_not_compile"]
 
 seeder_unix = ["concrete-csprng/seeder_unix"]
 seeder_x86_64_rdseed = ["concrete-csprng/seeder_x86_64_rdseed"]
 
+# These target_arch features enable a set of public features for concrete-core if users want a known
+# good/working configuration for concrete-core.
+# For a target_arch that does not yet have such a feature, one can still enable features manually or
+# create a feature for said target_arch to make its use simpler.
+x86_64 = [
+    "backend_default",
+    "backend_default_parallel",
+    "backend_default_generator_x86_64_aesni",
+    "backend_default_serialization",
+    "backend_fftw",
+    "backend_fftw_serialization",
+    "backend_fft",
+    "backend_fft_serialization",
+    "seeder_unix",
+    "seeder_x86_64_rdseed",
+]
+x86_64-cuda = ["x86_64", "backend_cuda"]
+aarch64 = [
+    "backend_default",
+    "backend_default_parallel",
+    "backend_default_generator_aarch64_aes",
+    "backend_default_serialization",
+    "backend_fftw",
+    "backend_fftw_serialization",
+    "backend_fft",
+    "backend_fft_serialization",
+    "seeder_unix",
+]
+
 [package.metadata.docs.rs]
-features = ["doc"]
+# TODO: manage builds for docs.rs based on their documentation https://docs.rs/about
+features = ["x86_64"]
 rustdoc-args = ["--html-in-header", "katex-header.html"]

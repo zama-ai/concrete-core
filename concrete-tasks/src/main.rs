@@ -111,6 +111,9 @@ fn main() -> Result<(), std::io::Error> {
         .subcommand(
             Command::new("chore_format_latex_doc").about("Escape underscores in latex equations"),
         )
+        .subcommand(
+            Command::new("get_build_toolchain").about("Prints the build toolchain to stdout"),
+        )
         .arg_required_else_help(true)
         .get_matches();
 
@@ -143,15 +146,12 @@ fn main() -> Result<(), std::io::Error> {
     if matches.subcommand_matches("build").is_some() {
         build::debug::benches()?;
         build::debug::crates()?;
-        build::debug::doctests()?;
         build::debug::tests()?;
         build::release::benches()?;
         build::release::crates()?;
-        build::release::doctests()?;
         build::release::tests()?;
         build::simd::benches()?;
         build::simd::crates()?;
-        build::simd::doctests()?;
         build::simd::tests()?;
     }
     if matches.subcommand_matches("check").is_some() {
@@ -209,6 +209,9 @@ fn main() -> Result<(), std::io::Error> {
         .is_some()
     {
         chore::format_latex_doc()?;
+    }
+    if matches.subcommand_matches("get_build_toolchain").is_some() {
+        println!("{}", utils::get_build_toolchain()?);
     }
 
     Ok(())

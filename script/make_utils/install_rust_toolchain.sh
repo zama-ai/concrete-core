@@ -3,7 +3,7 @@
 set -e
 
 function usage() {
-    echo "$0: install rust toolchain, always installing the x86_64 toolchain for macOS"
+    echo "$0: install specified rust toolchain with clippy and rustfmt components at least"
     echo
     echo "--help                    Print this message"
     echo "--version                 The toolchain to install without the platform triplet"
@@ -38,11 +38,6 @@ do
    esac
    shift
 done
-
-if [[ "$(uname)" == "Darwin" ]]; then
-    # We are on mac OS, specify the x86_64 toolchain for now
-    TOOLCHAIN_VERSION="${TOOLCHAIN_VERSION}-x86_64-apple-darwin"
-fi
 
 if [[ "${CHECK}" == "1" ]]; then
     rustup toolchain list | grep "${TOOLCHAIN_VERSION}" > /dev/null

@@ -1,13 +1,10 @@
+use super::ActivatedRandomGenerator;
 use crate::commons::crypto::secret::generators::{
     DeterministicSeeder as ImplDeterministicSeeder,
     EncryptionRandomGenerator as ImplEncryptionRandomGenerator,
 };
 use crate::specification::engines::sealed::AbstractEngineSeal;
 use crate::specification::engines::AbstractEngine;
-#[cfg(feature = "backend_default_generator_x86_64_aesni")]
-use concrete_csprng::generators::AesniRandomGenerator;
-#[cfg(not(feature = "backend_default_generator_x86_64_aesni"))]
-use concrete_csprng::generators::SoftwareRandomGenerator;
 use concrete_csprng::seeders::Seeder;
 use std::error::Error;
 use std::fmt::{Display, Formatter};
@@ -29,11 +26,6 @@ impl Display for DefaultParallelError {
 }
 
 impl Error for DefaultParallelError {}
-
-#[cfg(feature = "backend_default_generator_x86_64_aesni")]
-type ActivatedRandomGenerator = AesniRandomGenerator;
-#[cfg(not(feature = "backend_default_generator_x86_64_aesni"))]
-type ActivatedRandomGenerator = SoftwareRandomGenerator;
 
 pub struct DefaultParallelEngine {
     /// A structure containing two CSPRNGs to generate material for encryption like public masks

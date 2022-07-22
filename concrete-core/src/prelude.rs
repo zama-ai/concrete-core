@@ -22,9 +22,9 @@ pub use super::backends::fft::engines::*;
 pub use super::backends::fft::entities::*;
 
 // ------------------------------------------------------------------------------------ CUDA BACKEND
-#[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
+#[cfg(feature = "backend_cuda")]
 pub use super::backends::cuda::engines::*;
-#[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
+#[cfg(feature = "backend_cuda")]
 pub use super::backends::cuda::entities::*;
 
 // -------------------------------------------------------------------------------- COMMONS REEXPORT

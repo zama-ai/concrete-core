@@ -4,6 +4,7 @@
 
 SeederBuilder *get_best_seeder() {
   SeederBuilder *builder = NULL;
+#if defined(__x86_64__) || defined(_M_X64)
   bool rdseed_seeder_available = false;
   int rdseed_seeder_available_ok = rdseed_seeder_is_available(&rdseed_seeder_available);
   assert(rdseed_seeder_available_ok == 0);
@@ -14,6 +15,7 @@ SeederBuilder *get_best_seeder() {
     printf("Using rdseed seeder.\n");
     return builder;
   }
+#endif
 
   bool unix_seeder_available = false;
   int unix_seeder_available_ok = unix_seeder_is_available(&unix_seeder_available);
@@ -36,6 +38,7 @@ SeederBuilder *get_best_seeder() {
 
 SeederBuilder *get_best_seeder_unchecked() {
   SeederBuilder *builder = NULL;
+#if defined(__x86_64__) || defined(_M_X64)
   bool rdseed_seeder_available = false;
   int rdseed_seeder_available_ok = rdseed_seeder_is_available_unchecked(&rdseed_seeder_available);
   assert(rdseed_seeder_available_ok == 0);
@@ -46,6 +49,7 @@ SeederBuilder *get_best_seeder_unchecked() {
     printf("Using rdseed seeder.\n");
     return builder;
   }
+#endif
 
   bool unix_seeder_available = false;
   int unix_seeder_available_ok = unix_seeder_is_available_unchecked(&unix_seeder_available);

@@ -1,4 +1,4 @@
-use crate::utils::{get_nightly_toolchain, Environment};
+use crate::utils::{get_build_toolchain, get_target_arch_feature_for_core, Environment};
 use crate::{cmd, ENV_TARGET_NATIVE};
 use std::collections::HashMap;
 use std::io::Error;
@@ -38,20 +38,27 @@ pub mod debug {
     use super::*;
 
     pub fn crates() -> Result<(), Error> {
-        cmd!("cargo build --all-features")
+        cmd!(&format!(
+            "cargo {} build --features {} --workspace --exclude concrete-cuda",
+            get_build_toolchain()?,
+            get_target_arch_feature_for_core()?
+        ))
     }
 
     pub fn benches() -> Result<(), Error> {
-        cmd!("cargo build --benches --workspace --exclude concrete-cuda")
+        cmd!(&format!(
+            "cargo {} build --features {} --benches --workspace --exclude concrete-cuda",
+            get_build_toolchain()?,
+            get_target_arch_feature_for_core()?
+        ))
     }
 
     pub fn tests() -> Result<(), Error> {
-        cmd!("cargo test --no-run --all-features")
-    }
-
-    pub fn doctests() -> Result<(), Error> {
-        cmd!(<ENV_DOCTEST>
-            &format!("cargo {} test --doc --all-features", get_nightly_toolchain()?))
+        cmd!(&format!(
+            "cargo {} test --features {} --no-run --workspace --exclude concrete-cuda",
+            get_build_toolchain()?,
+            get_target_arch_feature_for_core()?
+        ))
     }
 }
 
@@ -59,20 +66,27 @@ pub mod release {
     use super::*;
 
     pub fn crates() -> Result<(), Error> {
-        cmd!("cargo build --release --all-features")
+        cmd!(&format!(
+            "cargo {} build --release --features {} --workspace --exclude concrete-cuda",
+            get_build_toolchain()?,
+            get_target_arch_feature_for_core()?
+        ))
     }
 
     pub fn benches() -> Result<(), Error> {
-        cmd!("cargo build --release --benches --workspace --exclude concrete-cuda")
+        cmd!(&format!(
+            "cargo {} build --release --features {} --benches --workspace --exclude concrete-cuda",
+            get_build_toolchain()?,
+            get_target_arch_feature_for_core()?
+        ))
     }
 
     pub fn tests() -> Result<(), Error> {
-        cmd!("cargo test --release --no-run --all-features")
-    }
-
-    pub fn doctests() -> Result<(), Error> {
-        cmd!(<ENV_DOCTEST>
-            &format!("cargo {} test --release --doc --all-features", get_nightly_toolchain()?))
+        cmd!(&format!(
+            "cargo {} test --release --features {} --no-run --workspace --exclude concrete-cuda",
+            get_build_toolchain()?,
+            get_target_arch_feature_for_core()?
+        ))
     }
 }
 
@@ -80,44 +94,50 @@ pub mod simd {
     use super::*;
 
     pub fn crates() -> Result<(), Error> {
-        if cfg!(target_os = "linux") {
-            cmd!(<ENV_TARGET_SIMD> "cargo build --release --all-features")
+        let env: &Environment = if cfg!(target_os = "linux") {
+            &ENV_TARGET_SIMD
         } else if cfg!(target_os = "macos") {
-            cmd!(<ENV_TARGET_NATIVE> "cargo build --release --all-features")
+            &ENV_TARGET_NATIVE
         } else {
             unreachable!()
-        }
+        };
+
+        cmd!(<env> &format!(
+            "cargo {} build --release --features {} --workspace --exclude concrete-cuda",
+            get_build_toolchain()?,
+            get_target_arch_feature_for_core()?
+        ))
     }
 
     pub fn benches() -> Result<(), Error> {
-        if cfg!(target_os = "linux") {
-            cmd!(<ENV_TARGET_SIMD> "cargo build --release --benches --workspace --exclude concrete-cuda")
+        let env: &Environment = if cfg!(target_os = "linux") {
+            &ENV_TARGET_SIMD
         } else if cfg!(target_os = "macos") {
-            cmd!(<ENV_TARGET_NATIVE> "cargo build --release --benches --workspace --exclude concrete-cuda")
+            &ENV_TARGET_NATIVE
         } else {
             unreachable!()
-        }
+        };
+
+        cmd!(<env> &format!(
+            "cargo {} build --release --features {} --benches --workspace --exclude concrete-cuda",
+            get_build_toolchain()?,
+            get_target_arch_feature_for_core()?
+        ))
     }
 
     pub fn tests() -> Result<(), Error> {
-        if cfg!(target_os = "linux") {
-            cmd!(<ENV_TARGET_SIMD> "cargo test --release --no-run --all-features")
+        let env: &Environment = if cfg!(target_os = "linux") {
+            &ENV_TARGET_SIMD
         } else if cfg!(target_os = "macos") {
-            cmd!(<ENV_TARGET_NATIVE> "cargo test --release --no-run --all-features")
+            &ENV_TARGET_NATIVE
         } else {
             unreachable!()
-        }
-    }
+        };
 
-    pub fn doctests() -> Result<(), Error> {
-        if cfg!(target_os = "linux") {
-            cmd!(<ENV_DOCTEST_SIMD>
-                &format!("cargo {} test --release --doc --all-features", get_nightly_toolchain()?))
-        } else if cfg!(target_os = "macos") {
-            cmd!(<ENV_DOCTEST_NATIVE>
-                &format!("cargo {} test --release --doc --all-features", get_nightly_toolchain()?))
-        } else {
-            unreachable!()
-        }
+        cmd!(<env> &format!(
+            "cargo {} test --release --features {} --no-run --workspace --exclude concrete-cuda",
+            get_build_toolchain()?,
+            get_target_arch_feature_for_core()?
+        ))
     }
 }
