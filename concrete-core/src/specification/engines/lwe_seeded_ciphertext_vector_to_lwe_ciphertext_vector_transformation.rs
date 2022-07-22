@@ -18,7 +18,9 @@ engine_error! {
 /// # Formal Definition
 ///
 /// ## LWE seeded ciphertext vector to LWE ciphertext vector transformation
-/// cf [`here`](`crate::specification::engines::LweSeededCiphertextToLweCiphertextTransformationEngine`)
+/// cf [`here`](
+/// `crate::specification::engines::LweSeededCiphertextToLweCiphertextTransformationEngine`
+/// )
 pub trait LweSeededCiphertextVectorToLweCiphertextVectorTransformationEngine<
     InputCiphertextVector,
     OutputCiphertextVector,

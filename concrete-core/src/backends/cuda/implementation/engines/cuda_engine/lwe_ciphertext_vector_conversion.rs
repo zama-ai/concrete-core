@@ -396,9 +396,9 @@ impl LweCiphertextVectorConversionEngine<CudaLweCiphertextVector64, LweCiphertex
 }
 
 /// # Description
-/// Convert an LWE ciphertext vector with 64 bits of precision from CPU to GPU.
+/// Convert an LWE ciphertext vector view with 64 bits of precision from CPU to GPU.
 ///
-/// The input ciphertext vector is split over GPUs, so that each GPU contains
+/// The input ciphertext vector view is split over GPUs, so that each GPU contains
 /// the total amount of ciphertexts divided by the number of GPUs on the machine.
 /// The last GPU takes the remainder of the division if there is any.
 impl LweCiphertextVectorConversionEngine<LweCiphertextVectorView64<'_>, CudaLweCiphertextVector64>
@@ -415,7 +415,7 @@ impl LweCiphertextVectorConversionEngine<LweCiphertextVectorView64<'_>, CudaLweC
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
     /// let lwe_dimension = LweDimension(6);
     /// // Here a hard-set encoding is applied (shift by 20 bits)
-    /// let input = vec![3_u64 << 20; 3];
+    /// let input = vec![3_u64 << 50; 3];
     /// let noise = Variance(2_f64.powf(-25.));
     ///
     /// const UNSAFE_SECRET: u128 = 0;

@@ -34,7 +34,7 @@ impl
     /// use std::borrow::BorrowMut;
     /// let lwe_dimension = LweDimension(6);
     /// // Here a hard-set encoding is applied (shift by 20 bits)
-    /// let input = vec![3_u64 << 20; 3];
+    /// let input = vec![3_u64 << 50; 3];
     /// let noise = Variance(2_f64.powf(-25.));
     ///
     /// const UNSAFE_SECRET: u128 = 0;

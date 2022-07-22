@@ -1,16 +1,17 @@
 use crate::backends::default::implementation::engines::DefaultEngine;
 use crate::backends::default::implementation::entities::{
-    LweCiphertextVector64, LweCiphertextVectorMutView64, LweCiphertextVectorView64,
+    LweCiphertextVectorMutView64, LweCiphertextVectorView64,
 };
 use crate::commons::crypto::lwe::LweList as ImplLweList;
+use crate::prelude::LweCiphertextVector64;
 use crate::specification::engines::{
     LweCiphertextVectorCreationEngine, LweCiphertextVectorCreationError,
 };
 use concrete_commons::parameters::LweSize;
 
 /// # Description:
-/// Implementation of [`LweCiphertextVectorCreationEngine`] for [`DefaultEngine`] which returns an
-/// immutable [`LweCiphertextVector64`] that does not own its memory.
+/// Implementation of [`LweCiphertextVectorCreationEngine`] for [`DefaultEngine`] which returns a
+/// [`LweCiphertextVector64`].
 impl LweCiphertextVectorCreationEngine<Vec<u64>, LweCiphertextVector64> for DefaultEngine {
     /// # Example:
     /// ```
@@ -28,7 +29,7 @@ impl LweCiphertextVectorCreationEngine<Vec<u64>, LweCiphertextVector64> for Defa
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext_vector: LweCiphertextVector64 =
-    ///     engine.create_lwe_ciphertext_vector(slice, lwe_size)?;
+    ///     engine.create_lwe_ciphertext_vector(owned_container, lwe_size)?;
     /// engine.destroy(ciphertext_vector)?;
     /// #
     /// # Ok(())

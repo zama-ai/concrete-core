@@ -103,7 +103,7 @@ pub(crate) enum LweCiphertextVectorView64Version {
 /// Notes:
 /// ------
 /// This view is not Clone as Clone for a slice is not defined. It is not Deserialize either,
-/// as Deserialize of a slice is not defined. Immutable variant.
+/// as Deserialize of a slice is not defined. Mutable variant.
 #[derive(Debug, PartialEq, Eq)]
 pub struct LweCiphertextVectorMutView64<'a>(pub(crate) ImplLweList<&'a mut [u64]>);
 
