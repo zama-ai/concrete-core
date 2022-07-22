@@ -398,7 +398,7 @@ impl<Scalar: UnsignedTorus> FourierGlweCiphertext<AlignedVec<Complex64>, Scalar>
         // Self's GLWE size is (k^2 + k) / 2, where k is the GLWE dimension of the original GLWE 
         // ciphertexts. (k^2 + k) / 2 is the Glev count of the relinearization key. 
         ck_dim_eq!(
-            self.glwe_size().to_glwe_dimension().0 => rlk.glev_count()
+            self.glwe_size().to_glwe_dimension().0 => rlk.glev_count().0;
         );
 
         // The output of the relinearization will have the GLWE size of the relinearization key
