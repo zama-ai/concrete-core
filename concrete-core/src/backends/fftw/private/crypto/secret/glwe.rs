@@ -9,6 +9,7 @@ use std::marker::PhantomData;
 use serde::{Deserialize, Serialize};
 
 /// A GLWE secret key in the Fourier Domain.
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub struct FourierGlweSecretKey<Kind, Cont, Scalar>
 where
     Kind: KeyKind,
