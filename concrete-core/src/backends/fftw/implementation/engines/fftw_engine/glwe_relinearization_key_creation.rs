@@ -83,7 +83,7 @@ for FftwEngine
             rlk.glwe_size(),
         );
         rlk.fill_with_new_key(
-            input,
+            &input.0,
             noise,
             &mut self.encryption_generator,
             buffers,
@@ -166,7 +166,7 @@ for FftwEngine
             rlk.glwe_size(),
         );
         rlk.fill_with_new_key(
-            input,
+            &input.0,
             noise,
             &mut self.encryption_generator,
             buffers,
