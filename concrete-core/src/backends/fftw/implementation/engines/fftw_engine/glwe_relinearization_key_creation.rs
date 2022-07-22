@@ -1,13 +1,9 @@
 use crate::backends::fftw::engines::FftwEngine;
-use crate::backends::fftw::entities::{FftwFourierLweBootstrapKey32, FftwFourierLweBootstrapKey64};
-use crate::backends::fftw::private::crypto::bootstrap::FourierBootstrapKey;
 use crate::backends::fftw::private::crypto::relinearize::StandardGlweRelinearizationKey;
-use crate::backends::fftw::private::math::fft::Complex64;
 use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, FftwStandardGlweRelinearizationKey32, FftwStandardGlweRelinearizationKey64, GlweSecretKey32, GlweSecretKey64, GlweSecretKeyEntity, Variance};
 use crate::specification::engines::{
     GlweRelinearizationKeyCreationEngine, GlweRelinearizationKeyCreationError,
 };
-use crate::specification::entities::LweBootstrapKeyEntity;
 
 /// # Description:
 /// Implementation of [`GlweRelinearizationKeyCreationEngine`] for [`FftwEngine`] that operates on
