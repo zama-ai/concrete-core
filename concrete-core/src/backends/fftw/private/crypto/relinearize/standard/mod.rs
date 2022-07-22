@@ -247,7 +247,7 @@ impl<Cont> StandardGlweRelinearizationKey<Cont> {
         for poly in key_product_vec.iter() {
             for poly_coef in poly.coefficient_iter() {
                 let mut plaintext = encoded_iter.next().unwrap();
-                plaintext = *poly_coef;
+                *plaintext = poly_coef;
             }
         }
         glwe_secret_key.create_relinearization_key(
@@ -459,7 +459,7 @@ impl<Cont> StandardGlweRelinearizationKey<Cont> {
         // Decompose the input polynomial
         let decomposer_t_i =
             SignedDecomposer::new(self.decomp_base_log, self.decomp_level);
-        decomposer_t_i.fill_tensor_with_closest_representable(rounded_buffer, &input_poly);
+        decomposer_t_i.fill_tensor_with_closest_representable(rounded_buffer, input_poly);
 
         // Perform the inner product between the RLK(i, j, l) element and the input polynomial in 
         // the Fourier domain, and accumulate the result in the output polynomial.
