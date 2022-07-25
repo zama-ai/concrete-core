@@ -1,13 +1,12 @@
 use crate::{cmd, utils, ENV_TARGET_NATIVE};
 use clap::{Arg, ArgMatches};
-use log::info;
+use log::{error, info};
 use std::error::Error;
+use std::fs;
 use std::fs::File;
 use std::io::{self, BufRead, Error as IoError, ErrorKind, Write};
 use std::path::Path;
 use std::process::Stdio;
-use std::thread::sleep;
-use std::{fs, time};
 
 pub fn command_args() -> clap::Command<'static> {
     let command = clap::Command::new("check_csprng")
@@ -61,7 +60,7 @@ fn generate_random_numbers(
 
     let build_cmd = format!(
         "cargo build --release -p concrete-csprng --bin generate --features=seeder_x86_64_rdseed,generator_x86_64_aesni --target-dir {}",
-        build_path.display()
+        build_path.to_str().unwrap()
     );
     info!("Building concrete-csprng");
     cmd!(<ENV_TARGET_NATIVE> &build_cmd)?;
@@ -71,7 +70,7 @@ fn generate_random_numbers(
     let result_file = File::create(results_path)?;
     let run_cmd = format!(
         "{} -b {}",
-        build_path.join("release/generate").display(),
+        build_path.join("release/generate").to_str().unwrap(),
         bytes_length
     );
     info!("Generating random numbers from concrete-csprng");
@@ -90,11 +89,20 @@ fn run_test_suite(
     sequence_length: u64,
     bitstreams: u64,
 ) -> Result<(), Box<dyn Error>> {
-    let cmd = format!(
-        "{} {}",
-        nist_path.join("assess").display(),
-        sequence_length
-    );
+    let exec_path = match nist_path.join("assess").to_str() {
+        Some(path) => path.to_owned(),
+        None => {
+            error!(
+                "NIST path '{}' contains non_utf8 characters",
+                nist_path.display()
+            );
+            return Err(Box::new(IoError::new(
+                ErrorKind::Other,
+                "path conversion failed",
+            )));
+        }
+    };
+    let cmd = format!("{} {}", exec_path, sequence_length);
     let data_source = 0;
     let input_file = nist_path.join("data/csprng_results");
     let do_run_all_tests = 1;
@@ -102,7 +110,7 @@ fn run_test_suite(
     let file_format = 1;
     let inputs = [
         data_source.to_string(),
-        input_file.display().to_string(),
+        input_file.display().to_string(), // Here Path is guaranteed to contain only valid utf8
         do_run_all_tests.to_string(),
         parameter_adjustments.to_string(),
         bitstreams.to_string(),
@@ -112,12 +120,9 @@ fn run_test_suite(
     info!("Run NIST statistical tests suite");
     let mut proc = cmd!(<ENV_TARGET_NATIVE> &cmd, &nist_path.to_path_buf(), Stdio::piped(), Stdio::piped(), Stdio::piped(), true)?.unwrap();
     let mut stdin = proc.stdin.take().expect("Failed to get stdin");
-    let half_a_sec = time::Duration::from_millis(500);
     for value in inputs {
         stdin.write_all(format!("{}\n", value).as_bytes())?;
         stdin.flush()?;
-        // Give some time for the input to be processed.
-        sleep(half_a_sec);
     }
     proc.wait()?;
     info!("NIST statistical test suite complete");

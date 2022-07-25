@@ -24,6 +24,15 @@ jobs:
       - name: Build native
         if: ${{ !cancelled() }}
         run: cargo xtask build_simd_crates
+      - name: Install NIST statistical test suite
+        if: ${{ !cancelled() }}
+        run: |
+          make install_nist_test_tool
+      - name: Check concrete-csprng
+        if: ${{ !cancelled() }}
+        run: |
+          cargo xtask check_csprng --nist_tool_dir ${{ GITHUB_WORKSPACE }}/csprng_check_builds/nist_sts/sts-2.1.2 --generated_bytes <FIXME: put here a meaningful value of bytes to generate>
+
 
   macos:
     runs-on: macos-latest

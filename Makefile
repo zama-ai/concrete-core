@@ -16,15 +16,20 @@ check_tasks_rust_toolchain:
 		exit 1; \
 	fi
 
-BUILD_DIR := $(CURDIR)/csprng_check_builds
-NIST_DIR := $(BUILD_DIR)/nist_sts
+CSPRNG_CHECK_BUILD_DIR := $(CURDIR)/csprng_check_builds
+NIST_BUILD_DIR := $(CSPRNG_CHECK_BUILD_DIR)/nist_sts
 
 .PHONY: install_nist_test_tool # Install NIST statistical test suite tool used to check concrete-csprng behavior
 install_nist_test_tool:
-	mkdir -p $(NIST_DIR)
-	cd $(BUILD_DIR) && wget "https://csrc.nist.gov/CSRC/media/Projects/Random-Bit-Generation/documents/sts-2_1_2.zip" && unzip -q sts-2_1_2.zip
-	mv $(BUILD_DIR)/sts-2.1.2/sts-2.1.2 $(NIST_DIR)
-	$(MAKE) -C $(NIST_DIR)/sts-2.1.2
+	mkdir -p $(NIST_BUILD_DIR)
+	cd $(CSPRNG_CHECK_BUILD_DIR); \
+	wget "https://csrc.nist.gov/CSRC/media/Projects/Random-Bit-Generation/documents/sts-2_1_2.zip" && \
+	echo "0238d2f1d26e120e3cc748ed2d4c674cdc636de37fc4027c76cc2a394fff9157  sts-2_1_2.zip" >> checksum && \
+	sha256sum -c checksum && \
+	unzip -q sts-2_1_2.zip;
+	mv $(CSPRNG_CHECK_BUILD_DIR)/sts-2.1.2/sts-2.1.2 $(NIST_BUILD_DIR)
+	rmdir $(CSPRNG_CHECK_BUILD_DIR)/sts-2.1.2
+	$(MAKE) -C $(NIST_BUILD_DIR)/sts-2.1.2
 
 .PHONY: help # Generate list of targets with descriptions
 help:
