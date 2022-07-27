@@ -15,7 +15,8 @@ build = "build.rs"
 
 [dependencies]
 concrete-commons = { path = "../concrete-commons" }
-concrete-core = { path = "../concrete-core" }
+concrete-cuda = { path = "../concrete-cuda"}
+concrete-core = { path = "../concrete-core"}
 bincode = "1.3"
 
 [features]
@@ -29,6 +30,7 @@ doc = [
     "backend_default_serialization",
     "backend_fftw",
     "backend_fftw_serialization",
+    "backend_cuda",
     "seeder_unix",
     "seeder_x86_64_rdseed",
 ]
@@ -45,6 +47,10 @@ backend_default_generator_x86_64_aesni = [
 # An accelerated backend, using the `fftw` library
 backend_fftw = ["concrete-core/backend_fftw"]
 backend_fftw_serialization = ["concrete-core/backend_fftw_serialization"]
+
+# An accelerated backend, using the `fftw` library
+backend_cuda = ["concrete-core/backend_cuda"]
+#backend_cuda_serialization = ["concrete-core/backend_cuda_serialization"]
 
 # Multithreaded key generation
 backend_default_parallel = ["concrete-core/backend_default_parallel"]

@@ -6,7 +6,7 @@
 
 #include "utils.h"
 
-void encrypt_add_decrypt_view_buffers_test(void) {
+void convert_view_buffers_test(void) {
   // We generate the random sources
   DefaultEngine *engine = NULL;
   SeederBuilder *builder = get_best_seeder();
@@ -315,7 +315,7 @@ void encrypt_add_decrypt_unchecked_raw_ptr_buffers_test(void) {
 }
 
 int main(void) {
-  encrypt_add_decrypt_view_buffers_test();
+    convert_view_buffers_test();
   encrypt_add_decrypt_unchecked_view_buffers_test();
   encrypt_add_decrypt_raw_ptr_buffers_test();
   encrypt_add_decrypt_unchecked_raw_ptr_buffers_test();
