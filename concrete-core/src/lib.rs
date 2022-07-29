@@ -1,4 +1,9 @@
 #![deny(rustdoc::broken_intra_doc_links)]
+#![cfg_attr(
+    feature = "backend_fft_nightly_avx512",
+    feature(stdsimd, avx512_target_feature)
+)]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 //! Welcome to the `concrete-core` documentation!
 //!
 //! This library contains a set of low-level primitives which can be used to implement *Fully

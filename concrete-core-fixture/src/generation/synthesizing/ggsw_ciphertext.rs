@@ -116,3 +116,58 @@ mod backend_fftw {
         fn destroy_ggsw_ciphertext(&mut self, _entity: FftwFourierGgswCiphertext64) {}
     }
 }
+
+#[cfg(feature = "backend_fft")]
+mod backend_fft {
+    use crate::generation::synthesizing::SynthesizesGgswCiphertext;
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
+    use concrete_core::prelude::{
+        FftFourierGgswCiphertext32, FftFourierGgswCiphertext64, GgswCiphertextConversionEngine,
+    };
+
+    impl SynthesizesGgswCiphertext<Precision32, BinaryKeyDistribution, FftFourierGgswCiphertext32>
+        for Maker
+    {
+        fn synthesize_ggsw_ciphertext(
+            &mut self,
+            prototype: &Self::GgswCiphertextProto,
+        ) -> FftFourierGgswCiphertext32 {
+            self.fft_engine
+                .convert_ggsw_ciphertext(&prototype.0)
+                .unwrap()
+        }
+
+        fn unsynthesize_ggsw_ciphertext(
+            &mut self,
+            _entity: FftFourierGgswCiphertext32,
+        ) -> Self::GgswCiphertextProto {
+            // FIXME:
+            unimplemented!("The backward fourier conversion was not yet implemented");
+        }
+
+        fn destroy_ggsw_ciphertext(&mut self, _entity: FftFourierGgswCiphertext32) {}
+    }
+
+    impl SynthesizesGgswCiphertext<Precision64, BinaryKeyDistribution, FftFourierGgswCiphertext64>
+        for Maker
+    {
+        fn synthesize_ggsw_ciphertext(
+            &mut self,
+            prototype: &Self::GgswCiphertextProto,
+        ) -> FftFourierGgswCiphertext64 {
+            self.fft_engine
+                .convert_ggsw_ciphertext(&prototype.0)
+                .unwrap()
+        }
+
+        fn unsynthesize_ggsw_ciphertext(
+            &mut self,
+            _entity: FftFourierGgswCiphertext64,
+        ) -> Self::GgswCiphertextProto {
+            // FIXME:
+            unimplemented!("The backward fourier conversion was not yet implemented");
+        }
+
+        fn destroy_ggsw_ciphertext(&mut self, _entity: FftFourierGgswCiphertext64) {}
+    }
+}

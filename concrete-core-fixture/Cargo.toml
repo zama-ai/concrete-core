@@ -16,8 +16,11 @@ paste = "1.0"
 [features]
 # No backend_default feature as it's required for all tests to work, so always enabled
 backend_fftw = ["concrete-core/backend_fftw"]
+backend_fft = ["concrete-core/backend_fft"]
+# backend_fft_nightly_avx512 = ["concrete-core/backend_fft_nightly_avx512"]
 backend_default_parallel = ["concrete-core/backend_default_parallel"]
 backend_cuda = ["concrete-core/backend_cuda", "concrete-cuda"]
+
 _ci_do_not_compile = []
 
 [target.'cfg(target_arch = "x86_64")'.dependencies]

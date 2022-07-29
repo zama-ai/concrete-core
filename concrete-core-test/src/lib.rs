@@ -16,5 +16,7 @@ pub const SAMPLE_SIZE: SampleSize = SampleSize(100);
 pub mod cuda;
 #[cfg(all(test, feature = "backend_default"))]
 pub mod default;
+#[cfg(all(test, feature = "backend_fft"))]
+pub mod fft;
 #[cfg(all(test, feature = "backend_fftw"))]
 pub mod fftw;

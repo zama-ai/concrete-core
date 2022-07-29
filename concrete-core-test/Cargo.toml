@@ -16,8 +16,13 @@ backend_fftw = [
     "concrete-core/backend_fftw",
     "concrete-core-fixture/backend_fftw",
 ]
+backend_fft = [
+    "concrete-core/backend_fft",
+    "concrete-core-fixture/backend_fft",
+]
+# backend_fft_nightly_avx512 = ["concrete-core/backend_fft_nightly_avx512"]
 backend_cuda = [
-    "concrete-core/backend_cuda", 
+    "concrete-core/backend_cuda",
     "concrete-core-fixture/backend_cuda",
 ]
 _ci_do_not_compile = ["concrete-core/_ci_do_not_compile", "concrete-core-fixture/_ci_do_not_compile"]

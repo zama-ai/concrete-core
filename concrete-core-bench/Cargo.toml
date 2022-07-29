@@ -17,6 +17,11 @@ backend_fftw = [
     "concrete-core/backend_fftw",
     "concrete-core-fixture/backend_fftw",
 ]
+backend_fft = [
+    "concrete-core/backend_fft",
+    "concrete-core-fixture/backend_fft",
+]
+# backend_fft_nightly_avx512 = ["concrete-core/backend_fft_nightly_avx512"]
 backend_default_parallel = [
     "concrete-core/backend_default_parallel",
     "concrete-core-fixture/backend_default_parallel"
