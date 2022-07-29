@@ -21,7 +21,7 @@ mod signed;
 mod unsigned;
 
 /// A trait implemented by any generic numeric type suitable for computations.
-pub trait Numeric: Sized + Copy + PartialEq + PartialOrd {
+pub trait Numeric: Sized + Copy + PartialEq + PartialOrd + 'static {
     /// This size of the type in bits.
     const BITS: usize;
 

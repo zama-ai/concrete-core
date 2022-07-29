@@ -48,6 +48,7 @@ macro_rules! implement {
             F: FloatingPoint + CastInto<Self>,
             Self: CastInto<F>,
         {
+            #[inline]
             fn into_torus(self) -> F {
                 let self_f: F = self.cast_into();
                 return self_f * (F::TWO.powi(-(<Self as Numeric>::BITS as i32)));
@@ -55,18 +56,16 @@ macro_rules! implement {
         }
         impl<F> FromTorus<F> for $Type
         where
-            F: FloatingPoint + CastInto<Self>,
+            F: FloatingPoint + CastInto<Self> + CastInto<Self::Signed>,
             Self: CastInto<F>,
         {
+            #[inline]
             fn from_torus(input: F) -> Self {
-                let mut fract = input - F::floor(input);
+                let mut fract = input - F::round(input);
                 fract *= F::TWO.powi(<Self as Numeric>::BITS as i32);
-                let carry = fract - F::floor(fract);
-                let zero_point_five = F::ONE / F::TWO;
-                if carry >= zero_point_five {
-                    fract += F::ONE;
-                };
-                return fract.cast_into();
+                fract = F::round(fract);
+                let signed: Self::Signed = fract.cast_into();
+                return signed.cast_into();
             }
         }
     };

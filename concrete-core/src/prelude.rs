@@ -15,6 +15,11 @@ pub use super::backends::default::entities::*;
 pub use super::backends::fftw::engines::*;
 #[cfg(feature = "backend_fftw")]
 pub use super::backends::fftw::entities::*;
+// --------------------------------------------------------------------------------- FFT BACKEND
+#[cfg(feature = "backend_fft")]
+pub use super::backends::fft::engines::*;
+#[cfg(feature = "backend_fft")]
+pub use super::backends::fft::entities::*;
 
 // ------------------------------------------------------------------------------------ CUDA BACKEND
 #[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]

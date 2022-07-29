@@ -26,7 +26,7 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct StandardBootstrapKey<Cont> {
-    tensor: Tensor<Cont>,
+    pub(crate) tensor: Tensor<Cont>,
     poly_size: PolynomialSize,
     rlwe_size: GlweSize,
     decomp_level: DecompositionLevelCount,

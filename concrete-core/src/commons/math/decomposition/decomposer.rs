@@ -94,6 +94,7 @@ where
     /// let closest = decomposer.closest_representable(1_340_987_234_u32);
     /// assert_eq!(closest, 1_341_128_704_u32);
     /// ```
+    #[inline]
     pub fn closest_representable(&self, input: Scalar) -> Scalar {
         // The closest number representable by the decomposition can be computed by performing
         // the rounding at the appropriate bit.

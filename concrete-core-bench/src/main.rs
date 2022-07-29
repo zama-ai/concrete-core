@@ -13,6 +13,9 @@ mod default;
 #[cfg(feature = "backend_fftw")]
 mod fftw;
 
+#[cfg(feature = "backend_fft")]
+mod fft;
+
 #[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
 mod cuda;
 
@@ -25,6 +28,8 @@ fn main() {
     default::bench_parallel();
     #[cfg(feature = "backend_fftw")]
     fftw::bench();
+    #[cfg(feature = "backend_fft")]
+    fft::bench();
     #[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
     cuda::bench();
     #[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]

@@ -448,6 +448,69 @@ mod backend_fftw {
     }
 }
 
+#[cfg(feature = "backend_fft")]
+mod backend_fft {
+    use crate::generation::synthesizing::SynthesizesLweBootstrapKey;
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
+    use concrete_core::prelude::{
+        FftFourierLweBootstrapKey32, FftFourierLweBootstrapKey64, LweBootstrapKeyConversionEngine,
+    };
+
+    impl
+        SynthesizesLweBootstrapKey<
+            Precision32,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            FftFourierLweBootstrapKey32,
+        > for Maker
+    {
+        fn synthesize_lwe_bootstrap_key(
+            &mut self,
+            prototype: &Self::LweBootstrapKeyProto,
+        ) -> FftFourierLweBootstrapKey32 {
+            self.fft_engine
+                .convert_lwe_bootstrap_key(&prototype.0)
+                .unwrap()
+        }
+
+        fn unsynthesize_lwe_bootstrap_key(
+            &mut self,
+            _entity: FftFourierLweBootstrapKey32,
+        ) -> Self::LweBootstrapKeyProto {
+            todo!()
+        }
+
+        fn destroy_lwe_bootstrap_key(&mut self, _entity: FftFourierLweBootstrapKey32) {}
+    }
+
+    impl
+        SynthesizesLweBootstrapKey<
+            Precision64,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            FftFourierLweBootstrapKey64,
+        > for Maker
+    {
+        fn synthesize_lwe_bootstrap_key(
+            &mut self,
+            prototype: &Self::LweBootstrapKeyProto,
+        ) -> FftFourierLweBootstrapKey64 {
+            self.fft_engine
+                .convert_lwe_bootstrap_key(&prototype.0)
+                .unwrap()
+        }
+
+        fn unsynthesize_lwe_bootstrap_key(
+            &mut self,
+            _entity: FftFourierLweBootstrapKey64,
+        ) -> Self::LweBootstrapKeyProto {
+            todo!()
+        }
+
+        fn destroy_lwe_bootstrap_key(&mut self, _entity: FftFourierLweBootstrapKey64) {}
+    }
+}
+
 #[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
 mod backend_cuda {
     use crate::generation::synthesizing::SynthesizesLweBootstrapKey;
