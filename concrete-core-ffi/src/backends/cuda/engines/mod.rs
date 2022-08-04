@@ -61,8 +61,10 @@ pub mod destruction;
 pub mod glwe_ciphertext_conversion;
 pub mod lwe_bootstrap_key_conversion;
 pub mod lwe_ciphertext_conversion;
+pub mod lwe_ciphertext_discarding_bootstrap;
 
 pub use destruction::*;
 pub use glwe_ciphertext_conversion::*;
 pub use lwe_bootstrap_key_conversion::*;
 pub use lwe_ciphertext_conversion::*;
+pub use lwe_ciphertext_discarding_bootstrap::*;
