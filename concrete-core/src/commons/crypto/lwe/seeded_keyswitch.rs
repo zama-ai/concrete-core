@@ -493,7 +493,7 @@ impl<Cont> LweSeededKeyswitchKey<Cont> {
 }
 
 /// The encryption of a single bit of the output key.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, PartialEq)]
 pub(crate) struct SeededLweKeyBitDecomposition<Cont> {
     pub(super) tensor: Tensor<Cont>,
