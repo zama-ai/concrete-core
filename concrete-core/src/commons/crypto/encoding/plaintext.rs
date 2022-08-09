@@ -146,7 +146,7 @@ impl<Cont> PlaintextList<Cont> {
     pub fn sublist_iter(
         &self,
         count: PlaintextCount,
-    ) -> impl Iterator<Item = PlaintextList<&[<Self as AsRefTensor>::Element]>>
+    ) -> impl DoubleEndedIterator<Item = PlaintextList<&[<Self as AsRefTensor>::Element]>>
     where
         Self: AsRefTensor,
     {
