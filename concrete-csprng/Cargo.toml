@@ -13,7 +13,7 @@ keywords = ["fully", "homomorphic", "encryption", "fhe", "cryptography"]
 
 [dependencies]
 aes-soft = "0.6.4"
-clap = "=3.2.12"
+clap = {version = "=3.2.12", optional = true}
 rayon = {version="1.5.0", optional= true}
 
 [dev-dependencies]
@@ -26,6 +26,7 @@ seeder_x86_64_rdseed = []
 seeder_unix = []
 generator_x86_64_aesni = []
 generator_soft = []
+cli = ["clap"]
 
 [[bench]]
 name = "benchmark"
@@ -36,4 +37,4 @@ required-features = ["seeder_x86_64_rdseed", "generator_x86_64_aesni"]
 [[bin]]
 name = "generate"
 path = "src/main.rs"
-required-features = ["seeder_x86_64_rdseed", "generator_x86_64_aesni"]
+required-features = ["seeder_x86_64_rdseed", "generator_x86_64_aesni", "cli"]

@@ -25,7 +25,7 @@ install_nist_test_tool:
 	cd $(CSPRNG_CHECK_BUILD_DIR); \
 	wget "https://csrc.nist.gov/CSRC/media/Projects/Random-Bit-Generation/documents/sts-2_1_2.zip" && \
 	echo "0238d2f1d26e120e3cc748ed2d4c674cdc636de37fc4027c76cc2a394fff9157  sts-2_1_2.zip" >> checksum && \
-	sha256sum -c checksum && \
+	shasum -a 256 -c checksum && \
 	unzip -q sts-2_1_2.zip;
 	mv $(CSPRNG_CHECK_BUILD_DIR)/sts-2.1.2/sts-2.1.2 $(NIST_BUILD_DIR)
 	rmdir $(CSPRNG_CHECK_BUILD_DIR)/sts-2.1.2

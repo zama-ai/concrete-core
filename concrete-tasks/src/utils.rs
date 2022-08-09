@@ -27,9 +27,9 @@ pub fn execute(
     command
         .arg("-c")
         .arg(cmd)
-        .stdin(stdin.unwrap_or(Stdio::piped()))
-        .stderr(stderr.unwrap_or(Stdio::inherit()))
-        .stdout(stdout.unwrap_or(Stdio::inherit()));
+        .stdin(stdin.unwrap_or_else(Stdio::piped))
+        .stderr(stderr.unwrap_or_else(Stdio::inherit))
+        .stdout(stdout.unwrap_or_else(Stdio::inherit));
     if let Some(env) = env {
         for (key, val) in env.iter() {
             command.env(&key, &val);
