@@ -226,6 +226,36 @@ impl<Cont> PolynomialList<Cont> {
             .map(|sub| Polynomial::from_container(sub.into_container()))
     }
 
+    /// Creates an iterator over borrowed sub-lists.
+    pub fn sublist_iter(
+        &self,
+        count: PolynomialCount,
+    ) -> impl DoubleEndedIterator<Item = PolynomialList<&[<Self as AsRefTensor>::Element]>>
+    where
+        Self: AsRefTensor,
+    {
+        ck_dim_div!(self.polynomial_count().0 => count.0);
+        let polynomial_size = self.polynomial_size();
+        self.as_tensor()
+            .subtensor_iter(count.0 * polynomial_size.0)
+            .map(move |sub| PolynomialList::from_container(sub.into_container(), polynomial_size))
+    }
+
+    /// Creates an iterator over mutably borrowed sub-lists.
+    pub fn sublist_iter_mut(
+        &mut self,
+        count: PolynomialCount,
+    ) -> impl DoubleEndedIterator<Item = PolynomialList<&mut [<Self as AsMutTensor>::Element]>>
+    where
+        Self: AsMutTensor,
+    {
+        ck_dim_div!(self.polynomial_count().0 => count.0);
+        let polynomial_size = self.polynomial_size();
+        self.as_mut_tensor()
+            .subtensor_iter_mut(count.0 * polynomial_size.0)
+            .map(move |sub| PolynomialList::from_container(sub.into_container(), polynomial_size))
+    }
+
     /// Multiplies (mod $(X^N+1)$), all the polynomials of the list with a unit monomial of a
     /// given degree.
     ///

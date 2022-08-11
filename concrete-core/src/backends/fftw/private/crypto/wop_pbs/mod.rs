@@ -1,15 +1,18 @@
 //! Primitives for the so-called Wop-PBS (Without Padding Programmable Bootstrapping)
 
 use crate::backends::fftw::private::crypto::bootstrap::{FourierBootstrapKey, FourierBuffers};
+use crate::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
 use crate::backends::fftw::private::math::fft::Complex64;
 use crate::commons::crypto::encoding::Cleartext;
 use crate::commons::crypto::ggsw::StandardGgswCiphertext;
 use crate::commons::crypto::glwe::{GlweCiphertext, LwePrivateFunctionalPackingKeyswitchKeyList};
 use crate::commons::crypto::lwe::{LweCiphertext, LweKeyswitchKey, LweList};
-use crate::commons::math::tensor::{AsMutTensor, AsRefSlice, AsRefTensor};
+use crate::commons::math::polynomial::PolynomialList;
+use crate::commons::math::tensor::{ck_dim_div, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor};
 use crate::commons::math::torus::UnsignedTorus;
 use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, DeltaLog, ExtractedBitsCount, LweDimension,
+    DecompositionBaseLog, DecompositionLevelCount, DeltaLog, ExtractedBitsCount, GlweDimension,
+    LweDimension, MonomialDegree, PolynomialCount,
 };
 
 #[cfg(test)]
@@ -21,17 +24,20 @@ mod test;
 /// Ouput bits are ordered from the MSB to the LSB. Each one of them is output in a distinct LWE
 /// ciphertext, containing the encryption of the bit scaled by q/2 (i.e., the most significant bit
 /// in the plaintext representation).
-pub fn extract_bits<Scalar, C1>(
+pub fn extract_bits<Scalar, C1, C2, C3, C4>(
     delta_log: DeltaLog,
-    lwe_list_out: &mut LweList<Vec<Scalar>>,
-    lwe_in: &LweCiphertext<Vec<Scalar>>,
-    ksk: &LweKeyswitchKey<Vec<Scalar>>,
-    fourier_bsk: &FourierBootstrapKey<C1, Scalar>,
+    lwe_list_out: &mut LweList<C1>,
+    lwe_in: &LweCiphertext<C2>,
+    ksk: &LweKeyswitchKey<C3>,
+    fourier_bsk: &FourierBootstrapKey<C4, Scalar>,
     buffers: &mut FourierBuffers<Scalar>,
     number_of_bits_to_extract: ExtractedBitsCount,
 ) where
     Scalar: UnsignedTorus,
-    FourierBootstrapKey<C1, Scalar>: AsRefTensor<Element = Complex64>,
+    C1: AsMutSlice<Element = Scalar>,
+    C2: AsRefSlice<Element = Scalar>,
+    C3: AsRefSlice<Element = Scalar>,
+    C4: AsRefSlice<Element = Complex64>,
 {
     let ciphertext_n_bits = Scalar::BITS;
     let number_of_bits_to_extract = number_of_bits_to_extract.0;
@@ -64,7 +70,7 @@ pub fn extract_bits<Scalar, C1>(
     let lwe_in_size = lwe_in.lwe_size();
 
     // The clone here is needed as we subtract extracted bits as we go from the original ciphertext
-    let mut lwe_in_buffer = lwe_in.clone();
+    let mut lwe_in_buffer = LweCiphertext::from_container(lwe_in.as_tensor().as_slice().to_vec());
     let mut lwe_bit_left_shift_buffer = LweCiphertext::allocate(Scalar::ZERO, lwe_in_size);
     let mut lwe_out_ks_buffer = LweCiphertext::allocate(Scalar::ZERO, ksk.lwe_size());
     let mut pbs_accumulator = GlweCiphertext::allocate(Scalar::ZERO, polynomial_size, glwe_size);
@@ -145,10 +151,10 @@ pub fn circuit_bootstrap_binary<Scalar, C1, C2, C3, C4>(
     fpksk_list: &LwePrivateFunctionalPackingKeyswitchKeyList<C4>,
 ) where
     Scalar: UnsignedTorus,
-    FourierBootstrapKey<C1, Scalar>: AsRefTensor<Element = Complex64>,
+    C1: AsRefSlice<Element = Complex64>,
     C2: AsRefSlice<Element = Scalar>,
-    StandardGgswCiphertext<C3>: AsMutTensor<Element = Scalar>,
-    LwePrivateFunctionalPackingKeyswitchKeyList<C4>: AsRefTensor<Element = Scalar>,
+    C3: AsMutSlice<Element = Scalar>,
+    C4: AsRefSlice<Element = Scalar>,
 {
     let level_cbs = ggsw_out.decomposition_level_count();
     let base_log_cbs = ggsw_out.decomposition_base_log();
@@ -206,7 +212,7 @@ pub fn circuit_bootstrap_binary<Scalar, C1, C2, C3, C4>(
     );
 
     // Output for every bootstrapping
-    let mut lwe_out_bs_buffer: LweCiphertext<Vec<Scalar>> = LweCiphertext::allocate(
+    let mut lwe_out_bs_buffer = LweCiphertext::allocate(
         Scalar::ZERO,
         LweDimension(bsk_glwe_dimension.0 * bsk_polynomial_size.0).to_lwe_size(),
     );
@@ -247,9 +253,9 @@ pub fn homomorphic_shift_binary<Scalar, C1, C2, C3>(
     delta_log: DeltaLog,
 ) where
     Scalar: UnsignedTorus,
-    FourierBootstrapKey<C1, Scalar>: AsRefTensor<Element = Complex64>,
-    LweCiphertext<C2>: AsMutTensor<Element = Scalar>,
-    LweCiphertext<C3>: AsRefTensor<Element = Scalar>,
+    C1: AsRefSlice<Element = Complex64>,
+    C2: AsMutSlice<Element = Scalar>,
+    C3: AsRefSlice<Element = Scalar>,
 {
     let ciphertext_n_bits = Scalar::BITS;
     let lwe_in_size = lwe_in.lwe_size();
@@ -275,15 +281,12 @@ pub fn homomorphic_shift_binary<Scalar, C1, C2, C3>(
     // Fill lut (equivalent to trivial encryption as mask is 0s)
     // The LUT is filled with -alpha in each coefficient where
     // alpha = 2^{log(q) - 1 - base_log * level}
-    for poly_coeff in pbs_accumulator
+    pbs_accumulator
         .get_mut_body()
-        .as_mut_polynomial()
-        .coefficient_iter_mut()
-    {
-        *poly_coeff = Scalar::ZERO.wrapping_sub(
+        .as_mut_tensor()
+        .fill_with_element(Scalar::ZERO.wrapping_sub(
             Scalar::ONE << (ciphertext_n_bits - 1 - base_log_cbs.0 * level_count_cbs.0),
-        );
-    }
+        ));
 
     // Applying a negacyclic LUT on a ciphertext with one bit of message in the MSB and no bit
     // of padding
@@ -295,4 +298,279 @@ pub fn homomorphic_shift_binary<Scalar, C1, C2, C3>(
     out_body.0 = out_body
         .0
         .wrapping_add(Scalar::ONE << (ciphertext_n_bits - 1 - base_log_cbs.0 * level_count_cbs.0));
+}
+
+/// Perform a circuit bootstrap followed by a vertical packing on ciphertexts encrypting binary
+/// messages.
+///
+/// The circuit bootstrapping uses the private functional packing key switch.
+///
+/// This is supposed to be used only with binary (1 bit of message) LWE ciphertexts.
+#[allow(clippy::too_many_arguments)]
+pub fn circuit_bootstrap_binary_vertical_packing<Scalar, C1, C2, C3, C4, C5>(
+    big_lut_as_polynomial_list: &PolynomialList<C1>,
+    buffers: &mut FourierBuffers<Scalar>,
+    fourier_bsk: &FourierBootstrapKey<C2, Scalar>,
+    lwe_list_out: &mut LweList<C3>,
+    lwe_list_in: &LweList<C4>,
+    level_cbs: DecompositionLevelCount,
+    base_log_cbs: DecompositionBaseLog,
+    fpksk_list: &LwePrivateFunctionalPackingKeyswitchKeyList<C5>,
+) where
+    Scalar: UnsignedTorus,
+    C1: AsRefSlice<Element = Scalar>,
+    C2: AsRefSlice<Element = Complex64>,
+    C3: AsMutSlice<Element = Scalar>,
+    C4: AsRefSlice<Element = Scalar>,
+    C5: AsRefSlice<Element = Scalar>,
+{
+    debug_assert!(lwe_list_in.count().0 != 0, "Got empty `lwe_list_in`");
+    debug_assert!(
+        lwe_list_out.lwe_size().to_lwe_dimension().0
+            == fourier_bsk.polynomial_size().0 * fourier_bsk.glwe_size().to_glwe_dimension().0,
+        "Output LWE ciphertext needs to have an LweDimension of {}, got {}",
+        lwe_list_out.lwe_size().to_lwe_dimension().0,
+        fourier_bsk.polynomial_size().0 * fourier_bsk.glwe_size().to_glwe_dimension().0
+    );
+
+    // TODO: Currently we need split_at and split_at_mut so can't switch to a list-like struct
+    // Update once we have a nice list primitive
+    let mut vec_ggsw = vec![
+        FourierGgswCiphertext::allocate(
+            Complex64::new(0., 0.),
+            fourier_bsk.polynomial_size(),
+            fourier_bsk.glwe_size(),
+            level_cbs,
+            base_log_cbs,
+        );
+        lwe_list_in.count().0
+    ];
+    let mut ggsw_res = StandardGgswCiphertext::allocate(
+        Scalar::ZERO,
+        fourier_bsk.polynomial_size(),
+        fourier_bsk.glwe_size(),
+        level_cbs,
+        base_log_cbs,
+    );
+    for (lwe_in, ggsw) in lwe_list_in.ciphertext_iter().zip(vec_ggsw.iter_mut()) {
+        circuit_bootstrap_binary(
+            fourier_bsk,
+            &lwe_in,
+            &mut ggsw_res,
+            buffers,
+            DeltaLog(Scalar::BITS - 1),
+            fpksk_list,
+        );
+        ggsw.fill_with_forward_fourier(&ggsw_res, buffers);
+    }
+
+    // We deduce the number of luts in the vec_lut from the number of cipherxtexts in lwe_list_out
+    let number_of_luts = lwe_list_out.count().0;
+
+    ck_dim_div!(big_lut_as_polynomial_list.polynomial_count().0 => number_of_luts);
+    let small_lut_size =
+        PolynomialCount(big_lut_as_polynomial_list.polynomial_count().0 / number_of_luts);
+
+    for (lut, mut lwe_out) in big_lut_as_polynomial_list
+        .sublist_iter(small_lut_size)
+        .zip(lwe_list_out.ciphertext_iter_mut())
+    {
+        vertical_packing(&lut, &mut lwe_out, &vec_ggsw, buffers);
+    }
+}
+
+// GGSW ciphertexts are stored from the msb (vec_ggsw[0]) to the lsb (vec_ggsw[last])
+pub fn vertical_packing<Scalar, C1, C2, C3>(
+    lut: &PolynomialList<C1>,
+    lwe_out: &mut LweCiphertext<C2>,
+    vec_ggsw: &[FourierGgswCiphertext<C3, Scalar>],
+    buffers: &mut FourierBuffers<Scalar>,
+) where
+    Scalar: UnsignedTorus,
+    C1: AsRefSlice<Element = Scalar>,
+    C2: AsMutSlice<Element = Scalar>,
+    C3: AsRefSlice<Element = Complex64>,
+{
+    let polynomial_size = vec_ggsw[0].polynomial_size();
+    let glwe_dimension = vec_ggsw[0].glwe_size().to_glwe_dimension();
+
+    debug_assert!(
+        lut.polynomial_count().0 == 1 << vec_ggsw.len(),
+        "Need {} polynomials in `lut`, got {}",
+        1 << vec_ggsw.len(),
+        lut.polynomial_count().0
+    );
+
+    debug_assert!(
+        lwe_out.lwe_size().to_lwe_dimension().0 == polynomial_size.0 * glwe_dimension.0,
+        "Output LWE ciphertext needs to have an LweDimension of {}, got {}",
+        lwe_out.lwe_size().to_lwe_dimension().0,
+        polynomial_size.0 * glwe_dimension.0
+    );
+
+    // Get the base 2 logarithm (rounded down) of the number of polynomials in the list i.e. if
+    // there is one polynomial, the number will be 0
+    let log_lut_number: usize =
+        Scalar::BITS - 1 - lut.polynomial_count().0.leading_zeros() as usize;
+
+    let log_number_of_luts_for_cmux_tree = if log_lut_number > vec_ggsw.len() {
+        // this means that we dont have enough GGSW to perform the CMux tree, we can only do the
+        // Blind rotation
+        0
+    } else {
+        log_lut_number
+    };
+
+    // split the vec of GGSW in two, the msb GGSW is for the CMux tree and the lsb GGSW is for
+    // the last blind rotation.
+    let (cmux_ggsw, br_ggsw) = vec_ggsw.split_at(log_number_of_luts_for_cmux_tree);
+    let mut cmux_tree_lut_res = cmux_tree_memory_optimized(lut, cmux_ggsw, buffers, glwe_dimension);
+    blind_rotate(&mut cmux_tree_lut_res, br_ggsw, buffers);
+
+    // sample extract of the RLWE of the Vertical packing
+    cmux_tree_lut_res.fill_lwe_with_sample_extraction(lwe_out, MonomialDegree(0));
+}
+
+/// Performs a tree of cmux in a way that limits the total allocated memory to avoid issues for
+/// bigger trees.
+pub fn cmux_tree_memory_optimized<Scalar, C1, C2>(
+    lut_per_layer: &PolynomialList<C1>,
+    vec_ggsw: &[FourierGgswCiphertext<C2, Scalar>],
+    buffers: &mut FourierBuffers<Scalar>,
+    glwe_dimension: GlweDimension,
+) -> GlweCiphertext<Vec<Scalar>>
+where
+    Scalar: UnsignedTorus,
+    C1: AsRefSlice<Element = Scalar>,
+    C2: AsRefSlice<Element = Complex64>,
+{
+    if !vec_ggsw.is_empty() {
+        let polynomial_size = vec_ggsw[0].polynomial_size();
+        let nb_layer = vec_ggsw.len();
+
+        let empty_glwe =
+            GlweCiphertext::allocate(Scalar::ZERO, polynomial_size, glwe_dimension.to_glwe_size());
+        let mut result = empty_glwe.clone();
+
+        // TODO: Currently we need split_at and split_at_mut so can't switch to a list-like struct
+        // Update once we have a nice list primitive
+        //
+        // These are accumulator that will be used to propagate the result from layer to layer
+        // At index 0 you have the lut that will be loaded, and then the result for each layer gets
+        // computed at the next index, last layer result gets stored in `result`.
+        // This allow to use memory space in C * nb_layer instead of C' * 2 ^ nb_layer
+        let mut t_0 = vec![empty_glwe.clone(); nb_layer];
+        let mut t_1 = vec![empty_glwe.clone(); nb_layer];
+
+        let mut cmux_buffer = empty_glwe;
+
+        let mut t_fill = vec![0_usize; nb_layer];
+
+        debug_assert!(lut_per_layer.polynomial_count().0 == 1 << (nb_layer - 1));
+
+        // Returns lut[2 * i] polynomial where i is the iteration index
+        let lut_iter_0 = lut_per_layer.polynomial_iter().step_by(2);
+        // Returns lut[2 * i + 1] polynomial where i is the iteration index
+        let lut_iter_1 = lut_per_layer.polynomial_iter().skip(1).step_by(2);
+
+        for (lut_2_i, lut_2_i_plus_1) in lut_iter_0.zip(lut_iter_1) {
+            //load 2 trivial CT with LUT
+            t_0[0]
+                .get_mut_body()
+                .as_mut_tensor()
+                .fill_with_copy(lut_2_i.as_tensor());
+            t_1[0]
+                .get_mut_body()
+                .as_mut_tensor()
+                .fill_with_copy(lut_2_i_plus_1.as_tensor());
+
+            t_fill[0] = 2;
+            for (j, ggsw) in vec_ggsw.iter().rev().enumerate() {
+                if t_fill[j] == 2 {
+                    if j != nb_layer - 1 {
+                        if t_fill[j + 1] == 0 {
+                            // Due to rust borrowing rules we have to use split at to get t_0[j] as
+                            // an immutable reference and t_0[j+1] as a
+                            // mutable refence
+                            let (t_0_j, t_0_j_plus_1) = t_0[j..=j + 1].split_at_mut(1);
+                            let t_0_j = &t_0_j[0];
+                            let t_0_j_plus_1 = &mut t_0_j_plus_1[0];
+                            ggsw.discard_cmux(
+                                t_0_j, // &t_0[j]
+                                &t_1[j],
+                                t_0_j_plus_1, // &mut t_0[j + 1]
+                                &mut cmux_buffer,
+                                buffers,
+                            );
+                        } else {
+                            // Due to rust borrowing rules we have to use split at to get t_1[j] as
+                            // an immutable reference and t_1[j+1] as a
+                            // mutable refence
+                            let (t_1_j, t_1_j_plus_1) = t_1[j..=j + 1].split_at_mut(1);
+                            let t_1_j = &t_1_j[0];
+                            let t_1_j_plus_1 = &mut t_1_j_plus_1[0];
+                            ggsw.discard_cmux(
+                                &t_0[j],
+                                t_1_j,        // &t_1[j]
+                                t_1_j_plus_1, // &mut t_1[j + 1]
+                                &mut cmux_buffer,
+                                buffers,
+                            );
+                        }
+                        t_fill[j + 1] += 1;
+                        t_fill[j] = 0;
+                    } else {
+                        ggsw.discard_cmux(&t_0[j], &t_1[j], &mut result, &mut cmux_buffer, buffers);
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
+
+        result
+    } else {
+        let mut out_glwe = GlweCiphertext::allocate(
+            Scalar::ZERO,
+            lut_per_layer.polynomial_size(),
+            glwe_dimension.to_glwe_size(),
+        );
+
+        let mut out_body = out_glwe.get_mut_body();
+        out_body
+            .as_mut_tensor()
+            .fill_with_copy(lut_per_layer.as_tensor());
+
+        out_glwe
+    }
+}
+
+pub fn blind_rotate<Scalar, C1, C2>(
+    lut: &mut GlweCiphertext<C1>,
+    vec_ggsw: &[FourierGgswCiphertext<C2, Scalar>],
+    buffers: &mut FourierBuffers<Scalar>,
+) where
+    Scalar: UnsignedTorus,
+    C1: AsMutSlice<Element = Scalar>,
+    C2: AsRefSlice<Element = Complex64>,
+{
+    let mut monomial_degree = MonomialDegree(1);
+    let mut ct_0 =
+        GlweCiphertext::from_container(lut.as_tensor().as_slice().to_vec(), lut.polynomial_size());
+    let mut ct_1 = GlweCiphertext::allocate(Scalar::ZERO, ct_0.polynomial_size(), ct_0.size());
+    for ggsw in vec_ggsw.iter().rev() {
+        ct_1.as_mut_tensor().fill_with_copy(ct_0.as_tensor());
+
+        ct_1.as_mut_polynomial_list()
+            .update_with_wrapping_monic_monomial_div(monomial_degree);
+        monomial_degree.0 <<= 1;
+        ggsw.cmux(
+            &mut ct_0,
+            &mut ct_1,
+            &mut buffers.fft_buffers,
+            &mut buffers.rounded_buffer,
+        );
+    }
+
+    lut.as_mut_tensor().fill_with_copy(ct_0.as_tensor());
 }

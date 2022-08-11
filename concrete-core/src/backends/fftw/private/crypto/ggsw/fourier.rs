@@ -646,6 +646,38 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
             .update_with_wrapping_sub(ct0.as_tensor());
         self.external_product(ct0, ct1, fft_buffers, rounded_buffer);
     }
+
+    // This cmux does not mutate its inputs. It outputs the result in ct_output, using ct_buffer for
+    // some intermediate value computations.
+    pub fn discard_cmux<C1, C2, C3, C4>(
+        &self,
+        ct_0: &GlweCiphertext<C1>,
+        ct_1: &GlweCiphertext<C2>,
+        ct_output: &mut GlweCiphertext<C3>,
+        ct_buffer: &mut GlweCiphertext<C4>,
+        buffers: &mut FourierBuffers<Scalar>,
+    ) where
+        Self: AsRefTensor<Element = Complex64>,
+        Scalar: UnsignedTorus,
+        C1: AsRefSlice<Element = Scalar>,
+        C2: AsRefSlice<Element = Scalar>,
+        C3: AsMutSlice<Element = Scalar>,
+        C4: AsMutSlice<Element = Scalar>,
+    {
+        ct_buffer
+            .as_mut_tensor()
+            .fill_with_wrapping_sub(ct_1.as_tensor(), ct_0.as_tensor());
+        ct_output.as_mut_tensor().fill_with_element(Scalar::ZERO);
+        self.external_product(
+            ct_output,
+            ct_buffer,
+            &mut buffers.fft_buffers,
+            &mut buffers.rounded_buffer,
+        );
+        ct_output
+            .as_mut_tensor()
+            .update_with_wrapping_add(ct_0.as_tensor())
+    }
 }
 
 impl<Element, Cont, Scalar> AsRefTensor for FourierGgswCiphertext<Cont, Scalar>
