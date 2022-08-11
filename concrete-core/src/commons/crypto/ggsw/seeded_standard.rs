@@ -4,7 +4,7 @@ use crate::commons::math::random::{
     ByteRandomGenerator, CompressionSeed, RandomGenerable, RandomGenerator, Uniform,
 };
 use crate::commons::math::tensor::{
-    ck_dim_div, tensor_traits, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
+    ck_dim_div, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
 use concrete_commons::numeric::Numeric;
 use concrete_commons::parameters::{
@@ -70,10 +70,8 @@ impl<Scalar> StandardGgswSeededCiphertext<Vec<Scalar>> {
     where
         Scalar: Numeric,
     {
-        // The factor 2 comes from the fact we need to keep the body and the polynomial containing
-        // the message
         Self::from_container(
-            vec![Scalar::ZERO; 2 * decomp_level.0 * glwe_size.0 * poly_size.0],
+            vec![Scalar::ZERO; decomp_level.0 * glwe_size.0 * poly_size.0],
             poly_size,
             glwe_size,
             decomp_base_log,
@@ -100,7 +98,7 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
     /// let decomp_base_log = DecompositionBaseLog(4);
     /// let compression_seed = CompressionSeed { seed: Seed(42) };
     ///
-    /// let container = vec![0u8; 2 * decomp_level.0 * glwe_size.0 * polynomial_size.0];
+    /// let container = vec![0u8; decomp_level.0 * glwe_size.0 * polynomial_size.0];
     ///
     /// let seeded_ggsw = StandardGgswSeededCiphertext::from_container(
     ///     container,
@@ -127,7 +125,7 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
         Cont: AsRefSlice,
     {
         let tensor = Tensor::from_container(cont);
-        ck_dim_div!(tensor.len() => poly_size.0, glwe_size.0, 2);
+        ck_dim_div!(tensor.len() => poly_size.0, glwe_size.0);
         Self {
             tensor,
             glwe_size,
@@ -232,10 +230,9 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
     {
         ck_dim_div!(self.as_tensor().len() =>
             self.glwe_size.0,
-            self.poly_size.0,
-            2
+            self.poly_size.0
         );
-        DecompositionLevelCount(self.as_tensor().len() / (2 * self.glwe_size.0 * self.poly_size.0))
+        DecompositionLevelCount(self.as_tensor().len() / (self.glwe_size.0 * self.poly_size.0))
     }
 
     /// Returns the size of the polynomials used in the ciphertext.
@@ -359,7 +356,7 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
     {
         // The factor two is to get the coefficient with the message and the body with unpredictable
         // noise
-        let chunks_size = 2 * self.poly_size.0 * self.glwe_size.0;
+        let chunks_size = self.poly_size.0 * self.glwe_size.0;
         let poly_size = self.poly_size;
         let glwe_size = self.glwe_size;
         self.as_tensor()
@@ -424,7 +421,7 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
     {
         // The factor two is to get the coefficient with the message and the body with unpredictable
         // noise
-        let chunks_size = 2 * self.poly_size.0 * self.glwe_size.0;
+        let chunks_size = self.poly_size.0 * self.glwe_size.0;
         let poly_size = self.poly_size;
         let glwe_size = self.glwe_size;
         let compression_seed = self.compression_seed;
@@ -491,7 +488,7 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
         Self: AsMutTensor,
         <Self as AsMutTensor>::Element: Sync + Send,
     {
-        let chunks_size = 2 * self.poly_size.0 * self.glwe_size.0;
+        let chunks_size = self.poly_size.0 * self.glwe_size.0;
         let poly_size = self.poly_size;
         let glwe_size = self.glwe_size;
         let compression_seed = self.compression_seed;
@@ -522,30 +519,13 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
         for (matrix_in, mut matrix_out) in
             self.level_matrix_iter().zip(output.level_matrix_iter_mut())
         {
-            for (row_idx, (row_in, row_out)) in matrix_in
-                .row_iter()
-                .zip(matrix_out.row_iter_mut())
-                .enumerate()
-            {
+            for (row_in, row_out) in matrix_in.row_iter().zip(matrix_out.row_iter_mut()) {
                 let mut glwe_out = row_out.into_glwe();
 
-                let (mut output_body, mut output_mask) = glwe_out.get_mut_body_and_mask();
+                let glwe_seeded = row_in.into_seeded_glwe();
 
-                let (poly_coeffs, glwe_body_in) = row_in.get_matrix_poly_coeffs();
-
-                // generate a uniformly random mask
-                generator.fill_tensor_with_random_uniform(output_mask.as_mut_tensor());
-
-                output_body
-                    .as_mut_tensor()
-                    .as_mut_slice()
-                    .clone_from_slice(glwe_body_in.as_tensor().as_slice());
-
-                glwe_out
-                    .as_mut_polynomial_list()
-                    .get_mut_polynomial(row_idx)
-                    .as_mut_tensor()
-                    .fill_with_copy(poly_coeffs.as_tensor());
+                glwe_seeded
+                    .expand_into_with_existing_generator::<_, _, Gen>(&mut glwe_out, generator);
             }
         }
     }

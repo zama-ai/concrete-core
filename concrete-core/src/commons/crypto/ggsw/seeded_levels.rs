@@ -1,9 +1,8 @@
-use super::super::glwe::GlweBody;
+use crate::commons::crypto::glwe::GlweSeededCiphertext;
 use crate::commons::math::decomposition::DecompositionLevel;
-use crate::commons::math::polynomial::Polynomial;
 use crate::commons::math::random::CompressionSeed;
 use crate::commons::math::tensor::{
-    ck_dim_div, tensor_traits, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
+    ck_dim_div, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
 use concrete_commons::parameters::{GlweDimension, GlweSize, PolynomialSize};
 #[cfg(feature = "__commons_parallel")]
@@ -37,7 +36,7 @@ impl<Cont> GgswSeededLevelMatrix<Cont> {
         Cont: AsRefSlice,
     {
         let tensor = Tensor::from_container(cont);
-        ck_dim_div!(tensor.len() => poly_size.0, 2);
+        ck_dim_div!(tensor.len() => poly_size.0);
         Self {
             tensor,
             poly_size,
@@ -73,7 +72,7 @@ impl<Cont> GgswSeededLevelMatrix<Cont> {
         Self: AsRefTensor,
     {
         self.as_tensor()
-            .subtensor_iter(2 * self.poly_size.0)
+            .subtensor_iter(self.poly_size.0)
             .map(move |sub| {
                 GgswSeededLevelRow::from_container(
                     sub.into_container(),
@@ -92,7 +91,7 @@ impl<Cont> GgswSeededLevelMatrix<Cont> {
     where
         Self: AsMutTensor,
     {
-        let chunks_size = 2 * self.poly_size.0;
+        let chunks_size = self.poly_size.0;
         let poly_size = self.poly_size;
         let glwe_dimension = self.glwe_size.to_glwe_dimension();
         let level = self.level;
@@ -124,7 +123,7 @@ impl<Cont> GgswSeededLevelMatrix<Cont> {
         Self: AsMutTensor,
         <Self as AsMutTensor>::Element: Send + Sync,
     {
-        let chunks_size = 2 * self.poly_size.0;
+        let chunks_size = self.poly_size.0;
         let poly_size = self.poly_size;
         let glwe_dimension = self.glwe_size.to_glwe_dimension();
         let level = self.level;
@@ -167,7 +166,7 @@ impl<Cont> GgswSeededLevelRow<Cont> {
         Cont: AsRefSlice,
     {
         let tensor = Tensor::from_container(cont);
-        ck_dim_div!(tensor.as_slice().len() => poly_size.0, 2);
+        ck_dim_div!(tensor.as_slice().len() => poly_size.0);
         Self {
             tensor,
             poly_size,
@@ -195,43 +194,12 @@ impl<Cont> GgswSeededLevelRow<Cont> {
         self.poly_size
     }
 
-    #[allow(clippy::type_complexity)]
-    /// Consumes the row and returns the elements required to recreate a row.
-    pub fn get_matrix_poly_coeffs(
-        &self,
-    ) -> (
-        Polynomial<&[<Cont as AsRefSlice>::Element]>,
-        GlweBody<&[<Cont as AsRefSlice>::Element]>,
-    )
-    where
-        Cont: AsRefSlice,
-    {
-        let (poly_coeff, glwe_body) = self.tensor.as_slice().split_at(self.poly_size.0);
-        (
-            Polynomial::from_tensor(Tensor::from_container(poly_coeff)),
-            GlweBody {
-                tensor: Tensor::from_container(glwe_body),
-            },
-        )
-    }
-
-    #[allow(clippy::type_complexity)]
-    /// Consumes the row and returns the mutable elements required to recreate a row.
-    pub fn get_mut_matrix_poly_coeffs(
-        &mut self,
-    ) -> (
-        Polynomial<&mut [<Cont as AsMutSlice>::Element]>,
-        GlweBody<&mut [<Cont as AsMutSlice>::Element]>,
-    )
-    where
-        Cont: AsMutSlice,
-    {
-        let (poly_coeff, glwe_body) = self.tensor.as_mut_slice().split_at_mut(self.poly_size.0);
-        (
-            Polynomial::from_tensor(Tensor::from_container(poly_coeff)),
-            GlweBody {
-                tensor: Tensor::from_container(glwe_body),
-            },
+    /// Consumes the row and returns its container wrapped into an `GlweCiphertext`.
+    pub fn into_seeded_glwe(self) -> GlweSeededCiphertext<Cont> {
+        GlweSeededCiphertext::from_container(
+            self.tensor.into_container(),
+            self.glwe_dimension,
+            self.compression_seed,
         )
     }
 }
