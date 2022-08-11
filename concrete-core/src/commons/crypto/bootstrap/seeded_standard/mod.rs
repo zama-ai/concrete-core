@@ -79,7 +79,7 @@ impl<Scalar> StandardSeededBootstrapKey<Vec<Scalar>> {
         StandardSeededBootstrapKey {
             tensor: Tensor::from_container(vec![
                 Scalar::ZERO;
-                2 * key_size.0
+                key_size.0
                     * decomp_level.0
                     * glwe_size.0
                     * poly_size.0
@@ -111,7 +111,7 @@ impl<Cont> StandardSeededBootstrapKey<Cont> {
     /// let glwe_size = GlweSize(7);
     /// let poly_size = PolynomialSize(9);
     ///
-    /// let container = vec![0u32; 2 * key_size.0 * decomp_level.0 * glwe_size.0 * poly_size.0];
+    /// let container = vec![0u32; key_size.0 * decomp_level.0 * glwe_size.0 * poly_size.0];
     ///
     /// let bsk = StandardSeededBootstrapKey::from_container(
     ///     container,
@@ -144,8 +144,7 @@ impl<Cont> StandardSeededBootstrapKey<Cont> {
         ck_dim_div!(tensor.len() =>
             decomp_level.0,
             glwe_size.0,
-            poly_size.0,
-            2
+            poly_size.0
         );
         StandardSeededBootstrapKey {
             tensor,
@@ -460,12 +459,10 @@ impl<Cont> StandardSeededBootstrapKey<Cont> {
         ck_dim_div!(self.as_tensor().len() =>
             self.poly_size.0,
             self.glwe_size.0,
-            self.decomp_level.0,
-            2
+            self.decomp_level.0
         );
         LweDimension(
-            self.as_tensor().len()
-                / (2 * self.glwe_size.0 * self.poly_size.0 * self.decomp_level.0),
+            self.as_tensor().len() / (self.glwe_size.0 * self.poly_size.0 * self.decomp_level.0),
         )
     }
 
@@ -524,7 +521,7 @@ impl<Cont> StandardSeededBootstrapKey<Cont> {
     where
         Self: AsRefTensor,
     {
-        let chunks_size = 2 * self.glwe_size.0 * self.poly_size.0 * self.decomp_level.0;
+        let chunks_size = self.glwe_size.0 * self.poly_size.0 * self.decomp_level.0;
         let glwe_size = self.glwe_size;
         let poly_size = self.poly_size;
         let base_log = self.decomp_base_log;
@@ -583,7 +580,7 @@ impl<Cont> StandardSeededBootstrapKey<Cont> {
         <Self as AsRefTensor>::Element: Sync + Send,
         Cont: Sync + Send,
     {
-        let chunks_size = 2 * self.glwe_size.0 * self.poly_size.0 * self.decomp_level.0;
+        let chunks_size = self.glwe_size.0 * self.poly_size.0 * self.decomp_level.0;
         let glwe_size = self.glwe_size;
         let poly_size = self.poly_size;
         let base_log = self.decomp_base_log;
@@ -634,7 +631,7 @@ impl<Cont> StandardSeededBootstrapKey<Cont> {
     where
         Self: AsMutTensor,
     {
-        let chunks_size = 2 * self.glwe_size.0 * self.poly_size.0 * self.decomp_level.0;
+        let chunks_size = self.glwe_size.0 * self.poly_size.0 * self.decomp_level.0;
         let glwe_size = self.glwe_size;
         let poly_size = self.poly_size;
         let base_log = self.decomp_base_log;

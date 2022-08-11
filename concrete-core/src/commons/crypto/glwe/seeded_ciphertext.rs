@@ -298,6 +298,27 @@ impl<Cont> GlweSeededCiphertext<Cont> {
         }
     }
 
+    pub fn expand_into_with_existing_generator<Scalar, OutputCont, Gen>(
+        self,
+        output: &mut GlweCiphertext<OutputCont>,
+        generator: &mut RandomGenerator<Gen>,
+    ) where
+        Scalar: Copy + RandomGenerable<Uniform> + Numeric,
+        GlweCiphertext<OutputCont>: AsMutTensor<Element = Scalar>,
+        Self: IntoTensor<Element = Scalar> + AsRefTensor,
+        Gen: ByteRandomGenerator,
+    {
+        let (mut output_body, mut output_mask) = output.get_mut_body_and_mask();
+
+        // generate a uniformly random mask
+        generator.fill_tensor_with_random_uniform(output_mask.as_mut_tensor());
+
+        output_body
+            .as_mut_tensor()
+            .as_mut_slice()
+            .clone_from_slice(self.into_tensor().as_slice());
+    }
+
     /// Returns the ciphertext as a full fledged GlweCiphertext
     ///
     /// # Example
@@ -341,14 +362,6 @@ impl<Cont> GlweSeededCiphertext<Cont> {
     {
         let mut generator = RandomGenerator::<Gen>::new(self.compression_seed().seed);
 
-        let (mut output_body, mut output_mask) = output.get_mut_body_and_mask();
-
-        // generate a uniformly random mask
-        generator.fill_tensor_with_random_uniform(output_mask.as_mut_tensor());
-
-        output_body
-            .as_mut_tensor()
-            .as_mut_slice()
-            .clone_from_slice(self.into_tensor().as_slice());
+        self.expand_into_with_existing_generator::<_, _, Gen>(output, &mut generator);
     }
 }
