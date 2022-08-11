@@ -74,15 +74,13 @@ impl<Cont> GgswSeededLevelMatrix<Cont> {
     {
         self.as_tensor()
             .subtensor_iter(2 * self.poly_size.0)
-            .enumerate()
-            .map(move |(row_idx, sub)| {
+            .map(move |sub| {
                 GgswSeededLevelRow::from_container(
                     sub.into_container(),
                     self.poly_size,
                     self.level,
                     self.glwe_size.to_glwe_dimension(),
                     self.compression_seed,
-                    row_idx,
                 )
             })
     }
@@ -101,15 +99,13 @@ impl<Cont> GgswSeededLevelMatrix<Cont> {
         let compression_seed = self.compression_seed;
         self.as_mut_tensor()
             .subtensor_iter_mut(chunks_size)
-            .enumerate()
-            .map(move |(row_idx, sub)| {
+            .map(move |sub| {
                 GgswSeededLevelRow::from_container(
                     sub.into_container(),
                     poly_size,
                     level,
                     glwe_dimension,
                     compression_seed,
-                    row_idx,
                 )
             })
     }
@@ -135,15 +131,13 @@ impl<Cont> GgswSeededLevelMatrix<Cont> {
         let compression_seed = self.compression_seed;
         self.as_mut_tensor()
             .par_subtensor_iter_mut(chunks_size)
-            .enumerate()
-            .map(move |(row_idx, sub)| {
+            .map(move |sub| {
                 GgswSeededLevelRow::from_container(
                     sub.into_container(),
                     poly_size,
                     level,
                     glwe_dimension,
                     compression_seed,
-                    row_idx,
                 )
             })
     }
@@ -156,7 +150,6 @@ pub struct GgswSeededLevelRow<Cont> {
     level: DecompositionLevel,
     glwe_dimension: GlweDimension,
     compression_seed: CompressionSeed,
-    row_index: usize,
 }
 
 tensor_traits!(GgswSeededLevelRow);
@@ -169,7 +162,6 @@ impl<Cont> GgswSeededLevelRow<Cont> {
         level: DecompositionLevel,
         glwe_dimension: GlweDimension,
         compression_seed: CompressionSeed,
-        row_index: usize,
     ) -> Self
     where
         Cont: AsRefSlice,
@@ -182,7 +174,6 @@ impl<Cont> GgswSeededLevelRow<Cont> {
             level,
             glwe_dimension,
             compression_seed,
-            row_index,
         }
     }
 
@@ -209,7 +200,7 @@ impl<Cont> GgswSeededLevelRow<Cont> {
     pub fn get_matrix_poly_coeffs(
         &self,
     ) -> (
-        (usize, Polynomial<&[<Cont as AsRefSlice>::Element]>),
+        Polynomial<&[<Cont as AsRefSlice>::Element]>,
         GlweBody<&[<Cont as AsRefSlice>::Element]>,
     )
     where
@@ -217,10 +208,7 @@ impl<Cont> GgswSeededLevelRow<Cont> {
     {
         let (poly_coeff, glwe_body) = self.tensor.as_slice().split_at(self.poly_size.0);
         (
-            (
-                self.row_index,
-                Polynomial::from_tensor(Tensor::from_container(poly_coeff)),
-            ),
+            Polynomial::from_tensor(Tensor::from_container(poly_coeff)),
             GlweBody {
                 tensor: Tensor::from_container(glwe_body),
             },
@@ -232,7 +220,7 @@ impl<Cont> GgswSeededLevelRow<Cont> {
     pub fn get_mut_matrix_poly_coeffs(
         &mut self,
     ) -> (
-        (usize, Polynomial<&mut [<Cont as AsMutSlice>::Element]>),
+        Polynomial<&mut [<Cont as AsMutSlice>::Element]>,
         GlweBody<&mut [<Cont as AsMutSlice>::Element]>,
     )
     where
@@ -240,10 +228,7 @@ impl<Cont> GgswSeededLevelRow<Cont> {
     {
         let (poly_coeff, glwe_body) = self.tensor.as_mut_slice().split_at_mut(self.poly_size.0);
         (
-            (
-                self.row_index,
-                Polynomial::from_tensor(Tensor::from_container(poly_coeff)),
-            ),
+            Polynomial::from_tensor(Tensor::from_container(poly_coeff)),
             GlweBody {
                 tensor: Tensor::from_container(glwe_body),
             },

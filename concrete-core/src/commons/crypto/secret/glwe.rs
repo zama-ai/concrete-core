@@ -1132,8 +1132,10 @@ where
                 .expect("Failed to split generator into glwe");
 
             // We iterate over the rows of the level matrix
-            for (mut row, mut generator) in matrix.row_iter_mut().zip(gen_iter) {
-                let ((row_idx, mut poly_coeffs), mut glwe_body) = row.get_mut_matrix_poly_coeffs();
+            for (row_idx, (mut row, mut generator)) in
+                matrix.row_iter_mut().zip(gen_iter).enumerate()
+            {
+                let (mut poly_coeffs, mut glwe_body) = row.get_mut_matrix_poly_coeffs();
                 // We issue a fresh  encryption of zero
                 self.encrypt_zero_glwe(&mut glwe_buffer, noise_parameters, &mut generator);
                 // We retrieve the buffer as a polynomial list
@@ -1376,9 +1378,9 @@ where
                 matrix
                     .par_row_iter_mut()
                     .zip(gen_iter)
-                    .for_each(|(mut row, mut generator)| {
-                        let ((row_idx, mut poly_coeffs), mut glwe_body) =
-                            row.get_mut_matrix_poly_coeffs();
+                    .enumerate()
+                    .for_each(|(row_idx, (mut row, mut generator))| {
+                        let (mut poly_coeffs, mut glwe_body) = row.get_mut_matrix_poly_coeffs();
                         let mut glwe_buffer = GlweCiphertext::allocate(
                             Scalar::ZERO,
                             self.poly_size,

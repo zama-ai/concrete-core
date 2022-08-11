@@ -519,19 +519,19 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
         Self: AsRefTensor<Element = Scalar>,
         Gen: ByteRandomGenerator,
     {
-        let matrix_levels_vec = self.level_matrix_iter().collect::<Vec<_>>();
-        let row_iter = matrix_levels_vec
-            .iter()
-            .flat_map(|matrix| matrix.row_iter());
+        for (matrix_in, mut matrix_out) in
+            self.level_matrix_iter().zip(output.level_matrix_iter_mut())
+        {
+            for (row_idx, (row_in, row_out)) in matrix_in
+                .row_iter()
+                .zip(matrix_out.row_iter_mut())
+                .enumerate()
+            {
+                let mut glwe_out = row_out.into_glwe();
 
-        output
-            .as_mut_glwe_list()
-            .ciphertext_iter_mut()
-            .zip(row_iter)
-            .for_each(|(mut glwe_out, row_in)| {
                 let (mut output_body, mut output_mask) = glwe_out.get_mut_body_and_mask();
 
-                let ((row_idx, poly_coeffs), glwe_body_in) = row_in.get_matrix_poly_coeffs();
+                let (poly_coeffs, glwe_body_in) = row_in.get_matrix_poly_coeffs();
 
                 // generate a uniformly random mask
                 generator.fill_tensor_with_random_uniform(output_mask.as_mut_tensor());
@@ -546,7 +546,8 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
                     .get_mut_polynomial(row_idx)
                     .as_mut_tensor()
                     .fill_with_copy(poly_coeffs.as_tensor());
-            });
+            }
+        }
     }
 
     /// Returns the ciphertext as a full fledged GgswCiphertext
