@@ -82,6 +82,11 @@ impl LweDimension {
     }
 }
 
+/// The number of LWE encryptions of 0 in an LWE public key.
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
+#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+pub struct LwePublicKeyZeroEncryptionCount(pub usize);
+
 /// The number of polynomials in a GLWE ciphertext, i.e. the number of polynomials in a GLWE mask
 /// plus one.
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
