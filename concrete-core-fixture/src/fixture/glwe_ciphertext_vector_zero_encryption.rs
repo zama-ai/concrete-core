@@ -51,7 +51,7 @@ where
             vec![
                 GlweCiphertextVectorZeroEncryptionParameters {
                     noise: Variance(0.00000001),
-                    glwe_dimension: GlweDimension(200),
+                    glwe_dimension: GlweDimension(2),
                     polynomial_size: PolynomialSize(256),
                     count: GlweCiphertextCount(100),
                 },
