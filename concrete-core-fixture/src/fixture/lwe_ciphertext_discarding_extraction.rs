@@ -55,7 +55,7 @@ where
         Box::new(
             vec![LweCiphertextDiscardingExtractionParameters {
                 noise: Variance(0.00000001),
-                glwe_dimension: GlweDimension(200),
+                glwe_dimension: GlweDimension(2),
                 poly_size: PolynomialSize(256),
                 nth: MonomialIndex(0),
             }]
