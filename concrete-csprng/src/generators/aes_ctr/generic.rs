@@ -29,8 +29,6 @@ pub struct AesCtrGenerator<BlockCipher: AesBlockCipher> {
     pub(crate) block_cipher: BlockCipher,
     // The state corresponding to the latest outputted byte.
     pub(crate) state: State,
-    // The bound, that is the first illegal index.
-    pub(crate) bound: TableIndex,
     // The last legal index. This makes bound check faster.
     pub(crate) last: TableIndex,
     // The buffer containing the current batch of aes calls.
@@ -79,7 +77,6 @@ impl<BlockCipher: AesBlockCipher> AesCtrGenerator<BlockCipher> {
         AesCtrGenerator {
             block_cipher,
             state,
-            bound: bound_index,
             last,
             buffer,
         }
@@ -94,12 +91,12 @@ impl<BlockCipher: AesBlockCipher> AesCtrGenerator<BlockCipher> {
     ///
     /// The bound is the table index of the first byte that can not be outputted by the generator.
     pub fn get_bound(&self) -> TableIndex {
-        self.bound
+        self.last.incremented()
     }
 
     /// Returns whether the generator is bounded or not.
     pub fn is_bounded(&self) -> bool {
-        self.bound != TableIndex::LAST
+        self.get_bound() != TableIndex::LAST
     }
 
     /// Computes the number of bytes that can still be outputted by the generator.
@@ -178,7 +175,7 @@ impl<BlockCipher: AesBlockCipher> AesCtrGenerator<BlockCipher> {
     ) -> bool {
         let mut end = self.state.table_index();
         end.increase(n_child.0 * child_bytes.0);
-        end < self.bound
+        end <= self.last
     }
 }
 
