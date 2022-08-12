@@ -225,32 +225,32 @@ fn test_cmux_1_gsw<T: UnsignedTorus>() {
     assert_noise_distribution(&msg, &new_msg, output_variance);
 }
 
-#[test]
-pub fn test_external_product_gsw_u32() {
-    test_external_product_gsw::<u32>()
-}
+// #[test]
+// pub fn test_external_product_gsw_u32() {
+//     test_external_product_gsw::<u32>()
+// }
 
-#[test]
-pub fn test_external_product_gsw_u64() {
-    test_external_product_gsw::<u64>()
-}
+// #[test]
+// pub fn test_external_product_gsw_u64() {
+//     test_external_product_gsw::<u64>()
+// }
 
-#[test]
-pub fn test_cmux0_gsw_u32() {
-    test_cmux_0_gsw::<u32>();
-}
+// #[test]
+// pub fn test_cmux0_gsw_u32() {
+//     test_cmux_0_gsw::<u32>();
+// }
 
-#[test]
-pub fn test_cmux0_gsw_u64() {
-    test_cmux_0_gsw::<u64>();
-}
+// #[test]
+// pub fn test_cmux0_gsw_u64() {
+//     test_cmux_0_gsw::<u64>();
+// }
 
-#[test]
-pub fn test_cmux_1_gsw_u32() {
-    test_cmux_1_gsw::<u32>();
-}
+// #[test]
+// pub fn test_cmux_1_gsw_u32() {
+//     test_cmux_1_gsw::<u32>();
+// }
 
-#[test]
-pub fn test_cmux_1_gsw_u64() {
-    test_cmux_1_gsw::<u64>();
-}
+// #[test]
+// pub fn test_cmux_1_gsw_u64() {
+//     test_cmux_1_gsw::<u64>();
+// }
