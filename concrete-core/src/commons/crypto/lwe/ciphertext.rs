@@ -338,8 +338,9 @@ impl<Cont> LweCiphertext<Cont> {
     /// let mut encryption_generator =
     ///     EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0), &mut UnixSeeder::new(0));
     ///
+    /// // Insecure parameters for a toy example
     /// let secret_key = LweSecretKey::generate_binary(LweDimension(4), &mut secret_generator);
-    /// let noise = LogStandardDev::from_log_standard_dev(-15.);
+    /// let noise = LogStandardDev::from_log_standard_dev(-60.);
     /// let encoder = RealEncoder {
     ///     offset: 0. as f32,
     ///     delta: 100.,
