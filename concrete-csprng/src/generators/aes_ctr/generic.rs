@@ -11,13 +11,13 @@ use crate::generators::{ByteCount, BytesPerChild, ChildrenCount, ForkError};
 
 /// A type alias for the children iterator closure type.
 pub type ChildrenClosure<BlockCipher> =
-    fn((usize, (BlockCipher, TableIndex, BytesPerChild))) -> AesCtrGenerator<BlockCipher>;
+    fn((usize, (Box<BlockCipher>, TableIndex, BytesPerChild))) -> AesCtrGenerator<BlockCipher>;
 
 /// A type alias for the children iterator type.
 pub type ChildrenIterator<BlockCipher> = std::iter::Map<
     std::iter::Zip<
         std::ops::Range<usize>,
-        std::iter::Repeat<(BlockCipher, TableIndex, BytesPerChild)>,
+        std::iter::Repeat<(Box<BlockCipher>, TableIndex, BytesPerChild)>,
     >,
     ChildrenClosure<BlockCipher>,
 >;
@@ -26,7 +26,7 @@ pub type ChildrenIterator<BlockCipher> = std::iter::Map<
 #[derive(Clone)]
 pub struct AesCtrGenerator<BlockCipher: AesBlockCipher> {
     // The block cipher used in the background
-    pub(crate) block_cipher: BlockCipher,
+    pub(crate) block_cipher: Box<BlockCipher>,
     // The state corresponding to the latest outputted byte.
     pub(crate) state: State,
     // The last legal index. This makes bound check faster.
@@ -58,7 +58,7 @@ impl<BlockCipher: AesBlockCipher> AesCtrGenerator<BlockCipher> {
         bound_index: Option<TableIndex>,
     ) -> AesCtrGenerator<BlockCipher> {
         AesCtrGenerator::from_block_cipher(
-            BlockCipher::new(key),
+            Box::new(BlockCipher::new(key)),
             start_index.unwrap_or(TableIndex::SECOND),
             bound_index.unwrap_or(TableIndex::LAST),
         )
@@ -66,7 +66,7 @@ impl<BlockCipher: AesBlockCipher> AesCtrGenerator<BlockCipher> {
 
     /// Generates a csprng from an existing block cipher.
     pub fn from_block_cipher(
-        block_cipher: BlockCipher,
+        block_cipher: Box<BlockCipher>,
         start_index: TableIndex,
         bound_index: TableIndex,
     ) -> AesCtrGenerator<BlockCipher> {
