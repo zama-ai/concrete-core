@@ -7,9 +7,9 @@ use crate::generators::{BytesPerChild, ChildrenCount, ForkError};
 pub type ParallelChildrenIterator<BlockCipher> = rayon::iter::Map<
     rayon::iter::Zip<
         rayon::range::Iter<usize>,
-        rayon::iter::RepeatN<(BlockCipher, TableIndex, BytesPerChild)>,
+        rayon::iter::RepeatN<(Box<BlockCipher>, TableIndex, BytesPerChild)>,
     >,
-    fn((usize, (BlockCipher, TableIndex, BytesPerChild))) -> AesCtrGenerator<BlockCipher>,
+    fn((usize, (Box<BlockCipher>, TableIndex, BytesPerChild))) -> AesCtrGenerator<BlockCipher>,
 >;
 
 impl<BlockCipher: AesBlockCipher> AesCtrGenerator<BlockCipher> {
