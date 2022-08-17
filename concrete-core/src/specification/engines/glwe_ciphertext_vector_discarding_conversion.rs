@@ -14,7 +14,7 @@ impl<EngineError: std::error::Error> GlweCiphertextVectorDiscardingConversionErr
     pub fn perform_generic_checks<Input, Output>(output: &Output, input: &Input) -> Result<(), Self>
     where
         Input: GlweCiphertextVectorEntity,
-        Output: GlweCiphertextVectorEntity<KeyDistribution = Input::KeyDistribution>,
+        Output: GlweCiphertextVectorEntity,
     {
         if input.glwe_dimension() != output.glwe_dimension() {
             return Err(Self::GlweDimensionMismatch);
@@ -44,7 +44,7 @@ impl<EngineError: std::error::Error> GlweCiphertextVectorDiscardingConversionErr
 pub trait GlweCiphertextVectorDiscardingConversionEngine<Input, Output>: AbstractEngine
 where
     Input: GlweCiphertextVectorEntity,
-    Output: GlweCiphertextVectorEntity<KeyDistribution = Input::KeyDistribution>,
+    Output: GlweCiphertextVectorEntity,
 {
     /// Converts a GLWE ciphertext vector .
     fn discard_convert_glwe_ciphertext_vector(

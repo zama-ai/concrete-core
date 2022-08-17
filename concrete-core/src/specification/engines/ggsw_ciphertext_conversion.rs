@@ -18,7 +18,7 @@ engine_error! {
 pub trait GgswCiphertextConversionEngine<Input, Output>: AbstractEngine
 where
     Input: GgswCiphertextEntity,
-    Output: GgswCiphertextEntity<KeyDistribution = Input::KeyDistribution>,
+    Output: GgswCiphertextEntity,
 {
     /// Converts a GGSW ciphertext.
     fn convert_ggsw_ciphertext(

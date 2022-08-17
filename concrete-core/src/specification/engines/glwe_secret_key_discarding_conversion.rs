@@ -13,7 +13,7 @@ impl<EngineError: std::error::Error> GlweSecretKeyDiscardingConversionError<Engi
     pub fn perform_generic_checks<Input, Output>(output: &Output, input: &Input) -> Result<(), Self>
     where
         Input: GlweSecretKeyEntity,
-        Output: GlweSecretKeyEntity<KeyDistribution = Input::KeyDistribution>,
+        Output: GlweSecretKeyEntity,
     {
         if input.glwe_dimension() != output.glwe_dimension() {
             return Err(Self::GlweDimensionMismatch);
@@ -38,7 +38,7 @@ impl<EngineError: std::error::Error> GlweSecretKeyDiscardingConversionError<Engi
 pub trait GlweSecretKeyDiscardingConversionEngine<Input, Output>: AbstractEngine
 where
     Input: GlweSecretKeyEntity,
-    Output: GlweSecretKeyEntity<KeyDistribution = Input::KeyDistribution>,
+    Output: GlweSecretKeyEntity,
 {
     /// Converts a GLWE secret key .
     fn discard_convert_glwe_secret_key(

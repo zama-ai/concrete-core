@@ -18,7 +18,7 @@ impl<EngineError: std::error::Error> LweCiphertextDiscardingLoadingError<EngineE
     ) -> Result<(), Self>
     where
         Ciphertext: LweCiphertextEntity,
-        CiphertextVector: LweCiphertextVectorEntity<KeyDistribution = Ciphertext::KeyDistribution>,
+        CiphertextVector: LweCiphertextVectorEntity,
     {
         if ciphertext.lwe_dimension() != vector.lwe_dimension() {
             return Err(Self::LweDimensionMismatch);
@@ -43,7 +43,7 @@ pub trait LweCiphertextDiscardingLoadingEngine<CiphertextVector, Ciphertext>:
     AbstractEngine
 where
     Ciphertext: LweCiphertextEntity,
-    CiphertextVector: LweCiphertextVectorEntity<KeyDistribution = Ciphertext::KeyDistribution>,
+    CiphertextVector: LweCiphertextVectorEntity,
 {
     /// Loads an LWE ciphertext from an LWE ciphertext vector.
     fn discard_load_lwe_ciphertext(

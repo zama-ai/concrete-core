@@ -1,14 +1,10 @@
-use crate::specification::entities::markers::{GgswCiphertextKind, KeyDistributionMarker};
+use crate::specification::entities::markers::GgswCiphertextKind;
 use crate::specification::entities::AbstractEntity;
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
 };
 
 /// A trait implemented by types embodying a GGSW ciphertext.
-///
-/// A GGSW ciphertext is associated with a
-/// [`KeyDistribution`](`GgswCiphertextEntity::KeyDistribution`) type, which conveys the
-/// distribution of the secret key it was encrypted with.
 ///
 /// # Formal Definition
 ///
@@ -160,9 +156,6 @@ use concrete_commons::parameters::{
 /// [`GLWE decryption algorithm`](`crate::specification::engines::GlweCiphertextDecryptionEngine`)
 /// on one of the GLWE ciphertexts contained in the GLev ciphertext.
 pub trait GgswCiphertextEntity: AbstractEntity<Kind = GgswCiphertextKind> {
-    /// The distribution of the key the ciphertext was encrypted with.
-    type KeyDistribution: KeyDistributionMarker;
-
     /// Returns the GLWE dimension of the ciphertext.
     fn glwe_dimension(&self) -> GlweDimension;
 

@@ -21,7 +21,7 @@ pub trait GgswCiphertextScalarEncryptionEngine<SecretKey, Plaintext, Ciphertext>
 where
     SecretKey: GlweSecretKeyEntity,
     Plaintext: PlaintextEntity,
-    Ciphertext: GgswCiphertextEntity<KeyDistribution = SecretKey::KeyDistribution>,
+    Ciphertext: GgswCiphertextEntity,
 {
     /// Encrypts a plaintext into a GGSW ciphertext.
     fn encrypt_scalar_ggsw_ciphertext(

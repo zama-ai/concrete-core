@@ -50,10 +50,7 @@ pub trait PackingKeyswitchKeyCreationEngine<InputSecretKey, OutputSecretKey, Pac
 where
     InputSecretKey: LweSecretKeyEntity,
     OutputSecretKey: GlweSecretKeyEntity,
-    PackingKeyswitchKey: PackingKeyswitchKeyEntity<
-        InputKeyDistribution = InputSecretKey::KeyDistribution,
-        OutputKeyDistribution = OutputSecretKey::KeyDistribution,
-    >,
+    PackingKeyswitchKey: PackingKeyswitchKeyEntity,
 {
     /// Creates a packing keyswitch key.
     fn create_packing_keyswitch_key(

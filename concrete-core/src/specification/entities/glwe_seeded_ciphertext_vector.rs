@@ -1,15 +1,9 @@
 use crate::commons::math::random::CompressionSeed;
-use crate::specification::entities::markers::{
-    GlweSeededCiphertextVectorKind, KeyDistributionMarker,
-};
+use crate::specification::entities::markers::GlweSeededCiphertextVectorKind;
 use crate::specification::entities::AbstractEntity;
 use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
 
 /// A trait implemented by types embodying a seeded GLWE ciphertext vector.
-///
-/// A GLWE seeded ciphertext vector is associated with a
-/// [`KeyDistribution`](`GlweSeededCiphertextVectorEntity::KeyDistribution`) type, which conveys the
-/// distribution of the secret key it was encrypted with.
 ///
 /// **Remark:** GLWE ciphertexts generalize LWE ciphertexts by definition, however in this library,
 /// GLWE ciphertext entities do not generalize LWE ciphertexts, i.e., polynomial size cannot be 1.
@@ -20,9 +14,6 @@ use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, Polynomia
 pub trait GlweSeededCiphertextVectorEntity:
     AbstractEntity<Kind = GlweSeededCiphertextVectorKind>
 {
-    /// The distribution of the key the ciphertext was encrypted with.
-    type KeyDistribution: KeyDistributionMarker;
-
     /// Returns the GLWE dimension of the ciphertexts.
     fn glwe_dimension(&self) -> GlweDimension;
 

@@ -15,10 +15,7 @@ impl<EngineError: std::error::Error> LweKeyswitchKeyDiscardingConversionError<En
     pub fn perform_generic_checks<Input, Output>(output: &Output, input: &Input) -> Result<(), Self>
     where
         Input: LweKeyswitchKeyEntity,
-        Output: LweKeyswitchKeyEntity<
-            InputKeyDistribution = Input::InputKeyDistribution,
-            OutputKeyDistribution = Input::OutputKeyDistribution,
-        >,
+        Output: LweKeyswitchKeyEntity,
     {
         if input.input_lwe_dimension() != output.input_lwe_dimension() {
             return Err(Self::InputLweDimensionMismatch);
@@ -52,10 +49,7 @@ impl<EngineError: std::error::Error> LweKeyswitchKeyDiscardingConversionError<En
 pub trait LweKeyswitchKeyDiscardingConversionEngine<Input, Output>: AbstractEngine
 where
     Input: LweKeyswitchKeyEntity,
-    Output: LweKeyswitchKeyEntity<
-        InputKeyDistribution = Input::InputKeyDistribution,
-        OutputKeyDistribution = Input::OutputKeyDistribution,
-    >,
+    Output: LweKeyswitchKeyEntity,
 {
     /// Converts a LWE keyswitch key .
     fn discard_convert_lwe_keyswitch_key(

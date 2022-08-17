@@ -44,8 +44,8 @@ pub trait GlweCiphertextGgswCiphertextExternalProductEngine<GlweInput, GgswInput
     AbstractEngine
 where
     GlweInput: GlweCiphertextEntity,
-    GgswInput: GgswCiphertextEntity<KeyDistribution = GlweInput::KeyDistribution>,
-    Output: GlweCiphertextEntity<KeyDistribution = GlweInput::KeyDistribution>,
+    GgswInput: GgswCiphertextEntity,
+    Output: GlweCiphertextEntity,
 {
     /// Computes the external product between a GLWE and a GSW ciphertext.
     fn compute_external_product_glwe_ciphertext_ggsw_ciphertext(

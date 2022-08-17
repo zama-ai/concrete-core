@@ -20,8 +20,7 @@ impl<EngineError: std::error::Error>
     ) -> Result<(), Self>
     where
         OutputCiphertext: LweCiphertextEntity,
-        CiphertextVector:
-            LweCiphertextVectorEntity<KeyDistribution = OutputCiphertext::KeyDistribution>,
+        CiphertextVector: LweCiphertextVectorEntity,
         CleartextVector: CleartextVectorEntity,
     {
         if output.lwe_dimension() != inputs.lwe_dimension() {
@@ -50,8 +49,7 @@ pub trait LweCiphertextVectorDiscardingAffineTransformationEngine<
     OutputCiphertext,
 >: AbstractEngine where
     OutputCiphertext: LweCiphertextEntity,
-    CiphertextVector:
-        LweCiphertextVectorEntity<KeyDistribution = OutputCiphertext::KeyDistribution>,
+    CiphertextVector: LweCiphertextVectorEntity,
     CleartextVector: CleartextVectorEntity,
     Plaintext: PlaintextEntity,
 {

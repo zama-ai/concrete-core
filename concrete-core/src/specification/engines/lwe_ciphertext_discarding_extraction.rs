@@ -19,7 +19,7 @@ impl<EngineError: std::error::Error> LweCiphertextDiscardingExtractionError<Engi
     ) -> Result<(), Self>
     where
         GlweCiphertext: GlweCiphertextEntity,
-        LweCiphertext: LweCiphertextEntity<KeyDistribution = GlweCiphertext::KeyDistribution>,
+        LweCiphertext: LweCiphertextEntity,
     {
         if output.lwe_dimension()
             != LweDimension(input.polynomial_size().0 * input.glwe_dimension().0)
@@ -47,7 +47,7 @@ pub trait LweCiphertextDiscardingExtractionEngine<GlweCiphertext, LweCiphertext>
     AbstractEngine
 where
     GlweCiphertext: GlweCiphertextEntity,
-    LweCiphertext: LweCiphertextEntity<KeyDistribution = GlweCiphertext::KeyDistribution>,
+    LweCiphertext: LweCiphertextEntity,
 {
     /// Extracts an LWE ciphertext from a GLWE ciphertext.
     fn discard_extract_lwe_ciphertext(

@@ -1,6 +1,6 @@
 use crate::commons::crypto::bootstrap::StandardSeededBootstrapKey as ImplStandardSeededBootstrapKey;
 use crate::commons::math::random::CompressionSeed;
-use crate::specification::entities::markers::{BinaryKeyDistribution, LweSeededBootstrapKeyKind};
+use crate::specification::entities::markers::LweSeededBootstrapKeyKind;
 use crate::specification::entities::{AbstractEntity, LweSeededBootstrapKeyEntity};
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
@@ -15,9 +15,6 @@ impl AbstractEntity for LweSeededBootstrapKey32 {
     type Kind = LweSeededBootstrapKeyKind;
 }
 impl LweSeededBootstrapKeyEntity for LweSeededBootstrapKey32 {
-    type InputKeyDistribution = BinaryKeyDistribution;
-    type OutputKeyDistribution = BinaryKeyDistribution;
-
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.glwe_size().to_glwe_dimension()
     }
@@ -58,9 +55,6 @@ impl AbstractEntity for LweSeededBootstrapKey64 {
     type Kind = LweSeededBootstrapKeyKind;
 }
 impl LweSeededBootstrapKeyEntity for LweSeededBootstrapKey64 {
-    type InputKeyDistribution = BinaryKeyDistribution;
-    type OutputKeyDistribution = BinaryKeyDistribution;
-
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.glwe_size().to_glwe_dimension()
     }

@@ -18,7 +18,7 @@ engine_error! {
 pub trait LweCiphertextConversionEngine<Input, Output>: AbstractEngine
 where
     Input: LweCiphertextEntity,
-    Output: LweCiphertextEntity<KeyDistribution = Input::KeyDistribution>,
+    Output: LweCiphertextEntity,
 {
     /// Converts a LWE ciphertext.
     fn convert_lwe_ciphertext(

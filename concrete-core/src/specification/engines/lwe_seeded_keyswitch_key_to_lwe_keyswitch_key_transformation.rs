@@ -25,10 +25,7 @@ pub trait LweSeededKeyswitchKeyToLweKeyswitchKeyTransformationEngine<InputKey, O
     AbstractEngine
 where
     InputKey: LweSeededKeyswitchKeyEntity,
-    OutputKey: LweKeyswitchKeyEntity<
-        InputKeyDistribution = InputKey::InputKeyDistribution,
-        OutputKeyDistribution = InputKey::OutputKeyDistribution,
-    >,
+    OutputKey: LweKeyswitchKeyEntity,
 {
     /// Does the transformation of the seeded LWE keyswitch key into an LWE keyswitch key
     fn transform_lwe_seeded_keyswitch_key_to_lwe_keyswitch_key(

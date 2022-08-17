@@ -42,7 +42,7 @@ pub trait LweSeededCiphertextEncryptionEngine<SecretKey, Plaintext, Ciphertext>:
 where
     SecretKey: LweSecretKeyEntity,
     Plaintext: PlaintextEntity,
-    Ciphertext: LweSeededCiphertextEntity<KeyDistribution = SecretKey::KeyDistribution>,
+    Ciphertext: LweSeededCiphertextEntity,
 {
     /// Encrypts a seeded LWE ciphertext.
     fn encrypt_lwe_seeded_ciphertext(

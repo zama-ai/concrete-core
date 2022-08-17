@@ -1,5 +1,5 @@
 use crate::commons::crypto::gsw::GswCiphertext as ImplGswCiphertext;
-use crate::specification::entities::markers::{BinaryKeyDistribution, GswCiphertextKind};
+use crate::specification::entities::markers::GswCiphertextKind;
 use crate::specification::entities::{AbstractEntity, GswCiphertextEntity};
 use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
 #[cfg(feature = "backend_default_serialization")]
@@ -14,8 +14,6 @@ impl AbstractEntity for GswCiphertext32 {
 }
 
 impl GswCiphertextEntity for GswCiphertext32 {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn lwe_dimension(&self) -> LweDimension {
         self.0.lwe_size().to_lwe_dimension()
     }
@@ -46,8 +44,6 @@ impl AbstractEntity for GswCiphertext64 {
 }
 
 impl GswCiphertextEntity for GswCiphertext64 {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn lwe_dimension(&self) -> LweDimension {
         self.0.lwe_size().to_lwe_dimension()
     }

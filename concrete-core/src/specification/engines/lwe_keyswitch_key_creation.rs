@@ -51,10 +51,7 @@ pub trait LweKeyswitchKeyCreationEngine<InputSecretKey, OutputSecretKey, Keyswit
 where
     InputSecretKey: LweSecretKeyEntity,
     OutputSecretKey: LweSecretKeyEntity,
-    KeyswitchKey: LweKeyswitchKeyEntity<
-        InputKeyDistribution = InputSecretKey::KeyDistribution,
-        OutputKeyDistribution = OutputSecretKey::KeyDistribution,
-    >,
+    KeyswitchKey: LweKeyswitchKeyEntity,
 {
     /// Creates an LWE keyswitch key.
     fn create_lwe_keyswitch_key(

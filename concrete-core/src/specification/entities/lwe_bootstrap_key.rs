@@ -1,17 +1,10 @@
-use crate::specification::entities::markers::{KeyDistributionMarker, LweBootstrapKeyKind};
+use crate::specification::entities::markers::LweBootstrapKeyKind;
 use crate::specification::entities::AbstractEntity;
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
 };
 
 /// A trait implemented by types embodying an LWE bootstrap key.
-///
-/// An LWE bootstrap key is associated with two [`KeyDistributionMarker`] types:
-///
-/// + The [`InputKeyDistribution`](`LweBootstrapKeyEntity::InputKeyDistribution`) type conveys the
-/// distribution of the secret key encrypted inside the bootstrap key.
-/// + The [`OutputKeyDistribution`](`LweBootstrapKeyEntity::OutputKeyDistribution`) type conveys the
-/// distribution of the secret key used to encrypt the bootstrap key.
 ///
 /// # Formal Definition
 ///
@@ -46,12 +39,6 @@ use concrete_commons::parameters::{
 /// \mathbb{Z}^{n\_{\mathsf{out}}}$, where $n\_{\mathsf{out}} = k\_{\mathsf{out}} \cdot
 /// N\_{\mathsf{out}}$.
 pub trait LweBootstrapKeyEntity: AbstractEntity<Kind = LweBootstrapKeyKind> {
-    /// The distribution of key the input ciphertext is encrypted with.
-    type InputKeyDistribution: KeyDistributionMarker;
-
-    /// The distribution of the key the output ciphertext is encrypted with.
-    type OutputKeyDistribution: KeyDistributionMarker;
-
     /// Returns the GLWE dimension of the key.
     fn glwe_dimension(&self) -> GlweDimension;
 

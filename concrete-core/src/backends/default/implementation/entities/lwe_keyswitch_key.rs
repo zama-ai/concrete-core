@@ -1,5 +1,5 @@
 use crate::commons::crypto::lwe::LweKeyswitchKey as ImplLweKeyswitchKey;
-use crate::specification::entities::markers::{BinaryKeyDistribution, LweKeyswitchKeyKind};
+use crate::specification::entities::markers::LweKeyswitchKeyKind;
 use crate::specification::entities::{AbstractEntity, LweKeyswitchKeyEntity};
 use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
 #[cfg(feature = "backend_default_serialization")]
@@ -12,9 +12,6 @@ impl AbstractEntity for LweKeyswitchKey32 {
     type Kind = LweKeyswitchKeyKind;
 }
 impl LweKeyswitchKeyEntity for LweKeyswitchKey32 {
-    type InputKeyDistribution = BinaryKeyDistribution;
-    type OutputKeyDistribution = BinaryKeyDistribution;
-
     fn input_lwe_dimension(&self) -> LweDimension {
         self.0.before_key_size()
     }
@@ -47,9 +44,6 @@ impl AbstractEntity for LweKeyswitchKey64 {
     type Kind = LweKeyswitchKeyKind;
 }
 impl LweKeyswitchKeyEntity for LweKeyswitchKey64 {
-    type InputKeyDistribution = BinaryKeyDistribution;
-    type OutputKeyDistribution = BinaryKeyDistribution;
-
     fn input_lwe_dimension(&self) -> LweDimension {
         self.0.before_key_size()
     }

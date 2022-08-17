@@ -16,8 +16,7 @@ impl<EngineError: std::error::Error> LweCiphertextVectorFusingAdditionError<Engi
     ) -> Result<(), Self>
     where
         InputCiphertextVector: LweCiphertextVectorEntity,
-        OutputCiphertextVector:
-            LweCiphertextVectorEntity<KeyDistribution = InputCiphertextVector::KeyDistribution>,
+        OutputCiphertextVector: LweCiphertextVectorEntity,
     {
         if input.lwe_dimension() != output.lwe_dimension() {
             return Err(Self::LweDimensionMismatch);
@@ -44,8 +43,7 @@ pub trait LweCiphertextVectorFusingAdditionEngine<InputCiphertextVector, OutputC
     AbstractEngine
 where
     InputCiphertextVector: LweCiphertextVectorEntity,
-    OutputCiphertextVector:
-        LweCiphertextVectorEntity<KeyDistribution = InputCiphertextVector::KeyDistribution>,
+    OutputCiphertextVector: LweCiphertextVectorEntity,
 {
     /// Add two LWE ciphertext vectors.
     fn fuse_add_lwe_ciphertext_vector(

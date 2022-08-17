@@ -25,7 +25,7 @@ impl<EngineError: std::error::Error> GlweCiphertextVectorDiscardingEncryptionErr
     where
         SecretKey: GlweSecretKeyEntity,
         PlaintextVector: PlaintextVectorEntity,
-        CiphertextVector: GlweCiphertextVectorEntity<KeyDistribution = SecretKey::KeyDistribution>,
+        CiphertextVector: GlweCiphertextVectorEntity,
     {
         if key.glwe_dimension() != output.glwe_dimension() {
             return Err(Self::GlweDimensionMismatch);
@@ -59,7 +59,7 @@ pub trait GlweCiphertextVectorDiscardingEncryptionEngine<
 >: AbstractEngine where
     SecretKey: GlweSecretKeyEntity,
     PlaintextVector: PlaintextVectorEntity,
-    CiphertextVector: GlweCiphertextVectorEntity<KeyDistribution = SecretKey::KeyDistribution>,
+    CiphertextVector: GlweCiphertextVectorEntity,
 {
     /// Encrypts a GLWE ciphertext vector .
     fn discard_encrypt_glwe_ciphertext_vector(

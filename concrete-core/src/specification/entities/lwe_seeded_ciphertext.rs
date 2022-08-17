@@ -1,5 +1,5 @@
 use crate::commons::math::random::CompressionSeed;
-use crate::specification::entities::markers::{KeyDistributionMarker, LweSeededCiphertextKind};
+use crate::specification::entities::markers::LweSeededCiphertextKind;
 use crate::specification::entities::AbstractEntity;
 use concrete_commons::parameters::LweDimension;
 
@@ -11,14 +11,7 @@ use concrete_commons::parameters::LweDimension;
 /// mask which can contain hundreds of u32 or u64. This lightweight seeded LWE ciphertext can be
 /// more efficiently sent over the network for example. It can then be decompressed into a regular
 /// LWE ciphertext that can be used in homomorphic computations.
-///
-/// A seeded LWE ciphertext is associated with a
-/// [`KeyDistribution`](`LweSeededCiphertextEntity::KeyDistribution`) type, which conveys the
-/// distribution of the secret key it was encrypted with.
 pub trait LweSeededCiphertextEntity: AbstractEntity<Kind = LweSeededCiphertextKind> {
-    /// The distribution of the key the ciphertext was encrypted with.
-    type KeyDistribution: KeyDistributionMarker;
-
     /// Returns the LWE dimension of the ciphertext.
     fn lwe_dimension(&self) -> LweDimension;
 

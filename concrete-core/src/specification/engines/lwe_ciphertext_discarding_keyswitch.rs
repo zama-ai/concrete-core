@@ -20,9 +20,8 @@ impl<EngineError: std::error::Error> LweCiphertextDiscardingKeyswitchError<Engin
     ) -> Result<(), Self>
     where
         KeyswitchKey: LweKeyswitchKeyEntity,
-        InputCiphertext: LweCiphertextEntity<KeyDistribution = KeyswitchKey::InputKeyDistribution>,
-        OutputCiphertext:
-            LweCiphertextEntity<KeyDistribution = KeyswitchKey::OutputKeyDistribution>,
+        InputCiphertext: LweCiphertextEntity,
+        OutputCiphertext: LweCiphertextEntity,
     {
         if input.lwe_dimension() != ksk.input_lwe_dimension() {
             return Err(Self::InputLweDimensionMismatch);
@@ -94,8 +93,8 @@ pub trait LweCiphertextDiscardingKeyswitchEngine<KeyswitchKey, InputCiphertext, 
     AbstractEngine
 where
     KeyswitchKey: LweKeyswitchKeyEntity,
-    InputCiphertext: LweCiphertextEntity<KeyDistribution = KeyswitchKey::InputKeyDistribution>,
-    OutputCiphertext: LweCiphertextEntity<KeyDistribution = KeyswitchKey::OutputKeyDistribution>,
+    InputCiphertext: LweCiphertextEntity,
+    OutputCiphertext: LweCiphertextEntity,
 {
     /// Keyswitch an LWE ciphertext.
     fn discard_keyswitch_lwe_ciphertext(

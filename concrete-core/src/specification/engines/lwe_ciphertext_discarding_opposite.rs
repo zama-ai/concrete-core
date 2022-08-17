@@ -15,7 +15,7 @@ impl<EngineError: std::error::Error> LweCiphertextDiscardingOppositeError<Engine
     ) -> Result<(), Self>
     where
         InputCiphertext: LweCiphertextEntity,
-        OutputCiphertext: LweCiphertextEntity<KeyDistribution = InputCiphertext::KeyDistribution>,
+        OutputCiphertext: LweCiphertextEntity,
     {
         if input.lwe_dimension() != output.lwe_dimension() {
             return Err(Self::LweDimensionMismatch);
@@ -67,7 +67,7 @@ pub trait LweCiphertextDiscardingOppositeEngine<InputCiphertext, OutputCiphertex
     AbstractEngine
 where
     InputCiphertext: LweCiphertextEntity,
-    OutputCiphertext: LweCiphertextEntity<KeyDistribution = InputCiphertext::KeyDistribution>,
+    OutputCiphertext: LweCiphertextEntity,
 {
     /// Computes the opposite of an LWE ciphertext.
     fn discard_opp_lwe_ciphertext(

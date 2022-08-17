@@ -13,7 +13,7 @@ impl<EngineError: std::error::Error> LweCiphertextVectorDiscardingConversionErro
     pub fn perform_generic_checks<Input, Output>(output: &Output, input: &Input) -> Result<(), Self>
     where
         Input: LweCiphertextVectorEntity,
-        Output: LweCiphertextVectorEntity<KeyDistribution = Input::KeyDistribution>,
+        Output: LweCiphertextVectorEntity,
     {
         if input.lwe_dimension() != output.lwe_dimension() {
             return Err(Self::LweDimensionMismatch);
@@ -38,7 +38,7 @@ impl<EngineError: std::error::Error> LweCiphertextVectorDiscardingConversionErro
 pub trait LweCiphertextVectorDiscardingConversionEngine<Input, Output>: AbstractEngine
 where
     Input: LweCiphertextVectorEntity,
-    Output: LweCiphertextVectorEntity<KeyDistribution = Input::KeyDistribution>,
+    Output: LweCiphertextVectorEntity,
 {
     /// Converts a LWE ciphertext vector .
     fn discard_convert_lwe_ciphertext_vector(

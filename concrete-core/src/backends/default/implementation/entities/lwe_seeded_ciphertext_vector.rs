@@ -1,8 +1,6 @@
 use crate::commons::crypto::lwe::LweSeededList as ImplLweSeededList;
 use crate::commons::math::random::CompressionSeed;
-use crate::specification::entities::markers::{
-    BinaryKeyDistribution, LweSeededCiphertextVectorKind,
-};
+use crate::specification::entities::markers::LweSeededCiphertextVectorKind;
 use crate::specification::entities::{AbstractEntity, LweSeededCiphertextVectorEntity};
 use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
 #[cfg(feature = "backend_default_serialization")]
@@ -17,8 +15,6 @@ impl AbstractEntity for LweSeededCiphertextVector32 {
 }
 
 impl LweSeededCiphertextVectorEntity for LweSeededCiphertextVector32 {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn lwe_dimension(&self) -> LweDimension {
         self.0.lwe_size().to_lwe_dimension()
     }
@@ -49,8 +45,6 @@ impl AbstractEntity for LweSeededCiphertextVector64 {
 }
 
 impl LweSeededCiphertextVectorEntity for LweSeededCiphertextVector64 {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn lwe_dimension(&self) -> LweDimension {
         self.0.lwe_size().to_lwe_dimension()
     }

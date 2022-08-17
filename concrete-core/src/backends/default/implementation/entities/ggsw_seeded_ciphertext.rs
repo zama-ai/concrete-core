@@ -1,6 +1,6 @@
 use crate::commons::crypto::ggsw::StandardGgswSeededCiphertext as ImplStandardGgswSeededCiphertext;
 use crate::commons::math::random::CompressionSeed;
-use crate::specification::entities::markers::{BinaryKeyDistribution, GgswSeededCiphertextKind};
+use crate::specification::entities::markers::GgswSeededCiphertextKind;
 use crate::specification::entities::{AbstractEntity, GgswSeededCiphertextEntity};
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
@@ -15,8 +15,6 @@ impl AbstractEntity for GgswSeededCiphertext32 {
     type Kind = GgswSeededCiphertextKind;
 }
 impl GgswSeededCiphertextEntity for GgswSeededCiphertext32 {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.glwe_size().to_glwe_dimension()
     }
@@ -53,8 +51,6 @@ impl AbstractEntity for GgswSeededCiphertext64 {
     type Kind = GgswSeededCiphertextKind;
 }
 impl GgswSeededCiphertextEntity for GgswSeededCiphertext64 {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.glwe_size().to_glwe_dimension()
     }

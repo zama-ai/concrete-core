@@ -17,7 +17,7 @@ impl<EngineError: std::error::Error> GgswCiphertextScalarDiscardingEncryptionErr
     ) -> Result<(), Self>
     where
         SecretKey: GlweSecretKeyEntity,
-        Ciphertext: GgswCiphertextEntity<KeyDistribution = SecretKey::KeyDistribution>,
+        Ciphertext: GgswCiphertextEntity,
     {
         if key.polynomial_size() != output.polynomial_size() {
             return Err(Self::PolynomialSizeMismatch);
@@ -42,7 +42,7 @@ pub trait GgswCiphertextScalarDiscardingEncryptionEngine<SecretKey, Plaintext, C
 where
     SecretKey: GlweSecretKeyEntity,
     Plaintext: PlaintextEntity,
-    Ciphertext: GgswCiphertextEntity<KeyDistribution = SecretKey::KeyDistribution>,
+    Ciphertext: GgswCiphertextEntity,
 {
     /// Encrypts a GGSW ciphertext.
     fn discard_encrypt_scalar_ggsw_ciphertext(

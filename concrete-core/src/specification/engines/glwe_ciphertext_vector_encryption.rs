@@ -43,7 +43,7 @@ pub trait GlweCiphertextVectorEncryptionEngine<SecretKey, PlaintextVector, Ciphe
 where
     SecretKey: GlweSecretKeyEntity,
     PlaintextVector: PlaintextVectorEntity,
-    CiphertextVector: GlweCiphertextVectorEntity<KeyDistribution = SecretKey::KeyDistribution>,
+    CiphertextVector: GlweCiphertextVectorEntity,
 {
     /// Encrypts a GLWE ciphertext vector.
     fn encrypt_glwe_ciphertext_vector(

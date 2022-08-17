@@ -80,37 +80,6 @@ entity_kind_marker! {
             => "An empty type representing the encoder vector kind in the type system"
 }
 
-/// A trait implemented by marker types encoding a _distribution_ of secret key in the type system.
-///
-/// By _distribution_ here, we mean the different types of secret key that can exist such as binary,
-/// ternary, uniform or gaussian key.
-///
-/// # Note
-///
-/// [`KeyDistributionMarker`] types are only defined in the specification part of the library, and
-/// can not be defined by a backend.
-pub trait KeyDistributionMarker: seal::KeyDistributionMarkerSealed + 'static {}
-macro_rules! key_distribution_marker {
-        (@ $name: ident => $doc: literal)=>{
-            #[doc=$doc]
-            #[derive(Debug, Clone, Copy)]
-            pub struct $name{}
-            impl seal::KeyDistributionMarkerSealed for $name{}
-            impl KeyDistributionMarker for $name{}
-        };
-        ($($name: ident => $doc: literal),+) =>{
-            $(
-                key_distribution_marker!(@ $name => $doc);
-            )+
-        }
-    }
-key_distribution_marker! {
-    BinaryKeyDistribution => "An empty type encoding the binary key distribution in the type system.",
-    TernaryKeyDistribution => "An empty type encoding the ternary key distribution in the type system.",
-    GaussianKeyDistribution => "An empty type encoding the gaussian key distribution in the type system."
-}
-
 pub(crate) mod seal {
     pub trait EntityKindMarkerSealed {}
-    pub trait KeyDistributionMarkerSealed {}
 }

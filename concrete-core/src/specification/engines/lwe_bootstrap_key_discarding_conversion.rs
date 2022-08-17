@@ -16,10 +16,7 @@ impl<EngineError: std::error::Error> LweBootstrapKeyDiscardingConversionError<En
     pub fn perform_generic_checks<Input, Output>(output: &Output, input: &Input) -> Result<(), Self>
     where
         Input: LweBootstrapKeyEntity,
-        Output: LweBootstrapKeyEntity<
-            InputKeyDistribution = Input::InputKeyDistribution,
-            OutputKeyDistribution = Input::OutputKeyDistribution,
-        >,
+        Output: LweBootstrapKeyEntity,
     {
         if input.input_lwe_dimension() != output.input_lwe_dimension() {
             return Err(Self::LweDimensionMismatch);
@@ -56,10 +53,7 @@ impl<EngineError: std::error::Error> LweBootstrapKeyDiscardingConversionError<En
 pub trait LweBootstrapKeyDiscardingConversionEngine<Input, Output>: AbstractEngine
 where
     Input: LweBootstrapKeyEntity,
-    Output: LweBootstrapKeyEntity<
-        InputKeyDistribution = Input::InputKeyDistribution,
-        OutputKeyDistribution = Input::OutputKeyDistribution,
-    >,
+    Output: LweBootstrapKeyEntity,
 {
     /// Converts a LWE bootstrap key .
     fn discard_convert_lwe_bootstrap_key(

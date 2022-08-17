@@ -1,12 +1,8 @@
-use crate::specification::entities::markers::{GlweCiphertextKind, KeyDistributionMarker};
+use crate::specification::entities::markers::GlweCiphertextKind;
 use crate::specification::entities::AbstractEntity;
 use concrete_commons::parameters::{GlweDimension, PolynomialSize};
 
 /// A trait implemented by types embodying a GLWE ciphertext.
-///
-/// A GLWE ciphertext is associated with a
-/// [`KeyDistribution`](`GlweCiphertextEntity::KeyDistribution`) type, which conveys the
-/// distribution of the secret key it was encrypted with.
 ///
 /// **Remark:** GLWE ciphertexts generalize LWE ciphertexts by definition, however in this library,
 /// GLWE
@@ -36,9 +32,6 @@ use concrete_commons::parameters::{GlweDimension, PolynomialSize};
 /// When we set $k=1$ a GLWE ciphertext becomes an RLWE ciphertext.
 /// When we set $N=1$ a GLWE ciphertext becomes an LWE ciphertext with $n=k$.
 pub trait GlweCiphertextEntity: AbstractEntity<Kind = GlweCiphertextKind> {
-    /// The distribution of the key the ciphertext was encrypted with.
-    type KeyDistribution: KeyDistributionMarker;
-
     /// Returns the GLWE dimension of the ciphertext.
     fn glwe_dimension(&self) -> GlweDimension;
 

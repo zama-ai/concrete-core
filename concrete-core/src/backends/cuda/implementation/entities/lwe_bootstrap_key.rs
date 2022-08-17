@@ -3,7 +3,7 @@ use concrete_commons::parameters::{
 };
 
 use crate::backends::cuda::private::crypto::bootstrap::CudaBootstrapKey;
-use crate::specification::entities::markers::{BinaryKeyDistribution, LweBootstrapKeyKind};
+use crate::specification::entities::markers::LweBootstrapKeyKind;
 use crate::specification::entities::{AbstractEntity, LweBootstrapKeyEntity};
 
 /// A structure representing a Fourier bootstrap key for 32 bits precision ciphertexts on the GPU.
@@ -15,9 +15,6 @@ impl AbstractEntity for CudaFourierLweBootstrapKey32 {
 }
 
 impl LweBootstrapKeyEntity for CudaFourierLweBootstrapKey32 {
-    type InputKeyDistribution = BinaryKeyDistribution;
-    type OutputKeyDistribution = BinaryKeyDistribution;
-
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.glwe_dimension()
     }
@@ -48,9 +45,6 @@ impl AbstractEntity for CudaFourierLweBootstrapKey64 {
 }
 
 impl LweBootstrapKeyEntity for CudaFourierLweBootstrapKey64 {
-    type InputKeyDistribution = BinaryKeyDistribution;
-    type OutputKeyDistribution = BinaryKeyDistribution;
-
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.glwe_dimension()
     }

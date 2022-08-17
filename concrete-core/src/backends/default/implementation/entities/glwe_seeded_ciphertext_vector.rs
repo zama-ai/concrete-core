@@ -1,8 +1,6 @@
 use crate::commons::crypto::glwe::GlweSeededList as ImplGlweSeededList;
 use crate::commons::math::random::CompressionSeed;
-use crate::specification::entities::markers::{
-    BinaryKeyDistribution, GlweSeededCiphertextVectorKind,
-};
+use crate::specification::entities::markers::GlweSeededCiphertextVectorKind;
 use crate::specification::entities::{AbstractEntity, GlweSeededCiphertextVectorEntity};
 use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
 #[cfg(feature = "backend_default_serialization")]
@@ -15,8 +13,6 @@ impl AbstractEntity for GlweSeededCiphertextVector32 {
     type Kind = GlweSeededCiphertextVectorKind;
 }
 impl GlweSeededCiphertextVectorEntity for GlweSeededCiphertextVector32 {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.glwe_dimension()
     }
@@ -49,8 +45,6 @@ impl AbstractEntity for GlweSeededCiphertextVector64 {
     type Kind = GlweSeededCiphertextVectorKind;
 }
 impl GlweSeededCiphertextVectorEntity for GlweSeededCiphertextVector64 {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.glwe_dimension()
     }

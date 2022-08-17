@@ -1,5 +1,5 @@
 use crate::commons::math::random::CompressionSeed;
-use crate::specification::entities::markers::{KeyDistributionMarker, LweSeededBootstrapKeyKind};
+use crate::specification::entities::markers::LweSeededBootstrapKeyKind;
 use crate::specification::entities::AbstractEntity;
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
@@ -7,25 +7,12 @@ use concrete_commons::parameters::{
 
 /// A trait implemented by types embodying a seeded LWE bootstrap key.
 ///
-/// A seeded LWE bootstrap key is associated with two [`KeyDistributionMarker`] types:
-///
-/// + The [`InputKeyDistribution`](`LweSeededBootstrapKeyEntity::InputKeyDistribution`) type conveys
-/// the distribution of the secret key encrypted inside the bootstrap key.
-/// + The [`OutputKeyDistribution`](`LweSeededBootstrapKeyEntity::OutputKeyDistribution`) type
-/// conveys the distribution of the secret key used to encrypt the bootstrap key.
-///
 /// # Formal Definition
 ///
 /// ## Seeded Bootstrapping Key
 ///
 /// TODO
 pub trait LweSeededBootstrapKeyEntity: AbstractEntity<Kind = LweSeededBootstrapKeyKind> {
-    /// The distribution of key the input ciphertext is encrypted with.
-    type InputKeyDistribution: KeyDistributionMarker;
-
-    /// The distribution of the key the output ciphertext is encrypted with.
-    type OutputKeyDistribution: KeyDistributionMarker;
-
     /// Returns the GLWE dimension of the key.
     fn glwe_dimension(&self) -> GlweDimension;
 

@@ -23,7 +23,7 @@ impl<EngineError: std::error::Error> GlweCiphertextDiscardingEncryptionError<Eng
     where
         SecretKey: GlweSecretKeyEntity,
         PlaintextVector: PlaintextVectorEntity,
-        Ciphertext: GlweCiphertextEntity<KeyDistribution = SecretKey::KeyDistribution>,
+        Ciphertext: GlweCiphertextEntity,
     {
         if key.polynomial_size() != output.polynomial_size() {
             return Err(Self::PolynomialSizeMismatch);
@@ -53,7 +53,7 @@ pub trait GlweCiphertextDiscardingEncryptionEngine<SecretKey, PlaintextVector, C
 where
     SecretKey: GlweSecretKeyEntity,
     PlaintextVector: PlaintextVectorEntity,
-    Ciphertext: GlweCiphertextEntity<KeyDistribution = SecretKey::KeyDistribution>,
+    Ciphertext: GlweCiphertextEntity,
 {
     /// Encrypts a GLWE ciphertext .
     fn discard_encrypt_glwe_ciphertext(

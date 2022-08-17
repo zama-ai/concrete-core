@@ -15,7 +15,7 @@ impl<EngineError: std::error::Error> GgswCiphertextDiscardingConversionError<Eng
     pub fn perform_generic_checks<Input, Output>(output: &Output, input: &Input) -> Result<(), Self>
     where
         Input: GgswCiphertextEntity,
-        Output: GgswCiphertextEntity<KeyDistribution = Input::KeyDistribution>,
+        Output: GgswCiphertextEntity,
     {
         if input.glwe_dimension() != output.glwe_dimension() {
             return Err(Self::GlweDimensionMismatch);
@@ -49,7 +49,7 @@ impl<EngineError: std::error::Error> GgswCiphertextDiscardingConversionError<Eng
 pub trait GgswCiphertextDiscardingConversionEngine<Input, Output>: AbstractEngine
 where
     Input: GgswCiphertextEntity,
-    Output: GgswCiphertextEntity<KeyDistribution = Input::KeyDistribution>,
+    Output: GgswCiphertextEntity,
 {
     /// Converts a GGSW ciphertext .
     fn discard_convert_ggsw_ciphertext(

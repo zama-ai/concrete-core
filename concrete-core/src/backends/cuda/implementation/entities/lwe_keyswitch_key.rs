@@ -1,7 +1,7 @@
 use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
 
 use crate::backends::cuda::private::crypto::keyswitch::CudaLweKeyswitchKey;
-use crate::specification::entities::markers::{BinaryKeyDistribution, LweKeyswitchKeyKind};
+use crate::specification::entities::markers::LweKeyswitchKeyKind;
 use crate::specification::entities::{AbstractEntity, LweKeyswitchKeyEntity};
 
 /// A structure representing a keyswitch key for 32 bits precision ciphertexts on the GPU.
@@ -13,9 +13,6 @@ impl AbstractEntity for CudaLweKeyswitchKey32 {
 }
 
 impl LweKeyswitchKeyEntity for CudaLweKeyswitchKey32 {
-    type InputKeyDistribution = BinaryKeyDistribution;
-    type OutputKeyDistribution = BinaryKeyDistribution;
-
     fn input_lwe_dimension(&self) -> LweDimension {
         self.0.input_lwe_dimension()
     }
@@ -42,9 +39,6 @@ impl AbstractEntity for CudaLweKeyswitchKey64 {
 }
 
 impl LweKeyswitchKeyEntity for CudaLweKeyswitchKey64 {
-    type InputKeyDistribution = BinaryKeyDistribution;
-    type OutputKeyDistribution = BinaryKeyDistribution;
-
     fn input_lwe_dimension(&self) -> LweDimension {
         self.0.input_lwe_dimension()
     }

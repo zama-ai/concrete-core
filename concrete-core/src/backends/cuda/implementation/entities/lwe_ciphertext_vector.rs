@@ -3,7 +3,7 @@ use std::fmt::Debug;
 use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
 
 use crate::backends::cuda::private::crypto::lwe::list::CudaLweList;
-use crate::specification::entities::markers::{BinaryKeyDistribution, LweCiphertextVectorKind};
+use crate::specification::entities::markers::LweCiphertextVectorKind;
 use crate::specification::entities::{AbstractEntity, LweCiphertextVectorEntity};
 
 /// A structure representing a vector of LWE ciphertexts with 32 bits of precision on the GPU.
@@ -15,8 +15,6 @@ impl AbstractEntity for CudaLweCiphertextVector32 {
 }
 
 impl LweCiphertextVectorEntity for CudaLweCiphertextVector32 {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn lwe_dimension(&self) -> LweDimension {
         self.0.lwe_dimension()
     }
@@ -35,8 +33,6 @@ impl AbstractEntity for CudaLweCiphertextVector64 {
 }
 
 impl LweCiphertextVectorEntity for CudaLweCiphertextVector64 {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn lwe_dimension(&self) -> LweDimension {
         self.0.lwe_dimension()
     }

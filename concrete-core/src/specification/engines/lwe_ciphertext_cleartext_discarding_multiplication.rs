@@ -17,7 +17,7 @@ impl<EngineError: std::error::Error>
     ) -> Result<(), Self>
     where
         InputCiphertext: LweCiphertextEntity,
-        OutputCiphertext: LweCiphertextEntity<KeyDistribution = InputCiphertext::KeyDistribution>,
+        OutputCiphertext: LweCiphertextEntity,
     {
         if output.lwe_dimension() != input_1.lwe_dimension() {
             return Err(Self::LweDimensionMismatch);
@@ -79,7 +79,7 @@ pub trait LweCiphertextCleartextDiscardingMultiplicationEngine<
 >: AbstractEngine where
     Cleartext: CleartextEntity,
     InputCiphertext: LweCiphertextEntity,
-    OutputCiphertext: LweCiphertextEntity<KeyDistribution = InputCiphertext::KeyDistribution>,
+    OutputCiphertext: LweCiphertextEntity,
 {
     /// Multiply an LWE ciphertext with a cleartext.
     fn discard_mul_lwe_ciphertext_cleartext(

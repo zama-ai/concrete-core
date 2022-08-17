@@ -1,6 +1,6 @@
 use crate::backends::fftw::private::crypto::glwe::FourierGlweCiphertext;
 use crate::backends::fftw::private::math::fft::Complex64;
-use crate::specification::entities::markers::{BinaryKeyDistribution, GlweCiphertextKind};
+use crate::specification::entities::markers::GlweCiphertextKind;
 use crate::specification::entities::{AbstractEntity, GlweCiphertextEntity};
 use concrete_commons::parameters::{GlweDimension, PolynomialSize};
 use concrete_fftw::array::AlignedVec;
@@ -16,8 +16,6 @@ impl AbstractEntity for FftwFourierGlweCiphertext32 {
     type Kind = GlweCiphertextKind;
 }
 impl GlweCiphertextEntity for FftwFourierGlweCiphertext32 {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.glwe_size().to_glwe_dimension()
     }
@@ -44,8 +42,6 @@ impl AbstractEntity for FftwFourierGlweCiphertext64 {
     type Kind = GlweCiphertextKind;
 }
 impl GlweCiphertextEntity for FftwFourierGlweCiphertext64 {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.glwe_size().to_glwe_dimension()
     }
