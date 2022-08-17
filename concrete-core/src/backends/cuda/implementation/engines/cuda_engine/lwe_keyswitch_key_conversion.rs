@@ -62,10 +62,6 @@ impl LweKeyswitchKeyConversionEngine<LweKeyswitchKey32, CudaLweKeyswitchKey32> f
     /// assert_eq!(d_ksk.decomposition_level_count(), decomposition_level_count);
     /// assert_eq!(d_ksk.decomposition_base_log(), decomposition_base_log);
     ///
-    /// default_engine.destroy(input_key)?;
-    /// default_engine.destroy(output_key)?;
-    /// default_engine.destroy(ksk)?;
-    /// cuda_engine.destroy(d_ksk)?;
     /// #
     /// # Ok(())
     /// # }
@@ -156,11 +152,6 @@ impl LweKeyswitchKeyConversionEngine<CudaLweKeyswitchKey32, LweKeyswitchKey32> f
     /// assert_eq!(d_ksk.decomposition_base_log(), decomposition_base_log);
     /// assert_eq!(h_output_ksk, h_ksk);
     ///
-    /// default_engine.destroy(input_key)?;
-    /// default_engine.destroy(output_key)?;
-    /// default_engine.destroy(h_ksk)?;
-    /// default_engine.destroy(h_output_ksk)?;
-    /// cuda_engine.destroy(d_ksk)?;
     /// #
     /// # Ok(())
     /// # }
@@ -238,10 +229,6 @@ impl LweKeyswitchKeyConversionEngine<LweKeyswitchKey64, CudaLweKeyswitchKey64> f
     /// assert_eq!(d_ksk.decomposition_level_count(), decomposition_level_count);
     /// assert_eq!(d_ksk.decomposition_base_log(), decomposition_base_log);
     ///
-    /// default_engine.destroy(input_key)?;
-    /// default_engine.destroy(output_key)?;
-    /// default_engine.destroy(ksk)?;
-    /// cuda_engine.destroy(d_ksk)?;
     /// #
     /// # Ok(())
     /// # }
@@ -327,11 +314,6 @@ impl LweKeyswitchKeyConversionEngine<CudaLweKeyswitchKey64, LweKeyswitchKey64> f
     /// assert_eq!(d_ksk.decomposition_base_log(), decomposition_base_log);
     /// assert_eq!(h_output_ksk, h_ksk);
     ///
-    /// default_engine.destroy(input_key)?;
-    /// default_engine.destroy(output_key)?;
-    /// default_engine.destroy(h_ksk)?;
-    /// default_engine.destroy(h_output_ksk)?;
-    /// cuda_engine.destroy(d_ksk)?;
     /// #
     /// # Ok(())
     /// # }

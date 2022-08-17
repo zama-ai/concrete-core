@@ -27,7 +27,6 @@ impl CleartextVectorRetrievalEngine<CleartextVector32, u32> for DefaultEngine {
     /// let retrieved: Vec<u32> = engine.retrieve_cleartext_vector(&cleartext_vector)?;
     ///
     /// assert_eq!(retrieved[0], 3_u32);
-    /// engine.destroy(cleartext_vector)?;
     /// #
     /// # Ok(())
     /// # }
@@ -68,7 +67,6 @@ impl CleartextVectorRetrievalEngine<CleartextVector64, u64> for DefaultEngine {
     /// let retrieved: Vec<u64> = engine.retrieve_cleartext_vector(&cleartext_vector)?;
     ///
     /// assert_eq!(retrieved[0], 3_u64);
-    /// engine.destroy(cleartext_vector)?;
     /// #
     /// # Ok(())
     /// # }
@@ -109,7 +107,6 @@ impl CleartextVectorRetrievalEngine<CleartextVectorF64, f64> for DefaultEngine {
     /// let retrieved: Vec<f64> = engine.retrieve_cleartext_vector(&cleartext_vector)?;
     ///
     /// assert_eq!(retrieved[0], 3.0_f64);
-    /// engine.destroy(cleartext_vector)?;
     /// #
     /// # Ok(())
     /// # }

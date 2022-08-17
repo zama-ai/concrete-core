@@ -21,7 +21,6 @@ impl PlaintextCreationEngine<u32, Plaintext32> for DefaultEngine {
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let plaintext: Plaintext32 = engine.create_plaintext(&input)?;
-    /// engine.destroy(plaintext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -56,7 +55,6 @@ impl PlaintextCreationEngine<u64, Plaintext64> for DefaultEngine {
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let plaintext: Plaintext64 = engine.create_plaintext(&input)?;
-    /// engine.destroy(plaintext)?;
     /// #
     /// # Ok(())
     /// # }

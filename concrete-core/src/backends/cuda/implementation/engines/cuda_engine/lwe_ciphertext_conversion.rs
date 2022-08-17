@@ -42,10 +42,6 @@ impl LweCiphertextConversionEngine<LweCiphertext32, CudaLweCiphertext32> for Cud
     ///
     /// assert_eq!(d_ciphertext.lwe_dimension(), lwe_dimension);
     ///
-    /// default_engine.destroy(h_key)?;
-    /// default_engine.destroy(h_plaintext)?;
-    /// default_engine.destroy(h_ciphertext)?;
-    /// cuda_engine.destroy(d_ciphertext);
     /// #
     /// # Ok(())
     /// # }
@@ -108,11 +104,6 @@ impl LweCiphertextConversionEngine<CudaLweCiphertext32, LweCiphertext32> for Cud
     /// assert_eq!(h_ciphertext_output.lwe_dimension(), lwe_dimension);
     /// assert_eq!(h_ciphertext, h_ciphertext_output);
     ///
-    /// default_engine.destroy(h_key)?;
-    /// default_engine.destroy(h_plaintext)?;
-    /// default_engine.destroy(h_ciphertext)?;
-    /// cuda_engine.destroy(d_ciphertext);
-    /// default_engine.destroy(h_ciphertext_output)?;
     /// #
     /// # Ok(())
     /// # }
@@ -164,10 +155,6 @@ impl LweCiphertextConversionEngine<LweCiphertext64, CudaLweCiphertext64> for Cud
     ///
     /// assert_eq!(d_ciphertext.lwe_dimension(), lwe_dimension);
     ///
-    /// default_engine.destroy(h_key)?;
-    /// default_engine.destroy(h_plaintext)?;
-    /// default_engine.destroy(h_ciphertext)?;
-    /// cuda_engine.destroy(d_ciphertext);
     /// #
     /// # Ok(())
     /// # }
@@ -230,11 +217,6 @@ impl LweCiphertextConversionEngine<CudaLweCiphertext64, LweCiphertext64> for Cud
     /// assert_eq!(h_ciphertext_output.lwe_dimension(), lwe_dimension);
     /// assert_eq!(h_ciphertext, h_ciphertext_output);
     ///
-    /// default_engine.destroy(h_key)?;
-    /// default_engine.destroy(h_plaintext)?;
-    /// default_engine.destroy(h_ciphertext)?;
-    /// cuda_engine.destroy(d_ciphertext);
-    /// default_engine.destroy(h_ciphertext_output)?;
     /// #
     /// # Ok(())
     /// # }

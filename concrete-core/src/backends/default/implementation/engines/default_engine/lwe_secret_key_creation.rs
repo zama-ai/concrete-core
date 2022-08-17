@@ -26,7 +26,6 @@ impl LweSecretKeyCreationEngine<LweSecretKey32> for DefaultEngine {
     /// let lwe_secret_key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
     /// #
     /// assert_eq!(lwe_secret_key.lwe_dimension(), lwe_dimension);
-    /// engine.destroy(lwe_secret_key)?;
     /// #
     /// # Ok(())
     /// # }
@@ -71,7 +70,6 @@ impl LweSecretKeyCreationEngine<LweSecretKey64> for DefaultEngine {
     /// let lwe_secret_key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
     /// #
     /// assert_eq!(lwe_secret_key.lwe_dimension(), lwe_dimension);
-    /// engine.destroy(lwe_secret_key)?;
     /// #
     /// # Ok(())
     /// # }

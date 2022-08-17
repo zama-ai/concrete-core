@@ -39,10 +39,6 @@ impl LweCiphertextDiscardingOppositeEngine<LweCiphertext32, LweCiphertext32> for
     /// #
     /// assert_eq!(ciphertext_2.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext_1)?;
-    /// engine.destroy(ciphertext_2)?;
     /// #
     /// # Ok(())
     /// # }
@@ -98,10 +94,6 @@ impl LweCiphertextDiscardingOppositeEngine<LweCiphertext64, LweCiphertext64> for
     /// #
     /// assert_eq!(ciphertext_2.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext_1)?;
-    /// engine.destroy(ciphertext_2)?;
     /// #
     /// # Ok(())
     /// # }
@@ -170,10 +162,6 @@ impl LweCiphertextDiscardingOppositeEngine<LweCiphertextView32<'_>, LweCiphertex
     /// #
     /// assert_eq!(ciphertext_2.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext_1)?;
-    /// engine.destroy(ciphertext_2)?;
     /// #
     /// # Ok(())
     /// # }
@@ -242,10 +230,6 @@ impl LweCiphertextDiscardingOppositeEngine<LweCiphertextView64<'_>, LweCiphertex
     /// #
     /// assert_eq!(ciphertext_2.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext_1)?;
-    /// engine.destroy(ciphertext_2)?;
     /// #
     /// # Ok(())
     /// # }

@@ -64,13 +64,6 @@ impl
     /// #     glwe.polynomial_size(),
     /// # );
     ///
-    /// default_engine.destroy(key)?;
-    /// default_engine.destroy(plaintext_ggsw)?;
-    /// default_engine.destroy(plaintext_glwe)?;
-    /// default_engine.destroy(ggsw)?;
-    /// fftw_engine.destroy(complex_ggsw)?;
-    /// default_engine.destroy(glwe)?;
-    /// default_engine.destroy(product)?;
     /// #
     /// # Ok(())
     /// # }
@@ -169,13 +162,6 @@ impl
     /// #     glwe.polynomial_size(),
     /// # );
     ///
-    /// default_engine.destroy(key)?;
-    /// default_engine.destroy(plaintext_ggsw)?;
-    /// default_engine.destroy(plaintext_glwe)?;
-    /// default_engine.destroy(ggsw)?;
-    /// fftw_engine.destroy(complex_ggsw)?;
-    /// default_engine.destroy(glwe)?;
-    /// default_engine.destroy(product)?;
     /// #
     /// # Ok(())
     /// # }

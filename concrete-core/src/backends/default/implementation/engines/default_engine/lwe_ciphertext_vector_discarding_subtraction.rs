@@ -45,10 +45,6 @@ impl LweCiphertextVectorDiscardingSubtractionEngine<LweCiphertextVector32, LweCi
     /// #
     /// assert_eq!(output_ciphertext_vector.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext_vector)?;
-    /// engine.destroy(output_ciphertext_vector)?;
     /// #
     /// # Ok(())
     /// # }
@@ -121,10 +117,6 @@ impl LweCiphertextVectorDiscardingSubtractionEngine<LweCiphertextVector64, LweCi
     /// #
     /// assert_eq!(output_ciphertext_vector.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext_vector)?;
-    /// engine.destroy(output_ciphertext_vector)?;
     /// #
     /// # Ok(())
     /// # }

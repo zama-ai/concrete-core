@@ -47,10 +47,6 @@ impl GlweCiphertextDiscardingEncryptionEngine<GlweSecretKey32, PlaintextVector32
     /// assert_eq!(ciphertext.glwe_dimension(), glwe_dimension);
     /// assert_eq!(ciphertext.polynomial_size(), polynomial_size);
     ///
-    /// engine.destroy(ciphertext)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(key_1)?;
-    /// engine.destroy(key_2)?;
     /// #
     /// # Ok(())
     /// # }
@@ -121,10 +117,6 @@ impl GlweCiphertextDiscardingEncryptionEngine<GlweSecretKey64, PlaintextVector64
     /// assert_eq!(ciphertext.glwe_dimension(), glwe_dimension);
     /// assert_eq!(ciphertext.polynomial_size(), polynomial_size);
     ///
-    /// engine.destroy(ciphertext)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(key_1)?;
-    /// engine.destroy(key_2)?;
     /// #
     /// # Ok(())
     /// # }

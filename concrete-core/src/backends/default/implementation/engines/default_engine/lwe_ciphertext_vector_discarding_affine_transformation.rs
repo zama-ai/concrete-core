@@ -55,12 +55,6 @@ impl
     /// #
     /// assert_eq!(output_ciphertext.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(weights)?;
-    /// engine.destroy(bias)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext_vector)?;
-    /// engine.destroy(output_ciphertext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -143,12 +137,6 @@ impl
     /// #
     /// assert_eq!(output_ciphertext.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(weights)?;
-    /// engine.destroy(bias)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext_vector)?;
-    /// engine.destroy(output_ciphertext)?;
     /// #
     /// # Ok(())
     /// # }

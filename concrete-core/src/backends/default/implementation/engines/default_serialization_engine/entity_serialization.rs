@@ -81,8 +81,6 @@ impl EntitySerializationEngine<Cleartext32, Vec<u8>> for DefaultSerializationEng
     /// let serialized = serialization_engine.serialize(&cleartext)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(cleartext, recovered);
-    /// engine.destroy(cleartext)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -131,8 +129,6 @@ impl EntitySerializationEngine<Cleartext64, Vec<u8>> for DefaultSerializationEng
     /// let serialized = serialization_engine.serialize(&cleartext)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(cleartext, recovered);
-    /// engine.destroy(cleartext)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -181,8 +177,6 @@ impl EntitySerializationEngine<CleartextF64, Vec<u8>> for DefaultSerializationEn
     /// let serialized = serialization_engine.serialize(&cleartext)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(cleartext, recovered);
-    /// engine.destroy(cleartext)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -232,8 +226,6 @@ impl EntitySerializationEngine<CleartextVector32, Vec<u8>> for DefaultSerializat
     /// let serialized = serialization_engine.serialize(&cleartext_vector)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(cleartext_vector, recovered);
-    /// engine.destroy(cleartext_vector)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -283,8 +275,6 @@ impl EntitySerializationEngine<CleartextVector64, Vec<u8>> for DefaultSerializat
     /// let serialized = serialization_engine.serialize(&cleartext_vector)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(cleartext_vector, recovered);
-    /// engine.destroy(cleartext_vector)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -334,8 +324,6 @@ impl EntitySerializationEngine<CleartextVectorF64, Vec<u8>> for DefaultSerializa
     /// let serialized = serialization_engine.serialize(&cleartext_vector)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(cleartext_vector, recovered);
-    /// engine.destroy(cleartext_vector)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -401,10 +389,6 @@ impl EntitySerializationEngine<GgswCiphertext32, Vec<u8>> for DefaultSerializati
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(ciphertext, recovered);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -470,10 +454,6 @@ impl EntitySerializationEngine<GgswCiphertext64, Vec<u8>> for DefaultSerializati
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(ciphertext, recovered);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -591,10 +571,6 @@ impl EntitySerializationEngine<GlweCiphertext32, Vec<u8>> for DefaultSerializati
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(ciphertext, recovered);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -656,10 +632,6 @@ impl EntitySerializationEngine<GlweCiphertext64, Vec<u8>> for DefaultSerializati
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(ciphertext, recovered);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -727,9 +699,6 @@ impl<'b> EntitySerializationEngine<GlweCiphertextView32<'b>, Vec<u8>>
     /// let recovered_buffer = engine.consume_retrieve_glwe_ciphertext(recovered)?;
     /// assert_eq!(raw_buffer, recovered_buffer);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(view)?;
     /// #
     /// # Ok(())
     /// # }
@@ -797,9 +766,6 @@ impl<'b> EntitySerializationEngine<GlweCiphertextView64<'b>, Vec<u8>>
     /// let recovered_buffer = engine.consume_retrieve_glwe_ciphertext(recovered)?;
     /// assert_eq!(raw_buffer, recovered_buffer);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(view)?;
     /// #
     /// # Ok(())
     /// # }
@@ -863,13 +829,10 @@ impl<'b> EntitySerializationEngine<GlweCiphertextMutView32<'b>, Vec<u8>>
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&view)?;
-    /// engine.destroy(view)?;
     /// let recovered: GlweCiphertext32 = serialization_engine.deserialize(serialized.as_slice())?;
     /// let recovered_buffer = engine.consume_retrieve_glwe_ciphertext(recovered)?;
     /// assert_eq!(raw_buffer, recovered_buffer);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext_vector)?;
     /// #
     /// # Ok(())
     /// # }
@@ -933,13 +896,10 @@ impl<'b> EntitySerializationEngine<GlweCiphertextMutView64<'b>, Vec<u8>>
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&view)?;
-    /// engine.destroy(view)?;
     /// let recovered: GlweCiphertext64 = serialization_engine.deserialize(serialized.as_slice())?;
     /// let recovered_buffer = engine.consume_retrieve_glwe_ciphertext(recovered)?;
     /// assert_eq!(raw_buffer, recovered_buffer);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext_vector)?;
     /// #
     /// # Ok(())
     /// # }
@@ -1001,10 +961,6 @@ impl EntitySerializationEngine<GlweCiphertextVector32, Vec<u8>> for DefaultSeria
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(ciphertext_vector, recovered);
     ///
-    /// engine.destroy(ciphertext_vector)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(key)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -1066,10 +1022,6 @@ impl EntitySerializationEngine<GlweCiphertextVector64, Vec<u8>> for DefaultSeria
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(ciphertext_vector, recovered);
     ///
-    /// engine.destroy(ciphertext_vector)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(key)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -1124,8 +1076,6 @@ impl EntitySerializationEngine<GlweSecretKey32, Vec<u8>> for DefaultSerializatio
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(glwe_secret_key, recovered);
     ///
-    /// engine.destroy(glwe_secret_key)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -1180,8 +1130,6 @@ impl EntitySerializationEngine<GlweSecretKey64, Vec<u8>> for DefaultSerializatio
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(glwe_secret_key, recovered);
     ///
-    /// engine.destroy(glwe_secret_key)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -1244,10 +1192,6 @@ impl EntitySerializationEngine<GlweSeededCiphertext32, Vec<u8>> for DefaultSeria
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(seeded_ciphertext, recovered);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(seeded_ciphertext)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -1310,10 +1254,6 @@ impl EntitySerializationEngine<GlweSeededCiphertext64, Vec<u8>> for DefaultSeria
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(seeded_ciphertext, recovered);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(seeded_ciphertext)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -1377,10 +1317,6 @@ impl EntitySerializationEngine<GlweSeededCiphertextVector32, Vec<u8>>
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(seeded_ciphertext_vector, recovered);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(seeded_ciphertext_vector)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -1444,10 +1380,6 @@ impl EntitySerializationEngine<GlweSeededCiphertextVector64, Vec<u8>>
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(seeded_ciphertext_vector, recovered);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(seeded_ciphertext_vector)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -1509,10 +1441,6 @@ impl EntitySerializationEngine<LweBootstrapKey32, Vec<u8>> for DefaultSerializat
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(bsk, recovered);
     ///
-    /// engine.destroy(lwe_sk)?;
-    /// engine.destroy(glwe_sk)?;
-    /// engine.destroy(bsk)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -1574,10 +1502,6 @@ impl EntitySerializationEngine<LweBootstrapKey64, Vec<u8>> for DefaultSerializat
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(bsk, recovered);
     ///
-    /// engine.destroy(lwe_sk)?;
-    /// engine.destroy(glwe_sk)?;
-    /// engine.destroy(bsk)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -1637,10 +1561,6 @@ impl EntitySerializationEngine<LweCiphertext32, Vec<u8>> for DefaultSerializatio
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(ciphertext, recovered);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -1700,10 +1620,6 @@ impl EntitySerializationEngine<LweCiphertext64, Vec<u8>> for DefaultSerializatio
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(ciphertext, recovered);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -1767,9 +1683,6 @@ impl<'b> EntitySerializationEngine<LweCiphertextView32<'b>, Vec<u8>>
     /// let recovered_buffer = engine.consume_retrieve_lwe_ciphertext(recovered)?;
     /// assert_eq!(raw_buffer, recovered_buffer);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(view)?;
     /// #
     /// # Ok(())
     /// # }
@@ -1835,9 +1748,6 @@ impl<'b> EntitySerializationEngine<LweCiphertextView64<'b>, Vec<u8>>
     /// let recovered_buffer = engine.consume_retrieve_lwe_ciphertext(recovered)?;
     /// assert_eq!(raw_buffer, recovered_buffer);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(view)?;
     /// #
     /// # Ok(())
     /// # }
@@ -1897,13 +1807,10 @@ impl<'b> EntitySerializationEngine<LweCiphertextMutView32<'b>, Vec<u8>>
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&view)?;
-    /// engine.destroy(view)?;
     /// let recovered: LweCiphertext32 = serialization_engine.deserialize(serialized.as_slice())?;
     /// let recovered_buffer = engine.consume_retrieve_lwe_ciphertext(recovered)?;
     /// assert_eq!(raw_buffer, recovered_buffer);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -1965,13 +1872,10 @@ impl<'b> EntitySerializationEngine<LweCiphertextMutView64<'b>, Vec<u8>>
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&view)?;
-    /// engine.destroy(view)?;
     /// let recovered: LweCiphertext64 = serialization_engine.deserialize(serialized.as_slice())?;
     /// let recovered_buffer = engine.consume_retrieve_lwe_ciphertext(recovered)?;
     /// assert_eq!(raw_buffer, recovered_buffer);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -2031,10 +1935,6 @@ impl EntitySerializationEngine<LweCiphertextVector32, Vec<u8>> for DefaultSerial
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(ciphertext_vector, recovered);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext_vector)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -2095,10 +1995,6 @@ impl EntitySerializationEngine<LweCiphertextVector64, Vec<u8>> for DefaultSerial
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(ciphertext_vector, recovered);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext_vector)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -2167,10 +2063,6 @@ impl EntitySerializationEngine<LweKeyswitchKey32, Vec<u8>> for DefaultSerializat
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(keyswitch_key, recovered);
     ///
-    /// engine.destroy(input_key)?;
-    /// engine.destroy(output_key)?;
-    /// engine.destroy(keyswitch_key)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -2239,10 +2131,6 @@ impl EntitySerializationEngine<LweKeyswitchKey64, Vec<u8>> for DefaultSerializat
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(keyswitch_key, recovered);
     ///
-    /// engine.destroy(input_key)?;
-    /// engine.destroy(output_key)?;
-    /// engine.destroy(keyswitch_key)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -2295,8 +2183,6 @@ impl EntitySerializationEngine<LweSecretKey32, Vec<u8>> for DefaultSerialization
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(lwe_secret_key, recovered);
     ///
-    /// engine.destroy(lwe_secret_key)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -2349,8 +2235,6 @@ impl EntitySerializationEngine<LweSecretKey64, Vec<u8>> for DefaultSerialization
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(lwe_secret_key, recovered);
     ///
-    /// engine.destroy(lwe_secret_key)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -2413,9 +2297,6 @@ impl EntitySerializationEngine<LweSeededBootstrapKey32, Vec<u8>> for DefaultSeri
     ///
     /// assert_eq!(bsk, recovered);
     ///
-    /// engine.destroy(lwe_sk)?;
-    /// engine.destroy(glwe_sk)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -2479,9 +2360,6 @@ impl EntitySerializationEngine<LweSeededBootstrapKey64, Vec<u8>> for DefaultSeri
     ///
     /// assert_eq!(bsk, recovered);
     ///
-    /// engine.destroy(lwe_sk)?;
-    /// engine.destroy(glwe_sk)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -2542,10 +2420,6 @@ impl EntitySerializationEngine<LweSeededCiphertext32, Vec<u8>> for DefaultSerial
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(ciphertext, recovered);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -2606,10 +2480,6 @@ impl EntitySerializationEngine<LweSeededCiphertext64, Vec<u8>> for DefaultSerial
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(ciphertext, recovered);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -2672,10 +2542,6 @@ impl EntitySerializationEngine<LweSeededCiphertextVector32, Vec<u8>>
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(ciphertext_vector, recovered);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext_vector)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -2738,10 +2604,6 @@ impl EntitySerializationEngine<LweSeededCiphertextVector64, Vec<u8>>
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(ciphertext_vector, recovered);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext_vector)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -2810,10 +2672,6 @@ impl EntitySerializationEngine<LweSeededKeyswitchKey32, Vec<u8>> for DefaultSeri
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(seeded_keyswitch_key, recovered);
     ///
-    /// engine.destroy(input_key)?;
-    /// engine.destroy(output_key)?;
-    /// engine.destroy(seeded_keyswitch_key)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -2882,10 +2740,6 @@ impl EntitySerializationEngine<LweSeededKeyswitchKey64, Vec<u8>> for DefaultSeri
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(seeded_keyswitch_key, recovered);
     ///
-    /// engine.destroy(input_key)?;
-    /// engine.destroy(output_key)?;
-    /// engine.destroy(seeded_keyswitch_key)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -2954,10 +2808,6 @@ impl EntitySerializationEngine<PackingKeyswitchKey32, Vec<u8>> for DefaultSerial
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(packing_keyswitch_key, recovered);
     ///
-    /// engine.destroy(input_key)?;
-    /// engine.destroy(output_key)?;
-    /// engine.destroy(packing_keyswitch_key)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -3026,10 +2876,6 @@ impl EntitySerializationEngine<PackingKeyswitchKey64, Vec<u8>> for DefaultSerial
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(packing_keyswitch_key, recovered);
     ///
-    /// engine.destroy(input_key)?;
-    /// engine.destroy(output_key)?;
-    /// engine.destroy(packing_keyswitch_key)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -3081,8 +2927,6 @@ impl EntitySerializationEngine<Plaintext32, Vec<u8>> for DefaultSerializationEng
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(plaintext, recovered);
     ///
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -3133,8 +2977,6 @@ impl EntitySerializationEngine<Plaintext64, Vec<u8>> for DefaultSerializationEng
     /// let serialized = serialization_engine.serialize(&plaintext)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(plaintext, recovered);
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -3187,8 +3029,6 @@ impl EntitySerializationEngine<PlaintextVector32, Vec<u8>> for DefaultSerializat
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(plaintext_vector, recovered);
     ///
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -3241,8 +3081,6 @@ impl EntitySerializationEngine<PlaintextVector64, Vec<u8>> for DefaultSerializat
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(plaintext_vector, recovered);
     ///
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -3298,8 +3136,6 @@ impl EntitySerializationEngine<FloatEncoder, Vec<u8>> for DefaultSerializationEn
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(encoder, recovered);
     ///
-    /// engine.destroy(encoder)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -3358,8 +3194,6 @@ impl EntitySerializationEngine<FloatEncoderVector, Vec<u8>> for DefaultSerializa
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(encoder_vector, recovered);
     ///
-    /// engine.destroy(encoder_vector)?;
-    /// engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }

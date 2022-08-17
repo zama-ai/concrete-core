@@ -51,9 +51,6 @@ impl
     ///     )?;
     /// assert_eq!(ciphertext_vector.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext_vector)?;
     /// #
     /// # Ok(())
     /// # }
@@ -128,9 +125,6 @@ impl
     ///     )?;
     /// assert_eq!(ciphertext_vector.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext_vector)?;
     /// #
     /// # Ok(())
     /// # }

@@ -31,9 +31,6 @@ impl LweCiphertextTrivialEncryptionEngine<Plaintext32, LweCiphertext32> for Defa
     ///
     /// assert_eq!(ciphertext.lwe_dimension().to_lwe_size(), lwe_size);
     ///
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext)?;
-    ///
     /// # Ok(())
     /// # }
     /// ```
@@ -80,9 +77,6 @@ impl LweCiphertextTrivialEncryptionEngine<Plaintext64, LweCiphertext64> for Defa
     ///     engine.trivially_encrypt_lwe_ciphertext(lwe_size, &plaintext)?;
     ///
     /// assert_eq!(ciphertext.lwe_dimension().to_lwe_size(), lwe_size);
-    ///
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext)?;
     ///
     /// # Ok(())
     /// # }

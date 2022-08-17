@@ -28,7 +28,6 @@ impl CleartextVectorDiscardingRetrievalEngine<CleartextVector32, u32> for Defaul
     /// engine.discard_retrieve_cleartext_vector(retrieved.as_mut_slice(), &cleartext_vector)?;
     ///
     /// assert_eq!(retrieved[0], 3_u32);
-    /// engine.destroy(cleartext_vector)?;
     /// #
     /// # Ok(())
     /// # }
@@ -74,7 +73,6 @@ impl CleartextVectorDiscardingRetrievalEngine<CleartextVector64, u64> for Defaul
     /// engine.discard_retrieve_cleartext_vector(retrieved.as_mut_slice(), &cleartext_vector)?;
     ///
     /// assert_eq!(retrieved[0], 3_u64);
-    /// engine.destroy(cleartext_vector)?;
     /// #
     /// # Ok(())
     /// # }
@@ -120,7 +118,6 @@ impl CleartextVectorDiscardingRetrievalEngine<CleartextVectorF64, f64> for Defau
     /// engine.discard_retrieve_cleartext_vector(retrieved.as_mut_slice(), &cleartext_vector)?;
     ///
     /// assert_eq!(retrieved[0], 3.0_f64);
-    /// engine.destroy(cleartext_vector)?;
     /// #
     /// # Ok(())
     /// # }

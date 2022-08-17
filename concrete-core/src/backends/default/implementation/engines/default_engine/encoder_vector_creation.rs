@@ -28,7 +28,6 @@ impl EncoderVectorCreationEngine<FloatEncoderMinMaxConfig, FloatEncoderVector> f
     ///     ]
     ///     .as_slice(),
     /// )?;
-    /// engine.destroy(encoder_vector)?;
     /// #
     /// # Ok(())
     /// # }
@@ -86,7 +85,6 @@ impl EncoderVectorCreationEngine<FloatEncoderCenterRadiusConfig, FloatEncoderVec
     ///     };
     ///     1
     /// ])?;
-    /// engine.destroy(encoder_vector)?;
     /// #
     /// # Ok(())
     /// # }

@@ -35,9 +35,6 @@ impl CleartextVectorEncodingEngine<FloatEncoderVector, CleartextVectorF64, Plain
     ///     cleartext_vector.cleartext_count().0,
     ///     plaintext_vector.plaintext_count().0
     /// );
-    /// engine.destroy(encoder_vector)?;
-    /// engine.destroy(cleartext_vector)?;
-    /// engine.destroy(plaintext_vector)?;
     /// #
     /// # Ok(())
     /// # }
@@ -108,9 +105,6 @@ impl CleartextVectorEncodingEngine<FloatEncoderVector, CleartextVectorF64, Plain
     ///     cleartext_vector.cleartext_count().0,
     ///     plaintext_vector.plaintext_count().0
     /// );
-    /// engine.destroy(encoder_vector)?;
-    /// engine.destroy(cleartext_vector)?;
-    /// engine.destroy(plaintext_vector)?;
     /// #
     /// # Ok(())
     /// # }

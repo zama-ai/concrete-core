@@ -52,9 +52,6 @@ impl LweSeededBootstrapKeyCreationEngine<LweSecretKey32, GlweSecretKey32, LweSee
     /// assert_eq!(bsk.decomposition_base_log(), dec_bl);
     /// assert_eq!(bsk.decomposition_level_count(), dec_lc);
     ///
-    /// default_engine.destroy(lwe_sk)?;
-    /// default_engine.destroy(glwe_sk)?;
-    /// default_engine.destroy(bsk)?;
     /// #
     /// # Ok(())
     /// # }
@@ -151,9 +148,6 @@ impl LweSeededBootstrapKeyCreationEngine<LweSecretKey64, GlweSecretKey64, LweSee
     /// assert_eq!(bsk.decomposition_base_log(), dec_bl);
     /// assert_eq!(bsk.decomposition_level_count(), dec_lc);
     ///
-    /// default_engine.destroy(lwe_sk)?;
-    /// default_engine.destroy(glwe_sk)?;
-    /// default_engine.destroy(bsk)?;
     /// #
     /// # Ok(())
     /// # }

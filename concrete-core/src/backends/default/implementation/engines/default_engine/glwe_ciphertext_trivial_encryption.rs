@@ -37,9 +37,6 @@ impl GlweCiphertextTrivialEncryptionEngine<PlaintextVector32, GlweCiphertext32> 
     /// assert_eq!(ciphertext.glwe_dimension(), glwe_dimension);
     /// assert_eq!(ciphertext.polynomial_size(), polynomial_size);
     ///
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext)?;
-    ///
     /// # Ok(())
     /// # }
     /// ```
@@ -88,9 +85,6 @@ impl GlweCiphertextTrivialEncryptionEngine<PlaintextVector64, GlweCiphertext64> 
     ///
     /// assert_eq!(ciphertext.glwe_dimension(), glwe_dimension);
     /// assert_eq!(ciphertext.polynomial_size(), polynomial_size);
-    ///
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext)?;
     ///
     /// # Ok(())
     /// # }

@@ -30,7 +30,6 @@ impl GlweSecretKeyCreationEngine<GlweSecretKey32> for DefaultEngine {
     /// assert_eq!(glwe_secret_key.glwe_dimension(), glwe_dimension);
     /// assert_eq!(glwe_secret_key.polynomial_size(), polynomial_size);
     ///
-    /// engine.destroy(glwe_secret_key)?;
     /// #
     /// # Ok(())
     /// # }
@@ -82,7 +81,6 @@ impl GlweSecretKeyCreationEngine<GlweSecretKey64> for DefaultEngine {
     /// assert_eq!(glwe_secret_key.glwe_dimension(), glwe_dimension);
     /// assert_eq!(glwe_secret_key.polynomial_size(), polynomial_size);
     ///
-    /// engine.destroy(glwe_secret_key)?;
     /// #
     /// # Ok(())
     /// # }

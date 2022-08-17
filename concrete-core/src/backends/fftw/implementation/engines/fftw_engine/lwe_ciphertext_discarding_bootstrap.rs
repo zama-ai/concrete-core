@@ -73,15 +73,6 @@ impl
     /// #
     /// assert_eq!(output.lwe_dimension(), lwe_dim_output);
     ///
-    /// default_engine.destroy(lwe_sk)?;
-    /// default_engine.destroy(glwe_sk)?;
-    /// fftw_engine.destroy(bsk)?;
-    /// default_engine.destroy(lwe_sk_output)?;
-    /// default_engine.destroy(plaintext)?;
-    /// default_engine.destroy(plaintext_vector)?;
-    /// default_engine.destroy(acc)?;
-    /// default_engine.destroy(input)?;
-    /// default_engine.destroy(output)?;
     /// #
     /// # Ok(())
     /// # }
@@ -173,15 +164,6 @@ impl
     /// #
     /// assert_eq!(output.lwe_dimension(), lwe_dim_output);
     ///
-    /// default_engine.destroy(lwe_sk)?;
-    /// default_engine.destroy(glwe_sk)?;
-    /// fftw_engine.destroy(bsk)?;
-    /// default_engine.destroy(lwe_sk_output)?;
-    /// default_engine.destroy(plaintext)?;
-    /// default_engine.destroy(plaintext_vector)?;
-    /// default_engine.destroy(acc)?;
-    /// default_engine.destroy(input)?;
-    /// default_engine.destroy(output)?;
     /// #
     /// # Ok(())
     /// # }
@@ -291,15 +273,6 @@ impl
     /// #
     /// assert_eq!(output.lwe_dimension(), lwe_dim_output);
     ///
-    /// default_engine.destroy(lwe_sk)?;
-    /// default_engine.destroy(glwe_sk)?;
-    /// fftw_engine.destroy(bsk)?;
-    /// default_engine.destroy(lwe_sk_output)?;
-    /// default_engine.destroy(plaintext)?;
-    /// default_engine.destroy(plaintext_vector)?;
-    /// default_engine.destroy(acc)?;
-    /// default_engine.destroy(input)?;
-    /// default_engine.destroy(output)?;
     /// #
     /// # Ok(())
     /// # }
@@ -409,15 +382,6 @@ impl
     /// #
     /// assert_eq!(output.lwe_dimension(), lwe_dim_output);
     ///
-    /// default_engine.destroy(lwe_sk)?;
-    /// default_engine.destroy(glwe_sk)?;
-    /// fftw_engine.destroy(bsk)?;
-    /// default_engine.destroy(lwe_sk_output)?;
-    /// default_engine.destroy(plaintext)?;
-    /// default_engine.destroy(plaintext_vector)?;
-    /// default_engine.destroy(acc)?;
-    /// default_engine.destroy(input)?;
-    /// default_engine.destroy(output)?;
     /// #
     /// # Ok(())
     /// # }

@@ -101,19 +101,6 @@ impl
     ///     &d_fourier_bsk,
     /// )?;
     ///
-    /// default_engine.destroy(h_input_key)?;
-    /// default_engine.destroy(h_input_plaintext)?;
-    /// default_engine.destroy(h_input_ciphertext)?;
-    /// default_engine.destroy(h_lut_plaintext_vector)?;
-    /// default_engine.destroy(h_lut_key)?;
-    /// default_engine.destroy(h_lut)?;
-    /// default_engine.destroy(h_bootstrap_key)?;
-    /// default_engine.destroy(h_dummy_key)?;
-    /// default_engine.destroy(h_zero_output_ciphertext)?;
-    /// cuda_engine.destroy(d_input_ciphertext)?;
-    /// cuda_engine.destroy(d_input_lut)?;
-    /// cuda_engine.destroy(d_fourier_bsk)?;
-    /// cuda_engine.destroy(d_output_ciphertext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -244,19 +231,6 @@ impl
     ///     &d_fourier_bsk,
     /// )?;
     ///
-    /// default_engine.destroy(h_input_key)?;
-    /// default_engine.destroy(h_input_plaintext)?;
-    /// default_engine.destroy(h_input_ciphertext)?;
-    /// default_engine.destroy(h_lut_plaintext_vector)?;
-    /// default_engine.destroy(h_lut_key)?;
-    /// default_engine.destroy(h_lut)?;
-    /// default_engine.destroy(h_bootstrap_key)?;
-    /// default_engine.destroy(h_dummy_key)?;
-    /// default_engine.destroy(h_zero_output_ciphertext)?;
-    /// cuda_engine.destroy(d_input_ciphertext)?;
-    /// cuda_engine.destroy(d_input_lut)?;
-    /// cuda_engine.destroy(d_fourier_bsk)?;
-    /// cuda_engine.destroy(d_output_ciphertext)?;
     /// #
     /// # Ok(())
     /// # }

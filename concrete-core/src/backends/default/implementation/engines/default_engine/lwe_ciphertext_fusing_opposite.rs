@@ -34,9 +34,6 @@ impl LweCiphertextFusingOppositeEngine<LweCiphertext32> for DefaultEngine {
     /// #
     /// assert_eq!(ciphertext.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -84,9 +81,6 @@ impl LweCiphertextFusingOppositeEngine<LweCiphertext64> for DefaultEngine {
     /// #
     /// assert_eq!(ciphertext.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext)?;
     /// #
     /// # Ok(())
     /// # }

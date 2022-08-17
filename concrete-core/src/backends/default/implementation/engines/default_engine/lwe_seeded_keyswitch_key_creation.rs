@@ -59,9 +59,6 @@ impl LweSeededKeyswitchKeyCreationEngine<LweSecretKey32, LweSecretKey32, LweSeed
     /// assert_eq!(seeded_keyswitch_key.input_lwe_dimension(), input_lwe_dimension);
     /// assert_eq!(seeded_keyswitch_key.output_lwe_dimension(), output_lwe_dimension);
     ///
-    /// engine.destroy(input_key)?;
-    /// engine.destroy(output_key)?;
-    /// engine.destroy(seeded_keyswitch_key)?;
     /// #
     /// # Ok(())
     /// # }
@@ -164,9 +161,6 @@ impl LweSeededKeyswitchKeyCreationEngine<LweSecretKey64, LweSecretKey64, LweSeed
     /// assert_eq!(seeded_keyswitch_key.input_lwe_dimension(), input_lwe_dimension);
     /// assert_eq!(seeded_keyswitch_key.output_lwe_dimension(), output_lwe_dimension);
     ///
-    /// engine.destroy(input_key)?;
-    /// engine.destroy(output_key)?;
-    /// engine.destroy(seeded_keyswitch_key)?;
     /// #
     /// # Ok(())
     /// # }
