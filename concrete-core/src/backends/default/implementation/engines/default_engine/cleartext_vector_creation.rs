@@ -24,7 +24,6 @@ impl CleartextVectorCreationEngine<u32, CleartextVector32> for DefaultEngine {
     /// let cleartext_vector: CleartextVector32 = engine.create_cleartext_vector(&input)?;
     /// #
     /// assert_eq!(cleartext_vector.cleartext_count(), CleartextCount(100));
-    /// engine.destroy(cleartext_vector)?;
     /// #
     /// # Ok(())
     /// # }
@@ -62,7 +61,6 @@ impl CleartextVectorCreationEngine<u64, CleartextVector64> for DefaultEngine {
     /// let cleartext_vector: CleartextVector64 = engine.create_cleartext_vector(&input)?;
     /// #
     /// assert_eq!(cleartext_vector.cleartext_count(), CleartextCount(100));
-    /// engine.destroy(cleartext_vector)?;
     /// #
     /// # Ok(())
     /// # }
@@ -100,7 +98,6 @@ impl CleartextVectorCreationEngine<f64, CleartextVectorF64> for DefaultEngine {
     /// let cleartext_vector: CleartextVectorF64 = engine.create_cleartext_vector(&input)?;
     /// #
     /// assert_eq!(cleartext_vector.cleartext_count(), CleartextCount(100));
-    /// engine.destroy(cleartext_vector)?;
     /// #
     /// # Ok(())
     /// # }

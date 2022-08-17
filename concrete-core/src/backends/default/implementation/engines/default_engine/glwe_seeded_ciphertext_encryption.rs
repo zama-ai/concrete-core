@@ -48,9 +48,6 @@ impl
     /// assert_eq!(seeded_ciphertext.glwe_dimension(), glwe_dimension);
     /// assert_eq!(seeded_ciphertext.polynomial_size(), polynomial_size);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(seeded_ciphertext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -128,9 +125,6 @@ impl
     /// assert_eq!(seeded_ciphertext.glwe_dimension(), glwe_dimension);
     /// assert_eq!(seeded_ciphertext.polynomial_size(), polynomial_size);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(seeded_ciphertext)?;
     /// #
     /// # Ok(())
     /// # }

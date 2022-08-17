@@ -42,10 +42,6 @@ impl GlweCiphertextVectorTrivialDecryptionEngine<GlweCiphertextVector32, Plainte
     ///
     /// assert_eq!(output.plaintext_count(), PlaintextCount(8));
     ///
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext_vector)?;
-    /// engine.destroy(output)?;
-    ///
     /// # Ok(())
     /// # }
     /// ```
@@ -110,10 +106,6 @@ impl GlweCiphertextVectorTrivialDecryptionEngine<GlweCiphertextVector64, Plainte
     ///     engine.trivially_decrypt_glwe_ciphertext_vector(&ciphertext_vector)?;
     ///
     /// assert_eq!(output.plaintext_count(), PlaintextCount(8));
-    ///
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext_vector)?;
-    /// engine.destroy(output)?;
     ///
     /// # Ok(())
     /// # }

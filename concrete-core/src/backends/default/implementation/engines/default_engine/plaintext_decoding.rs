@@ -26,10 +26,6 @@ impl PlaintextDecodingEngine<FloatEncoder, Plaintext32, CleartextF64> for Defaul
     /// let cleartext: CleartextF64 = engine.create_cleartext(&5.)?;
     /// let plaintext: Plaintext32 = engine.encode_cleartext(&encoder, &cleartext)?;
     /// let recovered_cleartext: CleartextF64 = engine.decode_plaintext(&encoder, &plaintext)?;
-    /// engine.destroy(encoder)?;
-    /// engine.destroy(cleartext)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(recovered_cleartext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -73,10 +69,6 @@ impl PlaintextDecodingEngine<FloatEncoder, Plaintext64, CleartextF64> for Defaul
     /// let cleartext: CleartextF64 = engine.create_cleartext(&5.)?;
     /// let plaintext: Plaintext64 = engine.encode_cleartext(&encoder, &cleartext)?;
     /// let recovered_cleartext: CleartextF64 = engine.decode_plaintext(&encoder, &plaintext)?;
-    /// engine.destroy(encoder)?;
-    /// engine.destroy(cleartext)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(recovered_cleartext)?;
     /// #
     /// # Ok(())
     /// # }

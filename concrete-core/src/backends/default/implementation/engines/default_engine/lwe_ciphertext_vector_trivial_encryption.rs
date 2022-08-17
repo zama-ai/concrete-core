@@ -37,9 +37,6 @@ impl LweCiphertextVectorTrivialEncryptionEngine<PlaintextVector32, LweCiphertext
     ///     plaintext_vector.plaintext_count().0
     /// );
     ///
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext_vector)?;
-    ///
     /// # Ok(())
     /// # }
     /// ```
@@ -93,9 +90,6 @@ impl LweCiphertextVectorTrivialEncryptionEngine<PlaintextVector64, LweCiphertext
     ///     ciphertext_vector.lwe_ciphertext_count().0,
     ///     plaintext_vector.plaintext_count().0
     /// );
-    ///
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext_vector)?;
     ///
     /// # Ok(())
     /// # }

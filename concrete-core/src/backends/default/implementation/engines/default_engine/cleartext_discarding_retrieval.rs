@@ -26,7 +26,6 @@ impl CleartextDiscardingRetrievalEngine<Cleartext32, u32> for DefaultEngine {
     /// engine.discard_retrieve_cleartext(&mut output, &cleartext)?;
     ///
     /// assert_eq!(output, 3_u32);
-    /// engine.destroy(cleartext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -70,7 +69,6 @@ impl CleartextDiscardingRetrievalEngine<Cleartext64, u64> for DefaultEngine {
     /// engine.discard_retrieve_cleartext(&mut output, &cleartext)?;
     ///
     /// assert_eq!(output, 3_u64);
-    /// engine.destroy(cleartext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -114,7 +112,6 @@ impl CleartextDiscardingRetrievalEngine<CleartextF64, f64> for DefaultEngine {
     /// engine.discard_retrieve_cleartext(&mut output, &cleartext)?;
     ///
     /// assert_eq!(output, 3.0);
-    /// engine.destroy(cleartext)?;
     /// #
     /// # Ok(())
     /// # }

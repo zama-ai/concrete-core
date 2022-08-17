@@ -59,10 +59,6 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey32, CudaFourierLweBootstrapK
     /// assert_eq!(d_fourier_bsk.decomposition_base_log(), dec_bl);
     /// assert_eq!(d_fourier_bsk.decomposition_level_count(), dec_lc);
     ///
-    /// default_engine.destroy(lwe_sk)?;
-    /// default_engine.destroy(glwe_sk)?;
-    /// default_engine.destroy(bsk)?;
-    /// cuda_engine.destroy(d_fourier_bsk)?;
     /// #
     /// # Ok(())
     /// # }
@@ -167,10 +163,6 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey64, CudaFourierLweBootstrapK
     /// assert_eq!(d_fourier_bsk.decomposition_base_log(), dec_bl);
     /// assert_eq!(d_fourier_bsk.decomposition_level_count(), dec_lc);
     ///
-    /// default_engine.destroy(lwe_sk)?;
-    /// default_engine.destroy(glwe_sk)?;
-    /// default_engine.destroy(bsk)?;
-    /// cuda_engine.destroy(d_fourier_bsk)?;
     /// #
     /// # Ok(())
     /// # }

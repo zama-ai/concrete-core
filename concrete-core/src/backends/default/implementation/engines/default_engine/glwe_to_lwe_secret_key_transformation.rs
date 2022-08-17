@@ -31,8 +31,6 @@ impl GlweToLweSecretKeyTransformationEngine<GlweSecretKey32, LweSecretKey32> for
     /// let lwe_secret_key = engine.transform_glwe_secret_key_to_lwe_secret_key(glwe_secret_key)?;
     /// assert_eq!(lwe_secret_key.lwe_dimension(), LweDimension(8));
     ///
-    /// engine.destroy(lwe_secret_key)?;
-    ///
     /// # Ok(())
     /// # }
     /// ```
@@ -76,8 +74,6 @@ impl GlweToLweSecretKeyTransformationEngine<GlweSecretKey64, LweSecretKey64> for
     ///
     /// let lwe_secret_key = engine.transform_glwe_secret_key_to_lwe_secret_key(glwe_secret_key)?;
     /// assert_eq!(lwe_secret_key.lwe_dimension(), LweDimension(8));
-    ///
-    /// engine.destroy(lwe_secret_key)?;
     ///
     /// # Ok(())
     /// # }

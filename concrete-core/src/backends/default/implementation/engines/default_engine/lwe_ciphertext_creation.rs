@@ -27,7 +27,6 @@ impl LweCiphertextCreationEngine<Vec<u32>, LweCiphertext32> for DefaultEngine {
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext: LweCiphertext32 = engine.create_lwe_ciphertext(owned_container)?;
-    /// engine.destroy(ciphertext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -66,7 +65,6 @@ impl LweCiphertextCreationEngine<Vec<u64>, LweCiphertext64> for DefaultEngine {
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext: LweCiphertext64 = engine.create_lwe_ciphertext(owned_container)?;
-    /// engine.destroy(ciphertext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -109,7 +107,6 @@ impl<'data> LweCiphertextCreationEngine<&'data [u32], LweCiphertextView32<'data>
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext_view: LweCiphertextView32 = engine.create_lwe_ciphertext(slice)?;
-    /// engine.destroy(ciphertext_view)?;
     /// #
     /// # Ok(())
     /// # }
@@ -155,7 +152,6 @@ impl<'data> LweCiphertextCreationEngine<&'data mut [u32], LweCiphertextMutView32
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext_view: LweCiphertextMutView32 = engine.create_lwe_ciphertext(slice)?;
-    /// engine.destroy(ciphertext_view)?;
     /// #
     /// # Ok(())
     /// # }
@@ -199,7 +195,6 @@ impl<'data> LweCiphertextCreationEngine<&'data [u64], LweCiphertextView64<'data>
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext_view: LweCiphertextView64 = engine.create_lwe_ciphertext(slice)?;
-    /// engine.destroy(ciphertext_view)?;
     /// #
     /// # Ok(())
     /// # }
@@ -245,7 +240,6 @@ impl<'data> LweCiphertextCreationEngine<&'data mut [u64], LweCiphertextMutView64
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext_view: LweCiphertextMutView64 = engine.create_lwe_ciphertext(slice)?;
-    /// engine.destroy(ciphertext_view)?;
     /// #
     /// # Ok(())
     /// # }

@@ -84,16 +84,6 @@ impl
     ///     output_lwe_dimension
     /// );
     ///
-    /// default_engine.destroy(input_key)?;
-    /// default_engine.destroy(output_key)?;
-    /// default_engine.destroy(h_dummy_key)?;
-    /// default_engine.destroy(h_ksk)?;
-    /// default_engine.destroy(h_plaintext)?;
-    /// default_engine.destroy(h_ciphertext)?;
-    /// default_engine.destroy(h_zero_ciphertext)?;
-    /// cuda_engine.destroy(d_ksk)?;
-    /// cuda_engine.destroy(d_ciphertext)?;
-    /// cuda_engine.destroy(d_keyswitched_ciphertext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -200,16 +190,6 @@ impl
     ///     output_lwe_dimension
     /// );
     ///
-    /// default_engine.destroy(input_key)?;
-    /// default_engine.destroy(output_key)?;
-    /// default_engine.destroy(h_dummy_key)?;
-    /// default_engine.destroy(h_ksk)?;
-    /// default_engine.destroy(h_plaintext)?;
-    /// default_engine.destroy(h_ciphertext)?;
-    /// default_engine.destroy(h_zero_ciphertext)?;
-    /// cuda_engine.destroy(d_ksk)?;
-    /// cuda_engine.destroy(d_ciphertext)?;
-    /// cuda_engine.destroy(d_keyswitched_ciphertext)?;
     /// #
     /// # Ok(())
     /// # }

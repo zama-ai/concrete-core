@@ -40,9 +40,6 @@ impl GlweCiphertextDiscardingTrivialEncryptionEngine<PlaintextVector32, GlweCiph
     /// assert_eq!(ciphertext.glwe_dimension(), glwe_dimension);
     /// assert_eq!(ciphertext.polynomial_size(), polynomial_size);
     ///
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext)?;
-    ///
     /// # Ok(())
     /// # }
     /// ```
@@ -96,9 +93,6 @@ impl GlweCiphertextDiscardingTrivialEncryptionEngine<PlaintextVector64, GlweCiph
     ///
     /// assert_eq!(ciphertext.glwe_dimension(), glwe_dimension);
     /// assert_eq!(ciphertext.polynomial_size(), polynomial_size);
-    ///
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext)?;
     ///
     /// # Ok(())
     /// # }
@@ -154,9 +148,6 @@ impl GlweCiphertextDiscardingTrivialEncryptionEngine<PlaintextVector32, GlweCiph
     /// assert_eq!(ciphertext.glwe_dimension(), glwe_dimension);
     /// assert_eq!(ciphertext.polynomial_size(), polynomial_size);
     ///
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext)?;
-    ///
     /// # Ok(())
     /// # }
     /// ```
@@ -210,9 +201,6 @@ impl GlweCiphertextDiscardingTrivialEncryptionEngine<PlaintextVector64, GlweCiph
     ///
     /// assert_eq!(ciphertext.glwe_dimension(), glwe_dimension);
     /// assert_eq!(ciphertext.polynomial_size(), polynomial_size);
-    ///
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext)?;
     ///
     /// # Ok(())
     /// # }

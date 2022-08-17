@@ -53,9 +53,6 @@ impl
     /// assert_eq!(bsk.decomposition_base_log(), dec_bl);
     /// assert_eq!(bsk.decomposition_level_count(), dec_lc);
     ///
-    /// engine.destroy(lwe_sk)?;
-    /// engine.destroy(glwe_sk)?;
-    /// engine.destroy(bsk)?;
     /// #
     /// # Ok(())
     /// # }
@@ -136,9 +133,6 @@ impl
     /// assert_eq!(bsk.decomposition_base_log(), dec_bl);
     /// assert_eq!(bsk.decomposition_level_count(), dec_lc);
     ///
-    /// engine.destroy(lwe_sk)?;
-    /// engine.destroy(glwe_sk)?;
-    /// engine.destroy(bsk)?;
     /// #
     /// # Ok(())
     /// # }

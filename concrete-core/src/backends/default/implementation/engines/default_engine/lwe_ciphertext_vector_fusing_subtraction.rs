@@ -40,10 +40,6 @@ impl LweCiphertextVectorFusingSubtractionEngine<LweCiphertextVector32, LweCipher
     /// #
     /// assert_eq!(output_ciphertext_vector.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext_vector)?;
-    /// engine.destroy(output_ciphertext_vector)?;
     /// #
     /// # Ok(())
     /// # }
@@ -107,10 +103,6 @@ impl LweCiphertextVectorFusingSubtractionEngine<LweCiphertextVector64, LweCipher
     /// #
     /// assert_eq!(output_ciphertext_vector.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext_vector)?;
-    /// engine.destroy(output_ciphertext_vector)?;
     /// #
     /// # Ok(())
     /// # }

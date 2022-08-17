@@ -60,9 +60,6 @@ impl PackingKeyswitchKeyCreationEngine<LweSecretKey32, GlweSecretKey32, PackingK
     /// assert_eq!(packing_keyswitch_key.input_lwe_dimension(), input_lwe_dimension);
     /// assert_eq!(packing_keyswitch_key.output_lwe_dimension(), output_lwe_dimension);
     ///
-    /// engine.destroy(input_key)?;
-    /// engine.destroy(output_key)?;
-    /// engine.destroy(packing_keyswitch_key)?;
     /// #
     /// # Ok(())
     /// # }
@@ -166,9 +163,6 @@ impl PackingKeyswitchKeyCreationEngine<LweSecretKey64, GlweSecretKey64, PackingK
     /// assert_eq!(packing_keyswitch_key.input_lwe_dimension(), input_lwe_dimension);
     /// assert_eq!(packing_keyswitch_key.output_lwe_dimension(), output_lwe_dimension);
     ///
-    /// engine.destroy(input_key)?;
-    /// engine.destroy(output_key)?;
-    /// engine.destroy(packing_keyswitch_key)?;
     /// #
     /// # Ok(())
     /// # }

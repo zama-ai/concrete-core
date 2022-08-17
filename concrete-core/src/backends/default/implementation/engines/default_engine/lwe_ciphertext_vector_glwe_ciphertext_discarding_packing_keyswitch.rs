@@ -65,12 +65,6 @@ impl
     /// #
     /// assert_eq!(ciphertext_output.glwe_dimension(), output_glwe_dimension);
     ///
-    /// engine.destroy(input_key)?;
-    /// engine.destroy(output_key)?;
-    /// engine.destroy(packing_keyswitch_key)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext_vector)?;
-    /// engine.destroy(ciphertext_output)?;
     /// #
     /// # Ok(())
     /// # }
@@ -160,12 +154,6 @@ impl
     /// #
     /// assert_eq!(ciphertext_output.glwe_dimension(), output_glwe_dimension);
     ///
-    /// engine.destroy(input_key)?;
-    /// engine.destroy(output_key)?;
-    /// engine.destroy(packing_keyswitch_key)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(ciphertext_vector)?;
-    /// engine.destroy(ciphertext_output)?;
     /// #
     /// # Ok(())
     /// # }

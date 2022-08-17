@@ -59,12 +59,7 @@ impl EntityDeserializationEngine<&[u8], FftwFourierGgswCiphertext32> for FftwSer
     /// let serialized = serialization_engine.serialize(&fourier_ciphertext)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(fourier_ciphertext, recovered);
-    ///
-    /// default_engine.destroy(key)?;
-    /// default_engine.destroy(plaintext)?;
-    /// default_engine.destroy(ciphertext)?;
-    /// fftw_engine.destroy(fourier_ciphertext)?;
-    /// fftw_engine.destroy(recovered)?;
+
     /// #
     /// # Ok(())
     /// # }
@@ -146,11 +141,6 @@ impl EntityDeserializationEngine<&[u8], FftwFourierGgswCiphertext64> for FftwSer
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(fourier_ciphertext, recovered);
     ///
-    /// default_engine.destroy(key)?;
-    /// default_engine.destroy(plaintext)?;
-    /// default_engine.destroy(ciphertext)?;
-    /// fftw_engine.destroy(fourier_ciphertext)?;
-    /// fftw_engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -229,11 +219,6 @@ impl EntityDeserializationEngine<&[u8], FftwFourierGlweCiphertext32> for FftwSer
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(fourier_ciphertext, recovered);
     ///
-    /// default_engine.destroy(key)?;
-    /// default_engine.destroy(plaintext_vector)?;
-    /// default_engine.destroy(ciphertext)?;
-    /// fftw_engine.destroy(fourier_ciphertext)?;
-    /// fftw_engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -312,11 +297,6 @@ impl EntityDeserializationEngine<&[u8], FftwFourierGlweCiphertext64> for FftwSer
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(fourier_ciphertext, recovered);
     ///
-    /// default_engine.destroy(key)?;
-    /// default_engine.destroy(plaintext_vector)?;
-    /// default_engine.destroy(ciphertext)?;
-    /// fftw_engine.destroy(fourier_ciphertext)?;
-    /// fftw_engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -389,11 +369,6 @@ impl EntityDeserializationEngine<&[u8], FftwFourierLweBootstrapKey32> for FftwSe
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(fourier_bsk, recovered);
     ///
-    /// default_engine.destroy(lwe_sk)?;
-    /// default_engine.destroy(glwe_sk)?;
-    /// default_engine.destroy(bsk)?;
-    /// fftw_engine.destroy(fourier_bsk)?;
-    /// fftw_engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }
@@ -466,11 +441,6 @@ impl EntityDeserializationEngine<&[u8], FftwFourierLweBootstrapKey64> for FftwSe
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(fourier_bsk, recovered);
     ///
-    /// default_engine.destroy(lwe_sk)?;
-    /// default_engine.destroy(glwe_sk)?;
-    /// default_engine.destroy(bsk)?;
-    /// fftw_engine.destroy(fourier_bsk)?;
-    /// fftw_engine.destroy(recovered)?;
     /// #
     /// # Ok(())
     /// # }

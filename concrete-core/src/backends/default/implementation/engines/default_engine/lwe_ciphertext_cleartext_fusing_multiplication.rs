@@ -41,10 +41,6 @@ impl LweCiphertextCleartextFusingMultiplicationEngine<LweCiphertext32, Cleartext
     /// #
     /// assert_eq!(ciphertext.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext)?;
-    /// engine.destroy(cleartext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -101,10 +97,6 @@ impl LweCiphertextCleartextFusingMultiplicationEngine<LweCiphertext64, Cleartext
     /// #
     /// assert_eq!(ciphertext.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext)?;
-    /// engine.destroy(cleartext)?;
     /// #
     /// # Ok(())
     /// # }

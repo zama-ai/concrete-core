@@ -41,10 +41,6 @@ impl LweCiphertextPlaintextDiscardingAdditionEngine<LweCiphertext32, Plaintext32
     /// #
     /// assert_eq!(ciphertext_2.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext_1)?;
-    /// engine.destroy(ciphertext_2)?;
     /// #
     /// # Ok(())
     /// # }
@@ -107,10 +103,6 @@ impl LweCiphertextPlaintextDiscardingAdditionEngine<LweCiphertext64, Plaintext64
     /// #
     /// assert_eq!(ciphertext_2.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext_1)?;
-    /// engine.destroy(ciphertext_2)?;
     /// #
     /// # Ok(())
     /// # }
@@ -187,10 +179,6 @@ impl
     /// #
     /// assert_eq!(ciphertext_2.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext_1)?;
-    /// engine.destroy(ciphertext_2)?;
     /// #
     /// # Ok(())
     /// # }
@@ -267,10 +255,6 @@ impl
     /// #
     /// assert_eq!(ciphertext_2.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext_1)?;
-    /// engine.destroy(ciphertext_2)?;
     /// #
     /// # Ok(())
     /// # }

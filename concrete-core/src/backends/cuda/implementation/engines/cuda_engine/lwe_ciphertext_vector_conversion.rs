@@ -57,10 +57,6 @@ impl LweCiphertextVectorConversionEngine<LweCiphertextVector32, CudaLweCiphertex
     ///     LweCiphertextCount(3)
     /// );
     ///
-    /// default_engine.destroy(h_key)?;
-    /// default_engine.destroy(h_plaintext_vector)?;
-    /// default_engine.destroy(h_ciphertext_vector)?;
-    /// cuda_engine.destroy(d_ciphertext_vector);
     /// #
     /// # Ok(())
     /// # }
@@ -156,11 +152,6 @@ impl LweCiphertextVectorConversionEngine<CudaLweCiphertextVector32, LweCiphertex
     /// );
     /// assert_eq!(h_ciphertext_vector, h_ciphertext_vector_output);
     ///
-    /// default_engine.destroy(h_key)?;
-    /// default_engine.destroy(h_plaintext_vector)?;
-    /// default_engine.destroy(h_ciphertext_vector)?;
-    /// cuda_engine.destroy(d_ciphertext_vector);
-    /// default_engine.destroy(h_ciphertext_vector_output)?;
     /// #
     /// # Ok(())
     /// # }
@@ -237,10 +228,6 @@ impl LweCiphertextVectorConversionEngine<LweCiphertextVector64, CudaLweCiphertex
     ///     LweCiphertextCount(3)
     /// );
     ///
-    /// default_engine.destroy(h_key)?;
-    /// default_engine.destroy(h_plaintext_vector)?;
-    /// default_engine.destroy(h_ciphertext_vector)?;
-    /// cuda_engine.destroy(d_ciphertext_vector);
     /// #
     /// # Ok(())
     /// # }
@@ -337,11 +324,6 @@ impl LweCiphertextVectorConversionEngine<CudaLweCiphertextVector64, LweCiphertex
     /// );
     /// assert_eq!(h_ciphertext_vector, h_ciphertext_vector_output);
     ///
-    /// default_engine.destroy(h_key)?;
-    /// default_engine.destroy(h_plaintext_vector)?;
-    /// default_engine.destroy(h_ciphertext_vector)?;
-    /// cuda_engine.destroy(d_ciphertext_vector);
-    /// default_engine.destroy(h_ciphertext_vector_output)?;
     /// #
     /// # Ok(())
     /// # }

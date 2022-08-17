@@ -22,7 +22,6 @@ impl EncoderCreationEngine<FloatEncoderMinMaxConfig, FloatEncoder> for DefaultEn
     ///     nb_bit_precision: 8,
     ///     nb_bit_padding: 1,
     /// })?;
-    /// engine.destroy(encoder)?;
     /// #
     /// # Ok(())
     /// # }
@@ -70,7 +69,6 @@ impl EncoderCreationEngine<FloatEncoderCenterRadiusConfig, FloatEncoder> for Def
     ///     nb_bit_precision: 8,
     ///     nb_bit_padding: 1,
     /// })?;
-    /// engine.destroy(encoder)?;
     /// #
     /// # Ok(())
     /// # }

@@ -43,9 +43,6 @@ impl LweSeededCiphertextEncryptionEngine<LweSecretKey32, Plaintext32, LweSeededC
     /// #
     /// assert_eq!(ciphertext.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -114,9 +111,6 @@ impl LweSeededCiphertextEncryptionEngine<LweSecretKey64, Plaintext64, LweSeededC
     /// #
     /// assert_eq!(ciphertext.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext)?;
     /// #
     /// # Ok(())
     /// # }

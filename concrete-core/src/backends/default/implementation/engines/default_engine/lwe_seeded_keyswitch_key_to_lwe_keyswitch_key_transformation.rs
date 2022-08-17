@@ -61,9 +61,6 @@ impl
     /// assert_eq!(keyswitch_key.input_lwe_dimension(), input_lwe_dimension);
     /// assert_eq!(keyswitch_key.output_lwe_dimension(), output_lwe_dimension);
     ///
-    /// engine.destroy(input_key)?;
-    /// engine.destroy(output_key)?;
-    /// engine.destroy(keyswitch_key)?;
     /// #
     /// # Ok(())
     /// # }
@@ -153,9 +150,6 @@ impl
     /// assert_eq!(keyswitch_key.input_lwe_dimension(), input_lwe_dimension);
     /// assert_eq!(keyswitch_key.output_lwe_dimension(), output_lwe_dimension);
     ///
-    /// engine.destroy(input_key)?;
-    /// engine.destroy(output_key)?;
-    /// engine.destroy(keyswitch_key)?;
     /// #
     /// # Ok(())
     /// # }

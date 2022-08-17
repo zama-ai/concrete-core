@@ -26,7 +26,6 @@ impl PlaintextDiscardingRetrievalEngine<Plaintext32, u32> for DefaultEngine {
     /// engine.discard_retrieve_plaintext(&mut output, &plaintext)?;
     ///
     /// assert_eq!(output, 3_u32 << 20);
-    /// engine.destroy(plaintext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -68,7 +67,6 @@ impl PlaintextDiscardingRetrievalEngine<Plaintext64, u64> for DefaultEngine {
     /// engine.discard_retrieve_plaintext(&mut output, &plaintext)?;
     ///
     /// assert_eq!(output, 3_u64 << 20);
-    /// engine.destroy(plaintext)?;
     /// #
     /// # Ok(())
     /// # }

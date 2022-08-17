@@ -94,16 +94,6 @@ impl
     ///     LweCiphertextCount(3)
     /// );
     ///
-    /// default_engine.destroy(input_key)?;
-    /// default_engine.destroy(output_key)?;
-    /// default_engine.destroy(h_dummy_key)?;
-    /// default_engine.destroy(h_ksk)?;
-    /// default_engine.destroy(h_plaintext_vector)?;
-    /// default_engine.destroy(h_ciphertext_vector)?;
-    /// default_engine.destroy(h_zero_ciphertext_vector)?;
-    /// cuda_engine.destroy(d_ksk)?;
-    /// cuda_engine.destroy(d_ciphertext_vector)?;
-    /// cuda_engine.destroy(d_keyswitched_ciphertext_vector)?;
     /// #
     /// # Ok(())
     /// # }
@@ -224,16 +214,6 @@ impl
     ///     LweCiphertextCount(3)
     /// );
     ///
-    /// default_engine.destroy(input_key)?;
-    /// default_engine.destroy(output_key)?;
-    /// default_engine.destroy(h_dummy_key)?;
-    /// default_engine.destroy(h_ksk)?;
-    /// default_engine.destroy(h_plaintext_vector)?;
-    /// default_engine.destroy(h_ciphertext_vector)?;
-    /// default_engine.destroy(h_zero_ciphertext_vector)?;
-    /// cuda_engine.destroy(d_ksk)?;
-    /// cuda_engine.destroy(d_ciphertext_vector)?;
-    /// cuda_engine.destroy(d_keyswitched_ciphertext_vector)?;
     /// #
     /// # Ok(())
     /// # }

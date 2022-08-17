@@ -23,7 +23,6 @@ impl CleartextRetrievalEngine<Cleartext32, u32> for DefaultEngine {
     /// let output: u32 = engine.retrieve_cleartext(&cleartext)?;
     ///
     /// assert_eq!(output, 3_u32);
-    /// engine.destroy(cleartext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -60,7 +59,6 @@ impl CleartextRetrievalEngine<Cleartext64, u64> for DefaultEngine {
     /// let output: u64 = engine.retrieve_cleartext(&cleartext)?;
     ///
     /// assert_eq!(output, 3_u64);
-    /// engine.destroy(cleartext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -97,7 +95,6 @@ impl CleartextRetrievalEngine<CleartextF64, f64> for DefaultEngine {
     /// let output: f64 = engine.retrieve_cleartext(&cleartext)?;
     ///
     /// assert_eq!(output, 3.0);
-    /// engine.destroy(cleartext)?;
     /// #
     /// # Ok(())
     /// # }

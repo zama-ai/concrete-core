@@ -49,9 +49,6 @@ impl
     /// #
     /// assert_eq!(plaintext_vector.plaintext_count(), PlaintextCount(8));
     ///
-    /// engine.destroy(ciphertext_vector)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(key)?;
     /// #
     /// # Ok(())
     /// # }
@@ -119,9 +116,6 @@ impl
     /// #
     /// assert_eq!(plaintext_vector.plaintext_count(), PlaintextCount(8));
     ///
-    /// engine.destroy(ciphertext_vector)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(key)?;
     /// #
     /// # Ok(())
     /// # }

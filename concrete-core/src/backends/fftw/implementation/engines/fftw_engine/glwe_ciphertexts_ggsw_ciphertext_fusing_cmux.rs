@@ -78,14 +78,6 @@ impl
     /// assert_eq!(glwe_output.polynomial_size(), glwe_input.polynomial_size(),);
     /// assert_eq!(glwe_output.glwe_dimension(), glwe_input.glwe_dimension(),);
     ///
-    /// default_engine.destroy(key)?;
-    /// default_engine.destroy(plaintext_ggsw)?;
-    /// default_engine.destroy(plaintext_output_glwe)?;
-    /// default_engine.destroy(plaintext_input_glwe)?;
-    /// default_engine.destroy(ggsw)?;
-    /// fftw_engine.destroy(complex_ggsw)?;
-    /// default_engine.destroy(glwe_output)?;
-    /// default_engine.destroy(glwe_input)?;
     /// #
     /// # Ok(())
     /// # }
@@ -200,14 +192,6 @@ impl
     /// assert_eq!(glwe_output.polynomial_size(), glwe_input.polynomial_size(),);
     /// assert_eq!(glwe_output.glwe_dimension(), glwe_input.glwe_dimension(),);
     ///
-    /// default_engine.destroy(key)?;
-    /// default_engine.destroy(plaintext_ggsw)?;
-    /// default_engine.destroy(plaintext_output_glwe)?;
-    /// default_engine.destroy(plaintext_input_glwe)?;
-    /// default_engine.destroy(ggsw)?;
-    /// fftw_engine.destroy(complex_ggsw)?;
-    /// default_engine.destroy(glwe_output)?;
-    /// default_engine.destroy(glwe_input)?;
     /// #
     /// # Ok(())
     /// # }

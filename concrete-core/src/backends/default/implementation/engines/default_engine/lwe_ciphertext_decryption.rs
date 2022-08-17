@@ -34,10 +34,6 @@ impl LweCiphertextDecryptionEngine<LweSecretKey32, LweCiphertext32, Plaintext32>
     ///
     /// let decrypted_plaintext = engine.decrypt_lwe_ciphertext(&key, &ciphertext)?;
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext)?;
-    /// engine.destroy(decrypted_plaintext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -89,10 +85,6 @@ impl LweCiphertextDecryptionEngine<LweSecretKey64, LweCiphertext64, Plaintext64>
     ///
     /// let decrypted_plaintext = engine.decrypt_lwe_ciphertext(&key, &ciphertext)?;
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext)?;
-    /// engine.destroy(decrypted_plaintext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -154,10 +146,6 @@ impl LweCiphertextDecryptionEngine<LweSecretKey32, LweCiphertextView32<'_>, Plai
     ///
     /// let decrypted_plaintext = engine.decrypt_lwe_ciphertext(&key, &ciphertext_view)?;
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext_view)?;
-    /// engine.destroy(decrypted_plaintext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -219,10 +207,6 @@ impl LweCiphertextDecryptionEngine<LweSecretKey64, LweCiphertextView64<'_>, Plai
     ///
     /// let decrypted_plaintext = engine.decrypt_lwe_ciphertext(&key, &ciphertext_view)?;
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext_view)?;
-    /// engine.destroy(decrypted_plaintext)?;
     /// #
     /// # Ok(())
     /// # }

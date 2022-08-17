@@ -71,15 +71,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // Check the high bits have the result we expect
     assert_eq!(output, 12);
-
-    engine.destroy(cleartext)?;
-    engine.destroy(key)?;
-    engine.destroy(input_plaintext)?;
-    engine.destroy(placeholder_output_plaintext)?;
-    engine.destroy(decrypted_plaintext)?;
-    engine.destroy(input_ciphertext)?;
-    engine.destroy(ouptut_ciphertext)?;
-
+    
     Ok(())
 }
 ```

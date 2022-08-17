@@ -21,7 +21,6 @@ impl CleartextCreationEngine<u32, Cleartext32> for DefaultEngine {
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let cleartext: Cleartext32 = engine.create_cleartext(&input)?;
-    /// engine.destroy(cleartext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -55,7 +54,6 @@ impl CleartextCreationEngine<u64, Cleartext64> for DefaultEngine {
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let cleartext: Cleartext64 = engine.create_cleartext(&input)?;
-    /// engine.destroy(cleartext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -89,7 +87,6 @@ impl CleartextCreationEngine<f64, CleartextF64> for DefaultEngine {
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let cleartext: CleartextF64 = engine.create_cleartext(&input)?;
-    /// engine.destroy(cleartext)?;
     /// #
     /// # Ok(())
     /// # }

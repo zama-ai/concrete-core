@@ -42,9 +42,6 @@ impl LweSeededCiphertextToLweCiphertextTransformationEngine<LweSeededCiphertext3
     /// #
     /// assert_eq!(ciphertext.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext)?;
     /// #
     /// # Ok(())
     /// # }
@@ -107,9 +104,6 @@ impl LweSeededCiphertextToLweCiphertextTransformationEngine<LweSeededCiphertext6
     /// #
     /// assert_eq!(ciphertext.lwe_dimension(), lwe_dimension);
     ///
-    /// engine.destroy(key)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext)?;
     /// #
     /// # Ok(())
     /// # }

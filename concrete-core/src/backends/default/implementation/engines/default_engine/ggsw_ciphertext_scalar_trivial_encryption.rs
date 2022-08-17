@@ -52,9 +52,6 @@ impl GgswCiphertextScalarTrivialEncryptionEngine<Plaintext32, GgswCiphertext32> 
     /// assert_eq!(ciphertext.decomposition_base_log(), base_log);
     /// assert_eq!(ciphertext.decomposition_level_count(), level);
     ///
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext)?;
-    ///
     /// # Ok(())
     /// # }
     /// ```
@@ -134,9 +131,6 @@ impl GgswCiphertextScalarTrivialEncryptionEngine<Plaintext64, GgswCiphertext64> 
     ///
     /// assert_eq!(ciphertext.glwe_dimension(), glwe_dimension);
     /// assert_eq!(ciphertext.polynomial_size(), polynomial_size);
-    ///
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext)?;
     ///
     /// # Ok(())
     /// # }

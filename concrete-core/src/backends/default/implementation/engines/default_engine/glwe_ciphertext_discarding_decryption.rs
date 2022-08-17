@@ -40,9 +40,6 @@ impl GlweCiphertextDiscardingDecryptionEngine<GlweSecretKey32, GlweCiphertext32,
     /// #
     /// assert_eq!(plaintext_vector.plaintext_count(), PlaintextCount(4));
     ///
-    /// engine.destroy(ciphertext)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(key)?;
     /// #
     /// # Ok(())
     /// # }
@@ -101,9 +98,6 @@ impl GlweCiphertextDiscardingDecryptionEngine<GlweSecretKey64, GlweCiphertext64,
     /// #
     /// assert_eq!(plaintext_vector.plaintext_count(), PlaintextCount(4));
     ///
-    /// engine.destroy(ciphertext)?;
-    /// engine.destroy(plaintext_vector)?;
-    /// engine.destroy(key)?;
     /// #
     /// # Ok(())
     /// # }

@@ -30,10 +30,6 @@ impl LweCiphertextTrivialDecryptionEngine<LweCiphertext32, Plaintext32> for Defa
     /// let res = engine.retrieve_plaintext(&output)?;
     /// assert_eq!(res, input);
     ///
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext)?;
-    /// engine.destroy(output)?;
-    ///
     /// # Ok(())
     /// # }
     /// ```
@@ -79,9 +75,6 @@ impl LweCiphertextTrivialDecryptionEngine<LweCiphertext64, Plaintext64> for Defa
     /// let res = engine.retrieve_plaintext(&output)?;
     /// assert_eq!(res, input);
     ///
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(ciphertext)?;
-    /// engine.destroy(output)?;
     /// # Ok(())
     /// # }
     /// ```

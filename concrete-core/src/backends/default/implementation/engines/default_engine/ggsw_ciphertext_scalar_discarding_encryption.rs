@@ -51,10 +51,6 @@ impl GgswCiphertextScalarDiscardingEncryptionEngine<GlweSecretKey32, Plaintext32
     /// assert_eq!(ciphertext.glwe_dimension(), glwe_dimension);
     /// assert_eq!(ciphertext.polynomial_size(), polynomial_size);
     ///
-    /// engine.destroy(ciphertext)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(key_1)?;
-    /// engine.destroy(key_2)?;
     /// #
     /// # Ok(())
     /// # }
@@ -130,10 +126,6 @@ impl GgswCiphertextScalarDiscardingEncryptionEngine<GlweSecretKey64, Plaintext64
     /// assert_eq!(ciphertext.glwe_dimension(), glwe_dimension);
     /// assert_eq!(ciphertext.polynomial_size(), polynomial_size);
     ///
-    /// engine.destroy(ciphertext)?;
-    /// engine.destroy(plaintext)?;
-    /// engine.destroy(key_1)?;
-    /// engine.destroy(key_2)?;
     /// #
     /// # Ok(())
     /// # }
