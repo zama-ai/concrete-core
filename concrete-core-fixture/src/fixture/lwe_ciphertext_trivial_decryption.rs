@@ -1,7 +1,7 @@
 use crate::fixture::Fixture;
 use crate::generation::prototyping::{PrototypesLweCiphertext, PrototypesPlaintext};
 use crate::generation::synthesizing::{SynthesizesLweCiphertext, SynthesizesPlaintext};
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 use concrete_commons::dispersion::Variance;
@@ -18,23 +18,22 @@ pub struct LweCiphertextTrivialDecryptionParameters {
     pub lwe_dimension: LweDimension,
 }
 
-impl<Precision, Engine, Plaintext, Ciphertext> Fixture<Precision, Engine, (Plaintext, Ciphertext)>
+impl<Precision, KeyDistribution, Engine, Plaintext, Ciphertext>
+    Fixture<Precision, (KeyDistribution,), Engine, (Plaintext, Ciphertext)>
     for LweCiphertextTrivialDecryptionFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: LweCiphertextTrivialDecryptionEngine<Ciphertext, Plaintext>,
     Plaintext: PlaintextEntity,
     Ciphertext: LweCiphertextEntity,
     Maker: SynthesizesPlaintext<Precision, Plaintext>
-        + SynthesizesLweCiphertext<Precision, Ciphertext>,
+        + SynthesizesLweCiphertext<Precision, KeyDistribution, Ciphertext>,
 {
     type Parameters = LweCiphertextTrivialDecryptionParameters;
     type RepetitionPrototypes = ();
     type SamplePrototypes = (
-        <Maker as PrototypesLweCiphertext<
-            Precision,
-            Ciphertext::KeyDistribution,
-        >>::LweCiphertextProto,
+        <Maker as PrototypesLweCiphertext<Precision, KeyDistribution>>::LweCiphertextProto,
         Precision::Raw,
     );
     type PreExecutionContext = (Ciphertext,);

@@ -14,7 +14,7 @@ pub struct CleartextRetrievalFixture;
 #[derive(Debug)]
 pub struct CleartextRetrievalParameters;
 
-impl<Precision, Engine, Cleartext> Fixture<Precision, Engine, (Cleartext,)>
+impl<Precision, Engine, Cleartext> Fixture<Precision, (), Engine, (Cleartext,)>
     for CleartextRetrievalFixture
 where
     Precision: IntegerPrecision,

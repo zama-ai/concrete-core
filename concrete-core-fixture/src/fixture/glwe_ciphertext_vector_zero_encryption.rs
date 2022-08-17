@@ -10,7 +10,7 @@ use crate::generation::prototyping::{
     PrototypesGlweCiphertextVector, PrototypesGlweSecretKey, PrototypesPlaintextVector,
 };
 use crate::generation::synthesizing::{SynthesizesGlweCiphertextVector, SynthesizesGlweSecretKey};
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 
@@ -25,21 +25,21 @@ pub struct GlweCiphertextVectorZeroEncryptionParameters {
     pub count: GlweCiphertextCount,
 }
 
-impl<Precision, Engine, SecretKey, CiphertextVector>
-    Fixture<Precision, Engine, (SecretKey, CiphertextVector)>
+impl<Precision, KeyDistribution, Engine, SecretKey, CiphertextVector>
+    Fixture<Precision, (KeyDistribution,), Engine, (SecretKey, CiphertextVector)>
     for GlweCiphertextVectorZeroEncryptionFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: GlweCiphertextVectorZeroEncryptionEngine<SecretKey, CiphertextVector>,
     SecretKey: GlweSecretKeyEntity,
-    CiphertextVector: GlweCiphertextVectorEntity<KeyDistribution = SecretKey::KeyDistribution>,
-    Maker: SynthesizesGlweSecretKey<Precision, SecretKey>
-        + SynthesizesGlweCiphertextVector<Precision, CiphertextVector>,
+    CiphertextVector: GlweCiphertextVectorEntity,
+    Maker: SynthesizesGlweSecretKey<Precision, KeyDistribution, SecretKey>
+        + SynthesizesGlweCiphertextVector<Precision, KeyDistribution, CiphertextVector>,
 {
     type Parameters = GlweCiphertextVectorZeroEncryptionParameters;
-    type RepetitionPrototypes = (
-        <Maker as PrototypesGlweSecretKey<Precision, SecretKey::KeyDistribution>>::GlweSecretKeyProto,
-    );
+    type RepetitionPrototypes =
+        (<Maker as PrototypesGlweSecretKey<Precision, KeyDistribution>>::GlweSecretKeyProto,);
     type SamplePrototypes = ();
     type PreExecutionContext = (SecretKey,);
     type PostExecutionContext = (SecretKey, CiphertextVector);

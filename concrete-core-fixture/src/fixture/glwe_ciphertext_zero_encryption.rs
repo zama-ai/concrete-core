@@ -3,7 +3,7 @@ use crate::generation::prototyping::{
     PrototypesGlweCiphertext, PrototypesGlweSecretKey, PrototypesPlaintextVector,
 };
 use crate::generation::synthesizing::{SynthesizesGlweCiphertext, SynthesizesGlweSecretKey};
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 use concrete_commons::dispersion::Variance;
@@ -22,20 +22,21 @@ pub struct GlweCiphertextZeroEncryptionParameters {
     pub polynomial_size: PolynomialSize,
 }
 
-impl<Precision, Engine, SecretKey, Ciphertext> Fixture<Precision, Engine, (SecretKey, Ciphertext)>
+impl<Precision, KeyDistribution, Engine, SecretKey, Ciphertext>
+    Fixture<Precision, (KeyDistribution,), Engine, (SecretKey, Ciphertext)>
     for GlweCiphertextZeroEncryptionFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: GlweCiphertextZeroEncryptionEngine<SecretKey, Ciphertext>,
     SecretKey: GlweSecretKeyEntity,
-    Ciphertext: GlweCiphertextEntity<KeyDistribution = SecretKey::KeyDistribution>,
-    Maker: SynthesizesGlweSecretKey<Precision, SecretKey>
-        + SynthesizesGlweCiphertext<Precision, Ciphertext>,
+    Ciphertext: GlweCiphertextEntity,
+    Maker: SynthesizesGlweSecretKey<Precision, KeyDistribution, SecretKey>
+        + SynthesizesGlweCiphertext<Precision, KeyDistribution, Ciphertext>,
 {
     type Parameters = GlweCiphertextZeroEncryptionParameters;
-    type RepetitionPrototypes = (
-        <Maker as PrototypesGlweSecretKey<Precision, SecretKey::KeyDistribution>>::GlweSecretKeyProto,
-    );
+    type RepetitionPrototypes =
+        (<Maker as PrototypesGlweSecretKey<Precision, KeyDistribution>>::GlweSecretKeyProto,);
     type SamplePrototypes = ();
     type PreExecutionContext = (SecretKey,);
     type PostExecutionContext = (SecretKey, Ciphertext);

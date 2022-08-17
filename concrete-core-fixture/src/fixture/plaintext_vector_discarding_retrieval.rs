@@ -17,7 +17,7 @@ pub struct PlaintextVectorDiscardingRetrievalParameters {
     count: PlaintextCount,
 }
 
-impl<Precision, Engine, PlaintextVector> Fixture<Precision, Engine, (PlaintextVector,)>
+impl<Precision, Engine, PlaintextVector> Fixture<Precision, (), Engine, (PlaintextVector,)>
     for PlaintextVectorDiscardingRetrievalFixture
 where
     Precision: IntegerPrecision,

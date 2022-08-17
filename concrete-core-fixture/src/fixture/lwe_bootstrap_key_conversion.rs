@@ -3,7 +3,7 @@ use crate::generation::prototyping::{
     PrototypesGlweSecretKey, PrototypesLweBootstrapKey, PrototypesLweSecretKey,
 };
 use crate::generation::synthesizing::SynthesizesLweBootstrapKey;
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use concrete_commons::dispersion::Variance;
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
@@ -23,25 +23,30 @@ pub struct LweBootstrapKeyConversionParameters {
     pub noise: Variance,
 }
 
-impl<Precision, Engine, InputKey, OutputKey> Fixture<Precision, Engine, (InputKey, OutputKey)>
+impl<Precision, InputKeyDistribution, OutputKeyDistribution, Engine, InputKey, OutputKey>
+    Fixture<Precision, (InputKeyDistribution, OutputKeyDistribution), Engine, (InputKey, OutputKey)>
     for LweBootstrapKeyConversionFixture
 where
     Precision: IntegerPrecision,
+    InputKeyDistribution: KeyDistributionMarker,
+    OutputKeyDistribution: KeyDistributionMarker,
     Engine: LweBootstrapKeyConversionEngine<InputKey, OutputKey>,
     InputKey: LweBootstrapKeyEntity,
-    OutputKey: LweBootstrapKeyEntity<
-        InputKeyDistribution = InputKey::InputKeyDistribution,
-        OutputKeyDistribution = InputKey::OutputKeyDistribution,
-    >,
-    Maker: SynthesizesLweBootstrapKey<Precision, InputKey>
-        + SynthesizesLweBootstrapKey<Precision, OutputKey>,
+    OutputKey: LweBootstrapKeyEntity,
+    Maker: SynthesizesLweBootstrapKey<Precision, InputKeyDistribution, OutputKeyDistribution, InputKey>
+        + SynthesizesLweBootstrapKey<
+            Precision,
+            InputKeyDistribution,
+            OutputKeyDistribution,
+            OutputKey,
+        >,
 {
     type Parameters = LweBootstrapKeyConversionParameters;
     type RepetitionPrototypes = (
         <Maker as PrototypesLweBootstrapKey<
             Precision,
-            InputKey::InputKeyDistribution,
-            InputKey::OutputKeyDistribution,
+            InputKeyDistribution,
+            OutputKeyDistribution,
         >>::LweBootstrapKeyProto,
     );
     type SamplePrototypes = ();
@@ -68,10 +73,11 @@ where
         parameters: &Self::Parameters,
         maker: &mut Maker,
     ) -> Self::RepetitionPrototypes {
-        let input_key = <Maker as PrototypesLweSecretKey<
-            Precision,
-            InputKey::InputKeyDistribution,
-        >>::new_lwe_secret_key(maker, parameters.lwe_dimension);
+        let input_key =
+            <Maker as PrototypesLweSecretKey<Precision, InputKeyDistribution>>::new_lwe_secret_key(
+                maker,
+                parameters.lwe_dimension,
+            );
         let output_key =
             maker.new_glwe_secret_key(parameters.glwe_dimension, parameters.polynomial_size);
         let proto_bsk_in = maker.new_lwe_bootstrap_key(

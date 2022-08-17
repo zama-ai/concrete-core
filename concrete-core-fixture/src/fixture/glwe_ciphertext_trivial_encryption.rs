@@ -1,7 +1,7 @@
 use crate::fixture::Fixture;
 use crate::generation::prototyping::{PrototypesGlweCiphertext, PrototypesPlaintextVector};
 use crate::generation::synthesizing::{SynthesizesGlweCiphertext, SynthesizesPlaintextVector};
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 use concrete_commons::dispersion::Variance;
@@ -19,16 +19,17 @@ pub struct GlweCiphertextTrivialEncryptionParameters {
     pub polynomial_size: PolynomialSize,
 }
 
-impl<Precision, Engine, PlaintextVector, Ciphertext>
-    Fixture<Precision, Engine, (PlaintextVector, Ciphertext)>
+impl<Precision, KeyDistribution, Engine, PlaintextVector, Ciphertext>
+    Fixture<Precision, (KeyDistribution,), Engine, (PlaintextVector, Ciphertext)>
     for GlweCiphertextTrivialEncryptionFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: GlweCiphertextTrivialEncryptionEngine<PlaintextVector, Ciphertext>,
     PlaintextVector: PlaintextVectorEntity,
     Ciphertext: GlweCiphertextEntity,
     Maker: SynthesizesPlaintextVector<Precision, PlaintextVector>
-        + SynthesizesGlweCiphertext<Precision, Ciphertext>,
+        + SynthesizesGlweCiphertext<Precision, KeyDistribution, Ciphertext>,
 {
     type Parameters = GlweCiphertextTrivialEncryptionParameters;
     type RepetitionPrototypes = ();

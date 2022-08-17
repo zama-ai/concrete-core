@@ -1,14 +1,13 @@
 use crate::generation::prototyping::PrototypesLweKeyswitchKey;
-use crate::generation::IntegerPrecision;
+use crate::generation::{IntegerPrecision, KeyDistributionMarker};
 use concrete_core::prelude::LweKeyswitchKeyEntity;
 
-pub trait SynthesizesLweKeyswitchKey<Precision: IntegerPrecision, LweKeyswitchKey>:
-    PrototypesLweKeyswitchKey<
-    Precision,
-    LweKeyswitchKey::InputKeyDistribution,
-    LweKeyswitchKey::OutputKeyDistribution,
->
-where
+pub trait SynthesizesLweKeyswitchKey<
+    Precision: IntegerPrecision,
+    InputKeyDistribution: KeyDistributionMarker,
+    OutputKeyDistribution: KeyDistributionMarker,
+    LweKeyswitchKey,
+>: PrototypesLweKeyswitchKey<Precision, InputKeyDistribution, OutputKeyDistribution> where
     LweKeyswitchKey: LweKeyswitchKeyEntity,
 {
     fn synthesize_lwe_keyswitch_key(
@@ -27,10 +26,17 @@ mod backend_default {
         ProtoBinaryBinaryLweKeyswitchKey32, ProtoBinaryBinaryLweKeyswitchKey64,
     };
     use crate::generation::synthesizing::SynthesizesLweKeyswitchKey;
-    use crate::generation::{Maker, Precision32, Precision64};
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
     use concrete_core::prelude::{LweKeyswitchKey32, LweKeyswitchKey64};
 
-    impl SynthesizesLweKeyswitchKey<Precision32, LweKeyswitchKey32> for Maker {
+    impl
+        SynthesizesLweKeyswitchKey<
+            Precision32,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            LweKeyswitchKey32,
+        > for Maker
+    {
         fn synthesize_lwe_keyswitch_key(
             &mut self,
             prototype: &Self::LweKeyswitchKeyProto,
@@ -48,7 +54,14 @@ mod backend_default {
         fn destroy_lwe_keyswitch_key(&mut self, _entity: LweKeyswitchKey32) {}
     }
 
-    impl SynthesizesLweKeyswitchKey<Precision64, LweKeyswitchKey64> for Maker {
+    impl
+        SynthesizesLweKeyswitchKey<
+            Precision64,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            LweKeyswitchKey64,
+        > for Maker
+    {
         fn synthesize_lwe_keyswitch_key(
             &mut self,
             prototype: &Self::LweKeyswitchKeyProto,
@@ -73,12 +86,19 @@ mod backend_cuda {
         ProtoBinaryBinaryLweKeyswitchKey32, ProtoBinaryBinaryLweKeyswitchKey64,
     };
     use crate::generation::synthesizing::SynthesizesLweKeyswitchKey;
-    use crate::generation::{Maker, Precision32, Precision64};
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
     use concrete_core::prelude::{
         CudaLweKeyswitchKey32, CudaLweKeyswitchKey64, LweKeyswitchKeyConversionEngine,
     };
 
-    impl SynthesizesLweKeyswitchKey<Precision32, CudaLweKeyswitchKey32> for Maker {
+    impl
+        SynthesizesLweKeyswitchKey<
+            Precision32,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            CudaLweKeyswitchKey32,
+        > for Maker
+    {
         fn synthesize_lwe_keyswitch_key(
             &mut self,
             prototype: &Self::LweKeyswitchKeyProto,
@@ -99,7 +119,14 @@ mod backend_cuda {
         fn destroy_lwe_keyswitch_key(&mut self, _entity: CudaLweKeyswitchKey32) {}
     }
 
-    impl SynthesizesLweKeyswitchKey<Precision64, CudaLweKeyswitchKey64> for Maker {
+    impl
+        SynthesizesLweKeyswitchKey<
+            Precision64,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            CudaLweKeyswitchKey64,
+        > for Maker
+    {
         fn synthesize_lwe_keyswitch_key(
             &mut self,
             prototype: &Self::LweKeyswitchKeyProto,

@@ -1,11 +1,13 @@
 use crate::generation::prototyping::PrototypesGlweCiphertext;
-use crate::generation::IntegerPrecision;
+use crate::generation::{IntegerPrecision, KeyDistributionMarker};
 use concrete_core::prelude::GlweCiphertextEntity;
 
 /// A trait allowing to synthesize an actual GlweCiphertext entity from a prototype.
-pub trait SynthesizesGlweCiphertext<Precision: IntegerPrecision, GlweCiphertext>:
-    PrototypesGlweCiphertext<Precision, GlweCiphertext::KeyDistribution>
-where
+pub trait SynthesizesGlweCiphertext<
+    Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
+    GlweCiphertext,
+>: PrototypesGlweCiphertext<Precision, KeyDistribution> where
     GlweCiphertext: GlweCiphertextEntity,
 {
     fn synthesize_glwe_ciphertext(
@@ -20,10 +22,10 @@ where
 mod backend_default {
     use crate::generation::prototypes::{ProtoBinaryGlweCiphertext32, ProtoBinaryGlweCiphertext64};
     use crate::generation::synthesizing::SynthesizesGlweCiphertext;
-    use crate::generation::{Maker, Precision32, Precision64};
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
     use concrete_core::prelude::{GlweCiphertext32, GlweCiphertext64};
 
-    impl SynthesizesGlweCiphertext<Precision32, GlweCiphertext32> for Maker {
+    impl SynthesizesGlweCiphertext<Precision32, BinaryKeyDistribution, GlweCiphertext32> for Maker {
         fn synthesize_glwe_ciphertext(
             &mut self,
             prototype: &Self::GlweCiphertextProto,
@@ -41,7 +43,7 @@ mod backend_default {
         fn destroy_glwe_ciphertext(&mut self, _entity: GlweCiphertext32) {}
     }
 
-    impl SynthesizesGlweCiphertext<Precision64, GlweCiphertext64> for Maker {
+    impl SynthesizesGlweCiphertext<Precision64, BinaryKeyDistribution, GlweCiphertext64> for Maker {
         fn synthesize_glwe_ciphertext(
             &mut self,
             prototype: &Self::GlweCiphertextProto,
@@ -64,7 +66,9 @@ mod backend_default {
         GlweCiphertextView32, GlweCiphertextView64,
     };
 
-    impl<'a> SynthesizesGlweCiphertext<Precision32, GlweCiphertextView32<'a>> for Maker {
+    impl<'a> SynthesizesGlweCiphertext<Precision32, BinaryKeyDistribution, GlweCiphertextView32<'a>>
+        for Maker
+    {
         fn synthesize_glwe_ciphertext(
             &mut self,
             prototype: &Self::GlweCiphertextProto,
@@ -111,7 +115,9 @@ mod backend_default {
         }
     }
 
-    impl<'a> SynthesizesGlweCiphertext<Precision64, GlweCiphertextView64<'a>> for Maker {
+    impl<'a> SynthesizesGlweCiphertext<Precision64, BinaryKeyDistribution, GlweCiphertextView64<'a>>
+        for Maker
+    {
         fn synthesize_glwe_ciphertext(
             &mut self,
             prototype: &Self::GlweCiphertextProto,
@@ -160,7 +166,10 @@ mod backend_default {
 
     use concrete_core::prelude::{GlweCiphertextMutView32, GlweCiphertextMutView64};
 
-    impl<'a> SynthesizesGlweCiphertext<Precision32, GlweCiphertextMutView32<'a>> for Maker {
+    impl<'a>
+        SynthesizesGlweCiphertext<Precision32, BinaryKeyDistribution, GlweCiphertextMutView32<'a>>
+        for Maker
+    {
         fn synthesize_glwe_ciphertext(
             &mut self,
             prototype: &Self::GlweCiphertextProto,
@@ -205,7 +214,10 @@ mod backend_default {
         }
     }
 
-    impl<'a> SynthesizesGlweCiphertext<Precision64, GlweCiphertextMutView64<'a>> for Maker {
+    impl<'a>
+        SynthesizesGlweCiphertext<Precision64, BinaryKeyDistribution, GlweCiphertextMutView64<'a>>
+        for Maker
+    {
         fn synthesize_glwe_ciphertext(
             &mut self,
             prototype: &Self::GlweCiphertextProto,
@@ -255,12 +267,14 @@ mod backend_default {
 mod backend_fftw {
     use crate::generation::prototypes::{ProtoBinaryGlweCiphertext32, ProtoBinaryGlweCiphertext64};
     use crate::generation::synthesizing::SynthesizesGlweCiphertext;
-    use crate::generation::{Maker, Precision32, Precision64};
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
     use concrete_core::prelude::{
         FftwFourierGlweCiphertext32, FftwFourierGlweCiphertext64, GlweCiphertextConversionEngine,
     };
 
-    impl SynthesizesGlweCiphertext<Precision32, FftwFourierGlweCiphertext32> for Maker {
+    impl SynthesizesGlweCiphertext<Precision32, BinaryKeyDistribution, FftwFourierGlweCiphertext32>
+        for Maker
+    {
         fn synthesize_glwe_ciphertext(
             &mut self,
             prototype: &Self::GlweCiphertextProto,
@@ -281,7 +295,9 @@ mod backend_fftw {
         fn destroy_glwe_ciphertext(&mut self, _entity: FftwFourierGlweCiphertext32) {}
     }
 
-    impl SynthesizesGlweCiphertext<Precision64, FftwFourierGlweCiphertext64> for Maker {
+    impl SynthesizesGlweCiphertext<Precision64, BinaryKeyDistribution, FftwFourierGlweCiphertext64>
+        for Maker
+    {
         fn synthesize_glwe_ciphertext(
             &mut self,
             prototype: &Self::GlweCiphertextProto,
@@ -307,12 +323,12 @@ mod backend_fftw {
 mod backend_cuda {
     use crate::generation::prototypes::{ProtoBinaryGlweCiphertext32, ProtoBinaryGlweCiphertext64};
     use crate::generation::synthesizing::SynthesizesGlweCiphertext;
-    use crate::generation::{Maker, Precision32, Precision64};
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
     use concrete_core::prelude::{
         CudaGlweCiphertext32, CudaGlweCiphertext64, GlweCiphertextConversionEngine,
     };
 
-    impl SynthesizesGlweCiphertext<Precision32, CudaGlweCiphertext32> for Maker {
+    impl SynthesizesGlweCiphertext<Precision32, BinaryKeyDistribution, CudaGlweCiphertext32> for Maker {
         fn synthesize_glwe_ciphertext(
             &mut self,
             prototype: &Self::GlweCiphertextProto,
@@ -333,7 +349,7 @@ mod backend_cuda {
         fn destroy_glwe_ciphertext(&mut self, _entity: CudaGlweCiphertext32) {}
     }
 
-    impl SynthesizesGlweCiphertext<Precision64, CudaGlweCiphertext64> for Maker {
+    impl SynthesizesGlweCiphertext<Precision64, BinaryKeyDistribution, CudaGlweCiphertext64> for Maker {
         fn synthesize_glwe_ciphertext(
             &mut self,
             prototype: &Self::GlweCiphertextProto,
@@ -351,6 +367,6 @@ mod backend_cuda {
             ProtoBinaryGlweCiphertext64(proto)
         }
 
-        fn destroy_glwe_ciphertext(&mut self, entity: CudaGlweCiphertext64) {}
+        fn destroy_glwe_ciphertext(&mut self, _entity: CudaGlweCiphertext64) {}
     }
 }

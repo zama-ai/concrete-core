@@ -1,14 +1,13 @@
 use crate::generation::prototyping::PrototypesPackingKeyswitchKey;
-use crate::generation::IntegerPrecision;
+use crate::generation::{IntegerPrecision, KeyDistributionMarker};
 use concrete_core::prelude::PackingKeyswitchKeyEntity;
 
-pub trait SynthesizesPackingKeyswitchKey<Precision: IntegerPrecision, PackingKeyswitchKey>:
-    PrototypesPackingKeyswitchKey<
-    Precision,
-    PackingKeyswitchKey::InputKeyDistribution,
-    PackingKeyswitchKey::OutputKeyDistribution,
->
-where
+pub trait SynthesizesPackingKeyswitchKey<
+    Precision: IntegerPrecision,
+    InputKeyDistribution: KeyDistributionMarker,
+    OutputKeyDistribution: KeyDistributionMarker,
+    PackingKeyswitchKey,
+>: PrototypesPackingKeyswitchKey<Precision, InputKeyDistribution, OutputKeyDistribution> where
     PackingKeyswitchKey: PackingKeyswitchKeyEntity,
 {
     fn synthesize_packing_keyswitch_key(
@@ -27,10 +26,17 @@ mod backend_default {
         ProtoBinaryBinaryPackingKeyswitchKey32, ProtoBinaryBinaryPackingKeyswitchKey64,
     };
     use crate::generation::synthesizing::SynthesizesPackingKeyswitchKey;
-    use crate::generation::{Maker, Precision32, Precision64};
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
     use concrete_core::prelude::{PackingKeyswitchKey32, PackingKeyswitchKey64};
 
-    impl SynthesizesPackingKeyswitchKey<Precision32, PackingKeyswitchKey32> for Maker {
+    impl
+        SynthesizesPackingKeyswitchKey<
+            Precision32,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            PackingKeyswitchKey32,
+        > for Maker
+    {
         fn synthesize_packing_keyswitch_key(
             &mut self,
             prototype: &Self::PackingKeyswitchKeyProto,
@@ -48,7 +54,14 @@ mod backend_default {
         fn destroy_packing_keyswitch_key(&mut self, _entity: PackingKeyswitchKey32) {}
     }
 
-    impl SynthesizesPackingKeyswitchKey<Precision64, PackingKeyswitchKey64> for Maker {
+    impl
+        SynthesizesPackingKeyswitchKey<
+            Precision64,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            PackingKeyswitchKey64,
+        > for Maker
+    {
         fn synthesize_packing_keyswitch_key(
             &mut self,
             prototype: &Self::PackingKeyswitchKeyProto,

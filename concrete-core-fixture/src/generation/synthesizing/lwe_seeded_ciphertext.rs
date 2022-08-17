@@ -1,11 +1,13 @@
 use crate::generation::prototyping::PrototypesLweSeededCiphertext;
-use crate::generation::IntegerPrecision;
+use crate::generation::{IntegerPrecision, KeyDistributionMarker};
 use concrete_core::prelude::LweSeededCiphertextEntity;
 
 /// A trait allowing to synthesize an actual LweSeededCiphertextEntity from a prototype.
-pub trait SynthesizesLweSeededCiphertext<Precision: IntegerPrecision, LweSeededCiphertext>:
-    PrototypesLweSeededCiphertext<Precision, LweSeededCiphertext::KeyDistribution>
-where
+pub trait SynthesizesLweSeededCiphertext<
+    Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
+    LweSeededCiphertext,
+>: PrototypesLweSeededCiphertext<Precision, KeyDistribution> where
     LweSeededCiphertext: LweSeededCiphertextEntity,
 {
     fn synthesize_lwe_seeded_ciphertext(
@@ -24,10 +26,12 @@ mod backend_default {
         ProtoBinaryLweSeededCiphertext32, ProtoBinaryLweSeededCiphertext64,
     };
     use crate::generation::synthesizing::SynthesizesLweSeededCiphertext;
-    use crate::generation::{Maker, Precision32, Precision64};
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
     use concrete_core::prelude::{LweSeededCiphertext32, LweSeededCiphertext64};
 
-    impl SynthesizesLweSeededCiphertext<Precision32, LweSeededCiphertext32> for Maker {
+    impl SynthesizesLweSeededCiphertext<Precision32, BinaryKeyDistribution, LweSeededCiphertext32>
+        for Maker
+    {
         fn synthesize_lwe_seeded_ciphertext(
             &mut self,
             prototype: &Self::LweSeededCiphertextProto,
@@ -45,7 +49,9 @@ mod backend_default {
         fn destroy_lwe_seeded_ciphertext(&mut self, _entity: LweSeededCiphertext32) {}
     }
 
-    impl SynthesizesLweSeededCiphertext<Precision64, LweSeededCiphertext64> for Maker {
+    impl SynthesizesLweSeededCiphertext<Precision64, BinaryKeyDistribution, LweSeededCiphertext64>
+        for Maker
+    {
         fn synthesize_lwe_seeded_ciphertext(
             &mut self,
             prototype: &Self::LweSeededCiphertextProto,

@@ -1,13 +1,13 @@
 use crate::generation::prototyping::PrototypesLweSeededCiphertextVector;
-use crate::generation::IntegerPrecision;
+use crate::generation::{IntegerPrecision, KeyDistributionMarker};
 use concrete_core::prelude::LweSeededCiphertextVectorEntity;
 
 /// A trait allowing to synthesize an actual LweSeededCiphertextVectorEntity from a prototype.
 pub trait SynthesizesLweSeededCiphertextVector<
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     LweSeededCiphertextVector,
->:
-    PrototypesLweSeededCiphertextVector<Precision, LweSeededCiphertextVector::KeyDistribution> where
+>: PrototypesLweSeededCiphertextVector<Precision, KeyDistribution> where
     LweSeededCiphertextVector: LweSeededCiphertextVectorEntity,
 {
     fn synthesize_lwe_seeded_ciphertext_vector(
@@ -26,10 +26,16 @@ mod backend_default {
         ProtoBinaryLweSeededCiphertextVector32, ProtoBinaryLweSeededCiphertextVector64,
     };
     use crate::generation::synthesizing::SynthesizesLweSeededCiphertextVector;
-    use crate::generation::{Maker, Precision32, Precision64};
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
     use concrete_core::prelude::{LweSeededCiphertextVector32, LweSeededCiphertextVector64};
 
-    impl SynthesizesLweSeededCiphertextVector<Precision32, LweSeededCiphertextVector32> for Maker {
+    impl
+        SynthesizesLweSeededCiphertextVector<
+            Precision32,
+            BinaryKeyDistribution,
+            LweSeededCiphertextVector32,
+        > for Maker
+    {
         fn synthesize_lwe_seeded_ciphertext_vector(
             &mut self,
             prototype: &Self::LweSeededCiphertextVectorProto,
@@ -47,7 +53,13 @@ mod backend_default {
         fn destroy_lwe_seeded_ciphertext_vector(&mut self, _entity: LweSeededCiphertextVector32) {}
     }
 
-    impl SynthesizesLweSeededCiphertextVector<Precision64, LweSeededCiphertextVector64> for Maker {
+    impl
+        SynthesizesLweSeededCiphertextVector<
+            Precision64,
+            BinaryKeyDistribution,
+            LweSeededCiphertextVector64,
+        > for Maker
+    {
         fn synthesize_lwe_seeded_ciphertext_vector(
             &mut self,
             prototype: &Self::LweSeededCiphertextVectorProto,

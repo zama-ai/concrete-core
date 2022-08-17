@@ -8,7 +8,7 @@ use crate::generation::prototyping::{
     PrototypesLweCiphertext, PrototypesLweSecretKey, PrototypesPlaintext,
 };
 use crate::generation::synthesizing::SynthesizesLweCiphertext;
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 
@@ -23,21 +23,22 @@ pub struct LweCiphertextFusingOppositeParameters {
 }
 
 #[allow(clippy::type_complexity)]
-impl<Precision, Engine, Ciphertext> Fixture<Precision, Engine, (Ciphertext,)>
+impl<Precision, KeyDistribution, Engine, Ciphertext>
+    Fixture<Precision, (KeyDistribution,), Engine, (Ciphertext,)>
     for LweCiphertextFusingOppositeFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: LweCiphertextFusingOppositeEngine<Ciphertext>,
     Ciphertext: LweCiphertextEntity,
-    Maker: SynthesizesLweCiphertext<Precision, Ciphertext>,
+    Maker: SynthesizesLweCiphertext<Precision, KeyDistribution, Ciphertext>,
 {
     type Parameters = LweCiphertextFusingOppositeParameters;
-    type RepetitionPrototypes = (
-        <Maker as PrototypesLweSecretKey<Precision, Ciphertext::KeyDistribution>>::LweSecretKeyProto,
-    );
+    type RepetitionPrototypes =
+        (<Maker as PrototypesLweSecretKey<Precision, KeyDistribution>>::LweSecretKeyProto,);
     type SamplePrototypes = (
         <Maker as PrototypesPlaintext<Precision>>::PlaintextProto,
-        <Maker as PrototypesLweCiphertext<Precision, Ciphertext::KeyDistribution>>::LweCiphertextProto,
+        <Maker as PrototypesLweCiphertext<Precision, KeyDistribution>>::LweCiphertextProto,
     );
     type PreExecutionContext = (Ciphertext,);
     type PostExecutionContext = (Ciphertext,);

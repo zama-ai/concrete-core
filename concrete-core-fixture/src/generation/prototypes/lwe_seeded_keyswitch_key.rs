@@ -1,5 +1,6 @@
-use crate::generation::{IntegerPrecision, Precision32, Precision64};
-use concrete_core::prelude::markers::{BinaryKeyDistribution, KeyDistributionMarker};
+use crate::generation::{
+    BinaryKeyDistribution, IntegerPrecision, KeyDistributionMarker, Precision32, Precision64,
+};
 use concrete_core::prelude::{LweSeededKeyswitchKey32, LweSeededKeyswitchKey64};
 
 /// A trait implemented by seeded LWE keyswitch key prototypes.

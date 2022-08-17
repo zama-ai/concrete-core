@@ -1,7 +1,7 @@
 use crate::fixture::Fixture;
 use crate::generation::prototyping::{PrototypesContainer, PrototypesLweCiphertext};
 use crate::generation::synthesizing::{SynthesizesContainer, SynthesizesLweCiphertext};
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 use concrete_commons::dispersion::Variance;
@@ -18,13 +18,15 @@ pub struct LweCiphertextCreationParameters {
 /// ciphertexts.
 pub struct LweCiphertextCreationFixture;
 
-impl<Precision, Engine, LweCiphertext, Container>
-    Fixture<Precision, Engine, (LweCiphertext, Container)> for LweCiphertextCreationFixture
+impl<Precision, KeyDistribution, Engine, LweCiphertext, Container>
+    Fixture<Precision, (KeyDistribution,), Engine, (LweCiphertext, Container)>
+    for LweCiphertextCreationFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: LweCiphertextCreationEngine<Container, LweCiphertext>,
     LweCiphertext: LweCiphertextEntity,
-    Maker: SynthesizesLweCiphertext<Precision, LweCiphertext>
+    Maker: SynthesizesLweCiphertext<Precision, KeyDistribution, LweCiphertext>
         + SynthesizesContainer<Precision, Container>,
 {
     type Parameters = LweCiphertextCreationParameters;

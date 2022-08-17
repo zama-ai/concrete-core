@@ -3,9 +3,10 @@ use crate::generation::prototypes::{
     ProtoBinaryLweSecretKey32, ProtoBinaryLweSecretKey64,
 };
 use crate::generation::prototyping::PrototypesGlweSecretKey;
-use crate::generation::{IntegerPrecision, Maker, Precision32, Precision64};
+use crate::generation::{
+    BinaryKeyDistribution, IntegerPrecision, KeyDistributionMarker, Maker, Precision32, Precision64,
+};
 use concrete_commons::parameters::LweDimension;
-use concrete_core::prelude::markers::{BinaryKeyDistribution, KeyDistributionMarker};
 use concrete_core::prelude::{
     LweSecretKeyCreationEngine, LweToGlweSecretKeyTransformationEngine, PolynomialSize,
 };

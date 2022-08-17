@@ -1,14 +1,13 @@
 use crate::generation::prototyping::PrototypesLweSeededKeyswitchKey;
-use crate::generation::IntegerPrecision;
+use crate::generation::{IntegerPrecision, KeyDistributionMarker};
 use concrete_core::prelude::LweSeededKeyswitchKeyEntity;
 
-pub trait SynthesizesLweSeededKeyswitchKey<Precision: IntegerPrecision, LweSeededKeyswitchKey>:
-    PrototypesLweSeededKeyswitchKey<
-    Precision,
-    LweSeededKeyswitchKey::InputKeyDistribution,
-    LweSeededKeyswitchKey::OutputKeyDistribution,
->
-where
+pub trait SynthesizesLweSeededKeyswitchKey<
+    Precision: IntegerPrecision,
+    InputKeyDistribution: KeyDistributionMarker,
+    OutputKeyDistribution: KeyDistributionMarker,
+    LweSeededKeyswitchKey,
+>: PrototypesLweSeededKeyswitchKey<Precision, InputKeyDistribution, OutputKeyDistribution> where
     LweSeededKeyswitchKey: LweSeededKeyswitchKeyEntity,
 {
     fn synthesize_lwe_seeded_keyswitch_key(
@@ -27,10 +26,17 @@ mod backend_default {
         ProtoBinaryBinaryLweSeededKeyswitchKey32, ProtoBinaryBinaryLweSeededKeyswitchKey64,
     };
     use crate::generation::synthesizing::SynthesizesLweSeededKeyswitchKey;
-    use crate::generation::{Maker, Precision32, Precision64};
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
     use concrete_core::prelude::{LweSeededKeyswitchKey32, LweSeededKeyswitchKey64};
 
-    impl SynthesizesLweSeededKeyswitchKey<Precision32, LweSeededKeyswitchKey32> for Maker {
+    impl
+        SynthesizesLweSeededKeyswitchKey<
+            Precision32,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            LweSeededKeyswitchKey32,
+        > for Maker
+    {
         fn synthesize_lwe_seeded_keyswitch_key(
             &mut self,
             prototype: &Self::LweSeededKeyswitchKeyProto,
@@ -48,7 +54,14 @@ mod backend_default {
         fn destroy_lwe_seeded_keyswitch_key(&mut self, _entity: LweSeededKeyswitchKey32) {}
     }
 
-    impl SynthesizesLweSeededKeyswitchKey<Precision64, LweSeededKeyswitchKey64> for Maker {
+    impl
+        SynthesizesLweSeededKeyswitchKey<
+            Precision64,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            LweSeededKeyswitchKey64,
+        > for Maker
+    {
         fn synthesize_lwe_seeded_keyswitch_key(
             &mut self,
             prototype: &Self::LweSeededKeyswitchKeyProto,

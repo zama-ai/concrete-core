@@ -1,11 +1,13 @@
 use crate::generation::prototyping::PrototypesLweCiphertextVector;
-use crate::generation::IntegerPrecision;
+use crate::generation::{IntegerPrecision, KeyDistributionMarker};
 use concrete_core::prelude::LweCiphertextVectorEntity;
 
 /// A trait allowing to synthesize an actual lwe ciphertext vector entity from a prototype.
-pub trait SynthesizesLweCiphertextVector<Precision: IntegerPrecision, LweCiphertextVector>:
-    PrototypesLweCiphertextVector<Precision, LweCiphertextVector::KeyDistribution>
-where
+pub trait SynthesizesLweCiphertextVector<
+    Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
+    LweCiphertextVector,
+>: PrototypesLweCiphertextVector<Precision, KeyDistribution> where
     LweCiphertextVector: LweCiphertextVectorEntity,
 {
     fn synthesize_lwe_ciphertext_vector(
@@ -24,10 +26,12 @@ mod backend_default {
         ProtoBinaryLweCiphertextVector32, ProtoBinaryLweCiphertextVector64,
     };
     use crate::generation::synthesizing::SynthesizesLweCiphertextVector;
-    use crate::generation::{Maker, Precision32, Precision64};
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
     use concrete_core::prelude::{LweCiphertextVector32, LweCiphertextVector64};
 
-    impl SynthesizesLweCiphertextVector<Precision32, LweCiphertextVector32> for Maker {
+    impl SynthesizesLweCiphertextVector<Precision32, BinaryKeyDistribution, LweCiphertextVector32>
+        for Maker
+    {
         fn synthesize_lwe_ciphertext_vector(
             &mut self,
             prototype: &Self::LweCiphertextVectorProto,
@@ -45,7 +49,9 @@ mod backend_default {
         fn destroy_lwe_ciphertext_vector(&mut self, _entity: LweCiphertextVector32) {}
     }
 
-    impl SynthesizesLweCiphertextVector<Precision64, LweCiphertextVector64> for Maker {
+    impl SynthesizesLweCiphertextVector<Precision64, BinaryKeyDistribution, LweCiphertextVector64>
+        for Maker
+    {
         fn synthesize_lwe_ciphertext_vector(
             &mut self,
             prototype: &Self::LweCiphertextVectorProto,
@@ -69,12 +75,18 @@ mod backend_cuda {
         ProtoBinaryLweCiphertextVector32, ProtoBinaryLweCiphertextVector64,
     };
     use crate::generation::synthesizing::SynthesizesLweCiphertextVector;
-    use crate::generation::{Maker, Precision32, Precision64};
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
     use concrete_core::prelude::{
         CudaLweCiphertextVector32, CudaLweCiphertextVector64, LweCiphertextVectorConversionEngine,
     };
 
-    impl SynthesizesLweCiphertextVector<Precision32, CudaLweCiphertextVector32> for Maker {
+    impl
+        SynthesizesLweCiphertextVector<
+            Precision32,
+            BinaryKeyDistribution,
+            CudaLweCiphertextVector32,
+        > for Maker
+    {
         fn synthesize_lwe_ciphertext_vector(
             &mut self,
             prototype: &Self::LweCiphertextVectorProto,
@@ -96,7 +108,13 @@ mod backend_cuda {
         fn destroy_lwe_ciphertext_vector(&mut self, _entity: CudaLweCiphertextVector32) {}
     }
 
-    impl SynthesizesLweCiphertextVector<Precision64, CudaLweCiphertextVector64> for Maker {
+    impl
+        SynthesizesLweCiphertextVector<
+            Precision64,
+            BinaryKeyDistribution,
+            CudaLweCiphertextVector64,
+        > for Maker
+    {
         fn synthesize_lwe_ciphertext_vector(
             &mut self,
             prototype: &Self::LweCiphertextVectorProto,

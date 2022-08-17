@@ -6,10 +6,11 @@ use crate::generation::prototypes::{
 use crate::generation::prototyping::glwe_secret_key::PrototypesGlweSecretKey;
 use crate::generation::prototyping::lwe_bootstrap_key::PrototypesLweBootstrapKey;
 use crate::generation::prototyping::lwe_secret_key::PrototypesLweSecretKey;
-use crate::generation::{IntegerPrecision, Maker, Precision32, Precision64};
+use crate::generation::{
+    BinaryKeyDistribution, IntegerPrecision, KeyDistributionMarker, Maker, Precision32, Precision64,
+};
 use concrete_commons::dispersion::Variance;
 use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
-use concrete_core::prelude::markers::{BinaryKeyDistribution, KeyDistributionMarker};
 use concrete_core::prelude::{
     LweSeededBootstrapKeyCreationEngine, LweSeededBootstrapKeyToLweBootstrapKeyTransformationEngine,
 };

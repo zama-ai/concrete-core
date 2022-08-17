@@ -14,7 +14,7 @@ pub struct PlaintextRetrievalFixture;
 #[derive(Debug)]
 pub struct PlaintextRetrievalParameters;
 
-impl<Precision, Engine, Plaintext> Fixture<Precision, Engine, (Plaintext,)>
+impl<Precision, Engine, Plaintext> Fixture<Precision, (), Engine, (Plaintext,)>
     for PlaintextRetrievalFixture
 where
     Precision: IntegerPrecision,

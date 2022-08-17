@@ -3,7 +3,7 @@ use crate::generation::prototyping::{
     PrototypesGlweSecretKey, TransformsLweToGlweSecretKeyPrototype,
 };
 use crate::generation::synthesizing::{SynthesizesGlweSecretKey, SynthesizesLweSecretKey};
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use concrete_commons::parameters::{GlweDimension, LweDimension, PolynomialSize};
 use concrete_core::prelude::{
     GlweSecretKeyEntity, GlweToLweSecretKeyTransformationEngine, LweSecretKeyEntity,
@@ -18,23 +18,23 @@ pub struct GlweToLweSecretKeyTransformationParameters {
     pub polynomial_size: PolynomialSize,
 }
 
-impl<Precision, Engine, InputSecretKey, OutputSecretKey>
-    Fixture<Precision, Engine, (InputSecretKey, OutputSecretKey)>
+impl<Precision, KeyDistribution, Engine, InputSecretKey, OutputSecretKey>
+    Fixture<Precision, (KeyDistribution,), Engine, (InputSecretKey, OutputSecretKey)>
     for GlweToLweSecretKeyTransformationFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: GlweToLweSecretKeyTransformationEngine<InputSecretKey, OutputSecretKey>,
     InputSecretKey: GlweSecretKeyEntity,
-    OutputSecretKey: LweSecretKeyEntity<KeyDistribution = InputSecretKey::KeyDistribution>,
-    Maker: TransformsLweToGlweSecretKeyPrototype<Precision, OutputSecretKey::KeyDistribution>
-        + SynthesizesLweSecretKey<Precision, OutputSecretKey>
-        + SynthesizesGlweSecretKey<Precision, InputSecretKey>,
+    OutputSecretKey: LweSecretKeyEntity,
+    Maker: TransformsLweToGlweSecretKeyPrototype<Precision, KeyDistribution>
+        + SynthesizesLweSecretKey<Precision, KeyDistribution, OutputSecretKey>
+        + SynthesizesGlweSecretKey<Precision, KeyDistribution, InputSecretKey>,
 {
     type Parameters = GlweToLweSecretKeyTransformationParameters;
     type RepetitionPrototypes = ();
-    type SamplePrototypes = (
-        <Maker as PrototypesGlweSecretKey<Precision, InputSecretKey::KeyDistribution>>::GlweSecretKeyProto,
-    );
+    type SamplePrototypes =
+        (<Maker as PrototypesGlweSecretKey<Precision, KeyDistribution>>::GlweSecretKeyProto,);
     type PreExecutionContext = (InputSecretKey,);
     type PostExecutionContext = (OutputSecretKey,);
     type Criteria = ();

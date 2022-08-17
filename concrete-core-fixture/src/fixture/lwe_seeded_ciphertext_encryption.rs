@@ -6,7 +6,7 @@ use crate::generation::prototyping::{
 use crate::generation::synthesizing::{
     SynthesizesLweSecretKey, SynthesizesLweSeededCiphertext, SynthesizesPlaintext,
 };
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 use concrete_commons::dispersion::Variance;
@@ -25,21 +25,23 @@ pub struct LweSeededCiphertextEncryptionParameters {
     pub lwe_dimension: LweDimension,
 }
 
-impl<Precision, Engine, Plaintext, SecretKey, Ciphertext>
-    Fixture<Precision, Engine, (Plaintext, SecretKey, Ciphertext)>
+impl<Precision, KeyDistribution, Engine, Plaintext, SecretKey, Ciphertext>
+    Fixture<Precision, (KeyDistribution,), Engine, (Plaintext, SecretKey, Ciphertext)>
     for LweSeededCiphertextEncryptionFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: LweSeededCiphertextEncryptionEngine<SecretKey, Plaintext, Ciphertext>,
     Plaintext: PlaintextEntity,
     SecretKey: LweSecretKeyEntity,
-    Ciphertext: LweSeededCiphertextEntity<KeyDistribution = SecretKey::KeyDistribution>,
+    Ciphertext: LweSeededCiphertextEntity,
     Maker: SynthesizesPlaintext<Precision, Plaintext>
-        + SynthesizesLweSecretKey<Precision, SecretKey>
-        + SynthesizesLweSeededCiphertext<Precision, Ciphertext>,
+        + SynthesizesLweSecretKey<Precision, KeyDistribution, SecretKey>
+        + SynthesizesLweSeededCiphertext<Precision, KeyDistribution, Ciphertext>,
 {
     type Parameters = LweSeededCiphertextEncryptionParameters;
-    type RepetitionPrototypes = (<Maker as PrototypesLweSecretKey<Precision, Ciphertext::KeyDistribution>>::LweSecretKeyProto, );
+    type RepetitionPrototypes =
+        (<Maker as PrototypesLweSecretKey<Precision, KeyDistribution>>::LweSecretKeyProto,);
     type SamplePrototypes = (
         <Maker as PrototypesPlaintext<Precision>>::PlaintextProto,
         Precision::Raw,

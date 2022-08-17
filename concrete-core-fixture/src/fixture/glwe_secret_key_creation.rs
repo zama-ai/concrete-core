@@ -1,6 +1,6 @@
 use crate::fixture::Fixture;
 use crate::generation::synthesizing::SynthesizesGlweSecretKey;
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use concrete_commons::parameters::{GlweDimension, PolynomialSize};
 use concrete_core::prelude::{GlweSecretKeyCreationEngine, GlweSecretKeyEntity};
 
@@ -13,13 +13,15 @@ pub struct GlweSecretKeyCreationParameters {
     pub polynomial_size: PolynomialSize,
 }
 
-impl<Precision, Engine, SecretKey> Fixture<Precision, Engine, (SecretKey,)>
-    for GlweSecretKeyCreationFixture
+impl<Precision, KeyDistribution, Engine, SecretKey>
+    Fixture<Precision, (KeyDistribution,), Engine, (SecretKey,)> for GlweSecretKeyCreationFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
+
     Engine: GlweSecretKeyCreationEngine<SecretKey>,
     SecretKey: GlweSecretKeyEntity,
-    Maker: SynthesizesGlweSecretKey<Precision, SecretKey>,
+    Maker: SynthesizesGlweSecretKey<Precision, KeyDistribution, SecretKey>,
 {
     type Parameters = GlweSecretKeyCreationParameters;
     type RepetitionPrototypes = ();

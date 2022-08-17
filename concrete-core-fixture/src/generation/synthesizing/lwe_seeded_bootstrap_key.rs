@@ -1,15 +1,14 @@
 use crate::generation::prototyping::PrototypesLweSeededBootstrapKey;
-use crate::generation::IntegerPrecision;
+use crate::generation::{IntegerPrecision, KeyDistributionMarker};
 use concrete_core::prelude::LweSeededBootstrapKeyEntity;
 
 /// A trait allowing to synthesize an actual LweSeededBootstrapKeyEntity from a prototype.
-pub trait SynthesizesLweSeededBootstrapKey<Precision: IntegerPrecision, LweSeededBootstrapKey>:
-    PrototypesLweSeededBootstrapKey<
-    Precision,
-    LweSeededBootstrapKey::InputKeyDistribution,
-    LweSeededBootstrapKey::OutputKeyDistribution,
->
-where
+pub trait SynthesizesLweSeededBootstrapKey<
+    Precision: IntegerPrecision,
+    InputKeyDistribution: KeyDistributionMarker,
+    OutputKeyDistribution: KeyDistributionMarker,
+    LweSeededBootstrapKey,
+>: PrototypesLweSeededBootstrapKey<Precision, InputKeyDistribution, OutputKeyDistribution> where
     LweSeededBootstrapKey: LweSeededBootstrapKeyEntity,
 {
     fn synthesize_lwe_seeded_bootstrap_key(
@@ -28,10 +27,17 @@ mod backend_default {
         ProtoBinaryBinaryLweSeededBootstrapKey32, ProtoBinaryBinaryLweSeededBootstrapKey64,
     };
     use crate::generation::synthesizing::SynthesizesLweSeededBootstrapKey;
-    use crate::generation::{Maker, Precision32, Precision64};
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
     use concrete_core::prelude::{LweSeededBootstrapKey32, LweSeededBootstrapKey64};
 
-    impl SynthesizesLweSeededBootstrapKey<Precision32, LweSeededBootstrapKey32> for Maker {
+    impl
+        SynthesizesLweSeededBootstrapKey<
+            Precision32,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            LweSeededBootstrapKey32,
+        > for Maker
+    {
         fn synthesize_lwe_seeded_bootstrap_key(
             &mut self,
             prototype: &Self::LweSeededBootstrapKeyProto,
@@ -49,7 +55,14 @@ mod backend_default {
         fn destroy_lwe_seeded_bootstrap_key(&mut self, _entity: LweSeededBootstrapKey32) {}
     }
 
-    impl SynthesizesLweSeededBootstrapKey<Precision64, LweSeededBootstrapKey64> for Maker {
+    impl
+        SynthesizesLweSeededBootstrapKey<
+            Precision64,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            LweSeededBootstrapKey64,
+        > for Maker
+    {
         fn synthesize_lwe_seeded_bootstrap_key(
             &mut self,
             prototype: &Self::LweSeededBootstrapKeyProto,
