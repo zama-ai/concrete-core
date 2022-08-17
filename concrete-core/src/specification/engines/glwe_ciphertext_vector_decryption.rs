@@ -19,7 +19,7 @@ impl<EngineError: std::error::Error> GlweCiphertextVectorDecryptionError<EngineE
     ) -> Result<(), Self>
     where
         SecretKey: GlweSecretKeyEntity,
-        CiphertextVector: GlweCiphertextVectorEntity<KeyDistribution = SecretKey::KeyDistribution>,
+        CiphertextVector: GlweCiphertextVectorEntity,
     {
         if key.glwe_dimension() != input.glwe_dimension() {
             return Err(Self::GlweDimensionMismatch);
@@ -45,7 +45,7 @@ pub trait GlweCiphertextVectorDecryptionEngine<SecretKey, CiphertextVector, Plai
     AbstractEngine
 where
     SecretKey: GlweSecretKeyEntity,
-    CiphertextVector: GlweCiphertextVectorEntity<KeyDistribution = SecretKey::KeyDistribution>,
+    CiphertextVector: GlweCiphertextVectorEntity,
     PlaintextVector: PlaintextVectorEntity,
 {
     /// Decrypts a GLWE ciphertext vector.

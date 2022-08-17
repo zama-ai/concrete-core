@@ -44,8 +44,7 @@ pub trait GlweSeededCiphertextVectorEncryptionEngine<SecretKey, PlaintextVector,
 where
     SecretKey: GlweSecretKeyEntity,
     PlaintextVector: PlaintextVectorEntity,
-    CiphertextVector:
-        GlweSeededCiphertextVectorEntity<KeyDistribution = SecretKey::KeyDistribution>,
+    CiphertextVector: GlweSeededCiphertextVectorEntity,
 {
     /// Encrypts a GLWE seeded ciphertext vector.
     fn encrypt_glwe_seeded_ciphertext_vector(

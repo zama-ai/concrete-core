@@ -1,5 +1,5 @@
 use crate::commons::crypto::glwe::GlweCiphertext as ImplGlweCiphertext;
-use crate::specification::entities::markers::{BinaryKeyDistribution, GlweCiphertextKind};
+use crate::specification::entities::markers::GlweCiphertextKind;
 use crate::specification::entities::{AbstractEntity, GlweCiphertextEntity};
 use concrete_commons::parameters::{GlweDimension, PolynomialSize};
 #[cfg(feature = "backend_default_serialization")]
@@ -14,8 +14,6 @@ impl AbstractEntity for GlweCiphertext32 {
 }
 
 impl GlweCiphertextEntity for GlweCiphertext32 {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.size().to_glwe_dimension()
     }
@@ -42,8 +40,6 @@ impl AbstractEntity for GlweCiphertext64 {
 }
 
 impl GlweCiphertextEntity for GlweCiphertext64 {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.size().to_glwe_dimension()
     }
@@ -79,8 +75,6 @@ impl AbstractEntity for GlweCiphertextView32<'_> {
 }
 
 impl GlweCiphertextEntity for GlweCiphertextView32<'_> {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.size().to_glwe_dimension()
     }
@@ -105,8 +99,6 @@ impl AbstractEntity for GlweCiphertextMutView32<'_> {
 }
 
 impl GlweCiphertextEntity for GlweCiphertextMutView32<'_> {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.size().to_glwe_dimension()
     }
@@ -132,8 +124,6 @@ impl AbstractEntity for GlweCiphertextView64<'_> {
 }
 
 impl GlweCiphertextEntity for GlweCiphertextView64<'_> {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.size().to_glwe_dimension()
     }
@@ -159,8 +149,6 @@ impl AbstractEntity for GlweCiphertextMutView64<'_> {
 }
 
 impl GlweCiphertextEntity for GlweCiphertextMutView64<'_> {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.size().to_glwe_dimension()
     }

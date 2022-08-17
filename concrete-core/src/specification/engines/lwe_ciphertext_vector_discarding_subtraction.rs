@@ -17,8 +17,7 @@ impl<EngineError: std::error::Error> LweCiphertextVectorDiscardingSubtractionErr
     ) -> Result<(), Self>
     where
         InputCiphertextVector: LweCiphertextVectorEntity,
-        OutputCiphertextVector:
-            LweCiphertextVectorEntity<KeyDistribution = InputCiphertextVector::KeyDistribution>,
+        OutputCiphertextVector: LweCiphertextVectorEntity,
     {
         if output.lwe_dimension() != input_1.lwe_dimension()
             || output.lwe_dimension() != input_2.lwe_dimension()
@@ -48,8 +47,7 @@ pub trait LweCiphertextVectorDiscardingSubtractionEngine<
     OutputCiphertextVector,
 >: AbstractEngine where
     InputCiphertextVector: LweCiphertextVectorEntity,
-    OutputCiphertextVector:
-        LweCiphertextVectorEntity<KeyDistribution = InputCiphertextVector::KeyDistribution>,
+    OutputCiphertextVector: LweCiphertextVectorEntity,
 {
     /// Subtracts two LWE ciphertext vectors.
     fn discard_sub_lwe_ciphertext_vector(

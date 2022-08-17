@@ -16,7 +16,7 @@ impl<EngineError: std::error::Error> LweCiphertextLoadingError<EngineError> {
     ) -> Result<(), Self>
     where
         Ciphertext: LweCiphertextEntity,
-        CiphertextVector: LweCiphertextVectorEntity<KeyDistribution = Ciphertext::KeyDistribution>,
+        CiphertextVector: LweCiphertextVectorEntity,
     {
         if i.0 >= vector.lwe_ciphertext_count().0 {
             return Err(Self::IndexTooLarge);
@@ -36,7 +36,7 @@ impl<EngineError: std::error::Error> LweCiphertextLoadingError<EngineError> {
 pub trait LweCiphertextLoadingEngine<CiphertextVector, Ciphertext>: AbstractEngine
 where
     Ciphertext: LweCiphertextEntity,
-    CiphertextVector: LweCiphertextVectorEntity<KeyDistribution = Ciphertext::KeyDistribution>,
+    CiphertextVector: LweCiphertextVectorEntity,
 {
     /// Loads an LWE ciphertext from an LWE ciphertext vector.
     fn load_lwe_ciphertext(

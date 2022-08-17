@@ -1,7 +1,6 @@
 use crate::commons::crypto::glwe::PackingKeyswitchKey as ImplPackingKeyswitchKey;
 use crate::prelude::markers::PackingKeyswitchKeyKind;
 use crate::prelude::PackingKeyswitchKeyEntity;
-use crate::specification::entities::markers::BinaryKeyDistribution;
 use crate::specification::entities::AbstractEntity;
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension,
@@ -16,9 +15,6 @@ impl AbstractEntity for PackingKeyswitchKey32 {
     type Kind = PackingKeyswitchKeyKind;
 }
 impl PackingKeyswitchKeyEntity for PackingKeyswitchKey32 {
-    type InputKeyDistribution = BinaryKeyDistribution;
-    type OutputKeyDistribution = BinaryKeyDistribution;
-
     fn input_lwe_dimension(&self) -> LweDimension {
         self.0.input_lwe_key_dimension()
     }
@@ -55,9 +51,6 @@ impl AbstractEntity for PackingKeyswitchKey64 {
     type Kind = PackingKeyswitchKeyKind;
 }
 impl PackingKeyswitchKeyEntity for PackingKeyswitchKey64 {
-    type InputKeyDistribution = BinaryKeyDistribution;
-    type OutputKeyDistribution = BinaryKeyDistribution;
-
     fn input_lwe_dimension(&self) -> LweDimension {
         self.0.input_lwe_key_dimension()
     }

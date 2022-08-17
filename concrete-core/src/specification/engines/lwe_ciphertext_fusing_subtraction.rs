@@ -15,7 +15,7 @@ impl<EngineError: std::error::Error> LweCiphertextFusingSubtractionError<EngineE
     ) -> Result<(), Self>
     where
         InputCiphertext: LweCiphertextEntity,
-        OutputCiphertext: LweCiphertextEntity<KeyDistribution = InputCiphertext::KeyDistribution>,
+        OutputCiphertext: LweCiphertextEntity,
     {
         if output.lwe_dimension() != input.lwe_dimension() {
             return Err(Self::LweDimensionMismatch);
@@ -36,7 +36,7 @@ pub trait LweCiphertextFusingSubtractionEngine<InputCiphertext, OutputCiphertext
     AbstractEngine
 where
     InputCiphertext: LweCiphertextEntity,
-    OutputCiphertext: LweCiphertextEntity<KeyDistribution = InputCiphertext::KeyDistribution>,
+    OutputCiphertext: LweCiphertextEntity,
 {
     /// Subtracts an LWE ciphertext to an other.
     fn fuse_sub_lwe_ciphertext(

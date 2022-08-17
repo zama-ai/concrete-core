@@ -12,7 +12,7 @@ impl<EngineError: std::error::Error> LweSecretKeyDiscardingConversionError<Engin
     pub fn perform_generic_checks<Input, Output>(output: &Output, input: &Input) -> Result<(), Self>
     where
         Input: LweSecretKeyEntity,
-        Output: LweSecretKeyEntity<KeyDistribution = Input::KeyDistribution>,
+        Output: LweSecretKeyEntity,
     {
         if input.lwe_dimension() != output.lwe_dimension() {
             return Err(Self::LweDimensionMismatch);
@@ -33,7 +33,7 @@ impl<EngineError: std::error::Error> LweSecretKeyDiscardingConversionError<Engin
 pub trait LweSecretKeyDiscardingConversionEngine<Input, Output>: AbstractEngine
 where
     Input: LweSecretKeyEntity,
-    Output: LweSecretKeyEntity<KeyDistribution = Input::KeyDistribution>,
+    Output: LweSecretKeyEntity,
 {
     /// Converts a LWE secret key .
     fn discard_convert_lwe_secret_key(

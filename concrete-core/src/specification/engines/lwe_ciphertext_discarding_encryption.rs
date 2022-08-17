@@ -17,7 +17,7 @@ impl<EngineError: std::error::Error> LweCiphertextDiscardingEncryptionError<Engi
     ) -> Result<(), Self>
     where
         SecretKey: LweSecretKeyEntity,
-        Ciphertext: LweCiphertextEntity<KeyDistribution = SecretKey::KeyDistribution>,
+        Ciphertext: LweCiphertextEntity,
     {
         if key.lwe_dimension() != output.lwe_dimension() {
             return Err(Self::LweDimensionMismatch);
@@ -41,7 +41,7 @@ pub trait LweCiphertextDiscardingEncryptionEngine<SecretKey, Plaintext, Cipherte
 where
     SecretKey: LweSecretKeyEntity,
     Plaintext: PlaintextEntity,
-    Ciphertext: LweCiphertextEntity<KeyDistribution = SecretKey::KeyDistribution>,
+    Ciphertext: LweCiphertextEntity,
 {
     /// Encrypts an LWE ciphertext.
     fn discard_encrypt_lwe_ciphertext(

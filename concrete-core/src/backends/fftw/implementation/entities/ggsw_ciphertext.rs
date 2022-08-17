@@ -1,6 +1,6 @@
 use crate::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
 use crate::backends::fftw::private::math::fft::Complex64;
-use crate::specification::entities::markers::{BinaryKeyDistribution, GgswCiphertextKind};
+use crate::specification::entities::markers::GgswCiphertextKind;
 use crate::specification::entities::{AbstractEntity, GgswCiphertextEntity};
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
@@ -21,8 +21,6 @@ impl AbstractEntity for FftwFourierGgswCiphertext64 {
     type Kind = GgswCiphertextKind;
 }
 impl GgswCiphertextEntity for FftwFourierGgswCiphertext64 {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.glwe_size().to_glwe_dimension()
     }
@@ -60,8 +58,6 @@ impl AbstractEntity for FftwFourierGgswCiphertext32 {
     type Kind = GgswCiphertextKind;
 }
 impl GgswCiphertextEntity for FftwFourierGgswCiphertext32 {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.glwe_size().to_glwe_dimension()
     }

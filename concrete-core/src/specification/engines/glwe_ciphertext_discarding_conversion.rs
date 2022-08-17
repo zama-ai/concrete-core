@@ -13,7 +13,7 @@ impl<EngineError: std::error::Error> GlweCiphertextDiscardingConversionError<Eng
     pub fn perform_generic_checks<Input, Output>(output: &Output, input: &Input) -> Result<(), Self>
     where
         Input: GlweCiphertextEntity,
-        Output: GlweCiphertextEntity<KeyDistribution = Input::KeyDistribution>,
+        Output: GlweCiphertextEntity,
     {
         if input.glwe_dimension() != output.glwe_dimension() {
             return Err(Self::GlweDimensionMismatch);
@@ -39,7 +39,7 @@ impl<EngineError: std::error::Error> GlweCiphertextDiscardingConversionError<Eng
 pub trait GlweCiphertextDiscardingConversionEngine<Input, Output>: AbstractEngine
 where
     Input: GlweCiphertextEntity,
-    Output: GlweCiphertextEntity<KeyDistribution = Input::KeyDistribution>,
+    Output: GlweCiphertextEntity,
 {
     /// Converts a GLWE ciphertext .
     fn discard_convert_glwe_ciphertext(

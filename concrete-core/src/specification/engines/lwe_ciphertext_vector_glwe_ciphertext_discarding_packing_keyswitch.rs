@@ -27,10 +27,8 @@ impl<EngineError: std::error::Error>
     ) -> Result<(), Self>
     where
         PackingKeyswitchKey: PackingKeyswitchKeyEntity,
-        InputCiphertextVector:
-            LweCiphertextVectorEntity<KeyDistribution = PackingKeyswitchKey::InputKeyDistribution>,
-        OutputCiphertext:
-            GlweCiphertextEntity<KeyDistribution = PackingKeyswitchKey::OutputKeyDistribution>,
+        InputCiphertextVector: LweCiphertextVectorEntity,
+        OutputCiphertext: GlweCiphertextEntity,
     {
         if input.lwe_dimension() != ksk.input_lwe_dimension() {
             return Err(Self::InputLweDimensionMismatch);
@@ -67,10 +65,8 @@ pub trait LweCiphertextVectorGlweCiphertextDiscardingPackingKeyswitchEngine<
     OutputCiphertext,
 >: AbstractEngine where
     PackingKeyswitchKey: PackingKeyswitchKeyEntity,
-    InputCiphertextVector:
-        LweCiphertextVectorEntity<KeyDistribution = PackingKeyswitchKey::InputKeyDistribution>,
-    OutputCiphertext:
-        GlweCiphertextEntity<KeyDistribution = PackingKeyswitchKey::OutputKeyDistribution>,
+    InputCiphertextVector: LweCiphertextVectorEntity,
+    OutputCiphertext: GlweCiphertextEntity,
 {
     /// Packing keyswitch an LWE ciphertext vector.
     fn discard_packing_keyswitch_lwe_ciphertext_vector(

@@ -1,4 +1,4 @@
-use crate::specification::entities::markers::{KeyDistributionMarker, PackingKeyswitchKeyKind};
+use crate::specification::entities::markers::PackingKeyswitchKeyKind;
 use crate::specification::entities::AbstractEntity;
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
@@ -6,21 +6,8 @@ use concrete_commons::parameters::{
 
 /// A trait implemented by types embodying a packing keyswitch key.
 ///
-/// A packing keyswitch key is associated with two [`KeyDistributionMarker`] types:
-///
-/// + The [`InputKeyDistribution`](`PackingKeyswitchKeyEntity::InputKeyDistribution`) type conveys
-/// the distribution of the input secret key.
-/// + The [`OutputKeyDistribution`](`PackingKeyswitchKeyEntity::OutputKeyDistribution`) type conveys
-/// the distribution of the output secret key.
-///
 /// # Formal Definition
 pub trait PackingKeyswitchKeyEntity: AbstractEntity<Kind = PackingKeyswitchKeyKind> {
-    /// The distribution of the key the input ciphertext is encrypted with.
-    type InputKeyDistribution: KeyDistributionMarker;
-
-    /// The distribution of the key the output ciphertext is encrypted with.
-    type OutputKeyDistribution: KeyDistributionMarker;
-
     /// Returns the input LWE dimension of the key.
     fn input_lwe_dimension(&self) -> LweDimension;
 

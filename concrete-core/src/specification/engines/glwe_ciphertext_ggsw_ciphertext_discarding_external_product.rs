@@ -51,8 +51,8 @@ pub trait GlweCiphertextGgswCiphertextDiscardingExternalProductEngine<GlweInput,
     AbstractEngine
 where
     GlweInput: GlweCiphertextEntity,
-    GgswInput: GgswCiphertextEntity<KeyDistribution = GlweInput::KeyDistribution>,
-    Output: GlweCiphertextEntity<KeyDistribution = GlweInput::KeyDistribution>,
+    GgswInput: GgswCiphertextEntity,
+    Output: GlweCiphertextEntity,
 {
     /// Computes the discarding external product between a GLWE and a GSW ciphertext.
     fn discard_compute_external_product_glwe_ciphertext_ggsw_ciphertext(

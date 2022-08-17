@@ -18,10 +18,7 @@ engine_error! {
 pub trait LweBootstrapKeyConversionEngine<InputKey, OutputKey>: AbstractEngine
 where
     InputKey: LweBootstrapKeyEntity,
-    OutputKey: LweBootstrapKeyEntity<
-        InputKeyDistribution = InputKey::InputKeyDistribution,
-        OutputKeyDistribution = InputKey::OutputKeyDistribution,
-    >,
+    OutputKey: LweBootstrapKeyEntity,
 {
     /// Converts an LWE bootstrap key.
     fn convert_lwe_bootstrap_key(

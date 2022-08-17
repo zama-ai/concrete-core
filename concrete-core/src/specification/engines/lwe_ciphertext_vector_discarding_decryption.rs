@@ -20,7 +20,7 @@ impl<EngineError: std::error::Error> LweCiphertextVectorDiscardingDecryptionErro
     ) -> Result<(), Self>
     where
         SecretKey: LweSecretKeyEntity,
-        CiphertextVector: LweCiphertextVectorEntity<KeyDistribution = SecretKey::KeyDistribution>,
+        CiphertextVector: LweCiphertextVectorEntity,
         PlaintextVector: PlaintextVectorEntity,
     {
         if key.lwe_dimension() != input.lwe_dimension() {
@@ -51,7 +51,7 @@ pub trait LweCiphertextVectorDiscardingDecryptionEngine<
     PlaintextVector,
 >: AbstractEngine where
     SecretKey: LweSecretKeyEntity,
-    CiphertextVector: LweCiphertextVectorEntity<KeyDistribution = SecretKey::KeyDistribution>,
+    CiphertextVector: LweCiphertextVectorEntity,
     PlaintextVector: PlaintextVectorEntity,
 {
     /// Decrypts an LWE ciphertext vector.

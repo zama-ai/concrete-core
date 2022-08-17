@@ -68,8 +68,8 @@ pub trait GlweCiphertextsGgswCiphertextFusingCmuxEngine<GlweInput, GlweOutput, G
     AbstractEngine
 where
     GlweInput: GlweCiphertextEntity,
-    GgswInput: GgswCiphertextEntity<KeyDistribution = GlweInput::KeyDistribution>,
-    GlweOutput: GlweCiphertextEntity<KeyDistribution = GlweInput::KeyDistribution>,
+    GgswInput: GgswCiphertextEntity,
+    GlweOutput: GlweCiphertextEntity,
 {
     /// Computes the cmux between two GLWE ciphertexts and a GGSW ciphertext.
     fn fuse_cmux_glwe_ciphertexts_ggsw_ciphertext(

@@ -26,8 +26,7 @@ pub trait GlweSeededCiphertextVectorToGlweCiphertextVectorTransformationEngine<
     OutputCiphertextVector,
 >: AbstractEngine where
     InputCiphertextVector: GlweSeededCiphertextVectorEntity,
-    OutputCiphertextVector:
-        GlweCiphertextVectorEntity<KeyDistribution = InputCiphertextVector::KeyDistribution>,
+    OutputCiphertextVector: GlweCiphertextVectorEntity,
 {
     /// Does the transformation of the GLWE seeded ciphertext vector into a GLWE ciphertext vector
     fn transform_glwe_seeded_ciphertext_vector_to_glwe_ciphertext_vector(

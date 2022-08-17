@@ -47,8 +47,8 @@ pub trait LweBootstrapKeyCreationEngine<LweSecretKey, GlweSecretKey, BootstrapKe
     AbstractEngine
 where
     BootstrapKey: LweBootstrapKeyEntity,
-    LweSecretKey: LweSecretKeyEntity<KeyDistribution = BootstrapKey::InputKeyDistribution>,
-    GlweSecretKey: GlweSecretKeyEntity<KeyDistribution = BootstrapKey::OutputKeyDistribution>,
+    LweSecretKey: LweSecretKeyEntity,
+    GlweSecretKey: GlweSecretKeyEntity,
 {
     /// Creates an LWE bootstrap key.
     fn create_lwe_bootstrap_key(

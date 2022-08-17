@@ -21,7 +21,7 @@ engine_error! {
 pub trait GlweCiphertextZeroEncryptionEngine<SecretKey, Ciphertext>: AbstractEngine
 where
     SecretKey: GlweSecretKeyEntity,
-    Ciphertext: GlweCiphertextEntity<KeyDistribution = SecretKey::KeyDistribution>,
+    Ciphertext: GlweCiphertextEntity,
 {
     /// Encrypts a zero in a GLWE ciphertext.
     fn zero_encrypt_glwe_ciphertext(

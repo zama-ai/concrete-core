@@ -23,7 +23,7 @@ pub trait GlweSeededCiphertextToGlweCiphertextTransformationEngine<
     OutputCiphertext,
 >: AbstractEngine where
     InputCiphertext: GlweSeededCiphertextEntity,
-    OutputCiphertext: GlweCiphertextEntity<KeyDistribution = InputCiphertext::KeyDistribution>,
+    OutputCiphertext: GlweCiphertextEntity,
 {
     /// Does the transformation of the GLWE seeded ciphertext into an GLWE ciphertext
     fn transform_glwe_seeded_ciphertext_to_glwe_ciphertext(

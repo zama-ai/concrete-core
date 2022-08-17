@@ -18,10 +18,7 @@ engine_error! {
 pub trait LweKeyswitchKeyConversionEngine<Input, Output>: AbstractEngine
 where
     Input: LweKeyswitchKeyEntity,
-    Output: LweKeyswitchKeyEntity<
-        InputKeyDistribution = Input::InputKeyDistribution,
-        OutputKeyDistribution = Input::OutputKeyDistribution,
-    >,
+    Output: LweKeyswitchKeyEntity,
 {
     /// Converts a LWE keyswitch key.
     fn convert_lwe_keyswitch_key(

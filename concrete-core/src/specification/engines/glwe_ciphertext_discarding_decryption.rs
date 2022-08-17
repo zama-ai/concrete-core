@@ -21,7 +21,7 @@ impl<EngineError: std::error::Error> GlweCiphertextDiscardingDecryptionError<Eng
     ) -> Result<(), Self>
     where
         SecretKey: GlweSecretKeyEntity,
-        Ciphertext: GlweCiphertextEntity<KeyDistribution = SecretKey::KeyDistribution>,
+        Ciphertext: GlweCiphertextEntity,
         PlaintextVector: PlaintextVectorEntity,
     {
         if key.polynomial_size() != input.polynomial_size() {
@@ -51,7 +51,7 @@ pub trait GlweCiphertextDiscardingDecryptionEngine<SecretKey, Ciphertext, Plaint
     AbstractEngine
 where
     SecretKey: GlweSecretKeyEntity,
-    Ciphertext: GlweCiphertextEntity<KeyDistribution = SecretKey::KeyDistribution>,
+    Ciphertext: GlweCiphertextEntity,
     PlaintextVector: PlaintextVectorEntity,
 {
     /// Decrypts a GLWE ciphertext .

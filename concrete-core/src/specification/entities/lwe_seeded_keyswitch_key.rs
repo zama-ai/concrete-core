@@ -1,16 +1,9 @@
 use crate::commons::math::random::CompressionSeed;
-use crate::specification::entities::markers::{KeyDistributionMarker, LweSeededKeyswitchKeyKind};
+use crate::specification::entities::markers::LweSeededKeyswitchKeyKind;
 use crate::specification::entities::AbstractEntity;
 use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
 
 /// A trait implemented by types embodying a seeded LWE keyswitch key.
-///
-/// An LWE keyswitch key is associated with two [`KeyDistributionMarker`] types:
-///
-/// + The [`InputKeyDistribution`](`LweSeededKeyswitchKeyEntity::InputKeyDistribution`) type conveys
-/// the distribution of the input secret key.
-/// + The [`OutputKeyDistribution`](`LweSeededKeyswitchKeyEntity::OutputKeyDistribution`) type
-/// conveys the distribution of the output secret key.
 ///
 /// # Formal Definition
 ///
@@ -18,12 +11,6 @@ use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount
 ///
 /// TODO
 pub trait LweSeededKeyswitchKeyEntity: AbstractEntity<Kind = LweSeededKeyswitchKeyKind> {
-    /// The distribution of the key the input ciphertext is encrypted with.
-    type InputKeyDistribution: KeyDistributionMarker;
-
-    /// The distribution of the key the output ciphertext is encrypted with.
-    type OutputKeyDistribution: KeyDistributionMarker;
-
     /// Returns the input LWE dimension of the key.
     fn input_lwe_dimension(&self) -> LweDimension;
 

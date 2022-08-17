@@ -18,7 +18,7 @@ engine_error! {
 pub trait GlweCiphertextConversionEngine<Input, Output>: AbstractEngine
 where
     Input: GlweCiphertextEntity,
-    Output: GlweCiphertextEntity<KeyDistribution = Input::KeyDistribution>,
+    Output: GlweCiphertextEntity,
 {
     /// Converts a GLWE ciphertext.
     fn convert_glwe_ciphertext(

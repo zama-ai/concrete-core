@@ -17,8 +17,7 @@ impl<EngineError: std::error::Error> LweCiphertextVectorDiscardingAdditionError<
     ) -> Result<(), Self>
     where
         InputCiphertextVector: LweCiphertextVectorEntity,
-        OutputCiphertextVector:
-            LweCiphertextVectorEntity<KeyDistribution = InputCiphertextVector::KeyDistribution>,
+        OutputCiphertextVector: LweCiphertextVectorEntity,
     {
         if output.lwe_dimension() != input_1.lwe_dimension()
             || output.lwe_dimension() != input_2.lwe_dimension()
@@ -49,8 +48,7 @@ pub trait LweCiphertextVectorDiscardingAdditionEngine<InputCiphertextVector, Out
     AbstractEngine
 where
     InputCiphertextVector: LweCiphertextVectorEntity,
-    OutputCiphertextVector:
-        LweCiphertextVectorEntity<KeyDistribution = InputCiphertextVector::KeyDistribution>,
+    OutputCiphertextVector: LweCiphertextVectorEntity,
 {
     /// Adds two LWE ciphertext vectors.
     fn discard_add_lwe_ciphertext_vector(

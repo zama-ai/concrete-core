@@ -3,7 +3,7 @@ use std::fmt::Debug;
 use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
 
 use crate::backends::cuda::private::crypto::glwe::list::CudaGlweList;
-use crate::specification::entities::markers::{BinaryKeyDistribution, GlweCiphertextVectorKind};
+use crate::specification::entities::markers::GlweCiphertextVectorKind;
 use crate::specification::entities::{AbstractEntity, GlweCiphertextVectorEntity};
 
 /// A structure representing a vector of GLWE ciphertexts with 32 bits of precision on the GPU.
@@ -16,8 +16,6 @@ impl AbstractEntity for CudaGlweCiphertextVector32 {
 }
 
 impl GlweCiphertextVectorEntity for CudaGlweCiphertextVector32 {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.glwe_dimension()
     }
@@ -41,8 +39,6 @@ impl AbstractEntity for CudaGlweCiphertextVector64 {
 }
 
 impl GlweCiphertextVectorEntity for CudaGlweCiphertextVector64 {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.glwe_dimension()
     }

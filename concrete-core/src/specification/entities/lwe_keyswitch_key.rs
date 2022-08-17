@@ -1,15 +1,8 @@
-use crate::specification::entities::markers::{KeyDistributionMarker, LweKeyswitchKeyKind};
+use crate::specification::entities::markers::LweKeyswitchKeyKind;
 use crate::specification::entities::AbstractEntity;
 use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
 
 /// A trait implemented by types embodying an LWE keyswitch key.
-///
-/// An LWE keyswitch key is associated with two [`KeyDistributionMarker`] types:
-///
-/// + The [`InputKeyDistribution`](`LweKeyswitchKeyEntity::InputKeyDistribution`) type conveys the
-/// distribution of the input secret key.
-/// + The [`OutputKeyDistribution`](`LweKeyswitchKeyEntity::OutputKeyDistribution`) type conveys the
-/// distribution of the output secret key.
 ///
 /// # Formal Definition
 ///
@@ -31,12 +24,6 @@ use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount
 /// $0\le i <n\_{\mathsf{in}}$ we have $\overline{\mathsf{ct}\_i} \in
 /// \mathsf{Lev}\_{\vec{s}\_{\mathsf{out}}}^{\beta, \ell}\left(s\_i\right)$.
 pub trait LweKeyswitchKeyEntity: AbstractEntity<Kind = LweKeyswitchKeyKind> {
-    /// The distribution of the key the input ciphertext is encrypted with.
-    type InputKeyDistribution: KeyDistributionMarker;
-
-    /// The distribution of the key the output ciphertext is encrypted with.
-    type OutputKeyDistribution: KeyDistributionMarker;
-
     /// Returns the input LWE dimension of the key.
     fn input_lwe_dimension(&self) -> LweDimension;
 

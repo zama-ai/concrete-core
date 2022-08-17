@@ -1,5 +1,5 @@
 use crate::commons::crypto::lwe::LweList as ImplLweList;
-use crate::specification::entities::markers::{BinaryKeyDistribution, LweCiphertextVectorKind};
+use crate::specification::entities::markers::LweCiphertextVectorKind;
 use crate::specification::entities::{AbstractEntity, LweCiphertextVectorEntity};
 use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
 #[cfg(feature = "backend_default_serialization")]
@@ -14,8 +14,6 @@ impl AbstractEntity for LweCiphertextVector32 {
 }
 
 impl LweCiphertextVectorEntity for LweCiphertextVector32 {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn lwe_dimension(&self) -> LweDimension {
         self.0.lwe_size().to_lwe_dimension()
     }
@@ -42,8 +40,6 @@ impl AbstractEntity for LweCiphertextVector64 {
 }
 
 impl LweCiphertextVectorEntity for LweCiphertextVector64 {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn lwe_dimension(&self) -> LweDimension {
         self.0.lwe_size().to_lwe_dimension()
     }

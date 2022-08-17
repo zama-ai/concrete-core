@@ -30,12 +30,9 @@ impl<EngineError: std::error::Error> LweCiphertextVectorDiscardingBootstrapError
     ) -> Result<(), Self>
     where
         BootstrapKey: LweBootstrapKeyEntity,
-        AccumulatorVector:
-            GlweCiphertextVectorEntity<KeyDistribution = BootstrapKey::OutputKeyDistribution>,
-        InputCiphertextVector:
-            LweCiphertextVectorEntity<KeyDistribution = BootstrapKey::InputKeyDistribution>,
-        OutputCiphertextVector:
-            LweCiphertextVectorEntity<KeyDistribution = BootstrapKey::OutputKeyDistribution>,
+        AccumulatorVector: GlweCiphertextVectorEntity,
+        InputCiphertextVector: LweCiphertextVectorEntity,
+        OutputCiphertextVector: LweCiphertextVectorEntity,
     {
         if bsk.input_lwe_dimension() != input.lwe_dimension() {
             return Err(Self::InputLweDimensionMismatch);
@@ -81,12 +78,9 @@ pub trait LweCiphertextVectorDiscardingBootstrapEngine<
     OutputCiphertextVector,
 >: AbstractEngine where
     BootstrapKey: LweBootstrapKeyEntity,
-    AccumulatorVector:
-        GlweCiphertextVectorEntity<KeyDistribution = BootstrapKey::OutputKeyDistribution>,
-    InputCiphertextVector:
-        LweCiphertextVectorEntity<KeyDistribution = BootstrapKey::InputKeyDistribution>,
-    OutputCiphertextVector:
-        LweCiphertextVectorEntity<KeyDistribution = BootstrapKey::OutputKeyDistribution>,
+    AccumulatorVector: GlweCiphertextVectorEntity,
+    InputCiphertextVector: LweCiphertextVectorEntity,
+    OutputCiphertextVector: LweCiphertextVectorEntity,
 {
     /// Bootstraps an LWE ciphertext vector.
     fn discard_bootstrap_lwe_ciphertext_vector(

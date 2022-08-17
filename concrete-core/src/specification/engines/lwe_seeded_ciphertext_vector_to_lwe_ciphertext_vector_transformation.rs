@@ -24,8 +24,7 @@ pub trait LweSeededCiphertextVectorToLweCiphertextVectorTransformationEngine<
     OutputCiphertextVector,
 >: AbstractEngine where
     InputCiphertextVector: LweSeededCiphertextVectorEntity,
-    OutputCiphertextVector:
-        LweCiphertextVectorEntity<KeyDistribution = InputCiphertextVector::KeyDistribution>,
+    OutputCiphertextVector: LweCiphertextVectorEntity,
 {
     /// Does the transformation of the LWE seeded ciphertext vector into an LWE ciphertext vector
     fn transform_lwe_seeded_ciphertext_vector_to_lwe_ciphertext_vector(

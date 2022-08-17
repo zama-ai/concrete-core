@@ -22,7 +22,7 @@ impl<EngineError: std::error::Error> LweCiphertextVectorDiscardingEncryptionErro
     where
         SecretKey: LweSecretKeyEntity,
         PlaintextVector: PlaintextVectorEntity,
-        CiphertextVector: LweCiphertextVectorEntity<KeyDistribution = SecretKey::KeyDistribution>,
+        CiphertextVector: LweCiphertextVectorEntity,
     {
         if key.lwe_dimension() != output.lwe_dimension() {
             return Err(Self::LweDimensionMismatch);
@@ -52,7 +52,7 @@ pub trait LweCiphertextVectorDiscardingEncryptionEngine<
 >: AbstractEngine where
     SecretKey: LweSecretKeyEntity,
     PlaintextVector: PlaintextVectorEntity,
-    CiphertextVector: LweCiphertextVectorEntity<KeyDistribution = SecretKey::KeyDistribution>,
+    CiphertextVector: LweCiphertextVectorEntity,
 {
     /// Encrypts an LWE ciphertext vector.
     fn discard_encrypt_lwe_ciphertext_vector(

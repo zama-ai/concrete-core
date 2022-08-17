@@ -36,7 +36,7 @@ pub trait LweCiphertextEncryptionEngine<SecretKey, Plaintext, Ciphertext>: Abstr
 where
     SecretKey: LweSecretKeyEntity,
     Plaintext: PlaintextEntity,
-    Ciphertext: LweCiphertextEntity<KeyDistribution = SecretKey::KeyDistribution>,
+    Ciphertext: LweCiphertextEntity,
 {
     /// Encrypts an LWE ciphertext.
     fn encrypt_lwe_ciphertext(

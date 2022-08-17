@@ -35,7 +35,7 @@ pub trait LweSeededCiphertextToLweCiphertextTransformationEngine<InputCiphertext
     AbstractEngine
 where
     InputCiphertext: LweSeededCiphertextEntity,
-    OutputCiphertext: LweCiphertextEntity<KeyDistribution = InputCiphertext::KeyDistribution>,
+    OutputCiphertext: LweCiphertextEntity,
 {
     /// Does the transformation of the LWE seeded ciphertext into an LWE ciphertext
     fn transform_lwe_seeded_ciphertext_to_lwe_ciphertext(

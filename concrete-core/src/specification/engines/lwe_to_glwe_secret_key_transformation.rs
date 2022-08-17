@@ -44,7 +44,7 @@ impl<EngineError: std::error::Error> LweToGlweSecretKeyTransformationEngineError
 pub trait LweToGlweSecretKeyTransformationEngine<InputKey, OutputKey>: AbstractEngine
 where
     InputKey: LweSecretKeyEntity,
-    OutputKey: GlweSecretKeyEntity<KeyDistribution = InputKey::KeyDistribution>,
+    OutputKey: GlweSecretKeyEntity,
 {
     /// Does the transformation of the LWE secret key into a GLWE secret key
     fn transform_lwe_secret_key_to_glwe_secret_key(

@@ -1,15 +1,12 @@
 use crate::commons::math::random::CompressionSeed;
-use crate::specification::entities::markers::{GgswSeededCiphertextKind, KeyDistributionMarker};
+
+use crate::specification::entities::markers::GgswSeededCiphertextKind;
 use crate::specification::entities::AbstractEntity;
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
 };
 
 /// A trait implemented by types embodying a seeded GGSW ciphertext.
-///
-/// A seeded GGSW ciphertext is associated with a
-/// [`KeyDistribution`](`GgswSeededCiphertextEntity::KeyDistribution`) type, which conveys the
-/// distribution of the secret key it was encrypted with.
 ///
 /// # Formal Definition
 ///
@@ -23,9 +20,6 @@ use concrete_commons::parameters::{
 /// See the [`GGSW ciphertext`](`crate::specification::entities::GgswCiphertextEntity`) for more
 /// information.
 pub trait GgswSeededCiphertextEntity: AbstractEntity<Kind = GgswSeededCiphertextKind> {
-    /// The distribution of the key the ciphertext was encrypted with.
-    type KeyDistribution: KeyDistributionMarker;
-
     /// Returns the GLWE dimension of the ciphertext.
     fn glwe_dimension(&self) -> GlweDimension;
 

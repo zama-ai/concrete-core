@@ -25,7 +25,7 @@ pub trait LweSeededCiphertextVectorEncryptionEngine<SecretKey, PlaintextVector, 
 where
     SecretKey: LweSecretKeyEntity,
     PlaintextVector: PlaintextVectorEntity,
-    CiphertextVector: LweSeededCiphertextVectorEntity<KeyDistribution = SecretKey::KeyDistribution>,
+    CiphertextVector: LweSeededCiphertextVectorEntity,
 {
     /// Encrypts a seeded LWE ciphertext vector.
     fn encrypt_lwe_seeded_ciphertext_vector(

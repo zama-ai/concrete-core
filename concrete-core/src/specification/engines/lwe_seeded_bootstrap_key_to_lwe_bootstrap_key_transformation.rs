@@ -25,10 +25,7 @@ pub trait LweSeededBootstrapKeyToLweBootstrapKeyTransformationEngine<
     OutputBootstrapKey,
 >: AbstractEngine where
     InputSeededBootstrapKey: LweSeededBootstrapKeyEntity,
-    OutputBootstrapKey: LweBootstrapKeyEntity<
-        InputKeyDistribution = InputSeededBootstrapKey::InputKeyDistribution,
-        OutputKeyDistribution = InputSeededBootstrapKey::OutputKeyDistribution,
-    >,
+    OutputBootstrapKey: LweBootstrapKeyEntity,
 {
     /// Does the transformation of the LWE seeded bootstrap key into an LWE bootstrap key
     fn transform_lwe_seeded_bootstrap_key_to_lwe_bootstrap_key(

@@ -1,5 +1,5 @@
 use crate::commons::crypto::lwe::LweCiphertext as ImplLweCiphertext;
-use crate::specification::entities::markers::{BinaryKeyDistribution, LweCiphertextKind};
+use crate::specification::entities::markers::LweCiphertextKind;
 use crate::specification::entities::{AbstractEntity, LweCiphertextEntity};
 use concrete_commons::parameters::LweDimension;
 #[cfg(feature = "backend_default_serialization")]
@@ -12,8 +12,6 @@ impl AbstractEntity for LweCiphertext32 {
     type Kind = LweCiphertextKind;
 }
 impl LweCiphertextEntity for LweCiphertext32 {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn lwe_dimension(&self) -> LweDimension {
         self.0.lwe_size().to_lwe_dimension()
     }
@@ -34,8 +32,6 @@ impl AbstractEntity for LweCiphertext64 {
     type Kind = LweCiphertextKind;
 }
 impl LweCiphertextEntity for LweCiphertext64 {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn lwe_dimension(&self) -> LweDimension {
         self.0.lwe_size().to_lwe_dimension()
     }
@@ -67,8 +63,6 @@ impl AbstractEntity for LweCiphertextView32<'_> {
     type Kind = LweCiphertextKind;
 }
 impl LweCiphertextEntity for LweCiphertextView32<'_> {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn lwe_dimension(&self) -> LweDimension {
         self.0.lwe_size().to_lwe_dimension()
     }
@@ -89,8 +83,6 @@ impl AbstractEntity for LweCiphertextMutView32<'_> {
     type Kind = LweCiphertextKind;
 }
 impl LweCiphertextEntity for LweCiphertextMutView32<'_> {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn lwe_dimension(&self) -> LweDimension {
         self.0.lwe_size().to_lwe_dimension()
     }
@@ -111,8 +103,6 @@ impl AbstractEntity for LweCiphertextView64<'_> {
     type Kind = LweCiphertextKind;
 }
 impl LweCiphertextEntity for LweCiphertextView64<'_> {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn lwe_dimension(&self) -> LweDimension {
         self.0.lwe_size().to_lwe_dimension()
     }
@@ -133,8 +123,6 @@ impl AbstractEntity for LweCiphertextMutView64<'_> {
     type Kind = LweCiphertextKind;
 }
 impl LweCiphertextEntity for LweCiphertextMutView64<'_> {
-    type KeyDistribution = BinaryKeyDistribution;
-
     fn lwe_dimension(&self) -> LweDimension {
         self.0.lwe_size().to_lwe_dimension()
     }

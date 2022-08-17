@@ -18,7 +18,7 @@ engine_error! {
 pub trait GlweSecretKeyConversionEngine<Input, Output>: AbstractEngine
 where
     Input: GlweSecretKeyEntity,
-    Output: GlweSecretKeyEntity<KeyDistribution = Input::KeyDistribution>,
+    Output: GlweSecretKeyEntity,
 {
     /// Converts a GLWE secret key.
     fn convert_glwe_secret_key(

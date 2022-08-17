@@ -17,8 +17,7 @@ impl<EngineError: std::error::Error> LweCiphertextVectorLoadingError<EngineError
     ) -> Result<(), Self>
     where
         CiphertextVector: LweCiphertextVectorEntity,
-        SubCiphertextVector:
-            LweCiphertextVectorEntity<KeyDistribution = CiphertextVector::KeyDistribution>,
+        SubCiphertextVector: LweCiphertextVectorEntity,
     {
         if !range.is_ordered() {
             return Err(Self::UnorderedInputRange);
@@ -43,8 +42,7 @@ pub trait LweCiphertextVectorLoadingEngine<CiphertextVector, SubCiphertextVector
     AbstractEngine
 where
     CiphertextVector: LweCiphertextVectorEntity,
-    SubCiphertextVector:
-        LweCiphertextVectorEntity<KeyDistribution = CiphertextVector::KeyDistribution>,
+    SubCiphertextVector: LweCiphertextVectorEntity,
 {
     /// Loads a subpart of an LWE ciphertext vector.
     fn load_lwe_ciphertext_vector(
