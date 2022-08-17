@@ -4,7 +4,10 @@ use crate::generation::prototyping::{
     PrototypesPlaintext, PrototypesPlaintextVector,
 };
 use crate::generation::synthesizing::{SynthesizesGgswCiphertext, SynthesizesGlweCiphertext};
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{
+    BinaryKeyDistribution, GaussianKeyDistribution, IntegerPrecision, KeyDistributionMarker, Maker,
+    TernaryKeyDistribution,
+};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 use concrete_commons::dispersion::{DispersionParameter, LogStandardDev, Variance};
@@ -12,9 +15,6 @@ use concrete_commons::key_kinds::{BinaryKeyKind, GaussianKeyKind, TernaryKeyKind
 use concrete_commons::numeric::UnsignedInteger;
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
-};
-use concrete_core::prelude::markers::{
-    BinaryKeyDistribution, GaussianKeyDistribution, KeyDistributionMarker, TernaryKeyDistribution,
 };
 use concrete_core::prelude::{
     GgswCiphertextEntity, GlweCiphertextEntity, GlweCiphertextGgswCiphertextExternalProductEngine,
@@ -36,30 +36,31 @@ pub struct GlweCiphertextGgswCiphertextExternalProductParameters {
     pub decomposition_level_count: DecompositionLevelCount,
 }
 
-impl<Precision, Engine, GlweInput, GgswInput, GlweOutput>
-    Fixture<Precision, Engine, (GlweInput, GgswInput, GlweOutput)>
+impl<Precision, KeyDistribution, Engine, GlweInput, GgswInput, GlweOutput>
+    Fixture<Precision, (KeyDistribution,), Engine, (GlweInput, GgswInput, GlweOutput)>
     for GlweCiphertextGgswCiphertextExternalProductFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: GlweCiphertextGgswCiphertextExternalProductEngine<GlweInput, GgswInput, GlweOutput>,
     GlweInput: GlweCiphertextEntity,
-    GgswInput: GgswCiphertextEntity<KeyDistribution = GlweInput::KeyDistribution>,
-    GlweOutput: GlweCiphertextEntity<KeyDistribution = GlweInput::KeyDistribution>,
-    Maker: SynthesizesGlweCiphertext<Precision, GlweInput>
-        + SynthesizesGlweCiphertext<Precision, GlweOutput>
-        + SynthesizesGgswCiphertext<Precision, GgswInput>,
+    GgswInput: GgswCiphertextEntity,
+    GlweOutput: GlweCiphertextEntity,
+    Maker: SynthesizesGlweCiphertext<Precision, KeyDistribution, GlweInput>
+        + SynthesizesGlweCiphertext<Precision, KeyDistribution, GlweOutput>
+        + SynthesizesGgswCiphertext<Precision, KeyDistribution, GgswInput>,
 {
     type Parameters = GlweCiphertextGgswCiphertextExternalProductParameters;
     type Criteria = (Variance,);
     type Outcome = (Vec<Precision::Raw>, Vec<Precision::Raw>);
     type RepetitionPrototypes = (
         <Maker as PrototypesPlaintext<Precision>>::PlaintextProto,
-        <Maker as PrototypesGlweSecretKey<Precision, GlweInput::KeyDistribution>>::GlweSecretKeyProto,
-        <Maker as PrototypesGgswCiphertext<Precision, GlweInput::KeyDistribution>>::GgswCiphertextProto,
+        <Maker as PrototypesGlweSecretKey<Precision, KeyDistribution>>::GlweSecretKeyProto,
+        <Maker as PrototypesGgswCiphertext<Precision, KeyDistribution>>::GgswCiphertextProto,
     );
     type SamplePrototypes = (
         <Maker as PrototypesPlaintextVector<Precision>>::PlaintextVectorProto,
-        <Maker as PrototypesGlweCiphertext<Precision, GlweInput::KeyDistribution>>::GlweCiphertextProto,
+        <Maker as PrototypesGlweCiphertext<Precision, KeyDistribution>>::GlweCiphertextProto,
     );
     type PreExecutionContext = (GlweInput, GgswInput);
     type PostExecutionContext = (GlweInput, GgswInput, GlweOutput);
@@ -207,7 +208,7 @@ where
             Precision::Raw,
             Variance,
             Variance,
-            GlweInput::KeyDistribution,
+            KeyDistribution,
         >(
             parameters.polynomial_size,
             parameters.glwe_dimension,

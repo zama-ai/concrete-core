@@ -1,11 +1,13 @@
 use crate::generation::prototyping::PrototypesGlweSeededCiphertext;
-use crate::generation::IntegerPrecision;
+use crate::generation::{IntegerPrecision, KeyDistributionMarker};
 use concrete_core::prelude::GlweSeededCiphertextEntity;
 
 /// A trait allowing to synthesize an actual GlweSeededCiphertextEntity from a prototype.
-pub trait SynthesizesGlweSeededCiphertext<Precision: IntegerPrecision, GlweSeededCiphertext>:
-    PrototypesGlweSeededCiphertext<Precision, GlweSeededCiphertext::KeyDistribution>
-where
+pub trait SynthesizesGlweSeededCiphertext<
+    Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
+    GlweSeededCiphertext,
+>: PrototypesGlweSeededCiphertext<Precision, KeyDistribution> where
     GlweSeededCiphertext: GlweSeededCiphertextEntity,
 {
     fn synthesize_glwe_seeded_ciphertext(
@@ -24,10 +26,12 @@ mod backend_default {
         ProtoBinaryGlweSeededCiphertext32, ProtoBinaryGlweSeededCiphertext64,
     };
     use crate::generation::synthesizing::SynthesizesGlweSeededCiphertext;
-    use crate::generation::{Maker, Precision32, Precision64};
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
     use concrete_core::prelude::{GlweSeededCiphertext32, GlweSeededCiphertext64};
 
-    impl SynthesizesGlweSeededCiphertext<Precision32, GlweSeededCiphertext32> for Maker {
+    impl SynthesizesGlweSeededCiphertext<Precision32, BinaryKeyDistribution, GlweSeededCiphertext32>
+        for Maker
+    {
         fn synthesize_glwe_seeded_ciphertext(
             &mut self,
             prototype: &Self::GlweSeededCiphertextProto,
@@ -45,7 +49,9 @@ mod backend_default {
         fn destroy_glwe_seeded_ciphertext(&mut self, _entity: GlweSeededCiphertext32) {}
     }
 
-    impl SynthesizesGlweSeededCiphertext<Precision64, GlweSeededCiphertext64> for Maker {
+    impl SynthesizesGlweSeededCiphertext<Precision64, BinaryKeyDistribution, GlweSeededCiphertext64>
+        for Maker
+    {
         fn synthesize_glwe_seeded_ciphertext(
             &mut self,
             prototype: &Self::GlweSeededCiphertextProto,

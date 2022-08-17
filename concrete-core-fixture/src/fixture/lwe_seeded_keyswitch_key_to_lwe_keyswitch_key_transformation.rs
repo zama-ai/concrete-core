@@ -3,7 +3,7 @@ use crate::generation::prototyping::{PrototypesLweSecretKey, PrototypesLweSeeded
 use crate::generation::synthesizing::{
     SynthesizesLweKeyswitchKey, SynthesizesLweSecretKey, SynthesizesLweSeededKeyswitchKey,
 };
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use concrete_commons::dispersion::Variance;
 use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
 use concrete_core::prelude::{
@@ -26,6 +26,8 @@ pub struct LweSeededKeyswitchKeyToLweSeededKeyswitchKeyTransformationParameters 
 
 impl<
         Precision,
+        InputKeyDistribution,
+        OutputKeyDistribution,
         Engine,
         InputSecretKey,
         OutputSecretKey,
@@ -34,6 +36,7 @@ impl<
     >
     Fixture<
         Precision,
+        (InputKeyDistribution, OutputKeyDistribution),
         Engine,
         (
             InputSecretKey,
@@ -44,32 +47,36 @@ impl<
     > for LweSeededKeyswitchKeyToLweKeyswitchKeyTransformationFixture
 where
     Precision: IntegerPrecision,
+    InputKeyDistribution: KeyDistributionMarker,
+    OutputKeyDistribution: KeyDistributionMarker,
     Engine: LweSeededKeyswitchKeyToLweKeyswitchKeyTransformationEngine<
         InputSeededKeyswitchKey,
         OutputKeyswitchKey,
     >,
     InputSecretKey: LweSecretKeyEntity,
     OutputSecretKey: LweSecretKeyEntity,
-    InputSeededKeyswitchKey: LweSeededKeyswitchKeyEntity<
-        InputKeyDistribution = InputSecretKey::KeyDistribution,
-        OutputKeyDistribution = OutputSecretKey::KeyDistribution,
-    >,
-    OutputKeyswitchKey: LweKeyswitchKeyEntity<
-        InputKeyDistribution = InputSecretKey::KeyDistribution,
-        OutputKeyDistribution = OutputSecretKey::KeyDistribution,
-    >,
-    Maker: SynthesizesLweSeededKeyswitchKey<Precision, InputSeededKeyswitchKey>
-        + SynthesizesLweKeyswitchKey<Precision, OutputKeyswitchKey>
-        + SynthesizesLweSecretKey<Precision, InputSecretKey>
-        + SynthesizesLweSecretKey<Precision, OutputSecretKey>,
+    InputSeededKeyswitchKey: LweSeededKeyswitchKeyEntity,
+    OutputKeyswitchKey: LweKeyswitchKeyEntity,
+    Maker: SynthesizesLweSeededKeyswitchKey<
+            Precision,
+            InputKeyDistribution,
+            OutputKeyDistribution,
+            InputSeededKeyswitchKey,
+        > + SynthesizesLweKeyswitchKey<
+            Precision,
+            InputKeyDistribution,
+            OutputKeyDistribution,
+            OutputKeyswitchKey,
+        > + SynthesizesLweSecretKey<Precision, InputKeyDistribution, InputSecretKey>
+        + SynthesizesLweSecretKey<Precision, OutputKeyDistribution, OutputSecretKey>,
 {
     type Parameters = LweSeededKeyswitchKeyToLweSeededKeyswitchKeyTransformationParameters;
     type RepetitionPrototypes = ();
     type SamplePrototypes = (
         <Maker as PrototypesLweSeededKeyswitchKey<
             Precision,
-            InputSecretKey::KeyDistribution,
-            OutputSecretKey::KeyDistribution,
+            InputKeyDistribution,
+            OutputKeyDistribution,
         >>::LweSeededKeyswitchKeyProto,
     );
     type PreExecutionContext = (InputSeededKeyswitchKey,);
@@ -105,18 +112,18 @@ where
     ) -> Self::SamplePrototypes {
         let proto_secret_key_in = <Maker as PrototypesLweSecretKey<
             Precision,
-            InputSecretKey::KeyDistribution,
+            InputKeyDistribution,
         >>::new_lwe_secret_key(maker, parameters.lwe_dimension_in);
         let proto_secret_key_out = <Maker as PrototypesLweSecretKey<
             Precision,
-            OutputSecretKey::KeyDistribution,
+            OutputKeyDistribution,
         >>::new_lwe_secret_key(
             maker, parameters.lwe_dimension_out
         );
         let proto_seeded_ksk = <Maker as PrototypesLweSeededKeyswitchKey<
             Precision,
-            InputSecretKey::KeyDistribution,
-            OutputSecretKey::KeyDistribution,
+            InputKeyDistribution,
+            OutputKeyDistribution,
         >>::new_lwe_seeded_keyswitch_key(
             maker,
             &proto_secret_key_in,

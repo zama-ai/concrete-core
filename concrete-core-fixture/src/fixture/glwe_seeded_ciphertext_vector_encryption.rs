@@ -6,7 +6,7 @@ use crate::generation::prototyping::{
 use crate::generation::synthesizing::{
     SynthesizesGlweSecretKey, SynthesizesGlweSeededCiphertextVector, SynthesizesPlaintextVector,
 };
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 use concrete_commons::dispersion::Variance;
@@ -27,11 +27,16 @@ pub struct GlweSeededCiphertextVectorEncryptionParameters {
     pub count: GlweCiphertextCount,
 }
 
-impl<Precision, Engine, PlaintextVector, SecretKey, SeededCiphertextVector>
-    Fixture<Precision, Engine, (PlaintextVector, SecretKey, SeededCiphertextVector)>
-    for GlweSeededCiphertextVectorEncryptionFixture
+impl<Precision, KeyDistribution, Engine, PlaintextVector, SecretKey, SeededCiphertextVector>
+    Fixture<
+        Precision,
+        (KeyDistribution,),
+        Engine,
+        (PlaintextVector, SecretKey, SeededCiphertextVector),
+    > for GlweSeededCiphertextVectorEncryptionFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: GlweSeededCiphertextVectorEncryptionEngine<
         SecretKey,
         PlaintextVector,
@@ -39,16 +44,14 @@ where
     >,
     PlaintextVector: PlaintextVectorEntity,
     SecretKey: GlweSecretKeyEntity,
-    SeededCiphertextVector:
-        GlweSeededCiphertextVectorEntity<KeyDistribution = SecretKey::KeyDistribution>,
+    SeededCiphertextVector: GlweSeededCiphertextVectorEntity,
     Maker: SynthesizesPlaintextVector<Precision, PlaintextVector>
-        + SynthesizesGlweSecretKey<Precision, SecretKey>
-        + SynthesizesGlweSeededCiphertextVector<Precision, SeededCiphertextVector>,
+        + SynthesizesGlweSecretKey<Precision, KeyDistribution, SecretKey>
+        + SynthesizesGlweSeededCiphertextVector<Precision, KeyDistribution, SeededCiphertextVector>,
 {
     type Parameters = GlweSeededCiphertextVectorEncryptionParameters;
-    type RepetitionPrototypes = (
-        <Maker as PrototypesGlweSecretKey<Precision, SecretKey::KeyDistribution>>::GlweSecretKeyProto,
-    );
+    type RepetitionPrototypes =
+        (<Maker as PrototypesGlweSecretKey<Precision, KeyDistribution>>::GlweSecretKeyProto,);
     type SamplePrototypes =
         (<Maker as PrototypesPlaintextVector<Precision>>::PlaintextVectorProto,);
     type PreExecutionContext = (SecretKey, PlaintextVector);

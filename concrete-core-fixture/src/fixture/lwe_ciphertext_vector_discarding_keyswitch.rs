@@ -1,11 +1,10 @@
-use crate::fixture::lwe_ciphertext_discarding_keyswitch::fix_estimate_keyswitch_noise_lwe_to_glwe_with_constant_terms;
-use crate::fixture::Fixture;
+use crate::fixture::{fix_estimate_keyswitch_noise_lwe_to_glwe_with_constant_terms, Fixture};
 use crate::generation::prototyping::{
     PrototypesLweCiphertextVector, PrototypesLweKeyswitchKey, PrototypesLweSecretKey,
     PrototypesPlaintextVector,
 };
 use crate::generation::synthesizing::{SynthesizesLweCiphertextVector, SynthesizesLweKeyswitchKey};
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 use concrete_commons::dispersion::{DispersionParameter, LogStandardDev, Variance};
@@ -30,11 +29,25 @@ pub struct LweCiphertextVectorDiscardingKeyswitchParameters {
     pub lwe_ciphertext_count: LweCiphertextCount,
 }
 
-impl<Precision, Engine, KeyswitchKey, InputCiphertextVector, OutputCiphertextVector>
-    Fixture<Precision, Engine, (KeyswitchKey, InputCiphertextVector, OutputCiphertextVector)>
-    for LweCiphertextVectorDiscardingKeyswitchFixture
+impl<
+        Precision,
+        InputKeyDistribution,
+        OutputKeyDistribution,
+        Engine,
+        KeyswitchKey,
+        InputCiphertextVector,
+        OutputCiphertextVector,
+    >
+    Fixture<
+        Precision,
+        (InputKeyDistribution, OutputKeyDistribution),
+        Engine,
+        (KeyswitchKey, InputCiphertextVector, OutputCiphertextVector),
+    > for LweCiphertextVectorDiscardingKeyswitchFixture
 where
     Precision: IntegerPrecision,
+    InputKeyDistribution: KeyDistributionMarker,
+    OutputKeyDistribution: KeyDistributionMarker,
     Engine: LweCiphertextVectorDiscardingKeyswitchEngine<
         KeyswitchKey,
         InputCiphertextVector,
@@ -42,29 +55,34 @@ where
     >,
     InputCiphertextVector: LweCiphertextVectorEntity,
     OutputCiphertextVector: LweCiphertextVectorEntity,
-    KeyswitchKey: LweKeyswitchKeyEntity<
-        InputKeyDistribution = InputCiphertextVector::KeyDistribution,
-        OutputKeyDistribution = OutputCiphertextVector::KeyDistribution,
-    >,
-    Maker: SynthesizesLweKeyswitchKey<Precision, KeyswitchKey>
-        + SynthesizesLweCiphertextVector<Precision, InputCiphertextVector>
-        + SynthesizesLweCiphertextVector<Precision, OutputCiphertextVector>,
+    KeyswitchKey: LweKeyswitchKeyEntity,
+    Maker: SynthesizesLweKeyswitchKey<
+            Precision,
+            InputKeyDistribution,
+            OutputKeyDistribution,
+            KeyswitchKey,
+        > + SynthesizesLweCiphertextVector<Precision, InputKeyDistribution, InputCiphertextVector>
+        + SynthesizesLweCiphertextVector<Precision, OutputKeyDistribution, OutputCiphertextVector>,
 {
     type Parameters = LweCiphertextVectorDiscardingKeyswitchParameters;
     type RepetitionPrototypes = (
-        <Maker as PrototypesLweSecretKey<Precision, InputCiphertextVector::KeyDistribution>>::LweSecretKeyProto,
-        <Maker as PrototypesLweSecretKey<Precision, OutputCiphertextVector::KeyDistribution>>::LweSecretKeyProto,
-        <Maker as PrototypesLweKeyswitchKey<Precision, InputCiphertextVector::KeyDistribution, OutputCiphertextVector::KeyDistribution>>::LweKeyswitchKeyProto,
+        <Maker as PrototypesLweSecretKey<Precision, InputKeyDistribution>>::LweSecretKeyProto,
+        <Maker as PrototypesLweSecretKey<Precision, OutputKeyDistribution>>::LweSecretKeyProto,
+        <Maker as PrototypesLweKeyswitchKey<
+            Precision,
+            InputKeyDistribution,
+            OutputKeyDistribution,
+        >>::LweKeyswitchKeyProto,
     );
     type SamplePrototypes = (
         <Maker as PrototypesPlaintextVector<Precision>>::PlaintextVectorProto,
         <Maker as PrototypesLweCiphertextVector<
             Precision,
-            InputCiphertextVector::KeyDistribution,
+            InputKeyDistribution,
         >>::LweCiphertextVectorProto,
         <Maker as PrototypesLweCiphertextVector<
             Precision,
-            OutputCiphertextVector::KeyDistribution,
+            OutputKeyDistribution,
         >>::LweCiphertextVectorProto,
     );
     type PreExecutionContext = (OutputCiphertextVector, InputCiphertextVector, KeyswitchKey);
@@ -110,16 +128,15 @@ where
     ) -> Self::RepetitionPrototypes {
         let proto_output_secret_key = <Maker as PrototypesLweSecretKey<
             Precision,
-            OutputCiphertextVector::KeyDistribution,
+            OutputKeyDistribution,
         >>::new_lwe_secret_key(
             maker, parameters.output_lwe_dimension
         );
-        let proto_input_secret_key = <Maker as PrototypesLweSecretKey<
-            Precision,
-            InputCiphertextVector::KeyDistribution,
-        >>::new_lwe_secret_key(
-            maker, parameters.input_lwe_dimension
-        );
+        let proto_input_secret_key =
+            <Maker as PrototypesLweSecretKey<Precision, InputKeyDistribution>>::new_lwe_secret_key(
+                maker,
+                parameters.input_lwe_dimension,
+            );
         let proto_keyswitch_key = maker.new_lwe_keyswitch_key(
             &proto_input_secret_key,
             &proto_output_secret_key,
@@ -148,7 +165,7 @@ where
             maker.transform_raw_vec_to_plaintext_vector(&raw_plaintext_vector);
         let proto_input_ciphertext_vector = <Maker as PrototypesLweCiphertextVector<
             Precision,
-            InputCiphertextVector::KeyDistribution,
+            InputKeyDistribution,
         >>::encrypt_plaintext_vector_to_lwe_ciphertext_vector(
             maker,
             proto_input_secret_key,
@@ -157,7 +174,7 @@ where
         );
         let proto_output_ciphertext_vector = <Maker as PrototypesLweCiphertextVector<
             Precision,
-            OutputCiphertextVector::KeyDistribution,
+            OutputKeyDistribution,
         >>::trivially_encrypt_zeros_to_lwe_ciphertext_vector(
             maker,
             parameters.output_lwe_dimension,
@@ -224,7 +241,7 @@ where
             maker.unsynthesize_lwe_ciphertext_vector(output_ciphertext_vector);
         let proto_output_plaintext_vector = <Maker as PrototypesLweCiphertextVector<
             Precision,
-            OutputCiphertextVector::KeyDistribution,
+            OutputKeyDistribution,
         >>::decrypt_lwe_ciphertext_vector_to_plaintext_vector(
             maker,
             proto_output_secret_key,
@@ -248,7 +265,7 @@ where
                 Precision::Raw,
                 _,
                 _,
-                OutputCiphertextVector::KeyDistribution,
+                OutputKeyDistribution,
             >(
                 parameters.input_lwe_dimension,
                 parameters.input_noise,

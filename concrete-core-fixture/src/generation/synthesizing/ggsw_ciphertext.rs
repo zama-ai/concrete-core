@@ -1,11 +1,13 @@
 use crate::generation::prototyping::PrototypesGgswCiphertext;
-use crate::generation::IntegerPrecision;
+use crate::generation::{IntegerPrecision, KeyDistributionMarker};
 use concrete_core::prelude::GgswCiphertextEntity;
 
 /// A trait allowing to synthesize an actual ggsw ciphertext entity from a prototype.
-pub trait SynthesizesGgswCiphertext<Precision: IntegerPrecision, GgswCiphertext>:
-    PrototypesGgswCiphertext<Precision, GgswCiphertext::KeyDistribution>
-where
+pub trait SynthesizesGgswCiphertext<
+    Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
+    GgswCiphertext,
+>: PrototypesGgswCiphertext<Precision, KeyDistribution> where
     GgswCiphertext: GgswCiphertextEntity,
 {
     fn synthesize_ggsw_ciphertext(
@@ -20,10 +22,10 @@ where
 mod backend_default {
     use crate::generation::prototypes::{ProtoBinaryGgswCiphertext32, ProtoBinaryGgswCiphertext64};
     use crate::generation::synthesizing::SynthesizesGgswCiphertext;
-    use crate::generation::{Maker, Precision32, Precision64};
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
     use concrete_core::prelude::{GgswCiphertext32, GgswCiphertext64};
 
-    impl SynthesizesGgswCiphertext<Precision32, GgswCiphertext32> for Maker {
+    impl SynthesizesGgswCiphertext<Precision32, BinaryKeyDistribution, GgswCiphertext32> for Maker {
         fn synthesize_ggsw_ciphertext(
             &mut self,
             prototype: &Self::GgswCiphertextProto,
@@ -41,7 +43,7 @@ mod backend_default {
         fn destroy_ggsw_ciphertext(&mut self, _entity: GgswCiphertext32) {}
     }
 
-    impl SynthesizesGgswCiphertext<Precision64, GgswCiphertext64> for Maker {
+    impl SynthesizesGgswCiphertext<Precision64, BinaryKeyDistribution, GgswCiphertext64> for Maker {
         fn synthesize_ggsw_ciphertext(
             &mut self,
             prototype: &Self::GgswCiphertextProto,
@@ -63,12 +65,14 @@ mod backend_default {
 #[cfg(feature = "backend_fftw")]
 mod backend_fftw {
     use crate::generation::synthesizing::SynthesizesGgswCiphertext;
-    use crate::generation::{Maker, Precision32, Precision64};
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
     use concrete_core::prelude::{
         FftwFourierGgswCiphertext32, FftwFourierGgswCiphertext64, GgswCiphertextConversionEngine,
     };
 
-    impl SynthesizesGgswCiphertext<Precision32, FftwFourierGgswCiphertext32> for Maker {
+    impl SynthesizesGgswCiphertext<Precision32, BinaryKeyDistribution, FftwFourierGgswCiphertext32>
+        for Maker
+    {
         fn synthesize_ggsw_ciphertext(
             &mut self,
             prototype: &Self::GgswCiphertextProto,
@@ -89,7 +93,9 @@ mod backend_fftw {
         fn destroy_ggsw_ciphertext(&mut self, _entity: FftwFourierGgswCiphertext32) {}
     }
 
-    impl SynthesizesGgswCiphertext<Precision64, FftwFourierGgswCiphertext64> for Maker {
+    impl SynthesizesGgswCiphertext<Precision64, BinaryKeyDistribution, FftwFourierGgswCiphertext64>
+        for Maker
+    {
         fn synthesize_ggsw_ciphertext(
             &mut self,
             prototype: &Self::GgswCiphertextProto,

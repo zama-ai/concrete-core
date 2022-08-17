@@ -1,7 +1,7 @@
 use crate::fixture::Fixture;
 use crate::generation::prototyping::{PrototypesContainer, PrototypesLweCiphertext};
 use crate::generation::synthesizing::{SynthesizesContainer, SynthesizesLweCiphertext};
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 use concrete_commons::dispersion::Variance;
@@ -18,20 +18,21 @@ pub struct LweCiphertextConsumingRetrievalParameters {
 /// ciphertexts.
 pub struct LweCiphertextConsumingRetrievalFixture;
 
-impl<Precision, Engine, LweCiphertext, Container>
-    Fixture<Precision, Engine, (LweCiphertext, Container)>
+impl<Precision, KeyDistribution, Engine, LweCiphertext, Container>
+    Fixture<Precision, (KeyDistribution,), Engine, (LweCiphertext, Container)>
     for LweCiphertextConsumingRetrievalFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: LweCiphertextConsumingRetrievalEngine<LweCiphertext, Container>,
     LweCiphertext: LweCiphertextEntity,
-    Maker: SynthesizesLweCiphertext<Precision, LweCiphertext>
+    Maker: SynthesizesLweCiphertext<Precision, KeyDistribution, LweCiphertext>
         + SynthesizesContainer<Precision, Container>,
 {
     type Parameters = LweCiphertextConsumingRetrievalParameters;
     type RepetitionPrototypes = ();
     type SamplePrototypes =
-        (<Maker as PrototypesLweCiphertext<Precision, LweCiphertext::KeyDistribution>>::LweCiphertextProto,);
+        (<Maker as PrototypesLweCiphertext<Precision, KeyDistribution>>::LweCiphertextProto,);
     type PreExecutionContext = (LweCiphertext,);
     type PostExecutionContext = (Container,);
     type Criteria = (Variance,);

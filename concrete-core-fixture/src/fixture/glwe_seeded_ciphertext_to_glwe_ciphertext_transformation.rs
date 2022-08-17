@@ -7,7 +7,7 @@ use crate::generation::synthesizing::{
     SynthesizesGlweCiphertext, SynthesizesGlweSecretKey, SynthesizesGlweSeededCiphertext,
     SynthesizesPlaintextVector,
 };
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 use concrete_commons::dispersion::Variance;
@@ -28,9 +28,18 @@ pub struct GlweSeededCiphertextToGlweCiphertextTransformationParameters {
     pub polynomial_size: PolynomialSize,
 }
 
-impl<Precision, Engine, PlaintextVector, SecretKey, InputCiphertext, OutputCiphertext>
+impl<
+        Precision,
+        KeyDistribution,
+        Engine,
+        PlaintextVector,
+        SecretKey,
+        InputCiphertext,
+        OutputCiphertext,
+    >
     Fixture<
         Precision,
+        (KeyDistribution,),
         Engine,
         (
             PlaintextVector,
@@ -41,26 +50,26 @@ impl<Precision, Engine, PlaintextVector, SecretKey, InputCiphertext, OutputCiphe
     > for GlweSeededCiphertextToGlweCiphertextTransformationFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine:
         GlweSeededCiphertextToGlweCiphertextTransformationEngine<InputCiphertext, OutputCiphertext>,
     PlaintextVector: PlaintextVectorEntity,
     SecretKey: GlweSecretKeyEntity,
-    InputCiphertext: GlweSeededCiphertextEntity<KeyDistribution = SecretKey::KeyDistribution>,
-    OutputCiphertext: GlweCiphertextEntity<KeyDistribution = SecretKey::KeyDistribution>,
+    InputCiphertext: GlweSeededCiphertextEntity,
+    OutputCiphertext: GlweCiphertextEntity,
     Maker: SynthesizesPlaintextVector<Precision, PlaintextVector>
-        + SynthesizesGlweSecretKey<Precision, SecretKey>
-        + SynthesizesGlweSeededCiphertext<Precision, InputCiphertext>
-        + SynthesizesGlweCiphertext<Precision, OutputCiphertext>,
+        + SynthesizesGlweSecretKey<Precision, KeyDistribution, SecretKey>
+        + SynthesizesGlweSeededCiphertext<Precision, KeyDistribution, InputCiphertext>
+        + SynthesizesGlweCiphertext<Precision, KeyDistribution, OutputCiphertext>,
 {
     type Parameters = GlweSeededCiphertextToGlweCiphertextTransformationParameters;
-    type RepetitionPrototypes = (
-        <Maker as PrototypesGlweSecretKey<Precision, SecretKey::KeyDistribution>>::GlweSecretKeyProto,
-    );
+    type RepetitionPrototypes =
+        (<Maker as PrototypesGlweSecretKey<Precision, KeyDistribution>>::GlweSecretKeyProto,);
     type SamplePrototypes =
         (
             <Maker as PrototypesGlweSeededCiphertext<
                 Precision,
-                InputCiphertext::KeyDistribution,
+                KeyDistribution,
             >>::GlweSeededCiphertextProto,
             <Maker as PrototypesPlaintextVector<Precision>>::PlaintextVectorProto,
         );

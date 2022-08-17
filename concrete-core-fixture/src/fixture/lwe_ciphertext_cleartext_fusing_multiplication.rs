@@ -10,7 +10,7 @@ use crate::generation::prototyping::{
     PrototypesCleartext, PrototypesLweCiphertext, PrototypesLweSecretKey, PrototypesPlaintext,
 };
 use crate::generation::synthesizing::{SynthesizesCleartext, SynthesizesLweCiphertext};
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 
@@ -25,24 +25,26 @@ pub struct LweCiphertextCleartextFusingMultiplicationParameters {
 }
 
 #[allow(clippy::type_complexity)]
-impl<Precision, Engine, Ciphertext, Cleartext> Fixture<Precision, Engine, (Ciphertext, Cleartext)>
+impl<Precision, KeyDistribution, Engine, Ciphertext, Cleartext>
+    Fixture<Precision, (KeyDistribution,), Engine, (Ciphertext, Cleartext)>
     for LweCiphertextCleartextFusingMultiplicationFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: LweCiphertextCleartextFusingMultiplicationEngine<Ciphertext, Cleartext>,
     Ciphertext: LweCiphertextEntity,
     Cleartext: CleartextEntity,
     Maker: SynthesizesCleartext<Precision, Cleartext>
-        + SynthesizesLweCiphertext<Precision, Ciphertext>,
+        + SynthesizesLweCiphertext<Precision, KeyDistribution, Ciphertext>,
 {
     type Parameters = LweCiphertextCleartextFusingMultiplicationParameters;
     type RepetitionPrototypes = (
-        <Maker as PrototypesLweSecretKey<Precision, Ciphertext::KeyDistribution>>::LweSecretKeyProto,
+        <Maker as PrototypesLweSecretKey<Precision, KeyDistribution>>::LweSecretKeyProto,
         <Maker as PrototypesCleartext<Precision>>::CleartextProto,
     );
     type SamplePrototypes = (
         <Maker as PrototypesPlaintext<Precision>>::PlaintextProto,
-        <Maker as PrototypesLweCiphertext<Precision, Ciphertext::KeyDistribution>>::LweCiphertextProto,
+        <Maker as PrototypesLweCiphertext<Precision, KeyDistribution>>::LweCiphertextProto,
     );
     type PreExecutionContext = (Ciphertext, Cleartext);
     type PostExecutionContext = (Ciphertext, Cleartext);

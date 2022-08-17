@@ -17,7 +17,7 @@ pub struct PlaintextVectorCreationParameters {
     count: PlaintextCount,
 }
 
-impl<Precision, Engine, PlaintextVector> Fixture<Precision, Engine, (PlaintextVector,)>
+impl<Precision, Engine, PlaintextVector> Fixture<Precision, (), Engine, (PlaintextVector,)>
     for PlaintextVectorCreationFixture
 where
     Precision: IntegerPrecision,

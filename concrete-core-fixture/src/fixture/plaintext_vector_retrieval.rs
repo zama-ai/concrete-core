@@ -17,7 +17,7 @@ pub struct PlaintextVectorRetrievalParameters {
     count: PlaintextCount,
 }
 
-impl<Precision, Engine, PlaintextVector> Fixture<Precision, Engine, (PlaintextVector,)>
+impl<Precision, Engine, PlaintextVector> Fixture<Precision, (), Engine, (PlaintextVector,)>
     for PlaintextVectorRetrievalFixture
 where
     Precision: IntegerPrecision,

@@ -7,7 +7,7 @@ use crate::generation::synthesizing::{
     SynthesizesCleartextVector, SynthesizesLweCiphertext, SynthesizesLweCiphertextVector,
     SynthesizesPlaintext,
 };
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 use concrete_commons::dispersion::{DispersionParameter, LogStandardDev, Variance};
@@ -31,9 +31,18 @@ pub struct LweCiphertextVectorDiscardingAffineTransformationParameters {
 }
 
 #[allow(clippy::type_complexity)]
-impl<Precision, Engine, CiphertextVector, CleartextVector, Plaintext, OutputCiphertext>
+impl<
+        Precision,
+        KeyDistribution,
+        Engine,
+        CiphertextVector,
+        CleartextVector,
+        Plaintext,
+        OutputCiphertext,
+    >
     Fixture<
         Precision,
+        (KeyDistribution,),
         Engine,
         (
             CiphertextVector,
@@ -44,6 +53,7 @@ impl<Precision, Engine, CiphertextVector, CleartextVector, Plaintext, OutputCiph
     > for LweCiphertextVectorDiscardingAffineTransformationFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: LweCiphertextVectorDiscardingAffineTransformationEngine<
         CiphertextVector,
         CleartextVector,
@@ -53,22 +63,22 @@ where
     CiphertextVector: LweCiphertextVectorEntity,
     CleartextVector: CleartextVectorEntity,
     Plaintext: PlaintextEntity,
-    OutputCiphertext: LweCiphertextEntity<KeyDistribution = CiphertextVector::KeyDistribution>,
-    Maker: SynthesizesLweCiphertextVector<Precision, CiphertextVector>
+    OutputCiphertext: LweCiphertextEntity,
+    Maker: SynthesizesLweCiphertextVector<Precision, KeyDistribution, CiphertextVector>
         + SynthesizesCleartextVector<Precision, CleartextVector>
         + SynthesizesPlaintext<Precision, Plaintext>
-        + SynthesizesLweCiphertext<Precision, OutputCiphertext>,
+        + SynthesizesLweCiphertext<Precision, KeyDistribution, OutputCiphertext>,
 {
     type Parameters = LweCiphertextVectorDiscardingAffineTransformationParameters;
     type RepetitionPrototypes = (
-        <Maker as PrototypesLweSecretKey<Precision, CiphertextVector::KeyDistribution>>::LweSecretKeyProto,
+        <Maker as PrototypesLweSecretKey<Precision, KeyDistribution>>::LweSecretKeyProto,
         <Maker as PrototypesCleartextVector<Precision>>::CleartextVectorProto,
-        <Maker as PrototypesPlaintext<Precision>>::PlaintextProto
+        <Maker as PrototypesPlaintext<Precision>>::PlaintextProto,
     );
     type SamplePrototypes = (
-        <Maker as PrototypesLweCiphertext<Precision, CiphertextVector::KeyDistribution>>::LweCiphertextProto,
+        <Maker as PrototypesLweCiphertext<Precision, KeyDistribution>>::LweCiphertextProto,
         <Maker as PrototypesPlaintextVector<Precision>>::PlaintextVectorProto,
-        <Maker as PrototypesLweCiphertextVector<Precision, CiphertextVector::KeyDistribution>>::LweCiphertextVectorProto,
+        <Maker as PrototypesLweCiphertextVector<Precision, KeyDistribution>>::LweCiphertextVectorProto,
     );
     type PreExecutionContext = (
         OutputCiphertext,

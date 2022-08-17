@@ -1,6 +1,6 @@
+use crate::generation::{BinaryKeyDistribution, KeyDistributionMarker};
 use concrete_commons::dispersion::Variance;
 use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
-use concrete_core::prelude::markers::{BinaryKeyDistribution, KeyDistributionMarker};
 use concrete_core::prelude::{
     LweCiphertextVectorDecryptionEngine, LweCiphertextVectorEncryptionEngine,
     LweCiphertextVectorTrivialDecryptionEngine, LweCiphertextVectorTrivialEncryptionEngine,

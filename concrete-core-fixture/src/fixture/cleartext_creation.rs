@@ -14,7 +14,7 @@ pub struct CleartextCreationFixture;
 #[derive(Debug)]
 pub struct CleartextCreationParameters;
 
-impl<Precision, Engine, Cleartext> Fixture<Precision, Engine, (Cleartext,)>
+impl<Precision, Engine, Cleartext> Fixture<Precision, (), Engine, (Cleartext,)>
     for CleartextCreationFixture
 where
     Precision: IntegerPrecision,

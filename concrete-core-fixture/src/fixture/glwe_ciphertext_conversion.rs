@@ -7,7 +7,7 @@ use crate::generation::prototyping::{
     PrototypesGlweCiphertext, PrototypesGlweSecretKey, PrototypesPlaintextVector,
 };
 use crate::generation::synthesizing::SynthesizesGlweCiphertext;
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 
@@ -21,27 +21,23 @@ pub struct GlweCiphertextConversionParameters {
     pub polynomial_size: PolynomialSize,
 }
 
-impl<Precision, Engine, InputCiphertext, OutputCiphertext>
-    Fixture<Precision, Engine, (InputCiphertext, OutputCiphertext)>
+impl<Precision, KeyDistribution, Engine, InputCiphertext, OutputCiphertext>
+    Fixture<Precision, (KeyDistribution,), Engine, (InputCiphertext, OutputCiphertext)>
     for GlweCiphertextConversionFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: GlweCiphertextConversionEngine<InputCiphertext, OutputCiphertext>,
     InputCiphertext: GlweCiphertextEntity,
-    OutputCiphertext: GlweCiphertextEntity<KeyDistribution = InputCiphertext::KeyDistribution>,
-    Maker: SynthesizesGlweCiphertext<Precision, InputCiphertext>
-        + SynthesizesGlweCiphertext<Precision, OutputCiphertext>,
+    OutputCiphertext: GlweCiphertextEntity,
+    Maker: SynthesizesGlweCiphertext<Precision, KeyDistribution, InputCiphertext>
+        + SynthesizesGlweCiphertext<Precision, KeyDistribution, OutputCiphertext>,
 {
     type Parameters = GlweCiphertextConversionParameters;
-    type RepetitionPrototypes = (
-        <Maker as PrototypesGlweSecretKey<Precision, InputCiphertext::KeyDistribution>>::GlweSecretKeyProto,
-    );
-    type SamplePrototypes = (
-        <Maker as PrototypesGlweCiphertext<
-            Precision,
-            InputCiphertext::KeyDistribution,
-        >>::GlweCiphertextProto,
-    );
+    type RepetitionPrototypes =
+        (<Maker as PrototypesGlweSecretKey<Precision, KeyDistribution>>::GlweSecretKeyProto,);
+    type SamplePrototypes =
+        (<Maker as PrototypesGlweCiphertext<Precision, KeyDistribution>>::GlweCiphertextProto,);
     type PreExecutionContext = (InputCiphertext,);
     type PostExecutionContext = (InputCiphertext, OutputCiphertext);
     type Criteria = (Variance,);
@@ -106,6 +102,7 @@ where
         let (proto_ciphertext,) = sample_proto;
         (<Maker as SynthesizesGlweCiphertext<
             Precision,
+            KeyDistribution,
             InputCiphertext,
         >>::synthesize_glwe_ciphertext(
             maker, proto_ciphertext
@@ -135,6 +132,7 @@ where
         let (input_ciphertext, output_ciphertext) = context;
         let proto_output_ciphertext = <Maker as SynthesizesGlweCiphertext<
             Precision,
+            KeyDistribution,
             OutputCiphertext,
         >>::unsynthesize_glwe_ciphertext(
             maker, output_ciphertext
@@ -144,7 +142,7 @@ where
             maker.decrypt_glwe_ciphertext_to_plaintext_vector(key, proto_ciphertext);
         let proto_output_plaintext_vector = <Maker as PrototypesGlweCiphertext<
             Precision,
-            InputCiphertext::KeyDistribution,
+            KeyDistribution,
         >>::decrypt_glwe_ciphertext_to_plaintext_vector(
             maker, key, &proto_output_ciphertext
         );

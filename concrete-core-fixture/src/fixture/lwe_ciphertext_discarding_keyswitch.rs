@@ -3,16 +3,16 @@ use crate::generation::prototyping::{
     PrototypesLweCiphertext, PrototypesLweKeyswitchKey, PrototypesLweSecretKey, PrototypesPlaintext,
 };
 use crate::generation::synthesizing::{SynthesizesLweCiphertext, SynthesizesLweKeyswitchKey};
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{
+    BinaryKeyDistribution, GaussianKeyDistribution, IntegerPrecision, KeyDistributionMarker, Maker,
+    TernaryKeyDistribution,
+};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 use concrete_commons::dispersion::{DispersionParameter, LogStandardDev, Variance};
 use concrete_commons::key_kinds::{BinaryKeyKind, GaussianKeyKind, TernaryKeyKind};
 use concrete_commons::numeric::UnsignedInteger;
 use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
-use concrete_core::prelude::markers::{
-    BinaryKeyDistribution, GaussianKeyDistribution, KeyDistributionMarker, TernaryKeyDistribution,
-};
 use concrete_core::prelude::{
     LweCiphertextDiscardingKeyswitchEngine, LweCiphertextEntity, LweKeyswitchKeyEntity,
 };
@@ -32,32 +32,51 @@ pub struct LweCiphertextDiscardingKeyswitchParameters {
     pub decomp_base_log: DecompositionBaseLog,
 }
 
-impl<Precision, Engine, KeyswitchKey, InputCiphertext, OutputCiphertext>
-    Fixture<Precision, Engine, (KeyswitchKey, InputCiphertext, OutputCiphertext)>
-    for LweCiphertextDiscardingKeyswitchFixture
+impl<
+        Precision,
+        InputKeyDistribution,
+        OutputKeyDistribution,
+        Engine,
+        KeyswitchKey,
+        InputCiphertext,
+        OutputCiphertext,
+    >
+    Fixture<
+        Precision,
+        (InputKeyDistribution, OutputKeyDistribution),
+        Engine,
+        (KeyswitchKey, InputCiphertext, OutputCiphertext),
+    > for LweCiphertextDiscardingKeyswitchFixture
 where
     Precision: IntegerPrecision,
+    InputKeyDistribution: KeyDistributionMarker,
+    OutputKeyDistribution: KeyDistributionMarker,
     Engine: LweCiphertextDiscardingKeyswitchEngine<KeyswitchKey, InputCiphertext, OutputCiphertext>,
     InputCiphertext: LweCiphertextEntity,
     OutputCiphertext: LweCiphertextEntity,
-    KeyswitchKey: LweKeyswitchKeyEntity<
-        InputKeyDistribution = InputCiphertext::KeyDistribution,
-        OutputKeyDistribution = OutputCiphertext::KeyDistribution,
-    >,
-    Maker: SynthesizesLweKeyswitchKey<Precision, KeyswitchKey>
-        + SynthesizesLweCiphertext<Precision, InputCiphertext>
-        + SynthesizesLweCiphertext<Precision, OutputCiphertext>,
+    KeyswitchKey: LweKeyswitchKeyEntity,
+    Maker: SynthesizesLweKeyswitchKey<
+            Precision,
+            InputKeyDistribution,
+            OutputKeyDistribution,
+            KeyswitchKey,
+        > + SynthesizesLweCiphertext<Precision, InputKeyDistribution, InputCiphertext>
+        + SynthesizesLweCiphertext<Precision, OutputKeyDistribution, OutputCiphertext>,
 {
     type Parameters = LweCiphertextDiscardingKeyswitchParameters;
     type RepetitionPrototypes = (
-        <Maker as PrototypesLweSecretKey<Precision, InputCiphertext::KeyDistribution>>::LweSecretKeyProto,
-        <Maker as PrototypesLweSecretKey<Precision, OutputCiphertext::KeyDistribution>>::LweSecretKeyProto,
-        <Maker as PrototypesLweKeyswitchKey<Precision, InputCiphertext::KeyDistribution, OutputCiphertext::KeyDistribution>>::LweKeyswitchKeyProto,
+        <Maker as PrototypesLweSecretKey<Precision, InputKeyDistribution>>::LweSecretKeyProto,
+        <Maker as PrototypesLweSecretKey<Precision, OutputKeyDistribution>>::LweSecretKeyProto,
+        <Maker as PrototypesLweKeyswitchKey<
+            Precision,
+            InputKeyDistribution,
+            OutputKeyDistribution,
+        >>::LweKeyswitchKeyProto,
     );
     type SamplePrototypes = (
         <Maker as PrototypesPlaintext<Precision>>::PlaintextProto,
-        <Maker as PrototypesLweCiphertext<Precision, InputCiphertext::KeyDistribution>>::LweCiphertextProto,
-        <Maker as PrototypesLweCiphertext<Precision, OutputCiphertext::KeyDistribution>>::LweCiphertextProto,
+        <Maker as PrototypesLweCiphertext<Precision, InputKeyDistribution>>::LweCiphertextProto,
+        <Maker as PrototypesLweCiphertext<Precision, OutputKeyDistribution>>::LweCiphertextProto,
     );
     type PreExecutionContext = (OutputCiphertext, InputCiphertext, KeyswitchKey);
     type PostExecutionContext = (OutputCiphertext, InputCiphertext, KeyswitchKey);
@@ -85,16 +104,15 @@ where
     ) -> Self::RepetitionPrototypes {
         let proto_output_secret_key = <Maker as PrototypesLweSecretKey<
             Precision,
-            OutputCiphertext::KeyDistribution,
+            OutputKeyDistribution,
         >>::new_lwe_secret_key(
             maker, parameters.output_lwe_dimension
         );
-        let proto_input_secret_key = <Maker as PrototypesLweSecretKey<
-            Precision,
-            InputCiphertext::KeyDistribution,
-        >>::new_lwe_secret_key(
-            maker, parameters.input_lwe_dimension
-        );
+        let proto_input_secret_key =
+            <Maker as PrototypesLweSecretKey<Precision, InputKeyDistribution>>::new_lwe_secret_key(
+                maker,
+                parameters.input_lwe_dimension,
+            );
         let proto_keyswitch_key = maker.new_lwe_keyswitch_key(
             &proto_input_secret_key,
             &proto_output_secret_key,
@@ -119,7 +137,7 @@ where
         let proto_plaintext = maker.transform_raw_to_plaintext(&raw_plaintext);
         let proto_input_ciphertext = <Maker as PrototypesLweCiphertext<
             Precision,
-            InputCiphertext::KeyDistribution,
+            InputKeyDistribution,
         >>::encrypt_plaintext_to_lwe_ciphertext(
             maker,
             proto_input_secret_key,
@@ -128,7 +146,7 @@ where
         );
         let proto_output_ciphertext = <Maker as PrototypesLweCiphertext<
             Precision,
-            OutputCiphertext::KeyDistribution,
+            OutputKeyDistribution,
         >>::trivially_encrypt_zero_to_lwe_ciphertext(
             maker, parameters.output_lwe_dimension
         );
@@ -186,7 +204,7 @@ where
         let proto_output_ciphertext = maker.unsynthesize_lwe_ciphertext(output_ciphertext);
         let proto_output_plaintext = <Maker as PrototypesLweCiphertext<
             Precision,
-            OutputCiphertext::KeyDistribution,
+            OutputKeyDistribution,
         >>::decrypt_lwe_ciphertext_to_plaintext(
             maker,
             proto_output_secret_key,
@@ -210,7 +228,7 @@ where
                 Precision::Raw,
                 _,
                 _,
-                OutputCiphertext::KeyDistribution,
+                OutputKeyDistribution,
             >(
                 parameters.input_lwe_dimension,
                 parameters.input_noise,

@@ -14,7 +14,7 @@ pub struct PlaintextDiscardingRetrievalFixture;
 #[derive(Debug)]
 pub struct PlaintextDiscardingRetrievalParameters;
 
-impl<Precision, Engine, Plaintext> Fixture<Precision, Engine, (Plaintext,)>
+impl<Precision, Engine, Plaintext> Fixture<Precision, (), Engine, (Plaintext,)>
     for PlaintextDiscardingRetrievalFixture
 where
     Precision: IntegerPrecision,

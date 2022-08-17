@@ -7,16 +7,16 @@ use crate::generation::prototyping::{
 use crate::generation::synthesizing::{
     SynthesizesGlweCiphertext, SynthesizesLweBootstrapKey, SynthesizesLweCiphertext,
 };
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{
+    BinaryKeyDistribution, GaussianKeyDistribution, IntegerPrecision, KeyDistributionMarker, Maker,
+    TernaryKeyDistribution,
+};
 use crate::raw::statistical_test::assert_delta_std_dev;
 use concrete_commons::dispersion::{DispersionParameter, LogStandardDev, Variance};
 use concrete_commons::key_kinds::{BinaryKeyKind, GaussianKeyKind, TernaryKeyKind};
 use concrete_commons::numeric::{Numeric, UnsignedInteger};
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-};
-use concrete_core::prelude::markers::{
-    BinaryKeyDistribution, GaussianKeyDistribution, KeyDistributionMarker, TernaryKeyDistribution,
 };
 use concrete_core::prelude::{
     GlweCiphertextEntity, LweBootstrapKeyEntity, LweCiphertextDiscardingBootstrapEngine,
@@ -38,11 +38,26 @@ pub struct LweCiphertextDiscardingBootstrapParameters1 {
 }
 
 #[allow(clippy::type_complexity)]
-impl<Precision, Engine, BootstrapKey, Accumulator, InputCiphertext, OutputCiphertext>
-    Fixture<Precision, Engine, (BootstrapKey, Accumulator, InputCiphertext, OutputCiphertext)>
-    for LweCiphertextDiscardingBootstrapFixture1
+impl<
+        Precision,
+        InputKeyDistribution,
+        OutputKeyDistribution,
+        Engine,
+        BootstrapKey,
+        Accumulator,
+        InputCiphertext,
+        OutputCiphertext,
+    >
+    Fixture<
+        Precision,
+        (InputKeyDistribution, OutputKeyDistribution),
+        Engine,
+        (BootstrapKey, Accumulator, InputCiphertext, OutputCiphertext),
+    > for LweCiphertextDiscardingBootstrapFixture1
 where
     Precision: IntegerPrecision,
+    InputKeyDistribution: KeyDistributionMarker,
+    OutputKeyDistribution: KeyDistributionMarker,
     Engine: LweCiphertextDiscardingBootstrapEngine<
         BootstrapKey,
         Accumulator,
@@ -51,28 +66,33 @@ where
     >,
     InputCiphertext: LweCiphertextEntity,
     OutputCiphertext: LweCiphertextEntity,
-    Accumulator: GlweCiphertextEntity<KeyDistribution = OutputCiphertext::KeyDistribution>,
-    BootstrapKey: LweBootstrapKeyEntity<
-        InputKeyDistribution = InputCiphertext::KeyDistribution,
-        OutputKeyDistribution = OutputCiphertext::KeyDistribution,
-    >,
-    Maker: TransformsGlweToLweSecretKeyPrototype<Precision, OutputCiphertext::KeyDistribution>
-        + SynthesizesLweBootstrapKey<Precision, BootstrapKey>
-        + SynthesizesGlweCiphertext<Precision, Accumulator>
-        + SynthesizesLweCiphertext<Precision, InputCiphertext>
-        + SynthesizesLweCiphertext<Precision, OutputCiphertext>,
+    Accumulator: GlweCiphertextEntity,
+    BootstrapKey: LweBootstrapKeyEntity,
+    Maker: TransformsGlweToLweSecretKeyPrototype<Precision, OutputKeyDistribution>
+        + SynthesizesLweBootstrapKey<
+            Precision,
+            InputKeyDistribution,
+            OutputKeyDistribution,
+            BootstrapKey,
+        > + SynthesizesGlweCiphertext<Precision, OutputKeyDistribution, Accumulator>
+        + SynthesizesLweCiphertext<Precision, InputKeyDistribution, InputCiphertext>
+        + SynthesizesLweCiphertext<Precision, OutputKeyDistribution, OutputCiphertext>,
 {
     type Parameters = LweCiphertextDiscardingBootstrapParameters1;
     type RepetitionPrototypes = (
-        <Maker as PrototypesGlweCiphertext<Precision, OutputCiphertext::KeyDistribution>>::GlweCiphertextProto,
-        <Maker as PrototypesLweSecretKey<Precision, InputCiphertext::KeyDistribution>>::LweSecretKeyProto,
-        <Maker as PrototypesGlweSecretKey<Precision, OutputCiphertext::KeyDistribution>>::GlweSecretKeyProto,
-        <Maker as PrototypesLweBootstrapKey<Precision, InputCiphertext::KeyDistribution, OutputCiphertext::KeyDistribution>>::LweBootstrapKeyProto,
+        <Maker as PrototypesGlweCiphertext<Precision, OutputKeyDistribution>>::GlweCiphertextProto,
+        <Maker as PrototypesLweSecretKey<Precision, InputKeyDistribution>>::LweSecretKeyProto,
+        <Maker as PrototypesGlweSecretKey<Precision, OutputKeyDistribution>>::GlweSecretKeyProto,
+        <Maker as PrototypesLweBootstrapKey<
+            Precision,
+            InputKeyDistribution,
+            OutputKeyDistribution,
+        >>::LweBootstrapKeyProto,
     );
     type SamplePrototypes = (
         <Maker as PrototypesPlaintext<Precision>>::PlaintextProto,
-        <Maker as PrototypesLweCiphertext<Precision, InputCiphertext::KeyDistribution>>::LweCiphertextProto,
-        <Maker as PrototypesLweCiphertext<Precision, OutputCiphertext::KeyDistribution>>::LweCiphertextProto,
+        <Maker as PrototypesLweCiphertext<Precision, InputKeyDistribution>>::LweCiphertextProto,
+        <Maker as PrototypesLweCiphertext<Precision, OutputKeyDistribution>>::LweCiphertextProto,
     );
     type PreExecutionContext = (BootstrapKey, Accumulator, OutputCiphertext, InputCiphertext);
     type PostExecutionContext = (BootstrapKey, Accumulator, OutputCiphertext, InputCiphertext);
@@ -125,11 +145,11 @@ where
         );
         let proto_lwe_secret_key = <Maker as PrototypesLweSecretKey<
             Precision,
-            InputCiphertext::KeyDistribution,
+            InputKeyDistribution,
         >>::new_lwe_secret_key(maker, parameters.lwe_dimension);
         let proto_glwe_secret_key = <Maker as PrototypesGlweSecretKey<
             Precision,
-            OutputCiphertext::KeyDistribution,
+            OutputKeyDistribution,
         >>::new_glwe_secret_key(
             maker, parameters.glwe_dimension, parameters.poly_size
         );
@@ -158,7 +178,7 @@ where
         let proto_plaintext = maker.transform_raw_to_plaintext(&raw_plaintext);
         let proto_input_ciphertext = <Maker as PrototypesLweCiphertext<
             Precision,
-            InputCiphertext::KeyDistribution,
+            InputKeyDistribution,
         >>::encrypt_plaintext_to_lwe_ciphertext(
             maker,
             proto_lwe_secret_key,
@@ -167,7 +187,7 @@ where
         );
         let proto_output_ciphertext = <Maker as PrototypesLweCiphertext<
             Precision,
-            OutputCiphertext::KeyDistribution,
+            OutputKeyDistribution,
         >>::trivially_encrypt_zero_to_lwe_ciphertext(
             maker,
             LweDimension(parameters.glwe_dimension.0 * parameters.poly_size.0),
@@ -236,7 +256,7 @@ where
             maker.transform_glwe_secret_key_to_lwe_secret_key(proto_glwe_secret_key);
         let proto_output_plaintext = <Maker as PrototypesLweCiphertext<
             Precision,
-            OutputCiphertext::KeyDistribution,
+            OutputKeyDistribution,
         >>::decrypt_lwe_ciphertext_to_plaintext(
             maker,
             &proto_output_lwe_secret_key,
@@ -257,7 +277,7 @@ where
         _repetition_proto: &Self::RepetitionPrototypes,
     ) -> Self::Criteria {
         let predicted_variance: Variance =
-            fix_estimate_pbs_noise::<Precision::Raw, Variance, OutputCiphertext::KeyDistribution>(
+            fix_estimate_pbs_noise::<Precision::Raw, Variance, OutputKeyDistribution>(
                 parameters.lwe_dimension,
                 parameters.poly_size,
                 parameters.glwe_dimension,

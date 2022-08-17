@@ -2,8 +2,11 @@
 //!
 //! The central abstraction of the library is the [`Fixture`] trait. This trait defines the logic
 //! used to sample / test / benchmark the implementors of any of the `*Engine` traits defined in
-//! `concrete-core`. This logic is always roughly the same and, depending on the use of the fixture,
-//! boils down to:
+//! `concrete-core`. This logic is defined generically, in such a way that only a few bits should be
+//! be implemented to test a `*Engine` trait.
+//!
+//! This logic used for sampling/testing/benchmarking is always roughly the same and, depending on
+//! the use of the fixture, boils down to:
 //! ```text
 //! | Iterate over a set of parameters:
 //! | | Repeat multiple times:
@@ -22,12 +25,15 @@
 //! Prototypes generated at the repetition level will be used for every samples, while prototyped
 //! generated at the sample level will only be used once.
 //!
-//! For any given `*Engine` trait, a matching `*Fixture` type is defined, which _generically_
-//! implements [`Fixture`]. Here _generically_ means that the implementation of the [`Fixture`]
-//! trait does not fix the `Engine` and `Precision` type parameters, but rather restricts them to a
-//! family of types. In particular, the `Engine` generic type parameter must implement the `*Engine`
-//! trait in question. This `*Fixture` type can then be used to sample / test / benchmark any
-//! implementor of the `*Engine` trait.
+//! Important note:
+//! ===============
+//!
+//! For any given `*Engine` trait, a matching `*Fixture` _type_ is defined, which _generically_
+//! implements the [`Fixture`] _trait_. Here _generically_ means that the implementation of the
+//! [`Fixture`] trait does not fix the `Engine` and `Precision` type parameters, but rather
+//! restricts them to a family of types. In particular, the `Engine` generic type parameter must
+//! implement the `*Engine` trait in question. This `*Fixture` type can then be used to sample /
+//! test / benchmark any implementor of the `*Engine` trait.
 //!
 //! In particular, once the [`Fixture`] mandatory methods and types are defined, the user can
 //! benefit from the default methods [`Fixture::sample`], [`Fixture::test`] or [`Fixture::stress`].
@@ -37,11 +43,27 @@ use concrete_core::prelude::AbstractEngine;
 use std::fmt::Debug;
 use std::ops::BitAnd;
 
-/// A trait for types implementing a fixture for a particular engine trait.
+/// A trait providing a generic implementation of fixtures.
 ///
-/// To understand how the different pieces fit, see how the default methods `sample`, `test`,
-/// `stress` and `stress_all` use the associated types and methods.
-pub trait Fixture<Precision: IntegerPrecision, Engine: AbstractEngine, RelatedEntities> {
+/// Notes:
+/// ======
+///
+/// + The `Precision` generic parameters allows to specify which integer precision should be used
+///   when a fixture is called.
+/// + The `KeyDistributions` generic parameter allows to specify key distributions, which may be
+///   needed to generate compatible prototypes.
+/// + The `Engine` generic parameters allows to specify the engine to be tested.
+/// + The `RelatedEntities` allows
+/// + To understand how the different pieces fit, see how the default methods `sample`, `test`,
+///   `stress` and `stress_all` use the associated types and methods.
+///
+pub trait Fixture<
+    Precision: IntegerPrecision,
+    KeyDistributions,
+    Engine: AbstractEngine,
+    RelatedEntities,
+>
+{
     /// A type containing the parameters needed to generate the execution context.
     type Parameters: Debug;
 

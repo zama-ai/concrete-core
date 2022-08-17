@@ -3,7 +3,7 @@ use crate::generation::prototyping::{PrototypesGlweSecretKey, PrototypesLweSecre
 use crate::generation::synthesizing::{
     SynthesizesGlweSecretKey, SynthesizesLweBootstrapKey, SynthesizesLweSecretKey,
 };
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use concrete_commons::dispersion::Variance;
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
@@ -25,27 +25,43 @@ pub struct LweBootstrapKeyCreationParameters {
     pub noise: Variance,
 }
 
-impl<Precision, Engine, LweSecretKey, GlweSecretKey, BootstrapKey>
-    Fixture<Precision, Engine, (LweSecretKey, GlweSecretKey, BootstrapKey)>
-    for LweBootstrapKeyCreationFixture
+impl<
+        Precision,
+        InputKeyDistribution,
+        OutputKeyDistribution,
+        Engine,
+        LweSecretKey,
+        GlweSecretKey,
+        BootstrapKey,
+    >
+    Fixture<
+        Precision,
+        (InputKeyDistribution, OutputKeyDistribution),
+        Engine,
+        (LweSecretKey, GlweSecretKey, BootstrapKey),
+    > for LweBootstrapKeyCreationFixture
 where
     Precision: IntegerPrecision,
+    InputKeyDistribution: KeyDistributionMarker,
+    OutputKeyDistribution: KeyDistributionMarker,
     Engine: LweBootstrapKeyCreationEngine<LweSecretKey, GlweSecretKey, BootstrapKey>,
     LweSecretKey: LweSecretKeyEntity,
     GlweSecretKey: GlweSecretKeyEntity,
-    BootstrapKey: LweBootstrapKeyEntity<
-        InputKeyDistribution = LweSecretKey::KeyDistribution,
-        OutputKeyDistribution = GlweSecretKey::KeyDistribution,
-    >,
-    Maker: SynthesizesLweSecretKey<Precision, LweSecretKey>
-        + SynthesizesGlweSecretKey<Precision, GlweSecretKey>
-        + SynthesizesLweBootstrapKey<Precision, BootstrapKey>,
+    BootstrapKey: LweBootstrapKeyEntity,
+    Maker: SynthesizesLweSecretKey<Precision, InputKeyDistribution, LweSecretKey>
+        + SynthesizesGlweSecretKey<Precision, OutputKeyDistribution, GlweSecretKey>
+        + SynthesizesLweBootstrapKey<
+            Precision,
+            InputKeyDistribution,
+            OutputKeyDistribution,
+            BootstrapKey,
+        >,
 {
     type Parameters = LweBootstrapKeyCreationParameters;
     type RepetitionPrototypes = ();
     type SamplePrototypes = (
-        <Maker as PrototypesLweSecretKey<Precision, LweSecretKey::KeyDistribution>>::LweSecretKeyProto,
-        <Maker as PrototypesGlweSecretKey<Precision, GlweSecretKey::KeyDistribution>>::GlweSecretKeyProto,
+        <Maker as PrototypesLweSecretKey<Precision, InputKeyDistribution>>::LweSecretKeyProto,
+        <Maker as PrototypesGlweSecretKey<Precision, OutputKeyDistribution>>::GlweSecretKeyProto,
     );
     type PreExecutionContext = (LweSecretKey, GlweSecretKey);
     type PostExecutionContext = (BootstrapKey,);
@@ -89,7 +105,7 @@ where
     ) -> Self::SamplePrototypes {
         let proto_secret_key_lwe = <Maker as PrototypesLweSecretKey<
             Precision,
-            LweSecretKey::KeyDistribution,
+            InputKeyDistribution,
         >>::new_lwe_secret_key(maker, parameters.lwe_dimension);
         let proto_secret_key_glwe =
             maker.new_glwe_secret_key(parameters.glwe_dimension, parameters.polynomial_size);

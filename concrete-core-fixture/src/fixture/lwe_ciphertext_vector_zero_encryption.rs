@@ -10,7 +10,7 @@ use crate::generation::prototyping::{
     PrototypesLweCiphertextVector, PrototypesLweSecretKey, PrototypesPlaintextVector,
 };
 use crate::generation::synthesizing::{SynthesizesLweCiphertextVector, SynthesizesLweSecretKey};
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 
@@ -24,19 +24,21 @@ pub struct LweCiphertextVectorZeroEncryptionParameters {
     pub lwe_ciphertext_count: LweCiphertextCount,
 }
 
-impl<Precision, Engine, SecretKey, CiphertextVector>
-    Fixture<Precision, Engine, (SecretKey, CiphertextVector)>
+impl<Precision, KeyDistribution, Engine, SecretKey, CiphertextVector>
+    Fixture<Precision, (KeyDistribution,), Engine, (SecretKey, CiphertextVector)>
     for LweCiphertextVectorZeroEncryptionFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: LweCiphertextVectorZeroEncryptionEngine<SecretKey, CiphertextVector>,
     SecretKey: LweSecretKeyEntity,
-    CiphertextVector: LweCiphertextVectorEntity<KeyDistribution = SecretKey::KeyDistribution>,
-    Maker: SynthesizesLweSecretKey<Precision, SecretKey>
-        + SynthesizesLweCiphertextVector<Precision, CiphertextVector>,
+    CiphertextVector: LweCiphertextVectorEntity,
+    Maker: SynthesizesLweSecretKey<Precision, KeyDistribution, SecretKey>
+        + SynthesizesLweCiphertextVector<Precision, KeyDistribution, CiphertextVector>,
 {
     type Parameters = LweCiphertextVectorZeroEncryptionParameters;
-    type RepetitionPrototypes = (<Maker as PrototypesLweSecretKey<Precision, CiphertextVector::KeyDistribution>>::LweSecretKeyProto, );
+    type RepetitionPrototypes =
+        (<Maker as PrototypesLweSecretKey<Precision, KeyDistribution>>::LweSecretKeyProto,);
     type SamplePrototypes = ();
     type PreExecutionContext = (SecretKey,);
     type PostExecutionContext = (SecretKey, CiphertextVector);

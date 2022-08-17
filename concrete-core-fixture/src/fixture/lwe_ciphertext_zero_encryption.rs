@@ -10,7 +10,7 @@ use crate::generation::prototyping::{
     PrototypesLweCiphertext, PrototypesLweSecretKey, PrototypesPlaintext,
 };
 use crate::generation::synthesizing::{SynthesizesLweCiphertext, SynthesizesLweSecretKey};
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::statistical_test::assert_noise_distribution;
 
 /// A fixture for the types implementing the `LweCiphertextZeroEncryptionEngine` trait.
@@ -22,18 +22,21 @@ pub struct LweCiphertextZeroEncryptionParameters {
     pub lwe_dimension: LweDimension,
 }
 
-impl<Precision, Engine, SecretKey, Ciphertext> Fixture<Precision, Engine, (SecretKey, Ciphertext)>
+impl<Precision, KeyDistribution, Engine, SecretKey, Ciphertext>
+    Fixture<Precision, (KeyDistribution,), Engine, (SecretKey, Ciphertext)>
     for LweCiphertextZeroEncryptionFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: LweCiphertextZeroEncryptionEngine<SecretKey, Ciphertext>,
     SecretKey: LweSecretKeyEntity,
-    Ciphertext: LweCiphertextEntity<KeyDistribution = SecretKey::KeyDistribution>,
-    Maker: SynthesizesLweSecretKey<Precision, SecretKey>
-        + SynthesizesLweCiphertext<Precision, Ciphertext>,
+    Ciphertext: LweCiphertextEntity,
+    Maker: SynthesizesLweSecretKey<Precision, KeyDistribution, SecretKey>
+        + SynthesizesLweCiphertext<Precision, KeyDistribution, Ciphertext>,
 {
     type Parameters = LweCiphertextZeroEncryptionParameters;
-    type RepetitionPrototypes = (<Maker as PrototypesLweSecretKey<Precision, Ciphertext::KeyDistribution>>::LweSecretKeyProto, );
+    type RepetitionPrototypes =
+        (<Maker as PrototypesLweSecretKey<Precision, KeyDistribution>>::LweSecretKeyProto,);
     type SamplePrototypes = ();
     type PreExecutionContext = (SecretKey,);
     type PostExecutionContext = (SecretKey, Ciphertext);

@@ -3,7 +3,7 @@ use crate::generation::prototyping::{PrototypesGlweCiphertextVector, PrototypesP
 use crate::generation::synthesizing::{
     SynthesizesGlweCiphertextVector, SynthesizesPlaintextVector,
 };
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 use concrete_commons::dispersion::Variance;
@@ -22,16 +22,17 @@ pub struct GlweCiphertextVectorTrivialDecryptionParameters {
     pub count: GlweCiphertextCount,
 }
 
-impl<Precision, Engine, PlaintextVector, CiphertextVector>
-    Fixture<Precision, Engine, (PlaintextVector, CiphertextVector)>
+impl<Precision, KeyDistribution, Engine, PlaintextVector, CiphertextVector>
+    Fixture<Precision, (KeyDistribution,), Engine, (PlaintextVector, CiphertextVector)>
     for GlweCiphertextVectorTrivialDecryptionFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: GlweCiphertextVectorTrivialDecryptionEngine<CiphertextVector, PlaintextVector>,
     PlaintextVector: PlaintextVectorEntity,
     CiphertextVector: GlweCiphertextVectorEntity,
     Maker: SynthesizesPlaintextVector<Precision, PlaintextVector>
-        + SynthesizesGlweCiphertextVector<Precision, CiphertextVector>,
+        + SynthesizesGlweCiphertextVector<Precision, KeyDistribution, CiphertextVector>,
 {
     type Parameters = GlweCiphertextVectorTrivialDecryptionParameters;
     type RepetitionPrototypes = ();
@@ -40,7 +41,7 @@ where
             <Maker as PrototypesPlaintextVector<Precision>>::PlaintextVectorProto,
             <Maker as PrototypesGlweCiphertextVector<
                 Precision,
-                CiphertextVector::KeyDistribution,
+                KeyDistribution,
             >>::GlweCiphertextVectorProto,
         );
     type PreExecutionContext = (CiphertextVector,);

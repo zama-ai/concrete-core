@@ -5,7 +5,7 @@ use crate::generation::prototyping::{
 use crate::generation::synthesizing::{
     SynthesizesLweCiphertextVector, SynthesizesLweSecretKey, SynthesizesPlaintextVector,
 };
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 use concrete_commons::dispersion::Variance;
@@ -25,26 +25,26 @@ pub struct LweCiphertextVectorDecryptionParameters {
     pub lwe_ciphertext_count: LweCiphertextCount,
 }
 
-impl<Precision, Engine, PlaintextVector, SecretKey, CiphertextVector>
-    Fixture<Precision, Engine, (PlaintextVector, SecretKey, CiphertextVector)>
+impl<Precision, KeyDistribution, Engine, PlaintextVector, SecretKey, CiphertextVector>
+    Fixture<Precision, (KeyDistribution,), Engine, (PlaintextVector, SecretKey, CiphertextVector)>
     for LweCiphertextVectorDecryptionFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: LweCiphertextVectorDecryptionEngine<SecretKey, CiphertextVector, PlaintextVector>,
     PlaintextVector: PlaintextVectorEntity,
     SecretKey: LweSecretKeyEntity,
-    CiphertextVector: LweCiphertextVectorEntity<KeyDistribution = SecretKey::KeyDistribution>,
+    CiphertextVector: LweCiphertextVectorEntity,
     Maker: SynthesizesPlaintextVector<Precision, PlaintextVector>
-        + SynthesizesLweSecretKey<Precision, SecretKey>
-        + SynthesizesLweCiphertextVector<Precision, CiphertextVector>,
+        + SynthesizesLweSecretKey<Precision, KeyDistribution, SecretKey>
+        + SynthesizesLweCiphertextVector<Precision, KeyDistribution, CiphertextVector>,
 {
     type Parameters = LweCiphertextVectorDecryptionParameters;
-    type RepetitionPrototypes = (
-        <Maker as PrototypesLweSecretKey<Precision, CiphertextVector::KeyDistribution>>::LweSecretKeyProto,
-    );
+    type RepetitionPrototypes =
+        (<Maker as PrototypesLweSecretKey<Precision, KeyDistribution>>::LweSecretKeyProto,);
     type SamplePrototypes = (
         <Maker as PrototypesPlaintextVector<Precision>>::PlaintextVectorProto,
-        <Maker as PrototypesLweCiphertextVector<Precision, SecretKey::KeyDistribution>>::LweCiphertextVectorProto,
+        <Maker as PrototypesLweCiphertextVector<Precision, KeyDistribution>>::LweCiphertextVectorProto,
     );
     type PreExecutionContext = (SecretKey, CiphertextVector);
     type PostExecutionContext = (SecretKey, CiphertextVector, PlaintextVector);

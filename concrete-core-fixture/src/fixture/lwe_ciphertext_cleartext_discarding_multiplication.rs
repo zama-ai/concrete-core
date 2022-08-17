@@ -3,7 +3,7 @@ use crate::generation::prototyping::{
     PrototypesCleartext, PrototypesLweCiphertext, PrototypesLweSecretKey, PrototypesPlaintext,
 };
 use crate::generation::synthesizing::{SynthesizesCleartext, SynthesizesLweCiphertext};
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 use concrete_commons::dispersion::{DispersionParameter, LogStandardDev, Variance};
@@ -24,11 +24,12 @@ pub struct LweCiphertextCleartextDiscardingMultiplicationParameters {
 }
 
 #[allow(clippy::type_complexity)]
-impl<Precision, Engine, InputCiphertext, Cleartext, OutputCiphertext>
-    Fixture<Precision, Engine, (InputCiphertext, Cleartext, OutputCiphertext)>
+impl<Precision, KeyDistribution, Engine, InputCiphertext, Cleartext, OutputCiphertext>
+    Fixture<Precision, (KeyDistribution,), Engine, (InputCiphertext, Cleartext, OutputCiphertext)>
     for LweCiphertextCleartextDiscardingMultiplicationFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: LweCiphertextCleartextDiscardingMultiplicationEngine<
         InputCiphertext,
         Cleartext,
@@ -36,20 +37,20 @@ where
     >,
     InputCiphertext: LweCiphertextEntity,
     Cleartext: CleartextEntity,
-    OutputCiphertext: LweCiphertextEntity<KeyDistribution = InputCiphertext::KeyDistribution>,
+    OutputCiphertext: LweCiphertextEntity,
     Maker: SynthesizesCleartext<Precision, Cleartext>
-        + SynthesizesLweCiphertext<Precision, InputCiphertext>
-        + SynthesizesLweCiphertext<Precision, OutputCiphertext>,
+        + SynthesizesLweCiphertext<Precision, KeyDistribution, InputCiphertext>
+        + SynthesizesLweCiphertext<Precision, KeyDistribution, OutputCiphertext>,
 {
     type Parameters = LweCiphertextCleartextDiscardingMultiplicationParameters;
     type RepetitionPrototypes = (
-        <Maker as PrototypesLweSecretKey<Precision, InputCiphertext::KeyDistribution>>::LweSecretKeyProto,
+        <Maker as PrototypesLweSecretKey<Precision, KeyDistribution>>::LweSecretKeyProto,
         <Maker as PrototypesCleartext<Precision>>::CleartextProto,
     );
     type SamplePrototypes = (
         <Maker as PrototypesPlaintext<Precision>>::PlaintextProto,
-        <Maker as PrototypesLweCiphertext<Precision, InputCiphertext::KeyDistribution>>::LweCiphertextProto,
-        <Maker as PrototypesLweCiphertext<Precision, InputCiphertext::KeyDistribution>>::LweCiphertextProto,
+        <Maker as PrototypesLweCiphertext<Precision, KeyDistribution>>::LweCiphertextProto,
+        <Maker as PrototypesLweCiphertext<Precision, KeyDistribution>>::LweCiphertextProto,
     );
     type PreExecutionContext = (InputCiphertext, Cleartext, OutputCiphertext);
     type PostExecutionContext = (InputCiphertext, Cleartext, OutputCiphertext);

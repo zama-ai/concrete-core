@@ -1,7 +1,7 @@
 use crate::fixture::Fixture;
 use crate::generation::prototyping::PrototypesLweSecretKey;
 use crate::generation::synthesizing::{SynthesizesLweSecretKey, SynthesizesLweSeededKeyswitchKey};
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use concrete_commons::dispersion::Variance;
 use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
 use concrete_core::prelude::{
@@ -20,29 +20,44 @@ pub struct LweSeededKeyswitchKeyCreationParameters {
     pub base_log: DecompositionBaseLog,
 }
 
-impl<Precision, Engine, InputSecretKey, OutputSecretKey, LweSeededKeyswitchKey>
-    Fixture<Precision, Engine, (InputSecretKey, OutputSecretKey, LweSeededKeyswitchKey)>
-    for LweSeededKeyswitchKeyCreationFixture
+impl<
+        Precision,
+        InputKeyDistribution,
+        OutputKeyDistribution,
+        Engine,
+        InputSecretKey,
+        OutputSecretKey,
+        LweSeededKeyswitchKey,
+    >
+    Fixture<
+        Precision,
+        (InputKeyDistribution, OutputKeyDistribution),
+        Engine,
+        (InputSecretKey, OutputSecretKey, LweSeededKeyswitchKey),
+    > for LweSeededKeyswitchKeyCreationFixture
 where
     Precision: IntegerPrecision,
+    InputKeyDistribution: KeyDistributionMarker,
+    OutputKeyDistribution: KeyDistributionMarker,
     Engine:
         LweSeededKeyswitchKeyCreationEngine<InputSecretKey, OutputSecretKey, LweSeededKeyswitchKey>,
     InputSecretKey: LweSecretKeyEntity,
     OutputSecretKey: LweSecretKeyEntity,
-    LweSeededKeyswitchKey: LweSeededKeyswitchKeyEntity<
-        InputKeyDistribution = InputSecretKey::KeyDistribution,
-        OutputKeyDistribution = OutputSecretKey::KeyDistribution,
-    >,
-    Maker: SynthesizesLweSeededKeyswitchKey<Precision, LweSeededKeyswitchKey>
-        + SynthesizesLweSecretKey<Precision, InputSecretKey>
-        + SynthesizesLweSecretKey<Precision, OutputSecretKey>,
+    LweSeededKeyswitchKey: LweSeededKeyswitchKeyEntity,
+    Maker: SynthesizesLweSeededKeyswitchKey<
+            Precision,
+            InputKeyDistribution,
+            OutputKeyDistribution,
+            LweSeededKeyswitchKey,
+        > + SynthesizesLweSecretKey<Precision, InputKeyDistribution, InputSecretKey>
+        + SynthesizesLweSecretKey<Precision, OutputKeyDistribution, OutputSecretKey>,
 {
     type Parameters = LweSeededKeyswitchKeyCreationParameters;
     type RepetitionPrototypes = ();
     type SamplePrototypes = (
-        <Maker as PrototypesLweSecretKey<Precision,
-InputSecretKey::KeyDistribution>>::LweSecretKeyProto,         <Maker as
-PrototypesLweSecretKey<Precision, OutputSecretKey::KeyDistribution>>::LweSecretKeyProto,     );
+        <Maker as PrototypesLweSecretKey<Precision, InputKeyDistribution>>::LweSecretKeyProto,
+        <Maker as PrototypesLweSecretKey<Precision, OutputKeyDistribution>>::LweSecretKeyProto,
+    );
     type PreExecutionContext = (InputSecretKey, OutputSecretKey);
     type PostExecutionContext = (LweSeededKeyswitchKey,);
     type Criteria = ();
@@ -74,11 +89,11 @@ PrototypesLweSecretKey<Precision, OutputSecretKey::KeyDistribution>>::LweSecretK
     ) -> Self::SamplePrototypes {
         let proto_secret_key_in = <Maker as PrototypesLweSecretKey<
             Precision,
-            InputSecretKey::KeyDistribution,
+            InputKeyDistribution,
         >>::new_lwe_secret_key(maker, parameters.lwe_dimension_in);
         let proto_secret_key_out = <Maker as PrototypesLweSecretKey<
             Precision,
-            OutputSecretKey::KeyDistribution,
+            OutputKeyDistribution,
         >>::new_lwe_secret_key(
             maker, parameters.lwe_dimension_out
         );

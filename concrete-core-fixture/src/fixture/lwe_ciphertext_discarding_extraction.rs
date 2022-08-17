@@ -4,7 +4,7 @@ use crate::generation::prototyping::{
     PrototypesPlaintext, PrototypesPlaintextVector, TransformsGlweToLweSecretKeyPrototype,
 };
 use crate::generation::synthesizing::{SynthesizesGlweCiphertext, SynthesizesLweCiphertext};
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 use concrete_commons::dispersion::Variance;
@@ -25,26 +25,26 @@ pub struct LweCiphertextDiscardingExtractionParameters {
 }
 
 #[allow(clippy::type_complexity)]
-impl<Precision, Engine, GlweCiphertext, LweCiphertext>
-    Fixture<Precision, Engine, (GlweCiphertext, LweCiphertext)>
+impl<Precision, KeyDistribution, Engine, GlweCiphertext, LweCiphertext>
+    Fixture<Precision, (KeyDistribution,), Engine, (GlweCiphertext, LweCiphertext)>
     for LweCiphertextDiscardingExtractionFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: LweCiphertextDiscardingExtractionEngine<GlweCiphertext, LweCiphertext>,
     GlweCiphertext: GlweCiphertextEntity,
-    LweCiphertext: LweCiphertextEntity<KeyDistribution = GlweCiphertext::KeyDistribution>,
-    Maker: TransformsGlweToLweSecretKeyPrototype<Precision, GlweCiphertext::KeyDistribution>
-        + SynthesizesLweCiphertext<Precision, LweCiphertext>
-        + SynthesizesGlweCiphertext<Precision, GlweCiphertext>,
+    LweCiphertext: LweCiphertextEntity,
+    Maker: TransformsGlweToLweSecretKeyPrototype<Precision, KeyDistribution>
+        + SynthesizesLweCiphertext<Precision, KeyDistribution, LweCiphertext>
+        + SynthesizesGlweCiphertext<Precision, KeyDistribution, GlweCiphertext>,
 {
     type Parameters = LweCiphertextDiscardingExtractionParameters;
-    type RepetitionPrototypes = (
-        <Maker as PrototypesGlweSecretKey<Precision, GlweCiphertext::KeyDistribution>>::GlweSecretKeyProto,
-    );
+    type RepetitionPrototypes =
+        (<Maker as PrototypesGlweSecretKey<Precision, KeyDistribution>>::GlweSecretKeyProto,);
     type SamplePrototypes = (
         <Maker as PrototypesPlaintextVector<Precision>>::PlaintextVectorProto,
-        <Maker as PrototypesGlweCiphertext<Precision, GlweCiphertext::KeyDistribution>>::GlweCiphertextProto,
-        <Maker as PrototypesLweCiphertext<Precision, GlweCiphertext::KeyDistribution>>::LweCiphertextProto,
+        <Maker as PrototypesGlweCiphertext<Precision, KeyDistribution>>::GlweCiphertextProto,
+        <Maker as PrototypesLweCiphertext<Precision, KeyDistribution>>::LweCiphertextProto,
     );
     type PreExecutionContext = (GlweCiphertext, LweCiphertext);
     type PostExecutionContext = (GlweCiphertext, LweCiphertext);

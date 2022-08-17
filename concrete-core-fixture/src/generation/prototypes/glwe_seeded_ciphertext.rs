@@ -1,5 +1,6 @@
-use crate::generation::{IntegerPrecision, Precision32, Precision64};
-use concrete_core::prelude::markers::{BinaryKeyDistribution, KeyDistributionMarker};
+use crate::generation::{
+    BinaryKeyDistribution, IntegerPrecision, KeyDistributionMarker, Precision32, Precision64,
+};
 use concrete_core::prelude::{GlweSeededCiphertext32, GlweSeededCiphertext64};
 
 /// A trait implemented by GlweSeeded ciphertext prototypes.

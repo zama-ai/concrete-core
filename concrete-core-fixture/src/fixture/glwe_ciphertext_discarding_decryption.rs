@@ -5,7 +5,7 @@ use crate::generation::prototyping::{
 use crate::generation::synthesizing::{
     SynthesizesGlweCiphertext, SynthesizesGlweSecretKey, SynthesizesPlaintextVector,
 };
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 use concrete_commons::dispersion::Variance;
@@ -25,27 +25,27 @@ pub struct GlweCiphertextDiscardingDecryptionParameters {
     pub polynomial_size: PolynomialSize,
 }
 
-impl<Precision, Engine, PlaintextVector, SecretKey, Ciphertext>
-    Fixture<Precision, Engine, (PlaintextVector, SecretKey, Ciphertext)>
+impl<Precision, KeyDistribution, Engine, PlaintextVector, SecretKey, Ciphertext>
+    Fixture<Precision, (KeyDistribution,), Engine, (PlaintextVector, SecretKey, Ciphertext)>
     for GlweCiphertextDiscardingDecryptionFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: GlweCiphertextDiscardingDecryptionEngine<SecretKey, Ciphertext, PlaintextVector>,
     PlaintextVector: PlaintextVectorEntity,
     SecretKey: GlweSecretKeyEntity,
-    Ciphertext: GlweCiphertextEntity<KeyDistribution = SecretKey::KeyDistribution>,
+    Ciphertext: GlweCiphertextEntity,
     Maker: SynthesizesPlaintextVector<Precision, PlaintextVector>
-        + SynthesizesGlweSecretKey<Precision, SecretKey>
-        + SynthesizesGlweCiphertext<Precision, Ciphertext>,
+        + SynthesizesGlweSecretKey<Precision, KeyDistribution, SecretKey>
+        + SynthesizesGlweCiphertext<Precision, KeyDistribution, Ciphertext>,
 {
     type Parameters = GlweCiphertextDiscardingDecryptionParameters;
-    type RepetitionPrototypes = (
-        <Maker as PrototypesGlweSecretKey<Precision, SecretKey::KeyDistribution>>::GlweSecretKeyProto,
-    );
+    type RepetitionPrototypes =
+        (<Maker as PrototypesGlweSecretKey<Precision, KeyDistribution>>::GlweSecretKeyProto,);
     type SamplePrototypes = (
         <Maker as PrototypesPlaintextVector<Precision>>::PlaintextVectorProto,
-        <Maker as PrototypesGlweCiphertext<Precision, SecretKey::KeyDistribution>>::GlweCiphertextProto,
-        <Maker as PrototypesPlaintextVector<Precision>>::PlaintextVectorProto
+        <Maker as PrototypesGlweCiphertext<Precision, KeyDistribution>>::GlweCiphertextProto,
+        <Maker as PrototypesPlaintextVector<Precision>>::PlaintextVectorProto,
     );
     type PreExecutionContext = (SecretKey, Ciphertext, PlaintextVector);
     type PostExecutionContext = (SecretKey, Ciphertext, PlaintextVector);

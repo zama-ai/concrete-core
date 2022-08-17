@@ -1,11 +1,13 @@
 use crate::generation::prototyping::PrototypesGlweSecretKey;
-use crate::generation::IntegerPrecision;
+use crate::generation::{IntegerPrecision, KeyDistributionMarker};
 use concrete_core::prelude::GlweSecretKeyEntity;
 
 /// A trait allowing to synthesize an actual glwe secret key entity from a prototype.
-pub trait SynthesizesGlweSecretKey<Precision: IntegerPrecision, GlweSecretKey>:
-    PrototypesGlweSecretKey<Precision, GlweSecretKey::KeyDistribution>
-where
+pub trait SynthesizesGlweSecretKey<
+    Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
+    GlweSecretKey,
+>: PrototypesGlweSecretKey<Precision, KeyDistribution> where
     GlweSecretKey: GlweSecretKeyEntity,
 {
     fn synthesize_glwe_secret_key(&mut self, prototype: &Self::GlweSecretKeyProto)
@@ -17,10 +19,10 @@ where
 mod backend_default {
     use crate::generation::prototypes::{ProtoBinaryGlweSecretKey32, ProtoBinaryGlweSecretKey64};
     use crate::generation::synthesizing::SynthesizesGlweSecretKey;
-    use crate::generation::{Maker, Precision32, Precision64};
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
     use concrete_core::prelude::{GlweSecretKey32, GlweSecretKey64};
 
-    impl SynthesizesGlweSecretKey<Precision32, GlweSecretKey32> for Maker {
+    impl SynthesizesGlweSecretKey<Precision32, BinaryKeyDistribution, GlweSecretKey32> for Maker {
         fn synthesize_glwe_secret_key(
             &mut self,
             prototype: &Self::GlweSecretKeyProto,
@@ -38,7 +40,7 @@ mod backend_default {
         fn destroy_glwe_secret_key(&mut self, _entity: GlweSecretKey32) {}
     }
 
-    impl SynthesizesGlweSecretKey<Precision64, GlweSecretKey64> for Maker {
+    impl SynthesizesGlweSecretKey<Precision64, BinaryKeyDistribution, GlweSecretKey64> for Maker {
         fn synthesize_glwe_secret_key(
             &mut self,
             prototype: &Self::GlweSecretKeyProto,

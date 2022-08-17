@@ -1,6 +1,6 @@
 use crate::fixture::Fixture;
 use crate::generation::synthesizing::SynthesizesLweSecretKey;
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use concrete_commons::parameters::LweDimension;
 use concrete_core::prelude::{LweSecretKeyCreationEngine, LweSecretKeyEntity};
 
@@ -12,13 +12,14 @@ pub struct LweSecretKeyCreationParameters {
     pub lwe_dimension: LweDimension,
 }
 
-impl<Precision, Engine, SecretKey> Fixture<Precision, Engine, (SecretKey,)>
-    for LweSecretKeyCreationFixture
+impl<Precision, KeyDistribution, Engine, SecretKey>
+    Fixture<Precision, (KeyDistribution,), Engine, (SecretKey,)> for LweSecretKeyCreationFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: LweSecretKeyCreationEngine<SecretKey>,
     SecretKey: LweSecretKeyEntity,
-    Maker: SynthesizesLweSecretKey<Precision, SecretKey>,
+    Maker: SynthesizesLweSecretKey<Precision, KeyDistribution, SecretKey>,
 {
     type Parameters = LweSecretKeyCreationParameters;
     type RepetitionPrototypes = ();

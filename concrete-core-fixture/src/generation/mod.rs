@@ -27,6 +27,21 @@ pub mod prototypes;
 pub mod prototyping;
 pub mod synthesizing;
 
+/// A trait for marker types representing key distributions managed in `concrete_core`.
+pub trait KeyDistributionMarker: 'static {}
+
+/// A type representing binary key distribution
+pub struct BinaryKeyDistribution;
+impl KeyDistributionMarker for BinaryKeyDistribution {}
+
+/// A type representing ternary key distribution
+pub struct TernaryKeyDistribution;
+impl KeyDistributionMarker for TernaryKeyDistribution {}
+
+/// A type representing Gaussian key distribution
+pub struct GaussianKeyDistribution;
+impl KeyDistributionMarker for GaussianKeyDistribution {}
+
 /// A trait for marker type representing integer precision managed in `concrete_core`.
 pub trait IntegerPrecision {
     type Raw: RawUnsignedIntegers;

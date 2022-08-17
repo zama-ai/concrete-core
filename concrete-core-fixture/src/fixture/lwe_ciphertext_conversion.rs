@@ -7,7 +7,7 @@ use crate::generation::prototyping::{
     PrototypesLweCiphertext, PrototypesLweSecretKey, PrototypesPlaintext,
 };
 use crate::generation::synthesizing::SynthesizesLweCiphertext;
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 
@@ -20,27 +20,23 @@ pub struct LweCiphertextConversionParameters {
     pub lwe_dimension: LweDimension,
 }
 
-impl<Precision, Engine, InputCiphertext, OutputCiphertext>
-    Fixture<Precision, Engine, (InputCiphertext, OutputCiphertext)>
+impl<Precision, KeyDistribution, Engine, InputCiphertext, OutputCiphertext>
+    Fixture<Precision, (KeyDistribution,), Engine, (InputCiphertext, OutputCiphertext)>
     for LweCiphertextConversionFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: LweCiphertextConversionEngine<InputCiphertext, OutputCiphertext>,
     InputCiphertext: LweCiphertextEntity,
-    OutputCiphertext: LweCiphertextEntity<KeyDistribution = InputCiphertext::KeyDistribution>,
-    Maker: SynthesizesLweCiphertext<Precision, InputCiphertext>
-        + SynthesizesLweCiphertext<Precision, OutputCiphertext>,
+    OutputCiphertext: LweCiphertextEntity,
+    Maker: SynthesizesLweCiphertext<Precision, KeyDistribution, InputCiphertext>
+        + SynthesizesLweCiphertext<Precision, KeyDistribution, OutputCiphertext>,
 {
     type Parameters = LweCiphertextConversionParameters;
-    type RepetitionPrototypes = (
-        <Maker as PrototypesLweSecretKey<Precision, InputCiphertext::KeyDistribution>>::LweSecretKeyProto,
-    );
-    type SamplePrototypes = (
-        <Maker as PrototypesLweCiphertext<
-            Precision,
-            InputCiphertext::KeyDistribution,
-        >>::LweCiphertextProto,
-    );
+    type RepetitionPrototypes =
+        (<Maker as PrototypesLweSecretKey<Precision, KeyDistribution>>::LweSecretKeyProto,);
+    type SamplePrototypes =
+        (<Maker as PrototypesLweCiphertext<Precision, KeyDistribution>>::LweCiphertextProto,);
     type PreExecutionContext = (InputCiphertext,);
     type PostExecutionContext = (InputCiphertext, OutputCiphertext);
     type Criteria = (Variance,);
@@ -112,6 +108,7 @@ where
         let (proto_ciphertext,) = sample_proto;
         (<Maker as SynthesizesLweCiphertext<
             Precision,
+            KeyDistribution,
             InputCiphertext,
         >>::synthesize_lwe_ciphertext(
             maker, proto_ciphertext
@@ -143,7 +140,7 @@ where
         let proto_plaintext = maker.decrypt_lwe_ciphertext_to_plaintext(key, proto_ciphertext);
         let proto_output_plaintext = <Maker as PrototypesLweCiphertext<
             Precision,
-            InputCiphertext::KeyDistribution,
+            KeyDistribution,
         >>::decrypt_lwe_ciphertext_to_plaintext(
             maker, key, &proto_output_ciphertext
         );

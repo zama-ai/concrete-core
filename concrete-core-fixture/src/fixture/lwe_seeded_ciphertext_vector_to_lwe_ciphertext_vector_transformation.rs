@@ -7,7 +7,7 @@ use crate::generation::synthesizing::{
     SynthesizesLweCiphertextVector, SynthesizesLweSecretKey, SynthesizesLweSeededCiphertextVector,
     SynthesizesPlaintextVector,
 };
-use crate::generation::{IntegerPrecision, Maker};
+use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
 use concrete_commons::dispersion::Variance;
@@ -31,6 +31,7 @@ pub struct LweSeededCiphertextVectorToLweCiphertextVectorTransformationParameter
 impl<
         Precision,
         Engine,
+        KeyDistribution,
         PlaintextVector,
         SecretKey,
         InputCiphertextVector,
@@ -38,6 +39,7 @@ impl<
     >
     Fixture<
         Precision,
+        (KeyDistribution,),
         Engine,
         (
             PlaintextVector,
@@ -48,28 +50,27 @@ impl<
     > for LweSeededCiphertextVectorToLweCiphertextVectorTransformationFixture
 where
     Precision: IntegerPrecision,
+    KeyDistribution: KeyDistributionMarker,
     Engine: LweSeededCiphertextVectorToLweCiphertextVectorTransformationEngine<
         InputCiphertextVector,
         OutputCiphertextVector,
     >,
     PlaintextVector: PlaintextVectorEntity,
     SecretKey: LweSecretKeyEntity,
-    InputCiphertextVector:
-        LweSeededCiphertextVectorEntity<KeyDistribution = SecretKey::KeyDistribution>,
-    OutputCiphertextVector: LweCiphertextVectorEntity<KeyDistribution = SecretKey::KeyDistribution>,
+    InputCiphertextVector: LweSeededCiphertextVectorEntity,
+    OutputCiphertextVector: LweCiphertextVectorEntity,
     Maker: SynthesizesPlaintextVector<Precision, PlaintextVector>
-        + SynthesizesLweSecretKey<Precision, SecretKey>
-        + SynthesizesLweSeededCiphertextVector<Precision, InputCiphertextVector>
-        + SynthesizesLweCiphertextVector<Precision, OutputCiphertextVector>,
+        + SynthesizesLweSecretKey<Precision, KeyDistribution, SecretKey>
+        + SynthesizesLweSeededCiphertextVector<Precision, KeyDistribution, InputCiphertextVector>
+        + SynthesizesLweCiphertextVector<Precision, KeyDistribution, OutputCiphertextVector>,
 {
     type Parameters = LweSeededCiphertextVectorToLweCiphertextVectorTransformationParameters;
-    type RepetitionPrototypes = (
-        <Maker as PrototypesLweSecretKey<Precision, SecretKey::KeyDistribution>>::LweSecretKeyProto,
-    );
+    type RepetitionPrototypes =
+        (<Maker as PrototypesLweSecretKey<Precision, KeyDistribution>>::LweSecretKeyProto,);
     type SamplePrototypes = (
         <Maker as PrototypesLweSeededCiphertextVector<
             Precision,
-            InputCiphertextVector::KeyDistribution,
+            KeyDistribution,
         >>::LweSeededCiphertextVectorProto,
         <Maker as PrototypesPlaintextVector<Precision>>::PlaintextVectorProto,
     );

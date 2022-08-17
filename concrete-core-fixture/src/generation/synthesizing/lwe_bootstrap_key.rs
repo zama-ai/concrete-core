@@ -1,15 +1,14 @@
 use crate::generation::prototyping::PrototypesLweBootstrapKey;
-use crate::generation::IntegerPrecision;
+use crate::generation::{IntegerPrecision, KeyDistributionMarker};
 use concrete_core::prelude::LweBootstrapKeyEntity;
 
 /// A trait allowing to synthesize an actual lwe bootstrap key entity from a prototype.
-pub trait SynthesizesLweBootstrapKey<Precision: IntegerPrecision, LweBootstrapKey>:
-    PrototypesLweBootstrapKey<
-    Precision,
-    LweBootstrapKey::InputKeyDistribution,
-    LweBootstrapKey::OutputKeyDistribution,
->
-where
+pub trait SynthesizesLweBootstrapKey<
+    Precision: IntegerPrecision,
+    InputKeyDistribution: KeyDistributionMarker,
+    OutputKeyDistribution: KeyDistributionMarker,
+    LweBootstrapKey,
+>: PrototypesLweBootstrapKey<Precision, InputKeyDistribution, OutputKeyDistribution> where
     LweBootstrapKey: LweBootstrapKeyEntity,
 {
     fn synthesize_lwe_bootstrap_key(
@@ -28,10 +27,17 @@ mod backend_default {
         ProtoBinaryBinaryLweBootstrapKey32, ProtoBinaryBinaryLweBootstrapKey64,
     };
     use crate::generation::synthesizing::SynthesizesLweBootstrapKey;
-    use crate::generation::{Maker, Precision32, Precision64};
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
     use concrete_core::prelude::{LweBootstrapKey32, LweBootstrapKey64};
 
-    impl SynthesizesLweBootstrapKey<Precision32, LweBootstrapKey32> for Maker {
+    impl
+        SynthesizesLweBootstrapKey<
+            Precision32,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            LweBootstrapKey32,
+        > for Maker
+    {
         fn synthesize_lwe_bootstrap_key(
             &mut self,
             prototype: &Self::LweBootstrapKeyProto,
@@ -49,7 +55,14 @@ mod backend_default {
         fn destroy_lwe_bootstrap_key(&mut self, _entity: LweBootstrapKey32) {}
     }
 
-    impl SynthesizesLweBootstrapKey<Precision64, LweBootstrapKey64> for Maker {
+    impl
+        SynthesizesLweBootstrapKey<
+            Precision64,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            LweBootstrapKey64,
+        > for Maker
+    {
         fn synthesize_lwe_bootstrap_key(
             &mut self,
             prototype: &Self::LweBootstrapKeyProto,
@@ -71,12 +84,19 @@ mod backend_default {
 #[cfg(feature = "backend_fftw")]
 mod backend_fftw {
     use crate::generation::synthesizing::SynthesizesLweBootstrapKey;
-    use crate::generation::{Maker, Precision32, Precision64};
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
     use concrete_core::prelude::{
         FftwFourierLweBootstrapKey32, FftwFourierLweBootstrapKey64, LweBootstrapKeyConversionEngine,
     };
 
-    impl SynthesizesLweBootstrapKey<Precision32, FftwFourierLweBootstrapKey32> for Maker {
+    impl
+        SynthesizesLweBootstrapKey<
+            Precision32,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            FftwFourierLweBootstrapKey32,
+        > for Maker
+    {
         fn synthesize_lwe_bootstrap_key(
             &mut self,
             prototype: &Self::LweBootstrapKeyProto,
@@ -96,7 +116,14 @@ mod backend_fftw {
         fn destroy_lwe_bootstrap_key(&mut self, _entity: FftwFourierLweBootstrapKey32) {}
     }
 
-    impl SynthesizesLweBootstrapKey<Precision64, FftwFourierLweBootstrapKey64> for Maker {
+    impl
+        SynthesizesLweBootstrapKey<
+            Precision64,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            FftwFourierLweBootstrapKey64,
+        > for Maker
+    {
         fn synthesize_lwe_bootstrap_key(
             &mut self,
             prototype: &Self::LweBootstrapKeyProto,
@@ -120,12 +147,19 @@ mod backend_fftw {
 #[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]
 mod backend_cuda {
     use crate::generation::synthesizing::SynthesizesLweBootstrapKey;
-    use crate::generation::{Maker, Precision32, Precision64};
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
     use concrete_core::prelude::{
         CudaFourierLweBootstrapKey32, CudaFourierLweBootstrapKey64, LweBootstrapKeyConversionEngine,
     };
 
-    impl SynthesizesLweBootstrapKey<Precision32, CudaFourierLweBootstrapKey32> for Maker {
+    impl
+        SynthesizesLweBootstrapKey<
+            Precision32,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            CudaFourierLweBootstrapKey32,
+        > for Maker
+    {
         fn synthesize_lwe_bootstrap_key(
             &mut self,
             prototype: &Self::LweBootstrapKeyProto,
@@ -148,7 +182,14 @@ mod backend_cuda {
         fn destroy_lwe_bootstrap_key(&mut self, _entity: CudaFourierLweBootstrapKey32) {}
     }
 
-    impl SynthesizesLweBootstrapKey<Precision64, CudaFourierLweBootstrapKey64> for Maker {
+    impl
+        SynthesizesLweBootstrapKey<
+            Precision64,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            CudaFourierLweBootstrapKey64,
+        > for Maker
+    {
         fn synthesize_lwe_bootstrap_key(
             &mut self,
             prototype: &Self::LweBootstrapKeyProto,
