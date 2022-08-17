@@ -1,0 +1,22 @@
+[profile.cpu]
+region = "eu-west-3"
+image_id = "ami-000311d202e281658"
+instance_type = "m5.2xlarge"
+subnet_id = "subnet-0e042c7621461f754"
+
+[profile.gpu]
+region = "us-east-1"
+image_id = "ami-0df0337664ad627fe"
+instance_type = "p3.2xlarge"
+subnet_id = "subnet-8123c9e7"
+security_group = "sg-0466d33ced960ba35"
+
+[command.cpu_test]
+workflow = "aws_tests_slab_beta.yml"
+profile = "cpu"
+check_run_name = "AWS tests (Slab)"
+
+[command.gpu_test]
+workflow = "aws_tests_gpu_slab_beta.yml"
+profile = "gpu"
+check_run_name = "AWS tests GPU (Slab)"
