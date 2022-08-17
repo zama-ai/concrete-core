@@ -38,7 +38,7 @@ pub fn ffi() -> Result<(), Error> {
 }
 
 pub fn cuda_test() -> Result<(), Error> {
-    cmd!(<ENV_TARGET_NATIVE> "cargo test --release --no-fail-fast --features=backend_cuda -p concrete-core-test -- --test-threads 1")
+    cmd!(<ENV_TARGET_NATIVE> "cargo test --release --no-fail-fast --features=backend_cuda -p concrete-core-test -- --test-threads 2")
 }
 
 pub fn cuda_doc_test() -> Result<(), Error> {
