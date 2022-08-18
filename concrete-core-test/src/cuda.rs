@@ -1,11 +1,11 @@
 use crate::{REPETITIONS, SAMPLE_SIZE};
 use concrete_core::prelude::*;
 use concrete_core_fixture::fixture::*;
-use concrete_core_fixture::generation::{Maker, Precision32, Precision64};
+use concrete_core_fixture::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
 use paste::paste;
 
 macro_rules! test {
-    ($fixture: ident, $precision: ident, ($($types:ident),+)) => {
+    (($($key_dist:ident),*), $fixture: ident, $precision: ident, ($($types:ident),+)) => {
         paste!{
             #[test]
             fn [< test_ $fixture:snake _ $precision:snake _ $($types:snake)_+ >]() {
@@ -14,6 +14,7 @@ macro_rules! test {
                 let test_result =
                     <$fixture as Fixture<
                         $precision,
+                        ($($key_dist,)*),
                         CudaEngine,
                         ($($types,)+),
                     >>::stress_all_parameters(&mut maker, &mut engine, REPETITIONS, SAMPLE_SIZE);
@@ -21,44 +22,39 @@ macro_rules! test {
             }
         }
     };
-    ($(($fixture: ident, $precision: ident, ($($types:ident),+))),+) => {
-        $(
-            test!{$fixture, $precision, ($($types),+)}
-        )+
-    };
-    ($(($fixture: ident, ($($types:ident),+))),+) => {
+    ($((($($key_dist:ident),*), $fixture: ident, ($($types:ident),+))),+) => {
         $(
             paste!{
-                test!{$fixture, Precision32, ($([< $types 32 >]),+)}
-                test!{$fixture, Precision64, ($([< $types 64 >]),+)}
+                test!{($($key_dist),*), $fixture, Precision32, ($([< $types 32 >]),+)}
+                test!{($($key_dist),*), $fixture, Precision64, ($([< $types 64 >]),+)}
             }
         )+
     };
 }
 
 test! {
-    (LweCiphertextVectorConversionFixture, (CudaLweCiphertextVector, LweCiphertextVector)),
-    (LweCiphertextConversionFixture, (CudaLweCiphertext, LweCiphertext)),
-    (LweCiphertextVectorDiscardingKeyswitchFixture, (CudaLweKeyswitchKey, CudaLweCiphertextVector,
+    ((BinaryKeyDistribution), LweCiphertextVectorConversionFixture, (CudaLweCiphertextVector, LweCiphertextVector)),
+    ((BinaryKeyDistribution), LweCiphertextConversionFixture, (CudaLweCiphertext, LweCiphertext)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingKeyswitchFixture, (CudaLweKeyswitchKey, CudaLweCiphertextVector,
         CudaLweCiphertextVector)),
-    (LweCiphertextDiscardingKeyswitchFixture, (CudaLweKeyswitchKey, CudaLweCiphertext,
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextDiscardingKeyswitchFixture, (CudaLweKeyswitchKey, CudaLweCiphertext,
         CudaLweCiphertext)),
-    (LweCiphertextDiscardingBootstrapFixture1, (CudaFourierLweBootstrapKey,
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextDiscardingBootstrapFixture1, (CudaFourierLweBootstrapKey,
         CudaGlweCiphertext,
         CudaLweCiphertext, CudaLweCiphertext)),
-    (LweCiphertextDiscardingBootstrapFixture2, (CudaFourierLweBootstrapKey,
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextDiscardingBootstrapFixture2, (CudaFourierLweBootstrapKey,
         CudaGlweCiphertext,
         CudaLweCiphertext, CudaLweCiphertext)),
-    (LweCiphertextVectorDiscardingBootstrapFixture1, (CudaFourierLweBootstrapKey,
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingBootstrapFixture1, (CudaFourierLweBootstrapKey,
         CudaGlweCiphertextVector,
         CudaLweCiphertextVector, CudaLweCiphertextVector)),
-    (LweCiphertextVectorDiscardingBootstrapFixture2, (CudaFourierLweBootstrapKey,
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingBootstrapFixture2, (CudaFourierLweBootstrapKey,
         CudaGlweCiphertextVector,
         CudaLweCiphertextVector, CudaLweCiphertextVector))
 }
 
 macro_rules! test_amortized {
-    ($fixture: ident, $precision: ident, ($($types:ident),+)) => {
+    (($($key_dist:ident),*), $fixture: ident, $precision: ident, ($($types:ident),+)) => {
         paste!{
             #[test]
             fn [< test_amortized_ $fixture:snake _ $precision:snake _ $($types:snake)_+ >]() {
@@ -67,6 +63,7 @@ macro_rules! test_amortized {
                 let test_result =
                     <$fixture as Fixture<
                         $precision,
+                        ($($key_dist,)*),
                         AmortizedCudaEngine,
                         ($($types,)+),
                     >>::stress_all_parameters(&mut maker, &mut engine, REPETITIONS, SAMPLE_SIZE);
@@ -74,26 +71,21 @@ macro_rules! test_amortized {
             }
         }
     };
-    ($(($fixture: ident, $precision: ident, ($($types:ident),+))),+) => {
-        $(
-            test_amortized!{$fixture, $precision, ($($types),+)}
-        )+
-    };
-    ($(($fixture: ident, ($($types:ident),+))),+) => {
+    ($((($($key_dist:ident),*), $fixture: ident, ($($types:ident),+))),+) => {
         $(
             paste!{
-                test_amortized!{$fixture, Precision32, ($([< $types 32 >]),+)}
-                test_amortized!{$fixture, Precision64, ($([< $types 64 >]),+)}
+                test_amortized!{($($key_dist),*), $fixture, Precision32, ($([< $types 32 >]),+)}
+                test_amortized!{($($key_dist),*), $fixture, Precision64, ($([< $types 64 >]),+)}
             }
         )+
     };
 }
 
 test_amortized! {
-    (LweCiphertextVectorDiscardingBootstrapFixture1, (CudaFourierLweBootstrapKey,
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingBootstrapFixture1, (CudaFourierLweBootstrapKey,
         CudaGlweCiphertextVector,
         CudaLweCiphertextVector, CudaLweCiphertextVector)),
-    (LweCiphertextVectorDiscardingBootstrapFixture2, (CudaFourierLweBootstrapKey,
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingBootstrapFixture2, (CudaFourierLweBootstrapKey,
         CudaGlweCiphertextVector,
         CudaLweCiphertextVector, CudaLweCiphertextVector))
 }
