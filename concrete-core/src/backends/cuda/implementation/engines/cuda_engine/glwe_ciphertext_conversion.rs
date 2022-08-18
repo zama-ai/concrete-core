@@ -26,7 +26,6 @@ impl GlweCiphertextConversionEngine<GlweCiphertext32, CudaGlweCiphertext32> for 
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
-    /// use std::task::Poll;
     /// let glwe_dimension = GlweDimension(2);
     /// let polynomial_size = PolynomialSize(3);
     /// // Here a hard-set encoding is applied (shift by 20 bits)
@@ -93,7 +92,6 @@ impl GlweCiphertextConversionEngine<CudaGlweCiphertext32, GlweCiphertext32> for 
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
-    /// use std::task::Poll;
     /// let glwe_dimension = GlweDimension(2);
     /// let polynomial_size = PolynomialSize(3);
     /// // Here a hard-set encoding is applied (shift by 20 bits)
@@ -156,7 +154,6 @@ impl GlweCiphertextConversionEngine<GlweCiphertext64, CudaGlweCiphertext64> for 
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
-    /// use std::task::Poll;
     /// let glwe_dimension = GlweDimension(2);
     /// let polynomial_size = PolynomialSize(3);
     /// // Here a hard-set encoding is applied (shift by 20 bits)
@@ -223,7 +220,6 @@ impl GlweCiphertextConversionEngine<CudaGlweCiphertext64, GlweCiphertext64> for 
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
-    /// use std::task::Poll;
     /// let glwe_dimension = GlweDimension(2);
     /// let polynomial_size = PolynomialSize(3);
     /// // Here a hard-set encoding is applied (shift by 20 bits)
@@ -285,7 +281,6 @@ impl GlweCiphertextConversionEngine<GlweCiphertextView64<'_>, CudaGlweCiphertext
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
-    /// use std::task::Poll;
     /// let glwe_dimension = GlweDimension(2);
     /// let polynomial_size = PolynomialSize(3);
     /// // Here a hard-set encoding is applied (shift by 20 bits)

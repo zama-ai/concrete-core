@@ -17,7 +17,6 @@ impl GlweCiphertextDiscardingConversionEngine<CudaGlweCiphertext64, GlweCipherte
     /// use std::borrow::{Borrow, BorrowMut};
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
     /// use concrete_core::commons::numeric::CastInto;
-    /// use std::task::Poll;
     /// let glwe_dimension = GlweDimension(2);
     /// let polynomial_size = PolynomialSize(3);
     /// // Here a hard-set encoding is applied (shift by 20 bits)
