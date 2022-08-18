@@ -27,13 +27,3 @@ pub(crate) struct CudaLweList<T: UnsignedInteger> {
     // Lwe dimension
     pub(crate) lwe_dimension: LweDimension,
 }
-
-impl<T: UnsignedInteger> CudaLweList<T> {
-    pub(crate) fn lwe_ciphertext_count(&self) -> LweCiphertextCount {
-        self.lwe_ciphertext_count
-    }
-
-    pub(crate) fn lwe_dimension(&self) -> LweDimension {
-        self.lwe_dimension
-    }
-}

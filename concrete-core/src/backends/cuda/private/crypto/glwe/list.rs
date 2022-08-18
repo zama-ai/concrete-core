@@ -22,17 +22,3 @@ pub(crate) struct CudaGlweList<T: UnsignedInteger> {
     // Polynomial size
     pub(crate) polynomial_size: PolynomialSize,
 }
-
-impl<T: UnsignedInteger> CudaGlweList<T> {
-    pub(crate) fn glwe_ciphertext_count(&self) -> GlweCiphertextCount {
-        self.glwe_ciphertext_count
-    }
-
-    pub(crate) fn glwe_dimension(&self) -> GlweDimension {
-        self.glwe_dimension
-    }
-
-    pub(crate) fn polynomial_size(&self) -> PolynomialSize {
-        self.polynomial_size
-    }
-}

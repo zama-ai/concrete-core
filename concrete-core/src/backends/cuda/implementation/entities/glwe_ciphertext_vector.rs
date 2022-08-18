@@ -17,15 +17,15 @@ impl AbstractEntity for CudaGlweCiphertextVector32 {
 
 impl GlweCiphertextVectorEntity for CudaGlweCiphertextVector32 {
     fn glwe_dimension(&self) -> GlweDimension {
-        self.0.glwe_dimension()
+        self.0.glwe_dimension
     }
 
     fn polynomial_size(&self) -> PolynomialSize {
-        self.0.polynomial_size()
+        self.0.polynomial_size
     }
 
     fn glwe_ciphertext_count(&self) -> GlweCiphertextCount {
-        self.0.glwe_ciphertext_count()
+        self.0.glwe_ciphertext_count
     }
 }
 
@@ -40,14 +40,14 @@ impl AbstractEntity for CudaGlweCiphertextVector64 {
 
 impl GlweCiphertextVectorEntity for CudaGlweCiphertextVector64 {
     fn glwe_dimension(&self) -> GlweDimension {
-        self.0.glwe_dimension()
+        self.0.glwe_dimension
     }
 
     fn polynomial_size(&self) -> PolynomialSize {
-        self.0.polynomial_size()
+        self.0.polynomial_size
     }
 
     fn glwe_ciphertext_count(&self) -> GlweCiphertextCount {
-        self.0.glwe_ciphertext_count()
+        self.0.glwe_ciphertext_count
     }
 }

@@ -15,9 +15,3 @@ pub(crate) struct CudaLweCiphertext<T: UnsignedInteger> {
     // Lwe dimension
     pub(crate) lwe_dimension: LweDimension,
 }
-
-impl<T: UnsignedInteger> CudaLweCiphertext<T> {
-    pub(crate) fn lwe_dimension(&self) -> LweDimension {
-        self.lwe_dimension
-    }
-}

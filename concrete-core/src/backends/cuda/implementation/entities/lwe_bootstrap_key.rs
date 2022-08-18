@@ -16,23 +16,23 @@ impl AbstractEntity for CudaFourierLweBootstrapKey32 {
 
 impl LweBootstrapKeyEntity for CudaFourierLweBootstrapKey32 {
     fn glwe_dimension(&self) -> GlweDimension {
-        self.0.glwe_dimension()
+        self.0.glwe_dimension
     }
 
     fn polynomial_size(&self) -> PolynomialSize {
-        self.0.polynomial_size()
+        self.0.polynomial_size
     }
 
     fn input_lwe_dimension(&self) -> LweDimension {
-        self.0.input_lwe_dimension()
+        self.0.input_lwe_dimension
     }
 
     fn decomposition_base_log(&self) -> DecompositionBaseLog {
-        self.0.decomposition_base_log()
+        self.0.decomp_base_log
     }
 
     fn decomposition_level_count(&self) -> DecompositionLevelCount {
-        self.0.decomposition_level_count()
+        self.0.decomp_level
     }
 }
 
@@ -46,22 +46,22 @@ impl AbstractEntity for CudaFourierLweBootstrapKey64 {
 
 impl LweBootstrapKeyEntity for CudaFourierLweBootstrapKey64 {
     fn glwe_dimension(&self) -> GlweDimension {
-        self.0.glwe_dimension()
+        self.0.glwe_dimension
     }
 
     fn polynomial_size(&self) -> PolynomialSize {
-        self.0.polynomial_size()
+        self.0.polynomial_size
     }
 
     fn input_lwe_dimension(&self) -> LweDimension {
-        self.0.input_lwe_dimension()
+        self.0.input_lwe_dimension
     }
 
     fn decomposition_base_log(&self) -> DecompositionBaseLog {
-        self.0.decomposition_base_log()
+        self.0.decomp_base_log
     }
 
     fn decomposition_level_count(&self) -> DecompositionLevelCount {
-        self.0.decomposition_level_count()
+        self.0.decomp_level
     }
 }

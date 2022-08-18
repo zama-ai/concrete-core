@@ -7,6 +7,7 @@ use crate::backends::cuda::private::device::NumberOfSamples;
 use crate::specification::engines::{
     LweCiphertextDiscardingKeyswitchEngine, LweCiphertextDiscardingKeyswitchError,
 };
+use crate::specification::entities::LweKeyswitchKeyEntity;
 
 impl From<CudaError> for LweCiphertextDiscardingKeyswitchError<CudaError> {
     fn from(err: CudaError) -> Self {
@@ -113,8 +114,8 @@ impl
             input.0.lwe_dimension,
             output.0.lwe_dimension,
             ksk.0.d_vecs.first().unwrap(),
-            ksk.0.decomposition_base_log(),
-            ksk.0.decomposition_level_count(),
+            ksk.decomposition_base_log(),
+            ksk.decomposition_level_count(),
             NumberOfSamples(1),
         );
     }
@@ -219,8 +220,8 @@ impl
             input.0.lwe_dimension,
             output.0.lwe_dimension,
             ksk.0.d_vecs.first().unwrap(),
-            ksk.0.decomposition_base_log(),
-            ksk.0.decomposition_level_count(),
+            ksk.decomposition_base_log(),
+            ksk.decomposition_level_count(),
             NumberOfSamples(1),
         );
     }

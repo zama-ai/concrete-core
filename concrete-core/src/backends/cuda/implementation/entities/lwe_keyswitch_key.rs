@@ -14,19 +14,19 @@ impl AbstractEntity for CudaLweKeyswitchKey32 {
 
 impl LweKeyswitchKeyEntity for CudaLweKeyswitchKey32 {
     fn input_lwe_dimension(&self) -> LweDimension {
-        self.0.input_lwe_dimension()
+        self.0.input_lwe_dimension
     }
 
     fn output_lwe_dimension(&self) -> LweDimension {
-        self.0.output_lwe_dimension()
+        self.0.output_lwe_dimension
     }
 
     fn decomposition_level_count(&self) -> DecompositionLevelCount {
-        self.0.decomposition_level_count()
+        self.0.decomp_level
     }
 
     fn decomposition_base_log(&self) -> DecompositionBaseLog {
-        self.0.decomposition_base_log()
+        self.0.decomp_base_log
     }
 }
 
@@ -40,18 +40,18 @@ impl AbstractEntity for CudaLweKeyswitchKey64 {
 
 impl LweKeyswitchKeyEntity for CudaLweKeyswitchKey64 {
     fn input_lwe_dimension(&self) -> LweDimension {
-        self.0.input_lwe_dimension()
+        self.0.input_lwe_dimension
     }
 
     fn output_lwe_dimension(&self) -> LweDimension {
-        self.0.output_lwe_dimension()
+        self.0.output_lwe_dimension
     }
 
     fn decomposition_level_count(&self) -> DecompositionLevelCount {
-        self.0.decomposition_level_count()
+        self.0.decomp_level
     }
 
     fn decomposition_base_log(&self) -> DecompositionBaseLog {
-        self.0.decomposition_base_log()
+        self.0.decomp_base_log
     }
 }

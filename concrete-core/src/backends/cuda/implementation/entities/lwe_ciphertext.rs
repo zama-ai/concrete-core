@@ -16,7 +16,7 @@ impl AbstractEntity for CudaLweCiphertext32 {
 
 impl LweCiphertextEntity for CudaLweCiphertext32 {
     fn lwe_dimension(&self) -> LweDimension {
-        self.0.lwe_dimension()
+        self.0.lwe_dimension
     }
 }
 
@@ -30,6 +30,6 @@ impl AbstractEntity for CudaLweCiphertext64 {
 
 impl LweCiphertextEntity for CudaLweCiphertext64 {
     fn lwe_dimension(&self) -> LweDimension {
-        self.0.lwe_dimension()
+        self.0.lwe_dimension
     }
 }

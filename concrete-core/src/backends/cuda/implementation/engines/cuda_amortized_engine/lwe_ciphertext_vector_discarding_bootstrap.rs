@@ -118,7 +118,7 @@ impl
         LweCiphertextVectorDiscardingBootstrapError::perform_generic_checks(
             output, input, acc, bsk,
         )?;
-        let poly_size = bsk.0.polynomial_size().0;
+        let poly_size = bsk.polynomial_size().0;
         check_poly_size!(poly_size);
         unsafe { self.discard_bootstrap_lwe_ciphertext_vector_unchecked(output, input, acc, bsk) };
         Ok(())
@@ -131,7 +131,7 @@ impl
         acc: &CudaGlweCiphertextVector32,
         bsk: &CudaFourierLweBootstrapKey32,
     ) {
-        let samples_per_gpu = input.0.lwe_ciphertext_count().0 / self.get_number_of_gpus();
+        let samples_per_gpu = input.lwe_ciphertext_count().0 / self.get_number_of_gpus();
 
         for gpu_index in 0..self.get_number_of_gpus() {
             let mut samples = samples_per_gpu;
@@ -273,7 +273,7 @@ impl
         LweCiphertextVectorDiscardingBootstrapError::perform_generic_checks(
             output, input, acc, bsk,
         )?;
-        let poly_size = bsk.0.polynomial_size().0;
+        let poly_size = bsk.polynomial_size().0;
         check_poly_size!(poly_size);
         unsafe { self.discard_bootstrap_lwe_ciphertext_vector_unchecked(output, input, acc, bsk) };
         Ok(())
@@ -286,7 +286,7 @@ impl
         acc: &CudaGlweCiphertextVector64,
         bsk: &CudaFourierLweBootstrapKey64,
     ) {
-        let samples_per_gpu = input.0.lwe_ciphertext_count().0 / self.get_number_of_gpus();
+        let samples_per_gpu = input.lwe_ciphertext_count().0 / self.get_number_of_gpus();
 
         for gpu_index in 0..self.get_number_of_gpus() {
             let mut samples = samples_per_gpu;
@@ -309,7 +309,7 @@ impl
                 &d_test_vector_indexes,
                 input.0.d_vecs.get(gpu_index).unwrap(),
                 bsk.0.d_vecs.get(gpu_index).unwrap(),
-                input.0.lwe_dimension,
+                input.lwe_dimension(),
                 bsk.polynomial_size(),
                 bsk.decomposition_base_log(),
                 bsk.decomposition_level_count(),
