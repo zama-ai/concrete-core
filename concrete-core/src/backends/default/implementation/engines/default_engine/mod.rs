@@ -118,6 +118,8 @@ mod glwe_ciphertext_discarding_trivial_encryption;
 mod glwe_ciphertext_encryption;
 mod glwe_ciphertext_trivial_decryption;
 mod glwe_ciphertext_trivial_encryption;
+mod glwe_ciphertext_vector_consuming_retrieval;
+mod glwe_ciphertext_vector_creation;
 mod glwe_ciphertext_vector_decryption;
 mod glwe_ciphertext_vector_discarding_decryption;
 mod glwe_ciphertext_vector_discarding_encryption;
