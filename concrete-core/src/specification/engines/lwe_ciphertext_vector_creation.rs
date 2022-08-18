@@ -23,7 +23,8 @@ impl<EngineError: std::error::Error> LweCiphertextVectorCreationError<EngineErro
 /// # Semantics
 ///
 /// This [pure](super#operation-semantics) operation creates an LWE ciphertext vector from the
-/// abitrary `container`. By arbitrary here, we mean that `Container` can be any type that allows to
+/// arbitrary `container`. By arbitrary here, we mean that `Container` can be any type that
+/// allows to
 /// instantiate an `LweCiphertextVectorEntity`.
 pub trait LweCiphertextVectorCreationEngine<Container, CiphertextVector>: AbstractEngine
 where
