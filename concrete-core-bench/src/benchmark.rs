@@ -32,8 +32,12 @@ use std::time::{Duration, Instant};
 pub const DEFAULT_BATCH_SIZE: u64 = 1000;
 
 /// An extension to the `Fixture` trait for benchmarking with criterion.
-pub trait BenchmarkFixture<Precision: IntegerPrecision, Engine: AbstractEngine, RelatedEntities>:
-    Fixture<Precision, Engine, RelatedEntities>
+pub trait BenchmarkFixture<
+    Precision: IntegerPrecision,
+    KeyDistributions,
+    Engine: AbstractEngine,
+    RelatedEntities,
+>: Fixture<Precision, KeyDistributions, Engine, RelatedEntities>
 {
     /// Benchmarks all the parameters defined by the fixture.
     fn bench_all_parameters(
@@ -125,10 +129,10 @@ pub trait BenchmarkFixture<Precision: IntegerPrecision, Engine: AbstractEngine, 
     }
 }
 
-impl<Precision, Engine, RelatedEntities, Fix> BenchmarkFixture<Precision, Engine, RelatedEntities>
-    for Fix
+impl<Precision, KeyDistributions, Engine, RelatedEntities, Fix>
+    BenchmarkFixture<Precision, KeyDistributions, Engine, RelatedEntities> for Fix
 where
-    Fix: Fixture<Precision, Engine, RelatedEntities>,
+    Fix: Fixture<Precision, KeyDistributions, Engine, RelatedEntities>,
     Precision: IntegerPrecision,
     Engine: AbstractEngine,
 {

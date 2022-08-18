@@ -1,14 +1,14 @@
 use crate::benchmark::BenchmarkFixture;
 use concrete_core::prelude::*;
 use concrete_core_fixture::fixture::*;
-use concrete_core_fixture::generation::{Maker, Precision32, Precision64};
+use concrete_core_fixture::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
 use criterion::Criterion;
 use paste::paste;
 
 macro_rules! bench {
-    ($fixture: ident, $precision: ident, ($($types:ident),+), $maker: ident, $engine: ident, $criterion: ident) => {
+    (($($key_dist:ident),*), $fixture: ident, $precision: ident, ($($types:ident),+), $maker: ident, $engine: ident, $criterion: ident) => {
         paste!{
-            <$fixture as BenchmarkFixture<$precision, CudaEngine, ($($types,)+),
+            <$fixture as BenchmarkFixture<$precision, ($($key_dist,)*), CudaEngine, ($($types,)+),
             >>::bench_all_parameters(
                 &mut $maker,
                 &mut $engine,
@@ -17,15 +17,15 @@ macro_rules! bench {
             );
         }
     };
-    ($(($fixture: ident, ($($types:ident),+))),+) => {
+    ($((($($key_dist:ident),*), $fixture: ident, ($($types:ident),+))),+) => {
         pub fn bench() {
             let mut criterion = Criterion::default().configure_from_args();
             let mut maker = Maker::default();
             let mut engine = CudaEngine::new(()).unwrap();
             $(
                 paste!{
-                    bench!{$fixture, Precision32, ($([< $types 32 >]),+), maker, engine, criterion}
-                    bench!{$fixture, Precision64, ($([< $types 64 >]),+), maker, engine, criterion}
+                    bench!{($($key_dist),*), $fixture, Precision32, ($([< $types 32 >]),+), maker, engine, criterion}
+                    bench!{($($key_dist),*), $fixture, Precision64, ($([< $types 64 >]),+), maker, engine, criterion}
                 }
             )+
         }
@@ -33,21 +33,21 @@ macro_rules! bench {
 }
 
 bench! {
-    (LweCiphertextVectorConversionFixture, (CudaLweCiphertextVector, LweCiphertextVector)),
-    (LweCiphertextVectorDiscardingKeyswitchFixture, (CudaLweKeyswitchKey, CudaLweCiphertextVector,
+    ((BinaryKeyDistribution), LweCiphertextVectorConversionFixture, (CudaLweCiphertextVector, LweCiphertextVector)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingKeyswitchFixture, (CudaLweKeyswitchKey, CudaLweCiphertextVector,
         CudaLweCiphertextVector)),
-    (LweCiphertextVectorDiscardingBootstrapFixture1, (CudaFourierLweBootstrapKey,
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingBootstrapFixture1, (CudaFourierLweBootstrapKey,
         CudaGlweCiphertextVector,
         CudaLweCiphertextVector, CudaLweCiphertextVector)),
-    (LweCiphertextVectorDiscardingBootstrapFixture2, (CudaFourierLweBootstrapKey,
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingBootstrapFixture2, (CudaFourierLweBootstrapKey,
         CudaGlweCiphertextVector,
         CudaLweCiphertextVector, CudaLweCiphertextVector))
 }
 
 macro_rules! bench_amortized {
-    ($fixture: ident, $precision: ident, ($($types:ident),+), $maker: ident, $engine: ident, $criterion: ident) => {
+    (($($key_dist:ident),*), $fixture: ident, $precision: ident, ($($types:ident),+), $maker: ident, $engine: ident, $criterion: ident) => {
         paste!{
-            <$fixture as BenchmarkFixture<$precision, AmortizedCudaEngine, ($($types,)+),
+            <$fixture as BenchmarkFixture<$precision, ($($key_dist,)*), AmortizedCudaEngine, ($($types,)+),
             >>::bench_all_parameters(
                 &mut $maker,
                 &mut $engine,
@@ -56,16 +56,16 @@ macro_rules! bench_amortized {
             );
         }
     };
-    ($(($fixture: ident, ($($types:ident),+))),+) => {
+    ($((($($key_dist:ident),*), $fixture: ident, ($($types:ident),+))),+) => {
         pub fn bench_amortized() {
             let mut criterion = Criterion::default().configure_from_args();
             let mut maker = Maker::default();
             let mut engine = AmortizedCudaEngine::new(()).unwrap();
             $(
                 paste!{
-                    bench_amortized!{$fixture, Precision32, ($([< $types 32 >]),+), maker, engine,
+                    bench_amortized!{($($key_dist),*), $fixture, Precision32, ($([< $types 32 >]),+), maker, engine,
                     criterion}
-                    bench_amortized!{$fixture, Precision64, ($([< $types 64 >]),+), maker, engine,
+                    bench_amortized!{($($key_dist),*), $fixture, Precision64, ($([< $types 64 >]),+), maker, engine,
                     criterion}
                 }
             )+
@@ -74,10 +74,10 @@ macro_rules! bench_amortized {
 }
 
 bench_amortized! {
-    (LweCiphertextVectorDiscardingBootstrapFixture1, (CudaFourierLweBootstrapKey,
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingBootstrapFixture1, (CudaFourierLweBootstrapKey,
         CudaGlweCiphertextVector,
         CudaLweCiphertextVector, CudaLweCiphertextVector)),
-    (LweCiphertextVectorDiscardingBootstrapFixture2, (CudaFourierLweBootstrapKey,
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingBootstrapFixture2, (CudaFourierLweBootstrapKey,
         CudaGlweCiphertextVector,
         CudaLweCiphertextVector, CudaLweCiphertextVector))
 }

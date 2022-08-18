@@ -1,16 +1,16 @@
 use crate::benchmark::BenchmarkFixture;
 use concrete_core::prelude::*;
 use concrete_core_fixture::fixture::*;
-use concrete_core_fixture::generation::{Maker, Precision32, Precision64};
+use concrete_core_fixture::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
 use concrete_csprng::seeders::UnixSeeder;
 use criterion::Criterion;
 
 use paste::paste;
 
 macro_rules! bench {
-    ($fixture: ident, $precision: ident, ($($types:ident),+), $maker: ident, $engine: ident, $criterion: ident) => {
+    (($($key_dist:ident),*), $fixture: ident, $precision: ident, ($($types:ident),+), $maker: ident, $engine: ident, $criterion: ident) => {
         paste!{
-            <$fixture as BenchmarkFixture<$precision, DefaultEngine, ($($types,)+),
+            <$fixture as BenchmarkFixture<$precision, ($($key_dist,)*), DefaultEngine, ($($types,)+),
             >>::bench_all_parameters(
                 &mut $maker,
                 &mut $engine,
@@ -19,15 +19,15 @@ macro_rules! bench {
             );
         }
     };
-    ($(($fixture: ident, ($($types:ident),+))),+) => {
+    ($((($($key_dist:ident),*), $fixture: ident, ($($types:ident),+))),+) => {
         pub fn bench() {
             let mut criterion = Criterion::default().configure_from_args();
             let mut maker = Maker::default();
             let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(0))).unwrap();
             $(
                 paste!{
-                    bench!{$fixture, Precision32, ($([< $types 32 >]),+), maker, engine, criterion}
-                    bench!{$fixture, Precision64, ($([< $types 64 >]),+), maker, engine, criterion}
+                    bench!{($($key_dist),*), $fixture, Precision32, ($([< $types 32 >]),+), maker, engine, criterion}
+                    bench!{($($key_dist),*), $fixture, Precision64, ($([< $types 64 >]),+), maker, engine, criterion}
                 }
             )+
         }
@@ -43,117 +43,117 @@ type MutSlice32 = &'static mut [u32];
 type MutSlice64 = &'static mut [u64];
 
 bench! {
-    (CleartextCreationFixture, (Cleartext)),
-    (CleartextRetrievalFixture, (Cleartext)),
-    (CleartextDiscardingRetrievalFixture, (Cleartext)),
-    (CleartextVectorCreationFixture, (CleartextVector)),
-    (GlweCiphertextTrivialDecryptionFixture, (PlaintextVector, GlweCiphertext)),
-    (CleartextVectorDiscardingRetrievalFixture, (CleartextVector)),
-    (CleartextVectorRetrievalFixture, (CleartextVector)),
-    (GlweCiphertextDecryptionFixture, (PlaintextVector, GlweSecretKey, GlweCiphertext)),
-    (GlweCiphertextDiscardingDecryptionFixture, (PlaintextVector, GlweSecretKey, GlweCiphertext)),
-    (GlweCiphertextDiscardingEncryptionFixture, (PlaintextVector, GlweSecretKey, GlweCiphertext)),
-    (GlweCiphertextDiscardingTrivialEncryptionFixture, (PlaintextVector, GlweCiphertext)),
-    (GlweCiphertextDiscardingTrivialEncryptionFixture, (PlaintextVector, GlweCiphertextMutView)),
-    (GlweCiphertextEncryptionFixture, (PlaintextVector, GlweSecretKey, GlweCiphertext)),
-    (GlweCiphertextTrivialEncryptionFixture, (PlaintextVector, GlweCiphertext)),
-    (GlweCiphertextZeroEncryptionFixture, (GlweSecretKey, GlweCiphertext)),
-    (GlweCiphertextVectorEncryptionFixture, (PlaintextVector, GlweSecretKey, GlweCiphertextVector)),
-    (GlweCiphertextVectorDecryptionFixture, (PlaintextVector, GlweSecretKey, GlweCiphertextVector)),
-    (GlweCiphertextVectorTrivialDecryptionFixture, (PlaintextVector, GlweCiphertextVector)),
-    (GlweCiphertextVectorTrivialEncryptionFixture, (PlaintextVector, GlweCiphertextVector)),
-    (GlweCiphertextVectorDiscardingDecryptionFixture, (PlaintextVector, GlweSecretKey,
+    ((),CleartextCreationFixture, (Cleartext)),
+    ((),CleartextRetrievalFixture, (Cleartext)),
+    ((),CleartextDiscardingRetrievalFixture, (Cleartext)),
+    ((),CleartextVectorCreationFixture, (CleartextVector)),
+    ((BinaryKeyDistribution),GlweCiphertextTrivialDecryptionFixture, (PlaintextVector, GlweCiphertext)),
+    ((),CleartextVectorDiscardingRetrievalFixture, (CleartextVector)),
+    ((),CleartextVectorRetrievalFixture, (CleartextVector)),
+    ((BinaryKeyDistribution), GlweCiphertextDecryptionFixture, (PlaintextVector, GlweSecretKey, GlweCiphertext)),
+    ((BinaryKeyDistribution), GlweCiphertextDiscardingDecryptionFixture, (PlaintextVector, GlweSecretKey, GlweCiphertext)),
+    ((BinaryKeyDistribution), GlweCiphertextDiscardingEncryptionFixture, (PlaintextVector, GlweSecretKey, GlweCiphertext)),
+    ((BinaryKeyDistribution), GlweCiphertextDiscardingTrivialEncryptionFixture, (PlaintextVector, GlweCiphertext)),
+    ((BinaryKeyDistribution), GlweCiphertextDiscardingTrivialEncryptionFixture, (PlaintextVector, GlweCiphertextMutView)),
+    ((BinaryKeyDistribution), GlweCiphertextEncryptionFixture, (PlaintextVector, GlweSecretKey, GlweCiphertext)),
+    ((BinaryKeyDistribution), GlweCiphertextTrivialEncryptionFixture, (PlaintextVector, GlweCiphertext)),
+    ((BinaryKeyDistribution), GlweCiphertextZeroEncryptionFixture, (GlweSecretKey, GlweCiphertext)),
+    ((BinaryKeyDistribution), GlweCiphertextVectorEncryptionFixture, (PlaintextVector, GlweSecretKey, GlweCiphertextVector)),
+    ((BinaryKeyDistribution), GlweCiphertextVectorDecryptionFixture, (PlaintextVector, GlweSecretKey, GlweCiphertextVector)),
+    ((BinaryKeyDistribution), GlweCiphertextVectorTrivialDecryptionFixture, (PlaintextVector, GlweCiphertextVector)),
+    ((BinaryKeyDistribution), GlweCiphertextVectorTrivialEncryptionFixture, (PlaintextVector, GlweCiphertextVector)),
+    ((BinaryKeyDistribution), GlweCiphertextVectorDiscardingDecryptionFixture, (PlaintextVector, GlweSecretKey,
         GlweCiphertextVector)),
-    (GlweCiphertextVectorDiscardingEncryptionFixture, (PlaintextVector, GlweSecretKey,
+    ((BinaryKeyDistribution),GlweCiphertextVectorDiscardingEncryptionFixture, (PlaintextVector, GlweSecretKey,
         GlweCiphertextVector)),
-    (GlweCiphertextVectorZeroEncryptionFixture, (GlweSecretKey, GlweCiphertextVector)),
-    (GlweCiphertextCreationFixture, (GlweCiphertext, Vec)),
-    (GlweCiphertextCreationFixture, (GlweCiphertextView, Slice)),
-    (GlweCiphertextCreationFixture, (GlweCiphertextMutView, MutSlice)),
-    (GlweCiphertextConsumingRetrievalFixture, (GlweCiphertext, Vec)),
-    (GlweCiphertextConsumingRetrievalFixture, (GlweCiphertextView, Slice)),
-    (GlweCiphertextConsumingRetrievalFixture, (GlweCiphertextMutView, MutSlice)),
-    (GlweSecretKeyCreationFixture, (GlweSecretKey)),
-    (GlweSeededCiphertextEncryptionFixture, (PlaintextVector, GlweSecretKey, GlweSeededCiphertext)),
-    (GlweSeededCiphertextToGlweCiphertextTransformationFixture, (PlaintextVector, GlweSecretKey, GlweSeededCiphertext, GlweCiphertext)),
-    (GlweSeededCiphertextVectorEncryptionFixture, (PlaintextVector, GlweSecretKey, GlweSeededCiphertextVector)),
-    (GlweSeededCiphertextVectorToGlweCiphertextVectorTransformationFixture, (PlaintextVector, GlweSecretKey, GlweSeededCiphertextVector, GlweCiphertextVector)),
-    (GlweToLweSecretKeyTransformationFixture, (GlweSecretKey, LweSecretKey)),
-    (LweBootstrapKeyCreationFixture, (LweSecretKey, GlweSecretKey, LweBootstrapKey)),
-    (LweCiphertextEncryptionFixture, (Plaintext, LweSecretKey, LweCiphertext)),
-    (LweCiphertextZeroEncryptionFixture, (LweSecretKey, LweCiphertext)),
-    (LweCiphertextTrivialEncryptionFixture, (Plaintext, LweCiphertext)),
-    (LweCiphertextTrivialDecryptionFixture, (Plaintext, LweCiphertext)),
-    (LweCiphertextVectorZeroEncryptionFixture, (LweSecretKey, LweCiphertextVector)),
-    (LweCiphertextDecryptionFixture, (Plaintext, LweSecretKey, LweCiphertext)),
-    (LweCiphertextDecryptionFixture, (Plaintext, LweSecretKey, LweCiphertextView)),
-    (LweCiphertextDiscardingEncryptionFixture, (Plaintext, LweSecretKey, LweCiphertext)),
-    (LweCiphertextDiscardingEncryptionFixture, (Plaintext, LweSecretKey, LweCiphertextMutView)),
-    (LweCiphertextVectorDecryptionFixture, (PlaintextVector, LweSecretKey, LweCiphertextVector)),
-    (LweCiphertextVectorEncryptionFixture, (PlaintextVector, LweSecretKey, LweCiphertextVector)),
-    (LweCiphertextVectorDiscardingEncryptionFixture, (PlaintextVector, LweSecretKey,
+    ((BinaryKeyDistribution), GlweCiphertextVectorZeroEncryptionFixture, (GlweSecretKey, GlweCiphertextVector)),
+    ((BinaryKeyDistribution), GlweCiphertextCreationFixture, (GlweCiphertext, Vec)),
+    ((BinaryKeyDistribution), GlweCiphertextCreationFixture, (GlweCiphertextView, Slice)),
+    ((BinaryKeyDistribution), GlweCiphertextCreationFixture, (GlweCiphertextMutView, MutSlice)),
+    ((BinaryKeyDistribution), GlweCiphertextConsumingRetrievalFixture, (GlweCiphertext, Vec)),
+    ((BinaryKeyDistribution), GlweCiphertextConsumingRetrievalFixture, (GlweCiphertextView, Slice)),
+    ((BinaryKeyDistribution), GlweCiphertextConsumingRetrievalFixture, (GlweCiphertextMutView, MutSlice)),
+    ((BinaryKeyDistribution), GlweSecretKeyCreationFixture, (GlweSecretKey)),
+    ((BinaryKeyDistribution), GlweSeededCiphertextEncryptionFixture, (PlaintextVector, GlweSecretKey, GlweSeededCiphertext)),
+    ((BinaryKeyDistribution), GlweSeededCiphertextToGlweCiphertextTransformationFixture, (PlaintextVector, GlweSecretKey, GlweSeededCiphertext, GlweCiphertext)),
+    ((BinaryKeyDistribution), GlweSeededCiphertextVectorEncryptionFixture, (PlaintextVector, GlweSecretKey, GlweSeededCiphertextVector)),
+    ((BinaryKeyDistribution), GlweSeededCiphertextVectorToGlweCiphertextVectorTransformationFixture, (PlaintextVector, GlweSecretKey, GlweSeededCiphertextVector, GlweCiphertextVector)),
+    ((BinaryKeyDistribution), GlweToLweSecretKeyTransformationFixture, (GlweSecretKey, LweSecretKey)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweBootstrapKeyCreationFixture, (LweSecretKey, GlweSecretKey, LweBootstrapKey)),
+    ((BinaryKeyDistribution), LweCiphertextEncryptionFixture, (Plaintext, LweSecretKey, LweCiphertext)),
+    ((BinaryKeyDistribution), LweCiphertextZeroEncryptionFixture, (LweSecretKey, LweCiphertext)),
+    ((BinaryKeyDistribution), LweCiphertextTrivialEncryptionFixture, (Plaintext, LweCiphertext)),
+    ((BinaryKeyDistribution), LweCiphertextTrivialDecryptionFixture, (Plaintext, LweCiphertext)),
+    ((BinaryKeyDistribution), LweCiphertextVectorZeroEncryptionFixture, (LweSecretKey, LweCiphertextVector)),
+    ((BinaryKeyDistribution), LweCiphertextDecryptionFixture, (Plaintext, LweSecretKey, LweCiphertext)),
+    ((BinaryKeyDistribution), LweCiphertextDecryptionFixture, (Plaintext, LweSecretKey, LweCiphertextView)),
+    ((BinaryKeyDistribution), LweCiphertextDiscardingEncryptionFixture, (Plaintext, LweSecretKey, LweCiphertext)),
+    ((BinaryKeyDistribution), LweCiphertextDiscardingEncryptionFixture, (Plaintext, LweSecretKey, LweCiphertextMutView)),
+    ((BinaryKeyDistribution), LweCiphertextVectorDecryptionFixture, (PlaintextVector, LweSecretKey, LweCiphertextVector)),
+    ((BinaryKeyDistribution), LweCiphertextVectorEncryptionFixture, (PlaintextVector, LweSecretKey, LweCiphertextVector)),
+    ((BinaryKeyDistribution),LweCiphertextVectorDiscardingEncryptionFixture, (PlaintextVector, LweSecretKey,
         LweCiphertextVector)),
-    (LweCiphertextVectorDiscardingDecryptionFixture, (PlaintextVector, LweSecretKey,
+    ((BinaryKeyDistribution),LweCiphertextVectorDiscardingDecryptionFixture, (PlaintextVector, LweSecretKey,
         LweCiphertextVector)),
-    (LweCiphertextCleartextDiscardingMultiplicationFixture, (LweCiphertext, Cleartext, LweCiphertext)),
-    (LweCiphertextCleartextDiscardingMultiplicationFixture, (LweCiphertextView, Cleartext, LweCiphertextMutView)),
-    (LweCiphertextCleartextFusingMultiplicationFixture, (LweCiphertext, Cleartext)),
-    (LweCiphertextFusingOppositeFixture, (LweCiphertext)),
-    (LweCiphertextFusingSubtractionFixture, (LweCiphertext, LweCiphertext)),
-    (LweCiphertextVectorFusingAdditionFixture, (LweCiphertextVector, LweCiphertextVector)),
-    (LweCiphertextVectorFusingSubtractionFixture, (LweCiphertextVector, LweCiphertextVector)),
-    (LweCiphertextVectorDiscardingSubtractionFixture, (LweCiphertextVector, LweCiphertextVector)),
-    (LweCiphertextVectorDiscardingAdditionFixture, (LweCiphertextVector, LweCiphertextVector)),
-    (LweCiphertextVectorDiscardingAffineTransformationFixture, (LweCiphertextVector, CleartextVector, Plaintext, LweCiphertext)),
-    (LweCiphertextDiscardingKeyswitchFixture, (LweKeyswitchKey, LweCiphertext, LweCiphertext)),
-    (LweCiphertextDiscardingKeyswitchFixture, (LweKeyswitchKey, LweCiphertextView, LweCiphertextMutView)),
-    (LweCiphertextDiscardingAdditionFixture, (LweCiphertext, LweCiphertext)),
-    (LweCiphertextDiscardingAdditionFixture, (LweCiphertextView, LweCiphertextMutView)),
-    (LweCiphertextDiscardingOppositeFixture, (LweCiphertext, LweCiphertext)),
-    (LweCiphertextDiscardingOppositeFixture, (LweCiphertextView, LweCiphertextMutView)),
-    (LweCiphertextFusingAdditionFixture, (LweCiphertext, LweCiphertext)),
-    (LweCiphertextVectorTrivialDecryptionFixture, (PlaintextVector, LweCiphertextVector)),
-    (LweCiphertextVectorTrivialEncryptionFixture, (PlaintextVector, LweCiphertextVector)),
-    (LweCiphertextDiscardingSubtractionFixture, (LweCiphertext, LweCiphertext)),
-    (LweCiphertextDiscardingDecryptionFixture, (LweCiphertext, LweSecretKey, Plaintext)),
-    (LweCiphertextPlaintextDiscardingAdditionFixture, (LweCiphertext, Plaintext, LweCiphertext)),
-    (LweCiphertextPlaintextDiscardingAdditionFixture, (LweCiphertextView, Plaintext, LweCiphertextMutView)),
-    (LweCiphertextPlaintextFusingAdditionFixture, (Plaintext, LweCiphertext)),
-    (LweCiphertextPlaintextDiscardingSubtractionFixture, (LweCiphertext, Plaintext, LweCiphertext)),
-    (LweCiphertextPlaintextFusingSubtractionFixture, (Plaintext, LweCiphertext)),
-    (LweCiphertextDiscardingExtractionFixture, (GlweCiphertext, LweCiphertext)),
-    (LweCiphertextVectorGlweCiphertextDiscardingPackingKeyswitchFixture, (LweCiphertextVector,
+    ((BinaryKeyDistribution), LweCiphertextCleartextDiscardingMultiplicationFixture, (LweCiphertext, Cleartext, LweCiphertext)),
+    ((BinaryKeyDistribution), LweCiphertextCleartextDiscardingMultiplicationFixture, (LweCiphertextView, Cleartext, LweCiphertextMutView)),
+    ((BinaryKeyDistribution), LweCiphertextCleartextFusingMultiplicationFixture, (LweCiphertext, Cleartext)),
+    ((BinaryKeyDistribution), LweCiphertextFusingOppositeFixture, (LweCiphertext)),
+    ((BinaryKeyDistribution), LweCiphertextFusingSubtractionFixture, (LweCiphertext, LweCiphertext)),
+    ((BinaryKeyDistribution), LweCiphertextVectorFusingAdditionFixture, (LweCiphertextVector, LweCiphertextVector)),
+    ((BinaryKeyDistribution), LweCiphertextVectorFusingSubtractionFixture, (LweCiphertextVector, LweCiphertextVector)),
+    ((BinaryKeyDistribution), LweCiphertextVectorDiscardingSubtractionFixture, (LweCiphertextVector, LweCiphertextVector)),
+    ((BinaryKeyDistribution), LweCiphertextVectorDiscardingAdditionFixture, (LweCiphertextVector, LweCiphertextVector)),
+    ((BinaryKeyDistribution), LweCiphertextVectorDiscardingAffineTransformationFixture, (LweCiphertextVector, CleartextVector, Plaintext, LweCiphertext)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextDiscardingKeyswitchFixture, (LweKeyswitchKey, LweCiphertext, LweCiphertext)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextDiscardingKeyswitchFixture, (LweKeyswitchKey, LweCiphertextView, LweCiphertextMutView)),
+    ((BinaryKeyDistribution), LweCiphertextDiscardingAdditionFixture, (LweCiphertext, LweCiphertext)),
+    ((BinaryKeyDistribution), LweCiphertextDiscardingAdditionFixture, (LweCiphertextView, LweCiphertextMutView)),
+    ((BinaryKeyDistribution), LweCiphertextDiscardingOppositeFixture, (LweCiphertext, LweCiphertext)),
+    ((BinaryKeyDistribution), LweCiphertextDiscardingOppositeFixture, (LweCiphertextView, LweCiphertextMutView)),
+    ((BinaryKeyDistribution), LweCiphertextFusingAdditionFixture, (LweCiphertext, LweCiphertext)),
+    ((BinaryKeyDistribution), LweCiphertextVectorTrivialDecryptionFixture, (PlaintextVector, LweCiphertextVector)),
+    ((BinaryKeyDistribution), LweCiphertextVectorTrivialEncryptionFixture, (PlaintextVector, LweCiphertextVector)),
+    ((BinaryKeyDistribution), LweCiphertextDiscardingSubtractionFixture, (LweCiphertext, LweCiphertext)),
+    ((BinaryKeyDistribution), LweCiphertextDiscardingDecryptionFixture, (LweCiphertext, LweSecretKey, Plaintext)),
+    ((BinaryKeyDistribution), LweCiphertextPlaintextDiscardingAdditionFixture, (LweCiphertext, Plaintext, LweCiphertext)),
+    ((BinaryKeyDistribution), LweCiphertextPlaintextDiscardingAdditionFixture, (LweCiphertextView, Plaintext, LweCiphertextMutView)),
+    ((BinaryKeyDistribution), LweCiphertextPlaintextFusingAdditionFixture, (Plaintext, LweCiphertext)),
+    ((BinaryKeyDistribution), LweCiphertextPlaintextDiscardingSubtractionFixture, (LweCiphertext, Plaintext, LweCiphertext)),
+    ((BinaryKeyDistribution), LweCiphertextPlaintextFusingSubtractionFixture, (Plaintext, LweCiphertext)),
+    ((BinaryKeyDistribution), LweCiphertextDiscardingExtractionFixture, (GlweCiphertext, LweCiphertext)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorGlweCiphertextDiscardingPackingKeyswitchFixture, (LweCiphertextVector,
         PackingKeyswitchKey, GlweCiphertext)),
-    (LweCiphertextCreationFixture, (LweCiphertext, Vec)),
-    (LweCiphertextCreationFixture, (LweCiphertextView, Slice)),
-    (LweCiphertextCreationFixture, (LweCiphertextMutView, MutSlice)),
-    (LweCiphertextConsumingRetrievalFixture, (LweCiphertext, Vec)),
-    (LweCiphertextConsumingRetrievalFixture, (LweCiphertextView, Slice)),
-    (LweCiphertextConsumingRetrievalFixture, (LweCiphertextMutView, MutSlice)),
-    (LweKeyswitchKeyCreationFixture, (LweSecretKey, LweSecretKey, LweKeyswitchKey)),
-    (LweSecretKeyCreationFixture, (LweSecretKey)),
-    (LweSeededBootstrapKeyCreationFixture, (LweSecretKey, GlweSecretKey, LweSeededBootstrapKey)),
-    (LweSeededBootstrapKeyToLweBootstrapKeyTransformationFixture, (LweSecretKey, GlweSecretKey, LweSeededBootstrapKey, LweBootstrapKey)),
-    (LweSeededCiphertextEncryptionFixture, (Plaintext, LweSecretKey, LweSeededCiphertext)),
-    (LweSeededCiphertextToLweCiphertextTransformationFixture, (Plaintext, LweSecretKey, LweSeededCiphertext, LweCiphertext)),
-    (LweSeededCiphertextVectorEncryptionFixture, (PlaintextVector, LweSecretKey, LweSeededCiphertextVector)),
-    (LweSeededCiphertextVectorToLweCiphertextVectorTransformationFixture, (PlaintextVector, LweSecretKey, LweSeededCiphertextVector, LweCiphertextVector)),
-    (LweSeededKeyswitchKeyCreationFixture, (LweSecretKey, LweSecretKey, LweSeededKeyswitchKey)),
-    (LweSeededKeyswitchKeyToLweKeyswitchKeyTransformationFixture,(LweSecretKey, LweSecretKey, LweSeededKeyswitchKey, LweKeyswitchKey)),
-    (LweToGlweSecretKeyTransformationFixture, (LweSecretKey, GlweSecretKey)),
-    (PlaintextCreationFixture, (Plaintext)),
-    (PlaintextDiscardingRetrievalFixture, (Plaintext)),
-    (PlaintextRetrievalFixture, (Plaintext)),
-    (PlaintextVectorDiscardingRetrievalFixture, (PlaintextVector)),
-    (PlaintextVectorCreationFixture, (PlaintextVector)),
-    (PlaintextVectorRetrievalFixture, (PlaintextVector))
+    ((BinaryKeyDistribution), LweCiphertextCreationFixture, (LweCiphertext, Vec)),
+    ((BinaryKeyDistribution), LweCiphertextCreationFixture, (LweCiphertextView, Slice)),
+    ((BinaryKeyDistribution), LweCiphertextCreationFixture, (LweCiphertextMutView, MutSlice)),
+    ((BinaryKeyDistribution), LweCiphertextConsumingRetrievalFixture, (LweCiphertext, Vec)),
+    ((BinaryKeyDistribution), LweCiphertextConsumingRetrievalFixture, (LweCiphertextView, Slice)),
+    ((BinaryKeyDistribution), LweCiphertextConsumingRetrievalFixture, (LweCiphertextMutView, MutSlice)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweKeyswitchKeyCreationFixture, (LweSecretKey, LweSecretKey, LweKeyswitchKey)),
+    ((BinaryKeyDistribution), LweSecretKeyCreationFixture, (LweSecretKey)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweSeededBootstrapKeyCreationFixture, (LweSecretKey, GlweSecretKey, LweSeededBootstrapKey)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweSeededBootstrapKeyToLweBootstrapKeyTransformationFixture, (LweSecretKey, GlweSecretKey, LweSeededBootstrapKey, LweBootstrapKey)),
+    ((BinaryKeyDistribution), LweSeededCiphertextEncryptionFixture, (Plaintext, LweSecretKey, LweSeededCiphertext)),
+    ((BinaryKeyDistribution), LweSeededCiphertextToLweCiphertextTransformationFixture, (Plaintext, LweSecretKey, LweSeededCiphertext, LweCiphertext)),
+    ((BinaryKeyDistribution), LweSeededCiphertextVectorEncryptionFixture, (PlaintextVector, LweSecretKey, LweSeededCiphertextVector)),
+    ((BinaryKeyDistribution), LweSeededCiphertextVectorToLweCiphertextVectorTransformationFixture, (PlaintextVector, LweSecretKey, LweSeededCiphertextVector, LweCiphertextVector)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweSeededKeyswitchKeyCreationFixture, (LweSecretKey, LweSecretKey, LweSeededKeyswitchKey)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweSeededKeyswitchKeyToLweKeyswitchKeyTransformationFixture,(LweSecretKey, LweSecretKey, LweSeededKeyswitchKey, LweKeyswitchKey)),
+    ((BinaryKeyDistribution), LweToGlweSecretKeyTransformationFixture, (LweSecretKey, GlweSecretKey)),
+    ((), PlaintextCreationFixture, (Plaintext)),
+    ((), PlaintextDiscardingRetrievalFixture, (Plaintext)),
+    ((), PlaintextRetrievalFixture, (Plaintext)),
+    ((), PlaintextVectorDiscardingRetrievalFixture, (PlaintextVector)),
+    ((), PlaintextVectorCreationFixture, (PlaintextVector)),
+    ((), PlaintextVectorRetrievalFixture, (PlaintextVector))
 }
 
 #[cfg(feature = "backend_default_parallel")]
 macro_rules! bench_parallel {
-    ($fixture: ident, $precision: ident, ($($types:ident),+), $maker: ident, $engine: ident, $criterion: ident) => {
+    (($($key_dist:ident),*), $fixture: ident, $precision: ident, ($($types:ident),+), $maker: ident, $engine: ident, $criterion: ident) => {
         paste!{
-            <$fixture as BenchmarkFixture<$precision, DefaultParallelEngine, ($($types,)+),
+            <$fixture as BenchmarkFixture<$precision, ($($key_dist,)*), DefaultParallelEngine, ($($types,)+),
             >>::bench_all_parameters(
                 &mut $maker,
                 &mut $engine,
@@ -162,15 +162,15 @@ macro_rules! bench_parallel {
             );
         }
     };
-    ($(($fixture: ident, ($($types:ident),+))),+) => {
+    ($((($($key_dist:ident),*), $fixture: ident, ($($types:ident),+))),+) => {
         pub fn bench_parallel() {
             let mut criterion = Criterion::default().configure_from_args();
             let mut maker = Maker::default();
             let mut engine = DefaultParallelEngine::new(Box::new(UnixSeeder::new(0))).unwrap();
             $(
                 paste!{
-                    bench_parallel!{$fixture, Precision32, ($([< $types 32 >]),+), maker, engine, criterion}
-                    bench_parallel!{$fixture, Precision64, ($([< $types 64 >]),+), maker, engine, criterion}
+                    bench_parallel!{($($key_dist),*), $fixture, Precision32, ($([< $types 32 >]),+), maker, engine, criterion}
+                    bench_parallel!{($($key_dist),*), $fixture, Precision64, ($([< $types 64 >]),+), maker, engine, criterion}
                 }
             )+
         }
@@ -179,6 +179,6 @@ macro_rules! bench_parallel {
 
 #[cfg(feature = "backend_default_parallel")]
 bench_parallel! {
-    (LweBootstrapKeyCreationFixture, (LweSecretKey, GlweSecretKey, LweBootstrapKey)),
-    (LweSeededBootstrapKeyCreationFixture, (LweSecretKey, GlweSecretKey, LweSeededBootstrapKey))
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweBootstrapKeyCreationFixture, (LweSecretKey, GlweSecretKey, LweBootstrapKey)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweSeededBootstrapKeyCreationFixture, (LweSecretKey, GlweSecretKey, LweSeededBootstrapKey))
 }
