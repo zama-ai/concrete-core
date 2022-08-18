@@ -8,6 +8,7 @@ use crate::backends::cuda::private::device::NumberOfSamples;
 use crate::specification::engines::{
     LweCiphertextVectorDiscardingKeyswitchEngine, LweCiphertextVectorDiscardingKeyswitchError,
 };
+use crate::specification::entities::{LweCiphertextVectorEntity, LweKeyswitchKeyEntity};
 
 impl From<CudaError> for LweCiphertextVectorDiscardingKeyswitchError<CudaError> {
     fn from(err: CudaError) -> Self {
@@ -116,7 +117,7 @@ impl
         ksk: &CudaLweKeyswitchKey32,
     ) {
         let samples_per_gpu =
-            NumberOfSamples(input.0.lwe_ciphertext_count().0 / self.get_number_of_gpus());
+            NumberOfSamples(input.lwe_ciphertext_count().0 / self.get_number_of_gpus());
 
         for gpu_index in 0..self.get_number_of_gpus() {
             let stream = self.streams.get(gpu_index).unwrap();
@@ -127,8 +128,8 @@ impl
                 input.0.lwe_dimension,
                 output.0.lwe_dimension,
                 ksk.0.d_vecs.get(gpu_index).unwrap(),
-                ksk.0.decomposition_base_log(),
-                ksk.0.decomposition_level_count(),
+                ksk.decomposition_base_log(),
+                ksk.decomposition_level_count(),
                 samples_per_gpu,
             );
         }
@@ -236,7 +237,7 @@ impl
         ksk: &CudaLweKeyswitchKey64,
     ) {
         let samples_per_gpu =
-            NumberOfSamples(input.0.lwe_ciphertext_count().0 / self.get_number_of_gpus());
+            NumberOfSamples(input.lwe_ciphertext_count().0 / self.get_number_of_gpus());
 
         for gpu_index in 0..self.get_number_of_gpus() {
             let stream = self.streams.get(gpu_index).unwrap();
@@ -247,8 +248,8 @@ impl
                 input.0.lwe_dimension,
                 output.0.lwe_dimension,
                 ksk.0.d_vecs.get(gpu_index).unwrap(),
-                ksk.0.decomposition_base_log(),
-                ksk.0.decomposition_level_count(),
+                ksk.decomposition_base_log(),
+                ksk.decomposition_level_count(),
                 samples_per_gpu,
             );
         }

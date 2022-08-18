@@ -18,11 +18,11 @@ impl LweCiphertextVectorEntity for CudaLweCiphertextVector32 {
     type KeyDistribution = BinaryKeyDistribution;
 
     fn lwe_dimension(&self) -> LweDimension {
-        self.0.lwe_dimension()
+        self.0.lwe_dimension
     }
 
     fn lwe_ciphertext_count(&self) -> LweCiphertextCount {
-        self.0.lwe_ciphertext_count()
+        self.0.lwe_ciphertext_count
     }
 }
 
@@ -38,10 +38,10 @@ impl LweCiphertextVectorEntity for CudaLweCiphertextVector64 {
     type KeyDistribution = BinaryKeyDistribution;
 
     fn lwe_dimension(&self) -> LweDimension {
-        self.0.lwe_dimension()
+        self.0.lwe_dimension
     }
 
     fn lwe_ciphertext_count(&self) -> LweCiphertextCount {
-        self.0.lwe_ciphertext_count()
+        self.0.lwe_ciphertext_count
     }
 }

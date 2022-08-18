@@ -16,13 +16,3 @@ pub(crate) struct CudaGlweCiphertext<T: UnsignedInteger> {
     // Polynomial size
     pub(crate) polynomial_size: PolynomialSize,
 }
-
-impl<T: UnsignedInteger> CudaGlweCiphertext<T> {
-    pub(crate) fn glwe_dimension(&self) -> GlweDimension {
-        self.glwe_dimension
-    }
-
-    pub(crate) fn polynomial_size(&self) -> PolynomialSize {
-        self.polynomial_size
-    }
-}

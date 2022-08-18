@@ -19,11 +19,11 @@ impl GlweCiphertextEntity for CudaGlweCiphertext32 {
     type KeyDistribution = BinaryKeyDistribution;
 
     fn glwe_dimension(&self) -> GlweDimension {
-        self.0.glwe_dimension()
+        self.0.glwe_dimension
     }
 
     fn polynomial_size(&self) -> PolynomialSize {
-        self.0.polynomial_size()
+        self.0.polynomial_size
     }
 }
 
@@ -40,10 +40,10 @@ impl GlweCiphertextEntity for CudaGlweCiphertext64 {
     type KeyDistribution = BinaryKeyDistribution;
 
     fn glwe_dimension(&self) -> GlweDimension {
-        self.0.glwe_dimension()
+        self.0.glwe_dimension
     }
 
     fn polynomial_size(&self) -> PolynomialSize {
-        self.0.polynomial_size()
+        self.0.polynomial_size
     }
 }

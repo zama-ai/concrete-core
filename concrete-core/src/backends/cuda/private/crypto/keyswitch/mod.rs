@@ -16,25 +16,3 @@ pub(crate) struct CudaLweKeyswitchKey<T: UnsignedInteger> {
     // Value of the base log for the decomposition
     pub(crate) decomp_base_log: DecompositionBaseLog,
 }
-
-impl<T: UnsignedInteger> CudaLweKeyswitchKey<T> {
-    #[allow(dead_code)]
-    pub(crate) fn input_lwe_dimension(&self) -> LweDimension {
-        self.input_lwe_dimension
-    }
-
-    #[allow(dead_code)]
-    pub(crate) fn output_lwe_dimension(&self) -> LweDimension {
-        self.output_lwe_dimension
-    }
-
-    #[allow(dead_code)]
-    pub(crate) fn decomposition_level_count(&self) -> DecompositionLevelCount {
-        self.decomp_level
-    }
-
-    #[allow(dead_code)]
-    pub(crate) fn decomposition_base_log(&self) -> DecompositionBaseLog {
-        self.decomp_base_log
-    }
-}

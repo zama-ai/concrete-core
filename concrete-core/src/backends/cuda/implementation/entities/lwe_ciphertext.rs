@@ -18,7 +18,7 @@ impl LweCiphertextEntity for CudaLweCiphertext32 {
     type KeyDistribution = BinaryKeyDistribution;
 
     fn lwe_dimension(&self) -> LweDimension {
-        self.0.lwe_dimension()
+        self.0.lwe_dimension
     }
 }
 
@@ -34,6 +34,6 @@ impl LweCiphertextEntity for CudaLweCiphertext64 {
     type KeyDistribution = BinaryKeyDistribution;
 
     fn lwe_dimension(&self) -> LweDimension {
-        self.0.lwe_dimension()
+        self.0.lwe_dimension
     }
 }
