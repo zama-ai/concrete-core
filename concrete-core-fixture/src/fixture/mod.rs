@@ -56,7 +56,6 @@ use std::ops::BitAnd;
 /// + The `RelatedEntities` allows
 /// + To understand how the different pieces fit, see how the default methods `sample`, `test`,
 ///   `stress` and `stress_all` use the associated types and methods.
-///
 pub trait Fixture<
     Precision: IntegerPrecision,
     KeyDistributions,
