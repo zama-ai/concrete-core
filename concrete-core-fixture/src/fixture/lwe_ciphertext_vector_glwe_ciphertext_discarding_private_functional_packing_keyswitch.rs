@@ -43,7 +43,7 @@ pub struct LweCiphertextVectorGlweCiphertextDiscardingPrivateFunctionalPackingKe
     pub output_polynomial_size: PolynomialSize,
     pub decomposition_level: DecompositionLevelCount,
     pub decomposition_base_log: DecompositionBaseLog,
-    pub function_lipschitz_bound: usize,
+    pub function_log_scalar: usize,
 }
 
 impl<
@@ -142,7 +142,7 @@ where
                     output_polynomial_size: PolynomialSize(256),
                     decomposition_level: DecompositionLevelCount(3),
                     decomposition_base_log: DecompositionBaseLog(7),
-                    function_lipschitz_bound: 1,
+                    function_log_scalar: 0,
                 },
                 LweCiphertextVectorGlweCiphertextDiscardingPrivateFunctionalPackingKeyswitchParameters {
                     input_lwe_noise: Variance(
@@ -157,7 +157,7 @@ where
                     output_polynomial_size: PolynomialSize(256),
                     decomposition_level: DecompositionLevelCount(3),
                     decomposition_base_log: DecompositionBaseLog(7),
-                    function_lipschitz_bound: 100,
+                    function_log_scalar: 4,
                 },
             ]
             .into_iter(),
@@ -181,18 +181,19 @@ where
             parameters.output_glwe_dimension,
             parameters.output_polynomial_size,
         );
-        let raw_cleartext_vector = Precision::Raw::uniform_zero_centered_vec(
-            parameters.function_lipschitz_bound,
-            parameters.output_polynomial_size.0,
-        );
+        let raw_cleartext_vector =
+            Precision::Raw::uniform_zero_centered_vec(1, parameters.output_polynomial_size.0);
         let proto_cleartext_vector =
             maker.transform_raw_vec_to_cleartext_vector(&raw_cleartext_vector);
+        let scalar = Precision::Raw::power_of_two(parameters.function_log_scalar);
+
         let proto_pfpksk = maker.new_private_functional_packing_keyswitch_key(
             &proto_secret_key_input,
             &proto_secret_key_output,
             parameters.decomposition_level,
             parameters.decomposition_base_log,
             parameters.pfpksk_noise,
+            &|x| scalar * x,
             &proto_cleartext_vector,
         );
         (
@@ -319,6 +320,7 @@ where
         _maker: &mut Maker,
         _repetition_proto: &Self::RepetitionPrototypes,
     ) -> Self::Criteria {
+        let polynomial_infinity_norm = 1.;
         let predicted_variance =
             fix_estimate_private_functional_keyswitch_noise_lwe_to_glwe_with_constant_terms::<
                 Precision::Raw,
@@ -331,7 +333,7 @@ where
                 parameters.pfpksk_noise,
                 parameters.decomposition_base_log,
                 parameters.decomposition_level,
-                parameters.function_lipschitz_bound as f64,
+                2_f64.powi(parameters.function_log_scalar as i32) * polynomial_infinity_norm,
             );
         (Variance(
             predicted_variance.0 * parameters.input_lwe_count.0 as f64,
