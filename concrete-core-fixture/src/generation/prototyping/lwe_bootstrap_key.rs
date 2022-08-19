@@ -8,8 +8,13 @@ use crate::generation::{
     BinaryKeyDistribution, IntegerPrecision, KeyDistributionMarker, Maker, Precision32, Precision64,
 };
 use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
-use concrete_core::prelude::LweBootstrapKeyCreationEngine;
+use concrete_commons::parameters::{
+    DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+};
+use concrete_core::prelude::{
+    LweBootstrapKeyConstructionEngine, LweBootstrapKeyConsumingRetrievalEngine,
+    LweBootstrapKeyCreationEngine,
+};
 
 /// A trait allowing to manipulate LWE bootstrap key prototypes.
 pub trait PrototypesLweBootstrapKey<
@@ -33,6 +38,18 @@ pub trait PrototypesLweBootstrapKey<
         decomposition_base_log: DecompositionBaseLog,
         noise: Variance,
     ) -> Self::LweBootstrapKeyProto;
+    fn transform_raw_vec_to_lwe_bootstrap_key(
+        &mut self,
+        raw: &[Precision::Raw],
+        glwe_size: GlweSize,
+        polynomial_size: PolynomialSize,
+        decomposition_level: DecompositionLevelCount,
+        decomposition_base_log: DecompositionBaseLog,
+    ) -> Self::LweBootstrapKeyProto;
+    fn transform_lwe_bootstrap_key_to_raw_vec(
+        &mut self,
+        lwe_bootstrap_key: &Self::LweBootstrapKeyProto,
+    ) -> Vec<Precision::Raw>;
 }
 
 impl PrototypesLweBootstrapKey<Precision32, BinaryKeyDistribution, BinaryKeyDistribution>
@@ -60,6 +77,37 @@ impl PrototypesLweBootstrapKey<Precision32, BinaryKeyDistribution, BinaryKeyDist
                 .unwrap(),
         )
     }
+
+    fn transform_raw_vec_to_lwe_bootstrap_key(
+        &mut self,
+        raw: &[u32],
+        glwe_size: GlweSize,
+        polynomial_size: PolynomialSize,
+        decomposition_level_count: DecompositionLevelCount,
+        decomposition_base_log: DecompositionBaseLog,
+    ) -> Self::LweBootstrapKeyProto {
+        ProtoBinaryBinaryLweBootstrapKey32(
+            self.default_engine
+                .construct_lwe_bootstrap_key(
+                    raw.to_owned(),
+                    glwe_size,
+                    polynomial_size,
+                    decomposition_base_log,
+                    decomposition_level_count,
+                )
+                .unwrap(),
+        )
+    }
+
+    fn transform_lwe_bootstrap_key_to_raw_vec(
+        &mut self,
+        lwe_bootstrap_key: &Self::LweBootstrapKeyProto,
+    ) -> Vec<u32> {
+        let lwe_bootstrap_key = lwe_bootstrap_key.0.to_owned();
+        self.default_engine
+            .consume_retrieve_lwe_bootstrap_key(lwe_bootstrap_key)
+            .unwrap()
+    }
 }
 
 impl PrototypesLweBootstrapKey<Precision64, BinaryKeyDistribution, BinaryKeyDistribution>
@@ -86,5 +134,36 @@ impl PrototypesLweBootstrapKey<Precision64, BinaryKeyDistribution, BinaryKeyDist
                 )
                 .unwrap(),
         )
+    }
+
+    fn transform_raw_vec_to_lwe_bootstrap_key(
+        &mut self,
+        raw: &[u64],
+        glwe_size: GlweSize,
+        polynomial_size: PolynomialSize,
+        decomposition_level_count: DecompositionLevelCount,
+        decomposition_base_log: DecompositionBaseLog,
+    ) -> Self::LweBootstrapKeyProto {
+        ProtoBinaryBinaryLweBootstrapKey64(
+            self.default_engine
+                .construct_lwe_bootstrap_key(
+                    raw.to_owned(),
+                    glwe_size,
+                    polynomial_size,
+                    decomposition_base_log,
+                    decomposition_level_count,
+                )
+                .unwrap(),
+        )
+    }
+
+    fn transform_lwe_bootstrap_key_to_raw_vec(
+        &mut self,
+        lwe_bootstrap_key: &Self::LweBootstrapKeyProto,
+    ) -> Vec<u64> {
+        let lwe_bootstrap_key = lwe_bootstrap_key.0.to_owned();
+        self.default_engine
+            .consume_retrieve_lwe_bootstrap_key(lwe_bootstrap_key)
+            .unwrap()
     }
 }
