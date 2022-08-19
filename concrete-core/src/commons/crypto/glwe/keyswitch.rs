@@ -917,8 +917,6 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
 
     /// Fills the current private functional keyswitch key container with an actual private
     /// functional keyswitching key constructed from an input and an output key.
-    /// Note that the private function is determined as x -> pol * x is where `pol` is a fixed
-    /// polynomial scalar.
     ///
     /// # Example
     ///
@@ -967,6 +965,7 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
     ///     &output_key,
     ///     noise,
     ///     &mut encryption_generator,
+    ///     &|x| x,
     ///     &Polynomial::allocate(1 as u32, output_key.polynomial_size()),
     /// );
     ///
@@ -978,7 +977,8 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
         output_glwe_key: &GlweSecretKey<BinaryKeyKind, OutKeyCont>,
         noise_parameters: impl DispersionParameter,
         generator: &mut EncryptionRandomGenerator<Gen>,
-        polynomial_scalar: &Polynomial<Vec<Scalar>>,
+        f: &dyn Fn(Scalar) -> Scalar,
+        polynomial: &Polynomial<Vec<Scalar>>,
     ) where
         Self: AsMutTensor<Element = Scalar>,
         LweSecretKey<BinaryKeyKind, InKeyCont>: AsRefTensor<Element = Scalar>,
@@ -999,7 +999,8 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
 
         let mut input_key_bit = input_lwe_key.as_tensor().as_slice().to_vec();
 
-        // append minus one for the function which will be applied to the decomposed body
+        // add minus one for the function which will be applied to the decomposed body
+        // ( Scalar::MAX = -Scalar::ONE )
         input_key_bit.push(Scalar::MAX);
 
         // loop over the before key blocks
@@ -1017,9 +1018,13 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
                 .zip(messages.sublist_iter_mut(PlaintextCount(polynomial_size.0)))
             {
                 message.as_mut_tensor().update_with_add_element_mul(
-                    polynomial_scalar.as_tensor(),
-                    DecompositionTerm::new(level, decomp_base_log, input_key_bit)
-                        .to_recomposition_summand(),
+                    polynomial.as_tensor(),
+                    DecompositionTerm::new(
+                        level,
+                        decomp_base_log,
+                        f(Scalar::ONE).wrapping_mul(input_key_bit),
+                    )
+                    .to_recomposition_summand(),
                 );
             }
 
@@ -1170,6 +1175,7 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
     ///     &output_key,
     ///     noise,
     ///     &mut encryption_generator,
+    ///     &|x| x,
     ///     &Polynomial::allocate(1 as u64, polynomial_size),
     /// );
     ///
@@ -1282,6 +1288,7 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
     ///     &output_key,
     ///     noise,
     ///     &mut encryption_generator,
+    ///     &|x| x,
     ///     &Polynomial::from_container(vec),
     /// );
     ///
@@ -1289,7 +1296,7 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
     /// let ciphertext_list =
     ///     LweList::new_trivial_encryption(input_key.key_size().to_lwe_size(), &plaintext_list);
     /// let mut switched_ciphertext =
-    ///     GlweCiphertext::allocate(0. as u64, polynomial_size, output_glwe_dim.to_glwe_size());
+    ///     GlweCiphertext::allocate(0 as u64, polynomial_size, output_glwe_dim.to_glwe_size());
     ///
     /// pfpksk.private_functional_packing_keyswitch(&mut switched_ciphertext, &ciphertext_list);
     ///

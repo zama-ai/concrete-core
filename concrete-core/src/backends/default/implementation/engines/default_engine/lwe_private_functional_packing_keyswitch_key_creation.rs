@@ -29,6 +29,7 @@ impl
         GlweSecretKey32,
         PrivateFunctionalPackingKeyswitchKey32,
         CleartextVector32,
+        u32,
     > for DefaultEngine
 {
     /// # Example:
@@ -66,6 +67,7 @@ impl
     ///     decomposition_level_count,
     ///     decomposition_base_log,
     ///     StandardDev(noise.get_standard_dev()),
+    ///     &|x|x,
     ///     &polynomial,
     /// )?;
     /// #
@@ -93,7 +95,8 @@ impl
         decomposition_level_count: DecompositionLevelCount,
         decomposition_base_log: DecompositionBaseLog,
         noise: StandardDev,
-        polynomial_scalar: &CleartextVector32,
+        f: &dyn Fn(u32) -> u32,
+        polynomial: &CleartextVector32,
     ) -> Result<
         PrivateFunctionalPackingKeyswitchKey32,
         PrivateFunctionalPackingKeyswitchKeyCreationError<Self::EngineError>,
@@ -103,7 +106,7 @@ impl
             decomposition_base_log,
             32,
             output_key.polynomial_size(),
-            PolynomialSize(polynomial_scalar.0.as_tensor().len()),
+            PolynomialSize(polynomial.0.as_tensor().len()),
         )?;
         Ok(unsafe {
             self.create_private_functional_packing_keyswitch_key_unchecked(
@@ -112,7 +115,8 @@ impl
                 decomposition_level_count,
                 decomposition_base_log,
                 noise,
-                polynomial_scalar,
+                f,
+                polynomial,
             )
         })
     }
@@ -124,7 +128,8 @@ impl
         decomposition_level_count: DecompositionLevelCount,
         decomposition_base_log: DecompositionBaseLog,
         noise: StandardDev,
-        polynomial_scalar: &CleartextVector32,
+        f: &dyn Fn(u32) -> u32,
+        polynomial: &CleartextVector32,
     ) -> PrivateFunctionalPackingKeyswitchKey32 {
         let mut pfpksk = ImplPrivateFunctionalPackingKeyswitchKey::allocate(
             0,
@@ -134,13 +139,14 @@ impl
             output_key.glwe_dimension(),
             output_key.polynomial_size(),
         );
-        let poly = Polynomial::from_container(polynomial_scalar.0.as_tensor().as_slice().to_vec());
+        let poly = Polynomial::from_container(polynomial.0.as_tensor().as_slice().to_vec());
 
         pfpksk.fill_with_private_functional_packing_keyswitch_key(
             &input_key.0,
             &output_key.0,
             noise,
             &mut self.encryption_generator,
+            f,
             &poly,
         );
         PrivateFunctionalPackingKeyswitchKey32(pfpksk)
@@ -159,13 +165,14 @@ impl
         GlweSecretKey64,
         PrivateFunctionalPackingKeyswitchKey64,
         CleartextVector64,
+        u64,
     > for DefaultEngine
 {
     /// # Example:
     /// ```
     /// use concrete_commons::dispersion::Variance;
     /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension,
+    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, GlweDimension
     /// };
     /// use concrete_core::prelude::*;
     /// # use std::error::Error;
@@ -196,7 +203,8 @@ impl
     ///     decomposition_level_count,
     ///     decomposition_base_log,
     ///     StandardDev(noise.get_standard_dev()),
-    ///     &polynomial
+    ///     &|x|x,
+    ///     &polynomial,
     /// )?;
     /// #
     /// assert_eq!(
@@ -223,7 +231,8 @@ impl
         decomposition_level_count: DecompositionLevelCount,
         decomposition_base_log: DecompositionBaseLog,
         noise: StandardDev,
-        polynomial_scalar: &CleartextVector64,
+        f: &dyn Fn(u64) -> u64,
+        polynomial: &CleartextVector64,
     ) -> Result<
         PrivateFunctionalPackingKeyswitchKey64,
         PrivateFunctionalPackingKeyswitchKeyCreationError<Self::EngineError>,
@@ -233,7 +242,7 @@ impl
             decomposition_base_log,
             64,
             output_key.polynomial_size(),
-            PolynomialSize(polynomial_scalar.0.as_tensor().len()),
+            PolynomialSize(polynomial.0.as_tensor().len()),
         )?;
         Ok(unsafe {
             self.create_private_functional_packing_keyswitch_key_unchecked(
@@ -242,7 +251,8 @@ impl
                 decomposition_level_count,
                 decomposition_base_log,
                 noise,
-                polynomial_scalar,
+                f,
+                polynomial,
             )
         })
     }
@@ -254,7 +264,8 @@ impl
         decomposition_level_count: DecompositionLevelCount,
         decomposition_base_log: DecompositionBaseLog,
         noise: StandardDev,
-        polynomial_scalar: &CleartextVector64,
+        f: &dyn Fn(u64) -> u64,
+        polynomial: &CleartextVector64,
     ) -> PrivateFunctionalPackingKeyswitchKey64 {
         let mut pfpksk = ImplPrivateFunctionalPackingKeyswitchKey::allocate(
             0,
@@ -264,13 +275,14 @@ impl
             output_key.glwe_dimension(),
             output_key.polynomial_size(),
         );
-        let poly = Polynomial::from_container(polynomial_scalar.0.as_tensor().as_slice().to_vec());
+        let poly = Polynomial::from_container(polynomial.0.as_tensor().as_slice().to_vec());
 
         pfpksk.fill_with_private_functional_packing_keyswitch_key(
             &input_key.0,
             &output_key.0,
             noise,
             &mut self.encryption_generator,
+            f,
             &poly,
         );
         PrivateFunctionalPackingKeyswitchKey64(pfpksk)

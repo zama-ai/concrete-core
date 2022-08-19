@@ -55,6 +55,7 @@ impl
     ///         decomposition_level_count,
     ///         decomposition_base_log,
     ///         StandardDev(noise.get_standard_dev()),
+    ///         &|x| x,
     ///         &polynomial,
     ///     )?;
     /// let plaintext_vector = engine.create_plaintext_vector(&input_vector)?;
@@ -156,6 +157,7 @@ impl
     ///         decomposition_level_count,
     ///         decomposition_base_log,
     ///         StandardDev(noise.get_standard_dev()),
+    ///         &|x| x,
     ///         &polynomial,
     ///     )?;
     /// let plaintext_vector = engine.create_plaintext_vector(&input_vector)?;

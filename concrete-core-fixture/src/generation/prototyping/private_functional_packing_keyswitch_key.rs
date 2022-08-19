@@ -30,6 +30,7 @@ pub trait PrototypesPrivateFunctionalPackingKeyswitchKey<
         InputKeyDistribution = InputKeyDistribution,
         OutputKeyDistribution = OutputKeyDistribution,
     >;
+    #[allow(clippy::too_many_arguments)]
     fn new_private_functional_packing_keyswitch_key(
         &mut self,
         input_key: &<Self as PrototypesLweSecretKey<
@@ -43,7 +44,8 @@ pub trait PrototypesPrivateFunctionalPackingKeyswitchKey<
         decomposition_level: DecompositionLevelCount,
         decomposition_base_log: DecompositionBaseLog,
         noise: StandardDev,
-        polynomial_scalar: &<Self as PrototypesCleartextVector<Precision>>::CleartextVectorProto,
+        f: &dyn Fn(Precision::Raw) -> Precision::Raw,
+        polynomial: &<Self as PrototypesCleartextVector<Precision>>::CleartextVectorProto,
     ) -> Self::PrivateFunctionalPackingKeyswitchKeyProto;
 }
 
@@ -64,6 +66,7 @@ impl
         decomposition_level: DecompositionLevelCount,
         decomposition_base_log: DecompositionBaseLog,
         noise: StandardDev,
+        f: &dyn Fn(u32) -> u32,
         polynomial_scalar: &Self::CleartextVectorProto,
     ) -> Self::PrivateFunctionalPackingKeyswitchKeyProto {
         ProtoBinaryBinaryPrivateFunctionalPackingKeyswitchKey32(
@@ -74,6 +77,7 @@ impl
                     decomposition_level,
                     decomposition_base_log,
                     noise,
+                    f,
                     &polynomial_scalar.0,
                 )
                 .unwrap(),
@@ -98,6 +102,7 @@ impl
         decomposition_level: DecompositionLevelCount,
         decomposition_base_log: DecompositionBaseLog,
         noise: StandardDev,
+        f: &dyn Fn(u64) -> u64,
         polynomial_scalar: &Self::CleartextVectorProto,
     ) -> Self::PrivateFunctionalPackingKeyswitchKeyProto {
         ProtoBinaryBinaryPrivateFunctionalPackingKeyswitchKey64(
@@ -108,6 +113,7 @@ impl
                     decomposition_level,
                     decomposition_base_log,
                     noise,
+                    f,
                     &polynomial_scalar.0,
                 )
                 .unwrap(),

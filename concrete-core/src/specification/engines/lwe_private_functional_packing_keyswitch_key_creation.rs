@@ -86,6 +86,7 @@ pub trait PrivateFunctionalPackingKeyswitchKeyCreationEngine<
     OutputSecretKey,
     PrivateFunctionalPackingKeyswitchKey,
     CleartextVector,
+    FunctionScalarType,
 >: AbstractEngine where
     InputSecretKey: LweSecretKeyEntity,
     OutputSecretKey: GlweSecretKeyEntity,
@@ -93,6 +94,7 @@ pub trait PrivateFunctionalPackingKeyswitchKeyCreationEngine<
     PrivateFunctionalPackingKeyswitchKey: PrivateFunctionalPackingKeyswitchKeyEntity,
 {
     /// Creates a private functional packing keyswitch key.
+    #[allow(clippy::too_many_arguments)]
     fn create_private_functional_packing_keyswitch_key(
         &mut self,
         input_key: &InputSecretKey,
@@ -100,7 +102,8 @@ pub trait PrivateFunctionalPackingKeyswitchKeyCreationEngine<
         decomposition_level_count: DecompositionLevelCount,
         decomposition_base_log: DecompositionBaseLog,
         noise: StandardDev,
-        polynomial_scalar: &CleartextVector,
+        f: &dyn Fn(FunctionScalarType) -> FunctionScalarType,
+        polynomial: &CleartextVector,
     ) -> Result<
         PrivateFunctionalPackingKeyswitchKey,
         PrivateFunctionalPackingKeyswitchKeyCreationError<Self::EngineError>,
@@ -112,6 +115,7 @@ pub trait PrivateFunctionalPackingKeyswitchKeyCreationEngine<
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
     /// of [`PrivateFunctionalPackingKeyswitchKeyCreationError`]. For safety concerns _specific_
     /// to an engine, refer to the implementer safety section.
+    #[allow(clippy::too_many_arguments)]
     unsafe fn create_private_functional_packing_keyswitch_key_unchecked(
         &mut self,
         input_key: &InputSecretKey,
@@ -119,6 +123,7 @@ pub trait PrivateFunctionalPackingKeyswitchKeyCreationEngine<
         decomposition_level_count: DecompositionLevelCount,
         decomposition_base_log: DecompositionBaseLog,
         noise: StandardDev,
-        polynomial_scalar: &CleartextVector,
+        f: &dyn Fn(FunctionScalarType) -> FunctionScalarType,
+        polynomial: &CleartextVector,
     ) -> PrivateFunctionalPackingKeyswitchKey;
 }
