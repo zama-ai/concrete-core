@@ -912,7 +912,7 @@ where
     ///     PolynomialSize(2),
     ///     &mut secret_generator,
     /// );
-    /// let noise = LogStandardDev::from_log_standard_dev(-25.);
+    /// let noise = LogStandardDev::from_log_standard_dev(-60.);
     /// let mut ciphertexts = GlweList::allocate(
     ///     0 as u32,
     ///     PolynomialSize(2),
