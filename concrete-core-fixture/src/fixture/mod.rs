@@ -498,11 +498,14 @@ pub use glwe_to_lwe_secret_key_transformation::*;
 mod lwe_bootstrap_key_construction;
 pub use lwe_bootstrap_key_construction::*;
 
-mod lwe_bootstrap_key_creation;
-pub use lwe_bootstrap_key_creation::*;
+mod lwe_bootstrap_key_consuming_retrieval;
+pub use lwe_bootstrap_key_consuming_retrieval::*;
 
 mod lwe_bootstrap_key_conversion;
 pub use lwe_bootstrap_key_conversion::*;
+
+mod lwe_bootstrap_key_creation;
+pub use lwe_bootstrap_key_creation::*;
 
 mod lwe_bootstrap_key_discarding_conversion;
 pub use lwe_bootstrap_key_discarding_conversion::*;
