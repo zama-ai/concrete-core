@@ -1,4 +1,4 @@
-#[cfg(feature = "serde_serialize")]
+#[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
 
 use crate::commons::math::random::ByteRandomGenerator;
@@ -29,7 +29,7 @@ use super::GlweCiphertext;
 ///
 /// A packing private functional keyswitching key allows to  pack several LWE ciphertexts into a
 /// single GLWE ciphertext.
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FunctionalPackingKeyswitchKey<Cont> {
     tensor: Tensor<Cont>,

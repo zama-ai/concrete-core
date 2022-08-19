@@ -4,7 +4,6 @@ use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount
 use crate::backends::default::entities::{
     CleartextVector64, FunctionalPackingKeyswitchKey32, FunctionalPackingKeyswitchKey64,
 };
-use crate::backends::default::implementation::engines::default_engine;
 use crate::backends::default::implementation::entities::{LweSecretKey32, LweSecretKey64};
 use crate::commons::crypto::glwe::FunctionalPackingKeyswitchKey as ImplFunctionalPackingKeyswitchKey;
 use crate::commons::math::polynomial::Polynomial;
