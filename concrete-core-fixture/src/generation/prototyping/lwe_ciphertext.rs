@@ -56,7 +56,7 @@ pub trait PrototypesLweCiphertext<
     ) -> Self::LweCiphertextProto;
     fn transform_lwe_ciphertext_to_raw_vec(
         &mut self,
-        ciphertext_view: &Self::LweCiphertextProto,
+        ciphertext: &Self::LweCiphertextProto,
     ) -> Vec<Precision::Raw>;
 }
 
