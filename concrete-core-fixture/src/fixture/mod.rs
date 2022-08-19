@@ -495,6 +495,9 @@ pub use glwe_seeded_ciphertext_vector_to_glwe_ciphertext_vector_transformation::
 mod glwe_to_lwe_secret_key_transformation;
 pub use glwe_to_lwe_secret_key_transformation::*;
 
+mod lwe_bootstrap_key_construction;
+pub use lwe_bootstrap_key_construction::*;
+
 mod lwe_bootstrap_key_creation;
 pub use lwe_bootstrap_key_creation::*;
 
