@@ -113,8 +113,10 @@ impl
         bsk: &CudaFourierLweBootstrapKey32,
     ) -> Result<(), LweCiphertextDiscardingBootstrapError<CudaError>> {
         LweCiphertextDiscardingBootstrapError::perform_generic_checks(output, input, acc, bsk)?;
-        let poly_size = bsk.polynomial_size().0;
+        let poly_size = bsk.polynomial_size();
         check_poly_size!(poly_size);
+        let glwe_dim = bsk.glwe_dimension();
+        check_glwe_dim!(glwe_dim);
         unsafe { self.discard_bootstrap_lwe_ciphertext_unchecked(output, input, acc, bsk) };
         Ok(())
     }
@@ -243,8 +245,10 @@ impl
         bsk: &CudaFourierLweBootstrapKey64,
     ) -> Result<(), LweCiphertextDiscardingBootstrapError<CudaError>> {
         LweCiphertextDiscardingBootstrapError::perform_generic_checks(output, input, acc, bsk)?;
-        let poly_size = bsk.polynomial_size().0;
+        let poly_size = bsk.polynomial_size();
         check_poly_size!(poly_size);
+        let glwe_dim = bsk.glwe_dimension();
+        check_glwe_dim!(glwe_dim);
         unsafe { self.discard_bootstrap_lwe_ciphertext_unchecked(output, input, acc, bsk) };
         Ok(())
     }

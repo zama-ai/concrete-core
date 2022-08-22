@@ -38,7 +38,7 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey32, CudaFourierLweBootstrapK
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
-    /// let (lwe_dim, glwe_dim, poly_size) = (LweDimension(4), GlweDimension(6), PolynomialSize(512));
+    /// let (lwe_dim, glwe_dim, poly_size) = (LweDimension(4), GlweDimension(1), PolynomialSize(512));
     /// let (dec_lc, dec_bl) = (DecompositionLevelCount(3), DecompositionBaseLog(5));
     /// let noise = Variance(2_f64.powf(-25.));
     ///
@@ -67,8 +67,10 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey32, CudaFourierLweBootstrapK
         &mut self,
         input: &LweBootstrapKey32,
     ) -> Result<CudaFourierLweBootstrapKey32, LweBootstrapKeyConversionError<CudaError>> {
-        let poly_size = input.0.polynomial_size().0;
+        let poly_size = input.0.polynomial_size();
         check_poly_size!(poly_size);
+        let glwe_dim = input.0.glwe_size().to_glwe_dimension();
+        check_glwe_dim!(glwe_dim);
         for stream in self.streams.iter() {
             let data_per_gpu = input.glwe_dimension().to_glwe_size().0
                 * input.glwe_dimension().to_glwe_size().0
@@ -142,7 +144,7 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey64, CudaFourierLweBootstrapK
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
-    /// let (lwe_dim, glwe_dim, poly_size) = (LweDimension(4), GlweDimension(6), PolynomialSize(512));
+    /// let (lwe_dim, glwe_dim, poly_size) = (LweDimension(4), GlweDimension(1), PolynomialSize(512));
     /// let (dec_lc, dec_bl) = (DecompositionLevelCount(3), DecompositionBaseLog(5));
     /// let noise = Variance(2_f64.powf(-25.));
     ///
@@ -171,8 +173,10 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey64, CudaFourierLweBootstrapK
         &mut self,
         input: &LweBootstrapKey64,
     ) -> Result<CudaFourierLweBootstrapKey64, LweBootstrapKeyConversionError<CudaError>> {
-        let poly_size = input.0.polynomial_size().0;
+        let poly_size = input.0.polynomial_size();
         check_poly_size!(poly_size);
+        let glwe_dim = input.0.glwe_size().to_glwe_dimension();
+        check_glwe_dim!(glwe_dim);
         for stream in self.streams.iter() {
             let data_per_gpu = input.glwe_dimension().to_glwe_size().0
                 * input.glwe_dimension().to_glwe_size().0

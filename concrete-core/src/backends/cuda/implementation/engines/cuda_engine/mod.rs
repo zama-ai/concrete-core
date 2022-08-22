@@ -79,13 +79,21 @@ impl CudaEngine {
 
 macro_rules! check_poly_size {
     ($poly_size: ident) => {
-        if $poly_size != 512
-            && $poly_size != 1024
-            && $poly_size != 2048
-            && $poly_size != 4096
-            && $poly_size != 8192
+        if $poly_size.0 != 512
+            && $poly_size.0 != 1024
+            && $poly_size.0 != 2048
+            && $poly_size.0 != 4096
+            && $poly_size.0 != 8192
         {
             return Err(CudaError::PolynomialSizeNotSupported.into());
+        }
+    };
+}
+
+macro_rules! check_glwe_dim {
+    ($glwe_dimension: ident) => {
+        if $glwe_dimension.0 != 1 {
+            return Err(CudaError::GlweDimensionNotSupported.into());
         }
     };
 }
