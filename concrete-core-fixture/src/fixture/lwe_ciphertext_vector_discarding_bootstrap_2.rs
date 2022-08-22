@@ -2,7 +2,6 @@ use crate::fixture::Fixture;
 use crate::generation::prototyping::{
     PrototypesGlweCiphertextVector, PrototypesGlweSecretKey, PrototypesLweBootstrapKey,
     PrototypesLweCiphertextVector, PrototypesLweSecretKey, PrototypesPlaintextVector,
-    TransformsGlweToLweSecretKeyPrototype,
 };
 use crate::generation::synthesizing::{
     SynthesizesGlweCiphertextVector, SynthesizesLweBootstrapKey, SynthesizesLweCiphertextVector,
@@ -68,8 +67,7 @@ where
     OutputCiphertextVector: LweCiphertextVectorEntity,
     AccumulatorVector: GlweCiphertextVectorEntity,
     BootstrapKey: LweBootstrapKeyEntity,
-    Maker: TransformsGlweToLweSecretKeyPrototype<Precision, OutputKeyDistribution>
-        + SynthesizesLweBootstrapKey<
+    Maker: SynthesizesLweBootstrapKey<
             Precision,
             InputKeyDistribution,
             OutputKeyDistribution,
