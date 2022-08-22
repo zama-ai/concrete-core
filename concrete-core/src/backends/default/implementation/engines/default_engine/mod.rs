@@ -135,6 +135,7 @@ mod glwe_to_lwe_secret_key_transformation;
 mod lwe_bootstrap_key_construction;
 mod lwe_bootstrap_key_consuming_retrieval;
 mod lwe_bootstrap_key_creation;
+mod lwe_bootstrap_key_discarding_conversion;
 mod lwe_ciphertext_cleartext_discarding_multiplication;
 mod lwe_ciphertext_cleartext_fusing_multiplication;
 mod lwe_ciphertext_consuming_retrieval;
