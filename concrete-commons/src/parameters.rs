@@ -59,7 +59,7 @@ pub struct GswCiphertextCount(pub usize);
 pub struct GgswCiphertextCount(pub usize);
 
 /// The number of scalars in an LWE ciphertext, i.e. the number of scalar in an LWE mask plus one.
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 pub struct LweSize(pub usize);
 
@@ -71,7 +71,7 @@ impl LweSize {
 }
 
 /// The number of scalar in an LWE mask, or the length of an LWE secret key.
-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 pub struct LweDimension(pub usize);
 
@@ -84,7 +84,7 @@ impl LweDimension {
 
 /// The number of polynomials in a GLWE ciphertext, i.e. the number of polynomials in a GLWE mask
 /// plus one.
-#[derive(Debug, PartialEq, Eq, Ord, PartialOrd, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 pub struct GlweSize(pub usize);
 
@@ -96,7 +96,7 @@ impl GlweSize {
 }
 
 /// The number of polynomials of an GLWE mask, or the size of an GLWE secret key.
-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 pub struct GlweDimension(pub usize);
 
