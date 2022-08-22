@@ -17,7 +17,8 @@ void encrypt_decrypt_view_buffers_test(void) {
 
   DefaultSerializationEngine *default_serialization_engine = NULL;
 
-  int default_serialization_engine_ok = new_default_serialization_engine(&default_serialization_engine);
+  int default_serialization_engine_ok =
+      new_default_serialization_engine(&default_serialization_engine);
   assert(default_serialization_engine_ok == 0);
 
   double variance = 0.000000001;
@@ -52,13 +53,13 @@ void encrypt_decrypt_view_buffers_test(void) {
   // Test SK Serialization/Deserialization
   Buffer sk_buffer = {.pointer = NULL, .length = 0};
   int sk_ser_ok = default_serialization_engine_serialize_lwe_secret_key_u64(
-          default_serialization_engine, sk, &sk_buffer);
+      default_serialization_engine, sk, &sk_buffer);
   assert(sk_ser_ok == 0);
 
   BufferView sk_buffer_view = {.pointer = sk_buffer.pointer, .length = sk_buffer.length};
   LweSecretKey64 *deser_sk = NULL;
   int sk_deser_ok = default_serialization_engine_deserialize_lwe_secret_key_u64(
-          default_serialization_engine, sk_buffer_view, &deser_sk);
+      default_serialization_engine, sk_buffer_view, &deser_sk);
   assert(sk_deser_ok == 0);
 
   // We decrypt the plaintext
@@ -76,10 +77,10 @@ void encrypt_decrypt_view_buffers_test(void) {
   assert(rel_error < 0.001);
 
   // We deallocate the objects
-  destroy_lwe_secret_key_u64( sk);
-  destroy_lwe_secret_key_u64( deser_sk);
-  destroy_lwe_ciphertext_view_u64( ciphertext_as_view);
-  destroy_lwe_ciphertext_mut_view_u64( ciphertext_as_mut_view);
+  destroy_lwe_secret_key_u64(sk);
+  destroy_lwe_secret_key_u64(deser_sk);
+  destroy_lwe_ciphertext_view_u64(ciphertext_as_view);
+  destroy_lwe_ciphertext_mut_view_u64(ciphertext_as_mut_view);
   destroy_seeder_builder(builder);
   destroy_default_serialization_engine(default_serialization_engine);
   destroy_default_engine(engine);
@@ -97,7 +98,8 @@ void encrypt_decrypt_unchecked_view_buffers_test(void) { // We generate the rand
 
   DefaultSerializationEngine *default_serialization_engine = NULL;
 
-  int default_serialization_engine_ok = new_default_serialization_engine(&default_serialization_engine);
+  int default_serialization_engine_ok =
+      new_default_serialization_engine(&default_serialization_engine);
   assert(default_serialization_engine_ok == 0);
 
   double variance = 0.000000001;
@@ -132,13 +134,13 @@ void encrypt_decrypt_unchecked_view_buffers_test(void) { // We generate the rand
   // Test SK Serialization/Deserialization
   Buffer sk_buffer = {.pointer = NULL, .length = 0};
   int sk_ser_ok = default_serialization_engine_serialize_lwe_secret_key_u64(
-          default_serialization_engine, sk, &sk_buffer);
+      default_serialization_engine, sk, &sk_buffer);
   assert(sk_ser_ok == 0);
 
   BufferView sk_buffer_view = {.pointer = sk_buffer.pointer, .length = sk_buffer.length};
   LweSecretKey64 *deser_sk = NULL;
   int sk_deser_ok = default_serialization_engine_deserialize_lwe_secret_key_u64(
-          default_serialization_engine, sk_buffer_view, &deser_sk);
+      default_serialization_engine, sk_buffer_view, &deser_sk);
   assert(sk_deser_ok == 0);
 
   // We decrypt the plaintext
@@ -156,10 +158,10 @@ void encrypt_decrypt_unchecked_view_buffers_test(void) { // We generate the rand
   assert(rel_error < 0.001);
 
   // We deallocate the objects
-  destroy_lwe_secret_key_unchecked_u64( sk);
-  destroy_lwe_secret_key_unchecked_u64( deser_sk);
-  destroy_lwe_ciphertext_view_unchecked_u64( ciphertext_as_view);
-  destroy_lwe_ciphertext_mut_view_unchecked_u64( ciphertext_as_mut_view);
+  destroy_lwe_secret_key_unchecked_u64(sk);
+  destroy_lwe_secret_key_unchecked_u64(deser_sk);
+  destroy_lwe_ciphertext_view_unchecked_u64(ciphertext_as_view);
+  destroy_lwe_ciphertext_mut_view_unchecked_u64(ciphertext_as_mut_view);
   destroy_seeder_builder_unchecked(builder);
   destroy_default_serialization_engine_unchecked(default_serialization_engine);
   destroy_default_engine_unchecked(engine);
@@ -178,7 +180,8 @@ void encrypt_decrypt_raw_ptr_buffers_test(void) {
 
   DefaultSerializationEngine *default_serialization_engine = NULL;
 
-  int default_serialization_engine_ok = new_default_serialization_engine(&default_serialization_engine);
+  int default_serialization_engine_ok =
+      new_default_serialization_engine(&default_serialization_engine);
   assert(default_serialization_engine_ok == 0);
 
   double variance = 0.000000001;
@@ -203,13 +206,13 @@ void encrypt_decrypt_raw_ptr_buffers_test(void) {
   // Test SK Serialization/Deserialization
   Buffer sk_buffer = {.pointer = NULL, .length = 0};
   int sk_ser_ok = default_serialization_engine_serialize_lwe_secret_key_u64(
-          default_serialization_engine, sk, &sk_buffer);
+      default_serialization_engine, sk, &sk_buffer);
   assert(sk_ser_ok == 0);
 
   BufferView sk_buffer_view = {.pointer = sk_buffer.pointer, .length = sk_buffer.length};
   LweSecretKey64 *deser_sk = NULL;
   int sk_deser_ok = default_serialization_engine_deserialize_lwe_secret_key_u64(
-          default_serialization_engine, sk_buffer_view, &deser_sk);
+      default_serialization_engine, sk_buffer_view, &deser_sk);
   assert(sk_deser_ok == 0);
 
   // We decrypt the plaintext
@@ -227,8 +230,8 @@ void encrypt_decrypt_raw_ptr_buffers_test(void) {
   assert(rel_error < 0.001);
 
   // We deallocate the objects
-  destroy_lwe_secret_key_u64( sk);
-  destroy_lwe_secret_key_u64( deser_sk);
+  destroy_lwe_secret_key_u64(sk);
+  destroy_lwe_secret_key_u64(deser_sk);
   destroy_default_serialization_engine(default_serialization_engine);
   destroy_seeder_builder(builder);
   destroy_default_engine(engine);
@@ -247,7 +250,8 @@ void encrypt_decrypt_unchecked_raw_ptr_buffers_test(void) {
 
   DefaultSerializationEngine *default_serialization_engine = NULL;
 
-  int default_serialization_engine_ok = new_default_serialization_engine(&default_serialization_engine);
+  int default_serialization_engine_ok =
+      new_default_serialization_engine(&default_serialization_engine);
   assert(default_serialization_engine_ok == 0);
 
   double variance = 0.000000001;
@@ -272,13 +276,13 @@ void encrypt_decrypt_unchecked_raw_ptr_buffers_test(void) {
   // Test SK Serialization/Deserialization
   Buffer sk_buffer = {.pointer = NULL, .length = 0};
   int sk_ser_ok = default_serialization_engine_serialize_lwe_secret_key_u64(
-          default_serialization_engine, sk, &sk_buffer);
+      default_serialization_engine, sk, &sk_buffer);
   assert(sk_ser_ok == 0);
 
   BufferView sk_buffer_view = {.pointer = sk_buffer.pointer, .length = sk_buffer.length};
   LweSecretKey64 *deser_sk = NULL;
   int sk_deser_ok = default_serialization_engine_deserialize_lwe_secret_key_u64(
-          default_serialization_engine, sk_buffer_view, &deser_sk);
+      default_serialization_engine, sk_buffer_view, &deser_sk);
   assert(sk_deser_ok == 0);
 
   // We decrypt the plaintext
@@ -296,8 +300,8 @@ void encrypt_decrypt_unchecked_raw_ptr_buffers_test(void) {
   assert(rel_error < 0.001);
 
   // We deallocate the objects
-  destroy_lwe_secret_key_unchecked_u64( sk);
-  destroy_lwe_secret_key_unchecked_u64( deser_sk);
+  destroy_lwe_secret_key_unchecked_u64(sk);
+  destroy_lwe_secret_key_unchecked_u64(deser_sk);
   destroy_seeder_builder_unchecked(builder);
   destroy_default_engine_unchecked(engine);
   destroy_buffer(&sk_buffer);
