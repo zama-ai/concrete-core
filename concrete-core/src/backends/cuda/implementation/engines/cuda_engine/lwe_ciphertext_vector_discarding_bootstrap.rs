@@ -117,8 +117,10 @@ impl
         LweCiphertextVectorDiscardingBootstrapError::perform_generic_checks(
             output, input, acc, bsk,
         )?;
-        let poly_size = bsk.polynomial_size().0;
+        let poly_size = bsk.polynomial_size();
         check_poly_size!(poly_size);
+        let glwe_dim = bsk.glwe_dimension();
+        check_glwe_dim!(glwe_dim);
         unsafe { self.discard_bootstrap_lwe_ciphertext_vector_unchecked(output, input, acc, bsk) };
         Ok(())
     }
@@ -141,7 +143,7 @@ impl
                     input.lwe_ciphertext_count().0 - samples_per_gpu * self.get_number_of_gpus();
             }
             let stream = &self.streams[gpu_index];
-            // FIXME this is hard set at the moment because concrete-default does not support a more
+            // FIXME this is hard set at the moment because concrete-core does not support a more
             //   general API for the bootstrap
             let test_vector_indexes = (0..samples as u32).collect::<Vec<u32>>();
             let mut d_test_vector_indexes = stream.malloc::<u32>(samples as u32);
@@ -271,8 +273,10 @@ impl
         LweCiphertextVectorDiscardingBootstrapError::perform_generic_checks(
             output, input, acc, bsk,
         )?;
-        let poly_size = bsk.polynomial_size().0;
+        let poly_size = bsk.polynomial_size();
         check_poly_size!(poly_size);
+        let glwe_dim = bsk.glwe_dimension();
+        check_glwe_dim!(glwe_dim);
         unsafe { self.discard_bootstrap_lwe_ciphertext_vector_unchecked(output, input, acc, bsk) };
         Ok(())
     }
@@ -295,7 +299,7 @@ impl
                     input.lwe_ciphertext_count().0 - samples_per_gpu * self.get_number_of_gpus();
             }
             let stream = &self.streams[gpu_index];
-            // FIXME this is hard set at the moment because concrete-default does not support a more
+            // FIXME this is hard set at the moment because concrete-core does not support a more
             //   general API for the bootstrap
             let test_vector_indexes = (0..samples as u32).collect::<Vec<u32>>();
             let mut d_test_vector_indexes = stream.malloc::<u32>(samples as u32);

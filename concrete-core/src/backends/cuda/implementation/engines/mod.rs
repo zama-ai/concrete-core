@@ -23,6 +23,7 @@ pub enum CudaError {
     InvalidDeviceIndex(GpuIndex),
     UnspecifiedDeviceError(GpuIndex),
     PolynomialSizeNotSupported,
+    GlweDimensionNotSupported,
 }
 impl Display for CudaError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -50,9 +51,12 @@ impl Display for CudaError {
             CudaError::PolynomialSizeNotSupported => {
                 write!(
                     f,
-                    "The polynomial size should be a power of 2. Values stricly lower than \
+                    "The polynomial size should be a power of 2. Values strictly lower than \
                 512, and strictly greater than 8192, are not supported."
                 )
+            }
+            CudaError::GlweDimensionNotSupported => {
+                write!(f, "The only supported GLWE dimension is 1.")
             }
             CudaError::UnspecifiedDeviceError(gpu_index) => {
                 write!(f, "Unspecified device error on GPU #{}.", gpu_index.0)
