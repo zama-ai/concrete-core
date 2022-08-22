@@ -1,7 +1,7 @@
 use crate::fixture::Fixture;
 use crate::generation::prototyping::{
     PrototypesGlweCiphertext, PrototypesGlweSecretKey, PrototypesLweCiphertext,
-    PrototypesPlaintext, PrototypesPlaintextVector, TransformsGlweToLweSecretKeyPrototype,
+    PrototypesPlaintext, PrototypesPlaintextVector,
 };
 use crate::generation::synthesizing::{SynthesizesGlweCiphertext, SynthesizesLweCiphertext};
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
@@ -34,8 +34,7 @@ where
     Engine: LweCiphertextDiscardingExtractionEngine<GlweCiphertext, LweCiphertext>,
     GlweCiphertext: GlweCiphertextEntity,
     LweCiphertext: LweCiphertextEntity,
-    Maker: TransformsGlweToLweSecretKeyPrototype<Precision, KeyDistribution>
-        + SynthesizesLweCiphertext<Precision, KeyDistribution, LweCiphertext>
+    Maker: SynthesizesLweCiphertext<Precision, KeyDistribution, LweCiphertext>
         + SynthesizesGlweCiphertext<Precision, KeyDistribution, GlweCiphertext>,
 {
     type Parameters = LweCiphertextDiscardingExtractionParameters;

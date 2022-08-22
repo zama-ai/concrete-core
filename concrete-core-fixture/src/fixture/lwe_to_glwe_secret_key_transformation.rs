@@ -1,7 +1,5 @@
 use crate::fixture::Fixture;
-use crate::generation::prototyping::{
-    PrototypesLweSecretKey, TransformsGlweToLweSecretKeyPrototype,
-};
+use crate::generation::prototyping::{PrototypesGlweSecretKey, PrototypesLweSecretKey};
 use crate::generation::synthesizing::{SynthesizesGlweSecretKey, SynthesizesLweSecretKey};
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use concrete_commons::parameters::{GlweDimension, LweDimension, PolynomialSize};
@@ -27,8 +25,7 @@ where
     Engine: LweToGlweSecretKeyTransformationEngine<InputSecretKey, OutputSecretKey>,
     InputSecretKey: LweSecretKeyEntity,
     OutputSecretKey: GlweSecretKeyEntity,
-    Maker: TransformsGlweToLweSecretKeyPrototype<Precision, KeyDistribution>
-        + SynthesizesGlweSecretKey<Precision, KeyDistribution, OutputSecretKey>
+    Maker: SynthesizesGlweSecretKey<Precision, KeyDistribution, OutputSecretKey>
         + SynthesizesLweSecretKey<Precision, KeyDistribution, InputSecretKey>,
 {
     type Parameters = LweToGlweSecretKeyTransformationParameters;
