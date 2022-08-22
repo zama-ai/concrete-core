@@ -365,7 +365,7 @@ impl<Cont> LweList<Cont> {
     ///     EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0), &mut UnixSeeder::new(0));
     ///
     /// let secret_key = LweSecretKey::generate_binary(LweDimension(4), &mut secret_generator);
-    /// let parameters = LogStandardDev::from_log_standard_dev(-15.);
+    /// let parameters = LogStandardDev::from_log_standard_dev(-60.);
     /// let encoder = RealEncoder {
     ///     offset: 0. as f32,
     ///     delta: 200.,
