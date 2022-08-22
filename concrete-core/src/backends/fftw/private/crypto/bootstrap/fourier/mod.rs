@@ -15,13 +15,12 @@ use crate::backends::fftw::private::math::fft::Complex64;
 use crate::commons::crypto::bootstrap::StandardBootstrapKey;
 use crate::commons::crypto::glwe::GlweCiphertext;
 use crate::commons::crypto::lwe::LweCiphertext;
+use crate::commons::math::polynomial::PolynomialList;
 use crate::commons::math::tensor::{
     ck_dim_div, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, IntoTensor, Tensor,
 };
 use crate::commons::math::torus::UnsignedTorus;
 pub use buffers::{FftBuffers, FourierBuffers};
-use crate::commons::math::polynomial::{PolynomialList};
-
 
 #[cfg(feature = "test")]
 mod tests;
@@ -448,7 +447,6 @@ where
                 )
             })
     }
-
 
     pub(crate) fn blind_rotate<C2>(
         &self,

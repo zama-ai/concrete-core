@@ -4,20 +4,17 @@ use crate::backends::fftw::private::crypto::circuit_bootstrap::{
     DeltaLog,
 };
 use crate::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
+use crate::backends::fftw::private::math::fft::{AlignedVec, Complex64};
 use crate::commons::crypto::glwe::{
     FunctionalPackingKeyswitchKey, GlweCiphertext, PackingKeyswitchKey,
 };
 use crate::commons::crypto::lwe::LweCiphertext;
-use crate::backends::fftw::private::math::fft::{AlignedVec, Complex64};
-use crate::commons::math::tensor::{
-    AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor,
-};
+use crate::commons::math::tensor::{AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor};
 use crate::commons::math::torus::UnsignedTorus;
-use concrete_commons::parameters::DecompositionBaseLog;
-use concrete_commons::parameters::DecompositionLevelCount;
-use concrete_commons::parameters::GlweDimension;
-use concrete_commons::parameters::PolynomialSize;
-use concrete_commons::parameters::{LweSize, MonomialDegree};
+use concrete_commons::parameters::{
+    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweSize, MonomialDegree,
+    PolynomialSize,
+};
 
 #[cfg(test)]
 mod tests;
@@ -402,7 +399,12 @@ pub fn cmux<C0, C1, C2, Scalar>(
 {
     ct_1.as_mut_tensor()
         .update_with_wrapping_sub(ct_0.as_tensor());
-    ggsw.external_product(ct_0, ct_1, &mut buffers.fft_buffers, &mut buffers.rounded_buffer);
+    ggsw.external_product(
+        ct_0,
+        ct_1,
+        &mut buffers.fft_buffers,
+        &mut buffers.rounded_buffer,
+    );
 }
 
 pub fn cmux_with_output<C0, C1, C2, C3, C4, Scalar>(
@@ -424,7 +426,12 @@ pub fn cmux_with_output<C0, C1, C2, C3, C4, Scalar>(
         .as_mut_tensor()
         .fill_with_wrapping_sub(ct_1.as_tensor(), ct_0.as_tensor());
     ct_output.as_mut_tensor().fill_with(|| Scalar::ZERO);
-    ggsw.external_product(ct_output, ct_buffer, &mut buffers.fft_buffers, &mut buffers.rounded_buffer);
+    ggsw.external_product(
+        ct_output,
+        ct_buffer,
+        &mut buffers.fft_buffers,
+        &mut buffers.rounded_buffer,
+    );
     ct_output
         .as_mut_tensor()
         .update_with_wrapping_add(ct_0.as_tensor())

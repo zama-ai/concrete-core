@@ -12,15 +12,13 @@ use crate::backends::core::private::crypto::secret::generators::{
     EncryptionRandomGenerator, SecretRandomGenerator,
 };
 use crate::backends::core::private::crypto::secret::{GlweSecretKey, LweSecretKey};
-use crate::backends::core::private::math::fft::Complex64;
-use crate::backends::core::private::math::fft::FourierPolynomial;
+use crate::backends::core::private::math::fft::{Complex64, FourierPolynomial};
 use crate::backends::core::private::math::polynomial::Polynomial;
 use concrete_commons::dispersion::LogStandardDev;
 use concrete_commons::numeric::CastInto;
-use concrete_commons::parameters::MonomialDegree;
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, LweSize,
-    PlaintextCount, PolynomialSize,
+    MonomialDegree, PlaintextCount, PolynomialSize,
 };
 use rand::Rng;
 
@@ -80,8 +78,8 @@ use rand::Rng;
 //         lwe_dimension,
 //     );
 //
-//     let mut buffers = FourierBuffers::new(fourier_bsk.polynomial_size(), fourier_bsk.glwe_size());
-//     fourier_bsk.fill_with_forward_fourier(&coef_bsk, &mut buffers);
+//     let mut buffers = FourierBuffers::new(fourier_bsk.polynomial_size(),
+// fourier_bsk.glwe_size());     fourier_bsk.fill_with_forward_fourier(&coef_bsk, &mut buffers);
 //
 //     let mut pksk = PackingKeyswitchKey::allocate(
 //         0 as u64,
@@ -109,8 +107,8 @@ use rand::Rng;
 //         //=========================================================
 //         let mut poly_acc = Vec::with_capacity(modulus);
 //         for i in 0..base{
-//             poly_acc.push( generate_polynomial_multivalue_base(|x| (i as u64 * x) % base as u64, modulus, base, polynomial_size));
-//         }
+//             poly_acc.push( generate_polynomial_multivalue_base(|x| (i as u64 * x) % base as u64,
+// modulus, base, polynomial_size));         }
 //         //=========================================================
 //
 //         // println!("poly_acc = {:?} ", poly_acc);
@@ -220,8 +218,8 @@ use rand::Rng;
 //         lwe_dimension,
 //     );
 //
-//     let mut buffers = FourierBuffers::new(fourier_bsk.polynomial_size(), fourier_bsk.glwe_size());
-//     fourier_bsk.fill_with_forward_fourier(&coef_bsk, &mut buffers);
+//     let mut buffers = FourierBuffers::new(fourier_bsk.polynomial_size(),
+// fourier_bsk.glwe_size());     fourier_bsk.fill_with_forward_fourier(&coef_bsk, &mut buffers);
 //
 //     let mut pksk = PackingKeyswitchKey::allocate(
 //         0 as u64,
@@ -249,8 +247,8 @@ use rand::Rng;
 //         //=========================================================
 //         let mut poly_acc = Vec::with_capacity(modulus);
 //         for i in 0..modulus{
-//             poly_acc.push( generate_polynomial_multivalue(|x| (i as u64 * x) % modulus as u64, modulus, polynomial_size));
-//         }
+//             poly_acc.push( generate_polynomial_multivalue(|x| (i as u64 * x) % modulus as u64,
+// modulus, polynomial_size));         }
 //         //=========================================================
 //
 //         // println!("poly_acc = {:?} ", poly_acc);

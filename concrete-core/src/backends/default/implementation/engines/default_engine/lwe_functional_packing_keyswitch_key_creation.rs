@@ -8,10 +8,9 @@ use crate::backends::default::implementation::entities::{LweSecretKey32, LweSecr
 use crate::commons::crypto::glwe::FunctionalPackingKeyswitchKey as ImplFunctionalPackingKeyswitchKey;
 use crate::commons::math::polynomial::Polynomial;
 use crate::commons::math::tensor::{AsRefSlice, AsRefTensor};
-use crate::prelude::{CleartextVector32, DefaultEngine};
 use crate::prelude::{
-    FunctionalPackingKeyswitchKeyCreationError, GlweSecretKey32, GlweSecretKey64,
-    GlweSecretKeyEntity,
+    CleartextVector32, DefaultEngine, FunctionalPackingKeyswitchKeyCreationError, GlweSecretKey32,
+    GlweSecretKey64, GlweSecretKeyEntity,
 };
 use crate::specification::engines::FunctionalPackingKeyswitchKeyCreationEngine;
 use crate::specification::entities::LweSecretKeyEntity;

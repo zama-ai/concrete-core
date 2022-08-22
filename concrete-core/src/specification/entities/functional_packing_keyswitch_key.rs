@@ -9,10 +9,10 @@ use concrete_commons::parameters::{
 ///
 /// A packing keyswitch key is associated with two [`KeyDistributionMarker`] types:
 ///
-/// + The [`InputKeyDistribution`](`FunctionalPackingKeyswitchKeyEntity::InputKeyDistribution`) type conveys
-/// the distribution of the input secret key.
-/// + The [`OutputKeyDistribution`](`FunctionalPackingKeyswitchKeyEntity::OutputKeyDistribution`) type conveys
-/// the distribution of the output secret key.
+/// + The [`InputKeyDistribution`](`FunctionalPackingKeyswitchKeyEntity::InputKeyDistribution`) type
+/// conveys the distribution of the input secret key.
+/// + The [`OutputKeyDistribution`](`FunctionalPackingKeyswitchKeyEntity::OutputKeyDistribution`)
+/// type conveys the distribution of the output secret key.
 ///
 /// # Formal Definition
 pub trait FunctionalPackingKeyswitchKeyEntity:

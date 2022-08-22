@@ -1,12 +1,12 @@
 use crate::backends::fftw::private::crypto::bootstrap::{FourierBootstrapKey, FourierBuffers};
+use crate::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
+use crate::backends::fftw::private::math::fft::Complex64;
 use crate::commons::crypto::encoding::Cleartext;
-use crate::backends::fftw::private::crypto::ggsw::{FourierGgswCiphertext};
 use crate::commons::crypto::ggsw::StandardGgswCiphertext;
 use crate::commons::crypto::glwe::{
     FunctionalPackingKeyswitchKey, GlweCiphertext, PackingKeyswitchKey,
 };
 use crate::commons::crypto::lwe::LweCiphertext;
-use crate::backends::fftw::private::math::fft::Complex64;
 use crate::commons::math::tensor::{AsMutTensor, AsRefTensor};
 use crate::commons::math::torus::UnsignedTorus;
 use concrete_commons::numeric::CastInto;
@@ -145,7 +145,12 @@ where
             rlwe_out_external_prod
                 .as_mut_tensor()
                 .fill_with(|| Scalar::ZERO);
-            ggsw.external_product(&mut rlwe_out_external_prod, &rlwe_out_ks, &mut buffers.fft_buffers, &mut buffers.rounded_buffer);
+            ggsw.external_product(
+                &mut rlwe_out_external_prod,
+                &rlwe_out_ks,
+                &mut buffers.fft_buffers,
+                &mut buffers.rounded_buffer,
+            );
             container.append(&mut rlwe_out_external_prod.tensor.as_mut_container().to_vec());
         }
         container.append(&mut rlwe_out_ks.tensor.as_mut_container().to_vec());
@@ -280,7 +285,12 @@ where
             rlwe_out_external_prod
                 .as_mut_tensor()
                 .fill_with(|| Scalar::ZERO);
-            ggsw.external_product(&mut rlwe_out_external_prod, &rlwe_out_ks, &mut buffers.fft_buffers, &mut buffers.rounded_buffer);
+            ggsw.external_product(
+                &mut rlwe_out_external_prod,
+                &rlwe_out_ks,
+                &mut buffers.fft_buffers,
+                &mut buffers.rounded_buffer,
+            );
             container.append(&mut rlwe_out_external_prod.tensor.as_mut_container().to_vec());
         }
         container.append(&mut rlwe_out_ks.tensor.as_mut_container().to_vec());
@@ -290,8 +300,8 @@ where
 }
 
 // Create a LUT with the function f
-// LUT = [f(0) << (modulus - beta * level),..,f(1) << (modulus - beta * level), ....,-f(0)  << (modulus - beta * level)]
-// After evaluate this lut with a bootstrapping
+// LUT = [f(0) << (modulus - beta * level),..,f(1) << (modulus - beta * level), ....,-f(0)  <<
+// (modulus - beta * level)] After evaluate this lut with a bootstrapping
 pub fn homomorphic_shift<Scalar, C1, C2, F: Fn(i64) -> i64>(
     fourier_bsk: &FourierBootstrapKey<AlignedVec<Complex64>, Scalar>,
     f: F,

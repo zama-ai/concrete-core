@@ -16,15 +16,13 @@ use crate::backends::core::private::crypto::secret::generators::{
     EncryptionRandomGenerator, SecretRandomGenerator,
 };
 use crate::backends::core::private::crypto::secret::{GlweSecretKey, LweSecretKey};
-use crate::backends::core::private::math::fft::Complex64;
-use crate::backends::core::private::math::fft::FourierPolynomial;
+use crate::backends::core::private::math::fft::{Complex64, FourierPolynomial};
 use crate::backends::core::private::math::polynomial::Polynomial;
 use concrete_commons::dispersion::LogStandardDev;
 use concrete_commons::numeric::CastInto;
-use concrete_commons::parameters::MonomialDegree;
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, LweSize,
-    PlaintextCount, PolynomialSize,
+    MonomialDegree, PlaintextCount, PolynomialSize,
 };
 use rand::Rng;
 

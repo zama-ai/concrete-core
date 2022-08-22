@@ -1,21 +1,18 @@
 use crate::backends::fftw::private::crypto::bootstrap::{FourierBootstrapKey, FourierBuffers};
 use crate::backends::fftw::private::crypto::circuit_bootstrap::DeltaLog;
+use crate::backends::fftw::private::math::fft::Complex64;
 use crate::commons::crypto::encoding::{Cleartext, PlaintextList};
 use crate::commons::crypto::ggsw::StandardGgswCiphertext;
 use crate::commons::crypto::glwe::GlweCiphertext;
 use crate::commons::crypto::lwe::{LweCiphertext, LweKeyswitchKey};
 use crate::commons::crypto::secret::generators::EncryptionRandomGenerator;
 use crate::commons::crypto::secret::GlweSecretKey;
-use crate::backends::fftw::private::math::fft::Complex64;
 use crate::commons::math::polynomial::Polynomial;
-use crate::commons::math::tensor::AsMutTensor;
-use crate::commons::math::tensor::AsRefTensor;
+use crate::commons::math::tensor::{AsMutTensor, AsRefTensor};
 use crate::commons::math::torus::UnsignedTorus;
 use concrete_commons::dispersion::LogStandardDev;
 use concrete_commons::key_kinds::BinaryKeyKind;
-use concrete_commons::parameters::DecompositionBaseLog;
-use concrete_commons::parameters::DecompositionLevelCount;
-use concrete_commons::parameters::LweSize;
+use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
 use concrete_fftw::array::AlignedVec;
 #[cfg(test)]
 mod test;

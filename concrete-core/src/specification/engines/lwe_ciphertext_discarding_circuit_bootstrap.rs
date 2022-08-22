@@ -14,9 +14,9 @@
 //     InputLweDimensionMismatch => "The input ciphertext and key LWE dimension must be the same.",
 //     OutputLweDimensionMismatch => "The output ciphertext dimension and key size (dimension * \
 //                                    polynomial size) must be the same.",
-//     AccumulatorPolynomialSizeMismatch => "The accumulator and key polynomial sizes must be the same.",
-//     AccumulatorGlweDimensionMismatch => "The accumulator and key GLWE dimensions must be the same."
-// }
+//     AccumulatorPolynomialSizeMismatch => "The accumulator and key polynomial sizes must be the
+// same.",     AccumulatorGlweDimensionMismatch => "The accumulator and key GLWE dimensions must be
+// the same." }
 //
 // /// Unsafely bootstrap an LWE ciphertext .
 // ///

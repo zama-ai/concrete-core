@@ -3,13 +3,11 @@ mod test;
 
 use crate::backends::fftw::private::crypto::bootstrap::fourier::constant_sample_extract;
 use crate::backends::fftw::private::crypto::bootstrap::{FourierBootstrapKey, FourierBuffers};
+use crate::backends::fftw::private::math::fft::{AlignedVec, Complex64, Fft, FourierPolynomial};
 use crate::commons::crypto::glwe::GlweCiphertext;
 use crate::commons::crypto::lwe::LweCiphertext;
-use crate::backends::fftw::private::math::fft::{AlignedVec, Complex64, Fft, FourierPolynomial};
 use crate::commons::math::polynomial::Polynomial;
-use crate::commons::math::tensor::{
-    AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor,
-};
+use crate::commons::math::tensor::{AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor};
 use crate::commons::math::torus::UnsignedTorus;
 use concrete_commons::numeric::{CastFrom, CastInto, UnsignedInteger};
 use concrete_commons::parameters::{MonomialDegree, PolynomialSize};
@@ -395,8 +393,9 @@ where
     //     let glwe_body = acc.get_body();
     //     let body = glwe_body.as_polynomial();
     //
-    //     let empty_lwe = LweCiphertext::allocate(Scalar::ZERO, self.output_lwe_dimension().to_lwe_size());
-    //     let mut res = vec![empty_lwe.clone(); poly_acc.len()];
+    //     let empty_lwe = LweCiphertext::allocate(Scalar::ZERO,
+    // self.output_lwe_dimension().to_lwe_size());     let mut res = vec![empty_lwe.clone();
+    // poly_acc.len()];
     //
     //     //Fourier transform mask and body
     //     let fft = Fft::new(self.polynomial_size());

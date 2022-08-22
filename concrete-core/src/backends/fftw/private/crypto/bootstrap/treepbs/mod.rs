@@ -1,18 +1,16 @@
 #[cfg(test)]
 mod test;
 
+use crate::backends::fftw::private::crypto::bootstrap::multivaluepbs::fourier_multiplication_torus_integer;
 use crate::backends::fftw::private::crypto::bootstrap::{FourierBootstrapKey, FourierBuffers};
+use crate::backends::fftw::private::math::fft::{AlignedVec, Complex64, Fft, FourierPolynomial};
 use crate::commons::crypto::glwe::{GlweCiphertext, PackingKeyswitchKey};
 use crate::commons::crypto::lwe::{LweCiphertext, LweKeyswitchKey};
-use crate::backends::fftw::private::math::fft::{AlignedVec, Complex64, Fft, FourierPolynomial};
 use crate::commons::math::polynomial::Polynomial;
-use crate::commons::math::tensor::{
-    AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor,
-};
+use crate::commons::math::tensor::{AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor};
 use crate::commons::math::torus::UnsignedTorus;
 use concrete_commons::numeric::{CastFrom, CastInto};
 use concrete_commons::parameters::{MonomialDegree, PolynomialSize};
-use crate::backends::fftw::private::crypto::bootstrap::multivaluepbs::fourier_multiplication_torus_integer;
 
 impl<Cont, Scalar> FourierBootstrapKey<Cont, Scalar>
 where
@@ -91,10 +89,9 @@ where
     /// let mut lwe_in = LweCiphertext::allocate(0u32, lwe_dimension.to_lwe_size());
     /// let mut lwe_out_1 =
     ///     LweCiphertext::allocate(0u32, LweSize(rlwe_dimension.0 * polynomial_size.0 + 1));
-    /// let mut lwe_out_2 =LweCiphertext::allocate(0u32, LweSize(rlwe_dimension.0 *
-    /// polynomial_size.0 + 1));
+    /// let mut lwe_out_2 =
+    ///     LweCiphertext::allocate(0u32, LweSize(rlwe_dimension.0 * polynomial_size.0 + 1));
     /// lwe_sk.encrypt_lwe(&mut lwe_in, &message, std, &mut encryption_generator);
-    ///
     ///
     /// // accumulator is a trivial encryption of [0, 1/2N, 2/2N, ...]
     /// let mut accumulator =
@@ -112,8 +109,12 @@ where
     /// let mut vec_buffers = vec![buffers.clone(), buffers];
     /// let mut vec_lwe_out = vec![lwe_out_1, lwe_out_2];
     /// // bootstrap
-    /// fourier_bsk.vector_bootstrap(&mut vec_lwe_out, &lwe_in, &vec_accumulator, &mut
-    /// vec_buffers);
+    /// fourier_bsk.vector_bootstrap(
+    ///     &mut vec_lwe_out,
+    ///     &lwe_in,
+    ///     &vec_accumulator,
+    ///     &mut vec_buffers,
+    /// );
     /// ```
     pub fn vector_bootstrap<C1, C2, C3>(
         &self,
@@ -426,24 +427,23 @@ impl<Cont> PackingKeyswitchKey<Cont> {
     /// use concrete_commons::numeric::CastInto;
     /// use concrete_commons::parameters::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, LweSize,
-    ///     PolynomialSize,
+    ///     MonomialDegree, PolynomialSize,
     /// };
     /// use concrete_core::backends::core::private::crypto::bootstrap::{
     ///     FourierBootstrapKey, FourierBuffers, StandardBootstrapKey,
     /// };
     /// use concrete_core::backends::core::private::crypto::encoding::Plaintext;
-    /// use concrete_core::backends::core::private::crypto::glwe::GlweCiphertext;
+    /// use concrete_core::backends::core::private::crypto::glwe::{
+    ///     GlweCiphertext, PackingKeyswitchKey,
+    /// };
     /// use concrete_core::backends::core::private::crypto::lwe::LweCiphertext;
     /// use concrete_core::backends::core::private::crypto::secret::generators::{
     ///     EncryptionRandomGenerator, SecretRandomGenerator,
     /// };
     /// use concrete_core::backends::core::private::crypto::secret::{GlweSecretKey, LweSecretKey};
-    /// use concrete_core::backends::core::private::math::fft::{Fft,Complex64};
-    /// use concrete_core::backends::core::private::math::tensor::AsMutTensor;
+    /// use concrete_core::backends::core::private::math::fft::{Complex64, Fft, FourierPolynomial};
     /// use concrete_core::backends::core::private::math::polynomial::Polynomial;
-    ///use concrete_core::backends::core::private::crypto::glwe::PackingKeyswitchKey;
-    /// use concrete_core::backends::core::private::math::fft::FourierPolynomial;
-    /// use concrete_commons::parameters::MonomialDegree;
+    /// use concrete_core::backends::core::private::math::tensor::AsMutTensor;
     /// // define settings
     /// let polynomial_size = PolynomialSize(1024);
     /// let rlwe_dimension = GlweDimension(1);
@@ -510,8 +510,7 @@ impl<Cont> PackingKeyswitchKey<Cont> {
     ///     rlwe_dimension.to_glwe_size().to_glwe_dimension(),
     ///     polynomial_size,
     /// );
-    /// pksk.fill_with_packing_keyswitch_key(&lwe_sk, &rlwe_sk, noise, &mut
-    /// encryption_generator);
+    /// pksk.fill_with_packing_keyswitch_key(&lwe_sk, &rlwe_sk, noise, &mut encryption_generator);
     ///
     /// let mut poly = Polynomial::allocate(0u64, polynomial_size);
     /// poly.get_mut_monomial(MonomialDegree(0)).set_coefficient(1);
@@ -530,7 +529,7 @@ impl<Cont> PackingKeyswitchKey<Cont> {
     /// //=======================================================================
     ///
     /// pksk.create_accumulator_treepbs(&mut accumulator, &vec_lwe_in, &poly_redundancy, shift);
-    ///```
+    /// ```
     pub fn create_accumulator_treepbs<InCont, OutCont, Scalar>(
         &self,
         acc_out: &mut GlweCiphertext<OutCont>,

@@ -103,7 +103,7 @@ fn test_cmux_0<T: UnsignedTorus>() {
             &m1,
             std_dev_rlwe,
             &mut encryption_generator,
-        );fou
+        );
 
         let rgsw = fourier_bsk.ggsw_iter().next().unwrap();
 

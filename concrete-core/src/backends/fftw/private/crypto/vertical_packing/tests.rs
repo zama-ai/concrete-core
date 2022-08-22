@@ -18,14 +18,12 @@ use crate::backends::core::private::crypto::vertical_packing::{
 };
 use crate::backends::core::private::math::fft::Complex64;
 use crate::backends::core::private::math::polynomial::Polynomial;
-use crate::backends::core::private::math::tensor::AsMutTensor;
-use crate::backends::core::private::math::tensor::{AsRefSlice, AsRefTensor};
+use crate::backends::core::private::math::tensor::{AsMutTensor, AsRefSlice, AsRefTensor};
 use crate::backends::core::private::math::torus::UnsignedTorus;
 use concrete_commons::dispersion::LogStandardDev;
 use concrete_commons::key_kinds::BinaryKeyKind;
-use concrete_commons::parameters::LweDimension;
 use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
+    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
 };
 
 #[test]
@@ -320,8 +318,6 @@ pub fn circuit_bs_vertical_packing_v0() {
     let delta_log = DeltaLog(60);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
     //encryption of a LWE with the value 'message'
     let value: u64 = 5;
     let message = Plaintext((value) << delta_log.0);
@@ -474,8 +470,6 @@ pub fn circuit_bs_vertical_packing_v1() {
         vec_fourier_ggsw.push(fourier_ggsw);
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //encryption of a LWE with the value 'message'
     let value: u64 = 5;
