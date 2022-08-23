@@ -1,7 +1,6 @@
 use crate::commons::crypto::glwe::FunctionalPackingKeyswitchKey as ImplFunctionalPackingKeyswitchKey;
 use crate::prelude::markers::FunctionalPackingKeyswitchKeyKind;
 use crate::prelude::FunctionalPackingKeyswitchKeyEntity;
-use crate::specification::entities::markers::BinaryKeyDistribution;
 use crate::specification::entities::AbstractEntity;
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension,
@@ -17,9 +16,6 @@ impl AbstractEntity for FunctionalPackingKeyswitchKey32 {
     type Kind = FunctionalPackingKeyswitchKeyKind;
 }
 impl FunctionalPackingKeyswitchKeyEntity for FunctionalPackingKeyswitchKey32 {
-    type InputKeyDistribution = BinaryKeyDistribution;
-    type OutputKeyDistribution = BinaryKeyDistribution;
-
     fn input_lwe_dimension(&self) -> LweDimension {
         self.0.input_lwe_key_dimension()
     }
@@ -49,9 +45,6 @@ impl AbstractEntity for FunctionalPackingKeyswitchKey64 {
     type Kind = FunctionalPackingKeyswitchKeyKind;
 }
 impl FunctionalPackingKeyswitchKeyEntity for FunctionalPackingKeyswitchKey64 {
-    type InputKeyDistribution = BinaryKeyDistribution;
-    type OutputKeyDistribution = BinaryKeyDistribution;
-
     fn input_lwe_dimension(&self) -> LweDimension {
         self.0.input_lwe_key_dimension()
     }

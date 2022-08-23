@@ -59,10 +59,7 @@ pub trait FunctionalPackingKeyswitchKeyCreationEngine<
     InputSecretKey: LweSecretKeyEntity,
     OutputSecretKey: GlweSecretKeyEntity,
     CleartextVector: CleartextVectorEntity,
-    FunctionalPackingKeyswitchKey: FunctionalPackingKeyswitchKeyEntity<
-        InputKeyDistribution = InputSecretKey::KeyDistribution,
-        OutputKeyDistribution = OutputSecretKey::KeyDistribution,
-    >,
+    FunctionalPackingKeyswitchKey: FunctionalPackingKeyswitchKeyEntity,
 {
     /// Creates a functional packing keyswitch key.
     fn create_functional_packing_keyswitch_key<F: Fn(Raw) -> Raw>(

@@ -1,5 +1,4 @@
 use crate::prelude::markers::FunctionalPackingKeyswitchKeyKind;
-use crate::specification::entities::markers::KeyDistributionMarker;
 use crate::specification::entities::AbstractEntity;
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
@@ -18,12 +17,6 @@ use concrete_commons::parameters::{
 pub trait FunctionalPackingKeyswitchKeyEntity:
     AbstractEntity<Kind = FunctionalPackingKeyswitchKeyKind>
 {
-    /// The distribution of the key the input ciphertext is encrypted with.
-    type InputKeyDistribution: KeyDistributionMarker;
-
-    /// The distribution of the key the output ciphertext is encrypted with.
-    type OutputKeyDistribution: KeyDistributionMarker;
-
     /// Returns the input LWE dimension of the key.
     fn input_lwe_dimension(&self) -> LweDimension;
 
