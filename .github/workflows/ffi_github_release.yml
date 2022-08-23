@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Build libconcrete_core_ffi
         env:
-          RUSTFLAGS: "-Ctarget-feature=+aes,+rdseed,+sse2"
+          RUSTFLAGS: "-Ctarget-feature=+aes,+sse2"
         run: |
           cargo build --release \
           --features backend_default \
@@ -103,7 +103,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Build libconcrete_core_ffi
         env:
-          RUSTFLAGS: "-Ctarget-feature=+aes,+rdseed,+sse2"
+          RUSTFLAGS: "-Ctarget-feature=+aes,+sse2"
         run: |
           cargo build --release \
           --features backend_default \
