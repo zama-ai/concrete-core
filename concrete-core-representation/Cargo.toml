@@ -1,0 +1,21 @@
+[package]
+name = "concrete-core-representation"
+version = "0.0.0"
+edition = "2021"
+authors = ["Zama team"]
+license = "BSD-3-Clause-Clear"
+readme = "README.md"
+
+[dependencies]
+syn={version="1.0", features=["full", "extra-traits"]}
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+quote = "1.0"
+
+[[bin]]
+name = "summary"
+path = "bin/summary.rs"
+
+[[bin]]
+name = "dump"
+path = "bin/dump.rs"
