@@ -1,11 +1,10 @@
 use crate::commons::crypto::glwe::FunctionalPackingKeyswitchKey as ImplFunctionalPackingKeyswitchKey;
 use crate::prelude::markers::FunctionalPackingKeyswitchKeyKind;
-use crate::prelude::FunctionalPackingKeyswitchKeyEntity;
-use crate::specification::entities::markers::BinaryKeyDistribution;
-use crate::specification::entities::AbstractEntity;
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension,
+use crate::prelude::{
+    DecompositionBaseLog, DecompositionLevelCount, FunctionalPackingKeyswitchKeyEntity,
+    GlweDimension, LweDimension,
 };
+use crate::specification::entities::AbstractEntity;
 #[cfg(feature = "serde_serialize")]
 use serde::{Deserialize, Serialize};
 
@@ -17,9 +16,6 @@ impl AbstractEntity for FunctionalPackingKeyswitchKey32 {
     type Kind = FunctionalPackingKeyswitchKeyKind;
 }
 impl FunctionalPackingKeyswitchKeyEntity for FunctionalPackingKeyswitchKey32 {
-    type InputKeyDistribution = BinaryKeyDistribution;
-    type OutputKeyDistribution = BinaryKeyDistribution;
-
     fn input_lwe_dimension(&self) -> LweDimension {
         self.0.input_lwe_key_dimension()
     }
@@ -28,7 +24,7 @@ impl FunctionalPackingKeyswitchKeyEntity for FunctionalPackingKeyswitchKey32 {
         self.0.output_glwe_key_dimension()
     }
 
-    fn output_polynomial_size(&self) -> concrete_commons::parameters::PolynomialSize {
+    fn output_polynomial_size(&self) -> crate::prelude::PolynomialSize {
         self.0.output_polynomial_size()
     }
 
@@ -49,9 +45,6 @@ impl AbstractEntity for FunctionalPackingKeyswitchKey64 {
     type Kind = FunctionalPackingKeyswitchKeyKind;
 }
 impl FunctionalPackingKeyswitchKeyEntity for FunctionalPackingKeyswitchKey64 {
-    type InputKeyDistribution = BinaryKeyDistribution;
-    type OutputKeyDistribution = BinaryKeyDistribution;
-
     fn input_lwe_dimension(&self) -> LweDimension {
         self.0.input_lwe_key_dimension()
     }
@@ -60,7 +53,7 @@ impl FunctionalPackingKeyswitchKeyEntity for FunctionalPackingKeyswitchKey64 {
         self.0.output_glwe_key_dimension()
     }
 
-    fn output_polynomial_size(&self) -> concrete_commons::parameters::PolynomialSize {
+    fn output_polynomial_size(&self) -> crate::prelude::PolynomialSize {
         self.0.output_polynomial_size()
     }
 

@@ -9,8 +9,8 @@ use crate::commons::crypto::lwe::LweCiphertext;
 use crate::commons::math::polynomial::Polynomial;
 use crate::commons::math::tensor::{AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor};
 use crate::commons::math::torus::UnsignedTorus;
-use concrete_commons::numeric::{CastFrom, CastInto, UnsignedInteger};
-use concrete_commons::parameters::{MonomialDegree, PolynomialSize};
+use crate::commons::numeric::{CastFrom, CastInto, UnsignedInteger};
+use crate::prelude::{MonomialDegree, PolynomialSize};
 
 //Fourier polynomial generation
 pub fn generate_fourier_polynomial_multivalue<F>(

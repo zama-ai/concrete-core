@@ -6,12 +6,13 @@ use crate::backends::fftw::private::crypto::circuit_bootstrap::{
 use crate::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
 use crate::backends::fftw::private::math::fft::{AlignedVec, Complex64};
 use crate::commons::crypto::glwe::{
-    FunctionalPackingKeyswitchKey, GlweCiphertext, PackingKeyswitchKey,
+    LwePrivateFunctionalPackingKeyswitchKey, GlweCiphertext, LwePackingKeyswitchKey,
 };
 use crate::commons::crypto::lwe::LweCiphertext;
 use crate::commons::math::tensor::{AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor};
 use crate::commons::math::torus::UnsignedTorus;
-use concrete_commons::parameters::{
+use crate::commons::numeric::CastFrom;
+use crate::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweSize, MonomialDegree,
     PolynomialSize,
 };
@@ -474,11 +475,11 @@ pub fn vertical_packing_cbs_v0<Scalar>(
     level_cbs: DecompositionLevelCount,
     base_log_cbs: DecompositionBaseLog,
     vec_delta_log: Vec<DeltaLog>,
-    vec_fpksk: &[FunctionalPackingKeyswitchKey<Vec<Scalar>>],
+    vec_fpksk: &[LwePrivateFunctionalPackingKeyswitchKey<Vec<Scalar>>],
     vec_nb_bit_to_extract: Vec<usize>,
 ) -> Vec<LweCiphertext<Vec<Scalar>>>
 where
-    Scalar: UnsignedTorus + concrete_commons::numeric::CastFrom<i64>,
+    Scalar: UnsignedTorus + CastFrom<i64>,
 {
     let mut vec_ggsw = vec![];
     for i in 0..vec_lwe_in.len() {
@@ -524,10 +525,10 @@ pub fn vertical_packing_cbs_v1<Scalar>(
     vec_delta_log: Vec<DeltaLog>,
     vec_nb_bit_to_extract: Vec<usize>,
     vec_fourier_ggsw: &[FourierGgswCiphertext<AlignedVec<Complex64>, Scalar>],
-    pksk: &PackingKeyswitchKey<Vec<Scalar>>,
+    pksk: &LwePackingKeyswitchKey<Vec<Scalar>>,
 ) -> Vec<LweCiphertext<Vec<Scalar>>>
 where
-    Scalar: UnsignedTorus + concrete_commons::numeric::CastFrom<i64>,
+    Scalar: UnsignedTorus + CastFrom<i64>,
 {
     let mut vec_ggsw = vec![];
     for i in 0..vec_lwe_in.len() {
@@ -573,7 +574,7 @@ pub fn vertical_packing_cbs_binary<Scalar>(
     level_cbs: DecompositionLevelCount,
     base_log_cbs: DecompositionBaseLog,
     vec_delta_log: Vec<DeltaLog>,
-    vec_fpksk: &[FunctionalPackingKeyswitchKey<Vec<Scalar>>],
+    vec_fpksk: &[LwePrivateFunctionalPackingKeyswitchKey<Vec<Scalar>>],
 ) -> Vec<LweCiphertext<Vec<Scalar>>>
 where
     Scalar: UnsignedTorus,
@@ -617,7 +618,7 @@ pub fn vertical_packing_cbs_binary_v0<Scalar>(
     vec_lwe_in: &[LweCiphertext<Vec<Scalar>>],
     level_cbs: DecompositionLevelCount,
     base_log_cbs: DecompositionBaseLog,
-    vec_fpksk: &[FunctionalPackingKeyswitchKey<Vec<Scalar>>],
+    vec_fpksk: &[LwePrivateFunctionalPackingKeyswitchKey<Vec<Scalar>>],
 ) -> Vec<LweCiphertext<Vec<Scalar>>>
 where
     Scalar: UnsignedTorus,
@@ -662,10 +663,10 @@ pub fn vertical_packing_cbs_binary_v1<Scalar>(
     level_cbs: DecompositionLevelCount,
     base_log_cbs: DecompositionBaseLog,
     vec_fourier_ggsw: &[FourierGgswCiphertext<AlignedVec<Complex64>, Scalar>],
-    pksk: &PackingKeyswitchKey<Vec<Scalar>>,
+    pksk: &LwePackingKeyswitchKey<Vec<Scalar>>,
 ) -> Vec<LweCiphertext<Vec<Scalar>>>
 where
-    Scalar: UnsignedTorus + concrete_commons::numeric::CastFrom<i64>,
+    Scalar: UnsignedTorus + CastFrom<i64>,
 {
     let mut vec_ggsw = vec![];
     for i in 0..vec_lwe_in.len() {

@@ -10,9 +10,9 @@ use crate::commons::crypto::secret::GlweSecretKey;
 use crate::commons::math::polynomial::Polynomial;
 use crate::commons::math::tensor::{AsMutTensor, AsRefTensor};
 use crate::commons::math::torus::UnsignedTorus;
-use concrete_commons::dispersion::LogStandardDev;
-use concrete_commons::key_kinds::BinaryKeyKind;
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
+use crate::prelude::{
+    BinaryKeyKind, DecompositionBaseLog, DecompositionLevelCount, LogStandardDev, LweSize,
+};
 use concrete_fftw::array::AlignedVec;
 #[cfg(test)]
 mod test;

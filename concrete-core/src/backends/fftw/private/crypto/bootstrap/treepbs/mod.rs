@@ -4,13 +4,13 @@ mod test;
 use crate::backends::fftw::private::crypto::bootstrap::multivaluepbs::fourier_multiplication_torus_integer;
 use crate::backends::fftw::private::crypto::bootstrap::{FourierBootstrapKey, FourierBuffers};
 use crate::backends::fftw::private::math::fft::{AlignedVec, Complex64, Fft, FourierPolynomial};
-use crate::commons::crypto::glwe::{GlweCiphertext, PackingKeyswitchKey};
+use crate::commons::crypto::glwe::{GlweCiphertext, LwePackingKeyswitchKey};
 use crate::commons::crypto::lwe::{LweCiphertext, LweKeyswitchKey};
 use crate::commons::math::polynomial::Polynomial;
 use crate::commons::math::tensor::{AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor};
 use crate::commons::math::torus::UnsignedTorus;
-use concrete_commons::numeric::{CastFrom, CastInto};
-use concrete_commons::parameters::{MonomialDegree, PolynomialSize};
+use crate::commons::numeric::{CastFrom, CastInto};
+use crate::prelude::{MonomialDegree, PolynomialSize};
 
 impl<Cont, Scalar> FourierBootstrapKey<Cont, Scalar>
 where
@@ -134,7 +134,7 @@ where
 
     pub fn treepbs<C1, C2, C3, C4>(
         &self,
-        pks_key: &PackingKeyswitchKey<C1>,
+        pks_key: &LwePackingKeyswitchKey<C1>,
         lwe_out: &mut LweCiphertext<C3>,
         vec_lwe_in: &[LweCiphertext<C3>],
         lwe_buffer_bootstrap: &mut [LweCiphertext<C4>],
@@ -145,7 +145,7 @@ where
         index: usize,
         poly_redundancy: &Polynomial<Vec<Scalar>>,
     ) where
-        PackingKeyswitchKey<C1>: AsRefTensor<Element = Scalar>,
+        LwePackingKeyswitchKey<C1>: AsRefTensor<Element = Scalar>,
         GlweCiphertext<C2>: AsRefTensor<Element = Scalar>,
         LweCiphertext<C3>: AsMutTensor<Element = Scalar>,
         LweCiphertext<C4>: AsMutTensor<Element = Scalar>,
@@ -169,7 +169,7 @@ where
 
     pub fn treepbs_base<C1, C2, C3, C4>(
         &self,
-        pks_key: &PackingKeyswitchKey<C1>,
+        pks_key: &LwePackingKeyswitchKey<C1>,
         lwe_out: &mut LweCiphertext<C3>,
         vec_lwe_in: &[LweCiphertext<C3>],
         lwe_buffer_bootstrap: &mut [LweCiphertext<C4>],
@@ -181,7 +181,7 @@ where
         index: usize,
         poly_redundancy: &Polynomial<Vec<Scalar>>,
     ) where
-        PackingKeyswitchKey<C1>: AsRefTensor<Element = Scalar>,
+        LwePackingKeyswitchKey<C1>: AsRefTensor<Element = Scalar>,
         GlweCiphertext<C2>: AsRefTensor<Element = Scalar>,
         LweCiphertext<C3>: AsMutTensor<Element = Scalar>,
         LweCiphertext<C4>: AsMutTensor<Element = Scalar>,
@@ -237,7 +237,7 @@ where
 
     pub fn treepbs_with_multivalue<C1, C3>(
         &self,
-        pks_key: &PackingKeyswitchKey<C3>,
+        pks_key: &LwePackingKeyswitchKey<C3>,
         lwe_out: &mut LweCiphertext<C1>,
         vec_lwe_in: &[LweCiphertext<C1>],
         ksk: &LweKeyswitchKey<Vec<Scalar>>,
@@ -247,7 +247,7 @@ where
         poly_redundancy: &Polynomial<Vec<Scalar>>,
         poly_acc: &[FourierPolynomial<AlignedVec<Complex64>>],
     ) where
-        PackingKeyswitchKey<C3>: AsRefTensor<Element = Scalar>,
+        LwePackingKeyswitchKey<C3>: AsRefTensor<Element = Scalar>,
         LweCiphertext<C1>: AsMutTensor<Element = Scalar>,
         C1: Clone + AsRefSlice<Element = Scalar>,
     {
@@ -268,7 +268,7 @@ where
 
     pub fn treepbs_with_multivalue_base<C1, C3>(
         &self,
-        pks_key: &PackingKeyswitchKey<C3>,
+        pks_key: &LwePackingKeyswitchKey<C3>,
         lwe_out: &mut LweCiphertext<C1>,
         vec_lwe_in: &[LweCiphertext<C1>],
         ksk: &LweKeyswitchKey<Vec<Scalar>>,
@@ -279,7 +279,7 @@ where
         poly_redundancy: &Polynomial<Vec<Scalar>>,
         poly_acc: &[FourierPolynomial<AlignedVec<Complex64>>],
     ) where
-        PackingKeyswitchKey<C3>: AsRefTensor<Element = Scalar>,
+        LwePackingKeyswitchKey<C3>: AsRefTensor<Element = Scalar>,
         LweCiphertext<C1>: AsMutTensor<Element = Scalar>,
         C1: Clone + AsRefSlice<Element = Scalar>,
     {
@@ -418,7 +418,7 @@ where
     GlweCiphertext::from_container(accumulator_ptxt, poly_size)
 }
 
-impl<Cont> PackingKeyswitchKey<Cont> {
+impl<Cont> LwePackingKeyswitchKey<Cont> {
     //Example: We want (ct0 + ct1*x4 + ct2*x10) * poly
     // vec_lwe = [ct0, ct1, ct2]
     // vec_index  = [0, 4, 6]
@@ -434,7 +434,7 @@ impl<Cont> PackingKeyswitchKey<Cont> {
     /// };
     /// use concrete_core::backends::core::private::crypto::encoding::Plaintext;
     /// use concrete_core::backends::core::private::crypto::glwe::{
-    ///     GlweCiphertext, PackingKeyswitchKey,
+    ///     GlweCiphertext, LwePackingKeyswitchKey,
     /// };
     /// use concrete_core::backends::core::private::crypto::lwe::LweCiphertext;
     /// use concrete_core::backends::core::private::crypto::secret::generators::{
@@ -502,7 +502,7 @@ impl<Cont> PackingKeyswitchKey<Cont> {
     ///     GlweCiphertext::allocate(0u32, polynomial_size, rlwe_dimension.to_glwe_size());
     ///
     /// let noise = LogStandardDev::from_log_standard_dev(-15.);
-    /// let mut pksk = PackingKeyswitchKey::allocate(
+    /// let mut pksk = LwePackingKeyswitchKey::allocate(
     ///     0 as u32,
     ///     level,
     ///     base_log,

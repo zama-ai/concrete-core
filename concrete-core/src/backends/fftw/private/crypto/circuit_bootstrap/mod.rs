@@ -4,13 +4,13 @@ use crate::backends::fftw::private::math::fft::Complex64;
 use crate::commons::crypto::encoding::Cleartext;
 use crate::commons::crypto::ggsw::StandardGgswCiphertext;
 use crate::commons::crypto::glwe::{
-    FunctionalPackingKeyswitchKey, GlweCiphertext, PackingKeyswitchKey,
+    LwePrivateFunctionalPackingKeyswitchKey, GlweCiphertext, LwePackingKeyswitchKey,
 };
 use crate::commons::crypto::lwe::LweCiphertext;
 use crate::commons::math::tensor::{AsMutTensor, AsRefTensor};
 use crate::commons::math::torus::UnsignedTorus;
-use concrete_commons::numeric::CastInto;
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
+use crate::commons::numeric::{CastFrom, CastInto};
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
 use concrete_fftw::array::AlignedVec;
 
 #[cfg(test)]
@@ -28,10 +28,10 @@ pub fn circuit_bootstrap<Scalar, F: Clone + Fn(i64) -> i64>(
     base_log_cbs: DecompositionBaseLog,
     delta_log: DeltaLog,
     f: F,
-    vec_fpksk: &[FunctionalPackingKeyswitchKey<Vec<Scalar>>],
+    vec_fpksk: &[LwePrivateFunctionalPackingKeyswitchKey<Vec<Scalar>>],
 ) -> StandardGgswCiphertext<Vec<Scalar>>
 where
-    Scalar: UnsignedTorus + concrete_commons::numeric::CastFrom<i64>,
+    Scalar: UnsignedTorus + CastFrom<i64>,
 {
     if level_cbs.0 < 1 {
         panic!(); //todo
@@ -69,7 +69,7 @@ where
         );
         for pfksk in vec_fpksk.iter() {
             rlwe_out.as_mut_tensor().fill_with(|| Scalar::ZERO);
-            pfksk.functional_keyswitch_ciphertext(&mut rlwe_out, &lwe_out_bs);
+            pfksk.private_functional_keyswitch_ciphertext(&mut rlwe_out, &lwe_out_bs);
             container.append(&mut rlwe_out.tensor.as_mut_container().to_vec());
         }
     }
@@ -91,10 +91,10 @@ pub fn circuit_bootstrap_v1<Scalar, F: Clone + Fn(i64) -> i64>(
     delta_log: DeltaLog,
     f: F,
     vec_fourier_ggsw: &[FourierGgswCiphertext<AlignedVec<Complex64>, Scalar>],
-    pksk: &PackingKeyswitchKey<Vec<Scalar>>,
+    pksk: &LwePackingKeyswitchKey<Vec<Scalar>>,
 ) -> StandardGgswCiphertext<Vec<Scalar>>
 where
-    Scalar: UnsignedTorus + concrete_commons::numeric::CastFrom<i64>,
+    Scalar: UnsignedTorus + CastFrom<i64>,
 {
     if level_cbs.0 < 1 {
         panic!(); //todo
@@ -168,7 +168,7 @@ pub fn circuit_bootstrap_binary<Scalar>(
     level_cbs: DecompositionLevelCount,
     base_log_cbs: DecompositionBaseLog,
     delta_log: DeltaLog,
-    vec_fpksk: &[FunctionalPackingKeyswitchKey<Vec<Scalar>>],
+    vec_fpksk: &[LwePrivateFunctionalPackingKeyswitchKey<Vec<Scalar>>],
 ) -> StandardGgswCiphertext<Vec<Scalar>>
 where
     Scalar: UnsignedTorus,
@@ -209,7 +209,7 @@ where
 
         for pfksk in vec_fpksk.iter() {
             rlwe_out.as_mut_tensor().fill_with(|| Scalar::ZERO);
-            pfksk.functional_keyswitch_ciphertext(&mut rlwe_out, &lwe_out_bs);
+            pfksk.private_functional_keyswitch_ciphertext(&mut rlwe_out, &lwe_out_bs);
             container.append(&mut rlwe_out.tensor.as_mut_container().to_vec());
         }
     }
@@ -231,7 +231,7 @@ pub fn circuit_bootstrap_binary_v1<Scalar>(
     base_log_cbs: DecompositionBaseLog,
     delta_log: DeltaLog,
     vec_fourier_ggsw: &[FourierGgswCiphertext<AlignedVec<Complex64>, Scalar>],
-    pksk: &PackingKeyswitchKey<Vec<Scalar>>,
+    pksk: &LwePackingKeyswitchKey<Vec<Scalar>>,
 ) -> StandardGgswCiphertext<Vec<Scalar>>
 where
     Scalar: UnsignedTorus,
@@ -312,7 +312,7 @@ pub fn homomorphic_shift<Scalar, C1, C2, F: Fn(i64) -> i64>(
     base_log_cbs: DecompositionBaseLog,
     delta_log: DeltaLog,
 ) where
-    Scalar: UnsignedTorus + concrete_commons::numeric::CastFrom<i64>,
+    Scalar: UnsignedTorus + CastFrom<i64>,
     LweCiphertext<C1>: AsMutTensor<Element = Scalar>,
     LweCiphertext<C2>: AsRefTensor<Element = Scalar>,
 {

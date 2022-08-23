@@ -85,7 +85,9 @@ entity_kind_marker! {
         EncoderKind
             => "An empty type representing the encoder kind in the type system.",
         EncoderVectorKind
-            => "An empty type representing the encoder vector kind in the type system"
+            => "An empty type representing the encoder vector kind in the type system",
+        FunctionalPackingKeyswitchKeyKind
+            => "FunctionalPackingKeyswitchKeyKind"
 }
 
 pub(crate) mod seal {

@@ -36,12 +36,8 @@ impl<EngineError: std::error::Error>
     ) -> Result<(), Self>
     where
         FunctionalPackingKeyswitchKey: FunctionalPackingKeyswitchKeyEntity,
-        InputCiphertextVector: LweCiphertextVectorEntity<
-            KeyDistribution = FunctionalPackingKeyswitchKey::InputKeyDistribution,
-        >,
-        OutputCiphertext: GlweCiphertextEntity<
-            KeyDistribution = FunctionalPackingKeyswitchKey::OutputKeyDistribution,
-        >,
+        InputCiphertextVector: LweCiphertextVectorEntity,
+        OutputCiphertext: GlweCiphertextEntity,
     {
         if input.lwe_dimension() != ksk.input_lwe_dimension() {
             return Err(Self::InputLweDimensionMismatch);
@@ -80,12 +76,8 @@ pub trait LweCiphertextVectorGlweCiphertextDiscardingFunctionalPackingKeyswitchE
     OutputCiphertext,
 >: AbstractEngine where
     FunctionalPackingKeyswitchKey: FunctionalPackingKeyswitchKeyEntity,
-    InputCiphertextVector: LweCiphertextVectorEntity<
-        KeyDistribution = FunctionalPackingKeyswitchKey::InputKeyDistribution,
-    >,
-    OutputCiphertext: GlweCiphertextEntity<
-        KeyDistribution = FunctionalPackingKeyswitchKey::OutputKeyDistribution,
-    >,
+    InputCiphertextVector: LweCiphertextVectorEntity,
+    OutputCiphertext: GlweCiphertextEntity,
 {
     /// Functional Packing keyswitch an LWE ciphertext vector.
     fn discard_functional_packing_keyswitch_lwe_ciphertext_vector(

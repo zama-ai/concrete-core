@@ -2,11 +2,9 @@
 use serde::{Deserialize, Serialize};
 
 use crate::commons::math::random::ByteRandomGenerator;
-use concrete_commons::dispersion::DispersionParameter;
-use concrete_commons::key_kinds::BinaryKeyKind;
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize, LweDimension,
-    MonomialDegree, PlaintextCount, PolynomialSize,
+use crate::prelude::{
+    BinaryKeyKind, DecompositionBaseLog, DecompositionLevelCount, DispersionParameter,
+    GlweDimension, GlweSize, LweDimension, MonomialDegree, PlaintextCount, PolynomialSize,
 };
 
 use crate::commons::crypto::encoding::PlaintextList;

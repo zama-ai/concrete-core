@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 
 /// A structure representing a packing keyswitch key with 32 bits of precision.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct LwePackingKeyswitchKey32(pub(crate) ImplLwePackingKeyswitchKey<Vec<u32>>);
+pub struct LwePackingKeyswitchKey32(pub ImplLwePackingKeyswitchKey<Vec<u32>>);
 impl AbstractEntity for LwePackingKeyswitchKey32 {
     type Kind = LwePackingKeyswitchKeyKind;
 }
@@ -46,7 +46,7 @@ pub(crate) enum LwePackingKeyswitchKey32Version {
 
 /// A structure representing a packing keyswitch key with 64 bits of precision.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct LwePackingKeyswitchKey64(pub(crate) ImplLwePackingKeyswitchKey<Vec<u64>>);
+pub struct LwePackingKeyswitchKey64(pub ImplLwePackingKeyswitchKey<Vec<u64>>);
 impl AbstractEntity for LwePackingKeyswitchKey64 {
     type Kind = LwePackingKeyswitchKeyKind;
 }
