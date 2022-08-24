@@ -10,7 +10,6 @@ use std::slice;
 use concrete_commons::numeric::{CastInto, SignedInteger, UnsignedInteger};
 use concrete_commons::parameters::PolynomialSize;
 
-use crate::commons::math::fft::twiddles::{BackwardCorrector, ForwardCorrector};
 use crate::commons::math::polynomial::Polynomial;
 use crate::commons::math::tensor::{
     ck_dim_eq, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor,
@@ -18,14 +17,15 @@ use crate::commons::math::tensor::{
 use crate::commons::math::torus::UnsignedTorus;
 use crate::commons::utils::zip;
 
-use proto_graphec::prelude::{FourierEngine, OFTSimulator2 as Simulator};
+use proto_graphec::prelude::{FourierEngine, OFTSimulator3b as Simulator};
 use std::cell::RefCell;
 
-use crate::commons::math::fft::{Complex64, Correctors};
+use crate::backends::optalysys::Complex64;
+use super::twiddles::{BackwardCorrector, ForwardCorrector, Correctors};
 use crate::backends::optalysys::private::math::fft::FourierPolynomial;
 
 // Number of bits of accuracy for the OFT simulator.
-const ACCURACY: usize = 40;
+const ACCURACY: usize = 44;
 
 /// A fast fourier transformer.
 ///
@@ -107,7 +107,7 @@ impl Fft {
     ///
     /// ```
     /// use concrete_commons::parameters::PolynomialSize;
-    /// use concrete_core::commons::math::fft::Complex64;
+    /// use concrete_core::backends::optalysys::Complex64;
     /// use concrete_core::backends::optalysys::private::math::fft::{Fft, FourierPolynomial};
     /// use concrete_core::commons::math::polynomial::Polynomial;
     /// use concrete_core::commons::math::random::RandomGenerator;
@@ -149,7 +149,7 @@ impl Fft {
     /// 
     /// ```
     /// use concrete_commons::parameters::PolynomialSize;
-    /// use concrete_core::commons::math::fft::Complex64;
+    /// use concrete_core::backends::optalysys::Complex64;
     /// use concrete_core::backends::optalysys::private::math::fft::{Fft, FourierPolynomial};
     /// use concrete_core::commons::math::polynomial::Polynomial;
     /// use concrete_core::commons::math::random::RandomGenerator;
@@ -229,7 +229,7 @@ impl Fft {
     /// ```
     /// use concrete_commons::numeric::UnsignedInteger;
     /// use concrete_commons::parameters::PolynomialSize;
-    /// use concrete_core::commons::math::fft::Complex64;
+    /// use concrete_core::backends::optalysys::Complex64;
     /// use concrete_core::backends::optalysys::private::math::fft::{Fft, FourierPolynomial};
     /// use concrete_core::commons::math::polynomial::Polynomial;
     /// use concrete_core::commons::math::random::RandomGenerator;
@@ -271,7 +271,7 @@ impl Fft {
     /// ```
     /// use concrete_commons::numeric::UnsignedInteger;
     /// use concrete_commons::parameters::PolynomialSize;
-    /// use concrete_core::commons::math::fft::Complex64;
+    /// use concrete_core::backends::optalysys::Complex64;
     /// use concrete_core::backends::optalysys::private::math::fft::{Fft, FourierPolynomial};
     /// use concrete_core::commons::math::polynomial::Polynomial;
     /// use concrete_core::commons::math::random::RandomGenerator;

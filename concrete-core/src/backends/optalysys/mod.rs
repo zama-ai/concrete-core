@@ -6,6 +6,8 @@
 #[doc(hidden)]
 pub mod private;
 
+pub type Complex64 = num_complex::Complex<f64>;
+
 pub(crate) mod implementation;
 
 pub use implementation::{engines, entities};

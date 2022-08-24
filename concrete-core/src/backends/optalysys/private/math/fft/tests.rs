@@ -1,7 +1,8 @@
+use crate::backends::optalysys::Complex64;
 use crate::backends::optalysys::private::math::fft::{
-    Fft, FourierPolynomial, ALLOWED_POLY_SIZE,
+    Fft, FourierPolynomial,
 };
-use crate::commons::math::fft::twiddles::{Complex64, BackwardCorrector, ForwardCorrector};
+use super::twiddles::{BackwardCorrector, ForwardCorrector};
 use crate::commons::math::polynomial::Polynomial;
 use crate::commons::math::tensor::{AsMutTensor, AsRefTensor};
 use crate::commons::test_tools::new_random_generator;
@@ -9,6 +10,7 @@ use concrete_commons::numeric::Numeric;
 use concrete_commons::parameters::PolynomialSize;
 
 const ACCEPTABLE_ERROR: f64 = 1e-6;
+const ALLOWED_POLY_SIZE: [usize; 8] = [128, 256, 512, 1024, 2048, 4096, 8192, 16384];
 
 #[test]
 fn test_single_forward_backward() {

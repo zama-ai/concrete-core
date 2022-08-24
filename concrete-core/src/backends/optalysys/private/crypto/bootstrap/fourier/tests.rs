@@ -7,7 +7,7 @@ use concrete_commons::parameters::{
 use concrete_npe as npe;
 
 use crate::backends::optalysys::private::crypto::bootstrap::{FourierBootstrapKey, FourierBuffers};
-use crate::commons::math::fft::Complex64;
+use crate::backends::optalysys::Complex64;
 use crate::commons::crypto::bootstrap::StandardBootstrapKey;
 use crate::commons::crypto::encoding::PlaintextList;
 use crate::commons::crypto::glwe::GlweCiphertext;

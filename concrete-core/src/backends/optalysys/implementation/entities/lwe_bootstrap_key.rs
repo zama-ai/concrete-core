@@ -1,12 +1,11 @@
-use crate::commons::math::fft::Complex64;
+use crate::backends::optalysys::Complex64;
 use crate::backends::optalysys::private::crypto::bootstrap::FourierBootstrapKey as ImplFourierBootstrapKey;
 use crate::specification::entities::markers::LweBootstrapKeyKind;
 use crate::specification::entities::{AbstractEntity, LweBootstrapKeyEntity};
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
 };
-
-#[cfg(feature = "serde_serialize")]
+#[cfg(feature = "backend_fftw_serialization")]
 use serde::{Deserialize, Serialize};
 
 /// A structure representing an LWE bootstrap key with 32 bits of precision, in the fourier domain.
@@ -19,7 +18,6 @@ impl AbstractEntity for OptalysysFourierLweBootstrapKey32 {
     type Kind = LweBootstrapKeyKind;
 }
 impl LweBootstrapKeyEntity for OptalysysFourierLweBootstrapKey32 {
-
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.glwe_size().to_glwe_dimension()
     }
@@ -51,7 +49,6 @@ impl AbstractEntity for OptalysysFourierLweBootstrapKey64 {
     type Kind = LweBootstrapKeyKind;
 }
 impl LweBootstrapKeyEntity for OptalysysFourierLweBootstrapKey64 {
-
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.glwe_size().to_glwe_dimension()
     }
