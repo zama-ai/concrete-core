@@ -430,17 +430,14 @@ mod tests {
         let gpu_index = GpuIndex(0);
         let stream = CudaStream::new(gpu_index).unwrap();
         stream.check_device_memory(vec.len() as u64).unwrap();
-        let ptr = stream.malloc::<u64>(vec.len() as u32);
+        let mut d_vec: CudaVec<u64> = stream.malloc::<u64>(vec.len() as u32);
         unsafe {
-            stream.copy_to_gpu(ptr, &vec);
+            stream.copy_to_gpu(&mut d_vec, &vec);
         }
         let mut empty = vec![0_u64; vec.len()];
         unsafe {
-            stream.copy_to_cpu(&mut empty, ptr);
+            stream.copy_to_cpu(&mut empty, &d_vec);
         }
         assert_eq!(vec, empty);
-        unsafe {
-            stream.drop(ptr).unwrap();
-        }
     }
 }
