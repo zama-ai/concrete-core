@@ -45,6 +45,10 @@ pub fn cuda_doc_test() -> Result<(), Error> {
     cmd!(<ENV_TARGET_NATIVE> "cargo test --doc -p concrete-core --features=backend_cuda -- backends::cuda ")
 }
 
+pub fn cuda_core_test() -> Result<(), Error> {
+    cmd!(<ENV_TARGET_NATIVE> "cargo test -p concrete-core --features=backend_cuda -- backends::cuda ")
+}
+
 pub fn crates() -> Result<(), Error> {
     commons()?;
     core()?;
@@ -56,7 +60,8 @@ pub fn crates() -> Result<(), Error> {
 
 pub fn cuda() -> Result<(), Error> {
     cuda_test()?;
-    cuda_doc_test()
+    cuda_doc_test()?;
+    cuda_core_test()
 }
 
 pub fn cov_crates() -> Result<(), Error> {
