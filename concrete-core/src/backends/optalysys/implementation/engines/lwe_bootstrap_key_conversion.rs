@@ -1,4 +1,4 @@
-use crate::commons::math::fft::Complex64;
+use crate::backends::optalysys::Complex64;
 use crate::backends::optalysys::entities::{
     OptalysysFourierLweBootstrapKey32, OptalysysFourierLweBootstrapKey64,
 };
@@ -47,7 +47,6 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey32, OptalysysFourierLweBoots
     /// assert_eq!(fourier_bsk.input_lwe_dimension(), lwe_dim);
     /// assert_eq!(fourier_bsk.decomposition_base_log(), dec_bl);
     /// assert_eq!(fourier_bsk.decomposition_level_count(), dec_lc);
-    ///
     /// #
     /// # Ok(())
     /// # }
@@ -116,7 +115,6 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey64, OptalysysFourierLweBoots
     /// assert_eq!(fourier_bsk.input_lwe_dimension(), lwe_dim);
     /// assert_eq!(fourier_bsk.decomposition_base_log(), dec_bl);
     /// assert_eq!(fourier_bsk.decomposition_level_count(), dec_lc);
-    ///
     /// #
     /// # Ok(())
     /// # }

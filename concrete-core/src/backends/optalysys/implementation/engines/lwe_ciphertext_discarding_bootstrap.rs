@@ -62,7 +62,6 @@ impl
     /// engine.discard_bootstrap_lwe_ciphertext(&mut output, &input, &acc, &optalysys_bsk)?;
     /// #
     /// assert_eq!(output.lwe_dimension(), lwe_dim_output);
-    ///
     /// #
     /// # Ok(())
     /// # }
