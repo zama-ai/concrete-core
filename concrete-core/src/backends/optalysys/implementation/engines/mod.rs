@@ -79,6 +79,5 @@ impl AbstractEngine for OptalysysEngine {
     }
 }
 
-mod destruction;
 mod lwe_bootstrap_key_conversion;
 mod lwe_ciphertext_discarding_bootstrap;

@@ -63,16 +63,6 @@ impl
     /// #
     /// assert_eq!(output.lwe_dimension(), lwe_dim_output);
     ///
-    /// core_engine.destroy(lwe_sk)?;
-    /// core_engine.destroy(glwe_sk)?;
-    /// core_engine.destroy(bsk)?;
-    /// core_engine.destroy(lwe_sk_output)?;
-    /// core_engine.destroy(plaintext)?;
-    /// core_engine.destroy(plaintext_vector)?;
-    /// core_engine.destroy(acc)?;
-    /// core_engine.destroy(input)?;
-    /// core_engine.destroy(output)?;
-    /// engine.destroy(optalysys_bsk)?;
     /// #
     /// # Ok(())
     /// # }

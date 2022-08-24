@@ -1,6 +1,6 @@
 use crate::commons::math::fft::Complex64;
 use crate::backends::optalysys::private::crypto::bootstrap::FourierBootstrapKey as ImplFourierBootstrapKey;
-use crate::specification::entities::markers::{BinaryKeyDistribution, LweBootstrapKeyKind};
+use crate::specification::entities::markers::LweBootstrapKeyKind;
 use crate::specification::entities::{AbstractEntity, LweBootstrapKeyEntity};
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
@@ -19,8 +19,6 @@ impl AbstractEntity for OptalysysFourierLweBootstrapKey32 {
     type Kind = LweBootstrapKeyKind;
 }
 impl LweBootstrapKeyEntity for OptalysysFourierLweBootstrapKey32 {
-    type InputKeyDistribution = BinaryKeyDistribution;
-    type OutputKeyDistribution = BinaryKeyDistribution;
 
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.glwe_size().to_glwe_dimension()
@@ -53,8 +51,6 @@ impl AbstractEntity for OptalysysFourierLweBootstrapKey64 {
     type Kind = LweBootstrapKeyKind;
 }
 impl LweBootstrapKeyEntity for OptalysysFourierLweBootstrapKey64 {
-    type InputKeyDistribution = BinaryKeyDistribution;
-    type OutputKeyDistribution = BinaryKeyDistribution;
 
     fn glwe_dimension(&self) -> GlweDimension {
         self.0.glwe_size().to_glwe_dimension()
