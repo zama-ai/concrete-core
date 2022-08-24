@@ -15,8 +15,9 @@ use crate::commons::math::torus::UnsignedTorus;
 use concrete_commons::dispersion::DispersionParameter;
 use concrete_commons::key_kinds::BinaryKeyKind;
 use concrete_commons::parameters::{
-    CiphertextCount, DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize,
-    LweDimension, MonomialDegree, PlaintextCount, PolynomialSize,
+    CiphertextCount, DecompositionBaseLog, DecompositionLevelCount,
+    FunctionalPackingKeyswitchKeyCount, GlweDimension, GlweSize, LweDimension, LweSize,
+    MonomialDegree, PlaintextCount, PolynomialSize,
 };
 #[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
@@ -971,18 +972,25 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
     ///
     /// assert!(!pfpksk.as_tensor().iter().all(|a| *a == 0));
     /// ```
-    pub fn fill_with_private_functional_packing_keyswitch_key<InKeyCont, OutKeyCont, Scalar, Gen>(
+    pub fn fill_with_private_functional_packing_keyswitch_key<
+        InKeyCont,
+        OutKeyCont,
+        PolyCont,
+        Scalar,
+        Gen,
+    >(
         &mut self,
         input_lwe_key: &LweSecretKey<BinaryKeyKind, InKeyCont>,
         output_glwe_key: &GlweSecretKey<BinaryKeyKind, OutKeyCont>,
         noise_parameters: impl DispersionParameter,
         generator: &mut EncryptionRandomGenerator<Gen>,
         f: &dyn Fn(Scalar) -> Scalar,
-        polynomial: &Polynomial<Vec<Scalar>>,
+        polynomial: &Polynomial<PolyCont>,
     ) where
         Self: AsMutTensor<Element = Scalar>,
         LweSecretKey<BinaryKeyKind, InKeyCont>: AsRefTensor<Element = Scalar>,
         GlweSecretKey<BinaryKeyKind, OutKeyCont>: AsRefTensor<Element = Scalar>,
+        Polynomial<PolyCont>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
         Gen: ByteRandomGenerator,
     {
@@ -1494,5 +1502,319 @@ impl<Cont> LweKeyBitDecomposition<Cont> {
             rlwe_size: self.glwe_size,
             poly_size: self.poly_size,
         }
+    }
+}
+
+/// A private functional packing keyswitching key list.
+#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PrivateFunctionalPackingKeyswitchKeyList<Cont> {
+    tensor: Tensor<Cont>,
+    decomp_base_log: DecompositionBaseLog,
+    decomp_level_count: DecompositionLevelCount,
+    input_lwe_size: LweSize,
+    output_glwe_size: GlweSize,
+    output_polynomial_size: PolynomialSize,
+}
+
+tensor_traits!(PrivateFunctionalPackingKeyswitchKeyList);
+
+impl<Scalar> PrivateFunctionalPackingKeyswitchKeyList<Vec<Scalar>>
+where
+    Scalar: Copy,
+{
+    /// Allocates storage for an owned [`PrivateFunctionalPackingKeyswitchKeyList`].
+    ///
+    /// # Note
+    ///
+    /// This function does *not* generate a private functional packing keyswitch key list, but
+    /// merely allocates a container of the right size.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use concrete_commons::parameters::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, FunctionalPackingKeyswitchKeyCount,
+    ///     GlweDimension, GlweSize, LweDimension, LweSize, PolynomialSize,
+    /// };
+    /// use concrete_core::commons::crypto::glwe::PrivateFunctionalPackingKeyswitchKeyList;
+    /// use concrete_core::commons::crypto::*;
+    /// let input_lwe_dim = LweDimension(200);
+    /// let output_glwe_dim = GlweDimension(2);
+    /// let polynomial_size = PolynomialSize(256);
+    /// let decomp_base_log = DecompositionBaseLog(7);
+    /// let decomp_level_count = DecompositionLevelCount(4);
+    /// let fpksk_count = FunctionalPackingKeyswitchKeyCount(3);
+    ///
+    /// let pfpksk_list = PrivateFunctionalPackingKeyswitchKeyList::allocate(
+    ///     0u8,
+    ///     decomp_level_count,
+    ///     decomp_base_log,
+    ///     input_lwe_dim,
+    ///     output_glwe_dim,
+    ///     polynomial_size,
+    ///     fpksk_count,
+    /// );
+    ///
+    /// assert_eq!(pfpksk_list.decomposition_level_count(), decomp_level_count);
+    /// assert_eq!(pfpksk_list.decomposition_base_log(), decomp_base_log);
+    /// assert_eq!(pfpksk_list.output_glwe_key_dimension(), output_glwe_dim);
+    /// assert_eq!(pfpksk_list.input_lwe_key_dimension(), input_lwe_dim);
+    /// assert_eq!(pfpksk_list.fpksk_count(), fpksk_count);
+    /// ```
+    pub fn allocate(
+        value: Scalar,
+        decomp_size: DecompositionLevelCount,
+        decomp_base_log: DecompositionBaseLog,
+        input_dimension: LweDimension,
+        output_dimension: GlweDimension,
+        output_polynomial_size: PolynomialSize,
+        fpksk_count: FunctionalPackingKeyswitchKeyCount,
+    ) -> Self {
+        PrivateFunctionalPackingKeyswitchKeyList {
+            tensor: Tensor::from_container(vec![
+                value;
+                decomp_size.0
+                    * output_dimension.to_glwe_size().0
+                    * output_polynomial_size.0
+                    * input_dimension.to_lwe_size().0
+                    * fpksk_count.0
+            ]),
+            decomp_base_log,
+            decomp_level_count: decomp_size,
+            input_lwe_size: input_dimension.to_lwe_size(),
+            output_glwe_size: output_dimension.to_glwe_size(),
+            output_polynomial_size,
+        }
+    }
+}
+
+impl<Cont> PrivateFunctionalPackingKeyswitchKeyList<Cont> {
+    /// Creates a list from a container of values.
+    ///
+    /// # Notes
+    ///
+    /// This method does not create a private functional packing keyswitch key list, but merely
+    /// wraps the container in the proper type. It assumes that either the container already
+    /// contains a proper functional keyswitching key list, or that it will be filled right after.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use concrete_commons::parameters::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, FunctionalPackingKeyswitchKeyCount,
+    ///     GlweDimension, GlweSize, LweDimension, LweSize, PolynomialSize,
+    /// };
+    /// use concrete_core::commons::crypto::glwe::PrivateFunctionalPackingKeyswitchKeyList;
+    /// use concrete_core::commons::crypto::*;
+    /// let input_lwe_dim = LweDimension(200);
+    /// let output_glwe_dim = GlweDimension(2);
+    /// let polynomial_size = PolynomialSize(256);
+    /// let decomp_base_log = DecompositionBaseLog(7);
+    /// let decomp_level_count = DecompositionLevelCount(4);
+    /// let fpksk_count = FunctionalPackingKeyswitchKeyCount(3);
+    ///
+    /// let pfpksk_list = PrivateFunctionalPackingKeyswitchKeyList::from_container(
+    ///     vec![
+    ///         0 as u8;
+    ///         input_lwe_dim.to_lwe_size().0
+    ///             * output_glwe_dim.to_glwe_size().0
+    ///             * polynomial_size.0
+    ///             * decomp_level_count.0
+    ///             * fpksk_count.0
+    ///     ],
+    ///     decomp_base_log,
+    ///     decomp_level_count,
+    ///     input_lwe_dim,
+    ///     output_glwe_dim,
+    ///     polynomial_size,
+    ///     fpksk_count,
+    /// );
+    ///
+    /// assert_eq!(pfpksk_list.decomposition_level_count(), decomp_level_count);
+    /// assert_eq!(pfpksk_list.decomposition_base_log(), decomp_base_log);
+    /// assert_eq!(pfpksk_list.output_glwe_key_dimension(), output_glwe_dim);
+    /// assert_eq!(pfpksk_list.input_lwe_key_dimension(), input_lwe_dim);
+    /// assert_eq!(pfpksk_list.fpksk_count(), fpksk_count);
+    /// ```
+    pub fn from_container(
+        cont: Cont,
+        decomp_base_log: DecompositionBaseLog,
+        decomp_size: DecompositionLevelCount,
+        input_dimension: LweDimension,
+        output_glwe_dimension: GlweDimension,
+        output_polynomial_size: PolynomialSize,
+        fpksk_count: FunctionalPackingKeyswitchKeyCount,
+    ) -> PrivateFunctionalPackingKeyswitchKeyList<Cont>
+    where
+        Cont: AsRefSlice,
+    {
+        let tensor = Tensor::from_container(cont);
+        ck_dim_div!(tensor.len() =>
+            output_glwe_dimension.to_glwe_size().0 * output_polynomial_size.0,
+            decomp_size.0,
+            input_dimension.to_lwe_size().0,
+            fpksk_count.0);
+        PrivateFunctionalPackingKeyswitchKeyList {
+            tensor,
+            decomp_base_log,
+            decomp_level_count: decomp_size,
+            input_lwe_size: input_dimension.to_lwe_size(),
+            output_glwe_size: output_glwe_dimension.to_glwe_size(),
+            output_polynomial_size,
+        }
+    }
+
+    /// Returns the dimension of the output GLWE key.
+    pub fn output_glwe_key_dimension(&self) -> GlweDimension {
+        self.output_glwe_size.to_glwe_dimension()
+    }
+
+    /// Returns the size of the polynomials composing the GLWE ciphertext
+    pub fn output_polynomial_size(&self) -> PolynomialSize {
+        self.output_polynomial_size
+    }
+
+    /// Returns the dimension of the input LWE key.
+    pub fn input_lwe_key_dimension(&self) -> LweDimension {
+        self.input_lwe_size.to_lwe_dimension()
+    }
+
+    /// Returns the number of levels used for the decomposition of the input key bits.
+    pub fn decomposition_level_count(&self) -> DecompositionLevelCount {
+        self.decomp_level_count
+    }
+
+    /// Returns the logarithm of the base used for the decomposition of the input key bits.
+    ///
+    /// Indeed, the basis used is always of the form $2^b$. This function returns $b$.
+    pub fn decomposition_base_log(&self) -> DecompositionBaseLog {
+        self.decomp_base_log
+    }
+
+    /// Returns the number of private functional packing keyswitch key in the list.
+    pub fn fpksk_count(&self) -> FunctionalPackingKeyswitchKeyCount
+    where
+        Self: AsRefTensor,
+    {
+        let single_ksk_size = self.output_glwe_size.0
+            * self.output_polynomial_size.0
+            * self.decomp_level_count.0
+            * self.input_lwe_size.0;
+        ck_dim_div!(self.as_tensor().len() => single_ksk_size);
+        FunctionalPackingKeyswitchKeyCount(self.as_tensor().len() / single_ksk_size)
+    }
+
+    /// Returns an iterator over keys borrowed from the list.
+    pub fn fpksk_iter(
+        &self,
+    ) -> impl DoubleEndedIterator<
+        Item = PrivateFunctionalPackingKeyswitchKey<&[<Self as AsRefTensor>::Element]>,
+    >
+    where
+        Self: AsRefTensor,
+    {
+        let single_ksk_size = self.output_glwe_size.0
+            * self.output_polynomial_size.0
+            * self.decomp_level_count.0
+            * self.input_lwe_size.0;
+        ck_dim_div!(self.as_tensor().len() => single_ksk_size);
+        self.as_tensor()
+            .subtensor_iter(single_ksk_size)
+            .map(move |sub| {
+                PrivateFunctionalPackingKeyswitchKey::from_container(
+                    sub.into_container(),
+                    self.decomposition_base_log(),
+                    self.decomposition_level_count(),
+                    self.output_glwe_key_dimension(),
+                    self.output_polynomial_size(),
+                )
+            })
+    }
+
+    /// Returns an iterator over keys borrowed from the list.
+    pub fn fpksk_iter_mut(
+        &mut self,
+    ) -> impl DoubleEndedIterator<
+        Item = PrivateFunctionalPackingKeyswitchKey<&mut [<Self as AsMutTensor>::Element]>,
+    >
+    where
+        Self: AsMutTensor,
+    {
+        let single_ksk_size = self.output_glwe_size.0
+            * self.output_polynomial_size.0
+            * self.decomp_level_count.0
+            * self.input_lwe_size.0;
+        ck_dim_div!(self.as_mut_tensor().len() => single_ksk_size);
+
+        let decomposition_base_log = self.decomposition_base_log();
+        let decomposition_level_count = self.decomposition_level_count();
+        let output_glwe_key_dimension = self.output_glwe_key_dimension();
+        let output_polynomial_size = self.output_polynomial_size();
+
+        self.as_mut_tensor()
+            .subtensor_iter_mut(single_ksk_size)
+            .map(move |sub| {
+                PrivateFunctionalPackingKeyswitchKey::from_container(
+                    sub.into_container(),
+                    decomposition_base_log,
+                    decomposition_level_count,
+                    output_glwe_key_dimension,
+                    output_polynomial_size,
+                )
+            })
+    }
+
+    pub fn fill_with_fpksk_for_circuit_bootstrap<Scalar, C1, C2, C3, Gen>(
+        &mut self,
+        input_lwe_key: &LweSecretKey<BinaryKeyKind, C1>,
+        output_glwe_key: &GlweSecretKey<BinaryKeyKind, C2>,
+        encrypted_glwe_key: &GlweSecretKey<BinaryKeyKind, C3>,
+        noise_parameters: impl DispersionParameter,
+        generator: &mut EncryptionRandomGenerator<Gen>,
+    ) where
+        Scalar: UnsignedTorus,
+        Self: AsMutTensor<Element = Scalar>,
+        LweSecretKey<BinaryKeyKind, C1>: AsRefTensor<Element = Scalar>,
+        GlweSecretKey<BinaryKeyKind, C2>: AsRefTensor<Element = Scalar>,
+        GlweSecretKey<BinaryKeyKind, C3>: AsRefTensor<Element = Scalar>,
+        Gen: ByteRandomGenerator,
+    {
+        for (i, mut fpksk) in self
+            .fpksk_iter_mut()
+            .take(output_glwe_key.key_size().0)
+            .enumerate()
+        {
+            fpksk.fill_with_private_functional_packing_keyswitch_key(
+                input_lwe_key,
+                output_glwe_key,
+                noise_parameters,
+                generator,
+                &|x| Scalar::ZERO.wrapping_sub(x),
+                &Polynomial::from_container(
+                    encrypted_glwe_key
+                        .as_polynomial_list()
+                        .get_polynomial(i)
+                        .tensor
+                        .into_container(),
+                ),
+            );
+        }
+
+        let mut polynomial = Polynomial::allocate(Scalar::ZERO, output_glwe_key.polynomial_size());
+        *polynomial
+            .get_mut_monomial(MonomialDegree(0))
+            .get_mut_coefficient() = Scalar::ONE;
+
+        let mut last_fpksk = self.fpksk_iter_mut().rev().next().unwrap();
+
+        last_fpksk.fill_with_private_functional_packing_keyswitch_key(
+            input_lwe_key,
+            output_glwe_key,
+            noise_parameters,
+            generator,
+            &|x| x,
+            &polynomial,
+        );
     }
 }
