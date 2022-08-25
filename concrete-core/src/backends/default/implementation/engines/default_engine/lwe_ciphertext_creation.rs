@@ -26,20 +26,23 @@ impl LweCiphertextCreationEngine<Vec<u32>, LweCiphertext32> for DefaultEngine {
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let ciphertext: LweCiphertext32 = engine.create_lwe_ciphertext(owned_container)?;
+    /// let ciphertext: LweCiphertext32 = engine.create_lwe_ciphertext_from(owned_container)?;
     /// #
     /// # Ok(())
     /// # }
     /// ```
-    fn create_lwe_ciphertext(
+    fn create_lwe_ciphertext_from(
         &mut self,
         container: Vec<u32>,
     ) -> Result<LweCiphertext32, LweCiphertextCreationError<Self::EngineError>> {
         LweCiphertextCreationError::<Self::EngineError>::perform_generic_checks(container.len())?;
-        Ok(unsafe { self.create_lwe_ciphertext_unchecked(container) })
+        Ok(unsafe { self.create_lwe_ciphertext_from_unchecked(container) })
     }
 
-    unsafe fn create_lwe_ciphertext_unchecked(&mut self, container: Vec<u32>) -> LweCiphertext32 {
+    unsafe fn create_lwe_ciphertext_from_unchecked(
+        &mut self,
+        container: Vec<u32>,
+    ) -> LweCiphertext32 {
         LweCiphertext32(ImplLweCiphertext::from_container(container))
     }
 }
@@ -64,20 +67,23 @@ impl LweCiphertextCreationEngine<Vec<u64>, LweCiphertext64> for DefaultEngine {
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let ciphertext: LweCiphertext64 = engine.create_lwe_ciphertext(owned_container)?;
+    /// let ciphertext: LweCiphertext64 = engine.create_lwe_ciphertext_from(owned_container)?;
     /// #
     /// # Ok(())
     /// # }
     /// ```
-    fn create_lwe_ciphertext(
+    fn create_lwe_ciphertext_from(
         &mut self,
         container: Vec<u64>,
     ) -> Result<LweCiphertext64, LweCiphertextCreationError<Self::EngineError>> {
         LweCiphertextCreationError::<Self::EngineError>::perform_generic_checks(container.len())?;
-        Ok(unsafe { self.create_lwe_ciphertext_unchecked(container) })
+        Ok(unsafe { self.create_lwe_ciphertext_from_unchecked(container) })
     }
 
-    unsafe fn create_lwe_ciphertext_unchecked(&mut self, container: Vec<u64>) -> LweCiphertext64 {
+    unsafe fn create_lwe_ciphertext_from_unchecked(
+        &mut self,
+        container: Vec<u64>,
+    ) -> LweCiphertext64 {
         LweCiphertext64(ImplLweCiphertext::from_container(container))
     }
 }
@@ -106,20 +112,20 @@ impl<'data> LweCiphertextCreationEngine<&'data [u32], LweCiphertextView32<'data>
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let ciphertext_view: LweCiphertextView32 = engine.create_lwe_ciphertext(slice)?;
+    /// let ciphertext_view: LweCiphertextView32 = engine.create_lwe_ciphertext_from(slice)?;
     /// #
     /// # Ok(())
     /// # }
     /// ```
-    fn create_lwe_ciphertext(
+    fn create_lwe_ciphertext_from(
         &mut self,
         container: &'data [u32],
     ) -> Result<LweCiphertextView32<'data>, LweCiphertextCreationError<Self::EngineError>> {
         LweCiphertextCreationError::<Self::EngineError>::perform_generic_checks(container.len())?;
-        Ok(unsafe { self.create_lwe_ciphertext_unchecked(container) })
+        Ok(unsafe { self.create_lwe_ciphertext_from_unchecked(container) })
     }
 
-    unsafe fn create_lwe_ciphertext_unchecked(
+    unsafe fn create_lwe_ciphertext_from_unchecked(
         &mut self,
         container: &'data [u32],
     ) -> LweCiphertextView32<'data> {
@@ -151,20 +157,20 @@ impl<'data> LweCiphertextCreationEngine<&'data mut [u32], LweCiphertextMutView32
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let ciphertext_view: LweCiphertextMutView32 = engine.create_lwe_ciphertext(slice)?;
+    /// let ciphertext_view: LweCiphertextMutView32 = engine.create_lwe_ciphertext_from(slice)?;
     /// #
     /// # Ok(())
     /// # }
     /// ```
-    fn create_lwe_ciphertext(
+    fn create_lwe_ciphertext_from(
         &mut self,
         container: &'data mut [u32],
     ) -> Result<LweCiphertextMutView32<'data>, LweCiphertextCreationError<Self::EngineError>> {
         LweCiphertextCreationError::<Self::EngineError>::perform_generic_checks(container.len())?;
-        Ok(unsafe { self.create_lwe_ciphertext_unchecked(container) })
+        Ok(unsafe { self.create_lwe_ciphertext_from_unchecked(container) })
     }
 
-    unsafe fn create_lwe_ciphertext_unchecked(
+    unsafe fn create_lwe_ciphertext_from_unchecked(
         &mut self,
         container: &'data mut [u32],
     ) -> LweCiphertextMutView32<'data> {
@@ -194,20 +200,20 @@ impl<'data> LweCiphertextCreationEngine<&'data [u64], LweCiphertextView64<'data>
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let ciphertext_view: LweCiphertextView64 = engine.create_lwe_ciphertext(slice)?;
+    /// let ciphertext_view: LweCiphertextView64 = engine.create_lwe_ciphertext_from(slice)?;
     /// #
     /// # Ok(())
     /// # }
     /// ```
-    fn create_lwe_ciphertext(
+    fn create_lwe_ciphertext_from(
         &mut self,
         container: &'data [u64],
     ) -> Result<LweCiphertextView64<'data>, LweCiphertextCreationError<Self::EngineError>> {
         LweCiphertextCreationError::<Self::EngineError>::perform_generic_checks(container.len())?;
-        Ok(unsafe { self.create_lwe_ciphertext_unchecked(container) })
+        Ok(unsafe { self.create_lwe_ciphertext_from_unchecked(container) })
     }
 
-    unsafe fn create_lwe_ciphertext_unchecked(
+    unsafe fn create_lwe_ciphertext_from_unchecked(
         &mut self,
         container: &'data [u64],
     ) -> LweCiphertextView64<'data> {
@@ -239,20 +245,20 @@ impl<'data> LweCiphertextCreationEngine<&'data mut [u64], LweCiphertextMutView64
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let ciphertext_view: LweCiphertextMutView64 = engine.create_lwe_ciphertext(slice)?;
+    /// let ciphertext_view: LweCiphertextMutView64 = engine.create_lwe_ciphertext_from(slice)?;
     /// #
     /// # Ok(())
     /// # }
     /// ```
-    fn create_lwe_ciphertext(
+    fn create_lwe_ciphertext_from(
         &mut self,
         container: &'data mut [u64],
     ) -> Result<LweCiphertextMutView64<'data>, LweCiphertextCreationError<Self::EngineError>> {
         LweCiphertextCreationError::<Self::EngineError>::perform_generic_checks(container.len())?;
-        Ok(unsafe { self.create_lwe_ciphertext_unchecked(container) })
+        Ok(unsafe { self.create_lwe_ciphertext_from_unchecked(container) })
     }
 
-    unsafe fn create_lwe_ciphertext_unchecked(
+    unsafe fn create_lwe_ciphertext_from_unchecked(
         &mut self,
         container: &'data mut [u64],
     ) -> LweCiphertextMutView64<'data> {

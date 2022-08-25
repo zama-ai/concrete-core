@@ -21,7 +21,11 @@ impl PrototypesCleartextVector<Precision32> for Maker {
     type CleartextVectorProto = ProtoCleartextVector32;
 
     fn transform_raw_vec_to_cleartext_vector(&mut self, raw: &[u32]) -> Self::CleartextVectorProto {
-        ProtoCleartextVector32(self.default_engine.create_cleartext_vector(raw).unwrap())
+        ProtoCleartextVector32(
+            self.default_engine
+                .create_cleartext_vector_from(raw)
+                .unwrap(),
+        )
     }
 
     fn transform_cleartext_vector_to_raw_vec(
@@ -38,7 +42,11 @@ impl PrototypesCleartextVector<Precision64> for Maker {
     type CleartextVectorProto = ProtoCleartextVector64;
 
     fn transform_raw_vec_to_cleartext_vector(&mut self, raw: &[u64]) -> Self::CleartextVectorProto {
-        ProtoCleartextVector64(self.default_engine.create_cleartext_vector(raw).unwrap())
+        ProtoCleartextVector64(
+            self.default_engine
+                .create_cleartext_vector_from(raw)
+                .unwrap(),
+        )
     }
 
     fn transform_cleartext_vector_to_raw_vec(

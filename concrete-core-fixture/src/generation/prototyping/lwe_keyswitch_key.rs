@@ -8,7 +8,7 @@ use crate::generation::{
 };
 use concrete_commons::dispersion::Variance;
 use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
-use concrete_core::prelude::LweKeyswitchKeyCreationEngine;
+use concrete_core::prelude::LweKeyswitchKeyGenerationEngine;
 
 /// A trait allowing to manipulate lwe keyswitch key prototypes.
 pub trait PrototypesLweKeyswitchKey<
@@ -49,7 +49,7 @@ impl PrototypesLweKeyswitchKey<Precision32, BinaryKeyDistribution, BinaryKeyDist
     ) -> Self::LweKeyswitchKeyProto {
         ProtoBinaryBinaryLweKeyswitchKey32(
             self.default_engine
-                .create_lwe_keyswitch_key(
+                .generate_new_lwe_keyswitch_key(
                     &input_key.0,
                     &output_key.0,
                     decomposition_level,
@@ -76,7 +76,7 @@ impl PrototypesLweKeyswitchKey<Precision64, BinaryKeyDistribution, BinaryKeyDist
     ) -> Self::LweKeyswitchKeyProto {
         ProtoBinaryBinaryLweKeyswitchKey64(
             self.default_engine
-                .create_lwe_keyswitch_key(
+                .generate_new_lwe_keyswitch_key(
                     &input_key.0,
                     &output_key.0,
                     decomposition_level,

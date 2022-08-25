@@ -76,7 +76,7 @@ pub unsafe extern "C" fn default_engine_discard_convert_lwe_bootstrap_key_to_lwe
         let output_as_slice = std::slice::from_raw_parts_mut(output, bsk_buffer_length);
 
         let mut output = engine
-            .construct_lwe_bootstrap_key(
+            .create_lwe_bootstrap_key_from(
                 output_as_slice,
                 glwe_size,
                 polynomial_size,
@@ -121,7 +121,7 @@ pub unsafe extern "C" fn default_engine_discard_convert_lwe_bootstrap_key_to_lwe
 
         let output_as_slice = std::slice::from_raw_parts_mut(output, bsk_buffer_length);
 
-        let mut output = engine.construct_lwe_bootstrap_key_unchecked(
+        let mut output = engine.create_lwe_bootstrap_key_from_unchecked(
             output_as_slice,
             glwe_size,
             polynomial_size,

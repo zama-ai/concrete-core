@@ -33,7 +33,7 @@ impl GlweCiphertextConsumingRetrievalEngine<GlweCiphertext32, Vec<u32>> for Defa
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext: GlweCiphertext32 =
-    ///     engine.create_glwe_ciphertext(owned_container, polynomial_size)?;
+    ///     engine.create_glwe_ciphertext_from(owned_container, polynomial_size)?;
     /// let retrieved_container = engine.consume_retrieve_glwe_ciphertext(ciphertext)?;
     /// assert_eq!(original_vec_ptr, retrieved_container.as_ptr());
     /// #
@@ -80,7 +80,7 @@ impl GlweCiphertextConsumingRetrievalEngine<GlweCiphertext64, Vec<u64>> for Defa
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext: GlweCiphertext64 =
-    ///     engine.create_glwe_ciphertext(owned_container, polynomial_size)?;
+    ///     engine.create_glwe_ciphertext_from(owned_container, polynomial_size)?;
     /// let retrieved_container = engine.consume_retrieve_glwe_ciphertext(ciphertext)?;
     /// assert_eq!(original_vec_ptr, retrieved_container.as_ptr());
     /// #
@@ -130,7 +130,7 @@ impl<'data> GlweCiphertextConsumingRetrievalEngine<GlweCiphertextView32<'data>, 
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext_view: GlweCiphertextView32 =
-    ///     engine.create_glwe_ciphertext(slice, polynomial_size)?;
+    ///     engine.create_glwe_ciphertext_from(slice, polynomial_size)?;
     /// let retrieved_slice = engine.consume_retrieve_glwe_ciphertext(ciphertext_view)?;
     /// assert_eq!(slice, retrieved_slice);
     /// #
@@ -182,7 +182,7 @@ impl<'data> GlweCiphertextConsumingRetrievalEngine<GlweCiphertextMutView32<'data
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext_view: GlweCiphertextMutView32 =
-    ///     engine.create_glwe_ciphertext(slice, polynomial_size)?;
+    ///     engine.create_glwe_ciphertext_from(slice, polynomial_size)?;
     /// let retrieved_slice = engine.consume_retrieve_glwe_ciphertext(ciphertext_view)?;
     /// assert_eq!(underlying_ptr, retrieved_slice.as_ptr());
     /// #
@@ -232,7 +232,7 @@ impl<'data> GlweCiphertextConsumingRetrievalEngine<GlweCiphertextView64<'data>, 
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext_view: GlweCiphertextView64 =
-    ///     engine.create_glwe_ciphertext(slice, polynomial_size)?;
+    ///     engine.create_glwe_ciphertext_from(slice, polynomial_size)?;
     /// let retrieved_slice = engine.consume_retrieve_glwe_ciphertext(ciphertext_view)?;
     /// assert_eq!(slice, retrieved_slice);
     /// #
@@ -284,7 +284,7 @@ impl<'data> GlweCiphertextConsumingRetrievalEngine<GlweCiphertextMutView64<'data
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext_view: GlweCiphertextMutView64 =
-    ///     engine.create_glwe_ciphertext(slice, polynomial_size)?;
+    ///     engine.create_glwe_ciphertext_from(slice, polynomial_size)?;
     /// let retrieved_slice = engine.consume_retrieve_glwe_ciphertext(ciphertext_view)?;
     /// assert_eq!(underlying_ptr, retrieved_slice.as_ptr());
     /// #

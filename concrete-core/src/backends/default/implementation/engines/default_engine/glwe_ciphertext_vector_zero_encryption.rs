@@ -35,7 +35,8 @@ impl GlweCiphertextVectorZeroEncryptionEngine<GlweSecretKey32, GlweCiphertextVec
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: GlweSecretKey32 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let key: GlweSecretKey32 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
     ///
     /// let ciphertext_vector =
     ///     engine.zero_encrypt_glwe_ciphertext_vector(&key, noise, ciphertext_count)?;
@@ -104,7 +105,8 @@ impl GlweCiphertextVectorZeroEncryptionEngine<GlweSecretKey64, GlweCiphertextVec
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: GlweSecretKey64 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let key: GlweSecretKey64 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
     ///
     /// let ciphertext_vector =
     ///     engine.zero_encrypt_glwe_ciphertext_vector(&key, noise, ciphertext_count)?;

@@ -21,7 +21,7 @@ where
     Plaintext: PlaintextEntity,
 {
     /// Creates a plaintext from an arbitrary value.
-    fn create_plaintext(
+    fn create_plaintext_from(
         &mut self,
         value: &Value,
     ) -> Result<Plaintext, PlaintextCreationError<Self::EngineError>>;
@@ -32,5 +32,5 @@ where
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
     /// of [`PlaintextCreationError`]. For safety concerns _specific_ to an engine, refer to the
     /// implementer safety section.
-    unsafe fn create_plaintext_unchecked(&mut self, value: &Value) -> Plaintext;
+    unsafe fn create_plaintext_from_unchecked(&mut self, value: &Value) -> Plaintext;
 }

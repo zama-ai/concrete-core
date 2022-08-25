@@ -60,7 +60,7 @@ impl PrototypesGgswCiphertext<Precision32, BinaryKeyDistribution> for Maker {
         decomposition_level_count: DecompositionLevelCount,
         decomposition_base_log: DecompositionBaseLog,
     ) -> Self::GgswCiphertextProto {
-        let plaintext = self.default_engine.create_plaintext(&0u32).unwrap();
+        let plaintext = self.default_engine.create_plaintext_from(&0u32).unwrap();
         ProtoBinaryGgswCiphertext32(
             self.default_engine
                 .trivially_encrypt_scalar_ggsw_ciphertext(
@@ -127,7 +127,7 @@ impl PrototypesGgswCiphertext<Precision64, BinaryKeyDistribution> for Maker {
         decomposition_level_count: DecompositionLevelCount,
         decomposition_base_log: DecompositionBaseLog,
     ) -> Self::GgswCiphertextProto {
-        let plaintext = self.default_engine.create_plaintext(&0u64).unwrap();
+        let plaintext = self.default_engine.create_plaintext_from(&0u64).unwrap();
         ProtoBinaryGgswCiphertext64(
             self.default_engine
                 .trivially_encrypt_scalar_ggsw_ciphertext(

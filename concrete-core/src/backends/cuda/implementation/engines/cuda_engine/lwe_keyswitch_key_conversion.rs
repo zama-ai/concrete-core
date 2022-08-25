@@ -44,9 +44,11 @@ impl LweKeyswitchKeyConversionEngine<LweKeyswitchKey32, CudaLweKeyswitchKey32> f
     ///
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let input_key: LweSecretKey32 = default_engine.create_lwe_secret_key(input_lwe_dimension)?;
-    /// let output_key: LweSecretKey32 = default_engine.create_lwe_secret_key(output_lwe_dimension)?;
-    /// let ksk = default_engine.create_lwe_keyswitch_key(
+    /// let input_key: LweSecretKey32 =
+    ///     default_engine.generate_new_lwe_secret_key(input_lwe_dimension)?;
+    /// let output_key: LweSecretKey32 =
+    ///     default_engine.generate_new_lwe_secret_key(output_lwe_dimension)?;
+    /// let ksk = default_engine.generate_new_lwe_keyswitch_key(
     ///     &input_key,
     ///     &output_key,
     ///     decomposition_level_count,
@@ -132,9 +134,11 @@ impl LweKeyswitchKeyConversionEngine<CudaLweKeyswitchKey32, LweKeyswitchKey32> f
     ///
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let input_key: LweSecretKey32 = default_engine.create_lwe_secret_key(input_lwe_dimension)?;
-    /// let output_key: LweSecretKey32 = default_engine.create_lwe_secret_key(output_lwe_dimension)?;
-    /// let h_ksk = default_engine.create_lwe_keyswitch_key(
+    /// let input_key: LweSecretKey32 =
+    ///     default_engine.generate_new_lwe_secret_key(input_lwe_dimension)?;
+    /// let output_key: LweSecretKey32 =
+    ///     default_engine.generate_new_lwe_secret_key(output_lwe_dimension)?;
+    /// let h_ksk = default_engine.generate_new_lwe_keyswitch_key(
     ///     &input_key,
     ///     &output_key,
     ///     decomposition_level_count,
@@ -211,9 +215,11 @@ impl LweKeyswitchKeyConversionEngine<LweKeyswitchKey64, CudaLweKeyswitchKey64> f
     ///
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let input_key: LweSecretKey64 = default_engine.create_lwe_secret_key(input_lwe_dimension)?;
-    /// let output_key: LweSecretKey64 = default_engine.create_lwe_secret_key(output_lwe_dimension)?;
-    /// let ksk = default_engine.create_lwe_keyswitch_key(
+    /// let input_key: LweSecretKey64 =
+    ///     default_engine.generate_new_lwe_secret_key(input_lwe_dimension)?;
+    /// let output_key: LweSecretKey64 =
+    ///     default_engine.generate_new_lwe_secret_key(output_lwe_dimension)?;
+    /// let ksk = default_engine.generate_new_lwe_keyswitch_key(
     ///     &input_key,
     ///     &output_key,
     ///     decomposition_level_count,
@@ -294,9 +300,11 @@ impl LweKeyswitchKeyConversionEngine<CudaLweKeyswitchKey64, LweKeyswitchKey64> f
     ///
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let input_key: LweSecretKey64 = default_engine.create_lwe_secret_key(input_lwe_dimension)?;
-    /// let output_key: LweSecretKey64 = default_engine.create_lwe_secret_key(output_lwe_dimension)?;
-    /// let h_ksk = default_engine.create_lwe_keyswitch_key(
+    /// let input_key: LweSecretKey64 =
+    ///     default_engine.generate_new_lwe_secret_key(input_lwe_dimension)?;
+    /// let output_key: LweSecretKey64 =
+    ///     default_engine.generate_new_lwe_secret_key(output_lwe_dimension)?;
+    /// let h_ksk = default_engine.generate_new_lwe_keyswitch_key(
     ///     &input_key,
     ///     &output_key,
     ///     decomposition_level_count,

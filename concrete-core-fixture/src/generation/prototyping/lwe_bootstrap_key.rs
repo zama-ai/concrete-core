@@ -12,8 +12,8 @@ use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
 };
 use concrete_core::prelude::{
-    LweBootstrapKeyConstructionEngine, LweBootstrapKeyConsumingRetrievalEngine,
-    LweBootstrapKeyCreationEngine,
+    LweBootstrapKeyConsumingRetrievalEngine, LweBootstrapKeyCreationEngine,
+    LweBootstrapKeyGenerationEngine,
 };
 
 /// A trait allowing to manipulate LWE bootstrap key prototypes.
@@ -67,7 +67,7 @@ impl PrototypesLweBootstrapKey<Precision32, BinaryKeyDistribution, BinaryKeyDist
     ) -> Self::LweBootstrapKeyProto {
         ProtoBinaryBinaryLweBootstrapKey32(
             self.default_parallel_engine
-                .create_lwe_bootstrap_key(
+                .generate_new_lwe_bootstrap_key(
                     &input_key.0,
                     &output_key.0,
                     decomposition_base_log,
@@ -88,7 +88,7 @@ impl PrototypesLweBootstrapKey<Precision32, BinaryKeyDistribution, BinaryKeyDist
     ) -> Self::LweBootstrapKeyProto {
         ProtoBinaryBinaryLweBootstrapKey32(
             self.default_engine
-                .construct_lwe_bootstrap_key(
+                .create_lwe_bootstrap_key_from(
                     raw.to_owned(),
                     glwe_size,
                     polynomial_size,
@@ -125,7 +125,7 @@ impl PrototypesLweBootstrapKey<Precision64, BinaryKeyDistribution, BinaryKeyDist
     ) -> Self::LweBootstrapKeyProto {
         ProtoBinaryBinaryLweBootstrapKey64(
             self.default_parallel_engine
-                .create_lwe_bootstrap_key(
+                .generate_new_lwe_bootstrap_key(
                     &input_key.0,
                     &output_key.0,
                     decomposition_base_log,
@@ -146,7 +146,7 @@ impl PrototypesLweBootstrapKey<Precision64, BinaryKeyDistribution, BinaryKeyDist
     ) -> Self::LweBootstrapKeyProto {
         ProtoBinaryBinaryLweBootstrapKey64(
             self.default_engine
-                .construct_lwe_bootstrap_key(
+                .create_lwe_bootstrap_key_from(
                     raw.to_owned(),
                     glwe_size,
                     polynomial_size,

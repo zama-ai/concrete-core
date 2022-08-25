@@ -24,7 +24,7 @@ impl CleartextVectorDiscardingRetrievalEngine<CleartextVector32, u32> for Defaul
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let cleartext_vector: CleartextVector32 = engine.create_cleartext_vector(&input)?;
+    /// let cleartext_vector: CleartextVector32 = engine.create_cleartext_vector_from(&input)?;
     /// engine.discard_retrieve_cleartext_vector(retrieved.as_mut_slice(), &cleartext_vector)?;
     ///
     /// assert_eq!(retrieved[0], 3_u32);
@@ -69,7 +69,7 @@ impl CleartextVectorDiscardingRetrievalEngine<CleartextVector64, u64> for Defaul
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let cleartext_vector: CleartextVector64 = engine.create_cleartext_vector(&input)?;
+    /// let cleartext_vector: CleartextVector64 = engine.create_cleartext_vector_from(&input)?;
     /// engine.discard_retrieve_cleartext_vector(retrieved.as_mut_slice(), &cleartext_vector)?;
     ///
     /// assert_eq!(retrieved[0], 3_u64);
@@ -114,7 +114,7 @@ impl CleartextVectorDiscardingRetrievalEngine<CleartextVectorF64, f64> for Defau
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let cleartext_vector: CleartextVectorF64 = engine.create_cleartext_vector(&input)?;
+    /// let cleartext_vector: CleartextVectorF64 = engine.create_cleartext_vector_from(&input)?;
     /// engine.discard_retrieve_cleartext_vector(retrieved.as_mut_slice(), &cleartext_vector)?;
     ///
     /// assert_eq!(retrieved[0], 3.0_f64);

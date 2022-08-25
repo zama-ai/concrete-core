@@ -19,7 +19,7 @@ where
     EncoderVector: EncoderVectorEntity,
 {
     /// Creates an encoder vector from a config.
-    fn create_encoder_vector(
+    fn create_encoder_vector_from(
         &mut self,
         config: &[Config],
     ) -> Result<EncoderVector, EncoderVectorCreationError<Self::EngineError>>;
@@ -30,5 +30,5 @@ where
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
     /// of [`EncoderVectorCreationError`]. For safety concerns _specific_ to an engine, refer to the
     /// implementer safety section.
-    unsafe fn create_encoder_vector_unchecked(&mut self, config: &[Config]) -> EncoderVector;
+    unsafe fn create_encoder_vector_from_unchecked(&mut self, config: &[Config]) -> EncoderVector;
 }

@@ -32,8 +32,8 @@ impl LweCiphertextPlaintextDiscardingAdditionEngine<LweCiphertext32, Plaintext32
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext = engine.create_plaintext(&input)?;
+    /// let key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext_from(&input)?;
     /// let ciphertext_1 = engine.encrypt_lwe_ciphertext(&key, &plaintext, noise)?;
     /// let mut ciphertext_2 = engine.zero_encrypt_lwe_ciphertext(&key, noise)?;
     ///
@@ -94,8 +94,8 @@ impl LweCiphertextPlaintextDiscardingAdditionEngine<LweCiphertext64, Plaintext64
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext = engine.create_plaintext(&input)?;
+    /// let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext_from(&input)?;
     /// let ciphertext_1 = engine.encrypt_lwe_ciphertext(&key, &plaintext, noise)?;
     /// let mut ciphertext_2 = engine.zero_encrypt_lwe_ciphertext(&key, noise)?;
     ///
@@ -160,20 +160,21 @@ impl
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext = engine.create_plaintext(&input)?;
+    /// let key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext_from(&input)?;
     ///
     /// let mut ciphertext_1_container = vec![0_u32; key.lwe_dimension().to_lwe_size().0];
     /// let mut ciphertext_1: LweCiphertextMutView32 =
-    ///     engine.create_lwe_ciphertext(&mut ciphertext_1_container[..])?;
+    ///     engine.create_lwe_ciphertext_from(&mut ciphertext_1_container[..])?;
     /// engine.discard_encrypt_lwe_ciphertext(&key, &mut ciphertext_1, &plaintext, noise)?;
     ///
     /// // Convert MutView to View
     /// let raw_ciphertext_1 = engine.consume_retrieve_lwe_ciphertext(ciphertext_1)?;
-    /// let ciphertext_1: LweCiphertextView32 = engine.create_lwe_ciphertext(&raw_ciphertext_1[..])?;
+    /// let ciphertext_1: LweCiphertextView32 =
+    ///     engine.create_lwe_ciphertext_from(&raw_ciphertext_1[..])?;
     ///
     /// let mut ciphertext_2_container = vec![0_u32; key.lwe_dimension().to_lwe_size().0];
-    /// let mut ciphertext_2 = engine.create_lwe_ciphertext(&mut ciphertext_2_container[..])?;
+    /// let mut ciphertext_2 = engine.create_lwe_ciphertext_from(&mut ciphertext_2_container[..])?;
     ///
     /// engine.discard_add_lwe_ciphertext_plaintext(&mut ciphertext_2, &ciphertext_1, &plaintext)?;
     /// #
@@ -236,20 +237,21 @@ impl
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext = engine.create_plaintext(&input)?;
+    /// let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext_from(&input)?;
     ///
     /// let mut ciphertext_1_container = vec![0_u64; key.lwe_dimension().to_lwe_size().0];
     /// let mut ciphertext_1: LweCiphertextMutView64 =
-    ///     engine.create_lwe_ciphertext(&mut ciphertext_1_container[..])?;
+    ///     engine.create_lwe_ciphertext_from(&mut ciphertext_1_container[..])?;
     /// engine.discard_encrypt_lwe_ciphertext(&key, &mut ciphertext_1, &plaintext, noise)?;
     ///
     /// // Convert MutView to View
     /// let raw_ciphertext_1 = engine.consume_retrieve_lwe_ciphertext(ciphertext_1)?;
-    /// let ciphertext_1: LweCiphertextView64 = engine.create_lwe_ciphertext(&raw_ciphertext_1[..])?;
+    /// let ciphertext_1: LweCiphertextView64 =
+    ///     engine.create_lwe_ciphertext_from(&raw_ciphertext_1[..])?;
     ///
     /// let mut ciphertext_2_container = vec![0_u64; key.lwe_dimension().to_lwe_size().0];
-    /// let mut ciphertext_2 = engine.create_lwe_ciphertext(&mut ciphertext_2_container[..])?;
+    /// let mut ciphertext_2 = engine.create_lwe_ciphertext_from(&mut ciphertext_2_container[..])?;
     ///
     /// engine.discard_add_lwe_ciphertext_plaintext(&mut ciphertext_2, &ciphertext_1, &plaintext)?;
     /// #

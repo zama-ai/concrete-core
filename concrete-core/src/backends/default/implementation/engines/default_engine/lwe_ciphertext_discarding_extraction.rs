@@ -40,9 +40,9 @@ impl LweCiphertextDiscardingExtractionEngine<GlweCiphertext32, LweCiphertext32> 
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let glwe_key: GlweSecretKey32 =
-    ///     engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let lwe_key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext_vector = engine.create_plaintext_vector(&input)?;
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let lwe_key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
     /// let glwe_ciphertext = engine.encrypt_glwe_ciphertext(&glwe_key, &plaintext_vector, noise)?;
     /// // We first create an LWE ciphertext encrypting zeros
     /// let mut lwe_ciphertext = engine.zero_encrypt_lwe_ciphertext(&lwe_key, noise)?;
@@ -115,9 +115,9 @@ impl LweCiphertextDiscardingExtractionEngine<GlweCiphertext64, LweCiphertext64> 
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let glwe_key: GlweSecretKey64 =
-    ///     engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let lwe_key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext_vector = engine.create_plaintext_vector(&input)?;
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let lwe_key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
     /// let glwe_ciphertext = engine.encrypt_glwe_ciphertext(&glwe_key, &plaintext_vector, noise)?;
     /// // We first create an LWE ciphertext encrypting zeros
     /// let mut lwe_ciphertext = engine.zero_encrypt_lwe_ciphertext(&lwe_key, noise)?;

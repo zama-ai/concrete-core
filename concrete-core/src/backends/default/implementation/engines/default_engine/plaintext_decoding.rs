@@ -17,13 +17,13 @@ impl PlaintextDecodingEngine<FloatEncoder, Plaintext32, CleartextF64> for Defaul
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let encoder = engine.create_encoder(&FloatEncoderMinMaxConfig {
+    /// let encoder = engine.create_encoder_from(&FloatEncoderMinMaxConfig {
     ///     min: 0.,
     ///     max: 10.,
     ///     nb_bit_precision: 8,
     ///     nb_bit_padding: 1,
     /// })?;
-    /// let cleartext: CleartextF64 = engine.create_cleartext(&5.)?;
+    /// let cleartext: CleartextF64 = engine.create_cleartext_from(&5.)?;
     /// let plaintext: Plaintext32 = engine.encode_cleartext(&encoder, &cleartext)?;
     /// let recovered_cleartext: CleartextF64 = engine.decode_plaintext(&encoder, &plaintext)?;
     /// #
@@ -60,13 +60,13 @@ impl PlaintextDecodingEngine<FloatEncoder, Plaintext64, CleartextF64> for Defaul
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let encoder = engine.create_encoder(&FloatEncoderMinMaxConfig {
+    /// let encoder = engine.create_encoder_from(&FloatEncoderMinMaxConfig {
     ///     min: 0.,
     ///     max: 10.,
     ///     nb_bit_precision: 8,
     ///     nb_bit_padding: 1,
     /// })?;
-    /// let cleartext: CleartextF64 = engine.create_cleartext(&5.)?;
+    /// let cleartext: CleartextF64 = engine.create_cleartext_from(&5.)?;
     /// let plaintext: Plaintext64 = engine.encode_cleartext(&encoder, &cleartext)?;
     /// let recovered_cleartext: CleartextF64 = engine.decode_plaintext(&encoder, &plaintext)?;
     /// #

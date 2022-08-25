@@ -37,8 +37,8 @@ impl GgswCiphertextConversionEngine<GgswCiphertext32, FftwFourierGgswCiphertext3
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fftw_engine = FftwEngine::new(())?;
     /// let key: GlweSecretKey32 =
-    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext = default_engine.create_plaintext(&input)?;
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext = default_engine.create_plaintext_from(&input)?;
     ///
     /// // We encrypt a GGSW ciphertext in the standard domain
     /// let ciphertext =
@@ -113,8 +113,8 @@ impl GgswCiphertextConversionEngine<GgswCiphertext64, FftwFourierGgswCiphertext6
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fftw_engine = FftwEngine::new(())?;
     /// let key: GlweSecretKey64 =
-    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext = default_engine.create_plaintext(&input)?;
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext = default_engine.create_plaintext_from(&input)?;
     ///
     /// // We encrypt a GGSW ciphertext in the standard domain
     /// let ciphertext =

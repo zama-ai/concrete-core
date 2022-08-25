@@ -18,7 +18,7 @@ void mul_cleartext_view_buffers_test(void) {
   // We generate the key
   size_t lwe_dimension = 10;
   LweSecretKey64 *sk = NULL;
-  int sk_ok = default_engine_create_lwe_secret_key_u64(engine, lwe_dimension, &sk);
+  int sk_ok = default_engine_generate_new_lwe_secret_key_u64(engine, lwe_dimension, &sk);
   assert(sk_ok == 0);
 
   // We generate the texts
@@ -26,22 +26,22 @@ void mul_cleartext_view_buffers_test(void) {
   uint64_t *output_ct_buffer = aligned_alloc(U64_ALIGNMENT, sizeof(uint64_t) * (lwe_dimension + 1));
 
   LweCiphertextView64 *input_ct_as_view = NULL;
-  int input_ct_view_ok = default_engine_create_lwe_ciphertext_view_u64(
+  int input_ct_view_ok = default_engine_create_lwe_ciphertext_view_from_u64(
       engine, input_ct_buffer, lwe_dimension + 1, &input_ct_as_view);
   assert(input_ct_view_ok == 0);
 
   LweCiphertextMutView64 *input_ct_as_mut_view = NULL;
-  int input_ct_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_u64(
+  int input_ct_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_from_u64(
       engine, input_ct_buffer, lwe_dimension + 1, &input_ct_as_mut_view);
   assert(input_ct_mut_view_ok == 0);
 
   LweCiphertextView64 *output_ct_as_view = NULL;
-  int output_ct_as_view_ok = default_engine_create_lwe_ciphertext_view_u64(
+  int output_ct_as_view_ok = default_engine_create_lwe_ciphertext_view_from_u64(
       engine, output_ct_buffer, lwe_dimension + 1, &output_ct_as_view);
   assert(output_ct_as_view_ok == 0);
 
   LweCiphertextMutView64 *output_ct_as_mut_view = NULL;
-  int output_ct_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_u64(
+  int output_ct_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_from_u64(
       engine, output_ct_buffer, lwe_dimension + 1, &output_ct_as_mut_view);
   assert(output_ct_mut_view_ok == 0);
 
@@ -96,7 +96,7 @@ void mul_cleartext_unchecked_view_buffers_test(void) {
   // We generate the key
   size_t lwe_dimension = {10};
   LweSecretKey64 *sk = NULL;
-  int sk_ok = default_engine_create_lwe_secret_key_unchecked_u64(engine, lwe_dimension, &sk);
+  int sk_ok = default_engine_generate_new_lwe_secret_key_unchecked_u64(engine, lwe_dimension, &sk);
   assert(sk_ok == 0);
 
   // We generate the texts
@@ -104,22 +104,22 @@ void mul_cleartext_unchecked_view_buffers_test(void) {
   uint64_t *output_ct_buffer = aligned_alloc(U64_ALIGNMENT, sizeof(uint64_t) * (lwe_dimension + 1));
 
   LweCiphertextView64 *input_ct_as_view = NULL;
-  int input_ct_view_ok = default_engine_create_lwe_ciphertext_view_unchecked_u64(
+  int input_ct_view_ok = default_engine_create_lwe_ciphertext_view_from_unchecked_u64(
       engine, input_ct_buffer, lwe_dimension + 1, &input_ct_as_view);
   assert(input_ct_view_ok == 0);
 
   LweCiphertextMutView64 *input_ct_as_mut_view = NULL;
-  int input_ct_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_unchecked_u64(
+  int input_ct_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_from_unchecked_u64(
       engine, input_ct_buffer, lwe_dimension + 1, &input_ct_as_mut_view);
   assert(input_ct_mut_view_ok == 0);
 
   LweCiphertextView64 *output_ct_as_view = NULL;
-  int output_ct_as_view_ok = default_engine_create_lwe_ciphertext_view_unchecked_u64(
+  int output_ct_as_view_ok = default_engine_create_lwe_ciphertext_view_from_unchecked_u64(
       engine, output_ct_buffer, lwe_dimension + 1, &output_ct_as_view);
   assert(output_ct_as_view_ok == 0);
 
   LweCiphertextMutView64 *output_ct_as_mut_view = NULL;
-  int output_ct_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_unchecked_u64(
+  int output_ct_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_from_unchecked_u64(
       engine, output_ct_buffer, lwe_dimension + 1, &output_ct_as_mut_view);
   assert(output_ct_mut_view_ok == 0);
 
@@ -174,7 +174,7 @@ void mul_cleartext_raw_ptr_buffers_test(void) {
   // We generate the key
   size_t lwe_dimension = {10};
   LweSecretKey64 *sk = NULL;
-  int sk_ok = default_engine_create_lwe_secret_key_u64(engine, lwe_dimension, &sk);
+  int sk_ok = default_engine_generate_new_lwe_secret_key_u64(engine, lwe_dimension, &sk);
   assert(sk_ok == 0);
 
   // We generate the texts
@@ -228,7 +228,7 @@ void mul_cleartext_unchecked_raw_ptr_buffers_test(void) {
   // We generate the key
   size_t lwe_dimension = {10};
   LweSecretKey64 *sk = NULL;
-  int sk_ok = default_engine_create_lwe_secret_key_unchecked_u64(engine, lwe_dimension, &sk);
+  int sk_ok = default_engine_generate_new_lwe_secret_key_unchecked_u64(engine, lwe_dimension, &sk);
   assert(sk_ok == 0);
 
   // We generate the texts

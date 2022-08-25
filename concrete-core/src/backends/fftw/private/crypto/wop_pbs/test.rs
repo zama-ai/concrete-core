@@ -4,7 +4,7 @@ use crate::backends::fftw::private::math::fft::Complex64;
 use crate::commons::crypto::bootstrap::StandardBootstrapKey;
 use crate::commons::crypto::encoding::{Plaintext, PlaintextList};
 use crate::commons::crypto::ggsw::StandardGgswCiphertext;
-use crate::commons::crypto::glwe::PrivateFunctionalPackingKeyswitchKeyList;
+use crate::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKeyList;
 use crate::commons::crypto::lwe::{LweCiphertext, LweKeyswitchKey, LweList};
 use crate::commons::crypto::secret::generators::{
     EncryptionRandomGenerator, SecretRandomGenerator,
@@ -212,7 +212,7 @@ pub fn test_circuit_bootstrapping_binary() {
     let lwe_sk_bs_output = LweSecretKey::binary_from_container(glwe_sk.as_tensor().as_slice());
 
     // Creation of all the pfksk for the circuit bootstrapping
-    let mut vec_pfksk = PrivateFunctionalPackingKeyswitchKeyList::allocate(
+    let mut vec_pfksk = LwePrivateFunctionalPackingKeyswitchKeyList::allocate(
         0u64,
         level_pksk,
         base_log_pksk,

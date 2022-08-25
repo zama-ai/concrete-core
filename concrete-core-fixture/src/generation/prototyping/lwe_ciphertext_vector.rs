@@ -67,7 +67,7 @@ impl PrototypesLweCiphertextVector<Precision32, BinaryKeyDistribution> for Maker
     ) -> Self::LweCiphertextVectorProto {
         let plaintext_vector = self
             .default_engine
-            .create_plaintext_vector(&vec![0u32; count.0])
+            .create_plaintext_vector_from(&vec![0u32; count.0])
             .unwrap();
         ProtoBinaryLweCiphertextVector32(
             self.default_engine
@@ -141,7 +141,7 @@ impl PrototypesLweCiphertextVector<Precision64, BinaryKeyDistribution> for Maker
     ) -> Self::LweCiphertextVectorProto {
         let plaintext_vector = self
             .default_engine
-            .create_plaintext_vector(&vec![0u64; count.0])
+            .create_plaintext_vector_from(&vec![0u64; count.0])
             .unwrap();
         ProtoBinaryLweCiphertextVector64(
             self.default_engine

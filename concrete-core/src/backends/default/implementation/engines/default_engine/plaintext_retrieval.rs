@@ -19,7 +19,7 @@ impl PlaintextRetrievalEngine<Plaintext32, u32> for DefaultEngine {
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let plaintext: Plaintext32 = engine.create_plaintext(&input)?;
+    /// let plaintext: Plaintext32 = engine.create_plaintext_from(&input)?;
     /// let output: u32 = engine.retrieve_plaintext(&plaintext)?;
     ///
     /// assert_eq!(output, 3_u32 << 20);
@@ -56,7 +56,7 @@ impl PlaintextRetrievalEngine<Plaintext64, u64> for DefaultEngine {
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let plaintext: Plaintext64 = engine.create_plaintext(&input)?;
+    /// let plaintext: Plaintext64 = engine.create_plaintext_from(&input)?;
     /// let output: u64 = engine.retrieve_plaintext(&plaintext)?;
     ///
     /// assert_eq!(output, 3_u64 << 20);

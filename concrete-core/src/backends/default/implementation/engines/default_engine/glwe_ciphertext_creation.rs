@@ -31,12 +31,12 @@ impl GlweCiphertextCreationEngine<Vec<u32>, GlweCiphertext32> for DefaultEngine 
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext: GlweCiphertext32 =
-    ///     engine.create_glwe_ciphertext(owned_container, polynomial_size)?;
+    ///     engine.create_glwe_ciphertext_from(owned_container, polynomial_size)?;
     /// #
     /// # Ok(())
     /// # }
     /// ```
-    fn create_glwe_ciphertext(
+    fn create_glwe_ciphertext_from(
         &mut self,
         container: Vec<u32>,
         polynomial_size: PolynomialSize,
@@ -45,10 +45,10 @@ impl GlweCiphertextCreationEngine<Vec<u32>, GlweCiphertext32> for DefaultEngine 
             container.len(),
             polynomial_size,
         )?;
-        Ok(unsafe { self.create_glwe_ciphertext_unchecked(container, polynomial_size) })
+        Ok(unsafe { self.create_glwe_ciphertext_from_unchecked(container, polynomial_size) })
     }
 
-    unsafe fn create_glwe_ciphertext_unchecked(
+    unsafe fn create_glwe_ciphertext_from_unchecked(
         &mut self,
         container: Vec<u32>,
         polynomial_size: PolynomialSize,
@@ -84,12 +84,12 @@ impl GlweCiphertextCreationEngine<Vec<u64>, GlweCiphertext64> for DefaultEngine 
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext: GlweCiphertext64 =
-    ///     engine.create_glwe_ciphertext(owned_container, polynomial_size)?;
+    ///     engine.create_glwe_ciphertext_from(owned_container, polynomial_size)?;
     /// #
     /// # Ok(())
     /// # }
     /// ```
-    fn create_glwe_ciphertext(
+    fn create_glwe_ciphertext_from(
         &mut self,
         container: Vec<u64>,
         polynomial_size: PolynomialSize,
@@ -98,10 +98,10 @@ impl GlweCiphertextCreationEngine<Vec<u64>, GlweCiphertext64> for DefaultEngine 
             container.len(),
             polynomial_size,
         )?;
-        Ok(unsafe { self.create_glwe_ciphertext_unchecked(container, polynomial_size) })
+        Ok(unsafe { self.create_glwe_ciphertext_from_unchecked(container, polynomial_size) })
     }
 
-    unsafe fn create_glwe_ciphertext_unchecked(
+    unsafe fn create_glwe_ciphertext_from_unchecked(
         &mut self,
         container: Vec<u64>,
         polynomial_size: PolynomialSize,
@@ -141,12 +141,12 @@ impl<'data> GlweCiphertextCreationEngine<&'data [u32], GlweCiphertextView32<'dat
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext_view: GlweCiphertextView32 =
-    ///     engine.create_glwe_ciphertext(slice, polynomial_size)?;
+    ///     engine.create_glwe_ciphertext_from(slice, polynomial_size)?;
     /// #
     /// # Ok(())
     /// # }
     /// ```
-    fn create_glwe_ciphertext(
+    fn create_glwe_ciphertext_from(
         &mut self,
         container: &'data [u32],
         polynomial_size: PolynomialSize,
@@ -155,10 +155,10 @@ impl<'data> GlweCiphertextCreationEngine<&'data [u32], GlweCiphertextView32<'dat
             container.len(),
             polynomial_size,
         )?;
-        Ok(unsafe { self.create_glwe_ciphertext_unchecked(container, polynomial_size) })
+        Ok(unsafe { self.create_glwe_ciphertext_from_unchecked(container, polynomial_size) })
     }
 
-    unsafe fn create_glwe_ciphertext_unchecked(
+    unsafe fn create_glwe_ciphertext_from_unchecked(
         &mut self,
         container: &'data [u32],
         polynomial_size: PolynomialSize,
@@ -198,12 +198,12 @@ impl<'data> GlweCiphertextCreationEngine<&'data mut [u32], GlweCiphertextMutView
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext_view: GlweCiphertextMutView32 =
-    ///     engine.create_glwe_ciphertext(slice, polynomial_size)?;
+    ///     engine.create_glwe_ciphertext_from(slice, polynomial_size)?;
     /// #
     /// # Ok(())
     /// # }
     /// ```
-    fn create_glwe_ciphertext(
+    fn create_glwe_ciphertext_from(
         &mut self,
         container: &'data mut [u32],
         polynomial_size: PolynomialSize,
@@ -213,10 +213,10 @@ impl<'data> GlweCiphertextCreationEngine<&'data mut [u32], GlweCiphertextMutView
             container.len(),
             polynomial_size,
         )?;
-        Ok(unsafe { self.create_glwe_ciphertext_unchecked(container, polynomial_size) })
+        Ok(unsafe { self.create_glwe_ciphertext_from_unchecked(container, polynomial_size) })
     }
 
-    unsafe fn create_glwe_ciphertext_unchecked(
+    unsafe fn create_glwe_ciphertext_from_unchecked(
         &mut self,
         container: &'data mut [u32],
         polynomial_size: PolynomialSize,
@@ -256,12 +256,12 @@ impl<'data> GlweCiphertextCreationEngine<&'data [u64], GlweCiphertextView64<'dat
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext_view: GlweCiphertextView64 =
-    ///     engine.create_glwe_ciphertext(slice, polynomial_size)?;
+    ///     engine.create_glwe_ciphertext_from(slice, polynomial_size)?;
     /// #
     /// # Ok(())
     /// # }
     /// ```
-    fn create_glwe_ciphertext(
+    fn create_glwe_ciphertext_from(
         &mut self,
         container: &'data [u64],
         polynomial_size: PolynomialSize,
@@ -270,10 +270,10 @@ impl<'data> GlweCiphertextCreationEngine<&'data [u64], GlweCiphertextView64<'dat
             container.len(),
             polynomial_size,
         )?;
-        Ok(unsafe { self.create_glwe_ciphertext_unchecked(container, polynomial_size) })
+        Ok(unsafe { self.create_glwe_ciphertext_from_unchecked(container, polynomial_size) })
     }
 
-    unsafe fn create_glwe_ciphertext_unchecked(
+    unsafe fn create_glwe_ciphertext_from_unchecked(
         &mut self,
         container: &'data [u64],
         polynomial_size: PolynomialSize,
@@ -313,12 +313,12 @@ impl<'data> GlweCiphertextCreationEngine<&'data mut [u64], GlweCiphertextMutView
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let ciphertext_view: GlweCiphertextMutView64 =
-    ///     engine.create_glwe_ciphertext(slice, polynomial_size)?;
+    ///     engine.create_glwe_ciphertext_from(slice, polynomial_size)?;
     /// #
     /// # Ok(())
     /// # }
     /// ```
-    fn create_glwe_ciphertext(
+    fn create_glwe_ciphertext_from(
         &mut self,
         container: &'data mut [u64],
         polynomial_size: PolynomialSize,
@@ -328,10 +328,10 @@ impl<'data> GlweCiphertextCreationEngine<&'data mut [u64], GlweCiphertextMutView
             container.len(),
             polynomial_size,
         )?;
-        Ok(unsafe { self.create_glwe_ciphertext_unchecked(container, polynomial_size) })
+        Ok(unsafe { self.create_glwe_ciphertext_from_unchecked(container, polynomial_size) })
     }
 
-    unsafe fn create_glwe_ciphertext_unchecked(
+    unsafe fn create_glwe_ciphertext_from_unchecked(
         &mut self,
         container: &'data mut [u64],
         polynomial_size: PolynomialSize,

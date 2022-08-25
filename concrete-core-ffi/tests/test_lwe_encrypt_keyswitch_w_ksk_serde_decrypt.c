@@ -32,14 +32,14 @@ void keyswitch_view_buffers_test(void) {
   size_t level = 5;
   size_t base_log = 10;
   LweSecretKey64 *input_sk = NULL;
-  int sk_ok = default_engine_create_lwe_secret_key_u64(engine, input_lwe_dimension, &input_sk);
+  int sk_ok = default_engine_generate_new_lwe_secret_key_u64(engine, input_lwe_dimension, &input_sk);
   assert(sk_ok == 0);
   LweSecretKey64 *output_sk = NULL;
-  sk_ok = default_engine_create_lwe_secret_key_u64(engine, input_lwe_dimension, &output_sk);
+  sk_ok = default_engine_generate_new_lwe_secret_key_u64(engine, input_lwe_dimension, &output_sk);
   assert(sk_ok == 0);
 
   LweSeededKeyswitchKey64 *seeded_ksk = NULL;
-  int seeded_ksk_ok = default_engine_create_lwe_seeded_keyswitch_key_u64(
+  int seeded_ksk_ok = default_engine_generate_new_lwe_seeded_keyswitch_key_u64(
       engine, input_sk, output_sk, level, base_log, ksk_variance, &seeded_ksk);
   assert(seeded_ksk_ok == 0);
 
@@ -82,22 +82,22 @@ void keyswitch_view_buffers_test(void) {
   //   uint64_t plaintext = ((uint64_t)10) << SHIFT;
 
   LweCiphertextMutView64 *input_ct_as_mut_view = NULL;
-  int input_ct_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_u64(
+  int input_ct_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_from_u64(
       engine, input_ct_buffer, input_lwe_dimension + 1, &input_ct_as_mut_view);
   assert(input_ct_mut_view_ok == 0);
 
   LweCiphertextView64 *input_ct_as_view = NULL;
-  int input_ct_view_ok = default_engine_create_lwe_ciphertext_view_u64(
+  int input_ct_view_ok = default_engine_create_lwe_ciphertext_view_from_u64(
       engine, input_ct_buffer, input_lwe_dimension + 1, &input_ct_as_view);
   assert(input_ct_view_ok == 0);
 
   LweCiphertextMutView64 *output_ct_as_mut_view = NULL;
-  int output_ct_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_u64(
+  int output_ct_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_from_u64(
       engine, output_ct_buffer, input_lwe_dimension + 1, &output_ct_as_mut_view);
   assert(output_ct_mut_view_ok == 0);
 
   LweCiphertextView64 *output_ct_as_view = NULL;
-  int output_ct_view_ok = default_engine_create_lwe_ciphertext_view_u64(
+  int output_ct_view_ok = default_engine_create_lwe_ciphertext_view_from_u64(
       engine, output_ct_buffer, input_lwe_dimension + 1, &output_ct_as_view);
   assert(output_ct_view_ok == 0);
 
@@ -170,15 +170,15 @@ void keyswitch_unchecked_view_buffers_test(void) {
   size_t base_log = 10;
   LweSecretKey64 *input_sk = NULL;
   int sk_ok =
-      default_engine_create_lwe_secret_key_unchecked_u64(engine, input_lwe_dimension, &input_sk);
+      default_engine_generate_new_lwe_secret_key_unchecked_u64(engine, input_lwe_dimension, &input_sk);
   assert(sk_ok == 0);
   LweSecretKey64 *output_sk = NULL;
   sk_ok =
-      default_engine_create_lwe_secret_key_unchecked_u64(engine, input_lwe_dimension, &output_sk);
+      default_engine_generate_new_lwe_secret_key_unchecked_u64(engine, input_lwe_dimension, &output_sk);
   assert(sk_ok == 0);
 
   LweSeededKeyswitchKey64 *seeded_ksk = NULL;
-  int seeded_ksk_ok = default_engine_create_lwe_seeded_keyswitch_key_unchecked_u64(
+  int seeded_ksk_ok = default_engine_generate_new_lwe_seeded_keyswitch_key_unchecked_u64(
       engine, input_sk, output_sk, level, base_log, ksk_variance, &seeded_ksk);
   assert(seeded_ksk_ok == 0);
 
@@ -223,22 +223,22 @@ void keyswitch_unchecked_view_buffers_test(void) {
   //   uint64_t plaintext = ((uint64_t)10) << SHIFT;
 
   LweCiphertextMutView64 *input_ct_as_mut_view = NULL;
-  int input_ct_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_unchecked_u64(
+  int input_ct_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_from_unchecked_u64(
       engine, input_ct_buffer, input_lwe_dimension + 1, &input_ct_as_mut_view);
   assert(input_ct_mut_view_ok == 0);
 
   LweCiphertextView64 *input_ct_as_view = NULL;
-  int input_ct_view_ok = default_engine_create_lwe_ciphertext_view_unchecked_u64(
+  int input_ct_view_ok = default_engine_create_lwe_ciphertext_view_from_unchecked_u64(
       engine, input_ct_buffer, input_lwe_dimension + 1, &input_ct_as_view);
   assert(input_ct_view_ok == 0);
 
   LweCiphertextMutView64 *output_ct_as_mut_view = NULL;
-  int output_ct_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_unchecked_u64(
+  int output_ct_mut_view_ok = default_engine_create_lwe_ciphertext_mut_view_from_unchecked_u64(
       engine, output_ct_buffer, input_lwe_dimension + 1, &output_ct_as_mut_view);
   assert(output_ct_mut_view_ok == 0);
 
   LweCiphertextView64 *output_ct_as_view = NULL;
-  int output_ct_view_ok = default_engine_create_lwe_ciphertext_view_unchecked_u64(
+  int output_ct_view_ok = default_engine_create_lwe_ciphertext_view_from_unchecked_u64(
       engine, output_ct_buffer, input_lwe_dimension + 1, &output_ct_as_view);
   assert(output_ct_view_ok == 0);
 
@@ -310,14 +310,14 @@ void keyswitch_raw_ptr_buffers_test(void) {
   size_t level = 5;
   size_t base_log = 10;
   LweSecretKey64 *input_sk = NULL;
-  int sk_ok = default_engine_create_lwe_secret_key_u64(engine, input_lwe_dimension, &input_sk);
+  int sk_ok = default_engine_generate_new_lwe_secret_key_u64(engine, input_lwe_dimension, &input_sk);
   assert(sk_ok == 0);
   LweSecretKey64 *output_sk = NULL;
-  sk_ok = default_engine_create_lwe_secret_key_u64(engine, input_lwe_dimension, &output_sk);
+  sk_ok = default_engine_generate_new_lwe_secret_key_u64(engine, input_lwe_dimension, &output_sk);
   assert(sk_ok == 0);
 
   LweSeededKeyswitchKey64 *seeded_ksk = NULL;
-  int seeded_ksk_ok = default_engine_create_lwe_seeded_keyswitch_key_u64(
+  int seeded_ksk_ok = default_engine_generate_new_lwe_seeded_keyswitch_key_u64(
       engine, input_sk, output_sk, level, base_log, ksk_variance, &seeded_ksk);
   assert(seeded_ksk_ok == 0);
 
@@ -423,15 +423,15 @@ void keyswitch_unchecked_raw_ptr_buffers_test(void) {
   size_t base_log = 10;
   LweSecretKey64 *input_sk = NULL;
   int sk_ok =
-      default_engine_create_lwe_secret_key_unchecked_u64(engine, input_lwe_dimension, &input_sk);
+      default_engine_generate_new_lwe_secret_key_unchecked_u64(engine, input_lwe_dimension, &input_sk);
   assert(sk_ok == 0);
   LweSecretKey64 *output_sk = NULL;
   sk_ok =
-      default_engine_create_lwe_secret_key_unchecked_u64(engine, input_lwe_dimension, &output_sk);
+      default_engine_generate_new_lwe_secret_key_unchecked_u64(engine, input_lwe_dimension, &output_sk);
   assert(sk_ok == 0);
 
   LweSeededKeyswitchKey64 *seeded_ksk = NULL;
-  int seeded_ksk_ok = default_engine_create_lwe_seeded_keyswitch_key_unchecked_u64(
+  int seeded_ksk_ok = default_engine_generate_new_lwe_seeded_keyswitch_key_unchecked_u64(
       engine, input_sk, output_sk, level, base_log, ksk_variance, &seeded_ksk);
   assert(seeded_ksk_ok == 0);
 

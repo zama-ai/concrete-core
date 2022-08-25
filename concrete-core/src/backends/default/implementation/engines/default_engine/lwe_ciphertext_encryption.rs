@@ -30,8 +30,8 @@ impl LweCiphertextEncryptionEngine<LweSecretKey32, Plaintext32, LweCiphertext32>
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext = engine.create_plaintext(&input)?;
+    /// let key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext_from(&input)?;
     ///
     /// let ciphertext = engine.encrypt_lwe_ciphertext(&key, &plaintext, noise)?;
     /// #
@@ -89,8 +89,8 @@ impl LweCiphertextEncryptionEngine<LweSecretKey64, Plaintext64, LweCiphertext64>
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext = engine.create_plaintext(&input)?;
+    /// let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext_from(&input)?;
     ///
     /// let ciphertext = engine.encrypt_lwe_ciphertext(&key, &plaintext, noise)?;
     /// #

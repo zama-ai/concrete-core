@@ -61,24 +61,30 @@ impl
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// // create a vector of LWE ciphertexts
-    /// let h_input_key: LweSecretKey32 = default_engine.create_lwe_secret_key(lwe_dim)?;
+    /// let h_input_key: LweSecretKey32 = default_engine.generate_new_lwe_secret_key(lwe_dim)?;
     /// let h_input_plaintext_vector: PlaintextVector32 =
-    ///     default_engine.create_plaintext_vector(&input)?;
+    ///     default_engine.create_plaintext_vector_from(&input)?;
     /// let mut h_input_ciphertext_vector: LweCiphertextVector32 = default_engine
     ///     .encrypt_lwe_ciphertext_vector(&h_input_key, &h_input_plaintext_vector, noise)?;
     /// // create a vector of GLWE ciphertexts containing the encryptions of the LUTs
-    /// let h_lut_plaintext_vector = default_engine.create_plaintext_vector(&lut)?;
-    /// let h_lut_key: GlweSecretKey32 = default_engine.create_glwe_secret_key(glwe_dim, poly_size)?;
+    /// let h_lut_plaintext_vector = default_engine.create_plaintext_vector_from(&lut)?;
+    /// let h_lut_key: GlweSecretKey32 =
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dim, poly_size)?;
     /// let h_lut_vector = default_engine.encrypt_glwe_ciphertext_vector(
     ///     &h_lut_key,
     ///     &h_lut_plaintext_vector,
     ///     noise,
     /// )?;
     /// // create a BSK
-    /// let h_bootstrap_key: LweBootstrapKey32 =
-    ///     default_engine.create_lwe_bootstrap_key(&h_input_key, &h_lut_key, dec_bl, dec_lc, noise)?;
+    /// let h_bootstrap_key: LweBootstrapKey32 = default_engine.generate_new_lwe_bootstrap_key(
+    ///     &h_input_key,
+    ///     &h_lut_key,
+    ///     dec_bl,
+    ///     dec_lc,
+    ///     noise,
+    /// )?;
     /// // initialize an output LWE ciphertext vector
-    /// let h_dummy_key: LweSecretKey32 = default_engine.create_lwe_secret_key(lwe_dim_output)?;
+    /// let h_dummy_key: LweSecretKey32 = default_engine.generate_new_lwe_secret_key(lwe_dim_output)?;
     ///
     /// // 2. cuda engine
     /// let mut cuda_engine = CudaEngine::new(())?;
@@ -217,24 +223,30 @@ impl
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// // create a vector of LWE ciphertexts
-    /// let h_input_key: LweSecretKey64 = default_engine.create_lwe_secret_key(lwe_dim)?;
+    /// let h_input_key: LweSecretKey64 = default_engine.generate_new_lwe_secret_key(lwe_dim)?;
     /// let h_input_plaintext_vector: PlaintextVector64 =
-    ///     default_engine.create_plaintext_vector(&input)?;
+    ///     default_engine.create_plaintext_vector_from(&input)?;
     /// let mut h_input_ciphertext_vector: LweCiphertextVector64 = default_engine
     ///     .encrypt_lwe_ciphertext_vector(&h_input_key, &h_input_plaintext_vector, noise)?;
     /// // create a vector of GLWE ciphertexts containing the encryptions of the LUTs
-    /// let h_lut_plaintext_vector = default_engine.create_plaintext_vector(&lut)?;
-    /// let h_lut_key: GlweSecretKey64 = default_engine.create_glwe_secret_key(glwe_dim, poly_size)?;
+    /// let h_lut_plaintext_vector = default_engine.create_plaintext_vector_from(&lut)?;
+    /// let h_lut_key: GlweSecretKey64 =
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dim, poly_size)?;
     /// let h_lut_vector = default_engine.encrypt_glwe_ciphertext_vector(
     ///     &h_lut_key,
     ///     &h_lut_plaintext_vector,
     ///     noise,
     /// )?;
     /// // create a BSK
-    /// let h_bootstrap_key: LweBootstrapKey64 =
-    ///     default_engine.create_lwe_bootstrap_key(&h_input_key, &h_lut_key, dec_bl, dec_lc, noise)?;
+    /// let h_bootstrap_key: LweBootstrapKey64 = default_engine.generate_new_lwe_bootstrap_key(
+    ///     &h_input_key,
+    ///     &h_lut_key,
+    ///     dec_bl,
+    ///     dec_lc,
+    ///     noise,
+    /// )?;
     /// // initialize an output LWE ciphertext vector
-    /// let h_dummy_key: LweSecretKey64 = default_engine.create_lwe_secret_key(lwe_dim_output)?;
+    /// let h_dummy_key: LweSecretKey64 = default_engine.generate_new_lwe_secret_key(lwe_dim_output)?;
     ///
     /// // 2. cuda engine
     /// let mut cuda_engine = CudaEngine::new(())?;

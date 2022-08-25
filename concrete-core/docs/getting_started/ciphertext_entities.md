@@ -10,7 +10,7 @@ For LWE ciphertext entities, example of such owning entities are `LweCiphertext3
 
 Some engines return freshly allocated ciphertexts like `LweCiphertextEncryptionEngine` whose entry point is `encrypt_lwe_ciphertext` (or `encrypt_lwe_ciphertext_unchecked` in its unchecked form).
 
-On the other hand some engines require to have an already allocated ciphertext entity, like `LweCiphertextDiscardingEncryptionEngine` whose entry point is `discard_encrypt_lwe_ciphertext`. In that case you can use one of the `LweCiphertextCreationEngine` variants available in the default backend for example (entry point `create_lwe_ciphertext`) providing a properly sized `Vec` (which will be consumed) to create an owning `LweCiphertext32` or `LweCiphertext64`. This entity can then be used in the `discard_encrypt_lwe_ciphertext` call.
+On the other hand some engines require to have an already allocated ciphertext entity, like `LweCiphertextDiscardingEncryptionEngine` whose entry point is `discard_encrypt_lwe_ciphertext`. In that case you can use one of the `LweCiphertextCreationEngine` variants available in the default backend for example (entry point `create_lwe_ciphertext_from`) providing a properly sized `Vec` (which will be consumed) to create an owning `LweCiphertext32` or `LweCiphertext64`. This entity can then be used in the `discard_encrypt_lwe_ciphertext` call.
 
 ## Entities borrowing their memory
 
@@ -26,9 +26,9 @@ To that end, a restricted set of ciphertext entities (at the time of writing `Lw
 
 The following paragraphs also apply to GLWE ciphertexts, so you can replace "LWE" by "GLWE" and the following text should remain correct.
 
-To instantiate an `LweCiphertextMutView32` or `LweCiphertextMutView64` you can call the proper variant of `LweCiphertextCreationEngine` (entry point `create_lwe_ciphertext`), providing a mutable slice of the proper scalar type (`u32` or `u64`). You can refer to the `concrete-core` documentation on [docs.rs](https://docs.rs) where example usage are provided for `LweCiphertextCreationEngine`.
+To instantiate an `LweCiphertextMutView32` or `LweCiphertextMutView64` you can call the proper variant of `LweCiphertextCreationEngine` (entry point `create_lwe_ciphertext_from`), providing a mutable slice of the proper scalar type (`u32` or `u64`). You can refer to the `concrete-core` documentation on [docs.rs](https://docs.rs) where example usage are provided for `LweCiphertextCreationEngine`.
 
-`LweCiphertextView32` and `LweCiphertextView64` can be instantiated in the same way, the requirement being that the slices passed to the `create_lwe_ciphertext` function have to be immutable.
+`LweCiphertextView32` and `LweCiphertextView64` can be instantiated in the same way, the requirement being that the slices passed to the `create_lwe_ciphertext_from` function have to be immutable.
 
 One current pain point of the view API is that you cannot create a mutable view and an immutable view from the same piece of memory, which is normal given Rust borrowing rules.
 
@@ -66,23 +66,23 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
 
     // Crate an LWE secret key
-    let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
+    let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
 
     // Prepare the plaintext
-    let plaintext = engine.create_plaintext(&input)?;
+    let plaintext = engine.create_plaintext_from(&input)?;
 
     // Prepare the container and create an LWE ciphertext mut view
     let mut raw_ciphertext = vec![0_u64; key.lwe_dimension().to_lwe_size().0];
     let mut ciphertext_mut_view: LweCiphertextMutView64 =
-        engine.create_lwe_ciphertext(&mut raw_ciphertext[..])?;
+        engine.create_lwe_ciphertext_from(&mut raw_ciphertext[..])?;
 
     // Perform the encryption
     engine.discard_encrypt_lwe_ciphertext(&key, &mut ciphertext_mut_view, &plaintext, noise)?;
 
     // Convert MutView to View by retrieving the mutable slice and passing it as immutable to
-    // create_lwe_ciphertext
+    // create_lwe_ciphertext_from
     let raw_ciphertext = engine.consume_retrieve_lwe_ciphertext(ciphertext_mut_view)?;
-    let ciphertext_view: LweCiphertextView64 = engine.create_lwe_ciphertext(&raw_ciphertext[..])?;
+    let ciphertext_view: LweCiphertextView64 = engine.create_lwe_ciphertext_from(&raw_ciphertext[..])?;
     let decrypted_plaintext = engine.decrypt_lwe_ciphertext(&key, &ciphertext_view)?;
 
     // Destroy entities

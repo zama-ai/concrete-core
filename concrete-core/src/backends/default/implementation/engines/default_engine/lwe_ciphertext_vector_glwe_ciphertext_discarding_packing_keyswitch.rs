@@ -1,7 +1,7 @@
 use crate::backends::default::implementation::engines::DefaultEngine;
 use crate::prelude::{
     GlweCiphertext32, GlweCiphertext64, LweCiphertextVector32, LweCiphertextVector64,
-    PackingKeyswitchKey32, PackingKeyswitchKey64,
+    LwePackingKeyswitchKey32, LwePackingKeyswitchKey64,
 };
 use crate::specification::engines::{
     LweCiphertextVectorGlweCiphertextDiscardingPackingKeyswitchEngine,
@@ -13,7 +13,7 @@ use crate::specification::engines::{
 /// [`DefaultEngine`] that operates on 32 bits integers.
 impl
     LweCiphertextVectorGlweCiphertextDiscardingPackingKeyswitchEngine<
-        PackingKeyswitchKey32,
+        LwePackingKeyswitchKey32,
         LweCiphertextVector32,
         GlweCiphertext32,
     > for DefaultEngine
@@ -42,17 +42,17 @@ impl
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let input_key: LweSecretKey32 = engine.create_lwe_secret_key(input_lwe_dimension)?;
+    /// let input_key: LweSecretKey32 = engine.generate_new_lwe_secret_key(input_lwe_dimension)?;
     /// let output_key: GlweSecretKey32 =
-    ///     engine.create_glwe_secret_key(output_glwe_dimension, polynomial_size)?;
-    /// let packing_keyswitch_key = engine.create_packing_keyswitch_key(
+    ///     engine.generate_new_glwe_secret_key(output_glwe_dimension, polynomial_size)?;
+    /// let packing_keyswitch_key = engine.generate_new_lwe_packing_keyswitch_key(
     ///     &input_key,
     ///     &output_key,
     ///     decomposition_level_count,
     ///     decomposition_base_log,
     ///     noise,
     /// )?;
-    /// let plaintext_vector = engine.create_plaintext_vector(&input_vector)?;
+    /// let plaintext_vector = engine.create_plaintext_vector_from(&input_vector)?;
     /// let ciphertext_vector =
     ///     engine.encrypt_lwe_ciphertext_vector(&input_key, &plaintext_vector, noise)?;
     /// let mut ciphertext_output = engine.zero_encrypt_glwe_ciphertext(&output_key, noise)?;
@@ -73,7 +73,7 @@ impl
         &mut self,
         output: &mut GlweCiphertext32,
         input: &LweCiphertextVector32,
-        ksk: &PackingKeyswitchKey32,
+        ksk: &LwePackingKeyswitchKey32,
     ) -> Result<
         (),
         LweCiphertextVectorGlweCiphertextDiscardingPackingKeyswitchError<Self::EngineError>,
@@ -91,7 +91,7 @@ impl
         &mut self,
         output: &mut GlweCiphertext32,
         input: &LweCiphertextVector32,
-        ksk: &PackingKeyswitchKey32,
+        ksk: &LwePackingKeyswitchKey32,
     ) {
         ksk.0.packing_keyswitch(&mut output.0, &input.0);
     }
@@ -102,7 +102,7 @@ impl
 /// [`DefaultEngine`] that operates on 64 bits integers.
 impl
     LweCiphertextVectorGlweCiphertextDiscardingPackingKeyswitchEngine<
-        PackingKeyswitchKey64,
+        LwePackingKeyswitchKey64,
         LweCiphertextVector64,
         GlweCiphertext64,
     > for DefaultEngine
@@ -131,17 +131,17 @@ impl
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let input_key: LweSecretKey64 = engine.create_lwe_secret_key(input_lwe_dimension)?;
+    /// let input_key: LweSecretKey64 = engine.generate_new_lwe_secret_key(input_lwe_dimension)?;
     /// let output_key: GlweSecretKey64 =
-    ///     engine.create_glwe_secret_key(output_glwe_dimension, polynomial_size)?;
-    /// let packing_keyswitch_key = engine.create_packing_keyswitch_key(
+    ///     engine.generate_new_glwe_secret_key(output_glwe_dimension, polynomial_size)?;
+    /// let packing_keyswitch_key = engine.generate_new_lwe_packing_keyswitch_key(
     ///     &input_key,
     ///     &output_key,
     ///     decomposition_level_count,
     ///     decomposition_base_log,
     ///     noise,
     /// )?;
-    /// let plaintext_vector = engine.create_plaintext_vector(&input_vector)?;
+    /// let plaintext_vector = engine.create_plaintext_vector_from(&input_vector)?;
     /// let ciphertext_vector =
     ///     engine.encrypt_lwe_ciphertext_vector(&input_key, &plaintext_vector, noise)?;
     /// let mut ciphertext_output = engine.zero_encrypt_glwe_ciphertext(&output_key, noise)?;
@@ -162,7 +162,7 @@ impl
         &mut self,
         output: &mut GlweCiphertext64,
         input: &LweCiphertextVector64,
-        ksk: &PackingKeyswitchKey64,
+        ksk: &LwePackingKeyswitchKey64,
     ) -> Result<
         (),
         LweCiphertextVectorGlweCiphertextDiscardingPackingKeyswitchError<Self::EngineError>,
@@ -180,7 +180,7 @@ impl
         &mut self,
         output: &mut GlweCiphertext64,
         input: &LweCiphertextVector64,
-        ksk: &PackingKeyswitchKey64,
+        ksk: &LwePackingKeyswitchKey64,
     ) {
         ksk.0.packing_keyswitch(&mut output.0, &input.0);
     }

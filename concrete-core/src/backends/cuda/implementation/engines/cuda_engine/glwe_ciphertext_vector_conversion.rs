@@ -44,8 +44,9 @@ impl GlweCiphertextVectorConversionEngine<GlweCiphertextVector32, CudaGlweCipher
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let h_key: GlweSecretKey32 =
-    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let h_plaintext_vector: PlaintextVector32 = default_engine.create_plaintext_vector(&input)?;
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let h_plaintext_vector: PlaintextVector32 =
+    ///     default_engine.create_plaintext_vector_from(&input)?;
     /// let mut h_ciphertext_vector: GlweCiphertextVector32 =
     ///     default_engine.encrypt_glwe_ciphertext_vector(&h_key, &h_plaintext_vector, noise)?;
     ///
@@ -130,8 +131,9 @@ impl GlweCiphertextVectorConversionEngine<CudaGlweCiphertextVector32, GlweCipher
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let h_key: GlweSecretKey32 =
-    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let h_plaintext_vector: PlaintextVector32 = default_engine.create_plaintext_vector(&input)?;
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let h_plaintext_vector: PlaintextVector32 =
+    ///     default_engine.create_plaintext_vector_from(&input)?;
     /// let mut h_ciphertext_vector: GlweCiphertextVector32 =
     ///     default_engine.encrypt_glwe_ciphertext_vector(&h_key, &h_plaintext_vector, noise)?;
     ///
@@ -208,8 +210,9 @@ impl GlweCiphertextVectorConversionEngine<GlweCiphertextVector64, CudaGlweCipher
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let h_key: GlweSecretKey64 =
-    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let h_plaintext_vector: PlaintextVector64 = default_engine.create_plaintext_vector(&input)?;
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let h_plaintext_vector: PlaintextVector64 =
+    ///     default_engine.create_plaintext_vector_from(&input)?;
     /// let mut h_ciphertext_vector: GlweCiphertextVector64 =
     ///     default_engine.encrypt_glwe_ciphertext_vector(&h_key, &h_plaintext_vector, noise)?;
     ///
@@ -294,8 +297,9 @@ impl GlweCiphertextVectorConversionEngine<CudaGlweCiphertextVector64, GlweCipher
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let h_key: GlweSecretKey64 =
-    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let h_plaintext_vector: PlaintextVector64 = default_engine.create_plaintext_vector(&input)?;
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let h_plaintext_vector: PlaintextVector64 =
+    ///     default_engine.create_plaintext_vector_from(&input)?;
     /// let mut h_ciphertext_vector: GlweCiphertextVector64 =
     ///     default_engine.encrypt_glwe_ciphertext_vector(&h_key, &h_plaintext_vector, noise)?;
     ///

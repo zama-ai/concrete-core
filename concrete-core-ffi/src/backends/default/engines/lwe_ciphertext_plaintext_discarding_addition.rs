@@ -25,7 +25,7 @@ pub unsafe extern "C" fn default_engine_discard_add_lwe_ciphertext_plaintext_u64
         let input = get_ref_checked(input).unwrap();
 
         let adder = engine
-            .create_plaintext(&adder)
+            .create_plaintext_from(&adder)
             .or_else(engine_error_as_readable_string)
             .unwrap();
 
@@ -51,7 +51,7 @@ pub unsafe extern "C" fn default_engine_discard_add_lwe_ciphertext_plaintext_unc
         let output = &mut (*output);
         let input = &(*input);
 
-        let adder = engine.create_plaintext_unchecked(&adder);
+        let adder = engine.create_plaintext_from_unchecked(&adder);
 
         engine.discard_add_lwe_ciphertext_plaintext_unchecked(output, input, &adder);
     })
@@ -76,19 +76,19 @@ pub unsafe extern "C" fn default_engine_discard_add_lwe_ciphertext_plaintext_u64
         let output = get_mut_checked(output).unwrap();
         let output_as_slice = std::slice::from_raw_parts_mut(output, lwe_size);
         let mut output = engine
-            .create_lwe_ciphertext(output_as_slice)
+            .create_lwe_ciphertext_from(output_as_slice)
             .or_else(engine_error_as_readable_string)
             .unwrap();
 
         let input = get_ref_checked(input).unwrap();
         let input_as_slice = std::slice::from_raw_parts(input, lwe_size);
         let input = engine
-            .create_lwe_ciphertext(input_as_slice)
+            .create_lwe_ciphertext_from(input_as_slice)
             .or_else(engine_error_as_readable_string)
             .unwrap();
 
         let adder = engine
-            .create_plaintext(&adder)
+            .create_plaintext_from(&adder)
             .or_else(engine_error_as_readable_string)
             .unwrap();
 
@@ -116,12 +116,12 @@ pub unsafe extern "C" fn default_engine_discard_add_lwe_ciphertext_plaintext_unc
         let lwe_size = lwe_dimension.to_lwe_size().0;
 
         let output_as_slice = std::slice::from_raw_parts_mut(output, lwe_size);
-        let mut output = engine.create_lwe_ciphertext_unchecked(output_as_slice);
+        let mut output = engine.create_lwe_ciphertext_from_unchecked(output_as_slice);
 
         let input_as_slice = std::slice::from_raw_parts(input, lwe_size);
-        let input = engine.create_lwe_ciphertext_unchecked(input_as_slice);
+        let input = engine.create_lwe_ciphertext_from_unchecked(input_as_slice);
 
-        let adder = engine.create_plaintext_unchecked(&adder);
+        let adder = engine.create_plaintext_from_unchecked(&adder);
 
         engine.discard_add_lwe_ciphertext_plaintext_unchecked(&mut output, &input, &adder);
     })

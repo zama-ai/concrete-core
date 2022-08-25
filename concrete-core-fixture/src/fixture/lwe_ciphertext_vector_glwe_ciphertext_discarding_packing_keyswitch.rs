@@ -1,7 +1,7 @@
 use crate::fixture::{fix_estimate_keyswitch_noise_lwe_to_glwe_with_constant_terms, Fixture};
 use crate::generation::prototyping::{
     PrototypesGlweCiphertext, PrototypesGlweSecretKey, PrototypesLweCiphertextVector,
-    PrototypesLweSecretKey, PrototypesPackingKeyswitchKey, PrototypesPlaintextVector,
+    PrototypesLwePackingKeyswitchKey, PrototypesLweSecretKey, PrototypesPlaintextVector,
 };
 use crate::generation::synthesizing::{
     SynthesizesGlweCiphertext, SynthesizesLweCiphertextVector, SynthesizesPackingKeyswitchKey,
@@ -16,7 +16,7 @@ use concrete_commons::parameters::{
 use concrete_core::prelude::{
     DispersionParameter, GlweCiphertextEntity, LogStandardDev, LweCiphertextCount,
     LweCiphertextVectorEntity, LweCiphertextVectorGlweCiphertextDiscardingPackingKeyswitchEngine,
-    PackingKeyswitchKeyEntity,
+    LwePackingKeyswitchKeyEntity,
 };
 
 /// A fixture for the types implementing the
@@ -41,26 +41,30 @@ impl<
         OutputKeyDistribution,
         Engine,
         InputCiphertextVector,
-        PackingKeyswitchKey,
+        LwePackingKeyswitchKey,
         OutputCiphertext,
     >
     Fixture<
         Precision,
         (InputKeyDistribution, OutputKeyDistribution),
         Engine,
-        (InputCiphertextVector, PackingKeyswitchKey, OutputCiphertext),
+        (
+            InputCiphertextVector,
+            LwePackingKeyswitchKey,
+            OutputCiphertext,
+        ),
     > for LweCiphertextVectorGlweCiphertextDiscardingPackingKeyswitchFixture
 where
     Precision: IntegerPrecision,
     InputKeyDistribution: KeyDistributionMarker,
     OutputKeyDistribution: KeyDistributionMarker,
     Engine: LweCiphertextVectorGlweCiphertextDiscardingPackingKeyswitchEngine<
-        PackingKeyswitchKey,
+        LwePackingKeyswitchKey,
         InputCiphertextVector,
         OutputCiphertext,
     >,
     InputCiphertextVector: LweCiphertextVectorEntity,
-    PackingKeyswitchKey: PackingKeyswitchKeyEntity,
+    LwePackingKeyswitchKey: LwePackingKeyswitchKeyEntity,
     OutputCiphertext: GlweCiphertextEntity,
     Maker: SynthesizesLweCiphertextVector<Precision, InputKeyDistribution, InputCiphertextVector>
         + SynthesizesGlweCiphertext<Precision, OutputKeyDistribution, OutputCiphertext>
@@ -68,12 +72,12 @@ where
             Precision,
             InputKeyDistribution,
             OutputKeyDistribution,
-            PackingKeyswitchKey,
+            LwePackingKeyswitchKey,
         >,
 {
     type Parameters = LweCiphertextVectorGlweCiphertextDiscardingPackingKeyswitchParameters;
     type RepetitionPrototypes = (
-        <Maker as PrototypesPackingKeyswitchKey<
+        <Maker as PrototypesLwePackingKeyswitchKey<
             Precision,
             InputKeyDistribution,
             OutputKeyDistribution,
@@ -92,8 +96,16 @@ where
             OutputKeyDistribution,
         >>::GlweCiphertextProto,
     );
-    type PreExecutionContext = (OutputCiphertext, InputCiphertextVector, PackingKeyswitchKey);
-    type PostExecutionContext = (OutputCiphertext, InputCiphertextVector, PackingKeyswitchKey);
+    type PreExecutionContext = (
+        OutputCiphertext,
+        InputCiphertextVector,
+        LwePackingKeyswitchKey,
+    );
+    type PostExecutionContext = (
+        OutputCiphertext,
+        InputCiphertextVector,
+        LwePackingKeyswitchKey,
+    );
     type Outcome = (Vec<Precision::Raw>, Vec<Precision::Raw>);
     type Criteria = (Variance,);
 
@@ -150,7 +162,7 @@ where
             parameters.output_glwe_dimension,
             parameters.output_polynomial_size,
         );
-        let proto_pksk = maker.new_packing_keyswitch_key(
+        let proto_pksk = maker.new_lwe_packing_keyswitch_key(
             &proto_secret_key_input,
             &proto_secret_key_output,
             parameters.decomposition_level,

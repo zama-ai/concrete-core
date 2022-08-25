@@ -15,7 +15,7 @@ use crate::commons::crypto::ggsw::{
 use crate::commons::crypto::glwe::{
     GlweCiphertext as ImplGlweCiphertext, GlweList as ImplGlweList,
     GlweSeededCiphertext as ImplGlweSeededCiphertext, GlweSeededList as ImplGlweSeededList,
-    PackingKeyswitchKey as ImplPackingKeyswitchKey,
+    LwePackingKeyswitchKey as ImplLwePackingKeyswitchKey,
 };
 use crate::commons::crypto::lwe::{
     LweCiphertext as ImplLweCiphertext, LweKeyswitchKey as ImplLweKeyswitchKey,
@@ -46,16 +46,17 @@ use crate::prelude::{
     LweCiphertext64, LweCiphertext64Version, LweCiphertextMutView32, LweCiphertextMutView64,
     LweCiphertextVector32, LweCiphertextVector32Version, LweCiphertextVector64,
     LweCiphertextVector64Version, LweCiphertextView32, LweCiphertextView64, LweKeyswitchKey32,
-    LweKeyswitchKey32Version, LweKeyswitchKey64, LweKeyswitchKey64Version, LweSecretKey32,
-    LweSecretKey32Version, LweSecretKey64, LweSecretKey64Version, LweSeededBootstrapKey32,
-    LweSeededBootstrapKey32Version, LweSeededBootstrapKey64, LweSeededBootstrapKey64Version,
-    LweSeededCiphertext32, LweSeededCiphertext32Version, LweSeededCiphertext64,
-    LweSeededCiphertext64Version, LweSeededCiphertextVector32, LweSeededCiphertextVector32Version,
-    LweSeededCiphertextVector64, LweSeededCiphertextVector64Version, LweSeededKeyswitchKey32,
-    LweSeededKeyswitchKey32Version, LweSeededKeyswitchKey64, LweSeededKeyswitchKey64Version,
-    PackingKeyswitchKey32, PackingKeyswitchKey32Version, PackingKeyswitchKey64,
-    PackingKeyswitchKey64Version, Plaintext32, Plaintext32Version, Plaintext64, Plaintext64Version,
-    PlaintextVector32, PlaintextVector32Version, PlaintextVector64, PlaintextVector64Version,
+    LweKeyswitchKey32Version, LweKeyswitchKey64, LweKeyswitchKey64Version,
+    LwePackingKeyswitchKey32, LwePackingKeyswitchKey32Version, LwePackingKeyswitchKey64,
+    LwePackingKeyswitchKey64Version, LweSecretKey32, LweSecretKey32Version, LweSecretKey64,
+    LweSecretKey64Version, LweSeededBootstrapKey32, LweSeededBootstrapKey32Version,
+    LweSeededBootstrapKey64, LweSeededBootstrapKey64Version, LweSeededCiphertext32,
+    LweSeededCiphertext32Version, LweSeededCiphertext64, LweSeededCiphertext64Version,
+    LweSeededCiphertextVector32, LweSeededCiphertextVector32Version, LweSeededCiphertextVector64,
+    LweSeededCiphertextVector64Version, LweSeededKeyswitchKey32, LweSeededKeyswitchKey32Version,
+    LweSeededKeyswitchKey64, LweSeededKeyswitchKey64Version, Plaintext32, Plaintext32Version,
+    Plaintext64, Plaintext64Version, PlaintextVector32, PlaintextVector32Version,
+    PlaintextVector64, PlaintextVector64Version,
 };
 use concrete_commons::key_kinds::BinaryKeyKind;
 use serde::Serialize;
@@ -76,7 +77,7 @@ impl EntitySerializationEngine<Cleartext32, Vec<u8>> for DefaultSerializationEng
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let cleartext: Cleartext32 = engine.create_cleartext(&input)?;
+    /// let cleartext: Cleartext32 = engine.create_cleartext_from(&input)?;
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&cleartext)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
@@ -124,7 +125,7 @@ impl EntitySerializationEngine<Cleartext64, Vec<u8>> for DefaultSerializationEng
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let cleartext: Cleartext64 = engine.create_cleartext(&input)?;
+    /// let cleartext: Cleartext64 = engine.create_cleartext_from(&input)?;
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&cleartext)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
@@ -172,7 +173,7 @@ impl EntitySerializationEngine<CleartextF64, Vec<u8>> for DefaultSerializationEn
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let cleartext: CleartextF64 = engine.create_cleartext(&input)?;
+    /// let cleartext: CleartextF64 = engine.create_cleartext_from(&input)?;
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&cleartext)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
@@ -221,7 +222,7 @@ impl EntitySerializationEngine<CleartextVector32, Vec<u8>> for DefaultSerializat
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let cleartext_vector: CleartextVector32 = engine.create_cleartext_vector(&input)?;
+    /// let cleartext_vector: CleartextVector32 = engine.create_cleartext_vector_from(&input)?;
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&cleartext_vector)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
@@ -270,7 +271,7 @@ impl EntitySerializationEngine<CleartextVector64, Vec<u8>> for DefaultSerializat
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let cleartext_vector: CleartextVector64 = engine.create_cleartext_vector(&input)?;
+    /// let cleartext_vector: CleartextVector64 = engine.create_cleartext_vector_from(&input)?;
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&cleartext_vector)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
@@ -319,7 +320,7 @@ impl EntitySerializationEngine<CleartextVectorF64, Vec<u8>> for DefaultSerializa
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let cleartext_vector: CleartextVectorF64 = engine.create_cleartext_vector(&input)?;
+    /// let cleartext_vector: CleartextVectorF64 = engine.create_cleartext_vector_from(&input)?;
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&cleartext_vector)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
@@ -378,8 +379,9 @@ impl EntitySerializationEngine<GgswCiphertext32, Vec<u8>> for DefaultSerializati
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: GlweSecretKey32 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext = engine.create_plaintext(&input)?;
+    /// let key: GlweSecretKey32 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext = engine.create_plaintext_from(&input)?;
     ///
     /// let ciphertext =
     ///     engine.encrypt_scalar_ggsw_ciphertext(&key, &plaintext, noise, level, base_log)?;
@@ -443,8 +445,9 @@ impl EntitySerializationEngine<GgswCiphertext64, Vec<u8>> for DefaultSerializati
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: GlweSecretKey64 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext = engine.create_plaintext(&input)?;
+    /// let key: GlweSecretKey64 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext = engine.create_plaintext_from(&input)?;
     ///
     /// let ciphertext =
     ///     engine.encrypt_scalar_ggsw_ciphertext(&key, &plaintext, noise, level, base_log)?;
@@ -561,8 +564,9 @@ impl EntitySerializationEngine<GlweCiphertext32, Vec<u8>> for DefaultSerializati
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: GlweSecretKey32 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector(&input)?;
+    /// let key: GlweSecretKey32 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
     ///
     /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
     ///
@@ -622,8 +626,9 @@ impl EntitySerializationEngine<GlweCiphertext64, Vec<u8>> for DefaultSerializati
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: GlweSecretKey64 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector(&input)?;
+    /// let key: GlweSecretKey64 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
     ///
     /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
     ///
@@ -685,13 +690,14 @@ impl<'b> EntitySerializationEngine<GlweCiphertextView32<'b>, Vec<u8>>
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: GlweSecretKey32 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector(&input)?;
+    /// let key: GlweSecretKey32 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
     ///
     /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
     /// let raw_buffer = engine.consume_retrieve_glwe_ciphertext(ciphertext)?;
     /// let view: GlweCiphertextView32 =
-    ///     engine.create_glwe_ciphertext(raw_buffer.as_slice(), polynomial_size)?;
+    ///     engine.create_glwe_ciphertext_from(raw_buffer.as_slice(), polynomial_size)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&view)?;
@@ -752,13 +758,14 @@ impl<'b> EntitySerializationEngine<GlweCiphertextView64<'b>, Vec<u8>>
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: GlweSecretKey64 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector(&input)?;
+    /// let key: GlweSecretKey64 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
     /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
     ///
     /// let raw_buffer = engine.consume_retrieve_glwe_ciphertext(ciphertext)?;
     /// let view: GlweCiphertextView64 =
-    ///     engine.create_glwe_ciphertext(raw_buffer.as_slice(), polynomial_size)?;
+    ///     engine.create_glwe_ciphertext_from(raw_buffer.as_slice(), polynomial_size)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&view)?;
@@ -819,13 +826,14 @@ impl<'b> EntitySerializationEngine<GlweCiphertextMutView32<'b>, Vec<u8>>
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: GlweSecretKey32 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector(&input)?;
+    /// let key: GlweSecretKey32 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
     ///
     /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
     /// let mut raw_buffer = engine.consume_retrieve_glwe_ciphertext(ciphertext)?;
     /// let view: GlweCiphertextMutView32 =
-    ///     engine.create_glwe_ciphertext(raw_buffer.as_mut_slice(), polynomial_size)?;
+    ///     engine.create_glwe_ciphertext_from(raw_buffer.as_mut_slice(), polynomial_size)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&view)?;
@@ -886,13 +894,14 @@ impl<'b> EntitySerializationEngine<GlweCiphertextMutView64<'b>, Vec<u8>>
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: GlweSecretKey64 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector(&input)?;
+    /// let key: GlweSecretKey64 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
     /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
     ///
     /// let mut raw_buffer = engine.consume_retrieve_glwe_ciphertext(ciphertext)?;
     /// let view: GlweCiphertextMutView64 =
-    ///     engine.create_glwe_ciphertext(raw_buffer.as_mut_slice(), polynomial_size)?;
+    ///     engine.create_glwe_ciphertext_from(raw_buffer.as_mut_slice(), polynomial_size)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&view)?;
@@ -950,8 +959,9 @@ impl EntitySerializationEngine<GlweCiphertextVector32, Vec<u8>> for DefaultSeria
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: GlweSecretKey32 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector(&input)?;
+    /// let key: GlweSecretKey32 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
     ///
     /// let ciphertext_vector =
     ///     engine.encrypt_glwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
@@ -1011,8 +1021,9 @@ impl EntitySerializationEngine<GlweCiphertextVector64, Vec<u8>> for DefaultSeria
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: GlweSecretKey64 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector(&input)?;
+    /// let key: GlweSecretKey64 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
     ///
     /// let ciphertext_vector =
     ///     engine.encrypt_glwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
@@ -1069,7 +1080,7 @@ impl EntitySerializationEngine<GlweSecretKey32, Vec<u8>> for DefaultSerializatio
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let glwe_secret_key: GlweSecretKey32 =
-    ///     engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&glwe_secret_key)?;
@@ -1123,7 +1134,7 @@ impl EntitySerializationEngine<GlweSecretKey64, Vec<u8>> for DefaultSerializatio
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let glwe_secret_key: GlweSecretKey64 =
-    ///     engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&glwe_secret_key)?;
@@ -1181,8 +1192,9 @@ impl EntitySerializationEngine<GlweSeededCiphertext32, Vec<u8>> for DefaultSeria
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: GlweSecretKey32 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector(&input)?;
+    /// let key: GlweSecretKey32 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
     ///
     /// let seeded_ciphertext =
     ///     engine.encrypt_glwe_seeded_ciphertext(&key, &plaintext_vector, noise)?;
@@ -1243,8 +1255,9 @@ impl EntitySerializationEngine<GlweSeededCiphertext64, Vec<u8>> for DefaultSeria
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: GlweSecretKey64 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector(&input)?;
+    /// let key: GlweSecretKey64 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
     ///
     /// let seeded_ciphertext =
     ///     engine.encrypt_glwe_seeded_ciphertext(&key, &plaintext_vector, noise)?;
@@ -1306,8 +1319,9 @@ impl EntitySerializationEngine<GlweSeededCiphertextVector32, Vec<u8>>
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: GlweSecretKey32 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector(&input)?;
+    /// let key: GlweSecretKey32 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
     ///
     /// let seeded_ciphertext_vector =
     ///     engine.encrypt_glwe_seeded_ciphertext_vector(&key, &plaintext_vector, noise)?;
@@ -1369,8 +1383,9 @@ impl EntitySerializationEngine<GlweSeededCiphertextVector64, Vec<u8>>
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: GlweSecretKey64 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector(&input)?;
+    /// let key: GlweSecretKey64 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
     ///
     /// let seeded_ciphertext_vector =
     ///     engine.encrypt_glwe_seeded_ciphertext_vector(&key, &plaintext_vector, noise)?;
@@ -1430,11 +1445,11 @@ impl EntitySerializationEngine<LweBootstrapKey32, Vec<u8>> for DefaultSerializat
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let lwe_sk: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dim)?;
-    /// let glwe_sk: GlweSecretKey32 = engine.create_glwe_secret_key(glwe_dim, poly_size)?;
+    /// let lwe_sk: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dim)?;
+    /// let glwe_sk: GlweSecretKey32 = engine.generate_new_glwe_secret_key(glwe_dim, poly_size)?;
     ///
     /// let bsk: LweBootstrapKey32 =
-    ///     engine.create_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
+    ///     engine.generate_new_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&bsk)?;
@@ -1491,11 +1506,11 @@ impl EntitySerializationEngine<LweBootstrapKey64, Vec<u8>> for DefaultSerializat
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let lwe_sk: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dim)?;
-    /// let glwe_sk: GlweSecretKey64 = engine.create_glwe_secret_key(glwe_dim, poly_size)?;
+    /// let lwe_sk: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dim)?;
+    /// let glwe_sk: GlweSecretKey64 = engine.generate_new_glwe_secret_key(glwe_dim, poly_size)?;
     ///
     /// let bsk: LweBootstrapKey64 =
-    ///     engine.create_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
+    ///     engine.generate_new_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&bsk)?;
@@ -1551,8 +1566,8 @@ impl EntitySerializationEngine<LweCiphertext32, Vec<u8>> for DefaultSerializatio
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext = engine.create_plaintext(&input)?;
+    /// let key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext_from(&input)?;
     ///
     /// let ciphertext = engine.encrypt_lwe_ciphertext(&key, &plaintext, noise)?;
     ///
@@ -1610,8 +1625,8 @@ impl EntitySerializationEngine<LweCiphertext64, Vec<u8>> for DefaultSerializatio
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext = engine.create_plaintext(&input)?;
+    /// let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext_from(&input)?;
     ///
     /// let ciphertext = engine.encrypt_lwe_ciphertext(&key, &plaintext, noise)?;
     ///
@@ -1670,12 +1685,12 @@ impl<'b> EntitySerializationEngine<LweCiphertextView32<'b>, Vec<u8>>
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext = engine.create_plaintext(&input)?;
+    /// let key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext_from(&input)?;
     ///
     /// let ciphertext = engine.encrypt_lwe_ciphertext(&key, &plaintext, noise)?;
     /// let raw_buffer = engine.consume_retrieve_lwe_ciphertext(ciphertext)?;
-    /// let view: LweCiphertextView32 = engine.create_lwe_ciphertext(raw_buffer.as_slice())?;
+    /// let view: LweCiphertextView32 = engine.create_lwe_ciphertext_from(raw_buffer.as_slice())?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&view)?;
@@ -1734,13 +1749,13 @@ impl<'b> EntitySerializationEngine<LweCiphertextView64<'b>, Vec<u8>>
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext = engine.create_plaintext(&input)?;
+    /// let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext_from(&input)?;
     ///
     /// let ciphertext = engine.encrypt_lwe_ciphertext(&key, &plaintext, noise)?;
     ///
     /// let raw_buffer = engine.consume_retrieve_lwe_ciphertext(ciphertext)?;
-    /// let view: LweCiphertextView64 = engine.create_lwe_ciphertext(raw_buffer.as_slice())?;
+    /// let view: LweCiphertextView64 = engine.create_lwe_ciphertext_from(raw_buffer.as_slice())?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&view)?;
@@ -1798,12 +1813,13 @@ impl<'b> EntitySerializationEngine<LweCiphertextMutView32<'b>, Vec<u8>>
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext = engine.create_plaintext(&input)?;
+    /// let key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext_from(&input)?;
     ///
     /// let ciphertext = engine.encrypt_lwe_ciphertext(&key, &plaintext, noise)?;
     /// let mut raw_buffer = engine.consume_retrieve_lwe_ciphertext(ciphertext)?;
-    /// let view: LweCiphertextMutView32 = engine.create_lwe_ciphertext(raw_buffer.as_mut_slice())?;
+    /// let view: LweCiphertextMutView32 =
+    ///     engine.create_lwe_ciphertext_from(raw_buffer.as_mut_slice())?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&view)?;
@@ -1862,13 +1878,13 @@ impl<'b> EntitySerializationEngine<LweCiphertextMutView64<'b>, Vec<u8>>
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext = engine.create_plaintext(&input)?;
+    /// let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext_from(&input)?;
     ///
     /// let ciphertext = engine.encrypt_lwe_ciphertext(&key, &plaintext, noise)?;
     ///
     /// let mut raw_buffer = engine.consume_retrieve_lwe_ciphertext(ciphertext)?;
-    /// let view: LweCiphertextMutView64 = engine.create_lwe_ciphertext(raw_buffer.as_mut_slice())?;
+    /// let view: LweCiphertextMutView64 = engine.create_lwe_ciphertext_from(raw_buffer.as_mut_slice())?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&view)?;
@@ -1924,8 +1940,8 @@ impl EntitySerializationEngine<LweCiphertextVector32, Vec<u8>> for DefaultSerial
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector(&input)?;
+    /// let key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector_from(&input)?;
     ///
     /// let mut ciphertext_vector: LweCiphertextVector32 =
     ///     engine.encrypt_lwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
@@ -1984,8 +2000,8 @@ impl EntitySerializationEngine<LweCiphertextVector64, Vec<u8>> for DefaultSerial
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector(&input)?;
+    /// let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector_from(&input)?;
     ///
     /// let mut ciphertext_vector: LweCiphertextVector64 =
     ///     engine.encrypt_lwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
@@ -2047,10 +2063,10 @@ impl EntitySerializationEngine<LweKeyswitchKey32, Vec<u8>> for DefaultSerializat
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let input_key: LweSecretKey32 = engine.create_lwe_secret_key(input_lwe_dimension)?;
-    /// let output_key: LweSecretKey32 = engine.create_lwe_secret_key(output_lwe_dimension)?;
+    /// let input_key: LweSecretKey32 = engine.generate_new_lwe_secret_key(input_lwe_dimension)?;
+    /// let output_key: LweSecretKey32 = engine.generate_new_lwe_secret_key(output_lwe_dimension)?;
     ///
-    /// let keyswitch_key = engine.create_lwe_keyswitch_key(
+    /// let keyswitch_key = engine.generate_new_lwe_keyswitch_key(
     ///     &input_key,
     ///     &output_key,
     ///     decomposition_level_count,
@@ -2115,10 +2131,10 @@ impl EntitySerializationEngine<LweKeyswitchKey64, Vec<u8>> for DefaultSerializat
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let input_key: LweSecretKey64 = engine.create_lwe_secret_key(input_lwe_dimension)?;
-    /// let output_key: LweSecretKey64 = engine.create_lwe_secret_key(output_lwe_dimension)?;
+    /// let input_key: LweSecretKey64 = engine.generate_new_lwe_secret_key(input_lwe_dimension)?;
+    /// let output_key: LweSecretKey64 = engine.generate_new_lwe_secret_key(output_lwe_dimension)?;
     ///
-    /// let keyswitch_key = engine.create_lwe_keyswitch_key(
+    /// let keyswitch_key = engine.generate_new_lwe_keyswitch_key(
     ///     &input_key,
     ///     &output_key,
     ///     decomposition_level_count,
@@ -2176,7 +2192,7 @@ impl EntitySerializationEngine<LweSecretKey32, Vec<u8>> for DefaultSerialization
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let lwe_secret_key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
+    /// let lwe_secret_key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&lwe_secret_key)?;
@@ -2228,7 +2244,7 @@ impl EntitySerializationEngine<LweSecretKey64, Vec<u8>> for DefaultSerialization
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let lwe_secret_key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
+    /// let lwe_secret_key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&lwe_secret_key)?;
@@ -2285,11 +2301,11 @@ impl EntitySerializationEngine<LweSeededBootstrapKey32, Vec<u8>> for DefaultSeri
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let lwe_sk: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dim)?;
-    /// let glwe_sk: GlweSecretKey32 = engine.create_glwe_secret_key(glwe_dim, poly_size)?;
+    /// let lwe_sk: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dim)?;
+    /// let glwe_sk: GlweSecretKey32 = engine.generate_new_glwe_secret_key(glwe_dim, poly_size)?;
     ///
     /// let bsk: LweSeededBootstrapKey32 =
-    ///     engine.create_lwe_seeded_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
+    ///     engine.generate_new_lwe_seeded_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&bsk)?;
@@ -2348,11 +2364,11 @@ impl EntitySerializationEngine<LweSeededBootstrapKey64, Vec<u8>> for DefaultSeri
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let lwe_sk: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dim)?;
-    /// let glwe_sk: GlweSecretKey64 = engine.create_glwe_secret_key(glwe_dim, poly_size)?;
+    /// let lwe_sk: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dim)?;
+    /// let glwe_sk: GlweSecretKey64 = engine.generate_new_glwe_secret_key(glwe_dim, poly_size)?;
     ///
     /// let bsk: LweSeededBootstrapKey64 =
-    ///     engine.create_lwe_seeded_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
+    ///     engine.generate_new_lwe_seeded_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&bsk)?;
@@ -2409,8 +2425,8 @@ impl EntitySerializationEngine<LweSeededCiphertext32, Vec<u8>> for DefaultSerial
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext = engine.create_plaintext(&input)?;
+    /// let key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext_from(&input)?;
     ///
     /// let ciphertext: LweSeededCiphertext32 =
     ///     engine.encrypt_lwe_seeded_ciphertext(&key, &plaintext, noise)?;
@@ -2469,8 +2485,8 @@ impl EntitySerializationEngine<LweSeededCiphertext64, Vec<u8>> for DefaultSerial
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext = engine.create_plaintext(&input)?;
+    /// let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext_from(&input)?;
     ///
     /// let ciphertext: LweSeededCiphertext64 =
     ///     engine.encrypt_lwe_seeded_ciphertext(&key, &plaintext, noise)?;
@@ -2531,8 +2547,8 @@ impl EntitySerializationEngine<LweSeededCiphertextVector32, Vec<u8>>
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector(&input)?;
+    /// let key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector_from(&input)?;
     ///
     /// let mut ciphertext_vector: LweSeededCiphertextVector32 =
     ///     engine.encrypt_lwe_seeded_ciphertext_vector(&key, &plaintext_vector, noise)?;
@@ -2593,8 +2609,8 @@ impl EntitySerializationEngine<LweSeededCiphertextVector64, Vec<u8>>
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector(&input)?;
+    /// let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector_from(&input)?;
     ///
     /// let mut ciphertext_vector: LweSeededCiphertextVector64 =
     ///     engine.encrypt_lwe_seeded_ciphertext_vector(&key, &plaintext_vector, noise)?;
@@ -2656,10 +2672,10 @@ impl EntitySerializationEngine<LweSeededKeyswitchKey32, Vec<u8>> for DefaultSeri
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let input_key: LweSecretKey32 = engine.create_lwe_secret_key(input_lwe_dimension)?;
-    /// let output_key: LweSecretKey32 = engine.create_lwe_secret_key(output_lwe_dimension)?;
+    /// let input_key: LweSecretKey32 = engine.generate_new_lwe_secret_key(input_lwe_dimension)?;
+    /// let output_key: LweSecretKey32 = engine.generate_new_lwe_secret_key(output_lwe_dimension)?;
     ///
-    /// let seeded_keyswitch_key = engine.create_lwe_seeded_keyswitch_key(
+    /// let seeded_keyswitch_key = engine.generate_new_lwe_seeded_keyswitch_key(
     ///     &input_key,
     ///     &output_key,
     ///     decomposition_level_count,
@@ -2724,10 +2740,10 @@ impl EntitySerializationEngine<LweSeededKeyswitchKey64, Vec<u8>> for DefaultSeri
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let input_key: LweSecretKey64 = engine.create_lwe_secret_key(input_lwe_dimension)?;
-    /// let output_key: LweSecretKey64 = engine.create_lwe_secret_key(output_lwe_dimension)?;
+    /// let input_key: LweSecretKey64 = engine.generate_new_lwe_secret_key(input_lwe_dimension)?;
+    /// let output_key: LweSecretKey64 = engine.generate_new_lwe_secret_key(output_lwe_dimension)?;
     ///
-    /// let seeded_keyswitch_key = engine.create_lwe_seeded_keyswitch_key(
+    /// let seeded_keyswitch_key = engine.generate_new_lwe_seeded_keyswitch_key(
     ///     &input_key,
     ///     &output_key,
     ///     decomposition_level_count,
@@ -2770,7 +2786,7 @@ impl EntitySerializationEngine<LweSeededKeyswitchKey64, Vec<u8>> for DefaultSeri
 /// # Description:
 /// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
 /// on 32 bits integers. It serializes a packing keyswitch key entity.
-impl EntitySerializationEngine<PackingKeyswitchKey32, Vec<u8>> for DefaultSerializationEngine {
+impl EntitySerializationEngine<LwePackingKeyswitchKey32, Vec<u8>> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_commons::dispersion::Variance;
@@ -2792,10 +2808,10 @@ impl EntitySerializationEngine<PackingKeyswitchKey32, Vec<u8>> for DefaultSerial
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let input_key: LweSecretKey32 = engine.create_lwe_secret_key(input_lwe_dimension)?;
-    /// let output_key: LweSecretKey32 = engine.create_lwe_secret_key(output_lwe_dimension)?;
+    /// let input_key: LweSecretKey32 = engine.generate_new_lwe_secret_key(input_lwe_dimension)?;
+    /// let output_key: LweSecretKey32 = engine.generate_new_lwe_secret_key(output_lwe_dimension)?;
     ///
-    /// let packing_keyswitch_key = engine.create_lwe_keyswitch_key(
+    /// let packing_keyswitch_key = engine.generate_new_lwe_keyswitch_key(
     ///     &input_key,
     ///     &output_key,
     ///     decomposition_level_count,
@@ -2814,15 +2830,15 @@ impl EntitySerializationEngine<PackingKeyswitchKey32, Vec<u8>> for DefaultSerial
     /// ```
     fn serialize(
         &mut self,
-        entity: &PackingKeyswitchKey32,
+        entity: &LwePackingKeyswitchKey32,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
         #[derive(Serialize)]
         struct SerializablePackingKeyswitchKey32<'a> {
-            version: PackingKeyswitchKey32Version,
-            inner: &'a ImplPackingKeyswitchKey<Vec<u32>>,
+            version: LwePackingKeyswitchKey32Version,
+            inner: &'a ImplLwePackingKeyswitchKey<Vec<u32>>,
         }
         let serializable = SerializablePackingKeyswitchKey32 {
-            version: PackingKeyswitchKey32Version::V0,
+            version: LwePackingKeyswitchKey32Version::V0,
             inner: &entity.0,
         };
         bincode::serialize(&serializable)
@@ -2830,7 +2846,7 @@ impl EntitySerializationEngine<PackingKeyswitchKey32, Vec<u8>> for DefaultSerial
             .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn serialize_unchecked(&mut self, entity: &PackingKeyswitchKey32) -> Vec<u8> {
+    unsafe fn serialize_unchecked(&mut self, entity: &LwePackingKeyswitchKey32) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
@@ -2838,7 +2854,7 @@ impl EntitySerializationEngine<PackingKeyswitchKey32, Vec<u8>> for DefaultSerial
 /// # Description:
 /// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
 /// on 64 bits integers. It serializes a packing keyswitch key entity.
-impl EntitySerializationEngine<PackingKeyswitchKey64, Vec<u8>> for DefaultSerializationEngine {
+impl EntitySerializationEngine<LwePackingKeyswitchKey64, Vec<u8>> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_commons::dispersion::Variance;
@@ -2860,10 +2876,10 @@ impl EntitySerializationEngine<PackingKeyswitchKey64, Vec<u8>> for DefaultSerial
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let input_key: LweSecretKey64 = engine.create_lwe_secret_key(input_lwe_dimension)?;
-    /// let output_key: LweSecretKey64 = engine.create_lwe_secret_key(output_lwe_dimension)?;
+    /// let input_key: LweSecretKey64 = engine.generate_new_lwe_secret_key(input_lwe_dimension)?;
+    /// let output_key: LweSecretKey64 = engine.generate_new_lwe_secret_key(output_lwe_dimension)?;
     ///
-    /// let packing_keyswitch_key = engine.create_lwe_keyswitch_key(
+    /// let packing_keyswitch_key = engine.generate_new_lwe_keyswitch_key(
     ///     &input_key,
     ///     &output_key,
     ///     decomposition_level_count,
@@ -2882,15 +2898,15 @@ impl EntitySerializationEngine<PackingKeyswitchKey64, Vec<u8>> for DefaultSerial
     /// ```
     fn serialize(
         &mut self,
-        entity: &PackingKeyswitchKey64,
+        entity: &LwePackingKeyswitchKey64,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
         #[derive(Serialize)]
         struct SerializablePackingKeyswitchKey64<'a> {
-            version: PackingKeyswitchKey64Version,
-            inner: &'a ImplPackingKeyswitchKey<Vec<u64>>,
+            version: LwePackingKeyswitchKey64Version,
+            inner: &'a ImplLwePackingKeyswitchKey<Vec<u64>>,
         }
         let serializable = SerializablePackingKeyswitchKey64 {
-            version: PackingKeyswitchKey64Version::V0,
+            version: LwePackingKeyswitchKey64Version::V0,
             inner: &entity.0,
         };
         bincode::serialize(&serializable)
@@ -2898,7 +2914,7 @@ impl EntitySerializationEngine<PackingKeyswitchKey64, Vec<u8>> for DefaultSerial
             .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn serialize_unchecked(&mut self, entity: &PackingKeyswitchKey64) -> Vec<u8> {
+    unsafe fn serialize_unchecked(&mut self, entity: &LwePackingKeyswitchKey64) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
@@ -2920,7 +2936,7 @@ impl EntitySerializationEngine<Plaintext32, Vec<u8>> for DefaultSerializationEng
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let plaintext: Plaintext32 = engine.create_plaintext(&input)?;
+    /// let plaintext: Plaintext32 = engine.create_plaintext_from(&input)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&plaintext)?;
@@ -2971,7 +2987,7 @@ impl EntitySerializationEngine<Plaintext64, Vec<u8>> for DefaultSerializationEng
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let plaintext: Plaintext64 = engine.create_plaintext(&input)?;
+    /// let plaintext: Plaintext64 = engine.create_plaintext_from(&input)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&plaintext)?;
@@ -3022,7 +3038,7 @@ impl EntitySerializationEngine<PlaintextVector32, Vec<u8>> for DefaultSerializat
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector(&input)?;
+    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector_from(&input)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&plaintext_vector)?;
@@ -3074,7 +3090,7 @@ impl EntitySerializationEngine<PlaintextVector64, Vec<u8>> for DefaultSerializat
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector(&input)?;
+    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector_from(&input)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&plaintext_vector)?;
@@ -3124,7 +3140,7 @@ impl EntitySerializationEngine<FloatEncoder, Vec<u8>> for DefaultSerializationEn
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let encoder = engine.create_encoder(&FloatEncoderMinMaxConfig {
+    /// let encoder = engine.create_encoder_from(&FloatEncoderMinMaxConfig {
     ///     min: 0.,
     ///     max: 10.,
     ///     nb_bit_precision: 8,
@@ -3179,7 +3195,7 @@ impl EntitySerializationEngine<FloatEncoderVector, Vec<u8>> for DefaultSerializa
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let encoder_vector = engine.create_encoder_vector(&vec![
+    /// let encoder_vector = engine.create_encoder_vector_from(&vec![
     ///     FloatEncoderCenterRadiusConfig {
     ///         center: 10.,
     ///         radius: 5.,

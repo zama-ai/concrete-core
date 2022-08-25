@@ -4,7 +4,7 @@ use crate::backends::fftw::private::crypto::bootstrap::{FourierBootstrapKey, Fou
 use crate::backends::fftw::private::math::fft::Complex64;
 use crate::commons::crypto::encoding::Cleartext;
 use crate::commons::crypto::ggsw::StandardGgswCiphertext;
-use crate::commons::crypto::glwe::{GlweCiphertext, PrivateFunctionalPackingKeyswitchKeyList};
+use crate::commons::crypto::glwe::{GlweCiphertext, LwePrivateFunctionalPackingKeyswitchKeyList};
 use crate::commons::crypto::lwe::{LweCiphertext, LweKeyswitchKey, LweList};
 use crate::commons::math::tensor::{AsMutTensor, AsRefSlice, AsRefTensor};
 use crate::commons::math::torus::UnsignedTorus;
@@ -142,13 +142,13 @@ pub fn circuit_bootstrap_binary<Scalar, C1, C2, C3, C4>(
     ggsw_out: &mut StandardGgswCiphertext<C3>,
     buffers: &mut FourierBuffers<Scalar>,
     delta_log: DeltaLog,
-    fpksk_list: &PrivateFunctionalPackingKeyswitchKeyList<C4>,
+    fpksk_list: &LwePrivateFunctionalPackingKeyswitchKeyList<C4>,
 ) where
     Scalar: UnsignedTorus,
     FourierBootstrapKey<C1, Scalar>: AsRefTensor<Element = Complex64>,
     C2: AsRefSlice<Element = Scalar>,
     StandardGgswCiphertext<C3>: AsMutTensor<Element = Scalar>,
-    PrivateFunctionalPackingKeyswitchKeyList<C4>: AsRefTensor<Element = Scalar>,
+    LwePrivateFunctionalPackingKeyswitchKeyList<C4>: AsRefTensor<Element = Scalar>,
 {
     let level_cbs = ggsw_out.decomposition_level_count();
     let base_log_cbs = ggsw_out.decomposition_base_log();

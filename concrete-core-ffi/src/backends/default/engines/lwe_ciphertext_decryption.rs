@@ -80,7 +80,7 @@ pub unsafe extern "C" fn default_engine_decrypt_lwe_ciphertext_u64_raw_ptr_buffe
         let input = get_ref_checked(input).unwrap();
         let input_as_slice = std::slice::from_raw_parts(input, lwe_size);
         let input = engine
-            .create_lwe_ciphertext(input_as_slice)
+            .create_lwe_ciphertext_from(input_as_slice)
             .or_else(engine_error_as_readable_string)
             .unwrap();
 
@@ -112,7 +112,7 @@ pub unsafe extern "C" fn default_engine_decrypt_lwe_ciphertext_unchecked_u64_raw
         let lwe_size = secret_key.lwe_dimension().to_lwe_size().0;
 
         let input_as_slice = std::slice::from_raw_parts(input, lwe_size);
-        let input = engine.create_lwe_ciphertext_unchecked(input_as_slice);
+        let input = engine.create_lwe_ciphertext_from_unchecked(input_as_slice);
 
         let decrypted_plaintext = engine.decrypt_lwe_ciphertext_unchecked(secret_key, &input);
         *result = engine.retrieve_plaintext_unchecked(&decrypted_plaintext);

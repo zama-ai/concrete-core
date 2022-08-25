@@ -19,7 +19,7 @@ impl CleartextVectorEncodingEngine<FloatEncoderVector, CleartextVectorF64, Plain
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let encoder_vector = engine.create_encoder_vector(&vec![
+    /// let encoder_vector = engine.create_encoder_vector_from(&vec![
     ///     FloatEncoderMinMaxConfig {
     ///         min: 0.,
     ///         max: 10.,
@@ -28,7 +28,8 @@ impl CleartextVectorEncodingEngine<FloatEncoderVector, CleartextVectorF64, Plain
     ///     };
     ///     100
     /// ])?;
-    /// let cleartext_vector: CleartextVectorF64 = engine.create_cleartext_vector(&vec![5.; 100])?;
+    /// let cleartext_vector: CleartextVectorF64 =
+    ///     engine.create_cleartext_vector_from(&vec![5.; 100])?;
     /// let plaintext_vector: PlaintextVector32 =
     ///     engine.encode_cleartext_vector(&encoder_vector, &cleartext_vector)?;
     /// assert_eq!(
@@ -89,7 +90,7 @@ impl CleartextVectorEncodingEngine<FloatEncoderVector, CleartextVectorF64, Plain
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let encoder_vector = engine.create_encoder_vector(&vec![
+    /// let encoder_vector = engine.create_encoder_vector_from(&vec![
     ///     FloatEncoderMinMaxConfig {
     ///         min: 0.,
     ///         max: 10.,
@@ -98,7 +99,8 @@ impl CleartextVectorEncodingEngine<FloatEncoderVector, CleartextVectorF64, Plain
     ///     };
     ///     100
     /// ])?;
-    /// let cleartext_vector: CleartextVectorF64 = engine.create_cleartext_vector(&vec![5.; 100])?;
+    /// let cleartext_vector: CleartextVectorF64 =
+    ///     engine.create_cleartext_vector_from(&vec![5.; 100])?;
     /// let plaintext_vector: PlaintextVector64 =
     ///     engine.encode_cleartext_vector(&encoder_vector, &cleartext_vector)?;
     /// assert_eq!(

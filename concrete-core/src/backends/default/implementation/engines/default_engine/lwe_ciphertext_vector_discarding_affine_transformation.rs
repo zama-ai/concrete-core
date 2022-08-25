@@ -39,10 +39,10 @@ impl
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let weights: CleartextVector32 = engine.create_cleartext_vector(&input_vector)?;
-    /// let bias: Plaintext32 = engine.create_plaintext(&bias_input)?;
-    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector(&input_vector)?;
+    /// let key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let weights: CleartextVector32 = engine.create_cleartext_vector_from(&input_vector)?;
+    /// let bias: Plaintext32 = engine.create_plaintext_from(&bias_input)?;
+    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector_from(&input_vector)?;
     /// let ciphertext_vector = engine.encrypt_lwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
     /// let mut output_ciphertext = engine.zero_encrypt_lwe_ciphertext(&key, noise)?;
     ///
@@ -121,10 +121,10 @@ impl
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let weights: CleartextVector64 = engine.create_cleartext_vector(&input_vector)?;
-    /// let bias: Plaintext64 = engine.create_plaintext(&bias_input)?;
-    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector(&input_vector)?;
+    /// let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let weights: CleartextVector64 = engine.create_cleartext_vector_from(&input_vector)?;
+    /// let bias: Plaintext64 = engine.create_plaintext_from(&bias_input)?;
+    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector_from(&input_vector)?;
     /// let ciphertext_vector = engine.encrypt_lwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
     /// let mut output_ciphertext = engine.zero_encrypt_lwe_ciphertext(&key, noise)?;
     ///

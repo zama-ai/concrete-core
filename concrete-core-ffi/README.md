@@ -93,7 +93,7 @@ int main(void) {
     // We generate the secret key
     size_t lwe_dimension = 10;
     LweSecretKey64 *sk = NULL;
-    int sk_ok = default_engine_create_lwe_secret_key_u64(engine, lwe_dimension, &sk);
+    int sk_ok = default_engine_generate_new_lwe_secret_key_u64(engine, lwe_dimension, &sk);
     assert(sk_ok == 0);
 
     // We allocate the ciphertext buffer

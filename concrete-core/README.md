@@ -41,15 +41,15 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
 
     // We create a cleartext from the raw cleartext
-    let cleartext: Cleartext64 = engine.create_cleartext(&raw_input_cleatext)?;
-    let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
+    let cleartext: Cleartext64 = engine.create_cleartext_from(&raw_input_cleatext)?;
+    let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
 
     // We crate the input plaintext from the raw input
-    let input_plaintext = engine.create_plaintext(&raw_input)?;
+    let input_plaintext = engine.create_plaintext_from(&raw_input)?;
     let input_ciphertext = engine.encrypt_lwe_ciphertext(&key, &input_plaintext, noise)?;
 
     // The content of the output ciphertext will be discarded, use a placeholder plaintext of 0
-    let placeholder_output_plaintext = engine.create_plaintext(&0u64)?;
+    let placeholder_output_plaintext = engine.create_plaintext_from(&0u64)?;
     let mut ouptut_ciphertext =
         engine.encrypt_lwe_ciphertext(&key, &placeholder_output_plaintext, noise)?;
 

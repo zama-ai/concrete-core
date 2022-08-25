@@ -42,8 +42,8 @@ impl GlweCiphertextConversionEngine<GlweCiphertext32, FftwFourierGlweCiphertext3
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fftw_engine = FftwEngine::new(())?;
     /// let key: GlweSecretKey32 =
-    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = default_engine.create_plaintext_vector(&input)?;
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = default_engine.create_plaintext_vector_from(&input)?;
     ///
     /// // We encrypt a GLWE ciphertext in the standard domain
     /// let ciphertext = default_engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
@@ -117,8 +117,8 @@ impl GlweCiphertextConversionEngine<GlweCiphertext64, FftwFourierGlweCiphertext6
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fftw_engine = FftwEngine::new(())?;
     /// let key: GlweSecretKey64 =
-    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = default_engine.create_plaintext_vector(&input)?;
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = default_engine.create_plaintext_vector_from(&input)?;
     ///
     /// // We encrypt a GLWE ciphertext in the standard domain
     /// let ciphertext = default_engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
@@ -203,8 +203,8 @@ impl GlweCiphertextConversionEngine<FftwFourierGlweCiphertext32, GlweCiphertext3
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fftw_engine = FftwEngine::new(())?;
     /// let key: GlweSecretKey32 =
-    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = default_engine.create_plaintext_vector(&input)?;
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = default_engine.create_plaintext_vector_from(&input)?;
     ///
     /// // We encrypt a GLWE ciphertext in the standard domain
     /// let ciphertext = default_engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
@@ -284,8 +284,8 @@ impl GlweCiphertextConversionEngine<FftwFourierGlweCiphertext64, GlweCiphertext6
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fftw_engine = FftwEngine::new(())?;
     /// let key: GlweSecretKey64 =
-    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = default_engine.create_plaintext_vector(&input)?;
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = default_engine.create_plaintext_vector_from(&input)?;
     ///
     /// // We encrypt a GLWE ciphertext in the standard domain
     /// let ciphertext = default_engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;

@@ -45,11 +45,13 @@ impl
     /// // Generate two secret keys
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let input_key: LweSecretKey32 = default_engine.create_lwe_secret_key(input_lwe_dimension)?;
-    /// let output_key: LweSecretKey32 = default_engine.create_lwe_secret_key(output_lwe_dimension)?;
+    /// let input_key: LweSecretKey32 =
+    ///     default_engine.generate_new_lwe_secret_key(input_lwe_dimension)?;
+    /// let output_key: LweSecretKey32 =
+    ///     default_engine.generate_new_lwe_secret_key(output_lwe_dimension)?;
     ///
     /// // Generate keyswitch keys to switch between first_key and second_key
-    /// let h_ksk = default_engine.create_lwe_keyswitch_key(
+    /// let h_ksk = default_engine.generate_new_lwe_keyswitch_key(
     ///     &input_key,
     ///     &output_key,
     ///     decomposition_level_count,
@@ -58,7 +60,7 @@ impl
     /// )?;
     ///
     /// // Encrypt something
-    /// let h_plaintext: Plaintext32 = default_engine.create_plaintext(&input)?;
+    /// let h_plaintext: Plaintext32 = default_engine.create_plaintext_from(&input)?;
     /// let mut h_ciphertext: LweCiphertext32 =
     ///     default_engine.encrypt_lwe_ciphertext(&input_key, &h_plaintext, noise)?;
     ///
@@ -68,7 +70,8 @@ impl
     /// let d_ksk: CudaLweKeyswitchKey32 = cuda_engine.convert_lwe_keyswitch_key(&h_ksk)?;
     ///
     /// // launch keyswitch on GPU
-    /// let h_dummy_key: LweSecretKey32 = default_engine.create_lwe_secret_key(output_lwe_dimension)?;
+    /// let h_dummy_key: LweSecretKey32 =
+    ///     default_engine.generate_new_lwe_secret_key(output_lwe_dimension)?;
     /// let h_zero_ciphertext: LweCiphertext32 =
     ///     default_engine.zero_encrypt_lwe_ciphertext(&h_dummy_key, noise)?;
     ///
@@ -151,11 +154,13 @@ impl
     /// // Generate two secret keys
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let input_key: LweSecretKey64 = default_engine.create_lwe_secret_key(input_lwe_dimension)?;
-    /// let output_key: LweSecretKey64 = default_engine.create_lwe_secret_key(output_lwe_dimension)?;
+    /// let input_key: LweSecretKey64 =
+    ///     default_engine.generate_new_lwe_secret_key(input_lwe_dimension)?;
+    /// let output_key: LweSecretKey64 =
+    ///     default_engine.generate_new_lwe_secret_key(output_lwe_dimension)?;
     ///
     /// // Generate keyswitch keys to switch between first_key and second_key
-    /// let h_ksk = default_engine.create_lwe_keyswitch_key(
+    /// let h_ksk = default_engine.generate_new_lwe_keyswitch_key(
     ///     &input_key,
     ///     &output_key,
     ///     decomposition_level_count,
@@ -164,7 +169,7 @@ impl
     /// )?;
     ///
     /// // Encrypt something
-    /// let h_plaintext: Plaintext64 = default_engine.create_plaintext(&input)?;
+    /// let h_plaintext: Plaintext64 = default_engine.create_plaintext_from(&input)?;
     /// let mut h_ciphertext: LweCiphertext64 =
     ///     default_engine.encrypt_lwe_ciphertext(&input_key, &h_plaintext, noise)?;
     ///
@@ -174,7 +179,8 @@ impl
     /// let d_ksk: CudaLweKeyswitchKey64 = cuda_engine.convert_lwe_keyswitch_key(&h_ksk)?;
     ///
     /// // launch keyswitch on GPU
-    /// let h_dummy_key: LweSecretKey64 = default_engine.create_lwe_secret_key(output_lwe_dimension)?;
+    /// let h_dummy_key: LweSecretKey64 =
+    ///     default_engine.generate_new_lwe_secret_key(output_lwe_dimension)?;
     /// let h_zero_ciphertext: LweCiphertext64 =
     ///     default_engine.zero_encrypt_lwe_ciphertext(&h_dummy_key, noise)?;
     ///

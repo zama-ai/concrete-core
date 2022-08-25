@@ -63,7 +63,7 @@ where
         context: Self::PreExecutionContext,
     ) -> Self::PostExecutionContext {
         let (raw_cleartext,) = context;
-        let cleartext = unsafe { engine.create_cleartext_unchecked(&raw_cleartext) };
+        let cleartext = unsafe { engine.create_cleartext_from_unchecked(&raw_cleartext) };
         (cleartext,)
     }
 
