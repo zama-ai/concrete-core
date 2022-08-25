@@ -67,7 +67,7 @@ impl PrototypesLweCiphertext<Precision32, BinaryKeyDistribution> for Maker {
         &mut self,
         lwe_dimension: LweDimension,
     ) -> Self::LweCiphertextProto {
-        let plaintext = self.default_engine.create_plaintext(&0u32).unwrap();
+        let plaintext = self.default_engine.create_plaintext_from(&0u32).unwrap();
         ProtoBinaryLweCiphertext32(
             self.default_engine
                 .trivially_encrypt_lwe_ciphertext(lwe_dimension.to_lwe_size(), &plaintext)
@@ -126,7 +126,7 @@ impl PrototypesLweCiphertext<Precision32, BinaryKeyDistribution> for Maker {
     fn transform_raw_vec_to_lwe_ciphertext(&mut self, raw: &[u32]) -> Self::LweCiphertextProto {
         ProtoBinaryLweCiphertext32(
             self.default_engine
-                .create_lwe_ciphertext(raw.to_owned())
+                .create_lwe_ciphertext_from(raw.to_owned())
                 .unwrap(),
         )
     }
@@ -149,7 +149,7 @@ impl PrototypesLweCiphertext<Precision64, BinaryKeyDistribution> for Maker {
         &mut self,
         lwe_dimension: LweDimension,
     ) -> Self::LweCiphertextProto {
-        let plaintext = self.default_engine.create_plaintext(&0u64).unwrap();
+        let plaintext = self.default_engine.create_plaintext_from(&0u64).unwrap();
         ProtoBinaryLweCiphertext64(
             self.default_engine
                 .trivially_encrypt_lwe_ciphertext(lwe_dimension.to_lwe_size(), &plaintext)
@@ -208,7 +208,7 @@ impl PrototypesLweCiphertext<Precision64, BinaryKeyDistribution> for Maker {
     fn transform_raw_vec_to_lwe_ciphertext(&mut self, raw: &[u64]) -> Self::LweCiphertextProto {
         ProtoBinaryLweCiphertext64(
             self.default_engine
-                .create_lwe_ciphertext(raw.to_owned())
+                .create_lwe_ciphertext_from(raw.to_owned())
                 .unwrap(),
         )
     }

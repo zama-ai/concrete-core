@@ -16,7 +16,7 @@ impl EncoderVectorCreationEngine<FloatEncoderMinMaxConfig, FloatEncoderVector> f
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let encoder_vector = engine.create_encoder_vector(
+    /// let encoder_vector = engine.create_encoder_vector_from(
     ///     vec![
     ///         FloatEncoderMinMaxConfig {
     ///             min: 0.,
@@ -32,7 +32,7 @@ impl EncoderVectorCreationEngine<FloatEncoderMinMaxConfig, FloatEncoderVector> f
     /// # Ok(())
     /// # }
     /// ```
-    fn create_encoder_vector(
+    fn create_encoder_vector_from(
         &mut self,
         config: &[FloatEncoderMinMaxConfig],
     ) -> Result<FloatEncoderVector, EncoderVectorCreationError<Self::EngineError>> {
@@ -45,10 +45,10 @@ impl EncoderVectorCreationEngine<FloatEncoderMinMaxConfig, FloatEncoderVector> f
                 DefaultError::FloatEncoderNullPrecision,
             ));
         }
-        Ok(unsafe { self.create_encoder_vector_unchecked(config) })
+        Ok(unsafe { self.create_encoder_vector_from_unchecked(config) })
     }
 
-    unsafe fn create_encoder_vector_unchecked(
+    unsafe fn create_encoder_vector_from_unchecked(
         &mut self,
         config: &[FloatEncoderMinMaxConfig],
     ) -> FloatEncoderVector {
@@ -76,7 +76,7 @@ impl EncoderVectorCreationEngine<FloatEncoderCenterRadiusConfig, FloatEncoderVec
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let encoder_vector = engine.create_encoder_vector(&vec![
+    /// let encoder_vector = engine.create_encoder_vector_from(&vec![
     ///     FloatEncoderCenterRadiusConfig {
     ///         center: 10.,
     ///         radius: 5.,
@@ -89,7 +89,7 @@ impl EncoderVectorCreationEngine<FloatEncoderCenterRadiusConfig, FloatEncoderVec
     /// # Ok(())
     /// # }
     /// ```
-    fn create_encoder_vector(
+    fn create_encoder_vector_from(
         &mut self,
         config: &[FloatEncoderCenterRadiusConfig],
     ) -> Result<FloatEncoderVector, EncoderVectorCreationError<Self::EngineError>> {
@@ -102,10 +102,10 @@ impl EncoderVectorCreationEngine<FloatEncoderCenterRadiusConfig, FloatEncoderVec
                 DefaultError::FloatEncoderNullPrecision,
             ));
         }
-        Ok(unsafe { self.create_encoder_vector_unchecked(config) })
+        Ok(unsafe { self.create_encoder_vector_from_unchecked(config) })
     }
 
-    unsafe fn create_encoder_vector_unchecked(
+    unsafe fn create_encoder_vector_from_unchecked(
         &mut self,
         config: &[FloatEncoderCenterRadiusConfig],
     ) -> FloatEncoderVector {

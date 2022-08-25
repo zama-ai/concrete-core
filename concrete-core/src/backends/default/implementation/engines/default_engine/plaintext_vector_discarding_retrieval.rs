@@ -24,7 +24,7 @@ impl PlaintextVectorDiscardingRetrievalEngine<PlaintextVector32, u32> for Defaul
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector(&input)?;
+    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector_from(&input)?;
     /// engine.discard_retrieve_plaintext_vector(output.as_mut_slice(), &plaintext_vector)?;
     /// #
     /// assert_eq!(output[0], 3_u32 << 20);
@@ -70,7 +70,7 @@ impl PlaintextVectorDiscardingRetrievalEngine<PlaintextVector64, u64> for Defaul
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector(&input)?;
+    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector_from(&input)?;
     /// engine.discard_retrieve_plaintext_vector(output.as_mut_slice(), &plaintext_vector)?;
     /// #
     /// assert_eq!(output[0], 3_u64 << 20);

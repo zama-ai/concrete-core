@@ -46,20 +46,20 @@ Now, we can create the engines we'll need, as well as the secret keys and the bo
     let mut parallel_engine = DefaultParallelEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET))).unwrap();
 
     // Create the secret keys
-    let lwe_sk: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dim).unwrap();
-    let glwe_sk: GlweSecretKey64 = engine.create_glwe_secret_key(glwe_dim, poly_size).unwrap();
+    let lwe_sk: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dim).unwrap();
+    let glwe_sk: GlweSecretKey64 = engine.generate_new_glwe_secret_key(glwe_dim, poly_size).unwrap();
 
     // The bootstrap key is created with multithreading, relying on rayon
     let bsk: LweBootstrapKey64 =
-        parallel_engine.create_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise).unwrap();
+        parallel_engine.generate_new_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise).unwrap();
 ```
 We're now going to encrypt the input message and the lookup table:
 ```rust
     // Now we have all the keys, prepare the ciphertexts
-    let plaintext = engine.create_plaintext(&input).unwrap();
+    let plaintext = engine.create_plaintext_from(&input).unwrap();
     let input = engine.encrypt_lwe_ciphertext(&lwe_sk, &plaintext, noise).unwrap();
     // Then the encryption of the LUT for the bootstrap
-    let lut_plaintext_vector = engine.create_plaintext_vector(&lut).unwrap();
+    let lut_plaintext_vector = engine.create_plaintext_vector_from(&lut).unwrap();
     let acc =
     engine.trivially_encrypt_glwe_ciphertext(glwe_dim.to_glwe_size(),
     &lut_plaintext_vector).unwrap();

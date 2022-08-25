@@ -81,7 +81,7 @@ mod backend_default {
     }
 
     use concrete_core::prelude::{
-        LweBootstrapKeyConstructionEngine, LweBootstrapKeyConsumingRetrievalEngine,
+        LweBootstrapKeyConsumingRetrievalEngine, LweBootstrapKeyCreationEngine,
         LweBootstrapKeyEntity, LweBootstrapKeyMutView32, LweBootstrapKeyMutView64,
         LweBootstrapKeyView32, LweBootstrapKeyView64,
     };
@@ -111,7 +111,7 @@ mod backend_default {
                 .unwrap();
 
             self.default_engine
-                .construct_lwe_bootstrap_key(
+                .create_lwe_bootstrap_key_from(
                     container.leak() as &mut [u32],
                     glwe_size,
                     poly_size,
@@ -139,7 +139,7 @@ mod backend_default {
 
             ProtoBinaryBinaryLweBootstrapKey32(
                 self.default_engine
-                    .construct_lwe_bootstrap_key(
+                    .create_lwe_bootstrap_key_from(
                         reconstructed_vec,
                         glwe_size,
                         poly_size,
@@ -185,7 +185,7 @@ mod backend_default {
                 .unwrap();
 
             self.default_engine
-                .construct_lwe_bootstrap_key(
+                .create_lwe_bootstrap_key_from(
                     container.leak() as &mut [u64],
                     glwe_size,
                     poly_size,
@@ -213,7 +213,7 @@ mod backend_default {
 
             ProtoBinaryBinaryLweBootstrapKey64(
                 self.default_engine
-                    .construct_lwe_bootstrap_key(
+                    .create_lwe_bootstrap_key_from(
                         reconstructed_vec,
                         glwe_size,
                         poly_size,
@@ -259,7 +259,7 @@ mod backend_default {
                 .unwrap();
 
             self.default_engine
-                .construct_lwe_bootstrap_key(
+                .create_lwe_bootstrap_key_from(
                     container.leak() as &[u32],
                     glwe_size,
                     poly_size,
@@ -288,7 +288,7 @@ mod backend_default {
 
             ProtoBinaryBinaryLweBootstrapKey32(
                 self.default_engine
-                    .construct_lwe_bootstrap_key(
+                    .create_lwe_bootstrap_key_from(
                         reconstructed_vec,
                         glwe_size,
                         poly_size,
@@ -334,7 +334,7 @@ mod backend_default {
                 .unwrap();
 
             self.default_engine
-                .construct_lwe_bootstrap_key(
+                .create_lwe_bootstrap_key_from(
                     container.leak() as &[u64],
                     glwe_size,
                     poly_size,
@@ -363,7 +363,7 @@ mod backend_default {
 
             ProtoBinaryBinaryLweBootstrapKey64(
                 self.default_engine
-                    .construct_lwe_bootstrap_key(
+                    .create_lwe_bootstrap_key_from(
                         reconstructed_vec,
                         glwe_size,
                         poly_size,

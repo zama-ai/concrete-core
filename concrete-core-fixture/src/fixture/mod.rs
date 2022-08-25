@@ -444,14 +444,14 @@ pub use plaintext_vector_creation::*;
 mod plaintext_vector_retrieval;
 pub use plaintext_vector_retrieval::*;
 
-mod lwe_keyswitch_key_creation;
-pub use lwe_keyswitch_key_creation::*;
+mod lwe_keyswitch_key_generation;
+pub use lwe_keyswitch_key_generation::*;
 
-mod lwe_secret_key_creation;
-pub use lwe_secret_key_creation::*;
+mod lwe_secret_key_generation;
+pub use lwe_secret_key_generation::*;
 
-mod lwe_seeded_bootstrap_key_creation;
-pub use lwe_seeded_bootstrap_key_creation::*;
+mod lwe_seeded_bootstrap_key_generation;
+pub use lwe_seeded_bootstrap_key_generation::*;
 
 mod lwe_seeded_bootstrap_key_to_lwe_bootstrap_key_transformation;
 pub use lwe_seeded_bootstrap_key_to_lwe_bootstrap_key_transformation::*;
@@ -462,8 +462,8 @@ pub use lwe_seeded_ciphertext_encryption::*;
 mod lwe_seeded_ciphertext_vector_encryption;
 pub use lwe_seeded_ciphertext_vector_encryption::*;
 
-mod lwe_seeded_keyswitch_key_creation;
-pub use lwe_seeded_keyswitch_key_creation::*;
+mod lwe_seeded_keyswitch_key_generation;
+pub use lwe_seeded_keyswitch_key_generation::*;
 
 mod lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_transformation;
 pub use lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_transformation::*;
@@ -477,8 +477,8 @@ pub use lwe_seeded_ciphertext_vector_to_lwe_ciphertext_vector_transformation::*;
 mod lwe_to_glwe_secret_key_transformation;
 pub use lwe_to_glwe_secret_key_transformation::*;
 
-mod glwe_secret_key_creation;
-pub use glwe_secret_key_creation::*;
+mod glwe_secret_key_generation;
+pub use glwe_secret_key_generation::*;
 
 mod glwe_seeded_ciphertext_encryption;
 pub use glwe_seeded_ciphertext_encryption::*;
@@ -495,8 +495,8 @@ pub use glwe_seeded_ciphertext_vector_to_glwe_ciphertext_vector_transformation::
 mod glwe_to_lwe_secret_key_transformation;
 pub use glwe_to_lwe_secret_key_transformation::*;
 
-mod lwe_bootstrap_key_construction;
-pub use lwe_bootstrap_key_construction::*;
+mod lwe_bootstrap_key_creation;
+pub use lwe_bootstrap_key_creation::*;
 
 mod lwe_bootstrap_key_consuming_retrieval;
 pub use lwe_bootstrap_key_consuming_retrieval::*;
@@ -504,8 +504,8 @@ pub use lwe_bootstrap_key_consuming_retrieval::*;
 mod lwe_bootstrap_key_conversion;
 pub use lwe_bootstrap_key_conversion::*;
 
-mod lwe_bootstrap_key_creation;
-pub use lwe_bootstrap_key_creation::*;
+mod lwe_bootstrap_key_generation;
+pub use lwe_bootstrap_key_generation::*;
 
 mod lwe_bootstrap_key_discarding_conversion;
 pub use lwe_bootstrap_key_discarding_conversion::*;

@@ -69,5 +69,5 @@ impl AbstractEngine for DefaultParallelEngine {
     }
 }
 
-mod lwe_bootstrap_key_creation;
-mod lwe_seeded_bootstrap_key_creation;
+mod lwe_bootstrap_key_generation;
+mod lwe_seeded_bootstrap_key_generation;

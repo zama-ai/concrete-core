@@ -19,7 +19,7 @@ impl PlaintextVectorDecodingEngine<FloatEncoderVector, PlaintextVector32, Cleart
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let encoder_vector = engine.create_encoder_vector(&vec![
+    /// let encoder_vector = engine.create_encoder_vector_from(&vec![
     ///     FloatEncoderMinMaxConfig {
     ///         min: 0.,
     ///         max: 10.,
@@ -28,7 +28,8 @@ impl PlaintextVectorDecodingEngine<FloatEncoderVector, PlaintextVector32, Cleart
     ///     };
     ///     100
     /// ])?;
-    /// let cleartext_vector: CleartextVectorF64 = engine.create_cleartext_vector(&vec![5.; 100])?;
+    /// let cleartext_vector: CleartextVectorF64 =
+    ///     engine.create_cleartext_vector_from(&vec![5.; 100])?;
     /// let plaintext_vector: PlaintextVector32 =
     ///     engine.encode_cleartext_vector(&encoder_vector, &cleartext_vector)?;
     /// let recovered_cleartext_vector: CleartextVectorF64 =
@@ -80,7 +81,7 @@ impl PlaintextVectorDecodingEngine<FloatEncoderVector, PlaintextVector64, Cleart
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let encoder_vector = engine.create_encoder_vector(&vec![
+    /// let encoder_vector = engine.create_encoder_vector_from(&vec![
     ///     FloatEncoderMinMaxConfig {
     ///         min: 0.,
     ///         max: 10.,
@@ -89,7 +90,8 @@ impl PlaintextVectorDecodingEngine<FloatEncoderVector, PlaintextVector64, Cleart
     ///     };
     ///     100
     /// ])?;
-    /// let cleartext_vector: CleartextVectorF64 = engine.create_cleartext_vector(&vec![5.; 100])?;
+    /// let cleartext_vector: CleartextVectorF64 =
+    ///     engine.create_cleartext_vector_from(&vec![5.; 100])?;
     /// let plaintext_vector: PlaintextVector32 =
     ///     engine.encode_cleartext_vector(&encoder_vector, &cleartext_vector)?;
     /// let recovered_cleartext_vector: CleartextVectorF64 =

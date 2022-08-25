@@ -32,7 +32,7 @@ where
     PlaintextVector: PlaintextVectorEntity,
 {
     /// Creates a plaintext vector from a slice of arbitrary values.
-    fn create_plaintext_vector(
+    fn create_plaintext_vector_from(
         &mut self,
         values: &[Value],
     ) -> Result<PlaintextVector, PlaintextVectorCreationError<Self::EngineError>>;
@@ -43,5 +43,8 @@ where
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
     /// of [`PlaintextVectorCreationError`]. For safety concerns _specific_ to an engine, refer to
     /// the implementer safety section.
-    unsafe fn create_plaintext_vector_unchecked(&mut self, values: &[Value]) -> PlaintextVector;
+    unsafe fn create_plaintext_vector_from_unchecked(
+        &mut self,
+        values: &[Value],
+    ) -> PlaintextVector;
 }

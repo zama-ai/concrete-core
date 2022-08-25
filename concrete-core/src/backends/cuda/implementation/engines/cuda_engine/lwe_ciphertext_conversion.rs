@@ -32,8 +32,8 @@ impl LweCiphertextConversionEngine<LweCiphertext32, CudaLweCiphertext32> for Cud
     ///
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let h_key: LweSecretKey32 = default_engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let h_plaintext: Plaintext32 = default_engine.create_plaintext(&input)?;
+    /// let h_key: LweSecretKey32 = default_engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let h_plaintext: Plaintext32 = default_engine.create_plaintext_from(&input)?;
     /// let mut h_ciphertext: LweCiphertext32 =
     ///     default_engine.encrypt_lwe_ciphertext(&h_key, &h_plaintext, noise)?;
     ///
@@ -92,8 +92,8 @@ impl LweCiphertextConversionEngine<CudaLweCiphertext32, LweCiphertext32> for Cud
     ///
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let h_key: LweSecretKey32 = default_engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let h_plaintext: Plaintext32 = default_engine.create_plaintext(&input)?;
+    /// let h_key: LweSecretKey32 = default_engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let h_plaintext: Plaintext32 = default_engine.create_plaintext_from(&input)?;
     /// let mut h_ciphertext: LweCiphertext32 =
     ///     default_engine.encrypt_lwe_ciphertext(&h_key, &h_plaintext, noise)?;
     ///
@@ -145,8 +145,8 @@ impl LweCiphertextConversionEngine<LweCiphertext64, CudaLweCiphertext64> for Cud
     ///
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let h_key: LweSecretKey64 = default_engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let h_plaintext: Plaintext64 = default_engine.create_plaintext(&input)?;
+    /// let h_key: LweSecretKey64 = default_engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let h_plaintext: Plaintext64 = default_engine.create_plaintext_from(&input)?;
     /// let mut h_ciphertext: LweCiphertext64 =
     ///     default_engine.encrypt_lwe_ciphertext(&h_key, &h_plaintext, noise)?;
     ///
@@ -205,8 +205,8 @@ impl LweCiphertextConversionEngine<CudaLweCiphertext64, LweCiphertext64> for Cud
     ///
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let h_key: LweSecretKey64 = default_engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let h_plaintext: Plaintext64 = default_engine.create_plaintext(&input)?;
+    /// let h_key: LweSecretKey64 = default_engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let h_plaintext: Plaintext64 = default_engine.create_plaintext_from(&input)?;
     /// let mut h_ciphertext: LweCiphertext64 =
     ///     default_engine.encrypt_lwe_ciphertext(&h_key, &h_plaintext, noise)?;
     ///
@@ -258,8 +258,8 @@ impl LweCiphertextConversionEngine<LweCiphertextView64<'_>, CudaLweCiphertext64>
     ///
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let h_key: LweSecretKey64 = default_engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let h_plaintext: Plaintext64 = default_engine.create_plaintext(&input)?;
+    /// let h_key: LweSecretKey64 = default_engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let h_plaintext: Plaintext64 = default_engine.create_plaintext_from(&input)?;
     /// let mut h_ciphertext: LweCiphertext64 =
     ///     default_engine.encrypt_lwe_ciphertext(&h_key, &h_plaintext, noise)?;
     ///
@@ -267,7 +267,7 @@ impl LweCiphertextConversionEngine<LweCiphertextView64<'_>, CudaLweCiphertext64>
     /// let h_raw_ciphertext: Vec<u64> =
     ///     default_engine.consume_retrieve_lwe_ciphertext(h_ciphertext)?;
     /// let mut h_view_ciphertext: LweCiphertextView64 =
-    ///     default_engine.create_lwe_ciphertext(h_raw_ciphertext.as_slice())?;
+    ///     default_engine.create_lwe_ciphertext_from(h_raw_ciphertext.as_slice())?;
     ///
     /// let mut cuda_engine = CudaEngine::new(())?;
     /// let d_ciphertext: CudaLweCiphertext64 =

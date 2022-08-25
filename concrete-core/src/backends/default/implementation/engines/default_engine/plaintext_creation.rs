@@ -20,19 +20,19 @@ impl PlaintextCreationEngine<u32, Plaintext32> for DefaultEngine {
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let plaintext: Plaintext32 = engine.create_plaintext(&input)?;
+    /// let plaintext: Plaintext32 = engine.create_plaintext_from(&input)?;
     /// #
     /// # Ok(())
     /// # }
     /// ```
-    fn create_plaintext(
+    fn create_plaintext_from(
         &mut self,
         input: &u32,
     ) -> Result<Plaintext32, PlaintextCreationError<Self::EngineError>> {
-        Ok(unsafe { self.create_plaintext_unchecked(input) })
+        Ok(unsafe { self.create_plaintext_from_unchecked(input) })
     }
 
-    unsafe fn create_plaintext_unchecked(&mut self, input: &u32) -> Plaintext32 {
+    unsafe fn create_plaintext_from_unchecked(&mut self, input: &u32) -> Plaintext32 {
         Plaintext32(ImplPlaintext(*input))
     }
 }
@@ -54,19 +54,19 @@ impl PlaintextCreationEngine<u64, Plaintext64> for DefaultEngine {
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let plaintext: Plaintext64 = engine.create_plaintext(&input)?;
+    /// let plaintext: Plaintext64 = engine.create_plaintext_from(&input)?;
     /// #
     /// # Ok(())
     /// # }
     /// ```
-    fn create_plaintext(
+    fn create_plaintext_from(
         &mut self,
         input: &u64,
     ) -> Result<Plaintext64, PlaintextCreationError<Self::EngineError>> {
-        Ok(unsafe { self.create_plaintext_unchecked(input) })
+        Ok(unsafe { self.create_plaintext_from_unchecked(input) })
     }
 
-    unsafe fn create_plaintext_unchecked(&mut self, input: &u64) -> Plaintext64 {
+    unsafe fn create_plaintext_from_unchecked(&mut self, input: &u64) -> Plaintext64 {
         Plaintext64(ImplPlaintext(*input))
     }
 }

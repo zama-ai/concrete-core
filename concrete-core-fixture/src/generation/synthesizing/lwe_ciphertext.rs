@@ -75,7 +75,7 @@ mod backend_default {
                 .consume_retrieve_lwe_ciphertext(ciphertext)
                 .unwrap();
             self.default_engine
-                .create_lwe_ciphertext(container.leak() as &[u32])
+                .create_lwe_ciphertext_from(container.leak() as &[u32])
                 .unwrap()
         }
 
@@ -92,7 +92,7 @@ mod backend_default {
             };
             ProtoBinaryLweCiphertext32(
                 self.default_engine
-                    .create_lwe_ciphertext(reconstructed_vec)
+                    .create_lwe_ciphertext_from(reconstructed_vec)
                     .unwrap(),
             )
         }
@@ -120,7 +120,7 @@ mod backend_default {
                 .consume_retrieve_lwe_ciphertext(ciphertext)
                 .unwrap();
             self.default_engine
-                .create_lwe_ciphertext(container.leak() as &[u64])
+                .create_lwe_ciphertext_from(container.leak() as &[u64])
                 .unwrap()
         }
 
@@ -137,7 +137,7 @@ mod backend_default {
             };
             ProtoBinaryLweCiphertext64(
                 self.default_engine
-                    .create_lwe_ciphertext(reconstructed_vec)
+                    .create_lwe_ciphertext_from(reconstructed_vec)
                     .unwrap(),
             )
         }
@@ -168,7 +168,7 @@ mod backend_default {
                 .consume_retrieve_lwe_ciphertext(ciphertext)
                 .unwrap();
             self.default_engine
-                .create_lwe_ciphertext(container.leak())
+                .create_lwe_ciphertext_from(container.leak())
                 .unwrap()
         }
 
@@ -184,7 +184,7 @@ mod backend_default {
                 unsafe { Vec::from_raw_parts(slice.as_mut_ptr(), slice.len(), slice.len()) };
             ProtoBinaryLweCiphertext32(
                 self.default_engine
-                    .create_lwe_ciphertext(reconstructed_vec)
+                    .create_lwe_ciphertext_from(reconstructed_vec)
                     .unwrap(),
             )
         }
@@ -213,7 +213,7 @@ mod backend_default {
                 .consume_retrieve_lwe_ciphertext(ciphertext)
                 .unwrap();
             self.default_engine
-                .create_lwe_ciphertext(container.leak())
+                .create_lwe_ciphertext_from(container.leak())
                 .unwrap()
         }
 
@@ -229,7 +229,7 @@ mod backend_default {
                 unsafe { Vec::from_raw_parts(slice.as_mut_ptr(), slice.len(), slice.len()) };
             ProtoBinaryLweCiphertext64(
                 self.default_engine
-                    .create_lwe_ciphertext(reconstructed_vec)
+                    .create_lwe_ciphertext_from(reconstructed_vec)
                     .unwrap(),
             )
         }

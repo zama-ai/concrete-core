@@ -1,5 +1,5 @@
 use super::engine_error;
-use crate::prelude::{GlweCiphertextEntity, PackingKeyswitchKeyEntity};
+use crate::prelude::{GlweCiphertextEntity, LwePackingKeyswitchKeyEntity};
 use crate::specification::engines::AbstractEngine;
 
 use crate::specification::entities::LweCiphertextVectorEntity;
@@ -20,13 +20,13 @@ impl<EngineError: std::error::Error>
     LweCiphertextVectorGlweCiphertextDiscardingPackingKeyswitchError<EngineError>
 {
     /// Validates the inputs
-    pub fn perform_generic_checks<PackingKeyswitchKey, InputCiphertextVector, OutputCiphertext>(
+    pub fn perform_generic_checks<LwePackingKeyswitchKey, InputCiphertextVector, OutputCiphertext>(
         output: &mut OutputCiphertext,
         input: &InputCiphertextVector,
-        ksk: &PackingKeyswitchKey,
+        ksk: &LwePackingKeyswitchKey,
     ) -> Result<(), Self>
     where
-        PackingKeyswitchKey: PackingKeyswitchKeyEntity,
+        LwePackingKeyswitchKey: LwePackingKeyswitchKeyEntity,
         InputCiphertextVector: LweCiphertextVectorEntity,
         OutputCiphertext: GlweCiphertextEntity,
     {
@@ -60,11 +60,11 @@ impl<EngineError: std::error::Error>
 ///
 /// # Formal Definition
 pub trait LweCiphertextVectorGlweCiphertextDiscardingPackingKeyswitchEngine<
-    PackingKeyswitchKey,
+    LwePackingKeyswitchKey,
     InputCiphertextVector,
     OutputCiphertext,
 >: AbstractEngine where
-    PackingKeyswitchKey: PackingKeyswitchKeyEntity,
+    LwePackingKeyswitchKey: LwePackingKeyswitchKeyEntity,
     InputCiphertextVector: LweCiphertextVectorEntity,
     OutputCiphertext: GlweCiphertextEntity,
 {
@@ -73,7 +73,7 @@ pub trait LweCiphertextVectorGlweCiphertextDiscardingPackingKeyswitchEngine<
         &mut self,
         output: &mut OutputCiphertext,
         input: &InputCiphertextVector,
-        pksk: &PackingKeyswitchKey,
+        pksk: &LwePackingKeyswitchKey,
     ) -> Result<
         (),
         LweCiphertextVectorGlweCiphertextDiscardingPackingKeyswitchError<Self::EngineError>,
@@ -89,6 +89,6 @@ pub trait LweCiphertextVectorGlweCiphertextDiscardingPackingKeyswitchEngine<
         &mut self,
         output: &mut OutputCiphertext,
         input: &InputCiphertextVector,
-        pksk: &PackingKeyswitchKey,
+        pksk: &LwePackingKeyswitchKey,
     );
 }

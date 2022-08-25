@@ -19,7 +19,7 @@ impl CleartextRetrievalEngine<Cleartext32, u32> for DefaultEngine {
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let cleartext: Cleartext32 = engine.create_cleartext(&input)?;
+    /// let cleartext: Cleartext32 = engine.create_cleartext_from(&input)?;
     /// let output: u32 = engine.retrieve_cleartext(&cleartext)?;
     ///
     /// assert_eq!(output, 3_u32);
@@ -55,7 +55,7 @@ impl CleartextRetrievalEngine<Cleartext64, u64> for DefaultEngine {
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let cleartext: Cleartext64 = engine.create_cleartext(&input)?;
+    /// let cleartext: Cleartext64 = engine.create_cleartext_from(&input)?;
     /// let output: u64 = engine.retrieve_cleartext(&cleartext)?;
     ///
     /// assert_eq!(output, 3_u64);
@@ -91,7 +91,7 @@ impl CleartextRetrievalEngine<CleartextF64, f64> for DefaultEngine {
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let cleartext: CleartextF64 = engine.create_cleartext(&input)?;
+    /// let cleartext: CleartextF64 = engine.create_cleartext_from(&input)?;
     /// let output: f64 = engine.retrieve_cleartext(&cleartext)?;
     ///
     /// assert_eq!(output, 3.0);

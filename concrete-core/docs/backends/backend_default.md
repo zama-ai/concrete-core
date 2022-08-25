@@ -67,11 +67,11 @@ fn main() {
     let mut parallel_engine = DefaultParallelEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET))).unwrap();
     
     // 3. Create the keys
-    let lwe_sk: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dim).unwrap();
-    let glwe_sk: GlweSecretKey64 = engine.create_glwe_secret_key(glwe_dim, poly_size).unwrap();
+    let lwe_sk: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dim).unwrap();
+    let glwe_sk: GlweSecretKey64 = engine.generate_new_glwe_secret_key(glwe_dim, poly_size).unwrap();
     // The bootstrap key is created with multithreading, relying on rayon
     let bsk: LweBootstrapKey64 =
-        parallel_engine.create_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise).unwrap();
+        parallel_engine.generate_new_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise).unwrap();
     
     // 4. Finally, destroy all data
     // Destroying the secret keys is important since their content is reset to 0 before dropping 

@@ -29,10 +29,11 @@ impl LweBootstrapKeyDiscardingConversionEngine<LweBootstrapKey32, LweBootstrapKe
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let lwe_sk: LweSecretKey32 = default_engine.create_lwe_secret_key(lwe_dim)?;
-    /// let glwe_sk: GlweSecretKey32 = default_engine.create_glwe_secret_key(glwe_dim, poly_size)?;
+    /// let lwe_sk: LweSecretKey32 = default_engine.generate_new_lwe_secret_key(lwe_dim)?;
+    /// let glwe_sk: GlweSecretKey32 =
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dim, poly_size)?;
     /// let bsk: LweBootstrapKey32 =
-    ///     default_engine.create_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
+    ///     default_engine.generate_new_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
     ///
     /// let mut owned_container = vec![
     ///     0_u32;
@@ -44,7 +45,7 @@ impl LweBootstrapKeyDiscardingConversionEngine<LweBootstrapKey32, LweBootstrapKe
     /// ];
     ///
     /// let mut out_bsk_mut_view: LweBootstrapKeyMutView32 = default_engine
-    ///     .construct_lwe_bootstrap_key(
+    ///     .create_lwe_bootstrap_key_from(
     ///         owned_container.as_mut_slice(),
     ///         glwe_dim.to_glwe_size(),
     ///         poly_size,
@@ -113,10 +114,11 @@ impl LweBootstrapKeyDiscardingConversionEngine<LweBootstrapKey64, LweBootstrapKe
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let lwe_sk: LweSecretKey64 = default_engine.create_lwe_secret_key(lwe_dim)?;
-    /// let glwe_sk: GlweSecretKey64 = default_engine.create_glwe_secret_key(glwe_dim, poly_size)?;
+    /// let lwe_sk: LweSecretKey64 = default_engine.generate_new_lwe_secret_key(lwe_dim)?;
+    /// let glwe_sk: GlweSecretKey64 =
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dim, poly_size)?;
     /// let bsk: LweBootstrapKey64 =
-    ///     default_engine.create_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
+    ///     default_engine.generate_new_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
     ///
     /// let mut owned_container = vec![
     ///     0_u64;
@@ -128,7 +130,7 @@ impl LweBootstrapKeyDiscardingConversionEngine<LweBootstrapKey64, LweBootstrapKe
     /// ];
     ///
     /// let mut out_bsk_mut_view: LweBootstrapKeyMutView64 = default_engine
-    ///     .construct_lwe_bootstrap_key(
+    ///     .create_lwe_bootstrap_key_from(
     ///         owned_container.as_mut_slice(),
     ///         glwe_dim.to_glwe_size(),
     ///         poly_size,

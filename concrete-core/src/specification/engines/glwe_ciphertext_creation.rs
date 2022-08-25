@@ -42,7 +42,7 @@ where
     Ciphertext: GlweCiphertextEntity,
 {
     /// Creates a GLWE ciphertext from an arbitrary container.
-    fn create_glwe_ciphertext(
+    fn create_glwe_ciphertext_from(
         &mut self,
         container: Container,
         polynomial_size: PolynomialSize,
@@ -54,7 +54,7 @@ where
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
     /// of [`GlweCiphertextCreationError`]. For safety concerns _specific_ to an engine, refer
     /// to the implementer safety section.
-    unsafe fn create_glwe_ciphertext_unchecked(
+    unsafe fn create_glwe_ciphertext_from_unchecked(
         &mut self,
         container: Container,
         polynomial_size: PolynomialSize,

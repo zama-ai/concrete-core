@@ -118,7 +118,7 @@ int main(void) {
     size_t lwe_dimension = 10;
     LweSecretKey64 *sk = NULL;
     // We generate the secret key
-    int sk_ok = default_engine_create_lwe_secret_key_u64(engine, lwe_dimension, &sk);
+    int sk_ok = default_engine_generate_new_lwe_secret_key_u64(engine, lwe_dimension, &sk);
     if (sk_ok != 0) {
         printf("Error while creating LWE secret key.\n");
         return sk_ok;

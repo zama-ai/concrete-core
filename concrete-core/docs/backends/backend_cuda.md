@@ -93,17 +93,17 @@ In this tutorial, we'll use the `h_` prefix to designate data on the CPU (host),
 designate data on the GPU (device). Let's start by creating the necessary data on the CPU, just like in the FFTW backend tutorial:
 ```rust
      // Encrypt the input message
-     let h_input_key: LweSecretKey64 = default_engine.create_lwe_secret_key(lwe_dim).unwrap();
-     let h_input_plaintext: Plaintext64 = default_engine.create_plaintext(&input).unwrap();
+     let h_input_key: LweSecretKey64 = default_engine.generate_new_lwe_secret_key(lwe_dim).unwrap();
+     let h_input_plaintext: Plaintext64 = default_engine.create_plaintext_from(&input).unwrap();
      let mut h_input_ciphertext: LweCiphertext64 =
          default_engine.encrypt_lwe_ciphertext(&h_input_key, &h_input_plaintext, noise).unwrap();
      // create a GLWE ciphertext containing an encryption of the LUT
-     let h_lut_plaintext_vector = default_engine.create_plaintext_vector(&lut).unwrap();
-     let h_lut_key: GlweSecretKey64 = default_engine.create_glwe_secret_key(glwe_dim, poly_size).unwrap();
+     let h_lut_plaintext_vector = default_engine.create_plaintext_vector_from(&lut).unwrap();
+     let h_lut_key: GlweSecretKey64 = default_engine.generate_new_glwe_secret_key(glwe_dim, poly_size).unwrap();
      let h_lut = default_engine.trivially_encrypt_glwe_ciphertext(glwe_dim.to_glwe_size(), &lut_plaintext_vector).unwrap();
      // create a BSK with multithreading
      let h_bootstrap_key: LweBootstrapKey64 =
-         parallel_engine.create_lwe_bootstrap_key(&h_input_key, &h_lut_key, dec_bl, dec_lc, noise).unwrap();
+         parallel_engine.generate_new_lwe_bootstrap_key(&h_input_key, &h_lut_key, dec_bl, dec_lc, noise).unwrap();
      // initialize an output LWE ciphertext
      let h_output_ciphertext: LweCiphertext64 =
      default_engine.trivially_encrypt_lwe_ciphertext(lwe_dim.to_lwe_size(), &h_input_plaintext).unwrap();

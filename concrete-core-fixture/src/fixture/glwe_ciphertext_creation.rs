@@ -99,7 +99,7 @@ where
     ) -> Self::PostExecutionContext {
         let (underlying_container, polynomial_size) = context;
         let glwe_ciphertext = unsafe {
-            engine.create_glwe_ciphertext_unchecked(underlying_container, polynomial_size)
+            engine.create_glwe_ciphertext_from_unchecked(underlying_container, polynomial_size)
         };
         (glwe_ciphertext,)
     }

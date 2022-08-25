@@ -39,6 +39,15 @@
 //! This design makes it possible for each operation, to match the error exhaustively against both
 //! general error variants, and backend-related error variants.
 //!
+//! # A word about Generation and Creation engines
+//!
+//! We have two families of engines to make entities:
+//! - Generation engines which generate new entities with non trivial algorithms, e.g. a bootstrap
+//!   key generation
+//! - Creation engines which wrap/re-interpret data to create entities from them without involving
+//!   non trivial algorithms, like creating a `Cleartext64` from a `u64` by simply wrapping the
+//!   value.
+//!
 //! # Operation semantics
 //!
 //! For each possible operation, we try to support the three following semantics:
@@ -185,18 +194,18 @@ mod glwe_ciphertext_vector_zero_encryption;
 mod glwe_ciphertext_zero_encryption;
 mod glwe_ciphertexts_ggsw_ciphertext_fusing_cmux;
 mod glwe_secret_key_conversion;
-mod glwe_secret_key_creation;
 mod glwe_secret_key_discarding_conversion;
+mod glwe_secret_key_generation;
 mod glwe_seeded_ciphertext_encryption;
 mod glwe_seeded_ciphertext_to_glwe_ciphertext_transformation;
 mod glwe_seeded_ciphertext_vector_encryption;
 mod glwe_seeded_ciphertext_vector_to_glwe_ciphertext_vector_transformation;
 mod glwe_to_lwe_secret_key_transformation;
-mod lwe_bootstrap_key_construction;
 mod lwe_bootstrap_key_consuming_retrieval;
 mod lwe_bootstrap_key_conversion;
 mod lwe_bootstrap_key_creation;
 mod lwe_bootstrap_key_discarding_conversion;
+mod lwe_bootstrap_key_generation;
 mod lwe_ciphertext_cleartext_discarding_multiplication;
 mod lwe_ciphertext_cleartext_fusing_multiplication;
 mod lwe_ciphertext_consuming_retrieval;
@@ -249,22 +258,22 @@ mod lwe_ciphertext_vector_trivial_encryption;
 mod lwe_ciphertext_vector_zero_encryption;
 mod lwe_ciphertext_zero_encryption;
 mod lwe_keyswitch_key_conversion;
-mod lwe_keyswitch_key_creation;
 mod lwe_keyswitch_key_discarding_conversion;
-mod lwe_private_functional_packing_keyswitch_key_creation;
+mod lwe_keyswitch_key_generation;
+mod lwe_packing_keyswitch_key_generation;
+mod lwe_private_functional_packing_keyswitch_key_generation;
 mod lwe_secret_key_conversion;
-mod lwe_secret_key_creation;
 mod lwe_secret_key_discarding_conversion;
-mod lwe_seeded_bootstrap_key_creation;
+mod lwe_secret_key_generation;
+mod lwe_seeded_bootstrap_key_generation;
 mod lwe_seeded_bootstrap_key_to_lwe_bootstrap_key_transformation;
 mod lwe_seeded_ciphertext_encryption;
 mod lwe_seeded_ciphertext_to_lwe_ciphertext_transformation;
 mod lwe_seeded_ciphertext_vector_encryption;
 mod lwe_seeded_ciphertext_vector_to_lwe_ciphertext_vector_transformation;
-mod lwe_seeded_keyswitch_key_creation;
+mod lwe_seeded_keyswitch_key_generation;
 mod lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_transformation;
 mod lwe_to_glwe_secret_key_transformation;
-mod packing_keyswitch_key_creation;
 mod plaintext_conversion;
 mod plaintext_creation;
 mod plaintext_decoding;
@@ -324,18 +333,18 @@ pub use glwe_ciphertext_vector_zero_encryption::*;
 pub use glwe_ciphertext_zero_encryption::*;
 pub use glwe_ciphertexts_ggsw_ciphertext_fusing_cmux::*;
 pub use glwe_secret_key_conversion::*;
-pub use glwe_secret_key_creation::*;
 pub use glwe_secret_key_discarding_conversion::*;
+pub use glwe_secret_key_generation::*;
 pub use glwe_seeded_ciphertext_encryption::*;
 pub use glwe_seeded_ciphertext_to_glwe_ciphertext_transformation::*;
 pub use glwe_seeded_ciphertext_vector_encryption::*;
 pub use glwe_seeded_ciphertext_vector_to_glwe_ciphertext_vector_transformation::*;
 pub use glwe_to_lwe_secret_key_transformation::*;
-pub use lwe_bootstrap_key_construction::*;
 pub use lwe_bootstrap_key_consuming_retrieval::*;
 pub use lwe_bootstrap_key_conversion::*;
 pub use lwe_bootstrap_key_creation::*;
 pub use lwe_bootstrap_key_discarding_conversion::*;
+pub use lwe_bootstrap_key_generation::*;
 pub use lwe_ciphertext_cleartext_discarding_multiplication::*;
 pub use lwe_ciphertext_cleartext_fusing_multiplication::*;
 pub use lwe_ciphertext_consuming_retrieval::*;
@@ -388,22 +397,22 @@ pub use lwe_ciphertext_vector_trivial_encryption::*;
 pub use lwe_ciphertext_vector_zero_encryption::*;
 pub use lwe_ciphertext_zero_encryption::*;
 pub use lwe_keyswitch_key_conversion::*;
-pub use lwe_keyswitch_key_creation::*;
 pub use lwe_keyswitch_key_discarding_conversion::*;
-pub use lwe_private_functional_packing_keyswitch_key_creation::*;
+pub use lwe_keyswitch_key_generation::*;
+pub use lwe_packing_keyswitch_key_generation::*;
+pub use lwe_private_functional_packing_keyswitch_key_generation::*;
 pub use lwe_secret_key_conversion::*;
-pub use lwe_secret_key_creation::*;
 pub use lwe_secret_key_discarding_conversion::*;
-pub use lwe_seeded_bootstrap_key_creation::*;
+pub use lwe_secret_key_generation::*;
+pub use lwe_seeded_bootstrap_key_generation::*;
 pub use lwe_seeded_bootstrap_key_to_lwe_bootstrap_key_transformation::*;
 pub use lwe_seeded_ciphertext_encryption::*;
 pub use lwe_seeded_ciphertext_to_lwe_ciphertext_transformation::*;
 pub use lwe_seeded_ciphertext_vector_encryption::*;
 pub use lwe_seeded_ciphertext_vector_to_lwe_ciphertext_vector_transformation::*;
-pub use lwe_seeded_keyswitch_key_creation::*;
+pub use lwe_seeded_keyswitch_key_generation::*;
 pub use lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_transformation::*;
 pub use lwe_to_glwe_secret_key_transformation::*;
-pub use packing_keyswitch_key_creation::*;
 pub use plaintext_conversion::*;
 pub use plaintext_creation::*;
 pub use plaintext_decoding::*;

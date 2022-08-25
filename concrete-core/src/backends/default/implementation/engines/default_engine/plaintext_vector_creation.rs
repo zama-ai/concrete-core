@@ -21,24 +21,27 @@ impl PlaintextVectorCreationEngine<u32, PlaintextVector32> for DefaultEngine {
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector(&input)?;
+    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector_from(&input)?;
     /// #
     /// assert_eq!(plaintext_vector.plaintext_count(), PlaintextCount(3));
     /// #
     /// # Ok(())
     /// # }
     /// ```
-    fn create_plaintext_vector(
+    fn create_plaintext_vector_from(
         &mut self,
         input: &[u32],
     ) -> Result<PlaintextVector32, PlaintextVectorCreationError<Self::EngineError>> {
         if input.is_empty() {
             return Err(PlaintextVectorCreationError::EmptyInput);
         }
-        Ok(unsafe { self.create_plaintext_vector_unchecked(input) })
+        Ok(unsafe { self.create_plaintext_vector_from_unchecked(input) })
     }
 
-    unsafe fn create_plaintext_vector_unchecked(&mut self, input: &[u32]) -> PlaintextVector32 {
+    unsafe fn create_plaintext_vector_from_unchecked(
+        &mut self,
+        input: &[u32],
+    ) -> PlaintextVector32 {
         PlaintextVector32(ImplPlaintextList::from_container(input.to_vec()))
     }
 }
@@ -61,24 +64,27 @@ impl PlaintextVectorCreationEngine<u64, PlaintextVector64> for DefaultEngine {
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector(&input)?;
+    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector_from(&input)?;
     /// #
     /// assert_eq!(plaintext_vector.plaintext_count(), PlaintextCount(3));
     /// #
     /// # Ok(())
     /// # }
     /// ```
-    fn create_plaintext_vector(
+    fn create_plaintext_vector_from(
         &mut self,
         input: &[u64],
     ) -> Result<PlaintextVector64, PlaintextVectorCreationError<Self::EngineError>> {
         if input.is_empty() {
             return Err(PlaintextVectorCreationError::EmptyInput);
         }
-        Ok(unsafe { self.create_plaintext_vector_unchecked(input) })
+        Ok(unsafe { self.create_plaintext_vector_from_unchecked(input) })
     }
 
-    unsafe fn create_plaintext_vector_unchecked(&mut self, input: &[u64]) -> PlaintextVector64 {
+    unsafe fn create_plaintext_vector_from_unchecked(
+        &mut self,
+        input: &[u64],
+    ) -> PlaintextVector64 {
         PlaintextVector64(ImplPlaintextList::from_container(input.to_vec()))
     }
 }

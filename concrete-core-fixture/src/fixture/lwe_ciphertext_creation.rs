@@ -85,7 +85,7 @@ where
     ) -> Self::PostExecutionContext {
         let (underlying_container,) = context;
         let lwe_ciphertext =
-            unsafe { engine.create_lwe_ciphertext_unchecked(underlying_container) };
+            unsafe { engine.create_lwe_ciphertext_from_unchecked(underlying_container) };
         (lwe_ciphertext,)
     }
 

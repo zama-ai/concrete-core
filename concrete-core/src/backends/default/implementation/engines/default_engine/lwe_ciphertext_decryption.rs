@@ -28,8 +28,8 @@ impl LweCiphertextDecryptionEngine<LweSecretKey32, LweCiphertext32, Plaintext32>
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext = engine.create_plaintext(&input)?;
+    /// let key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext_from(&input)?;
     /// let ciphertext = engine.encrypt_lwe_ciphertext(&key, &plaintext, noise)?;
     ///
     /// let decrypted_plaintext = engine.decrypt_lwe_ciphertext(&key, &ciphertext)?;
@@ -79,8 +79,8 @@ impl LweCiphertextDecryptionEngine<LweSecretKey64, LweCiphertext64, Plaintext64>
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext = engine.create_plaintext(&input)?;
+    /// let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext_from(&input)?;
     /// let ciphertext = engine.encrypt_lwe_ciphertext(&key, &plaintext, noise)?;
     ///
     /// let decrypted_plaintext = engine.decrypt_lwe_ciphertext(&key, &ciphertext)?;
@@ -132,17 +132,18 @@ impl LweCiphertextDecryptionEngine<LweSecretKey32, LweCiphertextView32<'_>, Plai
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext = engine.create_plaintext(&input)?;
+    /// let key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext_from(&input)?;
     ///
     /// let mut raw_ciphertext = vec![0_u32; key.lwe_dimension().to_lwe_size().0];
     /// let mut ciphertext_view: LweCiphertextMutView32 =
-    ///     engine.create_lwe_ciphertext(&mut raw_ciphertext[..])?;
+    ///     engine.create_lwe_ciphertext_from(&mut raw_ciphertext[..])?;
     /// engine.discard_encrypt_lwe_ciphertext(&key, &mut ciphertext_view, &plaintext, noise)?;
     ///
     /// // Convert MutView to View
     /// let raw_ciphertext = engine.consume_retrieve_lwe_ciphertext(ciphertext_view)?;
-    /// let ciphertext_view: LweCiphertextView32 = engine.create_lwe_ciphertext(&raw_ciphertext[..])?;
+    /// let ciphertext_view: LweCiphertextView32 =
+    ///     engine.create_lwe_ciphertext_from(&raw_ciphertext[..])?;
     ///
     /// let decrypted_plaintext = engine.decrypt_lwe_ciphertext(&key, &ciphertext_view)?;
     ///
@@ -193,17 +194,18 @@ impl LweCiphertextDecryptionEngine<LweSecretKey64, LweCiphertextView64<'_>, Plai
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext = engine.create_plaintext(&input)?;
+    /// let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext = engine.create_plaintext_from(&input)?;
     ///
     /// let mut raw_ciphertext = vec![0_u64; key.lwe_dimension().to_lwe_size().0];
     /// let mut ciphertext_view: LweCiphertextMutView64 =
-    ///     engine.create_lwe_ciphertext(&mut raw_ciphertext[..])?;
+    ///     engine.create_lwe_ciphertext_from(&mut raw_ciphertext[..])?;
     /// engine.discard_encrypt_lwe_ciphertext(&key, &mut ciphertext_view, &plaintext, noise)?;
     ///
     /// // Convert MutView to View
     /// let raw_ciphertext = engine.consume_retrieve_lwe_ciphertext(ciphertext_view)?;
-    /// let ciphertext_view: LweCiphertextView64 = engine.create_lwe_ciphertext(&raw_ciphertext[..])?;
+    /// let ciphertext_view: LweCiphertextView64 =
+    ///     engine.create_lwe_ciphertext_from(&raw_ciphertext[..])?;
     ///
     /// let decrypted_plaintext = engine.decrypt_lwe_ciphertext(&key, &ciphertext_view)?;
     ///

@@ -11,7 +11,7 @@ use std::os::raw::c_int;
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_create_glwe_ciphertext_view_u64(
+pub unsafe extern "C" fn default_engine_create_glwe_ciphertext_view_from_u64(
     engine: *mut DefaultEngine,
     input: *const u64,
     input_buffer_size: usize,
@@ -34,7 +34,7 @@ pub unsafe extern "C" fn default_engine_create_glwe_ciphertext_view_u64(
 
         let heap_allocated_glwe_ciphertext_view = Box::new(
             engine
-                .create_glwe_ciphertext(input_container, polynomial_size)
+                .create_glwe_ciphertext_from(input_container, polynomial_size)
                 .or_else(engine_error_as_readable_string)
                 .unwrap(),
         );
@@ -44,9 +44,9 @@ pub unsafe extern "C" fn default_engine_create_glwe_ciphertext_view_u64(
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_engine_create_glwe_ciphertext_view_u64`]
+/// [`default_engine_create_glwe_ciphertext_view_from_u64`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_create_glwe_ciphertext_view_unchecked_u64(
+pub unsafe extern "C" fn default_engine_create_glwe_ciphertext_view_from_unchecked_u64(
     engine: *mut DefaultEngine,
     input: *const u64,
     glwe_size: usize,
@@ -64,8 +64,9 @@ pub unsafe extern "C" fn default_engine_create_glwe_ciphertext_view_unchecked_u6
 
         let polynomial_size = PolynomialSize(polynomial_size);
 
-        let heap_allocated_glwe_ciphertext_view =
-            Box::new(engine.create_glwe_ciphertext_unchecked(input_container, polynomial_size));
+        let heap_allocated_glwe_ciphertext_view = Box::new(
+            engine.create_glwe_ciphertext_from_unchecked(input_container, polynomial_size),
+        );
 
         *result = Box::into_raw(heap_allocated_glwe_ciphertext_view);
     })
@@ -77,7 +78,7 @@ pub unsafe extern "C" fn default_engine_create_glwe_ciphertext_view_unchecked_u6
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_create_glwe_ciphertext_mut_view_u64(
+pub unsafe extern "C" fn default_engine_create_glwe_ciphertext_mut_view_from_u64(
     engine: *mut DefaultEngine,
     input: *mut u64,
     glwe_size: usize,
@@ -100,7 +101,7 @@ pub unsafe extern "C" fn default_engine_create_glwe_ciphertext_mut_view_u64(
 
         let heap_allocated_glwe_ciphertext_mut_view = Box::new(
             engine
-                .create_glwe_ciphertext(input_container, polynomial_size)
+                .create_glwe_ciphertext_from(input_container, polynomial_size)
                 .or_else(engine_error_as_readable_string)
                 .unwrap(),
         );
@@ -110,9 +111,9 @@ pub unsafe extern "C" fn default_engine_create_glwe_ciphertext_mut_view_u64(
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_engine_create_glwe_ciphertext_mut_view_u64`]
+/// [`default_engine_create_glwe_ciphertext_mut_view_from_u64`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_create_glwe_ciphertext_mut_view_unchecked_u64(
+pub unsafe extern "C" fn default_engine_create_glwe_ciphertext_mut_view_from_unchecked_u64(
     engine: *mut DefaultEngine,
     input: *mut u64,
     glwe_size: usize,
@@ -130,8 +131,9 @@ pub unsafe extern "C" fn default_engine_create_glwe_ciphertext_mut_view_unchecke
 
         let polynomial_size = PolynomialSize(polynomial_size);
 
-        let heap_allocated_glwe_ciphertext_mut_view =
-            Box::new(engine.create_glwe_ciphertext_unchecked(input_container, polynomial_size));
+        let heap_allocated_glwe_ciphertext_mut_view = Box::new(
+            engine.create_glwe_ciphertext_from_unchecked(input_container, polynomial_size),
+        );
 
         *result = Box::into_raw(heap_allocated_glwe_ciphertext_mut_view);
     })

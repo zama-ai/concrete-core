@@ -33,11 +33,11 @@ void bootstrap_key_to_mut_view_conversion_view_buffers(void) {
   // We generate the keys
   LweSecretKey64 *input_lwe_sk = NULL;
   int lwe_in_key_ok =
-      default_engine_create_lwe_secret_key_u64(default_engine, input_lwe_dimension, &input_lwe_sk);
+      default_engine_generate_new_lwe_secret_key_u64(default_engine, input_lwe_dimension, &input_lwe_sk);
   assert(lwe_in_key_ok == 0);
 
   LweSecretKey64 *output_lwe_sk = NULL;
-  int lwe_out_key_ok = default_engine_create_lwe_secret_key_u64(
+  int lwe_out_key_ok = default_engine_generate_new_lwe_secret_key_u64(
       default_engine, output_lwe_dimension, &output_lwe_sk);
   assert(lwe_out_key_ok == 0);
 
@@ -49,7 +49,7 @@ void bootstrap_key_to_mut_view_conversion_view_buffers(void) {
   assert(clone_transform_ok == 0);
 
   LweBootstrapKey64 *standard_bsk = NULL;
-  int seeded_bsk_ok = default_parallel_engine_create_lwe_bootstrap_key_u64(
+  int seeded_bsk_ok = default_parallel_engine_generate_new_lwe_bootstrap_key_u64(
       default_parallel_engine, input_lwe_sk, output_glwe_sk, base_log, level, pbs_variance,
       &standard_bsk);
   assert(seeded_bsk_ok == 0);
@@ -63,7 +63,7 @@ void bootstrap_key_to_mut_view_conversion_view_buffers(void) {
   }
 
   LweBootstrapKeyMutView64 *standard_bsk_mut_view = NULL;
-  int bsk_mut_view_ok = default_engine_construct_lwe_bootstrap_key_mut_view_u64(
+  int bsk_mut_view_ok = default_engine_create_lwe_bootstrap_key_mut_view_from_u64(
       default_engine, bootstrap_key_mut_mem, input_lwe_dimension, glwe_size, poly_size, base_log,
       level, &standard_bsk_mut_view);
   assert(bsk_mut_view_ok == 0);
@@ -120,12 +120,12 @@ void bootstrap_key_to_mut_view_conversion_unchecked_view_buffers(void) {
 
   // We generate the keys
   LweSecretKey64 *input_lwe_sk = NULL;
-  int lwe_in_key_ok = default_engine_create_lwe_secret_key_unchecked_u64(
+  int lwe_in_key_ok = default_engine_generate_new_lwe_secret_key_unchecked_u64(
       default_engine, input_lwe_dimension, &input_lwe_sk);
   assert(lwe_in_key_ok == 0);
 
   LweSecretKey64 *output_lwe_sk = NULL;
-  int lwe_out_key_ok = default_engine_create_lwe_secret_key_unchecked_u64(
+  int lwe_out_key_ok = default_engine_generate_new_lwe_secret_key_unchecked_u64(
       default_engine, output_lwe_dimension, &output_lwe_sk);
   assert(lwe_out_key_ok == 0);
 
@@ -137,7 +137,7 @@ void bootstrap_key_to_mut_view_conversion_unchecked_view_buffers(void) {
   assert(clone_transform_ok == 0);
 
   LweBootstrapKey64 *standard_bsk = NULL;
-  int seeded_bsk_ok = default_parallel_engine_create_lwe_bootstrap_key_unchecked_u64(
+  int seeded_bsk_ok = default_parallel_engine_generate_new_lwe_bootstrap_key_unchecked_u64(
       default_parallel_engine, input_lwe_sk, output_glwe_sk, base_log, level, pbs_variance,
       &standard_bsk);
   assert(seeded_bsk_ok == 0);
@@ -151,7 +151,7 @@ void bootstrap_key_to_mut_view_conversion_unchecked_view_buffers(void) {
   }
 
   LweBootstrapKeyMutView64 *standard_bsk_mut_view = NULL;
-  int bsk_mut_view_ok = default_engine_construct_lwe_bootstrap_key_mut_view_unchecked_u64(
+  int bsk_mut_view_ok = default_engine_create_lwe_bootstrap_key_mut_view_from_unchecked_u64(
       default_engine, bootstrap_key_mut_mem, input_lwe_dimension, glwe_size, poly_size, base_log,
       level, &standard_bsk_mut_view);
   assert(bsk_mut_view_ok == 0);
@@ -208,11 +208,11 @@ void bootstrap_key_to_mut_view_conversion_raw_ptr_buffers(void) {
   // We generate the keys
   LweSecretKey64 *input_lwe_sk = NULL;
   int lwe_in_key_ok =
-      default_engine_create_lwe_secret_key_u64(default_engine, input_lwe_dimension, &input_lwe_sk);
+      default_engine_generate_new_lwe_secret_key_u64(default_engine, input_lwe_dimension, &input_lwe_sk);
   assert(lwe_in_key_ok == 0);
 
   LweSecretKey64 *output_lwe_sk = NULL;
-  int lwe_out_key_ok = default_engine_create_lwe_secret_key_u64(
+  int lwe_out_key_ok = default_engine_generate_new_lwe_secret_key_u64(
       default_engine, output_lwe_dimension, &output_lwe_sk);
   assert(lwe_out_key_ok == 0);
 
@@ -224,7 +224,7 @@ void bootstrap_key_to_mut_view_conversion_raw_ptr_buffers(void) {
   assert(clone_transform_ok == 0);
 
   LweBootstrapKey64 *standard_bsk = NULL;
-  int seeded_bsk_ok = default_parallel_engine_create_lwe_bootstrap_key_u64(
+  int seeded_bsk_ok = default_parallel_engine_generate_new_lwe_bootstrap_key_u64(
       default_parallel_engine, input_lwe_sk, output_glwe_sk, base_log, level, pbs_variance,
       &standard_bsk);
   assert(seeded_bsk_ok == 0);
@@ -288,12 +288,12 @@ void bootstrap_key_to_mut_view_conversion_unchecked_raw_ptr_buffers(void) {
 
   // We generate the keys
   LweSecretKey64 *input_lwe_sk = NULL;
-  int lwe_in_key_ok = default_engine_create_lwe_secret_key_unchecked_u64(
+  int lwe_in_key_ok = default_engine_generate_new_lwe_secret_key_unchecked_u64(
       default_engine, input_lwe_dimension, &input_lwe_sk);
   assert(lwe_in_key_ok == 0);
 
   LweSecretKey64 *output_lwe_sk = NULL;
-  int lwe_out_key_ok = default_engine_create_lwe_secret_key_unchecked_u64(
+  int lwe_out_key_ok = default_engine_generate_new_lwe_secret_key_unchecked_u64(
       default_engine, output_lwe_dimension, &output_lwe_sk);
   assert(lwe_out_key_ok == 0);
 
@@ -305,7 +305,7 @@ void bootstrap_key_to_mut_view_conversion_unchecked_raw_ptr_buffers(void) {
   assert(clone_transform_ok == 0);
 
   LweBootstrapKey64 *standard_bsk = NULL;
-  int seeded_bsk_ok = default_parallel_engine_create_lwe_bootstrap_key_unchecked_u64(
+  int seeded_bsk_ok = default_parallel_engine_generate_new_lwe_bootstrap_key_unchecked_u64(
       default_parallel_engine, input_lwe_sk, output_glwe_sk, base_log, level, pbs_variance,
       &standard_bsk);
   assert(seeded_bsk_ok == 0);

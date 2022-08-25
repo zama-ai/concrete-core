@@ -34,7 +34,7 @@ impl LweBootstrapKeyConsumingRetrievalEngine<LweBootstrapKey32, Vec<u32>> for De
     ///     vec![0_u32; lwe_dimension.0 * level.0 * glwe_size.0 * glwe_size.0 * polynomial_size.0];
     /// let original_vec_ptr = owned_container.as_ptr();
     ///
-    /// let lwe_bootstrap_key: LweBootstrapKey32 = engine.construct_lwe_bootstrap_key(
+    /// let lwe_bootstrap_key: LweBootstrapKey32 = engine.create_lwe_bootstrap_key_from(
     ///     owned_container,
     ///     glwe_size,
     ///     polynomial_size,
@@ -88,7 +88,7 @@ impl LweBootstrapKeyConsumingRetrievalEngine<LweBootstrapKey64, Vec<u64>> for De
     ///     vec![0_u64; lwe_dimension.0 * level.0 * glwe_size.0 * glwe_size.0 * polynomial_size.0];
     /// let original_vec_ptr = owned_container.as_ptr();
     ///
-    /// let lwe_bootstrap_key: LweBootstrapKey64 = engine.construct_lwe_bootstrap_key(
+    /// let lwe_bootstrap_key: LweBootstrapKey64 = engine.create_lwe_bootstrap_key_from(
     ///     owned_container,
     ///     glwe_size,
     ///     polynomial_size,
@@ -148,7 +148,7 @@ impl<'data>
     /// let underlying_ptr = slice.as_ptr();
     ///
     /// let lwe_bootstrap_key: LweBootstrapKeyMutView32 =
-    ///     engine.construct_lwe_bootstrap_key(slice, glwe_size, polynomial_size, base_log, level)?;
+    ///     engine.create_lwe_bootstrap_key_from(slice, glwe_size, polynomial_size, base_log, level)?;
     /// let retrieved_slice = engine.consume_retrieve_lwe_bootstrap_key(lwe_bootstrap_key)?;
     ///
     /// assert_eq!(underlying_ptr, retrieved_slice.as_ptr());
@@ -203,7 +203,7 @@ impl<'data>
     /// let underlying_ptr = slice.as_ptr();
     ///
     /// let lwe_bootstrap_key: LweBootstrapKeyMutView64 =
-    ///     engine.construct_lwe_bootstrap_key(slice, glwe_size, polynomial_size, base_log, level)?;
+    ///     engine.create_lwe_bootstrap_key_from(slice, glwe_size, polynomial_size, base_log, level)?;
     /// let retrieved_slice = engine.consume_retrieve_lwe_bootstrap_key(lwe_bootstrap_key)?;
     ///
     /// assert_eq!(underlying_ptr, retrieved_slice.as_ptr());
@@ -255,7 +255,7 @@ impl<'data> LweBootstrapKeyConsumingRetrievalEngine<LweBootstrapKeyView32<'data>
     /// let slice = owned_container.as_slice();
     ///
     /// let lwe_bootstrap_key: LweBootstrapKeyView32 =
-    ///     engine.construct_lwe_bootstrap_key(slice, glwe_size, polynomial_size, base_log, level)?;
+    ///     engine.create_lwe_bootstrap_key_from(slice, glwe_size, polynomial_size, base_log, level)?;
     /// let retrieved_slice = engine.consume_retrieve_lwe_bootstrap_key(lwe_bootstrap_key)?;
     ///
     /// assert_eq!(slice, retrieved_slice);
@@ -307,7 +307,7 @@ impl<'data> LweBootstrapKeyConsumingRetrievalEngine<LweBootstrapKeyView64<'data>
     /// let slice = owned_container.as_slice();
     ///
     /// let lwe_bootstrap_key: LweBootstrapKeyView64 =
-    ///     engine.construct_lwe_bootstrap_key(slice, glwe_size, polynomial_size, base_log, level)?;
+    ///     engine.create_lwe_bootstrap_key_from(slice, glwe_size, polynomial_size, base_log, level)?;
     /// let retrieved_slice = engine.consume_retrieve_lwe_bootstrap_key(lwe_bootstrap_key)?;
     ///
     /// assert_eq!(slice, retrieved_slice);

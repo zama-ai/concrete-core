@@ -63,7 +63,7 @@ where
         context: Self::PreExecutionContext,
     ) -> Self::PostExecutionContext {
         let (raw_plaintext,) = context;
-        let plaintext = unsafe { engine.create_plaintext_unchecked(&raw_plaintext) };
+        let plaintext = unsafe { engine.create_plaintext_from_unchecked(&raw_plaintext) };
         (plaintext,)
     }
 

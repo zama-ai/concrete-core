@@ -44,8 +44,8 @@ impl EntitySerializationEngine<FftwFourierGgswCiphertext32, Vec<u8>> for FftwSer
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fftw_engine = FftwEngine::new(())?;
     /// let key: GlweSecretKey32 =
-    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext = default_engine.create_plaintext(&input)?;
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext = default_engine.create_plaintext_from(&input)?;
     ///
     /// // We encrypt a GGSW ciphertext in the standard domain
     /// let ciphertext =
@@ -116,8 +116,8 @@ impl EntitySerializationEngine<FftwFourierGgswCiphertext64, Vec<u8>> for FftwSer
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fftw_engine = FftwEngine::new(())?;
     /// let key: GlweSecretKey64 =
-    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext = default_engine.create_plaintext(&input)?;
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext = default_engine.create_plaintext_from(&input)?;
     ///
     /// // We encrypt a GGSW ciphertext in the standard domain
     /// let ciphertext =
@@ -186,8 +186,8 @@ impl EntitySerializationEngine<FftwFourierGlweCiphertext32, Vec<u8>> for FftwSer
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fftw_engine = FftwEngine::new(())?;
     /// let key: GlweSecretKey32 =
-    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = default_engine.create_plaintext_vector(&input)?;
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = default_engine.create_plaintext_vector_from(&input)?;
     ///
     /// // We encrypt a GLWE ciphertext in the standard domain
     /// let ciphertext = default_engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
@@ -255,8 +255,8 @@ impl EntitySerializationEngine<FftwFourierGlweCiphertext64, Vec<u8>> for FftwSer
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fftw_engine = FftwEngine::new(())?;
     /// let key: GlweSecretKey64 =
-    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = default_engine.create_plaintext_vector(&input)?;
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = default_engine.create_plaintext_vector_from(&input)?;
     ///
     /// // We encrypt a GLWE ciphertext in the standard domain
     /// let ciphertext = default_engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
@@ -321,10 +321,11 @@ impl EntitySerializationEngine<FftwFourierLweBootstrapKey32, Vec<u8>> for FftwSe
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fftw_engine = FftwEngine::new(())?;
-    /// let lwe_sk: LweSecretKey32 = default_engine.create_lwe_secret_key(lwe_dim)?;
-    /// let glwe_sk: GlweSecretKey32 = default_engine.create_glwe_secret_key(glwe_dim, poly_size)?;
+    /// let lwe_sk: LweSecretKey32 = default_engine.generate_new_lwe_secret_key(lwe_dim)?;
+    /// let glwe_sk: GlweSecretKey32 =
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dim, poly_size)?;
     /// let bsk: LweBootstrapKey32 =
-    ///     default_engine.create_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
+    ///     default_engine.generate_new_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
     ///
     /// let fourier_bsk: FftwFourierLweBootstrapKey32 = fftw_engine.convert_lwe_bootstrap_key(&bsk)?;
     ///
@@ -384,10 +385,11 @@ impl EntitySerializationEngine<FftwFourierLweBootstrapKey64, Vec<u8>> for FftwSe
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fftw_engine = FftwEngine::new(())?;
-    /// let lwe_sk: LweSecretKey64 = default_engine.create_lwe_secret_key(lwe_dim)?;
-    /// let glwe_sk: GlweSecretKey64 = default_engine.create_glwe_secret_key(glwe_dim, poly_size)?;
+    /// let lwe_sk: LweSecretKey64 = default_engine.generate_new_lwe_secret_key(lwe_dim)?;
+    /// let glwe_sk: GlweSecretKey64 =
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dim, poly_size)?;
     /// let bsk: LweBootstrapKey64 =
-    ///     default_engine.create_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
+    ///     default_engine.generate_new_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
     ///
     /// let fourier_bsk: FftwFourierLweBootstrapKey64 = fftw_engine.convert_lwe_bootstrap_key(&bsk)?;
     ///

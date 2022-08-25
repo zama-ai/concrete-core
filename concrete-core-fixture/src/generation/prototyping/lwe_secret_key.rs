@@ -8,7 +8,7 @@ use crate::generation::{
 };
 use concrete_commons::parameters::LweDimension;
 use concrete_core::prelude::{
-    LweSecretKeyCreationEngine, LweToGlweSecretKeyTransformationEngine, PolynomialSize,
+    LweSecretKeyGenerationEngine, LweToGlweSecretKeyTransformationEngine, PolynomialSize,
 };
 
 /// A trait allowing to manipulate lwe secret key prototypes.
@@ -30,7 +30,7 @@ impl PrototypesLweSecretKey<Precision32, BinaryKeyDistribution> for Maker {
     fn new_lwe_secret_key(&mut self, lwe_dimension: LweDimension) -> Self::LweSecretKeyProto {
         ProtoBinaryLweSecretKey32(
             self.default_engine
-                .create_lwe_secret_key(lwe_dimension)
+                .generate_new_lwe_secret_key(lwe_dimension)
                 .unwrap(),
         )
     }
@@ -42,7 +42,7 @@ impl PrototypesLweSecretKey<Precision64, BinaryKeyDistribution> for Maker {
     fn new_lwe_secret_key(&mut self, lwe_dimension: LweDimension) -> Self::LweSecretKeyProto {
         ProtoBinaryLweSecretKey64(
             self.default_engine
-                .create_lwe_secret_key(lwe_dimension)
+                .generate_new_lwe_secret_key(lwe_dimension)
                 .unwrap(),
         )
     }

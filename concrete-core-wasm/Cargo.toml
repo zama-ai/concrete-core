@@ -1,6 +1,6 @@
 [package]
 name = "concrete-core-wasm"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Zama team"]
 edition = "2021"
 license = "BSD-3-Clause-Clear"

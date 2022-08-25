@@ -77,7 +77,7 @@ where
     ) -> Self::PostExecutionContext {
         let (raw_plaintext_vector,) = context;
         let plaintext_vector =
-            unsafe { engine.create_plaintext_vector_unchecked(&raw_plaintext_vector) };
+            unsafe { engine.create_plaintext_vector_from_unchecked(&raw_plaintext_vector) };
         (plaintext_vector,)
     }
 

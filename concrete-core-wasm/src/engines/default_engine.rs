@@ -20,11 +20,14 @@ impl DefaultEngine {
     }
 
     pub fn create_plaintext_64(&mut self, input: u64) -> JsResult<Plaintext64> {
-        wrap!(Plaintext64, self.0.create_plaintext(&input))
+        wrap!(Plaintext64, self.0.create_plaintext_from(&input))
     }
 
     pub fn create_plaintext_vector_64(&mut self, input: Vec<u64>) -> JsResult<PlaintextVector64> {
-        wrap!(PlaintextVector64, self.0.create_plaintext_vector(&input))
+        wrap!(
+            PlaintextVector64,
+            self.0.create_plaintext_vector_from(&input)
+        )
     }
 
     pub fn retrieve_plaintext_64(&mut self, input: &Plaintext64) -> JsResult<u64> {
@@ -39,11 +42,14 @@ impl DefaultEngine {
     }
 
     pub fn create_plaintext_32(&mut self, input: u32) -> JsResult<Plaintext32> {
-        wrap!(Plaintext32, self.0.create_plaintext(&input))
+        wrap!(Plaintext32, self.0.create_plaintext_from(&input))
     }
 
     pub fn create_plaintext_vector_32(&mut self, input: Vec<u32>) -> JsResult<PlaintextVector32> {
-        wrap!(PlaintextVector32, self.0.create_plaintext_vector(&input))
+        wrap!(
+            PlaintextVector32,
+            self.0.create_plaintext_vector_from(&input)
+        )
     }
 
     pub fn retrieve_plaintext_32(&mut self, input: &Plaintext32) -> JsResult<u32> {
@@ -58,13 +64,13 @@ impl DefaultEngine {
     }
 
     pub fn create_cleartext_f64(&mut self, input: f64) -> JsResult<CleartextF64> {
-        wrap!(CleartextF64, self.0.create_cleartext(&input))
+        wrap!(CleartextF64, self.0.create_cleartext_from(&input))
     }
 
     pub fn create_cleartext_vector_f64(&mut self, input: Vec<f64>) -> JsResult<CleartextVectorF64> {
         wrap!(
             CleartextVectorF64,
-            self.0.create_cleartext_vector(input.as_slice())
+            self.0.create_cleartext_vector_from(input.as_slice())
         )
     }
 
@@ -100,7 +106,7 @@ impl DefaultEngine {
 
         wrap!(
             FloatEncoder,
-            self.0.create_encoder(&FloatEncoderMinMaxConfig {
+            self.0.create_encoder_from(&FloatEncoderMinMaxConfig {
                 min: config.min,
                 max: config.max,
                 nb_bit_padding: config.nb_bit_padding,
@@ -130,7 +136,7 @@ impl DefaultEngine {
 
         wrap!(
             FloatEncoder,
-            self.0.create_encoder(&FloatEncoderCenterRadiusConfig {
+            self.0.create_encoder_from(&FloatEncoderCenterRadiusConfig {
                 center: config.center,
                 radius: config.radius,
                 nb_bit_padding: config.nb_bit_padding,
@@ -174,7 +180,7 @@ impl DefaultEngine {
             .collect();
         wrap!(
             FloatEncoderVector,
-            self.0.create_encoder_vector(configs.as_slice())
+            self.0.create_encoder_vector_from(configs.as_slice())
         )
     }
 
@@ -213,7 +219,7 @@ impl DefaultEngine {
             .collect();
         wrap!(
             FloatEncoderVector,
-            self.0.create_encoder_vector(configs.as_slice())
+            self.0.create_encoder_vector_from(configs.as_slice())
         )
     }
 
@@ -315,7 +321,7 @@ impl DefaultEngine {
     ) -> JsResult<LweSecretKey32> {
         wrap!(
             LweSecretKey32,
-            self.0.create_lwe_secret_key(lwe_dimension.0)
+            self.0.generate_new_lwe_secret_key(lwe_dimension.0)
         )
     }
 
@@ -325,7 +331,7 @@ impl DefaultEngine {
     ) -> JsResult<LweSecretKey64> {
         wrap!(
             LweSecretKey64,
-            self.0.create_lwe_secret_key(lwe_dimension.0)
+            self.0.generate_new_lwe_secret_key(lwe_dimension.0)
         )
     }
 
@@ -336,7 +342,8 @@ impl DefaultEngine {
     ) -> JsResult<GlweSecretKey32> {
         wrap!(
             GlweSecretKey32,
-            self.0.create_glwe_secret_key(glwe_dimension.0, poly_size.0)
+            self.0
+                .generate_new_glwe_secret_key(glwe_dimension.0, poly_size.0)
         )
     }
 
@@ -347,7 +354,8 @@ impl DefaultEngine {
     ) -> JsResult<GlweSecretKey64> {
         wrap!(
             GlweSecretKey64,
-            self.0.create_glwe_secret_key(glwe_dimension.0, poly_size.0)
+            self.0
+                .generate_new_glwe_secret_key(glwe_dimension.0, poly_size.0)
         )
     }
 
@@ -361,7 +369,7 @@ impl DefaultEngine {
     ) -> JsResult<LweBootstrapKey32> {
         wrap!(
             LweBootstrapKey32,
-            self.0.create_lwe_bootstrap_key(
+            self.0.generate_new_lwe_bootstrap_key(
                 &input_key.0,
                 &output_key.0,
                 decomposition_base_log.0,
@@ -381,7 +389,7 @@ impl DefaultEngine {
     ) -> JsResult<LweBootstrapKey64> {
         wrap!(
             LweBootstrapKey64,
-            self.0.create_lwe_bootstrap_key(
+            self.0.generate_new_lwe_bootstrap_key(
                 &input_key.0,
                 &output_key.0,
                 decomposition_base_log.0,

@@ -12,7 +12,8 @@ use crate::generation::{
 use concrete_commons::dispersion::Variance;
 use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
 use concrete_core::prelude::{
-    LweSeededBootstrapKeyCreationEngine, LweSeededBootstrapKeyToLweBootstrapKeyTransformationEngine,
+    LweSeededBootstrapKeyGenerationEngine,
+    LweSeededBootstrapKeyToLweBootstrapKeyTransformationEngine,
 };
 
 /// A trait allowing to manipulate LWE seeded bootstrap key prototypes.
@@ -60,7 +61,7 @@ impl PrototypesLweSeededBootstrapKey<Precision32, BinaryKeyDistribution, BinaryK
     ) -> Self::LweSeededBootstrapKeyProto {
         ProtoBinaryBinaryLweSeededBootstrapKey32(
             self.default_parallel_engine
-                .create_lwe_seeded_bootstrap_key(
+                .generate_new_lwe_seeded_bootstrap_key(
                     &input_key.0,
                     &output_key.0,
                     decomposition_base_log,
@@ -98,7 +99,7 @@ impl PrototypesLweSeededBootstrapKey<Precision64, BinaryKeyDistribution, BinaryK
     ) -> Self::LweSeededBootstrapKeyProto {
         ProtoBinaryBinaryLweSeededBootstrapKey64(
             self.default_parallel_engine
-                .create_lwe_seeded_bootstrap_key(
+                .generate_new_lwe_seeded_bootstrap_key(
                     &input_key.0,
                     &output_key.0,
                     decomposition_base_log,

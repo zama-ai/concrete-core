@@ -34,13 +34,15 @@ impl GlweCiphertextDiscardingEncryptionEngine<GlweSecretKey32, PlaintextVector32
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key_1: GlweSecretKey32 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector(&input)?;
+    /// let key_1: GlweSecretKey32 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
     /// let mut ciphertext = engine.encrypt_glwe_ciphertext(&key_1, &plaintext_vector, noise)?;
     /// // We're going to re-encrypt the input with another secret key
     /// // For this, it is required that the second secret key uses the same GLWE dimension
     /// // and polynomial size as the first one.
-    /// let key_2: GlweSecretKey32 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let key_2: GlweSecretKey32 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
     ///
     /// engine.discard_encrypt_glwe_ciphertext(&key_2, &mut ciphertext, &plaintext_vector, noise)?;
     /// #
@@ -104,13 +106,15 @@ impl GlweCiphertextDiscardingEncryptionEngine<GlweSecretKey64, PlaintextVector64
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key_1: GlweSecretKey64 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector(&input)?;
+    /// let key_1: GlweSecretKey64 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
     /// let mut ciphertext = engine.encrypt_glwe_ciphertext(&key_1, &plaintext_vector, noise)?;
     /// // We're going to re-encrypt the input with another secret key
     /// // For this, it is required that the second secret key uses the same GLWE dimension
     /// // and polynomial size as the first one.
-    /// let key_2: GlweSecretKey64 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let key_2: GlweSecretKey64 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
     ///
     /// engine.discard_encrypt_glwe_ciphertext(&key_2, &mut ciphertext, &plaintext_vector, noise)?;
     /// #

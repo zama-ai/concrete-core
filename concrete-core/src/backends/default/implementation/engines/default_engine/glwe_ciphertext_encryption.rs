@@ -37,8 +37,9 @@ impl GlweCiphertextEncryptionEngine<GlweSecretKey32, PlaintextVector32, GlweCiph
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: GlweSecretKey32 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector(&input)?;
+    /// let key: GlweSecretKey32 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
     ///
     /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
     /// #
@@ -106,8 +107,9 @@ impl GlweCiphertextEncryptionEngine<GlweSecretKey64, PlaintextVector64, GlweCiph
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: GlweSecretKey64 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector(&input)?;
+    /// let key: GlweSecretKey64 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
     ///
     /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
     /// #

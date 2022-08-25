@@ -1,8 +1,8 @@
 use crate::fixture::Fixture;
 use crate::generation::prototyping::{
     PrototypesCleartextVector, PrototypesGlweCiphertext, PrototypesGlweSecretKey,
-    PrototypesLweCiphertextVector, PrototypesLweSecretKey, PrototypesPlaintextVector,
-    PrototypesPrivateFunctionalPackingKeyswitchKey,
+    PrototypesLweCiphertextVector, PrototypesLwePrivateFunctionalPackingKeyswitchKey,
+    PrototypesLweSecretKey, PrototypesPlaintextVector,
 };
 use crate::generation::synthesizing::{
     SynthesizesCleartextVector, SynthesizesGlweCiphertext, SynthesizesLweCiphertextVector,
@@ -25,7 +25,7 @@ use concrete_core::prelude::{
     CleartextVectorEntity, DispersionParameter, GlweCiphertextEntity, LogStandardDev,
     LweCiphertextCount, LweCiphertextVectorEntity,
     LweCiphertextVectorGlweCiphertextDiscardingPrivateFunctionalPackingKeyswitchEngine,
-    PrivateFunctionalPackingKeyswitchKeyEntity,
+    LwePrivateFunctionalPackingKeyswitchKeyEntity,
 };
 use std::any::TypeId;
 
@@ -52,7 +52,7 @@ impl<
         OutputKeyDistribution,
         Engine,
         InputCiphertextVector,
-        PrivateFunctionalPackingKeyswitchKey,
+        LwePrivateFunctionalPackingKeyswitchKey,
         OutputCiphertext,
         CleartextVector,
     >
@@ -62,7 +62,7 @@ impl<
         Engine,
         (
             InputCiphertextVector,
-            PrivateFunctionalPackingKeyswitchKey,
+            LwePrivateFunctionalPackingKeyswitchKey,
             OutputCiphertext,
             CleartextVector,
         ),
@@ -72,12 +72,12 @@ where
     InputKeyDistribution: KeyDistributionMarker,
     OutputKeyDistribution: KeyDistributionMarker,
     Engine: LweCiphertextVectorGlweCiphertextDiscardingPrivateFunctionalPackingKeyswitchEngine<
-        PrivateFunctionalPackingKeyswitchKey,
+        LwePrivateFunctionalPackingKeyswitchKey,
         InputCiphertextVector,
         OutputCiphertext,
     >,
     InputCiphertextVector: LweCiphertextVectorEntity,
-    PrivateFunctionalPackingKeyswitchKey: PrivateFunctionalPackingKeyswitchKeyEntity,
+    LwePrivateFunctionalPackingKeyswitchKey: LwePrivateFunctionalPackingKeyswitchKeyEntity,
     OutputCiphertext: GlweCiphertextEntity,
     CleartextVector: CleartextVectorEntity,
     Maker: SynthesizesLweCiphertextVector<Precision, InputKeyDistribution, InputCiphertextVector>
@@ -87,17 +87,17 @@ where
             Precision,
             InputKeyDistribution,
             OutputKeyDistribution,
-            PrivateFunctionalPackingKeyswitchKey,
+            LwePrivateFunctionalPackingKeyswitchKey,
         >,
 {
     type Parameters =
         LweCiphertextVectorGlweCiphertextDiscardingPrivateFunctionalPackingKeyswitchParameters;
     type RepetitionPrototypes = (
-        <Maker as PrototypesPrivateFunctionalPackingKeyswitchKey<
+        <Maker as PrototypesLwePrivateFunctionalPackingKeyswitchKey<
             Precision,
             InputKeyDistribution,
             OutputKeyDistribution,
-        >>::PrivateFunctionalPackingKeyswitchKeyProto,
+        >>::LwePrivateFunctionalPackingKeyswitchKeyProto,
         <Maker as PrototypesLweSecretKey<Precision, InputKeyDistribution>>::LweSecretKeyProto,
         <Maker as PrototypesGlweSecretKey<Precision, OutputKeyDistribution>>::GlweSecretKeyProto,
         <Maker as PrototypesCleartextVector<Precision>>::CleartextVectorProto,
@@ -116,12 +116,12 @@ where
     type PreExecutionContext = (
         OutputCiphertext,
         InputCiphertextVector,
-        PrivateFunctionalPackingKeyswitchKey,
+        LwePrivateFunctionalPackingKeyswitchKey,
     );
     type PostExecutionContext = (
         OutputCiphertext,
         InputCiphertextVector,
-        PrivateFunctionalPackingKeyswitchKey,
+        LwePrivateFunctionalPackingKeyswitchKey,
     );
     type Outcome = (Vec<Precision::Raw>, Vec<Precision::Raw>);
     type Criteria = (Variance,);
@@ -187,7 +187,7 @@ where
             maker.transform_raw_vec_to_cleartext_vector(&raw_cleartext_vector);
         let scalar = Precision::Raw::power_of_two(parameters.function_log_scalar);
 
-        let proto_pfpksk = maker.new_private_functional_packing_keyswitch_key(
+        let proto_pfpksk = maker.new_lwe_private_functional_packing_keyswitch_key(
             &proto_secret_key_input,
             &proto_secret_key_output,
             parameters.decomposition_level,

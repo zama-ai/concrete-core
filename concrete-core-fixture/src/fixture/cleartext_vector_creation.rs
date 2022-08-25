@@ -77,7 +77,7 @@ where
     ) -> Self::PostExecutionContext {
         let (raw_cleartext_vector,) = context;
         let cleartext_vector =
-            unsafe { engine.create_cleartext_vector_unchecked(&raw_cleartext_vector) };
+            unsafe { engine.create_cleartext_vector_from_unchecked(&raw_cleartext_vector) };
         (cleartext_vector,)
     }
 

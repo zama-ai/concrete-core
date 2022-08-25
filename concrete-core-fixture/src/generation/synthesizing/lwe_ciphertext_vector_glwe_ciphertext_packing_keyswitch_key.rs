@@ -1,57 +1,58 @@
-use crate::generation::prototyping::PrototypesPackingKeyswitchKey;
+use crate::generation::prototyping::PrototypesLwePackingKeyswitchKey;
 use crate::generation::{IntegerPrecision, KeyDistributionMarker};
-use concrete_core::prelude::PackingKeyswitchKeyEntity;
+use concrete_core::prelude::LwePackingKeyswitchKeyEntity;
 
 pub trait SynthesizesPackingKeyswitchKey<
     Precision: IntegerPrecision,
     InputKeyDistribution: KeyDistributionMarker,
     OutputKeyDistribution: KeyDistributionMarker,
-    PackingKeyswitchKey,
->: PrototypesPackingKeyswitchKey<Precision, InputKeyDistribution, OutputKeyDistribution> where
-    PackingKeyswitchKey: PackingKeyswitchKeyEntity,
+    LwePackingKeyswitchKey,
+>:
+    PrototypesLwePackingKeyswitchKey<Precision, InputKeyDistribution, OutputKeyDistribution> where
+    LwePackingKeyswitchKey: LwePackingKeyswitchKeyEntity,
 {
     fn synthesize_packing_keyswitch_key(
         &mut self,
         prototype: &Self::PackingKeyswitchKeyProto,
-    ) -> PackingKeyswitchKey;
+    ) -> LwePackingKeyswitchKey;
     fn unsynthesize_packing_keyswitch_key(
         &mut self,
-        entity: PackingKeyswitchKey,
+        entity: LwePackingKeyswitchKey,
     ) -> Self::PackingKeyswitchKeyProto;
-    fn destroy_packing_keyswitch_key(&mut self, entity: PackingKeyswitchKey);
+    fn destroy_packing_keyswitch_key(&mut self, entity: LwePackingKeyswitchKey);
 }
 
 mod backend_default {
     use crate::generation::prototypes::{
-        ProtoBinaryBinaryPackingKeyswitchKey32, ProtoBinaryBinaryPackingKeyswitchKey64,
+        ProtoBinaryBinaryLwePackingKeyswitchKey32, ProtoBinaryBinaryLwePackingKeyswitchKey64,
     };
     use crate::generation::synthesizing::SynthesizesPackingKeyswitchKey;
     use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
-    use concrete_core::prelude::{PackingKeyswitchKey32, PackingKeyswitchKey64};
+    use concrete_core::prelude::{LwePackingKeyswitchKey32, LwePackingKeyswitchKey64};
 
     impl
         SynthesizesPackingKeyswitchKey<
             Precision32,
             BinaryKeyDistribution,
             BinaryKeyDistribution,
-            PackingKeyswitchKey32,
+            LwePackingKeyswitchKey32,
         > for Maker
     {
         fn synthesize_packing_keyswitch_key(
             &mut self,
             prototype: &Self::PackingKeyswitchKeyProto,
-        ) -> PackingKeyswitchKey32 {
+        ) -> LwePackingKeyswitchKey32 {
             prototype.0.to_owned()
         }
 
         fn unsynthesize_packing_keyswitch_key(
             &mut self,
-            entity: PackingKeyswitchKey32,
+            entity: LwePackingKeyswitchKey32,
         ) -> Self::PackingKeyswitchKeyProto {
-            ProtoBinaryBinaryPackingKeyswitchKey32(entity)
+            ProtoBinaryBinaryLwePackingKeyswitchKey32(entity)
         }
 
-        fn destroy_packing_keyswitch_key(&mut self, _entity: PackingKeyswitchKey32) {}
+        fn destroy_packing_keyswitch_key(&mut self, _entity: LwePackingKeyswitchKey32) {}
     }
 
     impl
@@ -59,23 +60,23 @@ mod backend_default {
             Precision64,
             BinaryKeyDistribution,
             BinaryKeyDistribution,
-            PackingKeyswitchKey64,
+            LwePackingKeyswitchKey64,
         > for Maker
     {
         fn synthesize_packing_keyswitch_key(
             &mut self,
             prototype: &Self::PackingKeyswitchKeyProto,
-        ) -> PackingKeyswitchKey64 {
+        ) -> LwePackingKeyswitchKey64 {
             prototype.0.to_owned()
         }
 
         fn unsynthesize_packing_keyswitch_key(
             &mut self,
-            entity: PackingKeyswitchKey64,
+            entity: LwePackingKeyswitchKey64,
         ) -> Self::PackingKeyswitchKeyProto {
-            ProtoBinaryBinaryPackingKeyswitchKey64(entity)
+            ProtoBinaryBinaryLwePackingKeyswitchKey64(entity)
         }
 
-        fn destroy_packing_keyswitch_key(&mut self, _entity: PackingKeyswitchKey64) {}
+        fn destroy_packing_keyswitch_key(&mut self, _entity: LwePackingKeyswitchKey64) {}
     }
 }

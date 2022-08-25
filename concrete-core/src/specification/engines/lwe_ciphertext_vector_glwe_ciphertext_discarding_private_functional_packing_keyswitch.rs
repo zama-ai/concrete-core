@@ -1,5 +1,5 @@
 use super::engine_error;
-use crate::prelude::{GlweCiphertextEntity, PrivateFunctionalPackingKeyswitchKeyEntity};
+use crate::prelude::{GlweCiphertextEntity, LwePrivateFunctionalPackingKeyswitchKeyEntity};
 use crate::specification::engines::AbstractEngine;
 
 use crate::specification::entities::LweCiphertextVectorEntity;
@@ -22,16 +22,16 @@ impl<EngineError: std::error::Error>
 {
     /// Validates the inputs
     pub fn perform_generic_checks<
-        PrivateFunctionalPackingKeyswitchKey,
+        LwePrivateFunctionalPackingKeyswitchKey,
         InputCiphertextVector,
         OutputCiphertext,
     >(
         output: &mut OutputCiphertext,
         input: &InputCiphertextVector,
-        ksk: &PrivateFunctionalPackingKeyswitchKey,
+        ksk: &LwePrivateFunctionalPackingKeyswitchKey,
     ) -> Result<(), Self>
     where
-        PrivateFunctionalPackingKeyswitchKey: PrivateFunctionalPackingKeyswitchKeyEntity,
+        LwePrivateFunctionalPackingKeyswitchKey: LwePrivateFunctionalPackingKeyswitchKeyEntity,
         InputCiphertextVector: LweCiphertextVectorEntity,
         OutputCiphertext: GlweCiphertextEntity,
     {
@@ -65,11 +65,11 @@ impl<EngineError: std::error::Error>
 ///
 /// # Formal Definition
 pub trait LweCiphertextVectorGlweCiphertextDiscardingPrivateFunctionalPackingKeyswitchEngine<
-    PrivateFunctionalPackingKeyswitchKey,
+    LwePrivateFunctionalPackingKeyswitchKey,
     InputCiphertextVector,
     OutputCiphertext,
 >: AbstractEngine where
-    PrivateFunctionalPackingKeyswitchKey: PrivateFunctionalPackingKeyswitchKeyEntity,
+    LwePrivateFunctionalPackingKeyswitchKey: LwePrivateFunctionalPackingKeyswitchKeyEntity,
     InputCiphertextVector: LweCiphertextVectorEntity,
     OutputCiphertext: GlweCiphertextEntity,
 {
@@ -78,7 +78,7 @@ pub trait LweCiphertextVectorGlweCiphertextDiscardingPrivateFunctionalPackingKey
         &mut self,
         output: &mut OutputCiphertext,
         input: &InputCiphertextVector,
-        pfpksk: &PrivateFunctionalPackingKeyswitchKey,
+        pfpksk: &LwePrivateFunctionalPackingKeyswitchKey,
     ) -> Result<
         (),
         LweCiphertextVectorGlweCiphertextDiscardingPrivateFunctionalPackingKeyswitchError<
@@ -97,6 +97,6 @@ pub trait LweCiphertextVectorGlweCiphertextDiscardingPrivateFunctionalPackingKey
         &mut self,
         output: &mut OutputCiphertext,
         input: &InputCiphertextVector,
-        pfpksk: &PrivateFunctionalPackingKeyswitchKey,
+        pfpksk: &LwePrivateFunctionalPackingKeyswitchKey,
     );
 }

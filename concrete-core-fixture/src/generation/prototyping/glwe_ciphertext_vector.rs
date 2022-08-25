@@ -69,7 +69,7 @@ impl PrototypesGlweCiphertextVector<Precision32, BinaryKeyDistribution> for Make
     ) -> Self::GlweCiphertextVectorProto {
         let plaintext_vector = self
             .default_engine
-            .create_plaintext_vector(&vec![0u32; plaintext_count.0])
+            .create_plaintext_vector_from(&vec![0u32; plaintext_count.0])
             .unwrap();
         ProtoBinaryGlweCiphertextVector32(
             self.default_engine
@@ -147,7 +147,7 @@ impl PrototypesGlweCiphertextVector<Precision64, BinaryKeyDistribution> for Make
     ) -> Self::GlweCiphertextVectorProto {
         let plaintext_vector = self
             .default_engine
-            .create_plaintext_vector(&vec![0u64; plaintext_count.0])
+            .create_plaintext_vector_from(&vec![0u64; plaintext_count.0])
             .unwrap();
         ProtoBinaryGlweCiphertextVector64(
             self.default_engine

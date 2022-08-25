@@ -21,7 +21,7 @@ where
     Cleartext: CleartextEntity,
 {
     /// Creates a cleartext from an arbitrary value.
-    fn create_cleartext(
+    fn create_cleartext_from(
         &mut self,
         value: &Value,
     ) -> Result<Cleartext, CleartextCreationError<Self::EngineError>>;
@@ -32,5 +32,5 @@ where
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
     /// of [`CleartextCreationError`]. For safety concerns _specific_ to an
     /// engine, refer to the implementer safety section.
-    unsafe fn create_cleartext_unchecked(&mut self, value: &Value) -> Cleartext;
+    unsafe fn create_cleartext_from_unchecked(&mut self, value: &Value) -> Cleartext;
 }

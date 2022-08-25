@@ -28,9 +28,9 @@ impl LweCiphertextDiscardingSubtractionEngine<LweCiphertext32, LweCiphertext32> 
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext_1 = engine.create_plaintext(&input_1)?;
-    /// let plaintext_2 = engine.create_plaintext(&input_2)?;
+    /// let key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext_1 = engine.create_plaintext_from(&input_1)?;
+    /// let plaintext_2 = engine.create_plaintext_from(&input_2)?;
     /// let ciphertext_1 = engine.encrypt_lwe_ciphertext(&key, &plaintext_1, noise)?;
     /// let ciphertext_2 = engine.encrypt_lwe_ciphertext(&key, &plaintext_2, noise)?;
     /// let mut ciphertext_3 = engine.zero_encrypt_lwe_ciphertext(&key, noise)?;
@@ -91,9 +91,9 @@ impl LweCiphertextDiscardingSubtractionEngine<LweCiphertext64, LweCiphertext64> 
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext_1 = engine.create_plaintext(&input_1)?;
-    /// let plaintext_2 = engine.create_plaintext(&input_2)?;
+    /// let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext_1 = engine.create_plaintext_from(&input_1)?;
+    /// let plaintext_2 = engine.create_plaintext_from(&input_2)?;
     /// let ciphertext_1 = engine.encrypt_lwe_ciphertext(&key, &plaintext_1, noise)?;
     /// let ciphertext_2 = engine.encrypt_lwe_ciphertext(&key, &plaintext_2, noise)?;
     /// let mut ciphertext_3 = engine.zero_encrypt_lwe_ciphertext(&key, noise)?;

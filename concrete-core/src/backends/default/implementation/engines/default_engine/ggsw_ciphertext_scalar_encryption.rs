@@ -40,8 +40,9 @@ impl GgswCiphertextScalarEncryptionEngine<GlweSecretKey32, Plaintext32, GgswCiph
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: GlweSecretKey32 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext = engine.create_plaintext(&input)?;
+    /// let key: GlweSecretKey32 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext = engine.create_plaintext_from(&input)?;
     ///
     /// let ciphertext =
     ///     engine.encrypt_scalar_ggsw_ciphertext(&key, &plaintext, noise, level, base_log)?;
@@ -126,8 +127,9 @@ impl GgswCiphertextScalarEncryptionEngine<GlweSecretKey64, Plaintext64, GgswCiph
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let key: GlweSecretKey64 = engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext = engine.create_plaintext(&input)?;
+    /// let key: GlweSecretKey64 =
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext = engine.create_plaintext_from(&input)?;
     ///
     /// let ciphertext =
     ///     engine.encrypt_scalar_ggsw_ciphertext(&key, &plaintext, noise, level, base_log)?;

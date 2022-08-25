@@ -1,43 +1,43 @@
-use crate::generation::prototyping::PrototypesPrivateFunctionalPackingKeyswitchKey;
+use crate::generation::prototyping::PrototypesLwePrivateFunctionalPackingKeyswitchKey;
 use crate::generation::{IntegerPrecision, KeyDistributionMarker};
-use concrete_core::prelude::PrivateFunctionalPackingKeyswitchKeyEntity;
+use concrete_core::prelude::LwePrivateFunctionalPackingKeyswitchKeyEntity;
 
 pub trait SynthesizesPrivateFunctionalPackingKeyswitchKey<
     Precision: IntegerPrecision,
     InputKeyDistribution: KeyDistributionMarker,
     OutputKeyDistribution: KeyDistributionMarker,
-    PrivateFunctionalPackingKeyswitchKey,
+    LwePrivateFunctionalPackingKeyswitchKey,
 >:
-    PrototypesPrivateFunctionalPackingKeyswitchKey<
+    PrototypesLwePrivateFunctionalPackingKeyswitchKey<
     Precision,
     InputKeyDistribution,
     OutputKeyDistribution,
 > where
-    PrivateFunctionalPackingKeyswitchKey: PrivateFunctionalPackingKeyswitchKeyEntity,
+    LwePrivateFunctionalPackingKeyswitchKey: LwePrivateFunctionalPackingKeyswitchKeyEntity,
 {
     fn synthesize_private_functional_packing_keyswitch_key(
         &mut self,
-        prototype: &Self::PrivateFunctionalPackingKeyswitchKeyProto,
-    ) -> PrivateFunctionalPackingKeyswitchKey;
+        prototype: &Self::LwePrivateFunctionalPackingKeyswitchKeyProto,
+    ) -> LwePrivateFunctionalPackingKeyswitchKey;
     fn unsynthesize_private_functional_packing_keyswitch_key(
         &mut self,
-        entity: PrivateFunctionalPackingKeyswitchKey,
-    ) -> Self::PrivateFunctionalPackingKeyswitchKeyProto;
+        entity: LwePrivateFunctionalPackingKeyswitchKey,
+    ) -> Self::LwePrivateFunctionalPackingKeyswitchKeyProto;
     fn destroy_private_functional_packing_keyswitch_key(
         &mut self,
-        entity: PrivateFunctionalPackingKeyswitchKey,
+        entity: LwePrivateFunctionalPackingKeyswitchKey,
     );
 }
 
 mod backend_default {
     use crate::generation::prototypes::{
-        ProtoBinaryBinaryPrivateFunctionalPackingKeyswitchKey32,
-        ProtoBinaryBinaryPrivateFunctionalPackingKeyswitchKey64,
+        ProtoBinaryBinaryLwePrivateFunctionalPackingKeyswitchKey32,
+        ProtoBinaryBinaryLwePrivateFunctionalPackingKeyswitchKey64,
     };
     use crate::generation::synthesizing::SynthesizesPrivateFunctionalPackingKeyswitchKey;
     use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
     use concrete_core::prelude::{
-        PrivateFunctionalPackingKeyswitchKey32, PrivateFunctionalPackingKeyswitchKey64,
+        LwePrivateFunctionalPackingKeyswitchKey32, LwePrivateFunctionalPackingKeyswitchKey64,
     };
 
     impl
@@ -45,26 +45,26 @@ mod backend_default {
             Precision32,
             BinaryKeyDistribution,
             BinaryKeyDistribution,
-            PrivateFunctionalPackingKeyswitchKey32,
+            LwePrivateFunctionalPackingKeyswitchKey32,
         > for Maker
     {
         fn synthesize_private_functional_packing_keyswitch_key(
             &mut self,
-            prototype: &Self::PrivateFunctionalPackingKeyswitchKeyProto,
-        ) -> PrivateFunctionalPackingKeyswitchKey32 {
+            prototype: &Self::LwePrivateFunctionalPackingKeyswitchKeyProto,
+        ) -> LwePrivateFunctionalPackingKeyswitchKey32 {
             prototype.0.to_owned()
         }
 
         fn unsynthesize_private_functional_packing_keyswitch_key(
             &mut self,
-            entity: PrivateFunctionalPackingKeyswitchKey32,
-        ) -> Self::PrivateFunctionalPackingKeyswitchKeyProto {
-            ProtoBinaryBinaryPrivateFunctionalPackingKeyswitchKey32(entity)
+            entity: LwePrivateFunctionalPackingKeyswitchKey32,
+        ) -> Self::LwePrivateFunctionalPackingKeyswitchKeyProto {
+            ProtoBinaryBinaryLwePrivateFunctionalPackingKeyswitchKey32(entity)
         }
 
         fn destroy_private_functional_packing_keyswitch_key(
             &mut self,
-            _entity: PrivateFunctionalPackingKeyswitchKey32,
+            _entity: LwePrivateFunctionalPackingKeyswitchKey32,
         ) {
         }
     }
@@ -74,26 +74,26 @@ mod backend_default {
             Precision64,
             BinaryKeyDistribution,
             BinaryKeyDistribution,
-            PrivateFunctionalPackingKeyswitchKey64,
+            LwePrivateFunctionalPackingKeyswitchKey64,
         > for Maker
     {
         fn synthesize_private_functional_packing_keyswitch_key(
             &mut self,
-            prototype: &Self::PrivateFunctionalPackingKeyswitchKeyProto,
-        ) -> PrivateFunctionalPackingKeyswitchKey64 {
+            prototype: &Self::LwePrivateFunctionalPackingKeyswitchKeyProto,
+        ) -> LwePrivateFunctionalPackingKeyswitchKey64 {
             prototype.0.to_owned()
         }
 
         fn unsynthesize_private_functional_packing_keyswitch_key(
             &mut self,
-            entity: PrivateFunctionalPackingKeyswitchKey64,
-        ) -> Self::PrivateFunctionalPackingKeyswitchKeyProto {
-            ProtoBinaryBinaryPrivateFunctionalPackingKeyswitchKey64(entity)
+            entity: LwePrivateFunctionalPackingKeyswitchKey64,
+        ) -> Self::LwePrivateFunctionalPackingKeyswitchKeyProto {
+            ProtoBinaryBinaryLwePrivateFunctionalPackingKeyswitchKey64(entity)
         }
 
         fn destroy_private_functional_packing_keyswitch_key(
             &mut self,
-            _entity: PrivateFunctionalPackingKeyswitchKey64,
+            _entity: LwePrivateFunctionalPackingKeyswitchKey64,
         ) {
         }
     }

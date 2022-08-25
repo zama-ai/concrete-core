@@ -39,7 +39,7 @@ module represent the _operators_ which can be used to manipulate entities in the
 engines_
 all these operators we use in the library). For instance, we have:
 
-+ [`LweSecretKeyCreationEngine`](https://docs.rs/concrete-core/1.0.0-gamma/concrete_core/specification/engines/trait.LweSecretKeyCreationEngine.html)
++ [`LweSecretKeyGenerationEngine`](https://docs.rs/concrete-core/1.0.0-gamma/concrete_core/specification/engines/trait.LweSecretKeyGenerationEngine.html)
 + [`LweCiphertextEncryptionEngine`](https://docs.rs/concrete-core/1.0.0-gamma/concrete_core/specification/engines/trait.LweCiphertextEncryptionEngine.html)
 + [`LweCiphertextDecryptionEngine`](https://docs.rs/concrete-core/1.0.0-gamma/concrete_core/specification/engines/trait.LweCiphertextDescryptionEngine.html)
 + and more
@@ -90,7 +90,7 @@ In the `engines` module, we find three types:
 `DefaultEngine` is an _engine_ which implements many `*Engine` traits, among which the
 [`LweCiphertextEncryptionEngine`](https://docs.rs/concrete-core/1.0.0-gamma/concrete_core/specification/engines/trait.LweCiphertextEncryptionEngine.html)
 trait, or the
-[`LweSecretKeyCreationEngine`](https://docs.rs/concrete-core/1.0.0-gamma/concrete_core/specification/engines/trait.LweSecretKeyCreationEngine.html)
+[`LweSecretKeyGenerationEngine`](https://docs.rs/concrete-core/1.0.0-gamma/concrete_core/specification/engines/trait.LweSecretKeyGenerationEngine.html)
 trait, both of which are implemented for 32 and 64 bits precisions.
 `DefaultParallelEngine` on the other hand implements only a subset of those, relying on multithreading to accelerate the computations (via the `rayon` crate).
 This is particularly useful to accelerate the creation of bootstrap keys for example.
@@ -114,7 +114,7 @@ prefixes in their names. When non-pure variants of the operator exist, the pure 
 require more resources, because of the allocations it does. Example of such engine traits include:
 
 + [`LweCiphertextEncryptionEngine`](https://docs.rs/concrete-core/1.0.0-gamma/concrete_core/specification/engines/trait.LweCiphertextEncryptionEngine.html)
-+ [`LweBootstrapKeyCreationEngine`](https://docs.rs/concrete-core/1.0.0-gamma/concrete_core/specification/engines/trait.LweBootstrapKeyCreationEngine.html)
++ [`LweBootstrapKeyGenerationEngine`](https://docs.rs/concrete-core/1.0.0-gamma/concrete_core/specification/engines/trait.LweBootstrapKeyGenerationEngine.html)
 
 ### Discarding operators
 

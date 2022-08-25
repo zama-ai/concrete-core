@@ -26,7 +26,7 @@ impl LweCiphertextVectorTrivialEncryptionEngine<PlaintextVector32, LweCiphertext
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector(&input)?;
+    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector_from(&input)?;
     /// // DISCLAIMER: trivial encryption is NOT secure, and DOES NOT hide the message at all.
     /// let ciphertext_vector: LweCiphertextVector32 =
     ///     engine.trivially_encrypt_lwe_ciphertext_vector(lwe_size, &plaintext_vector)?;
@@ -80,7 +80,7 @@ impl LweCiphertextVectorTrivialEncryptionEngine<PlaintextVector64, LweCiphertext
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector(&input)?;
+    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector_from(&input)?;
     /// // DISCLAIMER: trivial encryption is NOT secure, and DOES NOT hide the message at all.
     /// let ciphertext_vector: LweCiphertextVector64 =
     ///     engine.trivially_encrypt_lwe_ciphertext_vector(lwe_size, &plaintext_vector)?;

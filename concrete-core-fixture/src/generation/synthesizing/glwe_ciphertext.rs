@@ -80,7 +80,7 @@ mod backend_default {
                 .consume_retrieve_glwe_ciphertext(ciphertext)
                 .unwrap();
             self.default_engine
-                .create_glwe_ciphertext(container.leak() as &[u32], polynomial_size)
+                .create_glwe_ciphertext_from(container.leak() as &[u32], polynomial_size)
                 .unwrap()
         }
 
@@ -95,7 +95,7 @@ mod backend_default {
                 .unwrap();
             let ciphertext = self
                 .default_engine
-                .create_glwe_ciphertext(
+                .create_glwe_ciphertext_from(
                     unsafe {
                         Vec::from_raw_parts(slice.as_ptr() as *mut u32, slice.len(), slice.len())
                     },
@@ -129,7 +129,7 @@ mod backend_default {
                 .consume_retrieve_glwe_ciphertext(ciphertext)
                 .unwrap();
             self.default_engine
-                .create_glwe_ciphertext(container.leak() as &[u64], polynomial_size)
+                .create_glwe_ciphertext_from(container.leak() as &[u64], polynomial_size)
                 .unwrap()
         }
 
@@ -144,7 +144,7 @@ mod backend_default {
                 .unwrap();
             let ciphertext = self
                 .default_engine
-                .create_glwe_ciphertext(
+                .create_glwe_ciphertext_from(
                     unsafe {
                         Vec::from_raw_parts(slice.as_ptr() as *mut u64, slice.len(), slice.len())
                     },
@@ -181,7 +181,7 @@ mod backend_default {
                 .consume_retrieve_glwe_ciphertext(ciphertext)
                 .unwrap();
             self.default_engine
-                .create_glwe_ciphertext(container.leak(), polynomial_size)
+                .create_glwe_ciphertext_from(container.leak(), polynomial_size)
                 .unwrap()
         }
 
@@ -196,7 +196,7 @@ mod backend_default {
                 .unwrap();
             let ciphertext = self
                 .default_engine
-                .create_glwe_ciphertext(
+                .create_glwe_ciphertext_from(
                     unsafe { Vec::from_raw_parts(slice.as_mut_ptr(), slice.len(), slice.len()) },
                     polynomial_size,
                 )
@@ -229,7 +229,7 @@ mod backend_default {
                 .consume_retrieve_glwe_ciphertext(ciphertext)
                 .unwrap();
             self.default_engine
-                .create_glwe_ciphertext(container.leak(), polynomial_size)
+                .create_glwe_ciphertext_from(container.leak(), polynomial_size)
                 .unwrap()
         }
 
@@ -244,7 +244,7 @@ mod backend_default {
                 .unwrap();
             let ciphertext = self
                 .default_engine
-                .create_glwe_ciphertext(
+                .create_glwe_ciphertext_from(
                     unsafe { Vec::from_raw_parts(slice.as_mut_ptr(), slice.len(), slice.len()) },
                     polynomial_size,
                 )

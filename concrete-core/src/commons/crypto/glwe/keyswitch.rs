@@ -28,7 +28,7 @@ use serde::{Deserialize, Serialize};
 /// ciphertext.
 #[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct PackingKeyswitchKey<Cont> {
+pub struct LwePackingKeyswitchKey<Cont> {
     tensor: Tensor<Cont>,
     decomp_base_log: DecompositionBaseLog,
     decomp_level_count: DecompositionLevelCount,
@@ -36,9 +36,9 @@ pub struct PackingKeyswitchKey<Cont> {
     output_polynomial_size: PolynomialSize,
 }
 
-tensor_traits!(PackingKeyswitchKey);
+tensor_traits!(LwePackingKeyswitchKey);
 
-impl<Scalar> PackingKeyswitchKey<Vec<Scalar>>
+impl<Scalar> LwePackingKeyswitchKey<Vec<Scalar>>
 where
     Scalar: Copy,
 {
@@ -47,8 +47,8 @@ where
     /// # Note
     ///
     /// This function does *not* generate a keyswitch key, but merely allocates a container of the
-    /// right size. See [`PackingKeyswitchKey::fill_with_keyswitch_key`] to fill the container with
-    /// a proper keyswitching key.
+    /// right size. See [`LwePackingKeyswitchKey::fill_with_keyswitch_key`] to fill the container
+    /// with a proper keyswitching key.
     ///
     /// # Example
     ///
@@ -57,9 +57,9 @@ where
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize, LweDimension,
     ///     LweSize, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::PackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::glwe::LwePackingKeyswitchKey;
     /// use concrete_core::commons::crypto::*;
-    /// let pksk = PackingKeyswitchKey::allocate(
+    /// let pksk = LwePackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
     ///     DecompositionBaseLog(16),
@@ -83,7 +83,7 @@ where
         output_dimension: GlweDimension,
         output_polynomial_size: PolynomialSize,
     ) -> Self {
-        PackingKeyswitchKey {
+        LwePackingKeyswitchKey {
             tensor: Tensor::from_container(vec![
                 value;
                 decomp_size.0
@@ -99,14 +99,14 @@ where
     }
 }
 
-impl<Cont> PackingKeyswitchKey<Cont> {
+impl<Cont> LwePackingKeyswitchKey<Cont> {
     /// Creates a packing keyswitching key from a container.
     ///
     /// # Notes
     ///
     /// This method does not create a packing keyswitch key, but merely wraps the container in
     /// the proper type. It assumes that either the container already contains a proper keyswitching
-    /// key, or that [`PackingKeyswitchKey::fill_with_keyswitch_key`] will be called right
+    /// key, or that [`LwePackingKeyswitchKey::fill_with_keyswitch_key`] will be called right
     /// after.
     ///
     /// # Example
@@ -116,7 +116,7 @@ impl<Cont> PackingKeyswitchKey<Cont> {
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize, LweDimension,
     ///     LweSize, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::PackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::glwe::LwePackingKeyswitchKey;
     /// use concrete_core::commons::crypto::*;
     /// let input_size = LweDimension(200);
     /// let output_size = GlweDimension(2);
@@ -124,7 +124,7 @@ impl<Cont> PackingKeyswitchKey<Cont> {
     /// let decomp_base_log = DecompositionBaseLog(7);
     /// let decomp_level_count = DecompositionLevelCount(4);
     ///
-    /// let pksk = PackingKeyswitchKey::from_container(
+    /// let pksk = LwePackingKeyswitchKey::from_container(
     ///     vec![
     ///         0 as u8;
     ///         input_size.0 * (output_size.0 + 1) * polynomial_size.0 * decomp_level_count.0
@@ -146,13 +146,13 @@ impl<Cont> PackingKeyswitchKey<Cont> {
         decomp_size: DecompositionLevelCount,
         output_glwe_dimension: GlweDimension,
         output_polynomial_size: PolynomialSize,
-    ) -> PackingKeyswitchKey<Cont>
+    ) -> LwePackingKeyswitchKey<Cont>
     where
         Cont: AsRefSlice,
     {
         let tensor = Tensor::from_container(cont);
         ck_dim_div!(tensor.len() => output_glwe_dimension.to_glwe_size().0 * output_polynomial_size.0, decomp_size.0);
-        PackingKeyswitchKey {
+        LwePackingKeyswitchKey {
             tensor,
             decomp_base_log,
             decomp_level_count: decomp_size,
@@ -169,9 +169,9 @@ impl<Cont> PackingKeyswitchKey<Cont> {
     /// use concrete_commons::parameters::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::PackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::glwe::LwePackingKeyswitchKey;
     /// use concrete_core::commons::crypto::*;
-    /// let pksk = PackingKeyswitchKey::allocate(
+    /// let pksk = LwePackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
     ///     DecompositionBaseLog(16),
@@ -194,9 +194,9 @@ impl<Cont> PackingKeyswitchKey<Cont> {
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, LweSize,
     ///     PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::PackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::glwe::LwePackingKeyswitchKey;
     /// use concrete_core::commons::crypto::*;
-    /// let pksk = PackingKeyswitchKey::allocate(
+    /// let pksk = LwePackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
     ///     DecompositionBaseLog(16),
@@ -218,9 +218,9 @@ impl<Cont> PackingKeyswitchKey<Cont> {
     /// use concrete_commons::parameters::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::PackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::glwe::LwePackingKeyswitchKey;
     /// use concrete_core::commons::crypto::*;
-    /// let pksk = PackingKeyswitchKey::allocate(
+    /// let pksk = LwePackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
     ///     DecompositionBaseLog(16),
@@ -250,9 +250,9 @@ impl<Cont> PackingKeyswitchKey<Cont> {
     /// use concrete_commons::parameters::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::PackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::glwe::LwePackingKeyswitchKey;
     /// use concrete_core::commons::crypto::*;
-    /// let pksk = PackingKeyswitchKey::allocate(
+    /// let pksk = LwePackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
     ///     DecompositionBaseLog(16),
@@ -282,9 +282,9 @@ impl<Cont> PackingKeyswitchKey<Cont> {
     /// use concrete_commons::parameters::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::PackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::glwe::LwePackingKeyswitchKey;
     /// use concrete_core::commons::crypto::*;
-    /// let pksk = PackingKeyswitchKey::allocate(
+    /// let pksk = LwePackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
     ///     DecompositionBaseLog(16),
@@ -312,7 +312,7 @@ impl<Cont> PackingKeyswitchKey<Cont> {
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, LweSize,
     ///     PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::PackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::glwe::LwePackingKeyswitchKey;
     /// use concrete_core::commons::crypto::secret::generators::{
     ///     EncryptionRandomGenerator, SecretRandomGenerator,
     /// };
@@ -337,7 +337,7 @@ impl<Cont> PackingKeyswitchKey<Cont> {
     /// let output_key =
     ///     GlweSecretKey::generate_binary(output_size, polynomial_size, &mut secret_generator);
     ///
-    /// let mut pksk = PackingKeyswitchKey::allocate(
+    /// let mut pksk = LwePackingKeyswitchKey::allocate(
     ///     0 as u32,
     ///     decomp_level_count,
     ///     decomp_base_log,
@@ -413,9 +413,9 @@ impl<Cont> PackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```ignore
-    /// use concrete_core::backends::default::private::crypto::{*, glwe::PackingKeyswitchKey};
+    /// use concrete_core::backends::default::private::crypto::{*, glwe::LwePackingKeyswitchKey};
     /// use concrete_core::backends::default::private::math::decomposition::{DecompositionLevelCount, DecompositionBaseLog};
-    /// let pksk = PackingKeyswitchKey::allocate(
+    /// let pksk = LwePackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
     ///     DecompositionBaseLog(16),
@@ -452,10 +452,10 @@ impl<Cont> PackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```ignore
-    /// use concrete_core::backends::default::private::crypto::{*, glwe::PackingKeyswitchKey};
+    /// use concrete_core::backends::default::private::crypto::{*, glwe::LwePackingKeyswitchKey};
     /// use concrete_core::backends::default::private::math::tensor::{AsRefTensor, AsMutTensor};
     /// use concrete_core::backends::default::private::math::decomposition::{DecompositionLevelCount, DecompositionBaseLog};
-    /// let mut pksk = PackingKeyswitchKey::allocate(
+    /// let mut pksk = LwePackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
     ///     DecompositionBaseLog(16),
@@ -523,7 +523,7 @@ impl<Cont> PackingKeyswitchKey<Cont> {
     /// let output_key =
     ///     GlweSecretKey::generate_binary(output_size, polynomial_size, &mut secret_generator);
     ///
-    /// let mut pksk = PackingKeyswitchKey::allocate(
+    /// let mut pksk = LwePackingKeyswitchKey::allocate(
     ///     0 as u64,
     ///     decomp_level_count,
     ///     decomp_base_log,
@@ -636,7 +636,7 @@ impl<Cont> PackingKeyswitchKey<Cont> {
 /// into a single GLWE ciphertext while performing a private function on each
 #[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct PrivateFunctionalPackingKeyswitchKey<Cont> {
+pub struct LwePrivateFunctionalPackingKeyswitchKey<Cont> {
     tensor: Tensor<Cont>,
     decomp_base_log: DecompositionBaseLog,
     decomp_level_count: DecompositionLevelCount,
@@ -644,9 +644,9 @@ pub struct PrivateFunctionalPackingKeyswitchKey<Cont> {
     output_polynomial_size: PolynomialSize,
 }
 
-tensor_traits!(PrivateFunctionalPackingKeyswitchKey);
+tensor_traits!(LwePrivateFunctionalPackingKeyswitchKey);
 
-impl<Scalar> PrivateFunctionalPackingKeyswitchKey<Vec<Scalar>>
+impl<Scalar> LwePrivateFunctionalPackingKeyswitchKey<Vec<Scalar>>
 where
     Scalar: Copy,
 {
@@ -657,8 +657,8 @@ where
     ///
     /// This function does *not* generate a private functional packing keyswitching key , but
     /// merely allocates a container of the right size.
-    /// See [`PrivateFunctionalPackingKeyswitchKey::fill_with_private_functional_keyswitch_key`] to
-    /// fill the container with a proper functional keyswitching key.
+    /// See [`LwePrivateFunctionalPackingKeyswitchKey::fill_with_private_functional_keyswitch_key`]
+    /// to fill the container with a proper functional keyswitching key.
     ///
     /// # Example
     ///
@@ -667,9 +667,9 @@ where
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize, LweDimension,
     ///     LweSize, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::PrivateFunctionalPackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKey;
     /// use concrete_core::commons::crypto::*;
-    /// let pfpksk = PrivateFunctionalPackingKeyswitchKey::allocate(
+    /// let pfpksk = LwePrivateFunctionalPackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
     ///     DecompositionBaseLog(16),
@@ -693,7 +693,7 @@ where
         output_dimension: GlweDimension,
         output_polynomial_size: PolynomialSize,
     ) -> Self {
-        PrivateFunctionalPackingKeyswitchKey {
+        LwePrivateFunctionalPackingKeyswitchKey {
             tensor: Tensor::from_container(vec![
                 value;
                 decomp_size.0
@@ -709,7 +709,7 @@ where
     }
 }
 
-impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
+impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
     /// Creates a private functional packing keyswitching key from a container.
     ///
     /// # Notes
@@ -717,7 +717,7 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
     /// This method does not create a private functional packing keyswitch key, but merely wraps
     /// the container in the proper type. It assumes that either the container already contains a
     /// proper functional keyswitching key, or that
-    /// [`PrivateFunctionalPackingKeyswitchKey::fill_with_private_functional_keyswitch_key`] will
+    /// [`LwePrivateFunctionalPackingKeyswitchKey::fill_with_private_functional_keyswitch_key`] will
     /// be called right after.
     ///
     /// # Example
@@ -727,7 +727,7 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize, LweDimension,
     ///     LweSize, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::PrivateFunctionalPackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKey;
     /// use concrete_core::commons::crypto::*;
     /// let input_lwe_dim = LweDimension(200);
     /// let output_glwe_dim = GlweDimension(2);
@@ -735,7 +735,7 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
     /// let decomp_base_log = DecompositionBaseLog(7);
     /// let decomp_level_count = DecompositionLevelCount(4);
     ///
-    /// let pfpksk = PrivateFunctionalPackingKeyswitchKey::from_container(
+    /// let pfpksk = LwePrivateFunctionalPackingKeyswitchKey::from_container(
     ///     vec![
     ///         0 as u8;
     ///         input_lwe_dim.to_lwe_size().0
@@ -760,13 +760,13 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
         decomp_size: DecompositionLevelCount,
         output_glwe_dimension: GlweDimension,
         output_polynomial_size: PolynomialSize,
-    ) -> PrivateFunctionalPackingKeyswitchKey<Cont>
+    ) -> LwePrivateFunctionalPackingKeyswitchKey<Cont>
     where
         Cont: AsRefSlice,
     {
         let tensor = Tensor::from_container(cont);
         ck_dim_div!(tensor.len() => output_glwe_dimension.to_glwe_size().0 * output_polynomial_size.0, decomp_size.0);
-        PrivateFunctionalPackingKeyswitchKey {
+        LwePrivateFunctionalPackingKeyswitchKey {
             tensor,
             decomp_base_log,
             decomp_level_count: decomp_size,
@@ -783,9 +783,9 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
     /// use concrete_commons::parameters::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::PrivateFunctionalPackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKey;
     /// use concrete_core::commons::crypto::*;
-    /// let pfpksk = PrivateFunctionalPackingKeyswitchKey::allocate(
+    /// let pfpksk = LwePrivateFunctionalPackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
     ///     DecompositionBaseLog(16),
@@ -808,9 +808,9 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, LweSize,
     ///     PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::PrivateFunctionalPackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKey;
     /// use concrete_core::commons::crypto::*;
-    /// let pfpksk = PrivateFunctionalPackingKeyswitchKey::allocate(
+    /// let pfpksk = LwePrivateFunctionalPackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
     ///     DecompositionBaseLog(16),
@@ -832,9 +832,9 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
     /// use concrete_commons::parameters::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::PrivateFunctionalPackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKey;
     /// use concrete_core::commons::crypto::*;
-    /// let pfpksk = PrivateFunctionalPackingKeyswitchKey::allocate(
+    /// let pfpksk = LwePrivateFunctionalPackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
     ///     DecompositionBaseLog(16),
@@ -865,9 +865,9 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
     /// use concrete_commons::parameters::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::PrivateFunctionalPackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKey;
     /// use concrete_core::commons::crypto::*;
-    /// let pfpksk = PrivateFunctionalPackingKeyswitchKey::allocate(
+    /// let pfpksk = LwePrivateFunctionalPackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
     ///     DecompositionBaseLog(16),
@@ -897,9 +897,9 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
     /// use concrete_commons::parameters::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::PrivateFunctionalPackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKey;
     /// use concrete_core::commons::crypto::*;
-    /// let pfpksk = PrivateFunctionalPackingKeyswitchKey::allocate(
+    /// let pfpksk = LwePrivateFunctionalPackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
     ///     DecompositionBaseLog(16),
@@ -927,7 +927,7 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, LweSize,
     ///     PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::PrivateFunctionalPackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKey;
     /// use concrete_core::commons::crypto::secret::generators::{
     ///     EncryptionRandomGenerator, SecretRandomGenerator,
     /// };
@@ -953,7 +953,7 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
     /// let output_key =
     ///     GlweSecretKey::generate_binary(output_size, polynomial_size, &mut secret_generator);
     ///
-    /// let mut pfpksk = PrivateFunctionalPackingKeyswitchKey::allocate(
+    /// let mut pfpksk = LwePrivateFunctionalPackingKeyswitchKey::allocate(
     ///     0 as u32,
     ///     decomp_level_count,
     ///     decomp_base_log,
@@ -1054,10 +1054,10 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```ignore
-    /// use concrete_core::commons::crypto::{*, glwe::PrivateFunctionalPackingKeyswitchKey};
+    /// use concrete_core::commons::crypto::{*, glwe::LwePrivateFunctionalPackingKeyswitchKey};
     /// use concrete_commons::parameters::{DecompositionLevelCount, DecompositionBaseLog,
     /// GlweDimension, LweDimension, PolynomialSize};
-    /// let pfpksk = PrivateFunctionalPackingKeyswitchKey::allocate(
+    /// let pfpksk = LwePrivateFunctionalPackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
     ///     DecompositionBaseLog(16),
@@ -1095,11 +1095,11 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```ignore
-    /// use concrete_core::commons::crypto::{*, glwe::PrivateFunctionalPackingKeyswitchKey};
+    /// use concrete_core::commons::crypto::{*, glwe::LwePrivateFunctionalPackingKeyswitchKey};
     /// use concrete_core::commons::math::tensor::{AsRefTensor, AsMutTensor};
     /// use concrete_commons::parameters::{DecompositionLevelCount, DecompositionBaseLog,
     /// GlweDimension, LweDimension, PolynomialSize};
-    /// let mut pfpksk = PrivateFunctionalPackingKeyswitchKey::allocate(
+    /// let mut pfpksk = LwePrivateFunctionalPackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
     ///     DecompositionBaseLog(16),
@@ -1170,7 +1170,7 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
     /// let output_key =
     ///     GlweSecretKey::generate_binary(output_glwe_dim, polynomial_size, &mut secret_generator);
     ///
-    /// let mut pfpksk = PrivateFunctionalPackingKeyswitchKey::allocate(
+    /// let mut pfpksk = LwePrivateFunctionalPackingKeyswitchKey::allocate(
     ///     0 as u64,
     ///     decomp_level_count,
     ///     decomp_base_log,
@@ -1280,7 +1280,7 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKey<Cont> {
     /// let output_key =
     ///     GlweSecretKey::generate_binary(output_glwe_dim, polynomial_size, &mut secret_generator);
     ///
-    /// let mut pfpksk = PrivateFunctionalPackingKeyswitchKey::allocate(
+    /// let mut pfpksk = LwePrivateFunctionalPackingKeyswitchKey::allocate(
     ///     0 as u64,
     ///     decomp_level_count,
     ///     decomp_base_log,
@@ -1358,8 +1358,8 @@ impl<Cont> LweKeyBitDecomposition<Cont> {
     /// # Notes
     ///
     /// This method does not decompose a key bit in a basis, but merely wraps a container in the
-    /// right structure. See [`PackingKeyswitchKey::bit_decomp_iter`] for an iterator that returns
-    /// key bit decompositions.
+    /// right structure. See [`LwePackingKeyswitchKey::bit_decomp_iter`] for an iterator that
+    /// returns key bit decompositions.
     ///
     /// # Example
     ///
@@ -1508,7 +1508,7 @@ impl<Cont> LweKeyBitDecomposition<Cont> {
 /// A private functional packing keyswitching key list.
 #[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct PrivateFunctionalPackingKeyswitchKeyList<Cont> {
+pub struct LwePrivateFunctionalPackingKeyswitchKeyList<Cont> {
     tensor: Tensor<Cont>,
     decomp_base_log: DecompositionBaseLog,
     decomp_level_count: DecompositionLevelCount,
@@ -1517,13 +1517,13 @@ pub struct PrivateFunctionalPackingKeyswitchKeyList<Cont> {
     output_polynomial_size: PolynomialSize,
 }
 
-tensor_traits!(PrivateFunctionalPackingKeyswitchKeyList);
+tensor_traits!(LwePrivateFunctionalPackingKeyswitchKeyList);
 
-impl<Scalar> PrivateFunctionalPackingKeyswitchKeyList<Vec<Scalar>>
+impl<Scalar> LwePrivateFunctionalPackingKeyswitchKeyList<Vec<Scalar>>
 where
     Scalar: Copy,
 {
-    /// Allocates storage for an owned [`PrivateFunctionalPackingKeyswitchKeyList`].
+    /// Allocates storage for an owned [`LwePrivateFunctionalPackingKeyswitchKeyList`].
     ///
     /// # Note
     ///
@@ -1537,7 +1537,7 @@ where
     ///     DecompositionBaseLog, DecompositionLevelCount, FunctionalPackingKeyswitchKeyCount,
     ///     GlweDimension, GlweSize, LweDimension, LweSize, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::PrivateFunctionalPackingKeyswitchKeyList;
+    /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKeyList;
     /// use concrete_core::commons::crypto::*;
     /// let input_lwe_dim = LweDimension(200);
     /// let output_glwe_dim = GlweDimension(2);
@@ -1546,7 +1546,7 @@ where
     /// let decomp_level_count = DecompositionLevelCount(4);
     /// let fpksk_count = FunctionalPackingKeyswitchKeyCount(3);
     ///
-    /// let pfpksk_list = PrivateFunctionalPackingKeyswitchKeyList::allocate(
+    /// let pfpksk_list = LwePrivateFunctionalPackingKeyswitchKeyList::allocate(
     ///     0u8,
     ///     decomp_level_count,
     ///     decomp_base_log,
@@ -1571,7 +1571,7 @@ where
         output_polynomial_size: PolynomialSize,
         fpksk_count: FunctionalPackingKeyswitchKeyCount,
     ) -> Self {
-        PrivateFunctionalPackingKeyswitchKeyList {
+        LwePrivateFunctionalPackingKeyswitchKeyList {
             tensor: Tensor::from_container(vec![
                 value;
                 decomp_size.0
@@ -1589,7 +1589,7 @@ where
     }
 }
 
-impl<Cont> PrivateFunctionalPackingKeyswitchKeyList<Cont> {
+impl<Cont> LwePrivateFunctionalPackingKeyswitchKeyList<Cont> {
     /// Creates a list from a container of values.
     ///
     /// # Notes
@@ -1605,7 +1605,7 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKeyList<Cont> {
     ///     DecompositionBaseLog, DecompositionLevelCount, FunctionalPackingKeyswitchKeyCount,
     ///     GlweDimension, GlweSize, LweDimension, LweSize, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::PrivateFunctionalPackingKeyswitchKeyList;
+    /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKeyList;
     /// use concrete_core::commons::crypto::*;
     /// let input_lwe_dim = LweDimension(200);
     /// let output_glwe_dim = GlweDimension(2);
@@ -1614,7 +1614,7 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKeyList<Cont> {
     /// let decomp_level_count = DecompositionLevelCount(4);
     /// let fpksk_count = FunctionalPackingKeyswitchKeyCount(3);
     ///
-    /// let pfpksk_list = PrivateFunctionalPackingKeyswitchKeyList::from_container(
+    /// let pfpksk_list = LwePrivateFunctionalPackingKeyswitchKeyList::from_container(
     ///     vec![
     ///         0 as u8;
     ///         input_lwe_dim.to_lwe_size().0
@@ -1645,7 +1645,7 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKeyList<Cont> {
         output_glwe_dimension: GlweDimension,
         output_polynomial_size: PolynomialSize,
         fpksk_count: FunctionalPackingKeyswitchKeyCount,
-    ) -> PrivateFunctionalPackingKeyswitchKeyList<Cont>
+    ) -> LwePrivateFunctionalPackingKeyswitchKeyList<Cont>
     where
         Cont: AsRefSlice,
     {
@@ -1655,7 +1655,7 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKeyList<Cont> {
             decomp_size.0,
             input_dimension.to_lwe_size().0,
             fpksk_count.0);
-        PrivateFunctionalPackingKeyswitchKeyList {
+        LwePrivateFunctionalPackingKeyswitchKeyList {
             tensor,
             decomp_base_log,
             decomp_level_count: decomp_size,
@@ -1709,7 +1709,7 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKeyList<Cont> {
     pub fn fpksk_iter(
         &self,
     ) -> impl DoubleEndedIterator<
-        Item = PrivateFunctionalPackingKeyswitchKey<&[<Self as AsRefTensor>::Element]>,
+        Item = LwePrivateFunctionalPackingKeyswitchKey<&[<Self as AsRefTensor>::Element]>,
     >
     where
         Self: AsRefTensor,
@@ -1722,7 +1722,7 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKeyList<Cont> {
         self.as_tensor()
             .subtensor_iter(single_ksk_size)
             .map(move |sub| {
-                PrivateFunctionalPackingKeyswitchKey::from_container(
+                LwePrivateFunctionalPackingKeyswitchKey::from_container(
                     sub.into_container(),
                     self.decomposition_base_log(),
                     self.decomposition_level_count(),
@@ -1736,7 +1736,7 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKeyList<Cont> {
     pub fn fpksk_iter_mut(
         &mut self,
     ) -> impl DoubleEndedIterator<
-        Item = PrivateFunctionalPackingKeyswitchKey<&mut [<Self as AsMutTensor>::Element]>,
+        Item = LwePrivateFunctionalPackingKeyswitchKey<&mut [<Self as AsMutTensor>::Element]>,
     >
     where
         Self: AsMutTensor,
@@ -1755,7 +1755,7 @@ impl<Cont> PrivateFunctionalPackingKeyswitchKeyList<Cont> {
         self.as_mut_tensor()
             .subtensor_iter_mut(single_ksk_size)
             .map(move |sub| {
-                PrivateFunctionalPackingKeyswitchKey::from_container(
+                LwePrivateFunctionalPackingKeyswitchKey::from_container(
                     sub.into_container(),
                     decomposition_base_log,
                     decomposition_level_count,

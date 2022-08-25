@@ -26,7 +26,7 @@ impl LweToGlweSecretKeyTransformationEngine<LweSecretKey32, GlweSecretKey32> for
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     ///
-    /// let lwe_secret_key: LweSecretKey32 = engine.create_lwe_secret_key(lwe_dimension)?;
+    /// let lwe_secret_key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
     /// assert_eq!(lwe_secret_key.lwe_dimension(), lwe_dimension);
     ///
     /// let glwe_secret_key =
@@ -86,7 +86,7 @@ impl LweToGlweSecretKeyTransformationEngine<LweSecretKey64, GlweSecretKey64> for
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     ///
-    /// let lwe_secret_key: LweSecretKey64 = engine.create_lwe_secret_key(lwe_dimension)?;
+    /// let lwe_secret_key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
     /// assert_eq!(lwe_secret_key.lwe_dimension(), lwe_dimension);
     ///
     /// let glwe_secret_key =

@@ -90,14 +90,14 @@ pub unsafe extern "C" fn fftw_engine_lwe_ciphertext_discarding_bootstrap_u64_raw
         let output = get_mut_checked(output).unwrap();
         let output_as_slice = std::slice::from_raw_parts_mut(output, ouput_lwe_size);
         let mut output = default_engine
-            .create_lwe_ciphertext(output_as_slice)
+            .create_lwe_ciphertext_from(output_as_slice)
             .or_else(engine_error_as_readable_string)
             .unwrap();
 
         let input = get_ref_checked(input).unwrap();
         let input_as_slice = std::slice::from_raw_parts(input, input_lwe_size);
         let input = default_engine
-            .create_lwe_ciphertext(input_as_slice)
+            .create_lwe_ciphertext_from(input_as_slice)
             .or_else(engine_error_as_readable_string)
             .unwrap();
 
@@ -105,7 +105,7 @@ pub unsafe extern "C" fn fftw_engine_lwe_ciphertext_discarding_bootstrap_u64_raw
         let accumulator_as_slice =
             std::slice::from_raw_parts(accumulator, polynomial_size.0 * glwe_size.0);
         let accumulator = default_engine
-            .create_glwe_ciphertext(accumulator_as_slice, polynomial_size)
+            .create_glwe_ciphertext_from(accumulator_as_slice, polynomial_size)
             .or_else(engine_error_as_readable_string)
             .unwrap();
 
@@ -140,15 +140,15 @@ pub unsafe extern "C" fn fftw_engine_lwe_ciphertext_discarding_bootstrap_uncheck
         let glwe_size = bootstrap_key.glwe_dimension().to_glwe_size();
 
         let output_as_slice = std::slice::from_raw_parts_mut(output, ouput_lwe_size);
-        let mut output = default_engine.create_lwe_ciphertext_unchecked(output_as_slice);
+        let mut output = default_engine.create_lwe_ciphertext_from_unchecked(output_as_slice);
 
         let input_as_slice = std::slice::from_raw_parts(input, input_lwe_size);
-        let input = default_engine.create_lwe_ciphertext_unchecked(input_as_slice);
+        let input = default_engine.create_lwe_ciphertext_from_unchecked(input_as_slice);
 
         let accumulator_as_slice =
             std::slice::from_raw_parts(accumulator, polynomial_size.0 * glwe_size.0);
-        let accumulator =
-            default_engine.create_glwe_ciphertext_unchecked(accumulator_as_slice, polynomial_size);
+        let accumulator = default_engine
+            .create_glwe_ciphertext_from_unchecked(accumulator_as_slice, polynomial_size);
 
         fftw_engine.discard_bootstrap_lwe_ciphertext_unchecked(
             &mut output,

@@ -29,7 +29,7 @@ where
     Ciphertext: LweCiphertextEntity,
 {
     /// Creates an LWE ciphertext from an arbitrary container.
-    fn create_lwe_ciphertext(
+    fn create_lwe_ciphertext_from(
         &mut self,
         container: Container,
     ) -> Result<Ciphertext, LweCiphertextCreationError<Self::EngineError>>;
@@ -40,5 +40,5 @@ where
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
     /// of [`LweCiphertextCreationError`]. For safety concerns _specific_ to an engine, refer to
     /// the implementer safety section.
-    unsafe fn create_lwe_ciphertext_unchecked(&mut self, container: Container) -> Ciphertext;
+    unsafe fn create_lwe_ciphertext_from_unchecked(&mut self, container: Container) -> Ciphertext;
 }

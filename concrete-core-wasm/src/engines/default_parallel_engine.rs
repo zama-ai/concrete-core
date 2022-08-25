@@ -29,7 +29,7 @@ impl DefaultParallelEngine {
     ) -> JsResult<LweBootstrapKey32> {
         wrap!(
             LweBootstrapKey32,
-            self.0.create_lwe_bootstrap_key(
+            self.0.generate_new_lwe_bootstrap_key(
                 &input_key.0,
                 &output_key.0,
                 decomposition_base_log.0,
@@ -49,7 +49,7 @@ impl DefaultParallelEngine {
     ) -> JsResult<LweBootstrapKey64> {
         wrap!(
             LweBootstrapKey64,
-            self.0.create_lwe_bootstrap_key(
+            self.0.generate_new_lwe_bootstrap_key(
                 &input_key.0,
                 &output_key.0,
                 decomposition_base_log.0,

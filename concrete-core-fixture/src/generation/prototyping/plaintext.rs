@@ -13,7 +13,7 @@ impl PrototypesPlaintext<Precision32> for Maker {
     type PlaintextProto = ProtoPlaintext32;
 
     fn transform_raw_to_plaintext(&mut self, raw: &u32) -> Self::PlaintextProto {
-        ProtoPlaintext32(self.default_engine.create_plaintext(raw).unwrap())
+        ProtoPlaintext32(self.default_engine.create_plaintext_from(raw).unwrap())
     }
 
     fn transform_plaintext_to_raw(&mut self, plaintext: &Self::PlaintextProto) -> u32 {
@@ -27,7 +27,7 @@ impl PrototypesPlaintext<Precision64> for Maker {
     type PlaintextProto = ProtoPlaintext64;
 
     fn transform_raw_to_plaintext(&mut self, raw: &u64) -> Self::PlaintextProto {
-        ProtoPlaintext64(self.default_engine.create_plaintext(raw).unwrap())
+        ProtoPlaintext64(self.default_engine.create_plaintext_from(raw).unwrap())
     }
 
     fn transform_plaintext_to_raw(&mut self, plaintext: &Self::PlaintextProto) -> u64 {

@@ -32,7 +32,7 @@ where
     CleartextVector: CleartextVectorEntity,
 {
     /// Creates a cleartext vector from a slice of arbitrary values.
-    fn create_cleartext_vector(
+    fn create_cleartext_vector_from(
         &mut self,
         values: &[Value],
     ) -> Result<CleartextVector, CleartextVectorCreationError<Self::EngineError>>;
@@ -43,5 +43,8 @@ where
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
     /// of [`CleartextVectorCreationError`]. For safety concerns _specific_ to an engine, refer to
     /// the implementer safety section.
-    unsafe fn create_cleartext_vector_unchecked(&mut self, values: &[Value]) -> CleartextVector;
+    unsafe fn create_cleartext_vector_from_unchecked(
+        &mut self,
+        values: &[Value],
+    ) -> CleartextVector;
 }

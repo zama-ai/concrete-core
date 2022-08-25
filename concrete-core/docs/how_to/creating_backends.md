@@ -420,8 +420,8 @@ let input = vec![3_u32 << 20; 3];
 let noise = Variance(2_f64.powf(-25.));
 
 let mut default_engine = DefaultEngine::new().unwrap();
-let h_key: LweSecretKey32 = default_engine.create_lwe_secret_key(lwe_dimension).unwrap();
-let h_plaintext_vector: PlaintextVector32 = default_engine.create_plaintext_vector(&input).unwrap();
+let h_key: LweSecretKey32 = default_engine.generate_new_lwe_secret_key(lwe_dimension).unwrap();
+let h_plaintext_vector: PlaintextVector32 = default_engine.create_plaintext_vector_from(&input).unwrap();
 let mut h_ciphertext_vector: LweCiphertextVector32 =
 default_engine.encrypt_lwe_ciphertext_vector(&h_key, &h_plaintext_vector, noise).unwrap();
 

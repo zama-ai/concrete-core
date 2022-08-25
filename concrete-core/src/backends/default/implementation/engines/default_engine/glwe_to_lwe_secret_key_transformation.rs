@@ -24,7 +24,7 @@ impl GlweToLweSecretKeyTransformationEngine<GlweSecretKey32, LweSecretKey32> for
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     ///
     /// let glwe_secret_key: GlweSecretKey32 =
-    ///     engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
     /// assert_eq!(glwe_secret_key.glwe_dimension(), glwe_dimension);
     /// assert_eq!(glwe_secret_key.polynomial_size(), polynomial_size);
     ///
@@ -68,7 +68,7 @@ impl GlweToLweSecretKeyTransformationEngine<GlweSecretKey64, LweSecretKey64> for
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     ///
     /// let glwe_secret_key: GlweSecretKey64 =
-    ///     engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
     /// assert_eq!(glwe_secret_key.glwe_dimension(), glwe_dimension);
     /// assert_eq!(glwe_secret_key.polynomial_size(), polynomial_size);
     ///
