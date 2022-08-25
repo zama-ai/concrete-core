@@ -2,7 +2,7 @@ use crate::backends::optalysys::Complex64;
 use crate::backends::optalysys::private::math::fft::{
     Fft, FourierPolynomial,
 };
-use super::twiddles::{BackwardCorrector, ForwardCorrector};
+use crate::commons::math::fft::twiddles::{BackwardCorrector, ForwardCorrector};
 use crate::commons::math::polynomial::Polynomial;
 use crate::commons::math::tensor::{AsMutTensor, AsRefTensor};
 use crate::commons::test_tools::new_random_generator;

@@ -21,7 +21,7 @@ use proto_graphec::prelude::{FourierEngine, OFTSimulator3b as Simulator};
 use std::cell::RefCell;
 
 use crate::backends::optalysys::Complex64;
-use super::twiddles::{BackwardCorrector, ForwardCorrector, Correctors};
+use crate::commons::math::fft::twiddles::{BackwardCorrector, ForwardCorrector, Correctors};
 use crate::backends::optalysys::private::math::fft::FourierPolynomial;
 
 // Number of bits of accuracy for the OFT simulator.
