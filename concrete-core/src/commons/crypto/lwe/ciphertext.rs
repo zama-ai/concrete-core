@@ -2,7 +2,9 @@ use super::LweList;
 use crate::commons::crypto::encoding::{Cleartext, CleartextList, Plaintext};
 use crate::commons::crypto::glwe::GlweCiphertext;
 use crate::commons::crypto::secret::LweSecretKey;
-use crate::commons::math::tensor::{tensor_traits, AsMutTensor, AsRefTensor, Tensor};
+use crate::commons::math::tensor::{
+    tensor_traits, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
+};
 use crate::commons::math::torus::UnsignedTorus;
 use concrete_commons::key_kinds::KeyKind;
 use concrete_commons::numeric::{Numeric, UnsignedInteger};
@@ -90,7 +92,10 @@ where
     }
 }
 
-impl<Cont> LweCiphertext<Cont> {
+impl<Cont, Scalar> LweCiphertext<Cont>
+where
+    Cont: AsRefSlice<Element = Scalar>,
+{
     /// Creates a ciphertext from a container of values.
     ///
     /// # Example
@@ -135,9 +140,9 @@ impl<Cont> LweCiphertext<Cont> {
     /// let body = ciphertext.get_body();
     /// assert_eq!(body, &LweBody(0 as u8));
     /// ```
-    pub fn get_body<Scalar>(&self) -> &LweBody<Scalar>
+    pub fn get_body(&self) -> &LweBody<Scalar>
     where
-        Self: AsRefTensor<Element = Scalar>,
+        Cont: AsRefSlice<Element = Scalar>,
     {
         unsafe { &*{ self.as_tensor().last() as *const Scalar as *const LweBody<Scalar> } }
     }
@@ -153,9 +158,9 @@ impl<Cont> LweCiphertext<Cont> {
     /// let mask = ciphertext.get_mask();
     /// assert_eq!(mask.mask_size(), LweDimension(9));
     /// ```
-    pub fn get_mask<Scalar>(&self) -> LweMask<&[Scalar]>
+    pub fn get_mask(&self) -> LweMask<&[Scalar]>
     where
-        Self: AsRefTensor<Element = Scalar>,
+        Cont: AsRefSlice<Element = Scalar>,
     {
         let (_, mask) = self.as_tensor().split_last();
         LweMask { tensor: mask }
@@ -173,9 +178,9 @@ impl<Cont> LweCiphertext<Cont> {
     /// assert_eq!(body, &LweBody(0));
     /// assert_eq!(mask.mask_size(), LweDimension(9));
     /// ```
-    pub fn get_body_and_mask<Scalar>(&self) -> (&LweBody<Scalar>, LweMask<&[Scalar]>)
+    pub fn get_body_and_mask(&self) -> (&LweBody<Scalar>, LweMask<&[Scalar]>)
     where
-        Self: AsRefTensor<Element = Scalar>,
+        Cont: AsRefSlice<Element = Scalar>,
     {
         let (body, mask) = self.as_tensor().split_last();
         let body = unsafe { &*{ body as *const Scalar as *const LweBody<Scalar> } };
@@ -194,9 +199,9 @@ impl<Cont> LweCiphertext<Cont> {
     /// let body = ciphertext.get_body();
     /// assert_eq!(body, &LweBody(8 as u8));
     /// ```
-    pub fn get_mut_body<Scalar>(&mut self) -> &mut LweBody<Scalar>
+    pub fn get_mut_body(&mut self) -> &mut LweBody<Scalar>
     where
-        Self: AsMutTensor<Element = Scalar>,
+        Cont: AsMutSlice<Element = Scalar>,
     {
         unsafe { &mut *{ self.as_mut_tensor().last_mut() as *mut Scalar as *mut LweBody<Scalar> } }
     }
@@ -219,9 +224,9 @@ impl<Cont> LweCiphertext<Cont> {
     /// }
     /// assert_eq!(mask.mask_element_iter().count(), 9);
     /// ```
-    pub fn get_mut_mask<Scalar>(&mut self) -> LweMask<&mut [Scalar]>
+    pub fn get_mut_mask(&mut self) -> LweMask<&mut [Scalar]>
     where
-        Self: AsMutTensor<Element = Scalar>,
+        Cont: AsMutSlice<Element = Scalar>,
     {
         let (_, masks) = self.as_mut_tensor().split_last_mut();
         LweMask { tensor: masks }
@@ -240,11 +245,9 @@ impl<Cont> LweCiphertext<Cont> {
     /// assert_eq!(body, &mut LweBody(0));
     /// assert_eq!(mask.mask_size(), LweDimension(9));
     /// ```
-    pub fn get_mut_body_and_mask<Scalar>(
-        &mut self,
-    ) -> (&mut LweBody<Scalar>, LweMask<&mut [Scalar]>)
+    pub fn get_mut_body_and_mask(&mut self) -> (&mut LweBody<Scalar>, LweMask<&mut [Scalar]>)
     where
-        Self: AsMutTensor<Element = Scalar>,
+        Cont: AsMutSlice<Element = Scalar>,
     {
         let (body, masks) = self.as_mut_tensor().split_last_mut();
         let body = unsafe { &mut *{ body as *mut Scalar as *mut LweBody<Scalar> } };
@@ -298,14 +301,14 @@ impl<Cont> LweCiphertext<Cont> {
     /// let decoded = encoder.decode(decrypted);
     /// assert!((decoded.0 - (cleartext.0 * 4.)).abs() < 0.2);
     /// ```
-    pub fn fill_with_scalar_mul<Scalar, InputCont>(
+    pub fn fill_with_scalar_mul<InputCont>(
         &mut self,
         input: &LweCiphertext<InputCont>,
         scalar: &Cleartext<Scalar>,
     ) where
-        Self: AsMutTensor<Element = Scalar>,
-        LweCiphertext<InputCont>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedInteger,
+        Cont: AsMutSlice<Element = Scalar>,
+        InputCont: AsRefSlice<Element = Scalar>,
     {
         self.as_mut_tensor()
             .fill_with_one(input.as_tensor(), |o| o.wrapping_mul(scalar.0));
@@ -368,16 +371,16 @@ impl<Cont> LweCiphertext<Cont> {
     /// let decoded = encoder.decode(decrypted);
     /// assert!((decoded.0 - 63.).abs() < 0.1);
     /// ```
-    pub fn fill_with_multisum_with_bias<Scalar, InputCont, WeightCont>(
+    pub fn fill_with_multisum_with_bias<InputCont, WeightCont>(
         &mut self,
         input_list: &LweList<InputCont>,
         weights: &CleartextList<WeightCont>,
         bias: &Plaintext<Scalar>,
     ) where
-        Self: AsMutTensor<Element = Scalar>,
-        LweList<InputCont>: AsRefTensor<Element = Scalar>,
-        CleartextList<WeightCont>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedInteger,
+        Cont: AsMutSlice<Element = Scalar>,
+        InputCont: AsRefSlice<Element = Scalar>,
+        WeightCont: AsRefSlice<Element = Scalar>,
     {
         // loop over the ciphertexts and the weights
         for (input_cipher, weight) in input_list.ciphertext_iter().zip(weights.cleartext_iter()) {
@@ -438,11 +441,11 @@ impl<Cont> LweCiphertext<Cont> {
     ///
     /// assert!((decoded.0 - 5.).abs() < 0.1);
     /// ```
-    pub fn update_with_add<OtherCont, Scalar>(&mut self, other: &LweCiphertext<OtherCont>)
+    pub fn update_with_add<OtherCont>(&mut self, other: &LweCiphertext<OtherCont>)
     where
-        Self: AsMutTensor<Element = Scalar>,
-        LweCiphertext<OtherCont>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
+        Cont: AsMutSlice<Element = Scalar>,
+        OtherCont: AsRefSlice<Element = Scalar>,
     {
         self.as_mut_tensor()
             .update_with_wrapping_add(other.as_tensor())
@@ -494,11 +497,11 @@ impl<Cont> LweCiphertext<Cont> {
     ///
     /// assert!((decoded.0 - 1.).abs() < 0.1);
     /// ```
-    pub fn update_with_sub<OtherCont, Scalar>(&mut self, other: &LweCiphertext<OtherCont>)
+    pub fn update_with_sub<OtherCont>(&mut self, other: &LweCiphertext<OtherCont>)
     where
-        Self: AsMutTensor<Element = Scalar>,
-        LweCiphertext<OtherCont>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
+        Cont: AsMutSlice<Element = Scalar>,
+        OtherCont: AsRefSlice<Element = Scalar>,
     {
         self.as_mut_tensor()
             .update_with_wrapping_sub(other.as_tensor())
@@ -545,10 +548,10 @@ impl<Cont> LweCiphertext<Cont> {
     ///
     /// assert!((decoded.0 - (-2.)).abs() < 0.1);
     /// ```
-    pub fn update_with_neg<Scalar>(&mut self)
+    pub fn update_with_neg(&mut self)
     where
-        Self: AsMutTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
+        Cont: AsMutSlice<Element = Scalar>,
     {
         self.as_mut_tensor().update_with_wrapping_neg()
     }
@@ -594,10 +597,10 @@ impl<Cont> LweCiphertext<Cont> {
     ///
     /// assert!((decoded.0 - 6.).abs() < 0.2);
     /// ```
-    pub fn update_with_scalar_mul<Scalar>(&mut self, scalar: Cleartext<Scalar>)
+    pub fn update_with_scalar_mul(&mut self, scalar: Cleartext<Scalar>)
     where
-        Self: AsMutTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
+        Cont: AsMutSlice<Element = Scalar>,
     {
         self.as_mut_tensor()
             .update_with_wrapping_scalar_mul(&scalar.0)
@@ -658,22 +661,22 @@ impl<Cont> LweCiphertext<Cont> {
     ///     assert!(dist < 400);
     /// }
     /// ```
-    pub fn fill_with_glwe_sample_extraction<InputCont, Element>(
+    pub fn fill_with_glwe_sample_extraction<InputCont>(
         &mut self,
         glwe: &GlweCiphertext<InputCont>,
         n_th: MonomialDegree,
     ) where
-        Self: AsMutTensor<Element = Element>,
-        GlweCiphertext<InputCont>: AsRefTensor<Element = Element>,
-        Element: UnsignedTorus,
+        Scalar: UnsignedTorus,
+        Cont: AsMutSlice<Element = Scalar>,
+        InputCont: AsRefSlice<Element = Scalar>,
     {
         glwe.fill_lwe_with_sample_extraction(self, n_th);
     }
 
-    pub fn fill_with_trivial_encryption<Scalar>(&mut self, plaintext: &Plaintext<Scalar>)
+    pub fn fill_with_trivial_encryption(&mut self, plaintext: &Plaintext<Scalar>)
     where
         Scalar: Numeric,
-        Self: AsMutTensor<Element = Scalar>,
+        Cont: AsMutSlice<Element = Scalar>,
     {
         let (output_body, mut output_mask) = self.get_mut_body_and_mask();
 

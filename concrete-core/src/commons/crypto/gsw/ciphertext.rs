@@ -415,8 +415,8 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     pub fn external_product<C1, C2>(&self, output: &mut LweCiphertext<C1>, lwe: &LweCiphertext<C2>)
     where
         Self: AsRefTensor<Element = Scalar>,
-        LweCiphertext<C1>: AsMutTensor<Element = Scalar>,
-        LweCiphertext<C2>: AsRefTensor<Element = Scalar>,
+        C1: AsMutSlice<Element = Scalar>,
+        C2: AsRefSlice<Element = Scalar>,
         Scalar: UnsignedTorus,
     {
         // We check that the lwe sizes match
@@ -539,12 +539,12 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
         ct0: &LweCiphertext<C0>,
         ct1: &LweCiphertext<C1>,
     ) where
-        LweCiphertext<C0>: AsRefTensor<Element = Scalar>,
-        LweCiphertext<C1>: AsRefTensor<Element = Scalar>,
-        LweCiphertext<Vec<Scalar>>: AsMutTensor<Element = Scalar>,
-        LweCiphertext<COut>: AsMutTensor<Element = Scalar>,
-        Self: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
+        LweCiphertext<C0>: AsRefTensor<Element = Scalar>,
+        C1: AsRefSlice<Element = Scalar>,
+        LweCiphertext<Vec<Scalar>>: AsMutTensor<Element = Scalar>,
+        COut: AsMutSlice<Element = Scalar>,
+        Self: AsRefTensor<Element = Scalar>,
     {
         let mut buffer = LweCiphertext::allocate(Scalar::ZERO, ct1.lwe_size());
         buffer

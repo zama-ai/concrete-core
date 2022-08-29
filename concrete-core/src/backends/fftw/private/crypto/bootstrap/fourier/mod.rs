@@ -447,10 +447,9 @@ where
 
     fn blind_rotate<C2>(&self, buffers: &mut FourierBuffers<Scalar>, lwe: &LweCiphertext<C2>)
     where
-        LweCiphertext<C2>: AsRefTensor<Element = Scalar>,
-        GlweCiphertext<Vec<Scalar>>: AsMutTensor<Element = Scalar>,
         Self: AsRefTensor<Element = Complex64>,
         Scalar: UnsignedTorus,
+        C2: AsRefSlice<Element = Scalar>,
     {
         // We unpack the lwe ciphertext.
         let (lwe_body, lwe_mask) = lwe.get_body_and_mask();
@@ -631,8 +630,8 @@ where
         accumulator: &GlweCiphertext<C3>,
         buffers: &mut FourierBuffers<Scalar>,
     ) where
-        LweCiphertext<C1>: AsMutTensor<Element = Scalar>,
-        LweCiphertext<C2>: AsRefTensor<Element = Scalar>,
+        C1: AsMutSlice<Element = Scalar>,
+        C2: AsRefSlice<Element = Scalar>,
         GlweCiphertext<C3>: AsRefTensor<Element = Scalar>,
     {
         // We retrieve the accumulator buffer, and fill it with the input accumulator values.

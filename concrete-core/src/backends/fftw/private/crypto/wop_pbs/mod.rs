@@ -6,7 +6,7 @@ use crate::commons::crypto::encoding::Cleartext;
 use crate::commons::crypto::ggsw::StandardGgswCiphertext;
 use crate::commons::crypto::glwe::{GlweCiphertext, LwePrivateFunctionalPackingKeyswitchKeyList};
 use crate::commons::crypto::lwe::{LweCiphertext, LweKeyswitchKey, LweList};
-use crate::commons::math::tensor::{AsMutTensor, AsRefSlice, AsRefTensor};
+use crate::commons::math::tensor::{AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor};
 use crate::commons::math::torus::UnsignedTorus;
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, DeltaLog, ExtractedBitsCount, LweDimension,
@@ -248,8 +248,8 @@ pub fn homomorphic_shift_binary<Scalar, C1, C2, C3>(
 ) where
     Scalar: UnsignedTorus,
     FourierBootstrapKey<C1, Scalar>: AsRefTensor<Element = Complex64>,
-    LweCiphertext<C2>: AsMutTensor<Element = Scalar>,
-    LweCiphertext<C3>: AsRefTensor<Element = Scalar>,
+    C2: AsMutSlice<Element = Scalar>,
+    C3: AsRefSlice<Element = Scalar>,
 {
     let ciphertext_n_bits = Scalar::BITS;
     let lwe_in_size = lwe_in.lwe_size();

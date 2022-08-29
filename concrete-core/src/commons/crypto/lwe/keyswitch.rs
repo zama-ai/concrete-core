@@ -7,7 +7,7 @@ use crate::commons::math::decomposition::{
 };
 use crate::commons::math::random::ByteRandomGenerator;
 use crate::commons::math::tensor::{
-    ck_dim_div, ck_dim_eq, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
+    ck_dim_div, ck_dim_eq, tensor_traits, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
 use crate::commons::math::torus::UnsignedTorus;
 use concrete_commons::dispersion::DispersionParameter;
@@ -521,10 +521,10 @@ impl<Cont> LweKeyswitchKey<Cont> {
         after: &mut LweCiphertext<OutCont>,
         before: &LweCiphertext<InCont>,
     ) where
-        Self: AsRefTensor<Element = Scalar>,
-        LweCiphertext<OutCont>: AsMutTensor<Element = Scalar>,
-        LweCiphertext<InCont>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
+        Self: AsRefTensor<Element = Scalar>,
+        OutCont: AsMutSlice<Element = Scalar>,
+        InCont: AsRefSlice<Element = Scalar>,
     {
         ck_dim_eq!(self.before_key_size().0 => before.get_mask().mask_size().0);
         ck_dim_eq!(self.after_key_size().0 => after.get_mask().mask_size().0);

@@ -376,9 +376,9 @@ where
         noise_parameters: impl DispersionParameter,
         generator: &mut EncryptionRandomGenerator<Gen>,
     ) where
-        Self: AsRefTensor<Element = Scalar>,
-        LweCiphertext<OutputCont>: AsMutTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
+        Self: AsRefTensor<Element = Scalar>,
+        OutputCont: AsMutSlice<Element = Scalar>,
         Gen: ByteRandomGenerator,
     {
         let (output_body, mut output_mask) = output.get_mut_body_and_mask();
@@ -672,9 +672,9 @@ where
         output: &mut Plaintext<Scalar>,
         cipher: &LweCiphertext<CipherCont>,
     ) where
-        Self: AsRefTensor<Element = Scalar>,
-        LweCiphertext<CipherCont>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
+        Self: AsRefTensor<Element = Scalar>,
+        CipherCont: AsRefSlice<Element = Scalar>,
     {
         let (body, masks) = cipher.get_body_and_mask();
         // put body inside result

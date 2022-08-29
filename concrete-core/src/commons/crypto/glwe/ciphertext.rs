@@ -441,7 +441,7 @@ impl<Cont> GlweCiphertext<Cont> {
         n_th: MonomialDegree,
     ) where
         Self: AsRefTensor<Element = Element>,
-        LweCiphertext<OutputCont>: AsMutTensor<Element = Element>,
+        OutputCont: AsMutSlice<Element = Element>,
         Element: UnsignedTorus,
     {
         // We retrieve the bodies and masks of the two ciphertexts.

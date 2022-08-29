@@ -7,7 +7,7 @@ use concrete_commons::parameters::{LweDimension, LweSize};
 use crate::commons::math::random::{
     ByteRandomGenerator, CompressionSeed, RandomGenerable, RandomGenerator, Uniform,
 };
-use crate::commons::math::tensor::AsMutTensor;
+use crate::commons::math::tensor::{AsMutSlice, AsMutTensor};
 
 use super::{LweBody, LweCiphertext};
 
@@ -164,7 +164,7 @@ impl<Scalar: Numeric> LweSeededCiphertext<Scalar> {
     /// ```
     pub fn expand_into<Cont, Gen>(self, output: &mut LweCiphertext<Cont>)
     where
-        LweCiphertext<Cont>: AsMutTensor<Element = Scalar>,
+        Cont: AsMutSlice<Element = Scalar>,
         Scalar: Copy + RandomGenerable<Uniform> + Numeric,
         Gen: ByteRandomGenerator,
     {

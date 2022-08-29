@@ -243,7 +243,10 @@ impl<Cont> GswLevelRow<Cont> {
     /// let lwe = level_row.into_lwe();
     /// assert_eq!(lwe.lwe_size(), LweSize(7));
     /// ```
-    pub fn into_lwe(self) -> LweCiphertext<Cont> {
+    pub fn into_lwe(self) -> LweCiphertext<Cont>
+    where
+        Cont: AsRefSlice,
+    {
         LweCiphertext::from_container(self.tensor.into_container())
     }
 }

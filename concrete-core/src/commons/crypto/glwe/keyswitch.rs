@@ -9,7 +9,7 @@ use crate::commons::math::decomposition::{
 use crate::commons::math::polynomial::Polynomial;
 use crate::commons::math::random::ByteRandomGenerator;
 use crate::commons::math::tensor::{
-    ck_dim_div, ck_dim_eq, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
+    ck_dim_div, ck_dim_eq, tensor_traits, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
 use crate::commons::math::torus::UnsignedTorus;
 use concrete_commons::dispersion::DispersionParameter;
@@ -555,8 +555,8 @@ impl<Cont> LwePackingKeyswitchKey<Cont> {
         before: &LweCiphertext<InCont>,
     ) where
         Self: AsRefTensor<Element = Scalar>,
-        GlweCiphertext<OutCont>: AsMutTensor<Element = Scalar>,
-        LweCiphertext<InCont>: AsRefTensor<Element = Scalar>,
+        OutCont: AsMutSlice<Element = Scalar>,
+        InCont: AsRefSlice<Element = Scalar>,
         Scalar: UnsignedTorus,
     {
         ck_dim_eq!(self.input_lwe_key_dimension().0 => before.lwe_size().to_lwe_dimension().0);
@@ -605,11 +605,10 @@ impl<Cont> LwePackingKeyswitchKey<Cont> {
         output: &mut GlweCiphertext<OutCont>,
         input: &LweList<InCont>,
     ) where
+        Scalar: UnsignedTorus,
         Self: AsRefTensor<Element = Scalar>,
         LweList<InCont>: AsRefTensor<Element = Scalar>,
-        GlweCiphertext<OutCont>: AsMutTensor<Element = Scalar>,
-        OutCont: Clone,
-        Scalar: UnsignedTorus,
+        OutCont: AsMutSlice<Element = Scalar> + Clone,
     {
         debug_assert!(input.count().0 <= output.polynomial_size().0);
         output.as_mut_tensor().fill_with_element(Scalar::ZERO);
@@ -1210,7 +1209,7 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
     ) where
         Self: AsRefTensor<Element = Scalar>,
         GlweCiphertext<OutCont>: AsMutTensor<Element = Scalar>,
-        LweCiphertext<InCont>: AsRefTensor<Element = Scalar>,
+        InCont: AsRefSlice<Element = Scalar>,
         Scalar: UnsignedTorus,
     {
         ck_dim_eq!(self.input_lwe_key_dimension().0  => before.lwe_size().to_lwe_dimension().0 );
