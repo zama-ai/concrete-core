@@ -14,13 +14,6 @@ members = [
     "concrete-cuda",
 ]
 
-[patch.crates-io]
-concrete-npe = { path = "concrete-npe" }
-concrete-core = { path = "concrete-core" }
-concrete-csprng = { path = "concrete-csprng" }
-concrete-commons = { path = "concrete-commons" }
-concrete-cuda = { path = "concrete-cuda" }
-
 [profile.release]
 lto = "fat"
 
