@@ -378,7 +378,6 @@ where
     let k_type_id = TypeId::of::<K>();
     if k_type_id == TypeId::of::<BinaryKeyDistribution>() {
         concrete_npe::estimate_private_functional_keyswitch_noise_lwe_to_glwe_with_constant_terms::<
-            T,
             D1,
             D2,
             BinaryKeyKind,
@@ -389,10 +388,10 @@ where
             base_log,
             level,
             function_lipschitz_bound,
+            T::BITS as u32,
         )
     } else if k_type_id == TypeId::of::<TernaryKeyDistribution>() {
         concrete_npe::estimate_private_functional_keyswitch_noise_lwe_to_glwe_with_constant_terms::<
-            T,
             D1,
             D2,
             TernaryKeyKind,
@@ -403,10 +402,10 @@ where
             base_log,
             level,
             function_lipschitz_bound,
+            T::BITS as u32,
         )
     } else if k_type_id == TypeId::of::<GaussianKeyDistribution>() {
         concrete_npe::estimate_private_functional_keyswitch_noise_lwe_to_glwe_with_constant_terms::<
-            T,
             D1,
             D2,
             GaussianKeyKind,
@@ -417,6 +416,7 @@ where
             base_log,
             level,
             function_lipschitz_bound,
+            T::BITS as u32,
         )
     } else {
         panic!("Unknown key distribution encountered.")
