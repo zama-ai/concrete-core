@@ -1,6 +1,7 @@
 use concrete_core::commons::numeric::{CastInto, UnsignedInteger};
 use concrete_core::prelude::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    BinaryKeyKind, DecompositionBaseLog, DecompositionLevelCount, ExtractedBitsCount,
+    GlweDimension, LweDimension, PolynomialSize,
 };
 /// Contains material needed to estimate the growth of the noise when performing homomorphic
 /// computation
@@ -534,7 +535,6 @@ where
 /// let dispersion_ks = Variance(2_f64.powi(-40));
 /// let function_lipschitz_bound = 10.;
 /// let var_ks = estimate_private_functional_keyswitch_noise_lwe_to_glwe_with_constant_terms::<
-///     u64,
 ///     _,
 ///     _,
 ///     BinaryKeyKind,
@@ -545,18 +545,19 @@ where
 ///     base_log,
 ///     l_ks,
 ///     function_lipschitz_bound,
+///     64,
 /// );
 /// ```
-pub fn estimate_private_functional_keyswitch_noise_lwe_to_glwe_with_constant_terms<T, D1, D2, K>(
+pub fn estimate_private_functional_keyswitch_noise_lwe_to_glwe_with_constant_terms<D1, D2, K>(
     lwe_mask_size: LweDimension,
     dispersion_lwe: D1,
     dispersion_ksk: D2,
     base_log: DecompositionBaseLog,
     level: DecompositionLevelCount,
     function_lipschitz_bound: f64,
+    log2_modulus: u32,
 ) -> Variance
 where
-    T: UnsignedInteger,
     D1: DispersionParameter,
     D2: DispersionParameter,
     K: KeyDispersion,
@@ -564,22 +565,22 @@ where
     let n = lwe_mask_size.0 as f64;
     let base = 2_f64.powi(base_log.0 as i32);
     let b2l = 2_f64.powi((base_log.0 * 2 * level.0) as i32);
-    let q_square = 2_f64.powi((2 * T::BITS as u32) as i32);
+    let q_square = 2_f64.powi((2 * log2_modulus) as i32);
     let r2 = square(function_lipschitz_bound);
 
     // res 1
-    let res_1 = r2 * dispersion_lwe.get_modular_variance(T::BITS as u32);
+    let res_1 = r2 * dispersion_lwe.get_modular_variance(log2_modulus);
 
     // res 2
     let res_2 = r2
         * n
         * (q_square / (12. * b2l) - 1. / 12.)
-        * (K::variance_key_coefficient(T::BITS as u32).get_modular_variance(T::BITS as u32)
+        * (K::variance_key_coefficient(log2_modulus).get_modular_variance(log2_modulus)
             + square(K::expectation_key_coefficient()));
 
     // res 3
-    let res_3 = r2 * n / 4.
-        * K::variance_key_coefficient(T::BITS as u32).get_modular_variance(T::BITS as u32);
+    let res_3 =
+        r2 * n / 4. * K::variance_key_coefficient(log2_modulus).get_modular_variance(log2_modulus);
 
     // res 4
     let res_4 = r2 * (q_square / (12. * b2l) - 1. / 12.);
@@ -587,11 +588,11 @@ where
     // res 5
     let res_5 = (n + 1.)
         * (level.0 as f64)
-        * dispersion_ksk.get_modular_variance(T::BITS as u32)
+        * dispersion_ksk.get_modular_variance(log2_modulus)
         * (square(base) + 2.)
         / 12.;
 
-    Variance::from_modular_variance(res_1 + res_2 + res_3 + res_4 + res_5, T::BITS as u32)
+    Variance::from_modular_variance(res_1 + res_2 + res_3 + res_4 + res_5, log2_modulus)
 }
 
 /// Computes the dispersion of the non-constant GLWE terms after an LWE to GLWE keyswitch.
@@ -838,6 +839,282 @@ where
             * K::variance_key_coefficient(log2_modulus).get_modular_variance(log2_modulus)
         + n / 16. * square(1. - k * big_n * K::expectation_key_coefficient());
     Variance::from_modular_variance(res_1 + res_2, log2_modulus)
+}
+
+/// Computes the dispersions of ciphertexts encrypting the bits after bit extraction, the
+/// dispersion of the ciphertext of the most significant bit extracted is first and of the least
+/// significant bit last.
+/// # Example
+/// ```rust
+/// use concrete_core::prelude::*;
+/// use concrete_npe::estimate_bit_extraction_noise;
+/// let poly_size = PolynomialSize(1024);
+/// let input_lwe_mask_size = LweDimension(667);
+/// let lwe_mask_size_after_ks = LweDimension(512);
+/// let glwe_mask_size = GlweDimension(2);
+/// let dispersion_lwe = Variance(2_f64.powi(-38));
+/// let dispersion_ksk = Variance(2_f64.powi(-31));
+/// let dispersion_bsk = Variance(2_f64.powi(-104));
+/// let level_ksk = DecompositionLevelCount(14);
+/// let base_log_ksk = DecompositionBaseLog(1);
+/// let level_bsk = DecompositionLevelCount(6);
+/// let base_log_bsk = DecompositionBaseLog(7);
+/// let number_of_bits_to_extract = ExtractedBitsCount(8);
+/// let total_precision = 16_u32;
+/// let vars_bit_extract = estimate_bit_extraction_noise::<_, _, _, BinaryKeyKind, BinaryKeyKind>(
+///     number_of_bits_to_extract,
+///     total_precision,
+///     input_lwe_mask_size,
+///     lwe_mask_size_after_ks,
+///     glwe_mask_size,
+///     poly_size,
+///     dispersion_lwe,
+///     dispersion_ksk,
+///     dispersion_bsk,
+///     base_log_ksk,
+///     level_ksk,
+///     base_log_bsk,
+///     level_bsk,
+///     64,
+/// );
+/// ```
+#[allow(clippy::too_many_arguments)]
+pub fn estimate_bit_extraction_noise<D1, D2, D3, K1, K2>(
+    number_of_bits_to_extract: ExtractedBitsCount,
+    total_precision: u32,
+    input_lwe_mask_size: LweDimension,
+    lwe_mask_size_after_ks: LweDimension,
+    glwe_mask_size: GlweDimension,
+    poly_size: PolynomialSize,
+    dispersion_lwe: D1,
+    dispersion_ksk: D2,
+    dispersion_bsk: D3,
+    base_log_ksk: DecompositionBaseLog,
+    level_ksk: DecompositionLevelCount,
+    base_log_bsk: DecompositionBaseLog,
+    level_bsk: DecompositionLevelCount,
+    log2_modulus: u32,
+) -> Vec<Variance>
+where
+    D1: DispersionParameter,
+    D2: DispersionParameter,
+    D3: DispersionParameter,
+    K1: KeyDispersion,
+    K2: KeyDispersion,
+{
+    let mut loop_dispersions: Vec<Variance> = vec![Variance(0f64); number_of_bits_to_extract.0];
+    let initial_var = dispersion_lwe.get_modular_variance(log2_modulus);
+    loop_dispersions[0] = Variance::from_modular_variance(initial_var, log2_modulus);
+    let mut output_dispersions: Vec<Variance> = vec![];
+    for bit in 0..number_of_bits_to_extract.0 {
+        let var_after_scaling: f64 = loop_dispersions[bit].get_modular_variance(log2_modulus)
+            * 4_f64.powi((total_precision as i32) - (bit as i32) - 1);
+        let dispersion_after_scaling =
+            Variance::from_modular_variance(var_after_scaling, log2_modulus);
+        let output_dispersion = estimate_keyswitch_noise_lwe_to_glwe_with_constant_terms::<_, D2, K1>(
+            input_lwe_mask_size,
+            dispersion_after_scaling,
+            dispersion_ksk,
+            base_log_ksk,
+            level_ksk,
+            log2_modulus,
+        );
+        output_dispersions.push(output_dispersion);
+        if bit != number_of_bits_to_extract.0 - 1 {
+            let dispersion_after_pbs = estimate_pbs_noise::<D3, K2>(
+                lwe_mask_size_after_ks,
+                poly_size,
+                glwe_mask_size,
+                base_log_bsk,
+                level_bsk,
+                dispersion_bsk,
+                log2_modulus,
+            );
+            loop_dispersions[bit + 1] = estimate_addition_noise::<_, _>(
+                loop_dispersions[bit],
+                dispersion_after_pbs,
+                log2_modulus,
+            );
+        }
+    }
+    output_dispersions.reverse();
+    output_dispersions
+}
+
+/// Computes the dispersion of a circuit bootstrapping for a binary message and a binary secret
+/// key, each ciphertext output is the result of a PBS followed by a private functional
+/// keyswitch where the private function is "multiplication by x" where `x` is one component
+/// of a GLWE secret key, hence a polynomial with binary coefficients, or is the identity function.
+///
+/// # Example
+/// ```rust
+/// use concrete_core::prelude::*;
+/// use concrete_npe::estimate_circuit_bootstrapping_binary_noise;
+/// let lwe_mask_size = LweDimension(667);
+/// let glwe_mask_size = GlweDimension(2);
+/// let poly_size = PolynomialSize(1024);
+/// let base_log = DecompositionBaseLog(4);
+/// let level = DecompositionLevelCount(7);
+/// let dispersion_bsk = Variance(2_f64.powi(-104));
+/// let dispersion_ksk = Variance(2_f64.powi(-31));
+/// let var_cb = estimate_circuit_bootstrapping_binary_noise::<_, _, BinaryKeyKind, BinaryKeyKind>(
+///     lwe_mask_size,
+///     poly_size,
+///     glwe_mask_size,
+///     base_log,
+///     level,
+///     dispersion_bsk,
+///     dispersion_ksk,
+///     64,
+/// );
+/// ```
+#[allow(clippy::too_many_arguments)]
+pub fn estimate_circuit_bootstrapping_binary_noise<D1, D2, K1, K2>(
+    lwe_mask_size: LweDimension,
+    poly_size: PolynomialSize,
+    glwe_mask_size: GlweDimension,
+    base_log: DecompositionBaseLog,
+    level: DecompositionLevelCount,
+    dispersion_bsk: D1,
+    dispersion_ksk: D2,
+    log2_modulus: u32,
+) -> Variance
+where
+    D1: DispersionParameter,
+    D2: DispersionParameter,
+    K1: KeyDispersion,
+    K2: KeyDispersion,
+{
+    estimate_private_functional_keyswitch_noise_lwe_to_glwe_with_constant_terms::<_, D2, K2>(
+        LweDimension(glwe_mask_size.0 * poly_size.0),
+        estimate_pbs_noise::<D1, K1>(
+            lwe_mask_size,
+            poly_size,
+            glwe_mask_size,
+            base_log,
+            level,
+            dispersion_bsk,
+            log2_modulus,
+        ),
+        dispersion_ksk,
+        base_log,
+        level,
+        1_f64, // Binary (or ternary) keys mean the lipschitz bound is 1
+        log2_modulus,
+    )
+}
+
+/// Compute the dispersion after a vertical packing. The output ciphertext is the result
+/// of n sequential CMUX operations where n is the number of GGSW ciphertexts given.
+/// During a PBS the final blind rotation also performs n sequential CMUX operations so we can
+/// use the same noise estimation formula.
+/// # Example
+/// ```rust
+/// use concrete_core::prelude::*;
+/// use concrete_npe::estimate_vertical_packing_noise;
+/// let poly_size = PolynomialSize(1024);
+/// let glwe_mask_size = GlweDimension(2);
+/// let base_log = DecompositionBaseLog(4);
+/// let level = DecompositionLevelCount(7);
+/// let dispersion_ggsw = Variance(2_f64.powi(-40));
+/// let number_of_ggsw = 8;
+/// let var_vp = estimate_vertical_packing_noise::<_>(
+///     number_of_ggsw,
+///     poly_size,
+///     glwe_mask_size,
+///     base_log,
+///     level,
+///     dispersion_ggsw,
+///     64,
+/// );
+/// ```
+pub fn estimate_vertical_packing_noise<D>(
+    number_of_ggsw: usize,
+    poly_size: PolynomialSize,
+    glwe_mask_size: GlweDimension,
+    base_log: DecompositionBaseLog,
+    level: DecompositionLevelCount,
+    dispersion_ggsw: D,
+    log2_modulus: u32,
+) -> Variance
+where
+    D: DispersionParameter,
+{
+    let n = LweDimension(number_of_ggsw);
+    // BinaryKeyKind used as the GGSWs encrypt binary messages
+    estimate_pbs_noise::<_, BinaryKeyKind>(
+        n,
+        poly_size,
+        glwe_mask_size,
+        base_log,
+        level,
+        dispersion_ggsw,
+        log2_modulus,
+    )
+}
+
+/// Compute the dispersion after a WoP-PBS.
+///
+/// # Example
+/// ```rust
+/// use concrete_core::prelude::*;
+/// use concrete_npe::estimate_wop_pbs_noise;
+/// let number_of_bits_to_extract = ExtractedBitsCount(8);
+/// let lwe_mask_size = LweDimension(667);
+/// let poly_size = PolynomialSize(1024);
+/// let glwe_mask_size = GlweDimension(2);
+/// let base_log_cb = DecompositionBaseLog(4);
+/// let level_cb = DecompositionLevelCount(7);
+/// let dispersion_cb_bsk = Variance(2_f64.powi(-104));
+/// let dispersion_cb_pfksk = Variance(2_f64.powi(-31));
+/// let var_wop_pbs = estimate_wop_pbs_noise::<_, _, BinaryKeyKind, BinaryKeyKind>(
+///     number_of_bits_to_extract,
+///     lwe_mask_size,
+///     poly_size,
+///     glwe_mask_size,
+///     base_log_cb,
+///     level_cb,
+///     dispersion_cb_bsk,
+///     dispersion_cb_pfksk,
+///     64,
+/// );
+/// ```
+#[allow(clippy::too_many_arguments)]
+pub fn estimate_wop_pbs_noise<D1, D2, K1, K2>(
+    number_of_bits_to_extract: ExtractedBitsCount,
+    lwe_mask_size_after_bit_extraction: LweDimension,
+    poly_size: PolynomialSize,
+    glwe_mask_size: GlweDimension,
+    base_log_cb: DecompositionBaseLog,
+    level_cb: DecompositionLevelCount,
+    dispersion_cb_bsk: D1,
+    dispersion_cb_pfksk: D2,
+    log2_modulus: u32,
+) -> Variance
+where
+    D1: DispersionParameter,
+    D2: DispersionParameter,
+    K1: KeyDispersion,
+    K2: KeyDispersion,
+{
+    estimate_vertical_packing_noise::<_>(
+        number_of_bits_to_extract.0,
+        poly_size,
+        glwe_mask_size,
+        base_log_cb,
+        level_cb,
+        estimate_circuit_bootstrapping_binary_noise::<D1, D2, K1, K2>(
+            lwe_mask_size_after_bit_extraction,
+            poly_size,
+            glwe_mask_size,
+            base_log_cb,
+            level_cb,
+            dispersion_cb_bsk,
+            dispersion_cb_pfksk,
+            log2_modulus,
+        ),
+        log2_modulus,
+    )
 }
 
 #[cfg(test)]
