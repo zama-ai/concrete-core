@@ -96,7 +96,7 @@ impl LweCiphertextConsumingRetrievalEngine<LweCiphertext64, Vec<u64>> for Defaul
 
 /// # Description:
 /// Implementation of [`LweCiphertextConsumingRetrievalEngine`] for [`DefaultEngine`] that returns
-/// the underlying slice of a [`LweCiphertextView32`] consuming it in the process
+/// the underlying container of a [`LweCiphertextView32`] consuming it in the process
 impl<'data> LweCiphertextConsumingRetrievalEngine<LweCiphertextView32<'data>, &'data [u32]>
     for DefaultEngine
 {
@@ -142,7 +142,7 @@ impl<'data> LweCiphertextConsumingRetrievalEngine<LweCiphertextView32<'data>, &'
 
 /// # Description:
 /// Implementation of [`LweCiphertextConsumingRetrievalEngine`] for [`DefaultEngine`] that returns
-/// the underlying slice of a [`LweCiphertextMutView32`] consuming it in the process
+/// the underlying container of a [`LweCiphertextMutView32`] consuming it in the process
 impl<'data> LweCiphertextConsumingRetrievalEngine<LweCiphertextMutView32<'data>, &'data mut [u32]>
     for DefaultEngine
 {
@@ -190,7 +190,7 @@ impl<'data> LweCiphertextConsumingRetrievalEngine<LweCiphertextMutView32<'data>,
 
 /// # Description:
 /// Implementation of [`LweCiphertextConsumingRetrievalEngine`] for [`DefaultEngine`] that returns
-/// the underlying slice of a [`LweCiphertextView64`] consuming it in the process
+/// the underlying container of a [`LweCiphertextView64`] consuming it in the process
 impl<'data> LweCiphertextConsumingRetrievalEngine<LweCiphertextView64<'data>, &'data [u64]>
     for DefaultEngine
 {
@@ -236,7 +236,7 @@ impl<'data> LweCiphertextConsumingRetrievalEngine<LweCiphertextView64<'data>, &'
 
 /// # Description:
 /// Implementation of [`LweCiphertextConsumingRetrievalEngine`] for [`DefaultEngine`] that returns
-/// the underlying slice of a [`LweCiphertextMutView64`] consuming it in the process
+/// the underlying container of a [`LweCiphertextMutView64`] consuming it in the process
 impl<'data> LweCiphertextConsumingRetrievalEngine<LweCiphertextMutView64<'data>, &'data mut [u64]>
     for DefaultEngine
 {
