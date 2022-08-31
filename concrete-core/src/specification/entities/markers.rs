@@ -73,6 +73,9 @@ entity_kind_marker! {
         LwePrivateFunctionalPackingKeyswitchKeyKind
             => "An empty type representing the private functional packing keyswitch key in the \
             type system.",
+        LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysKind
+            => "An empty type representing the private functional packing keyswitch key vector \
+            used for a circuit bootstrap in the type system.",
         LweBootstrapKeyKind
             => "An empty type representing the LWE bootstrap key kind in the type system.",
         LweSeededBootstrapKeyKind
