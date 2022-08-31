@@ -4,11 +4,10 @@ use crate::backends::cuda::implementation::entities::{
     CudaLweCiphertextVector32, CudaLweCiphertextVector64, CudaLweKeyswitchKey32,
     CudaLweKeyswitchKey64,
 };
-use crate::backends::cuda::private::device::NumberOfSamples;
+use crate::backends::cuda::private::crypto::keyswitch::execute_lwe_ciphertext_vector_keyswitch_on_gpu;
 use crate::specification::engines::{
     LweCiphertextVectorDiscardingKeyswitchEngine, LweCiphertextVectorDiscardingKeyswitchError,
 };
-use crate::specification::entities::{LweCiphertextVectorEntity, LweKeyswitchKeyEntity};
 
 impl From<CudaError> for LweCiphertextVectorDiscardingKeyswitchError<CudaError> {
     fn from(err: CudaError) -> Self {
@@ -120,23 +119,13 @@ impl
         input: &CudaLweCiphertextVector32,
         ksk: &CudaLweKeyswitchKey32,
     ) {
-        let samples_per_gpu =
-            NumberOfSamples(input.lwe_ciphertext_count().0 / self.get_number_of_gpus());
-
-        for gpu_index in 0..self.get_number_of_gpus() {
-            let stream = self.streams.get(gpu_index).unwrap();
-
-            stream.discard_keyswitch_lwe_ciphertext_vector_32(
-                output.0.d_vecs.get_mut(gpu_index).unwrap(),
-                input.0.d_vecs.get(gpu_index).unwrap(),
-                input.0.lwe_dimension,
-                output.0.lwe_dimension,
-                ksk.0.d_vecs.get(gpu_index).unwrap(),
-                ksk.decomposition_base_log(),
-                ksk.decomposition_level_count(),
-                samples_per_gpu,
-            );
-        }
+        execute_lwe_ciphertext_vector_keyswitch_on_gpu::<u32>(
+            self.get_cuda_streams(),
+            &mut output.0,
+            &input.0,
+            &ksk.0,
+            self.get_number_of_gpus(),
+        );
     }
 }
 
@@ -244,22 +233,12 @@ impl
         input: &CudaLweCiphertextVector64,
         ksk: &CudaLweKeyswitchKey64,
     ) {
-        let samples_per_gpu =
-            NumberOfSamples(input.lwe_ciphertext_count().0 / self.get_number_of_gpus());
-
-        for gpu_index in 0..self.get_number_of_gpus() {
-            let stream = self.streams.get(gpu_index).unwrap();
-
-            stream.discard_keyswitch_lwe_ciphertext_vector_64(
-                output.0.d_vecs.get_mut(gpu_index).unwrap(),
-                input.0.d_vecs.get(gpu_index).unwrap(),
-                input.0.lwe_dimension,
-                output.0.lwe_dimension,
-                ksk.0.d_vecs.get(gpu_index).unwrap(),
-                ksk.decomposition_base_log(),
-                ksk.decomposition_level_count(),
-                samples_per_gpu,
-            );
-        }
+        execute_lwe_ciphertext_vector_keyswitch_on_gpu::<u64>(
+            self.get_cuda_streams(),
+            &mut output.0,
+            &input.0,
+            &ksk.0,
+            self.get_number_of_gpus(),
+        );
     }
 }

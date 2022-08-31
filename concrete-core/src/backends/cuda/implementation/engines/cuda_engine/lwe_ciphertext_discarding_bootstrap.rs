@@ -138,7 +138,7 @@ impl
         let mut test_vector_indexes = stream.malloc::<u32>(1);
         stream.copy_to_gpu(&mut test_vector_indexes, &[0]);
 
-        stream.discard_bootstrap_low_latency_lwe_ciphertext_vector_32(
+        stream.discard_bootstrap_low_latency_lwe_ciphertext_vector::<u32>(
             &mut output.0.d_vec,
             &acc.0.d_vec,
             &test_vector_indexes,
@@ -276,7 +276,7 @@ impl
         let mut test_vector_indexes = stream.malloc::<u32>(1);
         stream.copy_to_gpu(&mut test_vector_indexes, &[0]);
 
-        stream.discard_bootstrap_low_latency_lwe_ciphertext_vector_64(
+        stream.discard_bootstrap_low_latency_lwe_ciphertext_vector::<u64>(
             &mut output.0.d_vec,
             &acc.0.d_vec,
             &test_vector_indexes,

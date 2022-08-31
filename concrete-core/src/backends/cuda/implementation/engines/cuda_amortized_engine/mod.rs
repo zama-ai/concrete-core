@@ -1,5 +1,5 @@
 use crate::backends::cuda::engines::CudaError;
-use crate::backends::cuda::private::device::{CudaStream, GpuIndex};
+use crate::backends::cuda::private::device::{CudaStream, GpuIndex, NumberOfGpus};
 use crate::prelude::sealed::AbstractEngineSeal;
 use crate::prelude::{AbstractEngine, SharedMemoryAmount};
 use concrete_cuda::cuda_bind::cuda_get_number_of_gpus;
@@ -28,7 +28,7 @@ impl AbstractEngine for AmortizedCudaEngine {
             Err(CudaError::DeviceNotFound)
         } else {
             let mut streams: Vec<CudaStream> = Vec::new();
-            for gpu_index in 0..number_of_gpus as u32 {
+            for gpu_index in 0..number_of_gpus {
                 streams.push(CudaStream::new(GpuIndex(gpu_index))?);
             }
             let max_shared_memory = streams[0].get_max_shared_memory()?;
@@ -43,8 +43,8 @@ impl AbstractEngine for AmortizedCudaEngine {
 
 impl AmortizedCudaEngine {
     /// Get the number of available GPUs from the engine
-    pub fn get_number_of_gpus(&self) -> usize {
-        self.streams.len()
+    pub fn get_number_of_gpus(&self) -> NumberOfGpus {
+        NumberOfGpus(self.streams.len())
     }
     /// Get the Cuda streams from the engine
     pub fn get_cuda_streams(&self) -> &Vec<CudaStream> {

@@ -3,8 +3,9 @@ use crate::backends::cuda::implementation::engines::CudaEngine;
 use crate::backends::cuda::implementation::entities::{
     CudaFourierLweBootstrapKey32, CudaFourierLweBootstrapKey64,
 };
-use crate::backends::cuda::private::crypto::bootstrap::CudaBootstrapKey;
-use crate::commons::math::tensor::{AsRefSlice, AsRefTensor};
+use crate::backends::cuda::private::crypto::bootstrap::{
+    convert_lwe_bootstrap_key_from_cpu_to_gpu, CudaBootstrapKey,
+};
 use crate::prelude::{LweBootstrapKey32, LweBootstrapKey64};
 use crate::specification::engines::{
     LweBootstrapKeyConversionEngine, LweBootstrapKeyConversionError,
@@ -72,13 +73,13 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey32, CudaFourierLweBootstrapK
         check_poly_size!(poly_size);
         let glwe_dim = input.0.glwe_size().to_glwe_dimension();
         check_glwe_dim!(glwe_dim);
+        let data_per_gpu = input.glwe_dimension().to_glwe_size().0
+            * input.glwe_dimension().to_glwe_size().0
+            * input.input_lwe_dimension().0
+            * input.decomposition_level_count().0
+            * input.polynomial_size().0;
+        let size = data_per_gpu as u64 * std::mem::size_of::<u32>() as u64;
         for stream in self.streams.iter() {
-            let data_per_gpu = input.glwe_dimension().to_glwe_size().0
-                * input.glwe_dimension().to_glwe_size().0
-                * input.input_lwe_dimension().0
-                * input.decomposition_level_count().0
-                * input.polynomial_size().0;
-            let size = data_per_gpu as u64 * std::mem::size_of::<u32>() as u64;
             stream.check_device_memory(size)?;
         }
         Ok(unsafe { self.convert_lwe_bootstrap_key_unchecked(input) })
@@ -88,31 +89,11 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey32, CudaFourierLweBootstrapK
         &mut self,
         input: &LweBootstrapKey32,
     ) -> CudaFourierLweBootstrapKey32 {
-        // Copy the entire input vector over all GPUs
-        let mut vecs = Vec::with_capacity(self.get_number_of_gpus() as usize);
-        // TODO
-        //   Check if it would be better to have GPU 0 compute the BSK and copy it back to the
-        //   CPU, then copy the BSK to the other GPUs. Are we sure the BSK generated on each GPU
-        //   will be exactly the same?
-        let total_polynomials = input.input_lwe_dimension().0
-            * input.glwe_dimension().to_glwe_size().0
-            * input.glwe_dimension().to_glwe_size().0
-            * input.decomposition_level_count().0;
-        let alloc_size = total_polynomials * input.polynomial_size().0;
-        for stream in self.streams.iter() {
-            stream.initialize_twiddles(input.polynomial_size());
-            let mut d_vec = stream.malloc::<f64>(alloc_size as u32);
-            let input_slice = input.0.as_tensor().as_slice();
-            stream.convert_lwe_bootstrap_key_32(
-                &mut d_vec,
-                input_slice,
-                input.input_lwe_dimension(),
-                input.glwe_dimension(),
-                input.decomposition_level_count(),
-                input.polynomial_size(),
-            );
-            vecs.push(d_vec);
-        }
+        let vecs = convert_lwe_bootstrap_key_from_cpu_to_gpu::<u32, _>(
+            self.get_cuda_streams(),
+            &input.0,
+            self.get_number_of_gpus(),
+        );
         CudaFourierLweBootstrapKey32(CudaBootstrapKey::<u32> {
             d_vecs: vecs,
             polynomial_size: input.polynomial_size(),
@@ -179,13 +160,13 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey64, CudaFourierLweBootstrapK
         check_poly_size!(poly_size);
         let glwe_dim = input.0.glwe_size().to_glwe_dimension();
         check_glwe_dim!(glwe_dim);
+        let data_per_gpu = input.glwe_dimension().to_glwe_size().0
+            * input.glwe_dimension().to_glwe_size().0
+            * input.input_lwe_dimension().0
+            * input.decomposition_level_count().0
+            * input.polynomial_size().0;
+        let size = data_per_gpu as u64 * std::mem::size_of::<u64>() as u64;
         for stream in self.streams.iter() {
-            let data_per_gpu = input.glwe_dimension().to_glwe_size().0
-                * input.glwe_dimension().to_glwe_size().0
-                * input.input_lwe_dimension().0
-                * input.decomposition_level_count().0
-                * input.polynomial_size().0;
-            let size = data_per_gpu as u64 * std::mem::size_of::<u64>() as u64;
             stream.check_device_memory(size)?;
         }
         Ok(unsafe { self.convert_lwe_bootstrap_key_unchecked(input) })
@@ -195,31 +176,11 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey64, CudaFourierLweBootstrapK
         &mut self,
         input: &LweBootstrapKey64,
     ) -> CudaFourierLweBootstrapKey64 {
-        // Copy the entire input vector over all GPUs
-        let mut vecs = Vec::with_capacity(self.get_number_of_gpus() as usize);
-        // TODO
-        //   Check if it would be better to have GPU 0 compute the BSK and copy it back to the
-        //   CPU, then copy the BSK to the other GPUs. Are we sure the BSK generated on each GPU
-        //   will be exactly the same?
-        let total_polynomials = input.input_lwe_dimension().0
-            * input.glwe_dimension().to_glwe_size().0
-            * input.glwe_dimension().to_glwe_size().0
-            * input.decomposition_level_count().0;
-        let alloc_size = total_polynomials * input.polynomial_size().0;
-        for stream in self.streams.iter() {
-            stream.initialize_twiddles(input.polynomial_size());
-            let mut d_vec = stream.malloc::<f64>(alloc_size as u32);
-            let input_slice = input.0.as_tensor().as_slice();
-            stream.convert_lwe_bootstrap_key_64(
-                &mut d_vec,
-                input_slice,
-                input.input_lwe_dimension(),
-                input.glwe_dimension(),
-                input.decomposition_level_count(),
-                input.polynomial_size(),
-            );
-            vecs.push(d_vec);
-        }
+        let vecs = convert_lwe_bootstrap_key_from_cpu_to_gpu::<u64, _>(
+            self.get_cuda_streams(),
+            &input.0,
+            self.get_number_of_gpus(),
+        );
         CudaFourierLweBootstrapKey64(CudaBootstrapKey::<u64> {
             d_vecs: vecs,
             polynomial_size: input.polynomial_size(),

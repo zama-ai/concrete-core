@@ -1,7 +1,6 @@
-use crate::backends::cuda::engines::CudaError;
-use crate::backends::cuda::private::device::{CudaStream, GpuIndex};
+use crate::backends::cuda::private::device::{CudaStream, GpuIndex, NumberOfGpus};
 use crate::prelude::sealed::AbstractEngineSeal;
-use crate::prelude::{AbstractEngine, SharedMemoryAmount};
+use crate::prelude::{AbstractEngine, CudaError, SharedMemoryAmount};
 use concrete_cuda::cuda_bind::cuda_get_number_of_gpus;
 
 /// The main engine exposed by the cuda backend.
@@ -34,7 +33,7 @@ impl AbstractEngine for CudaEngine {
             Err(CudaError::DeviceNotFound)
         } else {
             let mut streams: Vec<CudaStream> = Vec::new();
-            for gpu_index in 0..number_of_gpus as u32 {
+            for gpu_index in 0..number_of_gpus {
                 streams.push(CudaStream::new(GpuIndex(gpu_index))?);
             }
             let max_shared_memory = streams[0].get_max_shared_memory()?;
@@ -49,8 +48,8 @@ impl AbstractEngine for CudaEngine {
 
 impl CudaEngine {
     /// Get the number of available GPUs from the engine
-    pub fn get_number_of_gpus(&self) -> usize {
-        self.streams.len()
+    pub fn get_number_of_gpus(&self) -> NumberOfGpus {
+        NumberOfGpus(self.streams.len())
     }
     /// Get the Cuda streams from the engine
     pub fn get_cuda_streams(&self) -> &Vec<CudaStream> {
@@ -59,21 +58,6 @@ impl CudaEngine {
     /// Get the size of the shared memory (on device 0)
     pub fn get_cuda_shared_memory(&self) -> SharedMemoryAmount {
         SharedMemoryAmount(self.max_shared_memory)
-    }
-
-    fn compute_number_of_samples_lwe_ciphertext_vector(
-        &self,
-        samples_per_gpu: usize,
-        lwe_ciphertext_count: usize,
-        gpu_index: usize,
-    ) -> usize {
-        let mut samples = samples_per_gpu;
-        if gpu_index == self.get_number_of_gpus() - 1
-            && lwe_ciphertext_count % self.get_number_of_gpus() as usize != 0
-        {
-            samples += lwe_ciphertext_count - samples_per_gpu * self.get_number_of_gpus() as usize;
-        }
-        samples
     }
 }
 

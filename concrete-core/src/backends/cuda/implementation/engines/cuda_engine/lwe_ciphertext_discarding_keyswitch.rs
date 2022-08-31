@@ -111,7 +111,7 @@ impl
     ) {
         let stream = &self.streams[0];
 
-        stream.discard_keyswitch_lwe_ciphertext_vector_32(
+        stream.discard_keyswitch_lwe_ciphertext_vector::<u32>(
             &mut output.0.d_vec,
             &input.0.d_vec,
             input.0.lwe_dimension,
@@ -220,7 +220,7 @@ impl
     ) {
         let stream = &self.streams[0];
 
-        stream.discard_keyswitch_lwe_ciphertext_vector_64(
+        stream.discard_keyswitch_lwe_ciphertext_vector::<u64>(
             &mut output.0.d_vec,
             &input.0.d_vec,
             input.0.lwe_dimension,
