@@ -57,7 +57,7 @@ pub(crate) enum LweCiphertextVector64Version {
     Unsupported,
 }
 
-// LweCiphertextVectorViews are just LweCiphertextVector entities that do not own their memory, 
+// LweCiphertextVectorViews are just LweCiphertextVector entities that do not own their memory,
 // they use a slice as a container as opposed to Vec for the standard LweCiphertextVector
 
 /// A structure representing a vector of LWE ciphertext views, with 32 bits of precision.
