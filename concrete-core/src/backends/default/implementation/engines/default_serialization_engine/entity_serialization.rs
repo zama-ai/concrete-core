@@ -1,4 +1,5 @@
 #![allow(clippy::missing_safety_doc)]
+
 use crate::commons::crypto::bootstrap::{
     StandardBootstrapKey as ImplStandardBootstrapKey,
     StandardSeededBootstrapKey as ImplStandardSeededBootstrapKey,
@@ -45,8 +46,9 @@ use crate::prelude::{
     LweBootstrapKey64, LweBootstrapKey64Version, LweCiphertext32, LweCiphertext32Version,
     LweCiphertext64, LweCiphertext64Version, LweCiphertextMutView32, LweCiphertextMutView64,
     LweCiphertextVector32, LweCiphertextVector32Version, LweCiphertextVector64,
-    LweCiphertextVector64Version, LweCiphertextView32, LweCiphertextView64, LweKeyswitchKey32,
-    LweKeyswitchKey32Version, LweKeyswitchKey64, LweKeyswitchKey64Version,
+    LweCiphertextVector64Version, LweCiphertextVectorMutView32, LweCiphertextVectorMutView64,
+    LweCiphertextVectorView32, LweCiphertextVectorView64, LweCiphertextView32, LweCiphertextView64,
+    LweKeyswitchKey32, LweKeyswitchKey32Version, LweKeyswitchKey64, LweKeyswitchKey64Version,
     LwePackingKeyswitchKey32, LwePackingKeyswitchKey32Version, LwePackingKeyswitchKey64,
     LwePackingKeyswitchKey64Version, LweSecretKey32, LweSecretKey32Version, LweSecretKey64,
     LweSecretKey64Version, LweSeededBootstrapKey32, LweSeededBootstrapKey32Version,
@@ -2034,6 +2036,286 @@ impl EntitySerializationEngine<LweCiphertextVector64, Vec<u8>> for DefaultSerial
     }
 
     unsafe fn serialize_unchecked(&mut self, entity: &LweCiphertextVector64) -> Vec<u8> {
+        self.serialize(entity).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
+/// on 32 bits integers. It serializes a LWE ciphertext vector view entity. Immutable variant.
+impl<'b> EntitySerializationEngine<LweCiphertextVectorView32<'b>, Vec<u8>>
+    for DefaultSerializationEngine
+{
+    /// # Example:
+    /// ```
+    /// use concrete_commons::dispersion::Variance;
+    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let lwe_dimension = LweDimension(6);
+    /// let lwe_count = LweCiphertextCount(3);
+    /// // Here a hard-set encoding is applied (shift by 20 bits)
+    /// let input = vec![3_u32 << 20; lwe_count.0];
+    /// let noise = Variance(2_f64.powf(-50.));
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector_from(&input)?;
+    ///
+    /// let mut ciphertext_vector: LweCiphertextVector32 =
+    ///     engine.encrypt_lwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    /// let raw_buffer = engine.consume_retrieve_lwe_ciphertext_vector(ciphertext_vector)?;
+    /// let view: LweCiphertextVectorView32 = engine
+    ///     .create_lwe_ciphertext_vector_from(raw_buffer.as_slice(), lwe_dimension.to_lwe_size())?;
+    ///
+    /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
+    /// let serialized = serialization_engine.serialize(&view)?;
+    /// let recovered: LweCiphertextVector32 =
+    ///     serialization_engine.deserialize(serialized.as_slice())?;
+    /// let recovered_buffer = engine.consume_retrieve_lwe_ciphertext_vector(recovered)?;
+    /// assert_eq!(raw_buffer, recovered_buffer);
+    ///
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn serialize(
+        &mut self,
+        entity: &LweCiphertextVectorView32<'b>,
+    ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
+        #[derive(Serialize)]
+        struct SerializableLweCiphertextVectorView32<'a, 'b> {
+            version: LweCiphertextVector32Version,
+            inner: &'a ImplLweList<&'b [u32]>,
+        }
+
+        let serializable = SerializableLweCiphertextVectorView32 {
+            version: LweCiphertextVector32Version::V0,
+            inner: &entity.0,
+        };
+        bincode::serialize(&serializable)
+            .map_err(DefaultSerializationError::Serialization)
+            .map_err(EntitySerializationError::Engine)
+    }
+
+    unsafe fn serialize_unchecked(&mut self, entity: &LweCiphertextVectorView32<'b>) -> Vec<u8> {
+        self.serialize(entity).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
+/// on 64 bits integers. It serializes a LWE ciphertext vector view entity. Immutable variant.
+impl<'b> EntitySerializationEngine<LweCiphertextVectorView64<'b>, Vec<u8>>
+    for DefaultSerializationEngine
+{
+    /// # Example:
+    /// ```
+    /// use concrete_commons::dispersion::Variance;
+    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let lwe_dimension = LweDimension(6);
+    /// let lwe_count = LweCiphertextCount(3);
+    /// // Here a hard-set encoding is applied (shift by 50 bits)
+    /// let input = vec![3_u64 << 50; lwe_count.0];
+    /// let noise = Variance(2_f64.powf(-50.));
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector_from(&input)?;
+    ///
+    /// let mut ciphertext_vector: LweCiphertextVector64 =
+    ///     engine.encrypt_lwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    /// let raw_buffer = engine.consume_retrieve_lwe_ciphertext_vector(ciphertext_vector)?;
+    /// let view: LweCiphertextVectorView64 = engine
+    ///     .create_lwe_ciphertext_vector_from(raw_buffer.as_slice(), lwe_dimension.to_lwe_size())?;
+    ///
+    /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
+    /// let serialized = serialization_engine.serialize(&view)?;
+    /// let recovered: LweCiphertextVector64 =
+    ///     serialization_engine.deserialize(serialized.as_slice())?;
+    /// let recovered_buffer = engine.consume_retrieve_lwe_ciphertext_vector(recovered)?;
+    /// assert_eq!(raw_buffer, recovered_buffer);
+    ///
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn serialize(
+        &mut self,
+        entity: &LweCiphertextVectorView64<'b>,
+    ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
+        #[derive(Serialize)]
+        struct SerializableLweCiphertextVectorView64<'a, 'b> {
+            version: LweCiphertextVector64Version,
+            inner: &'a ImplLweList<&'b [u64]>,
+        }
+
+        let serializable = SerializableLweCiphertextVectorView64 {
+            version: LweCiphertextVector64Version::V0,
+            inner: &entity.0,
+        };
+        bincode::serialize(&serializable)
+            .map_err(DefaultSerializationError::Serialization)
+            .map_err(EntitySerializationError::Engine)
+    }
+
+    unsafe fn serialize_unchecked(&mut self, entity: &LweCiphertextVectorView64<'b>) -> Vec<u8> {
+        self.serialize(entity).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
+/// on 32 bits integers. It serializes a LWE ciphertext vector view entity. Mutable variant.
+impl<'b> EntitySerializationEngine<LweCiphertextVectorMutView32<'b>, Vec<u8>>
+    for DefaultSerializationEngine
+{
+    /// # Example:
+    /// ```
+    /// use concrete_commons::dispersion::Variance;
+    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let lwe_dimension = LweDimension(6);
+    /// let lwe_count = LweCiphertextCount(3);
+    /// // Here a hard-set encoding is applied (shift by 20 bits)
+    /// let input = vec![3_u32 << 20; lwe_count.0];
+    /// let noise = Variance(2_f64.powf(-50.));
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector_from(&input)?;
+    ///
+    /// let mut ciphertext_vector: LweCiphertextVector32 =
+    ///     engine.encrypt_lwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    /// let mut raw_buffer = engine.consume_retrieve_lwe_ciphertext_vector(ciphertext_vector)?;
+    /// let view: LweCiphertextVectorMutView32 = engine.create_lwe_ciphertext_vector_from(
+    ///     raw_buffer.as_mut_slice(),
+    ///     lwe_dimension.to_lwe_size(),
+    /// )?;
+    ///
+    /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
+    /// let serialized = serialization_engine.serialize(&view)?;
+    /// let recovered: LweCiphertextVector32 =
+    ///     serialization_engine.deserialize(serialized.as_slice())?;
+    /// let recovered_buffer = engine.consume_retrieve_lwe_ciphertext_vector(recovered)?;
+    /// assert_eq!(raw_buffer, recovered_buffer);
+    ///
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn serialize(
+        &mut self,
+        entity: &LweCiphertextVectorMutView32<'b>,
+    ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
+        #[derive(Serialize)]
+        struct SerializableLweCiphertextVectorMutView32<'a, 'b> {
+            version: LweCiphertextVector32Version,
+            inner: &'a ImplLweList<&'b mut [u32]>,
+        }
+
+        let serializable = SerializableLweCiphertextVectorMutView32 {
+            version: LweCiphertextVector32Version::V0,
+            inner: &entity.0,
+        };
+        bincode::serialize(&serializable)
+            .map_err(DefaultSerializationError::Serialization)
+            .map_err(EntitySerializationError::Engine)
+    }
+
+    unsafe fn serialize_unchecked(&mut self, entity: &LweCiphertextVectorMutView32<'b>) -> Vec<u8> {
+        self.serialize(entity).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
+/// on 64 bits integers. It serializes a LWE ciphertext vector view entity. Mutable variant.
+impl<'b> EntitySerializationEngine<LweCiphertextVectorMutView64<'b>, Vec<u8>>
+    for DefaultSerializationEngine
+{
+    /// # Example:
+    /// ```
+    /// use concrete_commons::dispersion::Variance;
+    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
+    /// use concrete_core::prelude::*;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let lwe_dimension = LweDimension(6);
+    /// let lwe_count = LweCiphertextCount(3);
+    /// // Here a hard-set encoding is applied (shift by 50 bits)
+    /// let input = vec![3_u64 << 50; lwe_count.0];
+    /// let noise = Variance(2_f64.powf(-50.));
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector_from(&input)?;
+    ///
+    /// let mut ciphertext_vector: LweCiphertextVector64 =
+    ///     engine.encrypt_lwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    /// let mut raw_buffer = engine.consume_retrieve_lwe_ciphertext_vector(ciphertext_vector)?;
+    /// let view: LweCiphertextVectorMutView64 = engine.create_lwe_ciphertext_vector_from(
+    ///     raw_buffer.as_mut_slice(),
+    ///     lwe_dimension.to_lwe_size(),
+    /// )?;
+    ///
+    /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
+    /// let serialized = serialization_engine.serialize(&view)?;
+    /// let recovered: LweCiphertextVector64 =
+    ///     serialization_engine.deserialize(serialized.as_slice())?;
+    /// let recovered_buffer = engine.consume_retrieve_lwe_ciphertext_vector(recovered)?;
+    /// assert_eq!(raw_buffer, recovered_buffer);
+    ///
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn serialize(
+        &mut self,
+        entity: &LweCiphertextVectorMutView64<'b>,
+    ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
+        #[derive(Serialize)]
+        struct SerializableLweCiphertextVectorMutView64<'a, 'b> {
+            version: LweCiphertextVector64Version,
+            inner: &'a ImplLweList<&'b mut [u64]>,
+        }
+
+        let serializable = SerializableLweCiphertextVectorMutView64 {
+            version: LweCiphertextVector64Version::V0,
+            inner: &entity.0,
+        };
+        bincode::serialize(&serializable)
+            .map_err(DefaultSerializationError::Serialization)
+            .map_err(EntitySerializationError::Engine)
+    }
+
+    unsafe fn serialize_unchecked(&mut self, entity: &LweCiphertextVectorMutView64<'b>) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }

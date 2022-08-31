@@ -128,8 +128,6 @@ impl<'data>
     /// let mut owned_container = vec![0_u32; lwe_size.0 * lwe_ciphertext_count.0];
     ///
     /// let slice = &owned_container[..];
-    /// // Required as we can't borrow a mut slice more than once
-    /// let underlying_ptr = slice.as_ptr();
     ///
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
@@ -179,8 +177,6 @@ impl<'data>
     /// let mut owned_container = vec![0_u64; lwe_size.0 * lwe_ciphertext_count.0];
     ///
     /// let slice = &owned_container[..];
-    /// // Required as we can't borrow a mut slice more than once
-    /// let underlying_ptr = slice.as_ptr();
     ///
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
