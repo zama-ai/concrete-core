@@ -230,7 +230,6 @@ pub fn test_circuit_bootstrapping_binary() {
     vec_pfksk.fill_with_fpksk_for_circuit_bootstrap(
         &lwe_sk_bs_output,
         &glwe_sk,
-        &glwe_sk,
         std,
         &mut encryption_generator,
     );
@@ -549,7 +548,6 @@ pub fn test_extract_bit_circuit_bootstrapping_vertical_packing() {
 
     vec_fpksk.fill_with_fpksk_for_circuit_bootstrap(
         &lwe_big_sk,
-        &glwe_sk,
         &glwe_sk,
         std_small,
         &mut encryption_generator,
