@@ -1765,11 +1765,10 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKeyList<Cont> {
             })
     }
 
-    pub fn fill_with_fpksk_for_circuit_bootstrap<Scalar, C1, C2, C3, Gen>(
+    pub fn fill_with_fpksk_for_circuit_bootstrap<Scalar, C1, C2, Gen>(
         &mut self,
         input_lwe_key: &LweSecretKey<BinaryKeyKind, C1>,
         output_glwe_key: &GlweSecretKey<BinaryKeyKind, C2>,
-        encrypted_glwe_key: &GlweSecretKey<BinaryKeyKind, C3>,
         noise_parameters: impl DispersionParameter,
         generator: &mut EncryptionRandomGenerator<Gen>,
     ) where
@@ -1777,13 +1776,20 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKeyList<Cont> {
         Self: AsMutTensor<Element = Scalar>,
         LweSecretKey<BinaryKeyKind, C1>: AsRefTensor<Element = Scalar>,
         GlweSecretKey<BinaryKeyKind, C2>: AsRefTensor<Element = Scalar>,
-        GlweSecretKey<BinaryKeyKind, C3>: AsRefTensor<Element = Scalar>,
         Gen: ByteRandomGenerator,
     {
-        for (i, mut fpksk) in self
+        debug_assert!(
+            self.fpksk_count().0 == output_glwe_key.key_size().to_glwe_size().0,
+            "Current list has {} fpksk, need to have {} \
+            (encrypted_glwe_key.key_size().to_glwe_size())",
+            self.fpksk_count().0,
+            output_glwe_key.key_size().to_glwe_size().0
+        );
+
+        for (mut fpksk, output_glwe_key_polynomial) in self
             .fpksk_iter_mut()
             .take(output_glwe_key.key_size().0)
-            .enumerate()
+            .zip(output_glwe_key.as_polynomial_list().polynomial_iter())
         {
             fpksk.fill_with_private_functional_packing_keyswitch_key(
                 input_lwe_key,
@@ -1791,13 +1797,7 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKeyList<Cont> {
                 noise_parameters,
                 generator,
                 &|x| Scalar::ZERO.wrapping_sub(x),
-                &Polynomial::from_container(
-                    encrypted_glwe_key
-                        .as_polynomial_list()
-                        .get_polynomial(i)
-                        .tensor
-                        .into_container(),
-                ),
+                &output_glwe_key_polynomial,
             );
         }
 
