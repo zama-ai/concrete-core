@@ -32,7 +32,8 @@ void keyswitch_view_buffers_test(void) {
   size_t level = 5;
   size_t base_log = 10;
   LweSecretKey64 *input_sk = NULL;
-  int sk_ok = default_engine_generate_new_lwe_secret_key_u64(engine, input_lwe_dimension, &input_sk);
+  int sk_ok =
+      default_engine_generate_new_lwe_secret_key_u64(engine, input_lwe_dimension, &input_sk);
   assert(sk_ok == 0);
   LweSecretKey64 *output_sk = NULL;
   sk_ok = default_engine_generate_new_lwe_secret_key_u64(engine, input_lwe_dimension, &output_sk);
@@ -169,12 +170,12 @@ void keyswitch_unchecked_view_buffers_test(void) {
   size_t level = 5;
   size_t base_log = 10;
   LweSecretKey64 *input_sk = NULL;
-  int sk_ok =
-      default_engine_generate_new_lwe_secret_key_unchecked_u64(engine, input_lwe_dimension, &input_sk);
+  int sk_ok = default_engine_generate_new_lwe_secret_key_unchecked_u64(engine, input_lwe_dimension,
+                                                                       &input_sk);
   assert(sk_ok == 0);
   LweSecretKey64 *output_sk = NULL;
-  sk_ok =
-      default_engine_generate_new_lwe_secret_key_unchecked_u64(engine, input_lwe_dimension, &output_sk);
+  sk_ok = default_engine_generate_new_lwe_secret_key_unchecked_u64(engine, input_lwe_dimension,
+                                                                   &output_sk);
   assert(sk_ok == 0);
 
   LweSeededKeyswitchKey64 *seeded_ksk = NULL;
@@ -310,7 +311,8 @@ void keyswitch_raw_ptr_buffers_test(void) {
   size_t level = 5;
   size_t base_log = 10;
   LweSecretKey64 *input_sk = NULL;
-  int sk_ok = default_engine_generate_new_lwe_secret_key_u64(engine, input_lwe_dimension, &input_sk);
+  int sk_ok =
+      default_engine_generate_new_lwe_secret_key_u64(engine, input_lwe_dimension, &input_sk);
   assert(sk_ok == 0);
   LweSecretKey64 *output_sk = NULL;
   sk_ok = default_engine_generate_new_lwe_secret_key_u64(engine, input_lwe_dimension, &output_sk);
@@ -422,12 +424,12 @@ void keyswitch_unchecked_raw_ptr_buffers_test(void) {
   size_t level = 5;
   size_t base_log = 10;
   LweSecretKey64 *input_sk = NULL;
-  int sk_ok =
-      default_engine_generate_new_lwe_secret_key_unchecked_u64(engine, input_lwe_dimension, &input_sk);
+  int sk_ok = default_engine_generate_new_lwe_secret_key_unchecked_u64(engine, input_lwe_dimension,
+                                                                       &input_sk);
   assert(sk_ok == 0);
   LweSecretKey64 *output_sk = NULL;
-  sk_ok =
-      default_engine_generate_new_lwe_secret_key_unchecked_u64(engine, input_lwe_dimension, &output_sk);
+  sk_ok = default_engine_generate_new_lwe_secret_key_unchecked_u64(engine, input_lwe_dimension,
+                                                                   &output_sk);
   assert(sk_ok == 0);
 
   LweSeededKeyswitchKey64 *seeded_ksk = NULL;

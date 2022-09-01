@@ -32,8 +32,8 @@ void bootstrap_key_to_mut_view_conversion_view_buffers(void) {
 
   // We generate the keys
   LweSecretKey64 *input_lwe_sk = NULL;
-  int lwe_in_key_ok =
-      default_engine_generate_new_lwe_secret_key_u64(default_engine, input_lwe_dimension, &input_lwe_sk);
+  int lwe_in_key_ok = default_engine_generate_new_lwe_secret_key_u64(
+      default_engine, input_lwe_dimension, &input_lwe_sk);
   assert(lwe_in_key_ok == 0);
 
   LweSecretKey64 *output_lwe_sk = NULL;
@@ -207,8 +207,8 @@ void bootstrap_key_to_mut_view_conversion_raw_ptr_buffers(void) {
 
   // We generate the keys
   LweSecretKey64 *input_lwe_sk = NULL;
-  int lwe_in_key_ok =
-      default_engine_generate_new_lwe_secret_key_u64(default_engine, input_lwe_dimension, &input_lwe_sk);
+  int lwe_in_key_ok = default_engine_generate_new_lwe_secret_key_u64(
+      default_engine, input_lwe_dimension, &input_lwe_sk);
   assert(lwe_in_key_ok == 0);
 
   LweSecretKey64 *output_lwe_sk = NULL;

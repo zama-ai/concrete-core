@@ -76,8 +76,8 @@ void bootstrap_view_buffers_test(void) {
 
   // We generate the keys
   LweSecretKey64 *input_lwe_sk = NULL;
-  int lwe_in_key_ok =
-      default_engine_generate_new_lwe_secret_key_u64(default_engine, input_lwe_dimension, &input_lwe_sk);
+  int lwe_in_key_ok = default_engine_generate_new_lwe_secret_key_u64(
+      default_engine, input_lwe_dimension, &input_lwe_sk);
   assert(lwe_in_key_ok == 0);
 
   LweSecretKey64 *output_lwe_sk = NULL;
@@ -116,9 +116,20 @@ void bootstrap_view_buffers_test(void) {
       default_engine, &deser_seeded_bsk, &bsk);
   assert(bsk_ok == 0);
 
+  Buffer bsk_buffer = {.pointer = NULL, .length = 0};
+  int bsk_ser_ok = default_serialization_engine_serialize_lwe_bootstrap_key_u64(
+      default_serialization_engine, bsk, &bsk_buffer);
+  assert(bsk_ser_ok == 0);
+
+  BufferView bsk_deser_buffer_view = {.pointer = bsk_buffer.pointer, .length = bsk_buffer.length};
+  LweBootstrapKey64 *deser_bsk = NULL;
+  int bsk_deser_ok = default_serialization_engine_deserialize_lwe_bootstrap_key_u64(
+      default_serialization_engine, bsk_deser_buffer_view, &deser_bsk);
+  assert(bsk_deser_ok == 0);
+
   FftwFourierLweBootstrapKey64 *fbsk = NULL;
   int fbsk_ok = fftw_engine_convert_lwe_bootstrap_key_to_fftw_fourier_lwe_bootstrap_key_u64(
-      fftw_engine, bsk, &fbsk);
+      fftw_engine, deser_bsk, &fbsk);
   assert(fbsk_ok == 0);
 
   // Test BSK Serialization/Deserialization
@@ -222,6 +233,7 @@ void bootstrap_view_buffers_test(void) {
   destroy_lwe_secret_key_u64(output_lwe_sk);
   destroy_glwe_secret_key_u64(output_glwe_sk);
   destroy_lwe_bootstrap_key_u64(bsk);
+  destroy_lwe_bootstrap_key_u64(deser_bsk);
   destroy_lwe_seeded_bootstrap_key_u64(seeded_bsk);
   destroy_lwe_ciphertext_view_u64(input_ct_as_view);
   destroy_lwe_ciphertext_mut_view_u64(input_ct_as_mut_view);
@@ -237,6 +249,8 @@ void bootstrap_view_buffers_test(void) {
   destroy_default_engine(default_engine);
   destroy_fftw_engine(fftw_engine);
   destroy_seeder_builder(builder);
+  destroy_buffer(&bsk_buffer);
+  destroy_buffer(&seeded_bsk_buffer);
   destroy_buffer(&fbsk_buffer);
   free(tabulated_function_array);
   free(expanded_tabulated_function_array);
@@ -328,10 +342,21 @@ void bootstrap_unchecked_view_buffers_test(void) {
       default_engine, &deser_seeded_bsk, &bsk);
   assert(bsk_ok == 0);
 
+  Buffer bsk_buffer = {.pointer = NULL, .length = 0};
+  int bsk_ser_ok = default_serialization_engine_serialize_lwe_bootstrap_key_unchecked_u64(
+      default_serialization_engine, bsk, &bsk_buffer);
+  assert(bsk_ser_ok == 0);
+
+  BufferView bsk_deser_buffer_view = {.pointer = bsk_buffer.pointer, .length = bsk_buffer.length};
+  LweBootstrapKey64 *deser_bsk = NULL;
+  int bsk_deser_ok = default_serialization_engine_deserialize_lwe_bootstrap_key_unchecked_u64(
+      default_serialization_engine, bsk_deser_buffer_view, &deser_bsk);
+  assert(bsk_deser_ok == 0);
+
   FftwFourierLweBootstrapKey64 *fbsk = NULL;
   int fbsk_ok =
       fftw_engine_convert_lwe_bootstrap_key_to_fftw_fourier_lwe_bootstrap_key_unchecked_u64(
-          fftw_engine, bsk, &fbsk);
+          fftw_engine, deser_bsk, &fbsk);
   assert(fbsk_ok == 0);
 
   // Test BSK Serialization/Deserialization
@@ -405,8 +430,9 @@ void bootstrap_unchecked_view_buffers_test(void) {
   assert(accumulator_as_view_ok == 0);
 
   GlweCiphertextMutView64 *accumulator_as_mut_view = NULL;
-  int accumulator_as_mut_view_ok = default_engine_create_glwe_ciphertext_mut_view_from_unchecked_u64(
-      default_engine, accumulator, accumulator_size, poly_size, &accumulator_as_mut_view);
+  int accumulator_as_mut_view_ok =
+      default_engine_create_glwe_ciphertext_mut_view_from_unchecked_u64(
+          default_engine, accumulator, accumulator_size, poly_size, &accumulator_as_mut_view);
   assert(accumulator_as_mut_view_ok == 0);
 
   int trivial_encrypt_ok =
@@ -437,6 +463,7 @@ void bootstrap_unchecked_view_buffers_test(void) {
   destroy_lwe_secret_key_unchecked_u64(output_lwe_sk);
   destroy_glwe_secret_key_unchecked_u64(output_glwe_sk);
   destroy_lwe_bootstrap_key_unchecked_u64(bsk);
+  destroy_lwe_bootstrap_key_unchecked_u64(deser_bsk);
   destroy_lwe_seeded_bootstrap_key_unchecked_u64(seeded_bsk);
   destroy_lwe_ciphertext_view_unchecked_u64(input_ct_as_view);
   destroy_lwe_ciphertext_mut_view_unchecked_u64(input_ct_as_mut_view);
@@ -452,6 +479,8 @@ void bootstrap_unchecked_view_buffers_test(void) {
   destroy_default_engine_unchecked(default_engine);
   destroy_fftw_engine_unchecked(fftw_engine);
   destroy_seeder_builder_unchecked(builder);
+  destroy_buffer_unchecked(&bsk_buffer);
+  destroy_buffer_unchecked(&seeded_bsk_buffer);
   destroy_buffer_unchecked(&fbsk_buffer);
   free(tabulated_function_array);
   free(expanded_tabulated_function_array);
@@ -500,8 +529,8 @@ void bootstrap_raw_ptr_buffers_test(void) {
 
   // We generate the keys
   LweSecretKey64 *input_lwe_sk = NULL;
-  int lwe_in_key_ok =
-      default_engine_generate_new_lwe_secret_key_u64(default_engine, input_lwe_dimension, &input_lwe_sk);
+  int lwe_in_key_ok = default_engine_generate_new_lwe_secret_key_u64(
+      default_engine, input_lwe_dimension, &input_lwe_sk);
   assert(lwe_in_key_ok == 0);
 
   LweSecretKey64 *output_lwe_sk = NULL;
@@ -540,9 +569,20 @@ void bootstrap_raw_ptr_buffers_test(void) {
       default_engine, &deser_seeded_bsk, &bsk);
   assert(bsk_ok == 0);
 
+  Buffer bsk_buffer = {.pointer = NULL, .length = 0};
+  int bsk_ser_ok = default_serialization_engine_serialize_lwe_bootstrap_key_u64(
+      default_serialization_engine, bsk, &bsk_buffer);
+  assert(bsk_ser_ok == 0);
+
+  BufferView bsk_deser_buffer_view = {.pointer = bsk_buffer.pointer, .length = bsk_buffer.length};
+  LweBootstrapKey64 *deser_bsk = NULL;
+  int bsk_deser_ok = default_serialization_engine_deserialize_lwe_bootstrap_key_u64(
+      default_serialization_engine, bsk_deser_buffer_view, &deser_bsk);
+  assert(bsk_deser_ok == 0);
+
   FftwFourierLweBootstrapKey64 *fbsk = NULL;
   int fbsk_ok = fftw_engine_convert_lwe_bootstrap_key_to_fftw_fourier_lwe_bootstrap_key_u64(
-      fftw_engine, bsk, &fbsk);
+      fftw_engine, deser_bsk, &fbsk);
   assert(fbsk_ok == 0);
 
   // Test BSK Serialization/Deserialization
@@ -615,6 +655,7 @@ void bootstrap_raw_ptr_buffers_test(void) {
   destroy_lwe_secret_key_u64(output_lwe_sk);
   destroy_glwe_secret_key_u64(output_glwe_sk);
   destroy_lwe_bootstrap_key_u64(bsk);
+  destroy_lwe_bootstrap_key_u64(deser_bsk);
   destroy_lwe_seeded_bootstrap_key_u64(seeded_bsk);
   destroy_fftw_fourier_lwe_bootstrap_key_u64(fbsk);
   destroy_fftw_fourier_lwe_bootstrap_key_u64(deser_fbsk);
@@ -624,6 +665,8 @@ void bootstrap_raw_ptr_buffers_test(void) {
   destroy_default_engine(default_engine);
   destroy_fftw_engine(fftw_engine);
   destroy_seeder_builder(builder);
+  destroy_buffer(&bsk_buffer);
+  destroy_buffer(&seeded_bsk_buffer);
   destroy_buffer(&fbsk_buffer);
   free(tabulated_function_array);
   free(expanded_tabulated_function_array);
@@ -715,10 +758,21 @@ void bootstrap_unchecked_raw_ptr_buffers_test(void) {
       default_engine, &deser_seeded_bsk, &bsk);
   assert(bsk_ok == 0);
 
+  Buffer bsk_buffer = {.pointer = NULL, .length = 0};
+  int bsk_ser_ok = default_serialization_engine_serialize_lwe_bootstrap_key_unchecked_u64(
+      default_serialization_engine, bsk, &bsk_buffer);
+  assert(bsk_ser_ok == 0);
+
+  BufferView bsk_deser_buffer_view = {.pointer = bsk_buffer.pointer, .length = bsk_buffer.length};
+  LweBootstrapKey64 *deser_bsk = NULL;
+  int bsk_deser_ok = default_serialization_engine_deserialize_lwe_bootstrap_key_unchecked_u64(
+      default_serialization_engine, bsk_deser_buffer_view, &deser_bsk);
+  assert(bsk_deser_ok == 0);
+
   FftwFourierLweBootstrapKey64 *fbsk = NULL;
   int fbsk_ok =
       fftw_engine_convert_lwe_bootstrap_key_to_fftw_fourier_lwe_bootstrap_key_unchecked_u64(
-          fftw_engine, bsk, &fbsk);
+          fftw_engine, deser_bsk, &fbsk);
   assert(fbsk_ok == 0);
 
   // Test BSK Serialization/Deserialization
@@ -792,6 +846,7 @@ void bootstrap_unchecked_raw_ptr_buffers_test(void) {
   destroy_lwe_secret_key_unchecked_u64(output_lwe_sk);
   destroy_glwe_secret_key_unchecked_u64(output_glwe_sk);
   destroy_lwe_bootstrap_key_unchecked_u64(bsk);
+  destroy_lwe_bootstrap_key_unchecked_u64(deser_bsk);
   destroy_lwe_seeded_bootstrap_key_unchecked_u64(seeded_bsk);
   destroy_fftw_fourier_lwe_bootstrap_key_unchecked_u64(fbsk);
   destroy_fftw_fourier_lwe_bootstrap_key_unchecked_u64(deser_fbsk);
@@ -801,6 +856,8 @@ void bootstrap_unchecked_raw_ptr_buffers_test(void) {
   destroy_default_engine_unchecked(default_engine);
   destroy_fftw_engine_unchecked(fftw_engine);
   destroy_seeder_builder_unchecked(builder);
+  destroy_buffer_unchecked(&bsk_buffer);
+  destroy_buffer_unchecked(&seeded_bsk_buffer);
   destroy_buffer_unchecked(&fbsk_buffer);
   free(tabulated_function_array);
   free(expanded_tabulated_function_array);
