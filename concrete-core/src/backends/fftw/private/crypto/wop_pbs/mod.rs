@@ -21,7 +21,7 @@ mod test;
 /// Function to extract `number_of_bits_to_extract` from an [`LweCiphertext`] starting at the bit
 /// number `delta_log` (0-indexed) included.
 ///
-/// Ouput bits are ordered from the MSB to the LSB. Each one of them is output in a distinct LWE
+/// Output bits are ordered from the MSB to the LSB. Each one of them is output in a distinct LWE
 /// ciphertext, containing the encryption of the bit scaled by q/2 (i.e., the most significant bit
 /// in the plaintext representation).
 pub fn extract_bits<Scalar, C1, C2, C3, C4>(
@@ -52,16 +52,28 @@ pub fn extract_bits<Scalar, C1, C2, C3, C4>(
         ciphertext_n_bits - delta_log.0,
     );
     debug_assert!(
-        lwe_list_out.lwe_size() == ksk.lwe_size(),
+        lwe_list_out.lwe_size().to_lwe_dimension() == ksk.after_key_size(),
         "lwe_list_out needs to have an lwe_size of {}, got {}",
-        ksk.lwe_size().0,
-        lwe_list_out.lwe_size().0,
+        ksk.after_key_size().0,
+        lwe_list_out.lwe_size().to_lwe_dimension().0,
     );
     debug_assert!(
         lwe_list_out.count().0 == number_of_bits_to_extract,
         "lwe_list_out needs to have a ciphertext count of {}, got {}",
         number_of_bits_to_extract,
         lwe_list_out.count().0,
+    );
+    debug_assert!(
+        lwe_in.lwe_size() == fourier_bsk.output_lwe_dimension().to_lwe_size(),
+        "lwe_in needs to have an LWE dimension of {}, got {}",
+        fourier_bsk.output_lwe_dimension().to_lwe_size().0,
+        lwe_in.lwe_size().0,
+    );
+    debug_assert!(
+        ksk.after_key_size() == fourier_bsk.key_size(),
+        "ksk needs to have an output LWE dimension of {}, got {}",
+        fourier_bsk.key_size().0,
+        ksk.after_key_size().0,
     );
 
     let polynomial_size = fourier_bsk.polynomial_size();

@@ -198,3 +198,8 @@ pub struct ExtractedBitsCount(pub usize);
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 #[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
 pub struct FunctionalPackingKeyswitchKeyCount(pub usize);
+
+/// The number of bits used for the mask coefficients and the body of a ciphertext
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+pub struct CiphertextModulusLog(pub usize);
