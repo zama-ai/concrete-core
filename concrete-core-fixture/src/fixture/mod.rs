@@ -300,6 +300,9 @@ pub use lwe_ciphertext_encryption::*;
 mod lwe_ciphertext_zero_encryption;
 pub use lwe_ciphertext_zero_encryption::*;
 
+mod lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_generation;
+pub use lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_generation::*;
+
 mod lwe_ciphertext_decryption;
 pub use lwe_ciphertext_decryption::*;
 
