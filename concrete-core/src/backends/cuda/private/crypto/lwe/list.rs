@@ -2,7 +2,7 @@ use crate::backends::cuda::private::device::{CudaStream, GpuIndex, NumberOfGpus}
 use crate::backends::cuda::private::vec::CudaVec;
 use crate::backends::cuda::private::{compute_number_of_samples_on_gpu, number_of_active_gpus};
 use crate::commons::crypto::lwe::LweList;
-use crate::commons::math::tensor::{AsRefSlice, AsRefTensor};
+use crate::commons::math::tensor::{AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor};
 use crate::commons::numeric::UnsignedInteger;
 use crate::prelude::{CiphertextCount, LweCiphertextCount, LweDimension};
 
@@ -91,4 +91,37 @@ pub(crate) unsafe fn copy_lwe_ciphertext_vector_from_gpu_to_cpu<T: UnsignedInteg
         last_stream.copy_to_cpu::<T>(last_chunk, input.d_vecs.last().unwrap());
     }
     output
+}
+
+pub(crate) unsafe fn discard_copy_lwe_ciphertext_vector_from_gpu_to_cpu<T: UnsignedInteger>(
+    output: &mut LweList<&mut [T]>,
+    streams: &[CudaStream],
+    input: &CudaLweList<T>,
+    number_of_available_gpus: NumberOfGpus,
+) {
+    let samples_per_gpu = compute_number_of_samples_on_gpu(
+        number_of_available_gpus,
+        CiphertextCount(input.lwe_ciphertext_count.0),
+        GpuIndex(0),
+    );
+    let data_per_gpu = samples_per_gpu.0 * input.lwe_dimension.to_lwe_size().0;
+
+    for (gpu_index, chunks) in output
+        .as_mut_tensor()
+        .as_mut_slice()
+        .chunks_exact_mut(data_per_gpu)
+        .enumerate()
+    {
+        let stream = &streams[gpu_index];
+        stream.copy_to_cpu::<T>(chunks, input.d_vecs.get(gpu_index).unwrap());
+    }
+    if samples_per_gpu.0 * number_of_available_gpus.0 < input.lwe_ciphertext_count.0 {
+        let last_chunk = output
+            .as_mut_tensor()
+            .as_mut_slice()
+            .chunks_exact_mut(data_per_gpu)
+            .into_remainder();
+        let last_stream = streams.last().unwrap();
+        last_stream.copy_to_cpu::<T>(last_chunk, input.d_vecs.last().unwrap());
+    }
 }
