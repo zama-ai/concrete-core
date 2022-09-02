@@ -4,7 +4,7 @@ use crate::prelude::AbstractEngine;
 use crate::specification::entities::{GlweSecretKeyEntity, LweSecretKeyEntity};
 
 engine_error! {
-    GlweToLweSecretKeyTransformationEngineError for GlweToLweSecretKeyTransformationEngine @
+    GlweToLweSecretKeyTransformationError for GlweToLweSecretKeyTransformationEngine @
 }
 
 /// A trait for engines transforming GLWE secret keys into LWE secret keys.
@@ -24,13 +24,13 @@ where
     fn transform_glwe_secret_key_to_lwe_secret_key(
         &mut self,
         glwe_secret_key: InputKey,
-    ) -> Result<OutputKey, GlweToLweSecretKeyTransformationEngineError<Self::EngineError>>;
+    ) -> Result<OutputKey, GlweToLweSecretKeyTransformationError<Self::EngineError>>;
 
     /// Unsafely transforms a GLWE secret key into an LWE secret key
     ///
     /// # Safety
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
-    /// of [`GlweToLweSecretKeyTransformationEngineError`].
+    /// of [`GlweToLweSecretKeyTransformationError`].
     /// For safety concerns _specific_ to an engine, refer to the implementer safety section.
     unsafe fn transform_glwe_secret_key_to_lwe_secret_key_unchecked(
         &mut self,

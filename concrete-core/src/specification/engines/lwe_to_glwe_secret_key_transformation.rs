@@ -5,7 +5,7 @@ use concrete_commons::parameters::PolynomialSize;
 use crate::specification::entities::{GlweSecretKeyEntity, LweSecretKeyEntity};
 
 engine_error! {
-    LweToGlweSecretKeyTransformationEngineError for LweToGlweSecretKeyTransformationEngine @
+    LweToGlweSecretKeyTransformationError for LweToGlweSecretKeyTransformationEngine @
     IncompatibleLweDimension => "The input key LweDimension is not compatible \
                                  with the provided PolynomialSize",
     NullPolynomialSize => "The output secret key polynomial size must be greater than zero.",
@@ -13,7 +13,7 @@ engine_error! {
                           you should prefer the LWE scheme."
 }
 
-impl<EngineError: std::error::Error> LweToGlweSecretKeyTransformationEngineError<EngineError> {
+impl<EngineError: std::error::Error> LweToGlweSecretKeyTransformationError<EngineError> {
     /// Validates the inputs
     pub fn perform_generic_checks<InputKey>(
         lwe_secret_key: &InputKey,
@@ -51,13 +51,13 @@ where
         &mut self,
         lwe_secret_key: InputKey,
         polynomial_size: PolynomialSize,
-    ) -> Result<OutputKey, LweToGlweSecretKeyTransformationEngineError<Self::EngineError>>;
+    ) -> Result<OutputKey, LweToGlweSecretKeyTransformationError<Self::EngineError>>;
 
     /// Unsafely transforms an LWE secret key into a GLWE secret key
     ///
     /// # Safety
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
-    /// of [`LweToGlweSecretKeyTransformationEngineError`].
+    /// of [`LweToGlweSecretKeyTransformationError`].
     /// For safety concerns _specific_ to an engine, refer to the implementer safety section.
     unsafe fn transform_lwe_secret_key_to_glwe_secret_key_unchecked(
         &mut self,

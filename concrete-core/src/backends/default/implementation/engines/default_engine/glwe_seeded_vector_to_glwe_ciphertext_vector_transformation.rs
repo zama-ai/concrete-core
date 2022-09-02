@@ -7,7 +7,7 @@ use crate::backends::default::entities::{
 use crate::commons::crypto::glwe::GlweList as ImplGlweList;
 use crate::specification::engines::{
     GlweSeededCiphertextVectorToGlweCiphertextVectorTransformationEngine,
-    GlweSeededCiphertextVectorToGlweCiphertextVectorTransformationEngineError,
+    GlweSeededCiphertextVectorToGlweCiphertextVectorTransformationError,
 };
 use crate::specification::entities::GlweSeededCiphertextVectorEntity;
 use concrete_commons::parameters::CiphertextCount;
@@ -64,9 +64,7 @@ impl
         glwe_seeded_ciphertext_vector: GlweSeededCiphertextVector32,
     ) -> Result<
         GlweCiphertextVector32,
-        GlweSeededCiphertextVectorToGlweCiphertextVectorTransformationEngineError<
-            Self::EngineError,
-        >,
+        GlweSeededCiphertextVectorToGlweCiphertextVectorTransformationError<Self::EngineError>,
     > {
         Ok(unsafe {
             self.transform_glwe_seeded_ciphertext_vector_to_glwe_ciphertext_vector_unchecked(
@@ -146,9 +144,7 @@ impl
         glwe_seeded_ciphertext_vector: GlweSeededCiphertextVector64,
     ) -> Result<
         GlweCiphertextVector64,
-        GlweSeededCiphertextVectorToGlweCiphertextVectorTransformationEngineError<
-            Self::EngineError,
-        >,
+        GlweSeededCiphertextVectorToGlweCiphertextVectorTransformationError<Self::EngineError>,
     > {
         Ok(unsafe {
             self.transform_glwe_seeded_ciphertext_vector_to_glwe_ciphertext_vector_unchecked(

@@ -4,7 +4,7 @@ use crate::prelude::AbstractEngine;
 use crate::specification::entities::{LweKeyswitchKeyEntity, LweSeededKeyswitchKeyEntity};
 
 engine_error! {
-    LweSeededKeyswitchKeyToLweKeyswitchKeyTransformationEngineError for
+    LweSeededKeyswitchKeyToLweKeyswitchKeyTransformationError for
     LweSeededKeyswitchKeyToLweKeyswitchKeyTransformationEngine @
 }
 
@@ -33,14 +33,14 @@ where
         lwe_seeded_keyswitch_key: InputKey,
     ) -> Result<
         OutputKey,
-        LweSeededKeyswitchKeyToLweKeyswitchKeyTransformationEngineError<Self::EngineError>,
+        LweSeededKeyswitchKeyToLweKeyswitchKeyTransformationError<Self::EngineError>,
     >;
 
     /// Unsafely transforms a seeded LWE keyswitch key into an LWE keyswitch key
     ///
     /// # Safety
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
-    /// of [`LweSeededKeyswitchKeyToLweKeyswitchKeyTransformationEngineError`].
+    /// of [`LweSeededKeyswitchKeyToLweKeyswitchKeyTransformationError`].
     /// For safety concerns _specific_ to an engine, refer to the implementer safety section.
     unsafe fn transform_lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_unchecked(
         &mut self,

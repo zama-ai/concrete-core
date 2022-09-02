@@ -6,7 +6,7 @@ use crate::backends::default::entities::{
 use crate::commons::crypto::lwe::LweKeyswitchKey as ImplLweKeyswitchKey;
 use crate::specification::engines::{
     LweSeededKeyswitchKeyToLweKeyswitchKeyTransformationEngine,
-    LweSeededKeyswitchKeyToLweKeyswitchKeyTransformationEngineError,
+    LweSeededKeyswitchKeyToLweKeyswitchKeyTransformationError,
 };
 use crate::specification::entities::LweSeededKeyswitchKeyEntity;
 
@@ -70,7 +70,7 @@ impl
         lwe_seeded_keyswitch_key: LweSeededKeyswitchKey32,
     ) -> Result<
         LweKeyswitchKey32,
-        LweSeededKeyswitchKeyToLweKeyswitchKeyTransformationEngineError<Self::EngineError>,
+        LweSeededKeyswitchKeyToLweKeyswitchKeyTransformationError<Self::EngineError>,
     > {
         Ok(unsafe {
             self.transform_lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_unchecked(
@@ -159,7 +159,7 @@ impl
         lwe_seeded_keyswitch_key: LweSeededKeyswitchKey64,
     ) -> Result<
         LweKeyswitchKey64,
-        LweSeededKeyswitchKeyToLweKeyswitchKeyTransformationEngineError<Self::EngineError>,
+        LweSeededKeyswitchKeyToLweKeyswitchKeyTransformationError<Self::EngineError>,
     > {
         Ok(unsafe {
             self.transform_lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_unchecked(

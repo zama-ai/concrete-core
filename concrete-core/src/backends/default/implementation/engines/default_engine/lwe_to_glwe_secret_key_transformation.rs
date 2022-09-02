@@ -5,7 +5,7 @@ use crate::backends::default::entities::{
 use crate::commons::crypto::secret::GlweSecretKey as ImpleGlweSecretKey;
 use crate::commons::math::tensor::IntoTensor;
 use crate::specification::engines::{
-    LweToGlweSecretKeyTransformationEngine, LweToGlweSecretKeyTransformationEngineError,
+    LweToGlweSecretKeyTransformationEngine, LweToGlweSecretKeyTransformationError,
 };
 use concrete_commons::parameters::PolynomialSize;
 
@@ -41,9 +41,8 @@ impl LweToGlweSecretKeyTransformationEngine<LweSecretKey32, GlweSecretKey32> for
         &mut self,
         lwe_secret_key: LweSecretKey32,
         polynomial_size: PolynomialSize,
-    ) -> Result<GlweSecretKey32, LweToGlweSecretKeyTransformationEngineError<Self::EngineError>>
-    {
-        LweToGlweSecretKeyTransformationEngineError::perform_generic_checks(
+    ) -> Result<GlweSecretKey32, LweToGlweSecretKeyTransformationError<Self::EngineError>> {
+        LweToGlweSecretKeyTransformationError::perform_generic_checks(
             &lwe_secret_key,
             polynomial_size,
         )?;
@@ -101,9 +100,8 @@ impl LweToGlweSecretKeyTransformationEngine<LweSecretKey64, GlweSecretKey64> for
         &mut self,
         lwe_secret_key: LweSecretKey64,
         polynomial_size: PolynomialSize,
-    ) -> Result<GlweSecretKey64, LweToGlweSecretKeyTransformationEngineError<Self::EngineError>>
-    {
-        LweToGlweSecretKeyTransformationEngineError::perform_generic_checks(
+    ) -> Result<GlweSecretKey64, LweToGlweSecretKeyTransformationError<Self::EngineError>> {
+        LweToGlweSecretKeyTransformationError::perform_generic_checks(
             &lwe_secret_key,
             polynomial_size,
         )?;

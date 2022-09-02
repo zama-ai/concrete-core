@@ -7,7 +7,7 @@ use crate::backends::default::entities::{
 use crate::commons::crypto::lwe::LweList as ImplLweList;
 use crate::specification::engines::{
     LweSeededCiphertextVectorToLweCiphertextVectorTransformationEngine,
-    LweSeededCiphertextVectorToLweCiphertextVectorTransformationEngineError,
+    LweSeededCiphertextVectorToLweCiphertextVectorTransformationError,
 };
 use crate::specification::entities::LweSeededCiphertextVectorEntity;
 use concrete_commons::parameters::CiphertextCount;
@@ -60,7 +60,7 @@ impl
         lwe_seeded_ciphertext_vector: LweSeededCiphertextVector32,
     ) -> Result<
         LweCiphertextVector32,
-        LweSeededCiphertextVectorToLweCiphertextVectorTransformationEngineError<Self::EngineError>,
+        LweSeededCiphertextVectorToLweCiphertextVectorTransformationError<Self::EngineError>,
     > {
         Ok(unsafe {
             self.transform_lwe_seeded_ciphertext_vector_to_lwe_ciphertext_vector_unchecked(
@@ -134,7 +134,7 @@ impl
         lwe_seeded_ciphertext_vector: LweSeededCiphertextVector64,
     ) -> Result<
         LweCiphertextVector64,
-        LweSeededCiphertextVectorToLweCiphertextVectorTransformationEngineError<Self::EngineError>,
+        LweSeededCiphertextVectorToLweCiphertextVectorTransformationError<Self::EngineError>,
     > {
         Ok(unsafe {
             self.transform_lwe_seeded_ciphertext_vector_to_lwe_ciphertext_vector_unchecked(

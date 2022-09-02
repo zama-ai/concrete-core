@@ -6,7 +6,7 @@ use crate::backends::default::entities::{
 use crate::commons::crypto::lwe::LweCiphertext as ImplLweCiphertext;
 use crate::specification::engines::{
     LweSeededCiphertextToLweCiphertextTransformationEngine,
-    LweSeededCiphertextToLweCiphertextTransformationEngineError,
+    LweSeededCiphertextToLweCiphertextTransformationError,
 };
 use crate::specification::entities::LweSeededCiphertextEntity;
 
@@ -51,7 +51,7 @@ impl LweSeededCiphertextToLweCiphertextTransformationEngine<LweSeededCiphertext3
         lwe_seeded_ciphertext: LweSeededCiphertext32,
     ) -> Result<
         LweCiphertext32,
-        LweSeededCiphertextToLweCiphertextTransformationEngineError<Self::EngineError>,
+        LweSeededCiphertextToLweCiphertextTransformationError<Self::EngineError>,
     > {
         Ok(unsafe {
             self.transform_lwe_seeded_ciphertext_to_lwe_ciphertext_unchecked(lwe_seeded_ciphertext)
@@ -113,7 +113,7 @@ impl LweSeededCiphertextToLweCiphertextTransformationEngine<LweSeededCiphertext6
         lwe_seeded_ciphertext: LweSeededCiphertext64,
     ) -> Result<
         LweCiphertext64,
-        LweSeededCiphertextToLweCiphertextTransformationEngineError<Self::EngineError>,
+        LweSeededCiphertextToLweCiphertextTransformationError<Self::EngineError>,
     > {
         Ok(unsafe {
             self.transform_lwe_seeded_ciphertext_to_lwe_ciphertext_unchecked(lwe_seeded_ciphertext)

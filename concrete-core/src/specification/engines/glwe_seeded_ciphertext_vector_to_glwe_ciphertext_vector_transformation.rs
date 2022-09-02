@@ -6,7 +6,7 @@ use crate::specification::entities::{
 };
 
 engine_error! {
-    GlweSeededCiphertextVectorToGlweCiphertextVectorTransformationEngineError
+    GlweSeededCiphertextVectorToGlweCiphertextVectorTransformationError
     for GlweSeededCiphertextVectorToGlweCiphertextVectorTransformationEngine @
 }
 
@@ -34,16 +34,14 @@ pub trait GlweSeededCiphertextVectorToGlweCiphertextVectorTransformationEngine<
         glwe_seeded_ciphertext_vector: InputCiphertextVector,
     ) -> Result<
         OutputCiphertextVector,
-        GlweSeededCiphertextVectorToGlweCiphertextVectorTransformationEngineError<
-            Self::EngineError,
-        >,
+        GlweSeededCiphertextVectorToGlweCiphertextVectorTransformationError<Self::EngineError>,
     >;
 
     /// Unsafely transforms a GLWE seeded ciphertext vector into a GLWE ciphertext vector
     ///
     /// # Safety
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
-    /// of [`GlweSeededCiphertextVectorToGlweCiphertextVectorTransformationEngineError`].
+    /// of [`GlweSeededCiphertextVectorToGlweCiphertextVectorTransformationError`].
     /// For safety concerns _specific_ to an engine, refer to the implementer safety section.
     unsafe fn transform_glwe_seeded_ciphertext_vector_to_glwe_ciphertext_vector_unchecked(
         &mut self,

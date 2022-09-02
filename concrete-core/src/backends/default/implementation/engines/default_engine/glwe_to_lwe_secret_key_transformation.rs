@@ -3,7 +3,7 @@ use crate::backends::default::entities::{
     GlweSecretKey32, GlweSecretKey64, LweSecretKey32, LweSecretKey64,
 };
 use crate::specification::engines::{
-    GlweToLweSecretKeyTransformationEngine, GlweToLweSecretKeyTransformationEngineError,
+    GlweToLweSecretKeyTransformationEngine, GlweToLweSecretKeyTransformationError,
 };
 
 impl GlweToLweSecretKeyTransformationEngine<GlweSecretKey32, LweSecretKey32> for DefaultEngine {
@@ -37,8 +37,7 @@ impl GlweToLweSecretKeyTransformationEngine<GlweSecretKey32, LweSecretKey32> for
     fn transform_glwe_secret_key_to_lwe_secret_key(
         &mut self,
         glwe_secret_key: GlweSecretKey32,
-    ) -> Result<LweSecretKey32, GlweToLweSecretKeyTransformationEngineError<Self::EngineError>>
-    {
+    ) -> Result<LweSecretKey32, GlweToLweSecretKeyTransformationError<Self::EngineError>> {
         Ok(unsafe { self.transform_glwe_secret_key_to_lwe_secret_key_unchecked(glwe_secret_key) })
     }
 
@@ -81,8 +80,7 @@ impl GlweToLweSecretKeyTransformationEngine<GlweSecretKey64, LweSecretKey64> for
     fn transform_glwe_secret_key_to_lwe_secret_key(
         &mut self,
         glwe_secret_key: GlweSecretKey64,
-    ) -> Result<LweSecretKey64, GlweToLweSecretKeyTransformationEngineError<Self::EngineError>>
-    {
+    ) -> Result<LweSecretKey64, GlweToLweSecretKeyTransformationError<Self::EngineError>> {
         Ok(unsafe { self.transform_glwe_secret_key_to_lwe_secret_key_unchecked(glwe_secret_key) })
     }
 
