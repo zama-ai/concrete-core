@@ -101,6 +101,7 @@ pub(crate) unsafe fn execute_lwe_ciphertext_vector_low_latency_bootstrap_on_gpu<
         let mut d_test_vector_indexes = stream.malloc::<u32>(samples.0 as u32);
         stream.copy_to_gpu(&mut d_test_vector_indexes, &test_vector_indexes);
 
+        stream.initialize_twiddles(bsk.polynomial_size);
         stream.discard_bootstrap_low_latency_lwe_ciphertext_vector::<T>(
             output.d_vecs.get_mut(gpu_index).unwrap(),
             acc.d_vecs.get(gpu_index).unwrap(),
@@ -151,6 +152,7 @@ pub(crate) unsafe fn execute_lwe_ciphertext_vector_amortized_bootstrap_on_gpu<
         let mut d_test_vector_indexes = stream.malloc::<u32>(samples.0 as u32);
         stream.copy_to_gpu(&mut d_test_vector_indexes, &test_vector_indexes);
 
+        stream.initialize_twiddles(bsk.polynomial_size);
         stream.discard_bootstrap_amortized_lwe_ciphertext_vector::<T>(
             output.d_vecs.get_mut(gpu_index).unwrap(),
             acc.d_vecs.get(gpu_index).unwrap(),
