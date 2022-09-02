@@ -4,7 +4,7 @@ use crate::prelude::AbstractEngine;
 use crate::specification::entities::{LweCiphertextEntity, LweSeededCiphertextEntity};
 
 engine_error! {
-    LweSeededCiphertextToLweCiphertextTransformationEngineError for
+    LweSeededCiphertextToLweCiphertextTransformationError for
     LweSeededCiphertextToLweCiphertextTransformationEngine @
 }
 
@@ -43,14 +43,14 @@ where
         lwe_seeded_ciphertext: InputCiphertext,
     ) -> Result<
         OutputCiphertext,
-        LweSeededCiphertextToLweCiphertextTransformationEngineError<Self::EngineError>,
+        LweSeededCiphertextToLweCiphertextTransformationError<Self::EngineError>,
     >;
 
     /// Unsafely transforms an LWE seeded ciphertext into an LWE ciphertext
     ///
     /// # Safety
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
-    /// of [`LweSeededCiphertextToLweCiphertextTransformationEngineError`].
+    /// of [`LweSeededCiphertextToLweCiphertextTransformationError`].
     /// For safety concerns _specific_ to an engine, refer to the implementer safety section.
     unsafe fn transform_lwe_seeded_ciphertext_to_lwe_ciphertext_unchecked(
         &mut self,

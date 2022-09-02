@@ -6,7 +6,7 @@ use crate::backends::default::entities::{
 use crate::commons::crypto::glwe::GlweCiphertext as ImplGlweCiphertext;
 use crate::specification::engines::{
     GlweSeededCiphertextToGlweCiphertextTransformationEngine,
-    GlweSeededCiphertextToGlweCiphertextTransformationEngineError,
+    GlweSeededCiphertextToGlweCiphertextTransformationError,
 };
 use crate::specification::entities::GlweSeededCiphertextEntity;
 
@@ -62,7 +62,7 @@ impl
         glwe_seeded_ciphertext: GlweSeededCiphertext32,
     ) -> Result<
         GlweCiphertext32,
-        GlweSeededCiphertextToGlweCiphertextTransformationEngineError<Self::EngineError>,
+        GlweSeededCiphertextToGlweCiphertextTransformationError<Self::EngineError>,
     > {
         Ok(unsafe {
             self.transform_glwe_seeded_ciphertext_to_glwe_ciphertext_unchecked(
@@ -141,7 +141,7 @@ impl
         glwe_seeded_ciphertext: GlweSeededCiphertext64,
     ) -> Result<
         GlweCiphertext64,
-        GlweSeededCiphertextToGlweCiphertextTransformationEngineError<Self::EngineError>,
+        GlweSeededCiphertextToGlweCiphertextTransformationError<Self::EngineError>,
     > {
         Ok(unsafe {
             self.transform_glwe_seeded_ciphertext_to_glwe_ciphertext_unchecked(

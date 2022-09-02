@@ -4,7 +4,7 @@ use crate::prelude::AbstractEngine;
 use crate::specification::entities::{GlweCiphertextEntity, GlweSeededCiphertextEntity};
 
 engine_error! {
-    GlweSeededCiphertextToGlweCiphertextTransformationEngineError for GlweSeededCiphertextToGlweCiphertextTransformationEngine @
+    GlweSeededCiphertextToGlweCiphertextTransformationError for GlweSeededCiphertextToGlweCiphertextTransformationEngine @
 }
 
 /// A trait for engines transforming GLWE seeded ciphertexts into GLWE ciphertexts.
@@ -31,14 +31,14 @@ pub trait GlweSeededCiphertextToGlweCiphertextTransformationEngine<
         glwe_seeded_ciphertext: InputCiphertext,
     ) -> Result<
         OutputCiphertext,
-        GlweSeededCiphertextToGlweCiphertextTransformationEngineError<Self::EngineError>,
+        GlweSeededCiphertextToGlweCiphertextTransformationError<Self::EngineError>,
     >;
 
     /// Unsafely transforms a GLWE seeded ciphertext into a GLWE ciphertext
     ///
     /// # Safety
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
-    /// of [`GlweSeededCiphertextToGlweCiphertextTransformationEngineError`].
+    /// of [`GlweSeededCiphertextToGlweCiphertextTransformationError`].
     /// For safety concerns _specific_ to an engine, refer to the implementer safety section.
     unsafe fn transform_glwe_seeded_ciphertext_to_glwe_ciphertext_unchecked(
         &mut self,

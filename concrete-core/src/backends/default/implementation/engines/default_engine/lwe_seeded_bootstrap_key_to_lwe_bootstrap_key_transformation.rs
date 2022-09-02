@@ -6,7 +6,7 @@ use crate::backends::default::entities::{
 use crate::commons::crypto::bootstrap::StandardBootstrapKey as ImplStandardBootstrapKey;
 use crate::specification::engines::{
     LweSeededBootstrapKeyToLweBootstrapKeyTransformationEngine,
-    LweSeededBootstrapKeyToLweBootstrapKeyTransformationEngineError,
+    LweSeededBootstrapKeyToLweBootstrapKeyTransformationError,
 };
 use crate::specification::entities::LweSeededBootstrapKeyEntity;
 
@@ -62,7 +62,7 @@ impl
         lwe_seeded_bootstrap_key: LweSeededBootstrapKey32,
     ) -> Result<
         LweBootstrapKey32,
-        LweSeededBootstrapKeyToLweBootstrapKeyTransformationEngineError<Self::EngineError>,
+        LweSeededBootstrapKeyToLweBootstrapKeyTransformationError<Self::EngineError>,
     > {
         Ok(unsafe {
             self.transform_lwe_seeded_bootstrap_key_to_lwe_bootstrap_key_unchecked(
@@ -142,7 +142,7 @@ impl
         lwe_seeded_bootstrap_key: LweSeededBootstrapKey64,
     ) -> Result<
         LweBootstrapKey64,
-        LweSeededBootstrapKeyToLweBootstrapKeyTransformationEngineError<Self::EngineError>,
+        LweSeededBootstrapKeyToLweBootstrapKeyTransformationError<Self::EngineError>,
     > {
         Ok(unsafe {
             self.transform_lwe_seeded_bootstrap_key_to_lwe_bootstrap_key_unchecked(

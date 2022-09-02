@@ -4,7 +4,7 @@ use crate::prelude::AbstractEngine;
 use crate::specification::entities::{LweBootstrapKeyEntity, LweSeededBootstrapKeyEntity};
 
 engine_error! {
-    LweSeededBootstrapKeyToLweBootstrapKeyTransformationEngineError
+    LweSeededBootstrapKeyToLweBootstrapKeyTransformationError
     for LweSeededBootstrapKeyToLweBootstrapKeyTransformationEngine @
 }
 
@@ -33,14 +33,14 @@ pub trait LweSeededBootstrapKeyToLweBootstrapKeyTransformationEngine<
         lwe_seeded_bootstrap_key: InputSeededBootstrapKey,
     ) -> Result<
         OutputBootstrapKey,
-        LweSeededBootstrapKeyToLweBootstrapKeyTransformationEngineError<Self::EngineError>,
+        LweSeededBootstrapKeyToLweBootstrapKeyTransformationError<Self::EngineError>,
     >;
 
     /// Unsafely transforms an LWE seeded bootstrap key into an LWE bootstrap key
     ///
     /// # Safety
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
-    /// of [`LweSeededBootstrapKeyToLweBootstrapKeyTransformationEngineError`].
+    /// of [`LweSeededBootstrapKeyToLweBootstrapKeyTransformationError`].
     /// For safety concerns _specific_ to an engine, refer to the implementer safety section.
     unsafe fn transform_lwe_seeded_bootstrap_key_to_lwe_bootstrap_key_unchecked(
         &mut self,
