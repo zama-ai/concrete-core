@@ -62,8 +62,8 @@ impl LweCiphertextDiscardingAdditionEngine<LweCiphertext32, LweCiphertext32> for
         input_1: &LweCiphertext32,
         input_2: &LweCiphertext32,
     ) {
-        output.0.tensor.fill_with_copy(&input_1.0.as_ref().tensor);
-        output.0.as_mut().update_with_add(&input_2.0.as_ref());
+        output.0.tensor.fill_with_copy(&input_1.0.as_view().tensor);
+        output.0.as_mut_view().update_with_add(&input_2.0.as_view());
     }
 }
 
@@ -122,8 +122,8 @@ impl LweCiphertextDiscardingAdditionEngine<LweCiphertext64, LweCiphertext64> for
         input_1: &LweCiphertext64,
         input_2: &LweCiphertext64,
     ) {
-        output.0.tensor.fill_with_copy(&input_1.0.as_ref().tensor);
-        output.0.as_mut().update_with_add(&input_2.0.as_ref());
+        output.0.tensor.fill_with_copy(&input_1.0.as_view().tensor);
+        output.0.as_mut_view().update_with_add(&input_2.0.as_view());
     }
 }
 

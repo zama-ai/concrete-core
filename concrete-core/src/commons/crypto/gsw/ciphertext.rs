@@ -555,7 +555,7 @@ impl<Cont, Scalar: UnsignedInteger> GswCiphertext<Cont, Scalar> {
             .as_mut_slice()
             .clone_from_slice(ct0.tensor.as_slice());
         buffer.tensor.update_with_wrapping_sub(&ct0.tensor);
-        self.external_product(output, &buffer.as_ref());
+        self.external_product(output, &buffer.as_view());
     }
 }
 

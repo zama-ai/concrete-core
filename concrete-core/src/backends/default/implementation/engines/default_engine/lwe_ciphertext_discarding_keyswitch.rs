@@ -75,7 +75,7 @@ impl LweCiphertextDiscardingKeyswitchEngine<LweKeyswitchKey32, LweCiphertext32, 
         ksk: &LweKeyswitchKey32,
     ) {
         ksk.0
-            .keyswitch_ciphertext(&mut output.0.as_mut(), &input.0.as_ref());
+            .keyswitch_ciphertext(&mut output.0.as_mut_view(), &input.0.as_view());
     }
 }
 
@@ -147,7 +147,7 @@ impl LweCiphertextDiscardingKeyswitchEngine<LweKeyswitchKey64, LweCiphertext64, 
         ksk: &LweKeyswitchKey64,
     ) {
         ksk.0
-            .keyswitch_ciphertext(&mut output.0.as_mut(), &input.0.as_ref());
+            .keyswitch_ciphertext(&mut output.0.as_mut_view(), &input.0.as_view());
     }
 }
 

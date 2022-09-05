@@ -527,7 +527,7 @@ impl<Cont> LweKeyswitchKey<Cont> {
         Scalar: UnsignedTorus,
     {
         ck_dim_eq!(self.before_key_size().0 => before.get_mask().mask_size().0);
-        ck_dim_eq!(self.after_key_size().0 => after.as_ref().get_mask().mask_size().0);
+        ck_dim_eq!(self.after_key_size().0 => after.as_view().get_mask().mask_size().0);
 
         // We reset the output
         after.tensor.fill_with(|| Scalar::ZERO);

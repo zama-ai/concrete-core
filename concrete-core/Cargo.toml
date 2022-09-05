@@ -15,6 +15,8 @@ keywords = ["fully", "homomorphic", "encryption", "fhe", "cryptography"]
 concrete-npe = { version = "0.3.0", path = "../concrete-npe" }
 rand = "0.7"
 kolmogorov_smirnov = "1.1.0"
+quote = "1.0"
+proc-macro2 = "1.0"
 
 [dependencies]
 concrete-fftw = { version = "=0.1.3", optional = true }

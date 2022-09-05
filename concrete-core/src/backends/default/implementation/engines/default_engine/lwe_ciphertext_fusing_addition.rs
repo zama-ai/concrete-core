@@ -56,7 +56,7 @@ impl LweCiphertextFusingAdditionEngine<LweCiphertext32, LweCiphertext32> for Def
         output: &mut LweCiphertext32,
         input: &LweCiphertext32,
     ) {
-        output.0.as_mut().update_with_add(&input.0.as_ref());
+        output.0.as_mut_view().update_with_add(&input.0.as_view());
     }
 }
 
@@ -112,6 +112,6 @@ impl LweCiphertextFusingAdditionEngine<LweCiphertext64, LweCiphertext64> for Def
         output: &mut LweCiphertext64,
         input: &LweCiphertext64,
     ) {
-        output.0.as_mut().update_with_add(&input.0.as_ref());
+        output.0.as_mut_view().update_with_add(&input.0.as_view());
     }
 }

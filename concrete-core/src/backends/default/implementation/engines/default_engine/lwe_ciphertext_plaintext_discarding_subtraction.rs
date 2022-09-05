@@ -62,9 +62,9 @@ impl
         input_1: &LweCiphertext32,
         input_2: &Plaintext32,
     ) {
-        output.0.tensor.fill_with_copy(&input_1.0.as_ref().tensor);
-        output.0.as_mut().get_mut_body().0 =
-            output.0.as_ref().get_body().0.wrapping_sub(input_2.0 .0);
+        output.0.tensor.fill_with_copy(&input_1.0.as_view().tensor);
+        output.0.as_mut_view().get_mut_body().0 =
+            output.0.as_view().get_body().0.wrapping_sub(input_2.0 .0);
     }
 }
 
@@ -123,8 +123,8 @@ impl
         input_1: &LweCiphertext64,
         input_2: &Plaintext64,
     ) {
-        output.0.tensor.fill_with_copy(&input_1.0.as_ref().tensor);
-        output.0.as_mut().get_mut_body().0 =
-            output.0.as_ref().get_body().0.wrapping_sub(input_2.0 .0);
+        output.0.tensor.fill_with_copy(&input_1.0.as_view().tensor);
+        output.0.as_mut_view().get_mut_body().0 =
+            output.0.as_view().get_body().0.wrapping_sub(input_2.0 .0);
     }
 }

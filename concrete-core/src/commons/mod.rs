@@ -42,6 +42,10 @@ pub mod utils;
 
 #[doc(hidden)]
 #[cfg(test)]
+pub mod gen_tools;
+
+#[doc(hidden)]
+#[cfg(test)]
 pub mod test_tools {
     use rand::Rng;
 

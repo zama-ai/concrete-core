@@ -57,8 +57,8 @@ impl LweCiphertextDiscardingOppositeEngine<LweCiphertext32, LweCiphertext32> for
         output: &mut LweCiphertext32,
         input: &LweCiphertext32,
     ) {
-        output.0.tensor.fill_with_copy(&input.0.as_ref().tensor);
-        output.0.as_mut().update_with_neg();
+        output.0.tensor.fill_with_copy(&input.0.as_view().tensor);
+        output.0.as_mut_view().update_with_neg();
     }
 }
 
@@ -112,8 +112,8 @@ impl LweCiphertextDiscardingOppositeEngine<LweCiphertext64, LweCiphertext64> for
         output: &mut LweCiphertext64,
         input: &LweCiphertext64,
     ) {
-        output.0.tensor.fill_with_copy(&input.0.as_ref().tensor);
-        output.0.as_mut().update_with_neg();
+        output.0.tensor.fill_with_copy(&input.0.as_view().tensor);
+        output.0.as_mut_view().update_with_neg();
     }
 }
 

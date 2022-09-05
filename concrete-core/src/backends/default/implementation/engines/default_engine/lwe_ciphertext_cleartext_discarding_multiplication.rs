@@ -72,8 +72,8 @@ impl
     ) {
         output
             .0
-            .as_mut()
-            .fill_with_scalar_mul(&input_1.0.as_ref(), &input_2.0);
+            .as_mut_view()
+            .fill_with_scalar_mul(&input_1.0.as_view(), &input_2.0);
     }
 }
 
@@ -141,8 +141,8 @@ impl
     ) {
         output
             .0
-            .as_mut()
-            .fill_with_scalar_mul(&input_1.0.as_ref(), &input_2.0);
+            .as_mut_view()
+            .fill_with_scalar_mul(&input_1.0.as_view(), &input_2.0);
     }
 }
 

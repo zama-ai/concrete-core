@@ -10,23 +10,70 @@ use concrete_commons::parameters::{LweDimension, LweSize, MonomialDegree};
 #[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
 
+//@begin_gen: lwe_ciphertext
 #[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct LweCiphertext<T: UnsignedInteger> {
-    pub(crate) tensor: Tensor<Vec<T>>,
+pub struct LweCiphertext<Scalar: UnsignedInteger> {
+    pub(crate) tensor: Tensor<Vec<Scalar>>,
 }
-
 impl<Scalar: UnsignedInteger> LweCiphertext<Scalar> {
-    pub fn from_vec(v: Vec<Scalar>) -> Self {
-        LweCiphertext {
-            tensor: Tensor::from_container(v),
+    pub fn from_vec(c: Vec<Scalar>) -> LweCiphertext<Scalar> {
+        Self {
+            tensor: Tensor::from_container(c),
         }
     }
-
-    pub fn to_vec(self) -> Vec<Scalar> {
+    pub fn into_vec(self) -> Vec<Scalar> {
         self.tensor.into_container()
     }
+    pub fn as_view(&self) -> LweCiphertextView<Scalar> {
+        LweCiphertextView {
+            tensor: Tensor::from_container(self.tensor.as_container().as_slice()),
+        }
+    }
+    pub fn as_mut_view(&mut self) -> LweCiphertextMutView<Scalar> {
+        LweCiphertextMutView {
+            tensor: Tensor::from_container(self.tensor.as_mut_container().as_mut_slice()),
+        }
+    }
+}
+#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
+#[derive(Debug, PartialEq, Eq)]
+pub struct LweCiphertextMutView<'a, Scalar: UnsignedInteger> {
+    pub(crate) tensor: Tensor<&'a mut [Scalar]>,
+}
+impl<'a, Scalar: UnsignedInteger> LweCiphertextMutView<'a, Scalar> {
+    pub fn from_mut_slice(c: &'a mut [Scalar]) -> LweCiphertextMutView<'a, Scalar> {
+        Self {
+            tensor: Tensor::from_container(c),
+        }
+    }
+    pub fn into_mut_slice(self) -> &'a mut [Scalar] {
+        self.tensor.into_container()
+    }
+    pub fn as_view(&'a self) -> LweCiphertextView<'a, Scalar> {
+        LweCiphertextView {
+            tensor: Tensor::from_container(self.tensor.as_container().as_slice()),
+        }
+    }
+}
+#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct LweCiphertextView<'a, Scalar: UnsignedInteger> {
+    pub(crate) tensor: Tensor<&'a [Scalar]>,
+}
+impl<'a, Scalar: UnsignedInteger> LweCiphertextView<'a, Scalar> {
+    pub fn from_slice(c: &'a [Scalar]) -> LweCiphertextView<'a, Scalar> {
+        Self {
+            tensor: Tensor::from_container(c),
+        }
+    }
+    pub fn into_slice(self) -> &'a [Scalar] {
+        self.tensor.into_container()
+    }
+}
+//@end_gen
 
+impl<Scalar: UnsignedInteger> LweCiphertext<Scalar> {
     pub fn lwe_size(&self) -> LweSize {
         LweSize(self.tensor.len())
     }
@@ -39,40 +86,14 @@ impl<Scalar: UnsignedInteger> LweCiphertext<Scalar> {
 
     pub fn new_trivial_encryption(lwe_size: LweSize, plaintext: &Plaintext<Scalar>) -> Self {
         let mut ciphertext = Self::allocate(Scalar::ZERO, lwe_size);
-        ciphertext.as_mut().fill_with_trivial_encryption(plaintext);
+        ciphertext
+            .as_mut_view()
+            .fill_with_trivial_encryption(plaintext);
         ciphertext
     }
-
-    pub fn as_ref(&self) -> LweCiphertextView<Scalar> {
-        LweCiphertextView {
-            tensor: Tensor::from_container(self.tensor.as_container().as_slice()),
-        }
-    }
-
-    pub fn as_mut(&mut self) -> LweCiphertextMutView<Scalar> {
-        LweCiphertextMutView {
-            tensor: Tensor::from_container(self.tensor.as_mut_container().as_mut_slice()),
-        }
-    }
-}
-
-#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct LweCiphertextView<'a, T: UnsignedInteger> {
-    pub(crate) tensor: Tensor<&'a [T]>,
 }
 
 impl<'a, Scalar: UnsignedInteger> LweCiphertextView<'a, Scalar> {
-    pub fn from_slice(v: &'a [Scalar]) -> Self {
-        LweCiphertextView {
-            tensor: Tensor::from_container(v),
-        }
-    }
-
-    pub fn to_slice(self) -> &'a [Scalar] {
-        self.tensor.into_container()
-    }
-
     pub fn lwe_size(&self) -> LweSize {
         LweSize(self.tensor.len())
     }
@@ -93,31 +114,9 @@ impl<'a, Scalar: UnsignedInteger> LweCiphertextView<'a, Scalar> {
     }
 }
 
-#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
-#[derive(Debug, PartialEq, Eq)]
-pub struct LweCiphertextMutView<'a, T: UnsignedInteger> {
-    pub(crate) tensor: Tensor<&'a mut [T]>,
-}
-
 impl<'a, Scalar: UnsignedInteger> LweCiphertextMutView<'a, Scalar> {
-    pub fn from_mut_slice(v: &'a mut [Scalar]) -> Self {
-        LweCiphertextMutView {
-            tensor: Tensor::from_container(v),
-        }
-    }
-
-    pub fn to_mut_slice(self) -> &'a mut [Scalar] {
-        self.tensor.into_container()
-    }
-
     pub fn lwe_size(&self) -> LweSize {
         LweSize(self.tensor.len())
-    }
-
-    pub fn as_ref(&self) -> LweCiphertextView<Scalar> {
-        LweCiphertextView {
-            tensor: Tensor::from_container(self.tensor.as_container()),
-        }
     }
 
     pub fn get_mut_body(&mut self) -> &mut LweBody<Scalar> {
@@ -162,7 +161,7 @@ impl<'a, Scalar: UnsignedInteger> LweCiphertextMutView<'a, Scalar> {
         }
 
         // add the bias
-        let new_body = (self.as_ref().get_body().0).wrapping_add(bias.0);
+        let new_body = (self.as_view().get_body().0).wrapping_add(bias.0);
         *self.get_mut_body() = LweBody(new_body);
     }
 
@@ -291,3 +290,27 @@ impl<'a, Scalar: UnsignedInteger> LweMaskMutView<'a, Scalar> {
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[repr(transparent)]
 pub struct LweBody<T>(pub T);
+
+#[cfg(test)]
+mod generate {
+    use crate::commons::gen_tools;
+    use proc_macro2::TokenStream;
+    use quote::format_ident;
+
+    #[test]
+    fn generate_lwe_ciphertext() {
+        let current_file = gen_tools::read_this_file(file!());
+        let content = gen_tools::split_on_gen_tag("lwe_ciphertext", current_file.as_str());
+        let new_content_tokens = gen_tools::generate_priv_api(format_ident!("LweCiphertext"));
+        let current_content_tokens: TokenStream = content.content.parse().unwrap();
+        if current_content_tokens.to_string() != new_content_tokens.to_string() {
+            if gen_tools::do_generate() {
+                let mut content = content;
+                let new_content = new_content_tokens.to_string();
+                content.content = new_content.as_str();
+                gen_tools::write_this_file(file!(), content);
+            }
+            panic!("Mismatch encountered when generating the `lwe_ciphertext` scope.");
+        }
+    }
+}

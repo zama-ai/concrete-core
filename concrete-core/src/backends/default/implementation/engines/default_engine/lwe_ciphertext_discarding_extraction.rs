@@ -80,7 +80,7 @@ impl LweCiphertextDiscardingExtractionEngine<GlweCiphertext32, LweCiphertext32> 
         #[allow(deprecated)]
         output
             .0
-            .as_mut()
+            .as_mut_view()
             .fill_with_glwe_sample_extraction(&input.0, MonomialDegree(nth.0));
     }
 }
@@ -156,7 +156,7 @@ impl LweCiphertextDiscardingExtractionEngine<GlweCiphertext64, LweCiphertext64> 
         #[allow(deprecated)]
         output
             .0
-            .as_mut()
+            .as_mut_view()
             .fill_with_glwe_sample_extraction(&input.0, MonomialDegree(nth.0));
     }
 }

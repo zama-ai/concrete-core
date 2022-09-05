@@ -65,7 +65,7 @@ impl LweCiphertextDiscardingEncryptionEngine<LweSecretKey32, Plaintext32, LweCip
         noise: Variance,
     ) {
         key.0.encrypt_lwe(
-            &mut output.0.as_mut(),
+            &mut output.0.as_mut_view(),
             &input.0,
             noise,
             &mut self.encryption_generator,
@@ -129,7 +129,7 @@ impl LweCiphertextDiscardingEncryptionEngine<LweSecretKey64, Plaintext64, LweCip
         noise: Variance,
     ) {
         key.0.encrypt_lwe(
-            &mut output.0.as_mut(),
+            &mut output.0.as_mut_view(),
             &input.0,
             noise,
             &mut self.encryption_generator,
