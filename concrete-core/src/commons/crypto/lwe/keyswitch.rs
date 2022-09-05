@@ -1,5 +1,6 @@
-use super::{LweCiphertext, LweList};
+use super::LweList;
 use crate::commons::crypto::encoding::{Plaintext, PlaintextList};
+use crate::commons::crypto::lwe::{LweCiphertextMutView, LweCiphertextView};
 use crate::commons::crypto::secret::generators::EncryptionRandomGenerator;
 use crate::commons::crypto::secret::LweSecretKey;
 use crate::commons::math::decomposition::{
@@ -12,6 +13,7 @@ use crate::commons::math::tensor::{
 use crate::commons::math::torus::UnsignedTorus;
 use concrete_commons::dispersion::DispersionParameter;
 use concrete_commons::key_kinds::BinaryKeyKind;
+use concrete_commons::numeric::UnsignedInteger;
 use concrete_commons::parameters::{
     CiphertextCount, DecompositionBaseLog, DecompositionLevelCount, LweDimension, LweSize,
 };
@@ -516,21 +518,19 @@ impl<Cont> LweKeyswitchKey<Cont> {
     /// let mut decrypted = Plaintext(0 as u64);
     /// output_key.decrypt_lwe(&mut decrypted, &switched_ciphertext);
     /// ```
-    pub fn keyswitch_ciphertext<InCont, OutCont, Scalar>(
+    pub fn keyswitch_ciphertext<Scalar>(
         &self,
-        after: &mut LweCiphertext<OutCont>,
-        before: &LweCiphertext<InCont>,
+        after: &mut LweCiphertextMutView<Scalar>,
+        before: &LweCiphertextView<Scalar>,
     ) where
         Self: AsRefTensor<Element = Scalar>,
-        LweCiphertext<OutCont>: AsMutTensor<Element = Scalar>,
-        LweCiphertext<InCont>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
     {
         ck_dim_eq!(self.before_key_size().0 => before.get_mask().mask_size().0);
-        ck_dim_eq!(self.after_key_size().0 => after.get_mask().mask_size().0);
+        ck_dim_eq!(self.after_key_size().0 => after.as_ref().get_mask().mask_size().0);
 
         // We reset the output
-        after.as_mut_tensor().fill_with(|| Scalar::ZERO);
+        after.tensor.fill_with(|| Scalar::ZERO);
 
         // We copy the body
         *after.get_mut_body() = *before.get_body();
@@ -551,7 +551,7 @@ impl<Cont> LweKeyswitchKey<Cont> {
                 .zip(decomp)
             {
                 after
-                    .as_mut_tensor()
+                    .tensor
                     .update_with_wrapping_sub_element_mul(&level_key_cipher, decomposed.value());
             }
         }
@@ -660,13 +660,14 @@ impl<Cont> LweKeyBitDecomposition<Cont> {
     #[allow(dead_code)]
     pub fn ciphertext_iter(
         &self,
-    ) -> impl Iterator<Item = LweCiphertext<&[<Self as AsRefTensor>::Element]>>
+    ) -> impl Iterator<Item = LweCiphertextView<<Self as AsRefTensor>::Element>>
     where
         Self: AsRefTensor,
+        <Self as AsRefTensor>::Element: UnsignedInteger,
     {
         self.as_tensor()
             .subtensor_iter(self.lwe_size.0)
-            .map(|sub| LweCiphertext::from_container(sub.into_container()))
+            .map(|sub| LweCiphertextView::from_slice(sub.into_container()))
     }
 
     /// Returns an iterator over mutably borrowed `LweCiphertext`.
@@ -686,14 +687,15 @@ impl<Cont> LweKeyBitDecomposition<Cont> {
     #[allow(dead_code)]
     pub fn ciphertext_iter_mut(
         &mut self,
-    ) -> impl Iterator<Item = LweCiphertext<&mut [<Self as AsMutTensor>::Element]>>
+    ) -> impl Iterator<Item = LweCiphertextMutView<<Self as AsMutTensor>::Element>>
     where
         Self: AsMutTensor,
+        <Self as AsMutTensor>::Element: UnsignedInteger,
     {
         let chunks_size = self.lwe_size.0;
         self.as_mut_tensor()
             .subtensor_iter_mut(chunks_size)
-            .map(|sub| LweCiphertext::from_container(sub.into_container()))
+            .map(|sub| LweCiphertextMutView::from_mut_slice(sub.into_container()))
     }
 
     /// Consumes the current key bit decomposition and returns an lwe list.

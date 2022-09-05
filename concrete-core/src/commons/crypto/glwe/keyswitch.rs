@@ -1,6 +1,6 @@
 use super::{GlweCiphertext, GlweList};
 use crate::commons::crypto::encoding::PlaintextList;
-use crate::commons::crypto::lwe::{LweCiphertext, LweList};
+use crate::commons::crypto::lwe::{LweCiphertextView, LweList};
 use crate::commons::crypto::secret::generators::EncryptionRandomGenerator;
 use crate::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
 use crate::commons::math::decomposition::{
@@ -549,14 +549,13 @@ impl<Cont> LwePackingKeyswitchKey<Cont> {
     /// let mut decrypted = PlaintextList::from_container(vec![0 as u64; 256]);
     /// output_key.decrypt_glwe(&mut decrypted, &switched_ciphertext);
     /// ```
-    pub fn keyswitch_ciphertext<InCont, OutCont, Scalar>(
+    pub fn keyswitch_ciphertext<OutCont, Scalar>(
         &self,
         after: &mut GlweCiphertext<OutCont>,
-        before: &LweCiphertext<InCont>,
+        before: &LweCiphertextView<Scalar>,
     ) where
         Self: AsRefTensor<Element = Scalar>,
         GlweCiphertext<OutCont>: AsMutTensor<Element = Scalar>,
-        LweCiphertext<InCont>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
     {
         ck_dim_eq!(self.input_lwe_key_dimension().0 => before.lwe_size().to_lwe_dimension().0);
@@ -1203,14 +1202,13 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
     /// let mut decrypted = PlaintextList::from_container(vec![0 as u64; polynomial_size.0]);
     /// output_key.decrypt_glwe(&mut decrypted, &switched_ciphertext);
     /// ```
-    pub fn private_functional_keyswitch_ciphertext<InCont, OutCont, Scalar>(
+    pub fn private_functional_keyswitch_ciphertext<OutCont, Scalar>(
         &self,
         after: &mut GlweCiphertext<OutCont>,
-        before: &LweCiphertext<InCont>,
+        before: &LweCiphertextView<Scalar>,
     ) where
         Self: AsRefTensor<Element = Scalar>,
         GlweCiphertext<OutCont>: AsMutTensor<Element = Scalar>,
-        LweCiphertext<InCont>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
     {
         ck_dim_eq!(self.input_lwe_key_dimension().0  => before.lwe_size().to_lwe_dimension().0 );
@@ -1222,7 +1220,7 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
         // We instantiate a decomposer
         let decomposer = SignedDecomposer::new(self.decomp_base_log, self.decomp_level_count);
 
-        for (block, input_lwe) in self.bit_decomp_iter().zip(before.as_tensor().iter()) {
+        for (block, input_lwe) in self.bit_decomp_iter().zip(before.tensor.iter()) {
             // We decompose
             let rounded = decomposer.closest_representable(*input_lwe);
             let decomp = decomposer.decompose(rounded);

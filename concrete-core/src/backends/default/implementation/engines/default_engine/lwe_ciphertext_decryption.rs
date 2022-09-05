@@ -52,7 +52,7 @@ impl LweCiphertextDecryptionEngine<LweSecretKey32, LweCiphertext32, Plaintext32>
         input: &LweCiphertext32,
     ) -> Plaintext32 {
         let mut plaintext = ImplPlaintext(0u32);
-        key.0.decrypt_lwe(&mut plaintext, &input.0);
+        key.0.decrypt_lwe(&mut plaintext, &input.0.as_ref());
         Plaintext32(plaintext)
     }
 }
@@ -103,7 +103,7 @@ impl LweCiphertextDecryptionEngine<LweSecretKey64, LweCiphertext64, Plaintext64>
         input: &LweCiphertext64,
     ) -> Plaintext64 {
         let mut plaintext = ImplPlaintext(0u64);
-        key.0.decrypt_lwe(&mut plaintext, &input.0);
+        key.0.decrypt_lwe(&mut plaintext, &input.0.as_ref());
         Plaintext64(plaintext)
     }
 }

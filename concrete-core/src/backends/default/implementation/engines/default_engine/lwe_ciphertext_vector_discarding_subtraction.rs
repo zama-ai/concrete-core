@@ -2,7 +2,6 @@ use crate::backends::default::implementation::engines::DefaultEngine;
 use crate::backends::default::implementation::entities::{
     LweCiphertextVector32, LweCiphertextVector64,
 };
-use crate::commons::math::tensor::{AsMutTensor, AsRefTensor};
 use crate::specification::engines::{
     LweCiphertextVectorDiscardingSubtractionEngine, LweCiphertextVectorDiscardingSubtractionError,
 };
@@ -73,7 +72,7 @@ impl LweCiphertextVectorDiscardingSubtractionEngine<LweCiphertextVector32, LweCi
             .ciphertext_iter_mut()
             .zip(input_1.0.ciphertext_iter().zip(input_2.0.ciphertext_iter()))
         {
-            out.as_mut_tensor().fill_with_copy(in_1.as_tensor());
+            out.tensor.fill_with_copy(&in_1.tensor);
             out.update_with_sub(&in_2);
         }
     }
@@ -145,7 +144,7 @@ impl LweCiphertextVectorDiscardingSubtractionEngine<LweCiphertextVector64, LweCi
             .ciphertext_iter_mut()
             .zip(input_1.0.ciphertext_iter().zip(input_2.0.ciphertext_iter()))
         {
-            out.as_mut_tensor().fill_with_copy(in_1.as_tensor());
+            out.tensor.fill_with_copy(&in_1.tensor);
             out.update_with_sub(&in_2);
         }
     }

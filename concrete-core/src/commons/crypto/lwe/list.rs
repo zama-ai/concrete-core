@@ -1,10 +1,11 @@
-use super::LweCiphertext;
 use crate::commons::crypto::encoding::{CleartextList, PlaintextList};
+use crate::commons::crypto::lwe::{LweCiphertextMutView, LweCiphertextView};
 use crate::commons::math::tensor::{
     ck_dim_div, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
 use crate::commons::math::torus::UnsignedTorus;
 use crate::commons::utils::{zip, zip_args};
+use concrete_commons::numeric::UnsignedInteger;
 use concrete_commons::parameters::{CiphertextCount, CleartextCount, LweDimension, LweSize};
 #[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
@@ -206,21 +207,22 @@ impl<Cont> LweList<Cont> {
     ///     assert_eq!(body, &LweBody(0));
     ///     assert_eq!(
     ///         masks,
-    ///         LweMask::from_container(&[0 as u8, 0, 0, 0, 0, 0, 0, 0, 0][..])
+    ///         LweMask::from_vec(&[0 as u8, 0, 0, 0, 0, 0, 0, 0, 0][..])
     ///     );
     /// }
     /// assert_eq!(list.ciphertext_iter().count(), 20);
     /// ```
     pub fn ciphertext_iter(
         &self,
-    ) -> impl DoubleEndedIterator<Item = LweCiphertext<&[<Self as AsRefTensor>::Element]>>
+    ) -> impl DoubleEndedIterator<Item = LweCiphertextView<<Self as AsRefTensor>::Element>>
     where
         Self: AsRefTensor,
+        <Self as AsRefTensor>::Element: UnsignedInteger,
     {
         ck_dim_div!(self.as_tensor().len() => self.lwe_size.0);
         self.as_tensor()
             .subtensor_iter(self.lwe_size.0)
-            .map(|sub| LweCiphertext::from_container(sub.into_container()))
+            .map(|sub| LweCiphertextView::from_slice(sub.into_container()))
     }
 
     /// Returns an iterator over ciphers mutably borrowed from the list.
@@ -244,15 +246,16 @@ impl<Cont> LweList<Cont> {
     /// ```
     pub fn ciphertext_iter_mut(
         &mut self,
-    ) -> impl DoubleEndedIterator<Item = LweCiphertext<&mut [<Self as AsMutTensor>::Element]>>
+    ) -> impl DoubleEndedIterator<Item = LweCiphertextMutView<<Self as AsMutTensor>::Element>>
     where
         Self: AsMutTensor,
+        <Self as AsRefTensor>::Element: UnsignedInteger,
     {
         ck_dim_div!(self.as_tensor().len() => self.lwe_size.0);
         let lwe_size = self.lwe_size.0;
         self.as_mut_tensor()
             .subtensor_iter_mut(lwe_size)
-            .map(|sub| LweCiphertext::from_container(sub.into_container()))
+            .map(|sub| LweCiphertextMutView::from_mut_slice(sub.into_container()))
     }
 
     /// Returns an iterator over sub lists borrowed from the list.
@@ -271,7 +274,7 @@ impl<Cont> LweList<Cont> {
     ///         assert_eq!(body, &LweBody(0));
     ///         assert_eq!(
     ///             masks,
-    ///             LweMask::from_container(&[0 as u8, 0, 0, 0, 0, 0, 0, 0, 0][..])
+    ///             LweMask::from_vec(&[0 as u8, 0, 0, 0, 0, 0, 0, 0, 0][..])
     ///         );
     ///     }
     /// }
@@ -315,7 +318,7 @@ impl<Cont> LweList<Cont> {
     ///     assert_eq!(body, &LweBody(9));
     ///     assert_eq!(
     ///         masks,
-    ///         LweMask::from_container(&[8 as u8, 8, 8, 8, 8, 8, 8, 8, 8][..])
+    ///         LweMask::from_vec(&[8 as u8, 8, 8, 8, 8, 8, 8, 8, 8][..])
     ///     );
     /// }
     /// assert_eq!(list.sublist_iter_mut(CiphertextCount(5)).count(), 4);

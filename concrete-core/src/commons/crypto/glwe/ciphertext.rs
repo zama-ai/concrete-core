@@ -1,6 +1,6 @@
 use super::{GlweBody, GlweMask};
 use crate::commons::crypto::encoding::{Plaintext, PlaintextList};
-use crate::commons::crypto::lwe::LweCiphertext;
+use crate::commons::crypto::lwe::LweCiphertextMutView;
 use crate::commons::math::polynomial::PolynomialList;
 use crate::commons::math::tensor::{
     tensor_traits, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
@@ -435,13 +435,12 @@ impl<Cont> GlweCiphertext<Cont> {
     ///     assert!(dist < 400);
     /// }
     /// ```
-    pub fn fill_lwe_with_sample_extraction<OutputCont, Element>(
+    pub fn fill_lwe_with_sample_extraction<Element>(
         &self,
-        lwe: &mut LweCiphertext<OutputCont>,
+        lwe: &mut LweCiphertextMutView<Element>,
         n_th: MonomialDegree,
     ) where
         Self: AsRefTensor<Element = Element>,
-        LweCiphertext<OutputCont>: AsMutTensor<Element = Element>,
         Element: UnsignedTorus,
     {
         // We retrieve the bodies and masks of the two ciphertexts.
@@ -455,19 +454,14 @@ impl<Cont> GlweCiphertext<Cont> {
             .get_coefficient();
 
         // We copy the mask (each polynomial is in the wrong order)
-        lwe_mask
-            .as_mut_tensor()
-            .fill_with_copy(glwe_mask.as_tensor());
+        lwe_mask.tensor.fill_with_copy(glwe_mask.as_tensor());
 
         // We compute the number of elements which must be
         // turned into their opposite
         let opposite_count = self.poly_size.0 - n_th.0 - 1;
 
         // We loop through the polynomials (as mut tensors)
-        for mut lwe_mask_poly in lwe_mask
-            .as_mut_tensor()
-            .subtensor_iter_mut(self.poly_size.0)
-        {
+        for mut lwe_mask_poly in lwe_mask.tensor.subtensor_iter_mut(self.poly_size.0) {
             // We reverse the polynomial
             lwe_mask_poly.reverse();
             // We compute the opposite of the proper coefficients

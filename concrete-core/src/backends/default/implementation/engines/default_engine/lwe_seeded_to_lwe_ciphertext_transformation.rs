@@ -66,7 +66,7 @@ impl LweSeededCiphertextToLweCiphertextTransformationEngine<LweSeededCiphertext3
             ImplLweCiphertext::allocate(0_u32, lwe_seeded_ciphertext.lwe_dimension().to_lwe_size());
         lwe_seeded_ciphertext
             .0
-            .expand_into::<_, ActivatedRandomGenerator>(&mut output_ciphertext);
+            .expand_into::<ActivatedRandomGenerator>(&mut output_ciphertext.as_mut());
 
         LweCiphertext32(output_ciphertext)
     }
@@ -128,7 +128,7 @@ impl LweSeededCiphertextToLweCiphertextTransformationEngine<LweSeededCiphertext6
             ImplLweCiphertext::allocate(0_u64, lwe_seeded_ciphertext.lwe_dimension().to_lwe_size());
         lwe_seeded_ciphertext
             .0
-            .expand_into::<_, ActivatedRandomGenerator>(&mut output_ciphertext);
+            .expand_into::<ActivatedRandomGenerator>(&mut output_ciphertext.as_mut());
 
         LweCiphertext64(output_ciphertext)
     }

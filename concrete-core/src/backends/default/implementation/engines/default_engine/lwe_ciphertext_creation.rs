@@ -4,6 +4,8 @@ use crate::backends::default::implementation::entities::{
     LweCiphertextView32, LweCiphertextView64,
 };
 use crate::commons::crypto::lwe::LweCiphertext as ImplLweCiphertext;
+use crate::commons::crypto::lwe::LweCiphertextMutView as ImplLweCiphertextMutView;
+use crate::commons::crypto::lwe::LweCiphertextView as ImplLweCiphertextView;
 use crate::specification::engines::{LweCiphertextCreationEngine, LweCiphertextCreationError};
 
 /// # Description:
@@ -43,7 +45,7 @@ impl LweCiphertextCreationEngine<Vec<u32>, LweCiphertext32> for DefaultEngine {
         &mut self,
         container: Vec<u32>,
     ) -> LweCiphertext32 {
-        LweCiphertext32(ImplLweCiphertext::from_container(container))
+        LweCiphertext32(ImplLweCiphertext::from_vec(container))
     }
 }
 
@@ -84,7 +86,7 @@ impl LweCiphertextCreationEngine<Vec<u64>, LweCiphertext64> for DefaultEngine {
         &mut self,
         container: Vec<u64>,
     ) -> LweCiphertext64 {
-        LweCiphertext64(ImplLweCiphertext::from_container(container))
+        LweCiphertext64(ImplLweCiphertext::from_vec(container))
     }
 }
 
@@ -129,7 +131,7 @@ impl<'data> LweCiphertextCreationEngine<&'data [u32], LweCiphertextView32<'data>
         &mut self,
         container: &'data [u32],
     ) -> LweCiphertextView32<'data> {
-        LweCiphertextView32(ImplLweCiphertext::from_container(container))
+        LweCiphertextView32(ImplLweCiphertextView::from_slice(container))
     }
 }
 
@@ -174,7 +176,7 @@ impl<'data> LweCiphertextCreationEngine<&'data mut [u32], LweCiphertextMutView32
         &mut self,
         container: &'data mut [u32],
     ) -> LweCiphertextMutView32<'data> {
-        LweCiphertextMutView32(ImplLweCiphertext::from_container(container))
+        LweCiphertextMutView32(ImplLweCiphertextMutView::from_mut_slice(container))
     }
 }
 
@@ -217,7 +219,7 @@ impl<'data> LweCiphertextCreationEngine<&'data [u64], LweCiphertextView64<'data>
         &mut self,
         container: &'data [u64],
     ) -> LweCiphertextView64<'data> {
-        LweCiphertextView64(ImplLweCiphertext::from_container(container))
+        LweCiphertextView64(ImplLweCiphertextView::from_slice(container))
     }
 }
 
@@ -262,6 +264,6 @@ impl<'data> LweCiphertextCreationEngine<&'data mut [u64], LweCiphertextMutView64
         &mut self,
         container: &'data mut [u64],
     ) -> LweCiphertextMutView64<'data> {
-        LweCiphertextMutView64(ImplLweCiphertext::from_container(container))
+        LweCiphertextMutView64(ImplLweCiphertextMutView::from_mut_slice(container))
     }
 }

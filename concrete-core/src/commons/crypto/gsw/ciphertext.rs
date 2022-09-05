@@ -1,6 +1,8 @@
 use std::cell::RefCell;
 
-use crate::commons::crypto::lwe::{LweCiphertext, LweList};
+use crate::commons::crypto::lwe::{
+    LweCiphertext, LweCiphertextMutView, LweCiphertextView, LweList,
+};
 use crate::commons::math::decomposition::{DecompositionLevel, SignedDecomposer};
 use crate::commons::math::tensor::{
     ck_dim_div, ck_dim_eq, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, IntoTensor, Tensor,
@@ -10,21 +12,21 @@ use crate::commons::utils::zip;
 
 use super::GswLevelMatrix;
 
-use concrete_commons::numeric::Numeric;
+use concrete_commons::numeric::{Numeric, UnsignedInteger};
 use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
 #[cfg(feature = "__commons_parallel")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
 
 /// A GSW ciphertext.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct GswCiphertext<Cont, Scalar> {
+pub struct GswCiphertext<Cont, Scalar: UnsignedInteger> {
     tensor: Tensor<Cont>,
     lwe_size: LweSize,
     decomp_base_log: DecompositionBaseLog,
-    rounded_buffer: RefCell<LweCiphertext<Vec<Scalar>>>,
+    rounded_buffer: RefCell<LweCiphertext<Scalar>>,
 }
 
-impl<Scalar> GswCiphertext<Vec<Scalar>, Scalar> {
+impl<Scalar: UnsignedInteger> GswCiphertext<Vec<Scalar>, Scalar> {
     /// Allocates a new GSW ciphertext whose coefficients are all `value`.
     ///
     /// # Example
@@ -60,7 +62,7 @@ impl<Scalar> GswCiphertext<Vec<Scalar>, Scalar> {
     }
 }
 
-impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
+impl<Cont, Scalar: UnsignedInteger> GswCiphertext<Cont, Scalar> {
     /// Creates a gsw ciphertext from an existing container.
     ///
     /// # Example
@@ -412,11 +414,12 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     ///
     /// gsw.external_product(&mut res, &ciphertext);
     /// ```
-    pub fn external_product<C1, C2>(&self, output: &mut LweCiphertext<C1>, lwe: &LweCiphertext<C2>)
-    where
+    pub fn external_product(
+        &self,
+        output: &mut LweCiphertextMutView<Scalar>,
+        lwe: &LweCiphertextView<Scalar>,
+    ) where
         Self: AsRefTensor<Element = Scalar>,
-        LweCiphertext<C1>: AsMutTensor<Element = Scalar>,
-        LweCiphertext<C2>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
     {
         // We check that the lwe sizes match
@@ -432,9 +435,10 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
         // We round the input mask and body
         let decomposer =
             SignedDecomposer::new(self.decomp_base_log, self.decomposition_level_count());
-        decomposer.fill_tensor_with_closest_representable(rounded_input_lwe, lwe);
+        decomposer
+            .fill_tensor_with_closest_representable(&mut rounded_input_lwe.tensor, &lwe.tensor);
 
-        let mut decomposition = decomposer.decompose_tensor(rounded_input_lwe);
+        let mut decomposition = decomposer.decompose_tensor(&rounded_input_lwe.tensor);
         // We loop through the levels (we reverse to match the order of the decomposition iterator.)
         for gsw_decomp_matrix in self.level_matrix_iter().rev() {
             // We retrieve the decomposition of this level.
@@ -463,13 +467,12 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
             for (gsw_row, lwe_coeff) in iterator {
                 // We loop through the coefficients of the output, and add the
                 // corresponding product of scalars.
-                output.as_mut_tensor().update_with_one(
-                    gsw_row.as_tensor(),
-                    |output_coeff, gsw_coeff| {
+                output
+                    .tensor
+                    .update_with_one(gsw_row.as_tensor(), |output_coeff, gsw_coeff| {
                         *output_coeff =
                             output_coeff.wrapping_add(gsw_coeff.wrapping_mul(*lwe_coeff))
-                    },
-                );
+                    });
             }
         }
     }
@@ -533,39 +536,32 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     ///
     /// gsw.cmux(&mut out, &ciphertext0, &ciphertext1);
     /// ```
-    pub fn cmux<C0, C1, COut>(
+    pub fn cmux(
         &self,
-        output: &mut LweCiphertext<COut>,
-        ct0: &LweCiphertext<C0>,
-        ct1: &LweCiphertext<C1>,
+        output: &mut LweCiphertextMutView<Scalar>,
+        ct0: &LweCiphertextView<Scalar>,
+        ct1: &LweCiphertextView<Scalar>,
     ) where
-        LweCiphertext<C0>: AsRefTensor<Element = Scalar>,
-        LweCiphertext<C1>: AsRefTensor<Element = Scalar>,
-        LweCiphertext<Vec<Scalar>>: AsMutTensor<Element = Scalar>,
-        LweCiphertext<COut>: AsMutTensor<Element = Scalar>,
         Self: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
     {
         let mut buffer = LweCiphertext::allocate(Scalar::ZERO, ct1.lwe_size());
         buffer
-            .as_mut_tensor()
+            .tensor
             .as_mut_slice()
-            .clone_from_slice(ct1.as_tensor().as_slice());
+            .clone_from_slice(ct1.tensor.as_slice());
         output
-            .as_mut_tensor()
+            .tensor
             .as_mut_slice()
-            .clone_from_slice(ct0.as_tensor().as_slice());
-        buffer
-            .as_mut_tensor()
-            .update_with_wrapping_sub(ct0.as_tensor());
-        self.external_product(output, &buffer);
+            .clone_from_slice(ct0.tensor.as_slice());
+        buffer.tensor.update_with_wrapping_sub(&ct0.tensor);
+        self.external_product(output, &buffer.as_ref());
     }
 }
 
-impl<Element, Cont, Scalar> AsRefTensor for GswCiphertext<Cont, Scalar>
+impl<Element, Cont, Scalar: UnsignedInteger> AsRefTensor for GswCiphertext<Cont, Scalar>
 where
     Cont: AsRefSlice<Element = Element>,
-    Scalar: Numeric,
 {
     type Element = Element;
     type Container = Cont;
@@ -574,10 +570,9 @@ where
     }
 }
 
-impl<Element, Cont, Scalar> AsMutTensor for GswCiphertext<Cont, Scalar>
+impl<Element, Cont, Scalar: UnsignedInteger> AsMutTensor for GswCiphertext<Cont, Scalar>
 where
     Cont: AsMutSlice<Element = Element>,
-    Scalar: Numeric,
 {
     type Element = Element;
     type Container = Cont;
@@ -586,10 +581,9 @@ where
     }
 }
 
-impl<Cont, Scalar> IntoTensor for GswCiphertext<Cont, Scalar>
+impl<Cont, Scalar: UnsignedInteger> IntoTensor for GswCiphertext<Cont, Scalar>
 where
     Cont: AsRefSlice,
-    Scalar: Numeric,
 {
     type Element = <Cont as AsRefSlice>::Element;
     type Container = Cont;

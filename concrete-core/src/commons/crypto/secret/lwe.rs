@@ -1,7 +1,8 @@
 use crate::commons::crypto::encoding::{Plaintext, PlaintextList};
 use crate::commons::crypto::gsw::GswCiphertext;
 use crate::commons::crypto::lwe::{
-    LweBody, LweCiphertext, LweList, LweMask, LweSeededCiphertext, LweSeededList,
+    LweBody, LweCiphertextMutView, LweCiphertextView, LweList, LweMask, LweMaskMutView,
+    LweSeededCiphertext, LweSeededList,
 };
 use crate::commons::crypto::secret::generators::{
     EncryptionRandomGenerator, SecretRandomGenerator,
@@ -303,21 +304,20 @@ where
         LweDimension(self.as_tensor().len())
     }
 
-    fn fill_lwe_mask_and_body_for_encryption<OutputCont, Scalar, Gen>(
+    fn fill_lwe_mask_and_body_for_encryption<Scalar, Gen>(
         &self,
         output_body: &mut LweBody<Scalar>,
-        output_mask: &mut LweMask<OutputCont>,
+        output_mask: &mut LweMaskMutView<Scalar>,
         encoded: &Plaintext<Scalar>,
         noise_parameters: impl DispersionParameter,
         generator: &mut EncryptionRandomGenerator<Gen>,
     ) where
         Self: AsRefTensor<Element = Scalar>,
-        OutputCont: AsMutSlice<Element = Scalar>,
         Scalar: UnsignedTorus,
         Gen: ByteRandomGenerator,
     {
         // generate a uniformly random mask
-        generator.fill_tensor_with_random_mask(output_mask);
+        generator.fill_tensor_with_random_mask(&mut output_mask.tensor);
 
         // generate an error from the normal distribution described by std_dev
         output_body.0 = generator.random_noise(noise_parameters);
@@ -325,7 +325,7 @@ where
         // compute the multisum between the secret key and the mask
         output_body.0 = output_body
             .0
-            .wrapping_add(output_mask.compute_multisum(self));
+            .wrapping_add(output_mask.as_ref().compute_multisum(self));
 
         // add the encoded message
         output_body.0 = output_body.0.wrapping_add(encoded.0);
@@ -369,15 +369,14 @@ where
     ///
     /// assert!((decoded.0 - clear.0).abs() < 0.1);
     /// ```
-    pub fn encrypt_lwe<OutputCont, Scalar, Gen>(
+    pub fn encrypt_lwe<Scalar, Gen>(
         &self,
-        output: &mut LweCiphertext<OutputCont>,
+        output: &mut LweCiphertextMutView<Scalar>,
         encoded: &Plaintext<Scalar>,
         noise_parameters: impl DispersionParameter,
         generator: &mut EncryptionRandomGenerator<Gen>,
     ) where
         Self: AsRefTensor<Element = Scalar>,
-        LweCiphertext<OutputCont>: AsMutTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
         Gen: ByteRandomGenerator,
     {
@@ -466,12 +465,12 @@ where
         let mut generator =
             EncryptionRandomGenerator::<Gen>::new(output.compression_seed().seed, seeder);
 
-        let mut output_mask = LweMask::from_container(vec![Scalar::ZERO; self.key_size().0]);
+        let mut output_mask = LweMask::from_vec(vec![Scalar::ZERO; self.key_size().0]);
         let output_body = output.get_mut_body();
 
         self.fill_lwe_mask_and_body_for_encryption(
             output_body,
-            &mut output_mask,
+            &mut output_mask.as_mut(),
             encoded,
             noise_parameters,
             &mut generator,
@@ -575,7 +574,7 @@ where
         NoiseParameter: DispersionParameter,
     {
         let mut mask_tensor = vec![Scalar::ZERO; self.key_size().0];
-        let mut output_mask = LweMask::from_container(mask_tensor.as_mut_slice());
+        let mut output_mask = LweMaskMutView::from_mut_slice(mask_tensor.as_mut_slice());
 
         for (output_body, encoded_message) in output.body_iter_mut().zip(encoded.plaintext_iter()) {
             self.fill_lwe_mask_and_body_for_encryption(
@@ -667,13 +666,12 @@ where
     /// Decrypts a single ciphertext.
     ///
     /// See ['encrypt_lwe'] for an example.
-    pub fn decrypt_lwe<Scalar, CipherCont>(
+    pub fn decrypt_lwe<Scalar>(
         &self,
         output: &mut Plaintext<Scalar>,
-        cipher: &LweCiphertext<CipherCont>,
+        cipher: &LweCiphertextView<Scalar>,
     ) where
         Self: AsRefTensor<Element = Scalar>,
-        LweCiphertext<CipherCont>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
     {
         let (body, masks) = cipher.get_body_and_mask();
@@ -788,7 +786,7 @@ where
 
                 // We retrieve the coefficient in the diagonal
                 let level_coeff = lwe_ct
-                    .as_mut_tensor()
+                    .tensor
                     .as_mut_container()
                     .as_mut_slice()
                     .get_mut(index)
@@ -956,7 +954,7 @@ where
         // We fill the gsw with trivial lwe encryptions of zero:
         for mut lwe in encrypted.as_mut_lwe_list().ciphertext_iter_mut() {
             let (mut body, mut mask) = lwe.get_mut_body_and_mask();
-            mask.as_mut_tensor().fill_with_element(Scalar::ZERO);
+            mask.tensor.fill_with_element(Scalar::ZERO);
             body.0 = generator.random_noise(noise_parameters);
         }
         let base_log = encrypted.decomposition_base_log();
@@ -970,7 +968,7 @@ where
                 let mut lwe_ct = row.into_lwe();
                 // We retrieve the coefficient in the diagonal
                 let level_coeff = lwe_ct
-                    .as_mut_tensor()
+                    .tensor
                     .as_mut_container()
                     .as_mut_slice()
                     .get_mut(index)

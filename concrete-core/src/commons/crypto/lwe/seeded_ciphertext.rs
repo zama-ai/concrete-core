@@ -1,15 +1,15 @@
 #[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
 
-use concrete_commons::numeric::Numeric;
+use crate::commons::crypto::lwe::LweCiphertextMutView;
+use concrete_commons::numeric::{Numeric, UnsignedInteger};
 use concrete_commons::parameters::{LweDimension, LweSize};
 
 use crate::commons::math::random::{
     ByteRandomGenerator, CompressionSeed, RandomGenerable, RandomGenerator, Uniform,
 };
-use crate::commons::math::tensor::AsMutTensor;
 
-use super::{LweBody, LweCiphertext};
+use super::LweBody;
 
 /// A seeded ciphertext encrypted using the LWE scheme.
 #[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
@@ -162,17 +162,16 @@ impl<Scalar: Numeric> LweSeededCiphertext<Scalar> {
     /// assert_eq!(body, &mut LweBody(0));
     /// assert_eq!(mask.mask_size(), LweDimension(9));
     /// ```
-    pub fn expand_into<Cont, Gen>(self, output: &mut LweCiphertext<Cont>)
+    pub fn expand_into<Gen>(self, output: &mut LweCiphertextMutView<Scalar>)
     where
-        LweCiphertext<Cont>: AsMutTensor<Element = Scalar>,
-        Scalar: Copy + RandomGenerable<Uniform> + Numeric,
+        Scalar: Copy + RandomGenerable<Uniform> + UnsignedInteger,
         Gen: ByteRandomGenerator,
     {
         let mut generator = RandomGenerator::<Gen>::new(self.compression_seed.seed);
         let (output_body, mut output_mask) = output.get_mut_body_and_mask();
 
         // generate a uniformly random mask
-        generator.fill_tensor_with_random_uniform(output_mask.as_mut_tensor());
+        generator.fill_tensor_with_random_uniform(&mut output_mask.tensor);
 
         output_body.0 = self.body.0;
     }

@@ -70,7 +70,10 @@ impl
         input_1: &LweCiphertext32,
         input_2: &Cleartext32,
     ) {
-        output.0.fill_with_scalar_mul(&input_1.0, &input_2.0);
+        output
+            .0
+            .as_mut()
+            .fill_with_scalar_mul(&input_1.0.as_ref(), &input_2.0);
     }
 }
 
@@ -136,7 +139,10 @@ impl
         input_1: &LweCiphertext64,
         input_2: &Cleartext64,
     ) {
-        output.0.fill_with_scalar_mul(&input_1.0, &input_2.0);
+        output
+            .0
+            .as_mut()
+            .fill_with_scalar_mul(&input_1.0.as_ref(), &input_2.0);
     }
 }
 
