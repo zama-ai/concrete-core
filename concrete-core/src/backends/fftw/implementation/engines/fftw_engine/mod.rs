@@ -102,4 +102,5 @@ mod glwe_ciphertexts_ggsw_ciphertext_fusing_cmux;
 mod lwe_bootstrap_key_conversion;
 mod lwe_ciphertext_discarding_bit_extraction;
 mod lwe_ciphertext_discarding_bootstrap;
+mod lwe_ciphertext_discarding_circuit_bootstrap_boolean;
 mod lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_vertical_packing;
