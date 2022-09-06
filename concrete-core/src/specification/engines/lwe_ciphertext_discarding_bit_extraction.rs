@@ -8,6 +8,8 @@ engine_error! {
     LweCiphertextDiscardingBitExtractError for LweCiphertextDiscardingBitExtractEngine @
     InputLweDimensionMismatch => "The input ciphertext and bootstrap key LWE dimension must be the \
                                   same.",
+    InputKeyswitchKeyLweDimensionMismatch => "The input ciphertext LWE dimension must be the same \
+                                            as the keyswitch key input LWE dimension.",
     OutputLweDimensionMismatch => "The output ciphertext vector LWE dimension must be the same \
                                   as the output LWE dimension of the keyswitch key.",
     ExtractedBitsCountMismatch => "The output LWE ciphertext vector count must be the same as \
@@ -43,6 +45,9 @@ impl<EngineError: std::error::Error> LweCiphertextDiscardingBitExtractError<Engi
     {
         if input.lwe_dimension() != bsk.output_lwe_dimension() {
             return Err(Self::InputLweDimensionMismatch);
+        }
+        if input.lwe_dimension() != ksk.input_lwe_dimension() {
+            return Err(Self::InputKeyswitchKeyLweDimensionMismatch);
         }
         if output.lwe_dimension() != ksk.output_lwe_dimension() {
             return Err(Self::OutputLweDimensionMismatch);

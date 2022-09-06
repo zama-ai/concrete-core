@@ -1,7 +1,6 @@
 use crate::backends::fftw::engines::{FftwEngine, FftwError};
 use crate::backends::fftw::entities::{FftwFourierLweBootstrapKey32, FftwFourierLweBootstrapKey64};
 use crate::backends::fftw::private::crypto::wop_pbs::extract_bits;
-use crate::backends::fftw::private::math::fft::ALLOWED_POLY_SIZE;
 use crate::prelude::{
     CiphertextModulusLog, DeltaLog, ExtractedBitsCount, LweBootstrapKeyEntity, LweCiphertext32,
     LweCiphertext64, LweCiphertextVector32, LweCiphertextVector64, LweCiphertextVectorMutView32,
@@ -109,11 +108,7 @@ impl
         extracted_bits_count: ExtractedBitsCount,
         delta_log: DeltaLog,
     ) -> Result<(), LweCiphertextDiscardingBitExtractError<Self::EngineError>> {
-        if !ALLOWED_POLY_SIZE.contains(&bsk.polynomial_size().0) {
-            return Err(LweCiphertextDiscardingBitExtractError::from(
-                FftwError::UnsupportedPolynomialSize,
-            ));
-        }
+        FftwError::perform_fftw_checks(bsk.polynomial_size())?;
         LweCiphertextDiscardingBitExtractError::perform_generic_checks(
             output,
             input,
@@ -250,11 +245,7 @@ impl
         extracted_bits_count: ExtractedBitsCount,
         delta_log: DeltaLog,
     ) -> Result<(), LweCiphertextDiscardingBitExtractError<Self::EngineError>> {
-        if !ALLOWED_POLY_SIZE.contains(&bsk.polynomial_size().0) {
-            return Err(LweCiphertextDiscardingBitExtractError::from(
-                FftwError::UnsupportedPolynomialSize,
-            ));
-        }
+        FftwError::perform_fftw_checks(bsk.polynomial_size())?;
         LweCiphertextDiscardingBitExtractError::perform_generic_checks(
             output,
             input,
@@ -402,11 +393,7 @@ impl
         extracted_bits_count: ExtractedBitsCount,
         delta_log: DeltaLog,
     ) -> Result<(), LweCiphertextDiscardingBitExtractError<Self::EngineError>> {
-        if !ALLOWED_POLY_SIZE.contains(&bsk.polynomial_size().0) {
-            return Err(LweCiphertextDiscardingBitExtractError::from(
-                FftwError::UnsupportedPolynomialSize,
-            ));
-        }
+        FftwError::perform_fftw_checks(bsk.polynomial_size())?;
         LweCiphertextDiscardingBitExtractError::perform_generic_checks(
             output,
             input,
@@ -554,11 +541,7 @@ impl
         extracted_bits_count: ExtractedBitsCount,
         delta_log: DeltaLog,
     ) -> Result<(), LweCiphertextDiscardingBitExtractError<Self::EngineError>> {
-        if !ALLOWED_POLY_SIZE.contains(&bsk.polynomial_size().0) {
-            return Err(LweCiphertextDiscardingBitExtractError::from(
-                FftwError::UnsupportedPolynomialSize,
-            ));
-        }
+        FftwError::perform_fftw_checks(bsk.polynomial_size())?;
         LweCiphertextDiscardingBitExtractError::perform_generic_checks(
             output,
             input,
