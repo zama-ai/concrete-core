@@ -3,6 +3,7 @@ use std::error::Error;
 use std::fmt::{Display, Formatter};
 
 use crate::backends::fftw::private::crypto::bootstrap::FourierBuffers;
+use crate::backends::fftw::private::math::fft::ALLOWED_POLY_SIZE;
 use concrete_commons::parameters::{GlweSize, PolynomialSize};
 
 use crate::specification::engines::sealed::AbstractEngineSeal;
@@ -29,6 +30,15 @@ impl Display for FftwError {
 }
 
 impl Error for FftwError {}
+
+impl FftwError {
+    pub fn perform_fftw_checks(polynomial_size: PolynomialSize) -> Result<(), Self> {
+        if !ALLOWED_POLY_SIZE.contains(&polynomial_size.0) {
+            return Err(FftwError::UnsupportedPolynomialSize);
+        }
+        Ok(())
+    }
+}
 
 #[derive(Ord, PartialOrd, Eq, PartialEq)]
 pub(crate) struct FourierBufferKey(pub PolynomialSize, pub GlweSize);

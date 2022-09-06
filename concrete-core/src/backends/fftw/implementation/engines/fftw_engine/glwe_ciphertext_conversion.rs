@@ -1,7 +1,7 @@
 use crate::backends::fftw::engines::{FftwEngine, FftwError};
 use crate::backends::fftw::entities::{FftwFourierGlweCiphertext32, FftwFourierGlweCiphertext64};
 use crate::backends::fftw::private::crypto::glwe::FourierGlweCiphertext;
-use crate::backends::fftw::private::math::fft::{Complex64, ALLOWED_POLY_SIZE};
+use crate::backends::fftw::private::math::fft::Complex64;
 use crate::commons::crypto::glwe::GlweCiphertext;
 use crate::prelude::{GlweCiphertext32, GlweCiphertext64};
 use crate::specification::engines::{
@@ -63,12 +63,7 @@ impl GlweCiphertextConversionEngine<GlweCiphertext32, FftwFourierGlweCiphertext3
         &mut self,
         input: &GlweCiphertext32,
     ) -> Result<FftwFourierGlweCiphertext32, GlweCiphertextConversionError<Self::EngineError>> {
-        if !ALLOWED_POLY_SIZE.contains(&input.polynomial_size().0) {
-            return Err(GlweCiphertextConversionError::from(
-                FftwError::UnsupportedPolynomialSize,
-            ));
-        }
-
+        FftwError::perform_fftw_checks(input.polynomial_size())?;
         Ok(unsafe { self.convert_glwe_ciphertext_unchecked(input) })
     }
 
@@ -228,11 +223,7 @@ impl GlweCiphertextConversionEngine<FftwFourierGlweCiphertext32, GlweCiphertext3
         &mut self,
         input: &FftwFourierGlweCiphertext32,
     ) -> Result<GlweCiphertext32, GlweCiphertextConversionError<Self::EngineError>> {
-        if !ALLOWED_POLY_SIZE.contains(&input.polynomial_size().0) {
-            return Err(GlweCiphertextConversionError::from(
-                FftwError::UnsupportedPolynomialSize,
-            ));
-        }
+        FftwError::perform_fftw_checks(input.polynomial_size())?;
 
         Ok(unsafe { self.convert_glwe_ciphertext_unchecked(input) })
     }
@@ -309,11 +300,7 @@ impl GlweCiphertextConversionEngine<FftwFourierGlweCiphertext64, GlweCiphertext6
         &mut self,
         input: &FftwFourierGlweCiphertext64,
     ) -> Result<GlweCiphertext64, GlweCiphertextConversionError<Self::EngineError>> {
-        if !ALLOWED_POLY_SIZE.contains(&input.polynomial_size().0) {
-            return Err(GlweCiphertextConversionError::from(
-                FftwError::UnsupportedPolynomialSize,
-            ));
-        }
+        FftwError::perform_fftw_checks(input.polynomial_size())?;
 
         Ok(unsafe { self.convert_glwe_ciphertext_unchecked(input) })
     }

@@ -1,6 +1,5 @@
 use crate::backends::fftw::engines::{FftwEngine, FftwError};
 use crate::backends::fftw::entities::{FftwFourierGgswCiphertext32, FftwFourierGgswCiphertext64};
-use crate::backends::fftw::private::math::fft::ALLOWED_POLY_SIZE;
 use crate::prelude::{GgswCiphertextEntity, GlweCiphertext32, GlweCiphertext64};
 use crate::specification::engines::{
     GlweCiphertextsGgswCiphertextFusingCmuxEngine, GlweCiphertextsGgswCiphertextFusingCmuxError,
@@ -93,11 +92,7 @@ impl
             glwe_input,
             ggsw_input,
         )?;
-        if !ALLOWED_POLY_SIZE.contains(&glwe_input.polynomial_size().0) {
-            return Err(GlweCiphertextsGgswCiphertextFusingCmuxError::from(
-                FftwError::UnsupportedPolynomialSize,
-            ));
-        }
+        FftwError::perform_fftw_checks(glwe_input.polynomial_size())?;
         unsafe {
             self.fuse_cmux_glwe_ciphertexts_ggsw_ciphertext_unchecked(
                 glwe_output,
@@ -207,11 +202,7 @@ impl
             glwe_input,
             ggsw_input,
         )?;
-        if !ALLOWED_POLY_SIZE.contains(&glwe_input.polynomial_size().0) {
-            return Err(GlweCiphertextsGgswCiphertextFusingCmuxError::from(
-                FftwError::UnsupportedPolynomialSize,
-            ));
-        }
+        FftwError::perform_fftw_checks(glwe_input.polynomial_size())?;
         unsafe {
             self.fuse_cmux_glwe_ciphertexts_ggsw_ciphertext_unchecked(
                 glwe_output,
