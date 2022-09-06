@@ -1,7 +1,7 @@
 #[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
 
-use concrete_commons::numeric::Numeric;
+use concrete_commons::numeric::{Numeric, UnsignedInteger};
 
 use concrete_commons::dispersion::DispersionParameter;
 use concrete_commons::key_kinds::BinaryKeyKind;
@@ -473,7 +473,7 @@ impl<Cont> LweSeededKeyswitchKey<Cont> {
     where
         LweKeyswitchKey<OutCont>: AsMutTensor<Element = Scalar>,
         Self: AsRefTensor<Element = Scalar>,
-        Scalar: Copy + RandomGenerable<Uniform> + Numeric,
+        Scalar: Copy + RandomGenerable<Uniform> + Numeric + UnsignedInteger,
         Gen: ByteRandomGenerator,
     {
         let mut generator = RandomGenerator::<Gen>::new(self.compression_seed.seed);

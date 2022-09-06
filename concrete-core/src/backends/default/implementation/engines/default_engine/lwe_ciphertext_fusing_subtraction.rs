@@ -56,7 +56,7 @@ impl LweCiphertextFusingSubtractionEngine<LweCiphertext32, LweCiphertext32> for 
         output: &mut LweCiphertext32,
         input: &LweCiphertext32,
     ) {
-        output.0.update_with_sub(&input.0);
+        output.0.as_mut_view().update_with_sub(&input.0.as_view());
     }
 }
 
@@ -112,6 +112,6 @@ impl LweCiphertextFusingSubtractionEngine<LweCiphertext64, LweCiphertext64> for 
         output: &mut LweCiphertext64,
         input: &LweCiphertext64,
     ) {
-        output.0.update_with_sub(&input.0);
+        output.0.as_mut_view().update_with_sub(&input.0.as_view());
     }
 }

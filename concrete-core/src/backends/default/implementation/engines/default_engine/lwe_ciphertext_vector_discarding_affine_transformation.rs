@@ -86,6 +86,7 @@ impl
     ) {
         output
             .0
+            .as_mut_view()
             .fill_with_multisum_with_bias(&inputs.0, &weights.0, &bias.0);
     }
 }
@@ -168,6 +169,7 @@ impl
     ) {
         output
             .0
+            .as_mut_view()
             .fill_with_multisum_with_bias(&inputs.0, &weights.0, &bias.0);
     }
 }

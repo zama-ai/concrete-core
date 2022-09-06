@@ -59,7 +59,7 @@ impl LweCiphertextDiscardingDecryptionEngine<LweSecretKey32, LweCiphertext32, Pl
         output: &mut Plaintext32,
         input: &LweCiphertext32,
     ) {
-        key.0.decrypt_lwe(&mut output.0, &input.0);
+        key.0.decrypt_lwe(&mut output.0, &input.0.as_view());
     }
 }
 
@@ -116,6 +116,6 @@ impl LweCiphertextDiscardingDecryptionEngine<LweSecretKey64, LweCiphertext64, Pl
         output: &mut Plaintext64,
         input: &LweCiphertext64,
     ) {
-        key.0.decrypt_lwe(&mut output.0, &input.0);
+        key.0.decrypt_lwe(&mut output.0, &input.0.as_view());
     }
 }

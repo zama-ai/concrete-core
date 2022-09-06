@@ -1,8 +1,9 @@
-use crate::commons::crypto::lwe::LweCiphertext;
+use crate::commons::crypto::lwe::LweCiphertextMutView;
 use crate::commons::math::decomposition::DecompositionLevel;
 use crate::commons::math::tensor::{
     ck_dim_eq, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
+use concrete_commons::numeric::UnsignedInteger;
 use concrete_commons::parameters::LweSize;
 #[cfg(feature = "__commons_parallel")]
 use rayon::prelude::*;
@@ -230,20 +231,12 @@ impl<Cont> GswLevelRow<Cont> {
     pub fn decomposition_level(&self) -> DecompositionLevel {
         self.level
     }
+}
 
-    /// Consumes the row and returns its container wrapped into an `LweCiphertext`.
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::commons::crypto::gsw::GswLevelRow;
-    /// use concrete_core::commons::math::decomposition::DecompositionLevel;
-    /// let level_row = GswLevelRow::from_container(vec![0 as u8; 7], DecompositionLevel(1));
-    /// let lwe = level_row.into_lwe();
-    /// assert_eq!(lwe.lwe_size(), LweSize(7));
-    /// ```
-    pub fn into_lwe(self) -> LweCiphertext<Cont> {
-        LweCiphertext::from_container(self.tensor.into_container())
+impl<'a, Scalar: UnsignedInteger> GswLevelRow<&'a mut [Scalar]> {
+    pub fn into_lwe(self) -> LweCiphertextMutView<'a, Scalar> {
+        LweCiphertextMutView {
+            tensor: self.tensor,
+        }
     }
 }

@@ -44,7 +44,7 @@ impl LweCiphertextTrivialDecryptionEngine<LweCiphertext32, Plaintext32> for Defa
         &mut self,
         input: &LweCiphertext32,
     ) -> Plaintext32 {
-        Plaintext32(ImplPlaintext(input.0.get_body().0))
+        Plaintext32(ImplPlaintext(input.0.as_view().get_body().0))
     }
 }
 
@@ -89,6 +89,6 @@ impl LweCiphertextTrivialDecryptionEngine<LweCiphertext64, Plaintext64> for Defa
         &mut self,
         input: &LweCiphertext64,
     ) -> Plaintext64 {
-        Plaintext64(ImplPlaintext(input.0.get_body().0))
+        Plaintext64(ImplPlaintext(input.0.as_view().get_body().0))
     }
 }

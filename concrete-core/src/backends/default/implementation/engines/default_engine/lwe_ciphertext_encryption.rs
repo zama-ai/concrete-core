@@ -58,7 +58,7 @@ impl LweCiphertextEncryptionEngine<LweSecretKey32, Plaintext32, LweCiphertext32>
     ) -> LweCiphertext32 {
         let mut ciphertext = ImplLweCiphertext::allocate(0u32, key.lwe_dimension().to_lwe_size());
         key.0.encrypt_lwe(
-            &mut ciphertext,
+            &mut ciphertext.as_mut_view(),
             &input.0,
             noise,
             &mut self.encryption_generator,
@@ -117,7 +117,7 @@ impl LweCiphertextEncryptionEngine<LweSecretKey64, Plaintext64, LweCiphertext64>
     ) -> LweCiphertext64 {
         let mut ciphertext = ImplLweCiphertext::allocate(0u64, key.lwe_dimension().to_lwe_size());
         key.0.encrypt_lwe(
-            &mut ciphertext,
+            &mut ciphertext.as_mut_view(),
             &input.0,
             noise,
             &mut self.encryption_generator,

@@ -3,7 +3,6 @@ use crate::backends::default::implementation::entities::{
     LweCiphertext32, LweCiphertext64, LweCiphertextMutView32, LweCiphertextMutView64,
     LweCiphertextView32, LweCiphertextView64,
 };
-use crate::commons::math::tensor::{AsMutTensor, AsRefTensor};
 use crate::specification::engines::{
     LweCiphertextDiscardingOppositeEngine, LweCiphertextDiscardingOppositeError,
 };
@@ -58,8 +57,8 @@ impl LweCiphertextDiscardingOppositeEngine<LweCiphertext32, LweCiphertext32> for
         output: &mut LweCiphertext32,
         input: &LweCiphertext32,
     ) {
-        output.0.as_mut_tensor().fill_with_copy(input.0.as_tensor());
-        output.0.update_with_neg();
+        output.0.tensor.fill_with_copy(&input.0.as_view().tensor);
+        output.0.as_mut_view().update_with_neg();
     }
 }
 
@@ -113,8 +112,8 @@ impl LweCiphertextDiscardingOppositeEngine<LweCiphertext64, LweCiphertext64> for
         output: &mut LweCiphertext64,
         input: &LweCiphertext64,
     ) {
-        output.0.as_mut_tensor().fill_with_copy(input.0.as_tensor());
-        output.0.update_with_neg();
+        output.0.tensor.fill_with_copy(&input.0.as_view().tensor);
+        output.0.as_mut_view().update_with_neg();
     }
 }
 
@@ -182,7 +181,7 @@ impl LweCiphertextDiscardingOppositeEngine<LweCiphertextView32<'_>, LweCiphertex
         output: &mut LweCiphertextMutView32,
         input: &LweCiphertextView32,
     ) {
-        output.0.as_mut_tensor().fill_with_copy(input.0.as_tensor());
+        output.0.tensor.fill_with_copy(&input.0.tensor);
         output.0.update_with_neg();
     }
 }
@@ -251,7 +250,7 @@ impl LweCiphertextDiscardingOppositeEngine<LweCiphertextView64<'_>, LweCiphertex
         output: &mut LweCiphertextMutView64,
         input: &LweCiphertextView64,
     ) {
-        output.0.as_mut_tensor().fill_with_copy(input.0.as_tensor());
+        output.0.tensor.fill_with_copy(&input.0.tensor);
         output.0.update_with_neg();
     }
 }

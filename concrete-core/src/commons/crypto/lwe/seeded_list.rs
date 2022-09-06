@@ -1,7 +1,7 @@
 #[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
 
-use concrete_commons::numeric::Numeric;
+use concrete_commons::numeric::{Numeric, UnsignedInteger};
 use concrete_commons::parameters::{CiphertextCount, LweDimension, LweSize};
 
 use crate::commons::crypto::lwe::LweList;
@@ -247,14 +247,14 @@ impl<Cont> LweSeededList<Cont> {
     ) where
         LweList<OutCont>: AsMutTensor<Element = Scalar>,
         Self: AsRefTensor<Element = Scalar>,
-        Scalar: RandomGenerable<Uniform> + Numeric,
+        Scalar: RandomGenerable<Uniform> + Numeric + UnsignedInteger,
         Gen: ByteRandomGenerator,
     {
         for (mut lwe_out, body_in) in output.ciphertext_iter_mut().zip(self.body_iter()) {
             let (output_body, mut output_mask) = lwe_out.get_mut_body_and_mask();
 
             // generate a uniformly random mask
-            generator.fill_tensor_with_random_uniform(output_mask.as_mut_tensor());
+            generator.fill_tensor_with_random_uniform(&mut output_mask.tensor);
             output_body.0 = body_in.0;
         }
     }
@@ -282,7 +282,7 @@ impl<Cont> LweSeededList<Cont> {
     where
         LweList<OutCont>: AsMutTensor<Element = Scalar>,
         Self: AsRefTensor<Element = Scalar>,
-        Scalar: RandomGenerable<Uniform> + Numeric,
+        Scalar: RandomGenerable<Uniform> + Numeric + UnsignedInteger,
         Gen: ByteRandomGenerator,
     {
         let mut generator = RandomGenerator::<Gen>::new(self.compression_seed.seed);

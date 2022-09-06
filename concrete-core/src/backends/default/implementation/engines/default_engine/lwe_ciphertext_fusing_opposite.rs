@@ -47,7 +47,7 @@ impl LweCiphertextFusingOppositeEngine<LweCiphertext32> for DefaultEngine {
     }
 
     unsafe fn fuse_opp_lwe_ciphertext_unchecked(&mut self, input: &mut LweCiphertext32) {
-        input.0.update_with_neg();
+        input.0.as_mut_view().update_with_neg();
     }
 }
 
@@ -94,6 +94,6 @@ impl LweCiphertextFusingOppositeEngine<LweCiphertext64> for DefaultEngine {
     }
 
     unsafe fn fuse_opp_lwe_ciphertext_unchecked(&mut self, input: &mut LweCiphertext64) {
-        input.0.update_with_neg();
+        input.0.as_mut_view().update_with_neg();
     }
 }

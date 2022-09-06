@@ -3,7 +3,6 @@ use crate::backends::default::implementation::entities::{
     LweCiphertext32, LweCiphertext64, LweCiphertextMutView32, LweCiphertextMutView64,
     LweCiphertextView32, LweCiphertextView64,
 };
-use crate::commons::math::tensor::{AsMutTensor, AsRefTensor};
 use crate::specification::engines::{
     LweCiphertextDiscardingAdditionEngine, LweCiphertextDiscardingAdditionError,
 };
@@ -63,11 +62,8 @@ impl LweCiphertextDiscardingAdditionEngine<LweCiphertext32, LweCiphertext32> for
         input_1: &LweCiphertext32,
         input_2: &LweCiphertext32,
     ) {
-        output
-            .0
-            .as_mut_tensor()
-            .fill_with_copy(input_1.0.as_tensor());
-        output.0.update_with_add(&input_2.0);
+        output.0.tensor.fill_with_copy(&input_1.0.as_view().tensor);
+        output.0.as_mut_view().update_with_add(&input_2.0.as_view());
     }
 }
 
@@ -126,11 +122,8 @@ impl LweCiphertextDiscardingAdditionEngine<LweCiphertext64, LweCiphertext64> for
         input_1: &LweCiphertext64,
         input_2: &LweCiphertext64,
     ) {
-        output
-            .0
-            .as_mut_tensor()
-            .fill_with_copy(input_1.0.as_tensor());
-        output.0.update_with_add(&input_2.0);
+        output.0.tensor.fill_with_copy(&input_1.0.as_view().tensor);
+        output.0.as_mut_view().update_with_add(&input_2.0.as_view());
     }
 }
 
@@ -209,10 +202,7 @@ impl LweCiphertextDiscardingAdditionEngine<LweCiphertextView32<'_>, LweCiphertex
         input_1: &LweCiphertextView32,
         input_2: &LweCiphertextView32,
     ) {
-        output
-            .0
-            .as_mut_tensor()
-            .fill_with_copy(input_1.0.as_tensor());
+        output.0.tensor.fill_with_copy(&input_1.0.tensor);
         output.0.update_with_add(&input_2.0);
     }
 }
@@ -292,10 +282,7 @@ impl LweCiphertextDiscardingAdditionEngine<LweCiphertextView64<'_>, LweCiphertex
         input_1: &LweCiphertextView64,
         input_2: &LweCiphertextView64,
     ) {
-        output
-            .0
-            .as_mut_tensor()
-            .fill_with_copy(input_1.0.as_tensor());
+        output.0.tensor.fill_with_copy(&input_1.0.tensor);
         output.0.update_with_add(&input_2.0);
     }
 }

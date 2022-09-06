@@ -3,7 +3,6 @@ use crate::backends::default::implementation::entities::{
     LweCiphertext32, LweCiphertext64, LweCiphertextMutView32, LweCiphertextMutView64,
     LweCiphertextView32, LweCiphertextView64,
 };
-use crate::commons::math::tensor::IntoTensor;
 use crate::specification::engines::{
     LweCiphertextConsumingRetrievalEngine, LweCiphertextConsumingRetrievalError,
 };
@@ -47,7 +46,7 @@ impl LweCiphertextConsumingRetrievalEngine<LweCiphertext32, Vec<u32>> for Defaul
         &mut self,
         ciphertext: LweCiphertext32,
     ) -> Vec<u32> {
-        ciphertext.0.into_tensor().into_container()
+        ciphertext.0.into_vec()
     }
 }
 
@@ -90,7 +89,7 @@ impl LweCiphertextConsumingRetrievalEngine<LweCiphertext64, Vec<u64>> for Defaul
         &mut self,
         ciphertext: LweCiphertext64,
     ) -> Vec<u64> {
-        ciphertext.0.into_tensor().into_container()
+        ciphertext.0.into_vec()
     }
 }
 
@@ -136,7 +135,7 @@ impl<'data> LweCiphertextConsumingRetrievalEngine<LweCiphertextView32<'data>, &'
         &mut self,
         ciphertext: LweCiphertextView32<'data>,
     ) -> &'data [u32] {
-        ciphertext.0.into_tensor().into_container()
+        ciphertext.0.into_slice()
     }
 }
 
@@ -184,7 +183,7 @@ impl<'data> LweCiphertextConsumingRetrievalEngine<LweCiphertextMutView32<'data>,
         &mut self,
         ciphertext: LweCiphertextMutView32<'data>,
     ) -> &'data mut [u32] {
-        ciphertext.0.into_tensor().into_container()
+        ciphertext.0.into_mut_slice()
     }
 }
 
@@ -230,7 +229,7 @@ impl<'data> LweCiphertextConsumingRetrievalEngine<LweCiphertextView64<'data>, &'
         &mut self,
         ciphertext: LweCiphertextView64<'data>,
     ) -> &'data [u64] {
-        ciphertext.0.into_tensor().into_container()
+        ciphertext.0.into_slice()
     }
 }
 
@@ -278,6 +277,6 @@ impl<'data> LweCiphertextConsumingRetrievalEngine<LweCiphertextMutView64<'data>,
         &mut self,
         ciphertext: LweCiphertextMutView64<'data>,
     ) -> &'data mut [u64] {
-        ciphertext.0.into_tensor().into_container()
+        ciphertext.0.into_mut_slice()
     }
 }

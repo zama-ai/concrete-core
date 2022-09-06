@@ -59,7 +59,7 @@ impl LweCiphertextCleartextFusingMultiplicationEngine<LweCiphertext32, Cleartext
         output: &mut LweCiphertext32,
         input: &Cleartext32,
     ) {
-        output.0.update_with_scalar_mul(input.0);
+        output.0.as_mut_view().update_with_scalar_mul(input.0);
     }
 }
 
@@ -115,6 +115,6 @@ impl LweCiphertextCleartextFusingMultiplicationEngine<LweCiphertext64, Cleartext
         output: &mut LweCiphertext64,
         input: &Cleartext64,
     ) {
-        output.0.update_with_scalar_mul(input.0);
+        output.0.as_mut_view().update_with_scalar_mul(input.0);
     }
 }
