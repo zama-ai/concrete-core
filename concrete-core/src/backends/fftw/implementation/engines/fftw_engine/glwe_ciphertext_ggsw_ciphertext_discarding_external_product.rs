@@ -1,4 +1,3 @@
-use crate::backends::fftw::private::math::fft::ALLOWED_POLY_SIZE;
 use crate::prelude::{
     FftwEngine, FftwError, FftwFourierGgswCiphertext32, FftwFourierGgswCiphertext64,
     GgswCiphertextEntity, GlweCiphertext32, GlweCiphertext64, GlweCiphertextEntity,
@@ -87,13 +86,7 @@ impl
         output: &mut GlweCiphertext32,
     ) -> Result<(), GlweCiphertextGgswCiphertextDiscardingExternalProductError<Self::EngineError>>
     {
-        if !ALLOWED_POLY_SIZE.contains(&glwe_input.polynomial_size().0) {
-            return Err(
-                GlweCiphertextGgswCiphertextDiscardingExternalProductError::from(
-                    FftwError::UnsupportedPolynomialSize,
-                ),
-            );
-        }
+        FftwError::perform_fftw_checks(glwe_input.polynomial_size())?;
         GlweCiphertextGgswCiphertextDiscardingExternalProductError::perform_generic_checks(
             glwe_input, ggsw_input, output,
         )?;
@@ -199,13 +192,7 @@ impl
         output: &mut GlweCiphertext64,
     ) -> Result<(), GlweCiphertextGgswCiphertextDiscardingExternalProductError<Self::EngineError>>
     {
-        if !ALLOWED_POLY_SIZE.contains(&glwe_input.polynomial_size().0) {
-            return Err(
-                GlweCiphertextGgswCiphertextDiscardingExternalProductError::from(
-                    FftwError::UnsupportedPolynomialSize,
-                ),
-            );
-        }
+        FftwError::perform_fftw_checks(glwe_input.polynomial_size())?;
         GlweCiphertextGgswCiphertextDiscardingExternalProductError::perform_generic_checks(
             glwe_input, ggsw_input, output,
         )?;

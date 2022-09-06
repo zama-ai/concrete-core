@@ -1,6 +1,5 @@
 use crate::backends::fftw::engines::{FftwEngine, FftwError};
 use crate::backends::fftw::entities::{FftwFourierLweBootstrapKey32, FftwFourierLweBootstrapKey64};
-use crate::backends::fftw::private::math::fft::ALLOWED_POLY_SIZE;
 use crate::prelude::{
     GlweCiphertext32, GlweCiphertext64, GlweCiphertextEntity, GlweCiphertextView32,
     GlweCiphertextView64, LweBootstrapKeyEntity, LweCiphertext32, LweCiphertext64,
@@ -86,11 +85,7 @@ impl
         acc: &GlweCiphertext32,
         bsk: &FftwFourierLweBootstrapKey32,
     ) -> Result<(), LweCiphertextDiscardingBootstrapError<Self::EngineError>> {
-        if !ALLOWED_POLY_SIZE.contains(&acc.polynomial_size().0) {
-            return Err(LweCiphertextDiscardingBootstrapError::from(
-                FftwError::UnsupportedPolynomialSize,
-            ));
-        }
+        FftwError::perform_fftw_checks(acc.polynomial_size())?;
         LweCiphertextDiscardingBootstrapError::perform_generic_checks(output, input, acc, bsk)?;
         unsafe { self.discard_bootstrap_lwe_ciphertext_unchecked(output, input, acc, bsk) };
         Ok(())
@@ -179,11 +174,7 @@ impl
         acc: &GlweCiphertext64,
         bsk: &FftwFourierLweBootstrapKey64,
     ) -> Result<(), LweCiphertextDiscardingBootstrapError<Self::EngineError>> {
-        if !ALLOWED_POLY_SIZE.contains(&acc.polynomial_size().0) {
-            return Err(LweCiphertextDiscardingBootstrapError::from(
-                FftwError::UnsupportedPolynomialSize,
-            ));
-        }
+        FftwError::perform_fftw_checks(acc.polynomial_size())?;
         LweCiphertextDiscardingBootstrapError::perform_generic_checks(output, input, acc, bsk)?;
         unsafe { self.discard_bootstrap_lwe_ciphertext_unchecked(output, input, acc, bsk) };
         Ok(())
@@ -290,11 +281,7 @@ impl
         acc: &GlweCiphertextView32<'_>,
         bsk: &FftwFourierLweBootstrapKey32,
     ) -> Result<(), LweCiphertextDiscardingBootstrapError<Self::EngineError>> {
-        if !ALLOWED_POLY_SIZE.contains(&acc.polynomial_size().0) {
-            return Err(LweCiphertextDiscardingBootstrapError::from(
-                FftwError::UnsupportedPolynomialSize,
-            ));
-        }
+        FftwError::perform_fftw_checks(acc.polynomial_size())?;
         LweCiphertextDiscardingBootstrapError::perform_generic_checks(output, input, acc, bsk)?;
         unsafe { self.discard_bootstrap_lwe_ciphertext_unchecked(output, input, acc, bsk) };
         Ok(())
@@ -401,11 +388,7 @@ impl
         acc: &GlweCiphertextView64<'_>,
         bsk: &FftwFourierLweBootstrapKey64,
     ) -> Result<(), LweCiphertextDiscardingBootstrapError<Self::EngineError>> {
-        if !ALLOWED_POLY_SIZE.contains(&acc.polynomial_size().0) {
-            return Err(LweCiphertextDiscardingBootstrapError::from(
-                FftwError::UnsupportedPolynomialSize,
-            ));
-        }
+        FftwError::perform_fftw_checks(acc.polynomial_size())?;
         LweCiphertextDiscardingBootstrapError::perform_generic_checks(output, input, acc, bsk)?;
         unsafe { self.discard_bootstrap_lwe_ciphertext_unchecked(output, input, acc, bsk) };
         Ok(())
