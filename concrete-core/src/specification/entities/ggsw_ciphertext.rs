@@ -66,8 +66,8 @@ use concrete_commons::parameters::{
 ///     - compute $\overline{\mathsf{CT}\_i} \leftarrow \mathsf{GLev}.\mathsf{encrypt}\left(
 ///    \mathsf{PT}\_i, \vec{S} ,\mathcal{D\_{\sigma^2,\mu}} ,\ell \right)$
 /// 2. compute  $\overline{\mathsf{CT}\_n} \leftarrow \mathsf{GLev}.\mathsf{encrypt}\left(
-/// \mathsf{PT}, \vec{s} ,\mathcal{D\_{\sigma^2,\mu}} ,\ell \right)$ 3. output
-/// $\overline{\overline{\ mathsf{CT}}} = \left( \overline{\mathsf{CT}\_0} , \cdots ,
+/// \mathsf{PT}, \vec{s} ,\mathcal{D\_{\sigma^2,\mu}} ,\ell \right)$
+/// 3. output $\overline{\overline{\mathsf{CT}}} = \left( \overline{\mathsf{CT}\_0} , \cdots ,
 /// \overline{\mathsf{CT}\_{n}} \right)$
 ///
 /// ###### equivalent algorithm (using the gadget matrix):
