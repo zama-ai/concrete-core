@@ -179,6 +179,7 @@ mod lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_generation;
 mod lwe_keyswitch_key_generation;
 mod lwe_packing_keyswitch_key_generation;
 mod lwe_private_functional_packing_keyswitch_key_generation;
+mod lwe_public_key_generation;
 mod lwe_secret_key_generation;
 mod lwe_seeded_bootstrap_key_generation;
 mod lwe_seeded_bootstrap_key_to_lwe_bootstrap_key_transformation;
