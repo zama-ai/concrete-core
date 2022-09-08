@@ -10,10 +10,10 @@ use crate::prelude::{
     FftFourierLweBootstrapKey64Version,
 };
 use aligned_vec::avec;
-use concrete_fft::c64;
 use concrete_commons::parameters::{
     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
 };
+use concrete_fft::c64;
 use serde::Deserialize;
 
 impl EntityDeserializationEngine<&[u8], FftFourierGgswCiphertext32> for FftSerializationEngine {
@@ -42,8 +42,8 @@ impl EntityDeserializationEngine<&[u8], FftFourierGgswCiphertext32> for FftSeria
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fft_engine = FftEngine::new(())?;
     /// let key: GlweSecretKey32 =
-    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext = default_engine.create_plaintext(&input)?;
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext = default_engine.create_plaintext_from(&input)?;
     ///
     /// // We encrypt a GGSW ciphertext in the standard domain
     /// let ciphertext =
@@ -118,8 +118,8 @@ impl EntityDeserializationEngine<&[u8], FftFourierGgswCiphertext64> for FftSeria
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fft_engine = FftEngine::new(())?;
     /// let key: GlweSecretKey64 =
-    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext = default_engine.create_plaintext(&input)?;
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext = default_engine.create_plaintext_from(&input)?;
     ///
     /// // We encrypt a GGSW ciphertext in the standard domain
     /// let ciphertext =
@@ -190,10 +190,11 @@ impl EntityDeserializationEngine<&[u8], FftFourierLweBootstrapKey32> for FftSeri
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fft_engine = FftEngine::new(())?;
-    /// let lwe_sk: LweSecretKey32 = default_engine.create_lwe_secret_key(lwe_dim)?;
-    /// let glwe_sk: GlweSecretKey32 = default_engine.create_glwe_secret_key(glwe_dim, poly_size)?;
+    /// let lwe_sk: LweSecretKey32 = default_engine.generate_new_lwe_secret_key(lwe_dim)?;
+    /// let glwe_sk: GlweSecretKey32 =
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dim, poly_size)?;
     /// let bsk: LweBootstrapKey32 =
-    ///     default_engine.create_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
+    ///     default_engine.generate_new_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
     ///
     /// let fourier_bsk: FftFourierLweBootstrapKey32 = fft_engine.convert_lwe_bootstrap_key(&bsk)?;
     ///
@@ -259,10 +260,11 @@ impl EntityDeserializationEngine<&[u8], FftFourierLweBootstrapKey64> for FftSeri
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fft_engine = FftEngine::new(())?;
-    /// let lwe_sk: LweSecretKey64 = default_engine.create_lwe_secret_key(lwe_dim)?;
-    /// let glwe_sk: GlweSecretKey64 = default_engine.create_glwe_secret_key(glwe_dim, poly_size)?;
+    /// let lwe_sk: LweSecretKey64 = default_engine.generate_new_lwe_secret_key(lwe_dim)?;
+    /// let glwe_sk: GlweSecretKey64 =
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dim, poly_size)?;
     /// let bsk: LweBootstrapKey64 =
-    ///     default_engine.create_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
+    ///     default_engine.generate_new_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
     ///
     /// let fourier_bsk: FftFourierLweBootstrapKey64 = fft_engine.convert_lwe_bootstrap_key(&bsk)?;
     ///

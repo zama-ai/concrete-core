@@ -42,10 +42,11 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey32, FftFourierLweBootstrapKe
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fft_engine = FftEngine::new(())?;
-    /// let lwe_sk: LweSecretKey32 = default_engine.create_lwe_secret_key(lwe_dim)?;
-    /// let glwe_sk: GlweSecretKey32 = default_engine.create_glwe_secret_key(glwe_dim, poly_size)?;
+    /// let lwe_sk: LweSecretKey32 = default_engine.generate_new_lwe_secret_key(lwe_dim)?;
+    /// let glwe_sk: GlweSecretKey32 =
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dim, poly_size)?;
     /// let bsk: LweBootstrapKey32 =
-    ///     default_engine.create_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
+    ///     default_engine.generate_new_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
     ///
     /// let fourier_bsk: FftFourierLweBootstrapKey32 = fft_engine.convert_lwe_bootstrap_key(&bsk)?;
     /// #
@@ -141,10 +142,11 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey64, FftFourierLweBootstrapKe
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fft_engine = FftEngine::new(())?;
-    /// let lwe_sk: LweSecretKey64 = default_engine.create_lwe_secret_key(lwe_dim)?;
-    /// let glwe_sk: GlweSecretKey64 = default_engine.create_glwe_secret_key(glwe_dim, poly_size)?;
+    /// let lwe_sk: LweSecretKey64 = default_engine.generate_new_lwe_secret_key(lwe_dim)?;
+    /// let glwe_sk: GlweSecretKey64 =
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dim, poly_size)?;
     /// let bsk: LweBootstrapKey64 =
-    ///     default_engine.create_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
+    ///     default_engine.generate_new_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
     ///
     /// let fourier_bsk: FftFourierLweBootstrapKey64 = fft_engine.convert_lwe_bootstrap_key(&bsk)?;
     /// #

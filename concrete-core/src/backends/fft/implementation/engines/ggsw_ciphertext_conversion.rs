@@ -58,8 +58,8 @@ impl GgswCiphertextDiscardingConversionEngine<GgswCiphertext32, FftFourierGgswCi
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fft_engine = FftEngine::new(())?;
     /// let key_1: GlweSecretKey32 =
-    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext = default_engine.create_plaintext(&input)?;
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext = default_engine.create_plaintext_from(&input)?;
     ///
     /// let mut ciphertext = default_engine
     ///     .encrypt_scalar_ggsw_ciphertext(&key_1, &plaintext, noise, level, base_log)?;
@@ -71,7 +71,7 @@ impl GgswCiphertextDiscardingConversionEngine<GgswCiphertext32, FftFourierGgswCi
     /// // For this, it is required that the second secret key uses the same GLWE dimension
     /// // and polynomial size as the first one.
     /// let key_2: GlweSecretKey32 =
-    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
     ///
     /// default_engine.discard_encrypt_scalar_ggsw_ciphertext(
     ///     &key_2,
@@ -160,8 +160,8 @@ impl GgswCiphertextDiscardingConversionEngine<GgswCiphertext64, FftFourierGgswCi
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fft_engine = FftEngine::new(())?;
     /// let key_1: GlweSecretKey64 =
-    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext = default_engine.create_plaintext(&input)?;
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext = default_engine.create_plaintext_from(&input)?;
     ///
     /// let mut ciphertext = default_engine
     ///     .encrypt_scalar_ggsw_ciphertext(&key_1, &plaintext, noise, level, base_log)?;
@@ -173,7 +173,7 @@ impl GgswCiphertextDiscardingConversionEngine<GgswCiphertext64, FftFourierGgswCi
     /// // For this, it is required that the second secret key uses the same GLWE dimension
     /// // and polynomial size as the first one.
     /// let key_2: GlweSecretKey64 =
-    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
     ///
     /// default_engine.discard_encrypt_scalar_ggsw_ciphertext(
     ///     &key_2,
@@ -260,8 +260,8 @@ impl GgswCiphertextConversionEngine<GgswCiphertext32, FftFourierGgswCiphertext32
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fft_engine = FftEngine::new(())?;
     /// let key: GlweSecretKey32 =
-    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext = default_engine.create_plaintext(&input)?;
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext = default_engine.create_plaintext_from(&input)?;
     ///
     /// // We encrypt a GGSW ciphertext in the standard domain
     /// let ciphertext =
@@ -344,8 +344,8 @@ impl GgswCiphertextConversionEngine<GgswCiphertext64, FftFourierGgswCiphertext64
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fft_engine = FftEngine::new(())?;
     /// let key: GlweSecretKey64 =
-    ///     default_engine.create_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext = default_engine.create_plaintext(&input)?;
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
+    /// let plaintext = default_engine.create_plaintext_from(&input)?;
     ///
     /// // We encrypt a GGSW ciphertext in the standard domain
     /// let ciphertext =
