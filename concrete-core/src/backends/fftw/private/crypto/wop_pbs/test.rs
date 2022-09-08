@@ -18,11 +18,10 @@ use crate::commons::math::decomposition::SignedDecomposer;
 use crate::commons::math::polynomial::PolynomialList;
 use crate::commons::math::tensor::{AsMutTensor, AsRefSlice, AsRefTensor};
 use crate::commons::test_tools;
-use concrete_commons::dispersion::{DispersionParameter, LogStandardDev, StandardDev, Variance};
-use concrete_commons::parameters::{
-    CiphertextCount, DecompositionBaseLog, DecompositionLevelCount, DeltaLog, ExtractedBitsCount,
-    FunctionalPackingKeyswitchKeyCount, GlweDimension, LweDimension, LweSize, PlaintextCount,
-    PolynomialCount, PolynomialSize,
+use crate::prelude::{
+    CiphertextCount, DecompositionBaseLog, DecompositionLevelCount, DeltaLog, DispersionParameter,
+    ExtractedBitsCount, FunctionalPackingKeyswitchKeyCount, GlweDimension, LogStandardDev,
+    LweDimension, LweSize, PlaintextCount, PolynomialCount, PolynomialSize, StandardDev, Variance,
 };
 use concrete_csprng::generators::SoftwareRandomGenerator;
 use concrete_csprng::seeders::{Seeder, UnixSeeder};

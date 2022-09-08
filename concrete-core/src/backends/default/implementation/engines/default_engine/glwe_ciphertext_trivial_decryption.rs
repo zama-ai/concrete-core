@@ -11,9 +11,7 @@ impl GlweCiphertextTrivialDecryptionEngine<GlweCiphertext32, PlaintextVector32> 
     /// ```
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     ///
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweDimension, PolynomialSize, Variance, *};
     ///
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
     /// let glwe_dimension = GlweDimension(2);
@@ -58,9 +56,7 @@ impl GlweCiphertextTrivialDecryptionEngine<GlweCiphertext64, PlaintextVector64> 
     /// ```
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     ///
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweDimension, PolynomialSize, Variance, *};
     ///
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
     /// let glwe_dimension = GlweDimension(2);

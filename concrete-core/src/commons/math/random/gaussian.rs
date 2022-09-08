@@ -1,4 +1,4 @@
-use concrete_commons::numeric::{CastInto, Numeric};
+use crate::commons::numeric::{CastInto, Numeric};
 
 use crate::commons::math::torus::{FromTorus, UnsignedTorus};
 

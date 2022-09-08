@@ -1,7 +1,7 @@
 use crate::commons::math::random::CompressionSeed;
+use crate::prelude::{GlweCiphertextCount, GlweDimension, PolynomialSize};
 use crate::specification::entities::markers::GlweSeededCiphertextVectorKind;
 use crate::specification::entities::AbstractEntity;
-use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
 
 /// A trait implemented by types embodying a seeded GLWE ciphertext vector.
 ///

@@ -13,10 +13,6 @@ lazy_static! {
     };
 }
 
-pub fn commons() -> Result<(), Error> {
-    cmd!(<ENV_TARGET_NATIVE> "cargo test --release --no-fail-fast --all-features -p concrete-commons")
-}
-
 pub fn core() -> Result<(), Error> {
     cmd!(<ENV_TARGET_NATIVE> "cargo test --release --no-fail-fast --all-features -p concrete-core")
 }
@@ -50,7 +46,6 @@ pub fn cuda_core_test() -> Result<(), Error> {
 }
 
 pub fn crates() -> Result<(), Error> {
-    commons()?;
     core()?;
     core_test()?;
     csprng()?;

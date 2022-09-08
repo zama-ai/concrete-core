@@ -16,9 +16,9 @@ impl<Cont> GlweBody<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
     /// use concrete_core::commons::crypto::glwe::*;
     /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::{GlweSize, PolynomialSize};
     /// let glwe = GlweCiphertext::allocate(0 as u8, PolynomialSize(10), GlweSize(100));
     /// let body = glwe.get_body();
     /// let poly = body.into_polynomial();
@@ -36,9 +36,9 @@ impl<Cont> GlweBody<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
     /// use concrete_core::commons::crypto::glwe::*;
     /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::{GlweSize, PolynomialSize};
     /// let glwe = GlweCiphertext::allocate(0 as u8, PolynomialSize(10), GlweSize(100));
     /// let body = glwe.get_body();
     /// let poly = body.as_polynomial();
@@ -56,10 +56,10 @@ impl<Cont> GlweBody<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
     /// use concrete_core::commons::crypto::glwe::*;
     /// use concrete_core::commons::crypto::*;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::{GlweSize, PolynomialSize};
     /// let mut glwe = GlweCiphertext::allocate(0 as u8, PolynomialSize(10), GlweSize(100));
     /// let mut body = glwe.get_mut_body();
     /// let mut poly = body.as_mut_polynomial();

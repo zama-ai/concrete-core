@@ -3,10 +3,8 @@ use crate::commons::crypto::encoding::PlaintextList;
 use crate::commons::math::tensor::{
     ck_dim_div, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
-use concrete_commons::numeric::Numeric;
-use concrete_commons::parameters::{
-    CiphertextCount, GlweDimension, GlweSize, PlaintextCount, PolynomialSize,
-};
+use crate::commons::numeric::Numeric;
+use crate::prelude::{CiphertextCount, GlweDimension, GlweSize, PlaintextCount, PolynomialSize};
 #[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
 
@@ -30,8 +28,8 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{CiphertextCount, GlweDimension, GlweSize, PolynomialSize};
     /// use concrete_core::commons::crypto::glwe::GlweList;
+    /// use concrete_core::prelude::{CiphertextCount, GlweDimension, GlweSize, PolynomialSize};
     /// let list = GlweList::allocate(
     ///     0 as u8,
     ///     PolynomialSize(10),
@@ -66,8 +64,8 @@ impl<Cont> GlweList<Cont> {
     /// Creates a list from a container of values.
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{CiphertextCount, GlweDimension, GlweSize, PolynomialSize};
     /// use concrete_core::commons::crypto::glwe::GlweList;
+    /// use concrete_core::prelude::{CiphertextCount, GlweDimension, GlweSize, PolynomialSize};
     /// let list = GlweList::from_container(
     ///     vec![0 as u8; 10 * 21 * 30],
     ///     GlweDimension(20),
@@ -100,8 +98,8 @@ impl<Cont> GlweList<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{CiphertextCount, GlweDimension, PolynomialSize};
     /// use concrete_core::commons::crypto::glwe::GlweList;
+    /// use concrete_core::prelude::{CiphertextCount, GlweDimension, PolynomialSize};
     /// let list = GlweList::allocate(
     ///     0 as u8,
     ///     PolynomialSize(10),
@@ -123,8 +121,8 @@ impl<Cont> GlweList<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{CiphertextCount, GlweDimension, GlweSize, PolynomialSize};
     /// use concrete_core::commons::crypto::glwe::GlweList;
+    /// use concrete_core::prelude::{CiphertextCount, GlweDimension, GlweSize, PolynomialSize};
     /// let list = GlweList::allocate(
     ///     0 as u8,
     ///     PolynomialSize(10),
@@ -145,8 +143,8 @@ impl<Cont> GlweList<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{CiphertextCount, GlweDimension, PolynomialSize};
     /// use concrete_core::commons::crypto::glwe::GlweList;
+    /// use concrete_core::prelude::{CiphertextCount, GlweDimension, PolynomialSize};
     /// let list = GlweList::allocate(
     ///     0 as u8,
     ///     PolynomialSize(10),
@@ -164,8 +162,8 @@ impl<Cont> GlweList<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{CiphertextCount, GlweDimension, PolynomialSize};
     /// use concrete_core::commons::crypto::glwe::GlweList;
+    /// use concrete_core::prelude::{CiphertextCount, GlweDimension, PolynomialSize};
     /// let list = GlweList::allocate(
     ///     0 as u8,
     ///     PolynomialSize(10),
@@ -186,9 +184,9 @@ impl<Cont> GlweList<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{CiphertextCount, GlweDimension, PolynomialSize};
     /// use concrete_core::commons::crypto::glwe::{GlweBody, GlweList};
     /// use concrete_core::commons::math::tensor::AsRefTensor;
+    /// use concrete_core::prelude::{CiphertextCount, GlweDimension, PolynomialSize};
     /// let list = GlweList::allocate(
     ///     0 as u8,
     ///     PolynomialSize(10),
@@ -220,9 +218,9 @@ impl<Cont> GlweList<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{CiphertextCount, GlweDimension, PolynomialSize};
     /// use concrete_core::commons::crypto::glwe::{GlweBody, GlweList};
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::{CiphertextCount, GlweDimension, PolynomialSize};
     /// let mut list = GlweList::allocate(
     ///     0 as u8,
     ///     PolynomialSize(10),

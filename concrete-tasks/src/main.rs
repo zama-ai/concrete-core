@@ -77,9 +77,6 @@ fn main() -> Result<(), std::io::Error> {
         .subcommand(Command::new("build").about("Builds the crates in all available mode"))
         .subcommand(Command::new("check").about("Performs all the available checks"))
         .subcommand(
-            Command::new("test_commons").about("Tests the `concrete-commons` crate in native mode"),
-        )
-        .subcommand(
             Command::new("test_core").about("Tests the `concrete-core` crate in native mode"),
         )
         .subcommand(
@@ -161,9 +158,6 @@ fn main() -> Result<(), std::io::Error> {
         check::doc()?;
         check::clippy()?;
         check::fmt()?;
-    }
-    if matches.subcommand_matches("test_commons").is_some() {
-        test::commons()?;
     }
     if matches.subcommand_matches("test_core").is_some() {
         test::core()?;

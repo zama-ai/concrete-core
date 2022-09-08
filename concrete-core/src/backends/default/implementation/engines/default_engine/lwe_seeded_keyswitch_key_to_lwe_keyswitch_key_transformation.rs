@@ -18,8 +18,8 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::Variance;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension,
     /// };
     /// use concrete_core::prelude::*;
@@ -107,8 +107,8 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::Variance;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension,
     /// };
     /// use concrete_core::prelude::*;

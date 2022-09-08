@@ -1,6 +1,6 @@
+use crate::prelude::LweDimension;
 use crate::specification::engines::AbstractEngine;
 use crate::specification::entities::LweSecretKeyEntity;
-use concrete_commons::parameters::LweDimension;
 
 engine_error! {
     LweSecretKeyGenerationError for LweSecretKeyGenerationEngine @

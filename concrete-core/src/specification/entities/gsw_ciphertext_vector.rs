@@ -1,8 +1,8 @@
-use crate::specification::entities::markers::GswCiphertextVectorKind;
-use crate::specification::entities::AbstractEntity;
-use concrete_commons::parameters::{
+use crate::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, GswCiphertextCount, LweDimension,
 };
+use crate::specification::entities::markers::GswCiphertextVectorKind;
+use crate::specification::entities::AbstractEntity;
 
 /// A trait implemented by types embodying a GSW ciphertext vector.
 ///

@@ -7,13 +7,10 @@ use crate::generation::synthesizing::{
     SynthesizesLweSeededBootstrapKey,
 };
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-};
 use concrete_core::prelude::{
-    GlweSecretKeyEntity, LweBootstrapKeyEntity, LweSecretKeyEntity, LweSeededBootstrapKeyEntity,
-    LweSeededBootstrapKeyToLweBootstrapKeyTransformationEngine,
+    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSecretKeyEntity,
+    LweBootstrapKeyEntity, LweDimension, LweSecretKeyEntity, LweSeededBootstrapKeyEntity,
+    LweSeededBootstrapKeyToLweBootstrapKeyTransformationEngine, PolynomialSize, Variance,
 };
 
 /// A fixture for the types implementing the

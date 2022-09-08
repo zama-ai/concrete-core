@@ -1,4 +1,4 @@
-use concrete_commons::dispersion::LogStandardDev;
+use crate::prelude::LogStandardDev;
 
 use crate::commons::math::tensor::Tensor;
 use crate::commons::math::torus::UnsignedTorus;

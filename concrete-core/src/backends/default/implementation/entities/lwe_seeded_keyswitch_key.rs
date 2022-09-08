@@ -1,8 +1,8 @@
 use crate::commons::crypto::lwe::LweSeededKeyswitchKey as ImplLweSeededKeyswitchKey;
 use crate::commons::math::random::CompressionSeed;
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
 use crate::specification::entities::markers::LweSeededKeyswitchKeyKind;
 use crate::specification::entities::{AbstractEntity, LweSeededKeyswitchKeyEntity};
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
 #[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 

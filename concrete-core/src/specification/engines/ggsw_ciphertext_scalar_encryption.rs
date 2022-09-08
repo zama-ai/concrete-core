@@ -1,8 +1,7 @@
 use super::engine_error;
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, Variance};
 use crate::specification::engines::AbstractEngine;
 use crate::specification::entities::{GgswCiphertextEntity, GlweSecretKeyEntity, PlaintextEntity};
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
 
 engine_error! {
     GgswCiphertextScalarEncryptionError for GgswCiphertextScalarEncryptionEngine @

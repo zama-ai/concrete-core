@@ -1,10 +1,9 @@
 use crate::commons::crypto::lwe::LweList as ImplLweList;
 use crate::prelude::{
     DefaultEngine, LweCiphertextVector32, LweCiphertextVector64,
-    LweCiphertextVectorTrivialEncryptionEngine, LweCiphertextVectorTrivialEncryptionError,
+    LweCiphertextVectorTrivialEncryptionEngine, LweCiphertextVectorTrivialEncryptionError, LweSize,
     PlaintextVector32, PlaintextVector64,
 };
-use concrete_commons::parameters::LweSize;
 
 impl LweCiphertextVectorTrivialEncryptionEngine<PlaintextVector32, LweCiphertextVector32>
     for DefaultEngine
@@ -14,9 +13,7 @@ impl LweCiphertextVectorTrivialEncryptionEngine<PlaintextVector32, LweCiphertext
     /// ```
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     ///
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, Variance, *};
     ///
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
     /// let lwe_size = LweSize(10);
@@ -68,9 +65,7 @@ impl LweCiphertextVectorTrivialEncryptionEngine<PlaintextVector64, LweCiphertext
     /// ```
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     ///
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, Variance, *};
     ///
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
     /// let lwe_size = LweSize(10);

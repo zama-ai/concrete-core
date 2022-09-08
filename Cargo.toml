@@ -4,7 +4,6 @@ members = [
     "concrete-npe",
     "concrete-core",
     "concrete-csprng",
-    "concrete-commons",
     "concrete-tasks",
     "concrete-core-bench",
     "concrete-core-ffi",

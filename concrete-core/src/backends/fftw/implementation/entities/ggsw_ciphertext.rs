@@ -1,10 +1,10 @@
 use crate::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
 use crate::backends::fftw::private::math::fft::Complex64;
-use crate::specification::entities::markers::GgswCiphertextKind;
-use crate::specification::entities::{AbstractEntity, GgswCiphertextEntity};
-use concrete_commons::parameters::{
+use crate::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
 };
+use crate::specification::entities::markers::GgswCiphertextKind;
+use crate::specification::entities::{AbstractEntity, GgswCiphertextEntity};
 use concrete_fftw::array::AlignedVec;
 #[cfg(feature = "backend_fftw_serialization")]
 use serde::{Deserialize, Serialize};

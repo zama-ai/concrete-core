@@ -19,7 +19,7 @@
 //!
 //! # Example:
 //! ```rust
-//! use concrete_commons::dispersion::{DispersionParameter, Variance};
+//! use concrete_core::prelude::{DispersionParameter, Variance};
 //! use concrete_npe::estimate_addition_noise;
 //! //We suppose that the two ciphertexts have the same variance.
 //! let var1 = Variance(2_f64.powf(-25.));

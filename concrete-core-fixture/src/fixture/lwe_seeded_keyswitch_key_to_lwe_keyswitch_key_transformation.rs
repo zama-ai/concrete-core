@@ -4,11 +4,10 @@ use crate::generation::synthesizing::{
     SynthesizesLweKeyswitchKey, SynthesizesLweSecretKey, SynthesizesLweSeededKeyswitchKey,
 };
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
 use concrete_core::prelude::{
-    LweKeyswitchKeyEntity, LweSecretKeyEntity, LweSeededKeyswitchKeyEntity,
-    LweSeededKeyswitchKeyToLweKeyswitchKeyTransformationEngine,
+    DecompositionBaseLog, DecompositionLevelCount, LweDimension, LweKeyswitchKeyEntity,
+    LweSecretKeyEntity, LweSeededKeyswitchKeyEntity,
+    LweSeededKeyswitchKeyToLweKeyswitchKeyTransformationEngine, Variance,
 };
 
 /// A fixture for the types implementing the

@@ -1,6 +1,6 @@
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
 use crate::specification::entities::markers::GswCiphertextKind;
 use crate::specification::entities::AbstractEntity;
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
 
 /// A trait implemented by types embodying a GSW ciphertext.
 ///

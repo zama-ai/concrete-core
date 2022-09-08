@@ -5,8 +5,8 @@ use crate::commons::math::tensor::{
 };
 
 use super::*;
-use concrete_commons::numeric::UnsignedInteger;
-use concrete_commons::parameters::{MonomialDegree, PolynomialCount, PolynomialSize};
+use crate::commons::numeric::UnsignedInteger;
+use crate::prelude::{MonomialDegree, PolynomialCount, PolynomialSize};
 
 /// A generic polynomial list type.
 ///
@@ -15,8 +15,8 @@ use concrete_commons::parameters::{MonomialDegree, PolynomialCount, PolynomialSi
 /// # Example
 ///
 /// ```
-/// use concrete_commons::parameters::{PolynomialCount, PolynomialSize};
 /// use concrete_core::commons::math::polynomial::PolynomialList;
+/// use concrete_core::prelude::{PolynomialCount, PolynomialSize};
 /// let list = PolynomialList::from_container(vec![1u8, 2, 3, 4, 5, 6, 7, 8], PolynomialSize(2));
 /// assert_eq!(list.polynomial_count(), PolynomialCount(4));
 /// assert_eq!(list.polynomial_size(), PolynomialSize(2));
@@ -38,8 +38,8 @@ where
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{PolynomialCount, PolynomialSize};
     /// use concrete_core::commons::math::polynomial::PolynomialList;
+    /// use concrete_core::prelude::{PolynomialCount, PolynomialSize};
     /// let list = PolynomialList::allocate(1u8, PolynomialCount(10), PolynomialSize(2));
     /// assert_eq!(list.polynomial_count(), PolynomialCount(10));
     /// assert_eq!(list.polynomial_size(), PolynomialSize(2));
@@ -58,8 +58,8 @@ impl<Cont> PolynomialList<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{PolynomialCount, PolynomialSize};
     /// use concrete_core::commons::math::polynomial::PolynomialList;
+    /// use concrete_core::prelude::{PolynomialCount, PolynomialSize};
     /// let list = PolynomialList::from_container(vec![1u8, 2, 3, 4, 5, 6, 7, 8], PolynomialSize(2));
     /// assert_eq!(list.polynomial_count(), PolynomialCount(4));
     /// assert_eq!(list.polynomial_size(), PolynomialSize(2));
@@ -80,8 +80,8 @@ impl<Cont> PolynomialList<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{PolynomialCount, PolynomialSize};
     /// use concrete_core::commons::math::polynomial::PolynomialList;
+    /// use concrete_core::prelude::{PolynomialCount, PolynomialSize};
     /// let list = PolynomialList::allocate(1u8, PolynomialCount(10), PolynomialSize(2));
     /// assert_eq!(list.polynomial_count(), PolynomialCount(10));
     /// ```
@@ -97,8 +97,8 @@ impl<Cont> PolynomialList<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{PolynomialCount, PolynomialSize};
     /// use concrete_core::commons::math::polynomial::PolynomialList;
+    /// use concrete_core::prelude::{PolynomialCount, PolynomialSize};
     /// let list = PolynomialList::allocate(1u8, PolynomialCount(10), PolynomialSize(2));
     /// assert_eq!(list.polynomial_size(), PolynomialSize(2));
     /// ```
@@ -111,8 +111,8 @@ impl<Cont> PolynomialList<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::PolynomialSize;
     /// use concrete_core::commons::math::polynomial::{MonomialDegree, PolynomialList};
+    /// use concrete_core::prelude::PolynomialSize;
     /// let list = PolynomialList::from_container(vec![1u8, 2, 3, 4, 5, 6, 7, 8], PolynomialSize(2));
     /// let poly = list.get_polynomial(2);
     /// assert_eq!(*poly.get_monomial(MonomialDegree(0)).get_coefficient(), 5u8);
@@ -134,8 +134,8 @@ impl<Cont> PolynomialList<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::PolynomialSize;
     /// use concrete_core::commons::math::polynomial::{MonomialDegree, PolynomialList};
+    /// use concrete_core::prelude::PolynomialSize;
     /// let mut list =
     ///     PolynomialList::from_container(vec![1u8, 2, 3, 4, 5, 6, 7, 8], PolynomialSize(2));
     /// let mut poly = list.get_mut_polynomial(2);
@@ -171,8 +171,8 @@ impl<Cont> PolynomialList<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::PolynomialSize;
     /// use concrete_core::commons::math::polynomial::PolynomialList;
+    /// use concrete_core::prelude::PolynomialSize;
     /// let mut list =
     ///     PolynomialList::from_container(vec![1u8, 2, 3, 4, 5, 6, 7, 8], PolynomialSize(2));
     /// for polynomial in list.polynomial_iter() {
@@ -196,8 +196,8 @@ impl<Cont> PolynomialList<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::PolynomialSize;
     /// use concrete_core::commons::math::polynomial::{MonomialDegree, PolynomialList};
+    /// use concrete_core::prelude::PolynomialSize;
     /// let mut list =
     ///     PolynomialList::from_container(vec![1u8, 2, 3, 4, 5, 6, 7, 8], PolynomialSize(2));
     /// for mut polynomial in list.polynomial_iter_mut() {
@@ -262,8 +262,8 @@ impl<Cont> PolynomialList<Cont> {
     /// # Examples
     ///
     /// ```
-    /// use concrete_commons::parameters::PolynomialSize;
     /// use concrete_core::commons::math::polynomial::{MonomialDegree, PolynomialList};
+    /// use concrete_core::prelude::PolynomialSize;
     /// let mut list = PolynomialList::from_container(vec![1u8, 2, 3, 4, 5, 6], PolynomialSize(3));
     /// list.update_with_wrapping_monic_monomial_mul(MonomialDegree(2));
     /// let poly = list.get_polynomial(0);
@@ -287,8 +287,8 @@ impl<Cont> PolynomialList<Cont> {
     /// # Examples
     ///
     /// ```
-    /// use concrete_commons::parameters::PolynomialSize;
     /// use concrete_core::commons::math::polynomial::{MonomialDegree, PolynomialList};
+    /// use concrete_core::prelude::PolynomialSize;
     /// let mut list = PolynomialList::from_container(vec![1u8, 2, 3, 4, 5, 6], PolynomialSize(3));
     /// list.update_with_wrapping_monic_monomial_div(MonomialDegree(2));
     /// let poly = list.get_polynomial(0);

@@ -1,9 +1,9 @@
-use crate::specification::entities::markers::GgswCiphertextVectorKind;
-use crate::specification::entities::AbstractEntity;
-use concrete_commons::parameters::{
+use crate::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, GgswCiphertextCount, GlweDimension,
     PolynomialSize,
 };
+use crate::specification::entities::markers::GgswCiphertextVectorKind;
+use crate::specification::entities::AbstractEntity;
 
 /// A trait implemented by types embodying a GGSW ciphertext vector.
 ///

@@ -22,44 +22,44 @@ impl AbstractEntity for FftFourierLweBootstrapKey64 {
 }
 
 impl LweBootstrapKeyEntity for FftFourierLweBootstrapKey32 {
-    fn glwe_dimension(&self) -> concrete_commons::parameters::GlweDimension {
+    fn glwe_dimension(&self) -> crate::prelude::GlweDimension {
         self.0.glwe_size().to_glwe_dimension()
     }
 
-    fn polynomial_size(&self) -> concrete_commons::parameters::PolynomialSize {
+    fn polynomial_size(&self) -> crate::prelude::PolynomialSize {
         self.0.polynomial_size()
     }
 
-    fn input_lwe_dimension(&self) -> concrete_commons::parameters::LweDimension {
+    fn input_lwe_dimension(&self) -> crate::prelude::LweDimension {
         self.0.key_size()
     }
 
-    fn decomposition_base_log(&self) -> concrete_commons::parameters::DecompositionBaseLog {
+    fn decomposition_base_log(&self) -> crate::prelude::DecompositionBaseLog {
         self.0.decomposition_base_log()
     }
 
-    fn decomposition_level_count(&self) -> concrete_commons::parameters::DecompositionLevelCount {
+    fn decomposition_level_count(&self) -> crate::prelude::DecompositionLevelCount {
         self.0.decomposition_level_count()
     }
 }
 impl LweBootstrapKeyEntity for FftFourierLweBootstrapKey64 {
-    fn glwe_dimension(&self) -> concrete_commons::parameters::GlweDimension {
+    fn glwe_dimension(&self) -> crate::prelude::GlweDimension {
         self.0.glwe_size().to_glwe_dimension()
     }
 
-    fn polynomial_size(&self) -> concrete_commons::parameters::PolynomialSize {
+    fn polynomial_size(&self) -> crate::prelude::PolynomialSize {
         self.0.polynomial_size()
     }
 
-    fn input_lwe_dimension(&self) -> concrete_commons::parameters::LweDimension {
+    fn input_lwe_dimension(&self) -> crate::prelude::LweDimension {
         self.0.key_size()
     }
 
-    fn decomposition_base_log(&self) -> concrete_commons::parameters::DecompositionBaseLog {
+    fn decomposition_base_log(&self) -> crate::prelude::DecompositionBaseLog {
         self.0.decomposition_base_log()
     }
 
-    fn decomposition_level_count(&self) -> concrete_commons::parameters::DecompositionLevelCount {
+    fn decomposition_level_count(&self) -> crate::prelude::DecompositionLevelCount {
         self.0.decomposition_level_count()
     }
 }

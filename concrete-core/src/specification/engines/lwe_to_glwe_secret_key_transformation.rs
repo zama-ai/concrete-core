@@ -1,6 +1,5 @@
 use super::engine_error;
-use crate::prelude::AbstractEngine;
-use concrete_commons::parameters::PolynomialSize;
+use crate::prelude::{AbstractEngine, PolynomialSize};
 
 use crate::specification::entities::{GlweSecretKeyEntity, LweSecretKeyEntity};
 

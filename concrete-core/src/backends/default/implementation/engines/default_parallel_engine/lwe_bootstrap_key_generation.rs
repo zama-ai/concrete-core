@@ -3,12 +3,13 @@ use crate::backends::default::implementation::entities::{
     LweSecretKey64,
 };
 use crate::commons::crypto::bootstrap::StandardBootstrapKey as ImplStandardBootstrapKey;
-use crate::prelude::{DefaultParallelEngine, GlweSecretKeyEntity, LweSecretKeyEntity};
+use crate::prelude::{
+    DecompositionBaseLog, DecompositionLevelCount, DefaultParallelEngine, GlweSecretKeyEntity,
+    LweSecretKeyEntity, Variance,
+};
 use crate::specification::engines::{
     LweBootstrapKeyGenerationEngine, LweBootstrapKeyGenerationError,
 };
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
 
 /// # Description:
 /// Implementation of [`LweBootstrapKeyGenerationEngine`] for [`DefaultParallelEngine`] that
@@ -18,11 +19,10 @@ impl LweBootstrapKeyGenerationEngine<LweSecretKey32, GlweSecretKey32, LweBootstr
 {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -112,11 +112,10 @@ impl LweBootstrapKeyGenerationEngine<LweSecretKey64, GlweSecretKey64, LweBootstr
 {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

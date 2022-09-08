@@ -1,7 +1,6 @@
+use crate::prelude::{LwePublicKeyZeroEncryptionCount, Variance};
 use crate::specification::engines::AbstractEngine;
 use crate::specification::entities::{LwePublicKeyEntity, LweSecretKeyEntity};
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::LwePublicKeyZeroEncryptionCount;
 
 engine_error! {
     LwePublicKeyGenerationError for LwePublicKeyGenerationEngine @

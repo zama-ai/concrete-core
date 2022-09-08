@@ -1,6 +1,6 @@
 //! A module containing statistical testing entry points for raw integers
 use crate::raw::generation::{RawUnsignedIntegers, GENERATOR};
-use concrete_commons::dispersion::{DispersionParameter, Variance};
+use concrete_core::prelude::{DispersionParameter, Variance};
 use kolmogorov_smirnov;
 
 /// A function performing a Kolmogorov Smirnov statistical test.

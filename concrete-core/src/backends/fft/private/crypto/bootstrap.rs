@@ -3,12 +3,12 @@ use super::super::{c64, izip, Container, IntoChunks};
 use super::ggsw::{cmux, *};
 use super::glwe::{GlweCiphertextMutView, GlweCiphertextView};
 use crate::commons::math::torus::UnsignedTorus;
-use aligned_vec::CACHELINE_ALIGN;
-use concrete_commons::numeric::CastInto;
-use concrete_commons::parameters::{
+use crate::commons::numeric::CastInto;
+use crate::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LutCountLog, LweDimension,
     ModulusSwitchOffset, PolynomialSize,
 };
+use aligned_vec::CACHELINE_ALIGN;
 use dyn_stack::{DynStack, ReborrowMut, SizeOverflow, StackReq};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

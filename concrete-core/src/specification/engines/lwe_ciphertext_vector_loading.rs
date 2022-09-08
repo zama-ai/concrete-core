@@ -1,7 +1,7 @@
 use super::engine_error;
+use crate::prelude::LweCiphertextRange;
 use crate::specification::engines::AbstractEngine;
 use crate::specification::entities::LweCiphertextVectorEntity;
-use concrete_commons::parameters::LweCiphertextRange;
 
 engine_error! {
     LweCiphertextVectorLoadingError for LweCiphertextVectorLoadingEngine @

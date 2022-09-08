@@ -1,5 +1,5 @@
 use super::super::{as_mut_uninit, c64};
-use concrete_commons::numeric::UnsignedInteger;
+use crate::commons::numeric::UnsignedInteger;
 
 //--------------------------------------------------------------------------------
 // Structure definitions

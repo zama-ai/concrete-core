@@ -14,9 +14,7 @@ impl LweCiphertextVectorFusingAdditionEngine<LweCiphertextVector32, LweCiphertex
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::LweDimension;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -77,9 +75,7 @@ impl LweCiphertextVectorFusingAdditionEngine<LweCiphertextVector64, LweCiphertex
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::LweDimension;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

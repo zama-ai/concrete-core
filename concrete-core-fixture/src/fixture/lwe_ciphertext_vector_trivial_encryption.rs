@@ -4,10 +4,9 @@ use crate::generation::synthesizing::{SynthesizesLweCiphertextVector, Synthesize
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
 use concrete_core::prelude::{
-    LweCiphertextVectorEntity, LweCiphertextVectorTrivialEncryptionEngine, PlaintextVectorEntity,
+    LweCiphertextCount, LweCiphertextVectorEntity, LweCiphertextVectorTrivialEncryptionEngine,
+    LweDimension, PlaintextVectorEntity, Variance,
 };
 
 /// A fixture for the types implementing the `LweCiphertextVectorTrivialEncryptionEngine` trait.

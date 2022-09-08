@@ -21,8 +21,8 @@ use serde::Deserialize;
 impl EntityDeserializationEngine<&[u8], FftwFourierGgswCiphertext32> for FftwSerializationEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::Variance;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
     /// };
     /// use concrete_core::prelude::*;
@@ -102,11 +102,10 @@ impl EntityDeserializationEngine<&[u8], FftwFourierGgswCiphertext32> for FftwSer
 impl EntityDeserializationEngine<&[u8], FftwFourierGgswCiphertext64> for FftwSerializationEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -183,11 +182,10 @@ impl EntityDeserializationEngine<&[u8], FftwFourierGgswCiphertext64> for FftwSer
 impl EntityDeserializationEngine<&[u8], FftwFourierGlweCiphertext32> for FftwSerializationEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -261,11 +259,10 @@ impl EntityDeserializationEngine<&[u8], FftwFourierGlweCiphertext32> for FftwSer
 impl EntityDeserializationEngine<&[u8], FftwFourierGlweCiphertext64> for FftwSerializationEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -339,11 +336,10 @@ impl EntityDeserializationEngine<&[u8], FftwFourierGlweCiphertext64> for FftwSer
 impl EntityDeserializationEngine<&[u8], FftwFourierLweBootstrapKey32> for FftwSerializationEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -412,11 +408,10 @@ impl EntityDeserializationEngine<&[u8], FftwFourierLweBootstrapKey32> for FftwSe
 impl EntityDeserializationEngine<&[u8], FftwFourierLweBootstrapKey64> for FftwSerializationEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

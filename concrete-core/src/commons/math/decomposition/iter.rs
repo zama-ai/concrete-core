@@ -2,9 +2,9 @@ use crate::commons::math::decomposition::{
     DecompositionLevel, DecompositionTerm, DecompositionTermTensor,
 };
 use crate::commons::math::tensor::Tensor;
+use crate::commons::numeric::UnsignedInteger;
 use crate::commons::utils::{zip, zip_args};
-use concrete_commons::numeric::UnsignedInteger;
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount};
 
 /// An iterator-like object that yields the terms of the signed decomposition of a tensor of values.
 ///
@@ -83,9 +83,9 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
     /// use concrete_core::commons::math::decomposition::SignedDecomposer;
     /// use concrete_core::commons::math::tensor::Tensor;
+    /// use concrete_core::prelude::{DecompositionBaseLog, DecompositionLevelCount};
     /// let decomposer =
     ///     SignedDecomposer::<u32>::new(DecompositionBaseLog(4), DecompositionLevelCount(3));
     /// let decomposable = Tensor::allocate(1_340_987_234_u32, 2);
@@ -103,9 +103,9 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
     /// use concrete_core::commons::math::decomposition::SignedDecomposer;
     /// use concrete_core::commons::math::tensor::Tensor;
+    /// use concrete_core::prelude::{DecompositionBaseLog, DecompositionLevelCount};
     /// let decomposer =
     ///     SignedDecomposer::<u32>::new(DecompositionBaseLog(4), DecompositionLevelCount(3));
     /// let decomposable = Tensor::allocate(1_340_987_234_u32, 2);
@@ -126,9 +126,9 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
     /// use concrete_core::commons::math::decomposition::{DecompositionLevel, SignedDecomposer};
     /// use concrete_core::commons::math::tensor::Tensor;
+    /// use concrete_core::prelude::{DecompositionBaseLog, DecompositionLevelCount};
     /// let decomposer =
     ///     SignedDecomposer::<u32>::new(DecompositionBaseLog(4), DecompositionLevelCount(3));
     /// let decomposable = Tensor::allocate(1_340_987_234_u32, 1);
@@ -216,8 +216,8 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
     /// use concrete_core::commons::math::decomposition::SignedDecomposer;
+    /// use concrete_core::prelude::{DecompositionBaseLog, DecompositionLevelCount};
     /// let decomposer =
     ///     SignedDecomposer::<u32>::new(DecompositionBaseLog(4), DecompositionLevelCount(3));
     /// let val = 1_340_987_234_u32;
@@ -235,8 +235,8 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
     /// use concrete_core::commons::math::decomposition::SignedDecomposer;
+    /// use concrete_core::prelude::{DecompositionBaseLog, DecompositionLevelCount};
     /// let decomposer =
     ///     SignedDecomposer::<u32>::new(DecompositionBaseLog(4), DecompositionLevelCount(3));
     /// let val = 1_340_987_234_u32;

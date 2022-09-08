@@ -1,4 +1,4 @@
-use concrete_commons::dispersion::Variance;
+use crate::prelude::Variance;
 
 use crate::backends::default::implementation::engines::DefaultEngine;
 use crate::backends::default::implementation::entities::{
@@ -21,8 +21,8 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
+    /// use concrete_core::prelude::Variance;
+    /// use concrete_core::prelude::{GlweCiphertextCount, GlweDimension, PolynomialSize};
     /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
@@ -104,8 +104,8 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
+    /// use concrete_core::prelude::Variance;
+    /// use concrete_core::prelude::{GlweCiphertextCount, GlweDimension, PolynomialSize};
     /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///

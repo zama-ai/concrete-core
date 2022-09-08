@@ -5,10 +5,10 @@ use crate::commons::math::random::{
 };
 use crate::commons::math::tensor::AsMutTensor;
 
-use concrete_commons::dispersion::DispersionParameter;
-use concrete_commons::numeric::UnsignedInteger;
-use concrete_commons::parameters::{
-    DecompositionLevelCount, GlweDimension, GlweSize, LweDimension, LweSize, PolynomialSize,
+use crate::commons::numeric::UnsignedInteger;
+use crate::prelude::{
+    DecompositionLevelCount, DispersionParameter, GlweDimension, GlweSize, LweDimension, LweSize,
+    PolynomialSize,
 };
 use concrete_csprng::generators::ForkError;
 #[cfg(feature = "__commons_parallel")]
@@ -315,9 +315,9 @@ mod test {
     use crate::commons::test_tools::{
         new_encryption_random_generator, new_secret_random_generator,
     };
-    use concrete_commons::dispersion::Variance;
-    use concrete_commons::parameters::{
+    use crate::prelude::{
         DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+        Variance,
     };
 
     #[test]

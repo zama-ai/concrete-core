@@ -4,8 +4,8 @@ use crate::backends::default::implementation::entities::{
     GlweCiphertextView32, GlweCiphertextView64,
 };
 use crate::commons::crypto::glwe::GlweCiphertext as ImplGlweCiphertext;
+use crate::prelude::PolynomialSize;
 use crate::specification::engines::{GlweCiphertextCreationEngine, GlweCiphertextCreationError};
-use concrete_commons::parameters::PolynomialSize;
 
 /// # Description:
 /// Implementation of [`GlweCiphertextCreationEngine`] for [`DefaultEngine`] which returns a
@@ -13,8 +13,7 @@ use concrete_commons::parameters::PolynomialSize;
 impl GlweCiphertextCreationEngine<Vec<u32>, GlweCiphertext32> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::GlweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -66,8 +65,7 @@ impl GlweCiphertextCreationEngine<Vec<u32>, GlweCiphertext32> for DefaultEngine 
 impl GlweCiphertextCreationEngine<Vec<u64>, GlweCiphertext64> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::GlweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -121,8 +119,7 @@ impl<'data> GlweCiphertextCreationEngine<&'data [u32], GlweCiphertextView32<'dat
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweSize, PolynomialSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -178,8 +175,7 @@ impl<'data> GlweCiphertextCreationEngine<&'data mut [u32], GlweCiphertextMutView
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweSize, PolynomialSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -236,8 +232,7 @@ impl<'data> GlweCiphertextCreationEngine<&'data [u64], GlweCiphertextView64<'dat
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::PolynomialSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{PolynomialSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -293,8 +288,7 @@ impl<'data> GlweCiphertextCreationEngine<&'data mut [u64], GlweCiphertextMutView
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweSize, PolynomialSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

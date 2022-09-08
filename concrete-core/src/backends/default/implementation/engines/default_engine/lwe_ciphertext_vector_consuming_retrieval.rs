@@ -18,8 +18,7 @@ impl LweCiphertextVectorConsumingRetrievalEngine<LweCiphertextVector32, Vec<u32>
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -66,8 +65,7 @@ impl LweCiphertextVectorConsumingRetrievalEngine<LweCiphertextVector64, Vec<u64>
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -115,8 +113,7 @@ impl<'data>
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -164,8 +161,7 @@ impl<'data>
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -215,8 +211,7 @@ impl<'data>
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -269,8 +264,7 @@ impl<'data>
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

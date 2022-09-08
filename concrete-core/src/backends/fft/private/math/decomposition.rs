@@ -1,6 +1,6 @@
 pub use crate::commons::math::decomposition::DecompositionLevel;
-use concrete_commons::numeric::UnsignedInteger;
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
+use crate::commons::numeric::UnsignedInteger;
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount};
 use dyn_stack::{DynArray, DynStack};
 use std::iter::Map;
 use std::slice::IterMut;

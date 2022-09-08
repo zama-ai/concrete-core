@@ -9,10 +9,8 @@ use super::super::{as_mut_uninit, assume_init_mut, c64, izip, Container, IntoChu
 use super::glwe::{GlweCiphertextMutView, GlweCiphertextView};
 use crate::commons::math::decomposition::{DecompositionLevel, SignedDecomposer};
 use crate::commons::math::torus::UnsignedTorus;
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize};
 use aligned_vec::CACHELINE_ALIGN;
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-};
 use dyn_stack::{DynStack, ReborrowMut, SizeOverflow, StackReq};
 
 #[cfg(target_arch = "x86")]

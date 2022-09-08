@@ -3,7 +3,7 @@ use crate::commons::math::decomposition::DecompositionLevel;
 use crate::commons::math::tensor::{
     ck_dim_eq, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
-use concrete_commons::parameters::LweSize;
+use crate::prelude::LweSize;
 #[cfg(feature = "__commons_parallel")]
 use rayon::prelude::*;
 
@@ -22,9 +22,9 @@ impl<Cont> GswLevelMatrix<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::LweSize;
     /// use concrete_core::commons::crypto::gsw::GswLevelMatrix;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
+    /// use concrete_core::prelude::LweSize;
     /// let level_matrix =
     ///     GswLevelMatrix::from_container(vec![0 as u8; 7 * 7], LweSize(7), DecompositionLevel(1));
     /// assert_eq!(level_matrix.lwe_size(), LweSize(7));
@@ -51,9 +51,9 @@ impl<Cont> GswLevelMatrix<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::LweSize;
     /// use concrete_core::commons::crypto::gsw::GswLevelMatrix;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
+    /// use concrete_core::prelude::LweSize;
     /// let level_matrix =
     ///     GswLevelMatrix::from_container(vec![0 as u8; 7 * 7], LweSize(7), DecompositionLevel(1));
     /// assert_eq!(level_matrix.lwe_size(), LweSize(7));
@@ -67,9 +67,9 @@ impl<Cont> GswLevelMatrix<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::LweSize;
     /// use concrete_core::commons::crypto::gsw::GswLevelMatrix;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
+    /// use concrete_core::prelude::LweSize;
     /// let level_matrix =
     ///     GswLevelMatrix::from_container(vec![0 as u8; 7 * 7], LweSize(7), DecompositionLevel(1));
     /// assert_eq!(level_matrix.decomposition_level(), DecompositionLevel(1));
@@ -83,9 +83,9 @@ impl<Cont> GswLevelMatrix<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::LweSize;
     /// use concrete_core::commons::crypto::gsw::GswLevelMatrix;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
+    /// use concrete_core::prelude::LweSize;
     /// let level_matrix =
     ///     GswLevelMatrix::from_container(vec![0 as u8; 7 * 7], LweSize(7), DecompositionLevel(1));
     /// for row in level_matrix.row_iter() {
@@ -107,10 +107,10 @@ impl<Cont> GswLevelMatrix<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::LweSize;
     /// use concrete_core::commons::crypto::gsw::GswLevelMatrix;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::LweSize;
     /// let mut level_matrix =
     ///     GswLevelMatrix::from_container(vec![0 as u8; 7 * 7], LweSize(7), DecompositionLevel(1));
     /// for mut row in level_matrix.row_iter_mut() {
@@ -142,10 +142,10 @@ impl<Cont> GswLevelMatrix<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::LweSize;
     /// use concrete_core::commons::crypto::gsw::GswLevelMatrix;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::LweSize;
     /// use rayon::iter::ParallelIterator;
     /// let mut level_matrix =
     ///     GswLevelMatrix::from_container(vec![0 as u8; 7 * 7], LweSize(7), DecompositionLevel(1));
@@ -183,9 +183,9 @@ impl<Cont> GswLevelRow<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::LweSize;
     /// use concrete_core::commons::crypto::gsw::GswLevelRow;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
+    /// use concrete_core::prelude::LweSize;
     /// let level_row = GswLevelRow::from_container(vec![0 as u8; 7], DecompositionLevel(1));
     /// assert_eq!(level_row.lwe_size(), LweSize(7));
     /// assert_eq!(level_row.decomposition_level(), DecompositionLevel(1));
@@ -203,9 +203,9 @@ impl<Cont> GswLevelRow<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::LweSize;
     /// use concrete_core::commons::crypto::gsw::GswLevelRow;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
+    /// use concrete_core::prelude::LweSize;
     /// let level_row = GswLevelRow::from_container(vec![0 as u8; 7], DecompositionLevel(1));
     /// assert_eq!(level_row.lwe_size(), LweSize(7));
     /// ```
@@ -221,9 +221,9 @@ impl<Cont> GswLevelRow<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::LweSize;
     /// use concrete_core::commons::crypto::gsw::GswLevelRow;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
+    /// use concrete_core::prelude::LweSize;
     /// let level_row = GswLevelRow::from_container(vec![0 as u8; 7], DecompositionLevel(1));
     /// assert_eq!(level_row.decomposition_level(), DecompositionLevel(1));
     /// ```
@@ -236,9 +236,9 @@ impl<Cont> GswLevelRow<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::LweSize;
     /// use concrete_core::commons::crypto::gsw::GswLevelRow;
     /// use concrete_core::commons::math::decomposition::DecompositionLevel;
+    /// use concrete_core::prelude::LweSize;
     /// let level_row = GswLevelRow::from_container(vec![0 as u8; 7], DecompositionLevel(1));
     /// let lwe = level_row.into_lwe();
     /// assert_eq!(lwe.lwe_size(), LweSize(7));

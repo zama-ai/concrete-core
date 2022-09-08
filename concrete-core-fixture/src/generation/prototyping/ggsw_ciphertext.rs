@@ -6,13 +6,10 @@ use crate::generation::prototyping::plaintext::PrototypesPlaintext;
 use crate::generation::{
     BinaryKeyDistribution, IntegerPrecision, KeyDistributionMarker, Maker, Precision32, Precision64,
 };
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
-};
 use concrete_core::prelude::{
-    GgswCiphertextScalarEncryptionEngine, GgswCiphertextScalarTrivialEncryptionEngine,
-    PlaintextCreationEngine,
+    DecompositionBaseLog, DecompositionLevelCount, GgswCiphertextScalarEncryptionEngine,
+    GgswCiphertextScalarTrivialEncryptionEngine, GlweDimension, PlaintextCreationEngine,
+    PolynomialSize, Variance,
 };
 
 /// A trait allowing to manipulate GGSW ciphertext prototypes.

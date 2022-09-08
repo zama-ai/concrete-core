@@ -2,9 +2,9 @@ use crate::commons::math::decomposition::SignedDecomposer;
 use crate::commons::math::random::{RandomGenerable, Uniform};
 use crate::commons::math::tensor::Tensor;
 use crate::commons::math::torus::UnsignedTorus;
+use crate::commons::numeric::{Numeric, SignedInteger, UnsignedInteger};
 use crate::commons::test_tools::{any_uint, any_usize, random_usize_between};
-use concrete_commons::numeric::{Numeric, SignedInteger, UnsignedInteger};
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount};
 use std::fmt::Debug;
 
 // Returns a random decomposition valid for the size of the T type.

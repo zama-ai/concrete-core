@@ -3,10 +3,10 @@ use crate::generation::prototyping::{PrototypesContainer, PrototypesLweBootstrap
 use crate::generation::synthesizing::{SynthesizesContainer, SynthesizesLweBootstrapKey};
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+use concrete_core::prelude::{
+    DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweBootstrapKeyCreationEngine,
+    LweBootstrapKeyEntity, LweDimension, PolynomialSize,
 };
-use concrete_core::prelude::{LweBootstrapKeyCreationEngine, LweBootstrapKeyEntity};
 
 /// A fixture for the types implementing the `LweBootstrapKeyCreationEngine` trait.
 pub struct LweBootstrapKeyCreationFixture;

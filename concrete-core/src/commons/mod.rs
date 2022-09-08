@@ -38,6 +38,7 @@ macro_rules! modular_distance {
 
 pub mod crypto;
 pub mod math;
+pub mod numeric;
 pub mod utils;
 
 #[doc(hidden)]
@@ -51,11 +52,10 @@ pub mod test_tools {
     use crate::commons::math::random::{RandomGenerable, RandomGenerator, Uniform};
     use crate::commons::math::tensor::{AsRefSlice, AsRefTensor};
     use crate::commons::math::torus::UnsignedTorus;
-    use concrete_commons::dispersion::DispersionParameter;
-    use concrete_commons::numeric::UnsignedInteger;
-    use concrete_commons::parameters::{
-        CiphertextCount, DecompositionBaseLog, DecompositionLevelCount, GlweDimension,
-        LweDimension, PlaintextCount, PolynomialSize,
+    use crate::commons::numeric::UnsignedInteger;
+    use crate::prelude::{
+        CiphertextCount, DecompositionBaseLog, DecompositionLevelCount, DispersionParameter,
+        GlweDimension, LweDimension, PlaintextCount, PolynomialSize,
     };
     use concrete_csprng::generators::SoftwareRandomGenerator;
     use concrete_csprng::seeders::{Seed, Seeder};

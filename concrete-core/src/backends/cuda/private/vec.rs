@@ -1,4 +1,4 @@
-use concrete_commons::numeric::Numeric;
+use crate::commons::numeric::Numeric;
 use concrete_cuda::cuda_bind::cuda_drop;
 use std::ffi::c_void;
 use std::marker::PhantomData;

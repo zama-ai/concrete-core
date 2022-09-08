@@ -1,6 +1,5 @@
 use super::engine_error;
-use crate::prelude::PlaintextVectorEntity;
-use concrete_commons::parameters::{GlweCiphertextCount, GlweSize};
+use crate::prelude::{GlweCiphertextCount, GlweSize, PlaintextVectorEntity};
 
 use crate::specification::engines::AbstractEngine;
 use crate::specification::entities::GlweCiphertextVectorEntity;

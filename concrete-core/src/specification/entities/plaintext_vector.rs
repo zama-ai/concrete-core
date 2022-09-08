@@ -1,6 +1,6 @@
+use crate::prelude::PlaintextCount;
 use crate::specification::entities::markers::PlaintextVectorKind;
 use crate::specification::entities::AbstractEntity;
-use concrete_commons::parameters::PlaintextCount;
 
 /// A trait implemented by types embodying a plaintext vector.
 ///

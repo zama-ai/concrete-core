@@ -6,10 +6,8 @@ use crate::commons::math::random::{
 use crate::commons::math::tensor::{
     ck_dim_div, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
-use concrete_commons::numeric::Numeric;
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-};
+use crate::commons::numeric::Numeric;
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize};
 #[cfg(feature = "__commons_parallel")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
 #[cfg(feature = "__commons_serialization")]
@@ -34,11 +32,11 @@ impl<Scalar> StandardGgswSeededCiphertext<Vec<Scalar>> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::ggsw::StandardGgswSeededCiphertext;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+    /// };
     ///
     /// let polynomial_size = PolynomialSize(10);
     /// let glwe_size = GlweSize(7);
@@ -86,11 +84,11 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::ggsw::StandardGgswSeededCiphertext;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+    /// };
     ///
     /// let polynomial_size = PolynomialSize(10);
     /// let glwe_size = GlweSize(7);
@@ -140,11 +138,11 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::ggsw::StandardGgswSeededCiphertext;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+    /// };
     ///
     /// let polynomial_size = PolynomialSize(10);
     /// let glwe_size = GlweSize(7);
@@ -171,11 +169,11 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
     ///
     /// # Example
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::ggsw::StandardGgswSeededCiphertext;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+    /// };
     ///
     /// let polynomial_size = PolynomialSize(10);
     /// let glwe_size = GlweSize(7);
@@ -202,11 +200,11 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::ggsw::StandardGgswSeededCiphertext;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+    /// };
     ///
     /// let polynomial_size = PolynomialSize(10);
     /// let glwe_size = GlweSize(7);
@@ -240,11 +238,11 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::ggsw::StandardGgswSeededCiphertext;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+    /// };
     ///
     /// let polynomial_size = PolynomialSize(10);
     /// let glwe_size = GlweSize(7);
@@ -271,11 +269,11 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::ggsw::StandardGgswSeededCiphertext;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+    /// };
     ///
     /// let polynomial_size = PolynomialSize(10);
     /// let glwe_size = GlweSize(7);
@@ -316,12 +314,12 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::ggsw::StandardGgswSeededCiphertext;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+    /// };
     ///
     /// let polynomial_size = PolynomialSize(10);
     /// let glwe_size = GlweSize(7);
@@ -383,12 +381,12 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::ggsw::StandardGgswSeededCiphertext;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+    /// };
     ///
     /// let polynomial_size = PolynomialSize(10);
     /// let glwe_size = GlweSize(7);
@@ -447,12 +445,12 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::ggsw::StandardGgswSeededCiphertext;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+    /// };
     /// use rayon::iter::ParallelIterator;
     ///
     /// let polynomial_size = PolynomialSize(10);
@@ -535,14 +533,14 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::ggsw::{
     ///     StandardGgswCiphertext, StandardGgswSeededCiphertext,
     /// };
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+    /// };
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     ///
     /// let polynomial_size = PolynomialSize(10);

@@ -13,7 +13,7 @@
 //! which makes if possible to use any of those representations generically when noise must be
 //! defined.
 
-#[cfg(feature = "serde_serialize")]
+#[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
 
 /// A trait for types representing distribution parameters, for a given unsigned integer type.
@@ -45,7 +45,7 @@ pub trait DispersionParameter: Copy {
 /// # Example:
 ///
 /// ```
-/// use concrete_commons::dispersion::{DispersionParameter, LogStandardDev};
+/// use concrete_core::prelude::{DispersionParameter, LogStandardDev};
 /// let params = LogStandardDev::from_log_standard_dev(-25.);
 /// assert_eq!(params.get_standard_dev(), 2_f64.powf(-25.));
 /// assert_eq!(params.get_log_standard_dev(), -25.);
@@ -99,7 +99,7 @@ impl DispersionParameter for LogStandardDev {
 /// # Example:
 ///
 /// ```
-/// use concrete_commons::dispersion::{DispersionParameter, StandardDev};
+/// use concrete_core::prelude::{DispersionParameter, StandardDev};
 /// let params = StandardDev::from_standard_dev(2_f64.powf(-25.));
 /// assert_eq!(params.get_standard_dev(), 2_f64.powf(-25.));
 /// assert_eq!(params.get_log_standard_dev(), -25.);
@@ -111,7 +111,7 @@ impl DispersionParameter for LogStandardDev {
 ///     2_f64.powf(32. - 25.).powi(2)
 /// );
 /// ```
-#[cfg_attr(feature = "serde_serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
 pub struct StandardDev(pub f64);
 
@@ -151,7 +151,7 @@ impl DispersionParameter for StandardDev {
 /// # Example:
 ///
 /// ```
-/// use concrete_commons::dispersion::{DispersionParameter, Variance};
+/// use concrete_core::prelude::{DispersionParameter, Variance};
 /// let params = Variance::from_variance(2_f64.powi(-50));
 /// assert_eq!(params.get_standard_dev(), 2_f64.powf(-25.));
 /// assert_eq!(params.get_log_standard_dev(), -25.);

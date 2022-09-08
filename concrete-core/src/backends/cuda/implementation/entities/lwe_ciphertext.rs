@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use concrete_commons::parameters::LweDimension;
+use crate::prelude::LweDimension;
 
 use crate::backends::cuda::private::crypto::lwe::ciphertext::CudaLweCiphertext;
 use crate::specification::entities::markers::LweCiphertextKind;

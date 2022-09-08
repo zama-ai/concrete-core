@@ -1,9 +1,9 @@
 use crate::commons::crypto::ggsw::StandardGgswCiphertext as ImplStandardGgswCiphertext;
-use crate::specification::entities::markers::GgswCiphertextKind;
-use crate::specification::entities::{AbstractEntity, GgswCiphertextEntity};
-use concrete_commons::parameters::{
+use crate::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
 };
+use crate::specification::entities::markers::GgswCiphertextKind;
+use crate::specification::entities::{AbstractEntity, GgswCiphertextEntity};
 #[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 

@@ -2,10 +2,9 @@ use crate::fixture::Fixture;
 use crate::generation::prototyping::PrototypesLweSecretKey;
 use crate::generation::synthesizing::{SynthesizesLweKeyswitchKey, SynthesizesLweSecretKey};
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
 use concrete_core::prelude::{
-    LweKeyswitchKeyEntity, LweKeyswitchKeyGenerationEngine, LweSecretKeyEntity,
+    DecompositionBaseLog, DecompositionLevelCount, LweDimension, LweKeyswitchKeyEntity,
+    LweKeyswitchKeyGenerationEngine, LweSecretKeyEntity, Variance,
 };
 
 /// A fixture for the types implementing the `LweKeyswitchKeyGenerationEngine` trait.

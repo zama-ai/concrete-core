@@ -8,10 +8,12 @@ use crate::generation::prototyping::PrototypesCleartextVector;
 use crate::generation::{
     BinaryKeyDistribution, IntegerPrecision, KeyDistributionMarker, Maker, Precision32, Precision64,
 };
-use concrete_commons::dispersion::StandardDev;
+use concrete_core::prelude::StandardDev;
 
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
-use concrete_core::prelude::LwePrivateFunctionalLwePackingKeyswitchKeyGenerationEngine;
+use concrete_core::prelude::{
+    DecompositionBaseLog, DecompositionLevelCount,
+    LwePrivateFunctionalLwePackingKeyswitchKeyGenerationEngine,
+};
 
 use super::PrototypesGlweSecretKey;
 

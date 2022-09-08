@@ -21,9 +21,7 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweDimension, PolynomialSize, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -100,9 +98,7 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweDimension, PolynomialSize, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

@@ -1,8 +1,9 @@
 use crate::fixture::Fixture;
 use crate::generation::synthesizing::SynthesizesGlweSecretKey;
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
-use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-use concrete_core::prelude::{GlweSecretKeyEntity, GlweSecretKeyGenerationEngine};
+use concrete_core::prelude::{
+    GlweDimension, GlweSecretKeyEntity, GlweSecretKeyGenerationEngine, PolynomialSize,
+};
 
 /// A fixture for the types implementing the `GlweSecretKeyGenerationEngine` trait.
 pub struct GlweSecretKeyGenerationFixture;

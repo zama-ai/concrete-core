@@ -1,7 +1,7 @@
 use crate::commons::math::random::CompressionSeed;
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
 use crate::specification::entities::markers::LweSeededKeyswitchKeyKind;
 use crate::specification::entities::AbstractEntity;
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
 
 /// A trait implemented by types embodying a seeded LWE keyswitch key.
 ///

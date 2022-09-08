@@ -1,10 +1,10 @@
 use crate::commons::crypto::bootstrap::StandardSeededBootstrapKey as ImplStandardSeededBootstrapKey;
 use crate::commons::math::random::CompressionSeed;
-use crate::specification::entities::markers::LweSeededBootstrapKeyKind;
-use crate::specification::entities::{AbstractEntity, LweSeededBootstrapKeyEntity};
-use concrete_commons::parameters::{
+use crate::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
 };
+use crate::specification::entities::markers::LweSeededBootstrapKeyKind;
+use crate::specification::entities::{AbstractEntity, LweSeededBootstrapKeyEntity};
 #[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 

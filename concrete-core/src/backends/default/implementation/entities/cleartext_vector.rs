@@ -1,7 +1,7 @@
 use crate::commons::crypto::encoding::CleartextList as ImplCleartextList;
+use crate::prelude::CleartextCount;
 use crate::specification::entities::markers::CleartextVectorKind;
 use crate::specification::entities::{AbstractEntity, CleartextVectorEntity};
-use concrete_commons::parameters::CleartextCount;
 #[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 

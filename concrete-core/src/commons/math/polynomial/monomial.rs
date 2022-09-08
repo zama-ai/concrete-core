@@ -1,7 +1,7 @@
 use crate::commons::math::tensor::{
     tensor_traits, AsMutElement, AsMutTensor, AsRefElement, AsRefSlice, AsRefTensor, Tensor,
 };
-use concrete_commons::parameters::MonomialDegree;
+use crate::prelude::MonomialDegree;
 
 /// A monomial term.
 ///
@@ -10,8 +10,8 @@ use concrete_commons::parameters::MonomialDegree;
 /// # Example
 ///
 /// ```
-/// use concrete_commons::parameters::MonomialDegree;
 /// use concrete_core::commons::math::polynomial::Monomial;
+/// use concrete_core::prelude::MonomialDegree;
 /// let mono = Monomial::allocate(1u8, MonomialDegree(5));
 /// assert_eq!(*mono.get_coefficient(), 1u8);
 /// assert_eq!(mono.degree(), MonomialDegree(5));

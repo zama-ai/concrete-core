@@ -21,11 +21,9 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension,
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -123,11 +121,9 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension,
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

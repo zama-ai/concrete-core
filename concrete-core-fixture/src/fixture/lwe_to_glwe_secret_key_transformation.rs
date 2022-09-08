@@ -2,9 +2,9 @@ use crate::fixture::Fixture;
 use crate::generation::prototyping::{PrototypesGlweSecretKey, PrototypesLweSecretKey};
 use crate::generation::synthesizing::{SynthesizesGlweSecretKey, SynthesizesLweSecretKey};
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
-use concrete_commons::parameters::{GlweDimension, LweDimension, PolynomialSize};
 use concrete_core::prelude::{
-    GlweSecretKeyEntity, LweSecretKeyEntity, LweToGlweSecretKeyTransformationEngine,
+    GlweDimension, GlweSecretKeyEntity, LweDimension, LweSecretKeyEntity,
+    LweToGlweSecretKeyTransformationEngine, PolynomialSize,
 };
 
 /// A fixture for the types implementing the `LweToGlweSecretKeyTransformationEngine` trait.

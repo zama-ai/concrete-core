@@ -1,4 +1,4 @@
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
 
 use crate::backends::cuda::private::crypto::keyswitch::CudaLweKeyswitchKey;
 use crate::specification::entities::markers::LweKeyswitchKeyKind;

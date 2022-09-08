@@ -2,8 +2,8 @@ use crate::commons::math::polynomial::Polynomial;
 use crate::commons::math::tensor::{
     ck_dim_div, tensor_traits, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
-use concrete_commons::numeric::Numeric;
-use concrete_commons::parameters::PlaintextCount;
+use crate::commons::numeric::Numeric;
+use crate::prelude::PlaintextCount;
 #[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
 
@@ -31,8 +31,8 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::PlaintextCount;
     /// use concrete_core::commons::crypto::encoding::*;
+    /// use concrete_core::prelude::PlaintextCount;
     /// let plain_list = PlaintextList::allocate(1 as u8, PlaintextCount(100));
     /// assert_eq!(plain_list.count(), PlaintextCount(100));
     /// ```
@@ -47,8 +47,8 @@ impl<Cont> PlaintextList<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::PlaintextCount;
     /// use concrete_core::commons::crypto::encoding::*;
+    /// use concrete_core::prelude::PlaintextCount;
     /// let plain_list = PlaintextList::from_container(vec![1 as u8; 100]);
     /// assert_eq!(plain_list.count(), PlaintextCount(100));
     /// ```
@@ -67,8 +67,8 @@ impl<Cont> PlaintextList<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::PlaintextCount;
     /// use concrete_core::commons::crypto::encoding::*;
+    /// use concrete_core::prelude::PlaintextCount;
     /// let plain_list = PlaintextList::from_container(vec![1 as u8; 100]);
     /// assert_eq!(plain_list.count(), PlaintextCount(100));
     /// ```
@@ -135,8 +135,8 @@ impl<Cont> PlaintextList<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::PlaintextCount;
     /// use concrete_core::commons::crypto::encoding::*;
+    /// use concrete_core::prelude::PlaintextCount;
     /// let mut plain_list = PlaintextList::from_container(vec![1 as u8; 100]);
     /// plain_list
     ///     .sublist_iter(PlaintextCount(10))
@@ -160,8 +160,8 @@ impl<Cont> PlaintextList<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::PlaintextCount;
     /// use concrete_core::commons::crypto::encoding::*;
+    /// use concrete_core::prelude::PlaintextCount;
     /// let mut plain_list = PlaintextList::from_container(vec![1 as u8; 100]);
     /// plain_list
     ///     .sublist_iter_mut(PlaintextCount(10))
@@ -189,8 +189,8 @@ impl<Cont> PlaintextList<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::PolynomialSize;
     /// use concrete_core::commons::crypto::encoding::*;
+    /// use concrete_core::prelude::PolynomialSize;
     /// let plain_list = PlaintextList::from_container(vec![1 as u8; 100]);
     /// let plain_poly = plain_list.as_polynomial();
     /// assert_eq!(plain_poly.polynomial_size(), PolynomialSize(100));
@@ -207,8 +207,8 @@ impl<Cont> PlaintextList<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::PolynomialSize;
     /// use concrete_core::commons::crypto::encoding::*;
+    /// use concrete_core::prelude::PolynomialSize;
     /// let mut plain_list = PlaintextList::from_container(vec![1 as u8; 100]);
     /// let mut plain_poly = plain_list.as_mut_polynomial();
     /// assert_eq!(plain_poly.polynomial_size(), PolynomialSize(100));

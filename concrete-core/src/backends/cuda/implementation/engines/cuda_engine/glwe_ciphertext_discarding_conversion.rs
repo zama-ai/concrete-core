@@ -10,15 +10,13 @@ impl GlweCiphertextDiscardingConversionEngine<CudaGlweCiphertext64, GlweCipherte
 {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweCiphertextCount, GlweDimension, PolynomialSize, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
     /// use std::borrow::{Borrow, BorrowMut};
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
-    /// use concrete_commons::numeric::CastInto;
+    /// use concrete_core::commons::numeric::CastInto;
     /// use std::task::Poll;
     /// let glwe_dimension = GlweDimension(2);
     /// let polynomial_size = PolynomialSize(3);

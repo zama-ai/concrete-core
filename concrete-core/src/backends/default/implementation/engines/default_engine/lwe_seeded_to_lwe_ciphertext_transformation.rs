@@ -18,9 +18,7 @@ impl LweSeededCiphertextToLweCiphertextTransformationEngine<LweSeededCiphertext3
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::LweDimension;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -80,9 +78,7 @@ impl LweSeededCiphertextToLweCiphertextTransformationEngine<LweSeededCiphertext6
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::LweDimension;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

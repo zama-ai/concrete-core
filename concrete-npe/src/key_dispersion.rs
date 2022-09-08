@@ -1,11 +1,8 @@
 //! This trait contains functions related to the dispersion of secret key coefficients, and
 //! operations related to the secret keys (e.g., products of secret keys).
 
-use concrete_commons::dispersion::*;
-use concrete_commons::parameters::PolynomialSize;
-
 use super::*;
-use concrete_commons::key_kinds::*;
+use concrete_core::prelude::{PolynomialSize, *};
 
 // The Gaussian secret keys have modular standard deviation set to 3.2 by default.
 const GAUSSIAN_MODULAR_STDEV: f64 = 3.2;
@@ -16,8 +13,7 @@ pub trait KeyDispersion: KeyKind {
     /// Returns the variance of key coefficients.
     /// # Example
     ///```rust
-    /// use concrete_commons::dispersion::*;
-    /// use concrete_commons::key_kinds::*;
+    /// use concrete_core::prelude::*;
     /// use concrete_npe::*;
     ///
     /// let var_out_1 =
@@ -31,8 +27,7 @@ pub trait KeyDispersion: KeyKind {
     /// Returns the expectation of key coefficients.
     /// # Example
     ///```rust
-    /// use concrete_commons::dispersion::*;
-    /// use concrete_commons::key_kinds::*;
+    /// use concrete_core::prelude::*;
     /// use concrete_npe::*;
     ///
     /// type ui = u64;
@@ -47,8 +42,7 @@ pub trait KeyDispersion: KeyKind {
     /// Returns the variance of the squared key coefficients.
     /// # Example
     ///```rust
-    /// use concrete_commons::dispersion::*;
-    /// use concrete_commons::key_kinds::*;
+    /// use concrete_core::prelude::*;
     /// use concrete_npe::*;
     ///
     /// let var_out_2 =
@@ -62,8 +56,7 @@ pub trait KeyDispersion: KeyKind {
     /// Returns the expectation of the squared key coefficients.
     /// # Example
     ///```rust
-    /// use concrete_commons::dispersion::*;
-    /// use concrete_commons::key_kinds::*;
+    /// use concrete_core::prelude::*;
     /// use concrete_npe::*;
     ///
     /// let expect_out_2 = GaussianKeyKind::expectation_key_coefficient_squared(64);
@@ -76,9 +69,7 @@ pub trait KeyDispersion: KeyKind {
     /// Returns the variance of the odd coefficients of a polynomial key to the square.
     /// # Example
     ///```rust
-    /// use concrete_commons::dispersion::*;
-    /// use concrete_commons::key_kinds::*;
-    /// use concrete_commons::parameters::PolynomialSize;
+    /// use concrete_core::prelude::{PolynomialSize, *};
     /// use concrete_npe::*;
     ///
     /// let polynomial_size = PolynomialSize(1024);
@@ -99,9 +90,7 @@ pub trait KeyDispersion: KeyKind {
     /// Returns the variance of the even coefficients of a polynomial key to the square
     /// # Example
     ///```rust
-    /// use concrete_commons::dispersion::*;
-    /// use concrete_commons::key_kinds::*;
-    /// use concrete_commons::parameters::PolynomialSize;
+    /// use concrete_core::prelude::{PolynomialSize, *};
     /// use concrete_npe::*;
     ///
     /// let polynomial_size = PolynomialSize(1024);
@@ -122,9 +111,7 @@ pub trait KeyDispersion: KeyKind {
     /// Returns the mean expectation of the coefficients of a polynomial key to the square.
     /// # Example
     ///```rust
-    /// use concrete_commons::dispersion::*;
-    /// use concrete_commons::key_kinds::*;
-    /// use concrete_commons::parameters::PolynomialSize;
+    /// use concrete_core::prelude::{PolynomialSize, *};
     /// use concrete_npe::*;
     ///
     /// let polynomial_size = PolynomialSize(1024);
@@ -145,9 +132,7 @@ pub trait KeyDispersion: KeyKind {
     /// of the same key kind ($S\_i \cdot S\_j$ with $i,j$ different).
     /// # Example
     ///```rust
-    /// use concrete_commons::dispersion::*;
-    /// use concrete_commons::key_kinds::*;
-    /// use concrete_commons::parameters::PolynomialSize;
+    /// use concrete_core::prelude::{PolynomialSize, *};
     /// use concrete_npe::*;
     ///
     /// let polynomial_size = PolynomialSize(1024);
@@ -170,9 +155,7 @@ pub trait KeyDispersion: KeyKind {
     /// keys of the same key kind ($S\_i \cdot S\_j$ with $i,j$ different).
     /// # Example
     ///```rust
-    /// use concrete_commons::dispersion::*;
-    /// use concrete_commons::key_kinds::*;
-    /// use concrete_commons::parameters::PolynomialSize;
+    /// use concrete_core::prelude::{PolynomialSize, *};
     /// use concrete_npe::*;
     ///
     /// type ui = u64;

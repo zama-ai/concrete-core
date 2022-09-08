@@ -1,5 +1,4 @@
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::CiphertextCount;
+use crate::prelude::{CiphertextCount, Variance};
 
 use super::ActivatedRandomGenerator;
 use crate::backends::default::implementation::engines::DefaultEngine;
@@ -26,8 +25,8 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
+    /// use concrete_core::prelude::Variance;
+    /// use concrete_core::prelude::{LweCiphertextCount, LweDimension};
     /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
@@ -106,8 +105,8 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
+    /// use concrete_core::prelude::Variance;
+    /// use concrete_core::prelude::{LweCiphertextCount, LweDimension};
     /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///

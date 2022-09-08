@@ -14,9 +14,7 @@ impl LweCiphertextDiscardingDecryptionEngine<LweSecretKey32, LweCiphertext32, Pl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::LweDimension;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -71,9 +69,7 @@ impl LweCiphertextDiscardingDecryptionEngine<LweSecretKey64, LweCiphertext64, Pl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::LweDimension;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

@@ -1,9 +1,9 @@
 use crate::commons::crypto::bootstrap::StandardBootstrapKey as ImplStandardBootstrapKey;
-use crate::specification::entities::markers::LweBootstrapKeyKind;
-use crate::specification::entities::{AbstractEntity, LweBootstrapKeyEntity};
-use concrete_commons::parameters::{
+use crate::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
 };
+use crate::specification::entities::markers::LweBootstrapKeyKind;
+use crate::specification::entities::{AbstractEntity, LweBootstrapKeyEntity};
 #[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 

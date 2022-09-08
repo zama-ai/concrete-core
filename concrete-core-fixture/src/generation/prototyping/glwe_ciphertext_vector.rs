@@ -7,12 +7,11 @@ use crate::generation::prototyping::plaintext_vector::PrototypesPlaintextVector;
 use crate::generation::{
     BinaryKeyDistribution, IntegerPrecision, KeyDistributionMarker, Maker, Precision32, Precision64,
 };
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{GlweCiphertextCount, GlweSize, PlaintextCount};
 use concrete_core::prelude::{
-    GlweCiphertextVectorDecryptionEngine, GlweCiphertextVectorEncryptionEngine,
-    GlweCiphertextVectorTrivialDecryptionEngine, GlweCiphertextVectorTrivialEncryptionEngine,
-    PlaintextVectorCreationEngine,
+    GlweCiphertextCount, GlweCiphertextVectorDecryptionEngine,
+    GlweCiphertextVectorEncryptionEngine, GlweCiphertextVectorTrivialDecryptionEngine,
+    GlweCiphertextVectorTrivialEncryptionEngine, GlweSize, PlaintextCount,
+    PlaintextVectorCreationEngine, Variance,
 };
 
 /// A trait allowing to manipulate GLWE ciphertext vector prototypes.

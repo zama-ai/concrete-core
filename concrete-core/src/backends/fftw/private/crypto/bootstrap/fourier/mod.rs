@@ -4,7 +4,7 @@ use concrete_fftw::array::AlignedVec;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-use concrete_commons::parameters::{
+use crate::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LutCountLog, LweDimension,
     ModulusSwitchOffset, MonomialDegree, PolynomialSize,
 };
@@ -50,11 +50,11 @@ where
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::backends::fftw::private::crypto::bootstrap::FourierBootstrapKey;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// let bsk: FourierBootstrapKey<_, u32> = FourierBootstrapKey::allocate(
     ///     Complex64::new(9., 8.),
     ///     GlweSize(7),
@@ -101,11 +101,11 @@ where
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::backends::fftw::private::crypto::bootstrap::FourierBootstrapKey;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// let vector = vec![Complex64::new(0., 0.); 256 * 5 * 4 * 4 * 15];
     /// let bsk: FourierBootstrapKey<_, u32> = FourierBootstrapKey::from_container(
     ///     vector.as_slice(),
@@ -152,14 +152,14 @@ where
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::backends::fftw::private::crypto::bootstrap::{
     ///     FourierBootstrapKey, FourierBuffers,
     /// };
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
     /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// let bsk = StandardBootstrapKey::allocate(
     ///     9u32,
     ///     GlweSize(7),
@@ -200,11 +200,11 @@ where
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::backends::fftw::private::crypto::bootstrap::FourierBootstrapKey;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// let bsk: FourierBootstrapKey<_, u32> = FourierBootstrapKey::allocate(
     ///     Complex64::new(9., 8.),
     ///     GlweSize(7),
@@ -224,11 +224,11 @@ where
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::backends::fftw::private::crypto::bootstrap::FourierBootstrapKey;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// let bsk: FourierBootstrapKey<_, u32> = FourierBootstrapKey::allocate(
     ///     Complex64::new(9., 8.),
     ///     GlweSize(7),
@@ -248,11 +248,11 @@ where
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::backends::fftw::private::crypto::bootstrap::FourierBootstrapKey;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// let bsk: FourierBootstrapKey<_, u32> = FourierBootstrapKey::allocate(
     ///     Complex64::new(9., 8.),
     ///     GlweSize(7),
@@ -272,11 +272,11 @@ where
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::backends::fftw::private::crypto::bootstrap::FourierBootstrapKey;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// let bsk: FourierBootstrapKey<_, u32> = FourierBootstrapKey::allocate(
     ///     Complex64::new(9., 8.),
     ///     GlweSize(7),
@@ -296,11 +296,11 @@ where
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::backends::fftw::private::crypto::bootstrap::FourierBootstrapKey;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// let bsk: FourierBootstrapKey<_, u32> = FourierBootstrapKey::allocate(
     ///     Complex64::new(9., 8.),
     ///     GlweSize(7),
@@ -320,11 +320,11 @@ where
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::backends::fftw::private::crypto::bootstrap::FourierBootstrapKey;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// let bsk: FourierBootstrapKey<_, u32> = FourierBootstrapKey::allocate(
     ///     Complex64::new(9., 8.),
     ///     GlweSize(7),
@@ -355,11 +355,11 @@ where
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::backends::fftw::private::crypto::bootstrap::FourierBootstrapKey;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// let bsk: FourierBootstrapKey<_, u32> = FourierBootstrapKey::allocate(
     ///     Complex64::new(9., 8.),
     ///     GlweSize(7),
@@ -401,12 +401,12 @@ where
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::backends::fftw::private::crypto::bootstrap::FourierBootstrapKey;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// let mut bsk: FourierBootstrapKey<_, u32> = FourierBootstrapKey::allocate(
     ///     Complex64::new(9., 8.),
     ///     GlweSize(7),
@@ -539,12 +539,6 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::dispersion::LogStandardDev;
-    /// use concrete_commons::numeric::CastInto;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, LweSize,
-    ///     PolynomialSize,
-    /// };
     /// use concrete_core::backends::fftw::private::crypto::bootstrap::{
     ///     FourierBootstrapKey, FourierBuffers,
     /// };
@@ -558,6 +552,11 @@ where
     /// };
     /// use concrete_core::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
     /// use concrete_core::commons::math::tensor::AsMutTensor;
+    /// use concrete_core::commons::numeric::CastInto;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LogStandardDev, LweDimension,
+    ///     LweSize, PolynomialSize,
+    /// };
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///

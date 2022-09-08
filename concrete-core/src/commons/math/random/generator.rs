@@ -3,7 +3,7 @@ use crate::commons::math::random::{
     UniformWithZeros,
 };
 use crate::commons::math::tensor::{AsMutSlice, AsMutTensor, Tensor};
-use concrete_commons::numeric::{FloatingPoint, Numeric};
+use crate::commons::numeric::{FloatingPoint, Numeric};
 use concrete_csprng::generators::{BytesPerChild, ChildrenCount, ForkError};
 #[cfg(feature = "__commons_parallel")]
 use rayon::prelude::*;

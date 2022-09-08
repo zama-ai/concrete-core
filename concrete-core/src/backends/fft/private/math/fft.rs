@@ -4,9 +4,9 @@ use super::polynomial::{
     PolynomialMutView, PolynomialUninitMutView, PolynomialView,
 };
 use crate::commons::math::torus::UnsignedTorus;
+use crate::commons::numeric::CastInto;
+use crate::prelude::PolynomialSize;
 use aligned_vec::{avec, ABox};
-use concrete_commons::numeric::CastInto;
-use concrete_commons::parameters::PolynomialSize;
 use concrete_fft::unordered::{Method, Plan};
 use dyn_stack::{DynStack, SizeOverflow, StackReq};
 use once_cell::sync::OnceCell;

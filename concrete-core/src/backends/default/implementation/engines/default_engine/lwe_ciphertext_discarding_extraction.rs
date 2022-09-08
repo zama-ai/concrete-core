@@ -1,5 +1,5 @@
 #[allow(deprecated)]
-use concrete_commons::parameters::{MonomialDegree, MonomialIndex};
+use crate::prelude::{MonomialDegree, MonomialIndex};
 
 use crate::backends::default::implementation::engines::DefaultEngine;
 use crate::backends::default::implementation::entities::{
@@ -15,11 +15,9 @@ use crate::specification::engines::{
 impl LweCiphertextDiscardingExtractionEngine<GlweCiphertext32, LweCiphertext32> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
-    ///     GlweDimension, LweDimension, MonomialIndex, PolynomialSize,
+    /// use concrete_core::prelude::{
+    ///     GlweDimension, LweDimension, MonomialIndex, PolynomialSize, Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -90,11 +88,9 @@ impl LweCiphertextDiscardingExtractionEngine<GlweCiphertext32, LweCiphertext32> 
 impl LweCiphertextDiscardingExtractionEngine<GlweCiphertext64, LweCiphertext64> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
-    ///     GlweDimension, LweDimension, MonomialIndex, PolynomialSize,
+    /// use concrete_core::prelude::{
+    ///     GlweDimension, LweDimension, MonomialIndex, PolynomialSize, Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

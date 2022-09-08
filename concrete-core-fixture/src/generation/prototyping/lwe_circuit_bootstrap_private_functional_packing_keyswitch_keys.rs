@@ -7,11 +7,13 @@ use crate::generation::prototyping::lwe_secret_key::PrototypesLweSecretKey;
 use crate::generation::{
     BinaryKeyDistribution, IntegerPrecision, KeyDistributionMarker, Maker, Precision32, Precision64,
 };
-use concrete_commons::dispersion::Variance;
+use concrete_core::prelude::Variance;
 
 use super::PrototypesGlweSecretKey;
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
-use concrete_core::prelude::LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysGenerationEngine;
+use concrete_core::prelude::{
+    DecompositionBaseLog, DecompositionLevelCount,
+    LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysGenerationEngine,
+};
 
 /// A trait allowing to manipulate prototypes of private functional packing keyswitch keys vector
 /// used in circuit bootstrapping.

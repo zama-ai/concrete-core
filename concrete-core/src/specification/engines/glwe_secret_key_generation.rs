@@ -1,7 +1,7 @@
 use super::engine_error;
+use crate::prelude::{GlweDimension, PolynomialSize};
 use crate::specification::engines::AbstractEngine;
 use crate::specification::entities::GlweSecretKeyEntity;
-use concrete_commons::parameters::{GlweDimension, PolynomialSize};
 
 engine_error! {
     GlweSecretKeyGenerationError for GlweSecretKeyGenerationEngine @

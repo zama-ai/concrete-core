@@ -1,6 +1,6 @@
+use crate::prelude::{LweDimension, LwePublicKeyZeroEncryptionCount};
 use crate::specification::entities::markers::LwePublicKeyKind;
 use crate::specification::entities::AbstractEntity;
-use concrete_commons::parameters::{LweDimension, LwePublicKeyZeroEncryptionCount};
 
 /// A trait implemented by types embodying an LWE public key.
 ///

@@ -1,6 +1,6 @@
+use crate::prelude::LweDimension;
 use crate::specification::entities::markers::LweSecretKeyKind;
 use crate::specification::entities::AbstractEntity;
-use concrete_commons::parameters::LweDimension;
 
 /// A trait implemented by types embodying an LWE secret key.
 ///

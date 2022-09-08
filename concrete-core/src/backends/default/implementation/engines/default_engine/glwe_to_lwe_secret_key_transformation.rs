@@ -11,8 +11,7 @@ impl GlweToLweSecretKeyTransformationEngine<GlweSecretKey32, LweSecretKey32> for
     ///
     /// ```
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-    /// use concrete_commons::parameters::{GlweDimension, LweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweDimension, LweDimension, PolynomialSize, *};
     ///
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
     /// let glwe_dimension = GlweDimension(2);
@@ -54,8 +53,7 @@ impl GlweToLweSecretKeyTransformationEngine<GlweSecretKey64, LweSecretKey64> for
     ///
     /// ```
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-    /// use concrete_commons::parameters::{GlweDimension, LweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweDimension, LweDimension, PolynomialSize, *};
     ///
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
     /// let glwe_dimension = GlweDimension(2);

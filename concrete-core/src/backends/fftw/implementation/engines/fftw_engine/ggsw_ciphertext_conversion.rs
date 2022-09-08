@@ -14,11 +14,10 @@ use crate::specification::entities::GgswCiphertextEntity;
 impl GgswCiphertextConversionEngine<GgswCiphertext32, FftwFourierGgswCiphertext32> for FftwEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -90,11 +89,10 @@ impl GgswCiphertextConversionEngine<GgswCiphertext32, FftwFourierGgswCiphertext3
 impl GgswCiphertextConversionEngine<GgswCiphertext64, FftwFourierGgswCiphertext64> for FftwEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

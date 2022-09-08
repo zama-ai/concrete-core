@@ -1,5 +1,4 @@
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, Variance};
 
 use crate::backends::default::implementation::engines::DefaultEngine;
 use crate::backends::default::implementation::entities::{
@@ -19,8 +18,8 @@ impl LweKeyswitchKeyGenerationEngine<LweSecretKey32, LweSecretKey32, LweKeyswitc
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::Variance;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension,
     /// };
     /// use concrete_core::prelude::*;
@@ -121,8 +120,8 @@ impl LweKeyswitchKeyGenerationEngine<LweSecretKey64, LweSecretKey64, LweKeyswitc
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::Variance;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension,
     /// };
     /// use concrete_core::prelude::*;

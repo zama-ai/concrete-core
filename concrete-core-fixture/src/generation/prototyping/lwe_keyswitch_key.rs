@@ -6,9 +6,9 @@ use crate::generation::prototyping::lwe_secret_key::PrototypesLweSecretKey;
 use crate::generation::{
     BinaryKeyDistribution, IntegerPrecision, KeyDistributionMarker, Maker, Precision32, Precision64,
 };
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
-use concrete_core::prelude::LweKeyswitchKeyGenerationEngine;
+use concrete_core::prelude::{
+    DecompositionBaseLog, DecompositionLevelCount, LweKeyswitchKeyGenerationEngine, Variance,
+};
 
 /// A trait allowing to manipulate lwe keyswitch key prototypes.
 pub trait PrototypesLweKeyswitchKey<

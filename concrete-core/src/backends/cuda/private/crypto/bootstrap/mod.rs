@@ -7,10 +7,10 @@ use crate::backends::cuda::private::vec::CudaVec;
 use crate::backends::cuda::private::{compute_number_of_samples_on_gpu, number_of_active_gpus};
 use crate::commons::crypto::bootstrap::StandardBootstrapKey;
 use crate::commons::math::tensor::{AsRefSlice, AsRefTensor};
-use crate::prelude::numeric::UnsignedInteger;
-use crate::prelude::{CiphertextCount, LweCiphertextIndex};
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+use crate::commons::numeric::UnsignedInteger;
+use crate::prelude::{
+    CiphertextCount, DecompositionBaseLog, DecompositionLevelCount, GlweDimension,
+    LweCiphertextIndex, LweDimension, PolynomialSize,
 };
 use std::marker::PhantomData;
 

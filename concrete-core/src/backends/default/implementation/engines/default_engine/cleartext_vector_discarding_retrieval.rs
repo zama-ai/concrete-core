@@ -12,8 +12,7 @@ use crate::specification::engines::{
 impl CleartextVectorDiscardingRetrievalEngine<CleartextVector32, u32> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::CleartextCount;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{CleartextCount, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -57,8 +56,7 @@ impl CleartextVectorDiscardingRetrievalEngine<CleartextVector32, u32> for Defaul
 impl CleartextVectorDiscardingRetrievalEngine<CleartextVector64, u64> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::CleartextCount;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{CleartextCount, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -102,8 +100,7 @@ impl CleartextVectorDiscardingRetrievalEngine<CleartextVector64, u64> for Defaul
 impl CleartextVectorDiscardingRetrievalEngine<CleartextVectorF64, f64> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::CleartextCount;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{CleartextCount, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

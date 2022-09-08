@@ -4,9 +4,9 @@ use crate::backends::fftw::private::math::fft::{
 };
 use crate::commons::math::polynomial::Polynomial;
 use crate::commons::math::tensor::{AsMutTensor, AsRefTensor};
+use crate::commons::numeric::Numeric;
 use crate::commons::test_tools::new_random_generator;
-use concrete_commons::numeric::Numeric;
-use concrete_commons::parameters::PolynomialSize;
+use crate::prelude::PolynomialSize;
 use concrete_fftw::array::AlignedVec;
 
 #[test]

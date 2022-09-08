@@ -1,9 +1,9 @@
 use crate::prelude::markers::LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysKind;
-use crate::specification::entities::AbstractEntity;
-use concrete_commons::parameters::{
+use crate::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, FunctionalPackingKeyswitchKeyCount,
     GlweDimension, LweDimension, PolynomialSize,
 };
+use crate::specification::entities::AbstractEntity;
 
 /// A trait implemented by types embodying a private functional packing keyswitch key vector used
 /// for circuit bootstrapping.

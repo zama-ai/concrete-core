@@ -1,11 +1,9 @@
 use super::engine_error;
 use crate::prelude::{
-    GlweSecretKeyEntity, LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysEntity,
-    LweSecretKeyEntity,
+    DecompositionBaseLog, DecompositionLevelCount, GlweSecretKeyEntity,
+    LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysEntity, LweSecretKeyEntity, Variance,
 };
 use crate::specification::engines::AbstractEngine;
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
 
 engine_error! {
     LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysGenerationError for

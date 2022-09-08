@@ -10,12 +10,11 @@ use crate::commons::math::tensor::{
     ck_dim_div, ck_dim_eq, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
 use crate::commons::math::torus::UnsignedTorus;
+use crate::commons::numeric::Numeric;
 use crate::commons::utils::{zip, zip_args};
-use concrete_commons::dispersion::DispersionParameter;
-use concrete_commons::key_kinds::BinaryKeyKind;
-use concrete_commons::numeric::Numeric;
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+use crate::prelude::{
+    BinaryKeyKind, DecompositionBaseLog, DecompositionLevelCount, DispersionParameter, GlweSize,
+    LweDimension, PolynomialSize,
 };
 #[cfg(feature = "__commons_parallel")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
@@ -42,10 +41,10 @@ impl<Scalar> StandardBootstrapKey<Vec<Scalar>> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
     /// let bsk = StandardBootstrapKey::allocate(
     ///     9u32,
     ///     GlweSize(7),
@@ -94,10 +93,10 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
     /// let vector = vec![0u32; 10 * 5 * 4 * 4 * 15];
     /// let bsk = StandardBootstrapKey::from_container(
     ///     vector.as_slice(),
@@ -144,15 +143,15 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::dispersion::LogStandardDev;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
     /// use concrete_core::commons::crypto::secret::generators::{
     ///     EncryptionRandomGenerator, SecretRandomGenerator,
     /// };
     /// use concrete_core::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LogStandardDev, LweDimension,
+    ///     PolynomialSize,
+    /// };
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
@@ -230,15 +229,15 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::dispersion::LogStandardDev;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
     /// use concrete_core::commons::crypto::secret::generators::{
     ///     EncryptionRandomGenerator, SecretRandomGenerator,
     /// };
     /// use concrete_core::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LogStandardDev, LweDimension,
+    ///     PolynomialSize,
+    /// };
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
@@ -312,15 +311,15 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::dispersion::LogStandardDev;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
     /// use concrete_core::commons::crypto::secret::generators::{
     ///     EncryptionRandomGenerator, SecretRandomGenerator,
     /// };
     /// use concrete_core::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LogStandardDev, LweDimension,
+    ///     PolynomialSize,
+    /// };
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
@@ -376,10 +375,10 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
     /// let bsk = StandardBootstrapKey::allocate(
     ///     9u32,
     ///     GlweSize(7),
@@ -399,10 +398,10 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
     /// let bsk = StandardBootstrapKey::allocate(
     ///     9u32,
     ///     GlweSize(7),
@@ -422,10 +421,10 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
     /// let bsk = StandardBootstrapKey::allocate(
     ///     9u32,
     ///     GlweSize(7),
@@ -445,10 +444,10 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
     /// let bsk = StandardBootstrapKey::allocate(
     ///     9u32,
     ///     GlweSize(7),
@@ -468,10 +467,10 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
     /// let bsk = StandardBootstrapKey::allocate(
     ///     9u32,
     ///     GlweSize(7),
@@ -502,10 +501,10 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
     /// let bsk = StandardBootstrapKey::allocate(
     ///     9u32,
     ///     GlweSize(7),
@@ -554,11 +553,11 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// use rayon::iter::ParallelIterator;
     /// let mut bsk = StandardBootstrapKey::allocate(
     ///     9u32,
@@ -605,11 +604,11 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// let mut bsk = StandardBootstrapKey::allocate(
     ///     9u32,
     ///     GlweSize(7),
@@ -652,11 +651,11 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// let bsk = StandardBootstrapKey::allocate(
     ///     9u32,
     ///     GlweSize(7),
@@ -686,11 +685,11 @@ impl<Cont> StandardBootstrapKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::bootstrap::StandardBootstrapKey;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// let mut bsk = StandardBootstrapKey::allocate(
     ///     9u32,
     ///     GlweSize(7),

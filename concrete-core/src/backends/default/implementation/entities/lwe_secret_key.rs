@@ -1,8 +1,7 @@
 use crate::commons::crypto::secret::LweSecretKey as ImpLweSecretKey;
+use crate::prelude::{BinaryKeyKind, LweDimension};
 use crate::specification::entities::markers::LweSecretKeyKind;
 use crate::specification::entities::{AbstractEntity, LweSecretKeyEntity};
-use concrete_commons::key_kinds::BinaryKeyKind;
-use concrete_commons::parameters::LweDimension;
 #[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 

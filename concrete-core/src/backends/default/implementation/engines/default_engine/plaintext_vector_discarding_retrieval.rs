@@ -11,8 +11,7 @@ use crate::specification::engines::{
 impl PlaintextVectorDiscardingRetrievalEngine<PlaintextVector32, u32> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::PlaintextCount;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{PlaintextCount, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -57,8 +56,7 @@ impl PlaintextVectorDiscardingRetrievalEngine<PlaintextVector32, u32> for Defaul
 impl PlaintextVectorDiscardingRetrievalEngine<PlaintextVector64, u64> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::PlaintextCount;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{PlaintextCount, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

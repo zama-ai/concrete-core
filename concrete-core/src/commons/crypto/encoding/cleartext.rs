@@ -1,6 +1,6 @@
 use crate::commons::math::tensor::{ck_dim_div, tensor_traits, AsMutTensor, AsRefTensor, Tensor};
-use concrete_commons::numeric::Numeric;
-use concrete_commons::parameters::CleartextCount;
+use crate::commons::numeric::Numeric;
+use crate::prelude::CleartextCount;
 #[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
 
@@ -27,8 +27,8 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::CleartextCount;
     /// use concrete_core::commons::crypto::encoding::*;
+    /// use concrete_core::prelude::CleartextCount;
     /// let clear_list = CleartextList::allocate(1 as u8, CleartextCount(100));
     /// assert_eq!(clear_list.count(), CleartextCount(100));
     /// ```
@@ -43,8 +43,8 @@ impl<Cont> CleartextList<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::CleartextCount;
     /// use concrete_core::commons::crypto::encoding::CleartextList;
+    /// use concrete_core::prelude::CleartextCount;
     /// let clear_list = CleartextList::from_container(vec![1 as u8; 100]);
     /// assert_eq!(clear_list.count(), CleartextCount(100));
     /// ```
@@ -59,8 +59,8 @@ impl<Cont> CleartextList<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::CleartextCount;
     /// use concrete_core::commons::crypto::encoding::CleartextList;
+    /// use concrete_core::prelude::CleartextCount;
     /// let clear_list = CleartextList::from_container(vec![1 as u8; 100]);
     /// assert_eq!(clear_list.count(), CleartextCount(100));
     /// ```
@@ -127,8 +127,8 @@ impl<Cont> CleartextList<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::CleartextCount;
     /// use concrete_core::commons::crypto::encoding::CleartextList;
+    /// use concrete_core::prelude::CleartextCount;
     /// let clear_list = CleartextList::from_container(vec![1 as u8; 100]);
     /// clear_list
     ///     .sublist_iter(CleartextCount(10))
@@ -153,8 +153,8 @@ impl<Cont> CleartextList<Cont> {
     /// #Example
     ///
     /// ```
-    /// use concrete_commons::parameters::CleartextCount;
     /// use concrete_core::commons::crypto::encoding::{Cleartext, CleartextList};
+    /// use concrete_core::prelude::CleartextCount;
     /// let mut clear_list = CleartextList::from_container(vec![1 as u8; 100]);
     /// clear_list
     ///     .sublist_iter_mut(CleartextCount(10))

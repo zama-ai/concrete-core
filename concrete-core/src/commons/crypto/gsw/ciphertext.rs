@@ -10,8 +10,8 @@ use crate::commons::utils::zip;
 
 use super::GswLevelMatrix;
 
-use concrete_commons::numeric::Numeric;
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
+use crate::commons::numeric::Numeric;
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
 #[cfg(feature = "__commons_parallel")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
 
@@ -30,8 +30,8 @@ impl<Scalar> GswCiphertext<Vec<Scalar>, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
     /// use concrete_core::commons::crypto::gsw::GswCiphertext;
+    /// use concrete_core::prelude::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
     /// let gsw = GswCiphertext::allocate(
     ///     9 as u8,
     ///     LweSize(7),
@@ -66,8 +66,8 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
     /// use concrete_core::commons::crypto::gsw::GswCiphertext;
+    /// use concrete_core::prelude::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
     /// let gsw = GswCiphertext::from_container(
     ///     vec![9 as u8; 7 * 7 * 3],
     ///     LweSize(7),
@@ -101,8 +101,8 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
     /// use concrete_core::commons::crypto::gsw::GswCiphertext;
+    /// use concrete_core::prelude::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
     /// let gsw = GswCiphertext::allocate(
     ///     9 as u8,
     ///     LweSize(7),
@@ -120,8 +120,8 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
     /// use concrete_core::commons::crypto::gsw::GswCiphertext;
+    /// use concrete_core::prelude::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
     /// let gsw = GswCiphertext::allocate(
     ///     9 as u8,
     ///     LweSize(7),
@@ -146,10 +146,10 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::gsw::GswCiphertext;
+    /// use concrete_core::prelude::{
     ///     CiphertextCount, DecompositionBaseLog, DecompositionLevelCount, LweSize,
     /// };
-    /// use concrete_core::commons::crypto::gsw::GswCiphertext;
     /// let gsw = GswCiphertext::allocate(
     ///     9 as u8,
     ///     LweSize(7),
@@ -174,11 +174,11 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     CiphertextCount, DecompositionBaseLog, DecompositionLevelCount, LweSize,
-    /// };
     /// use concrete_core::commons::crypto::gsw::GswCiphertext;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::{
+    ///     CiphertextCount, DecompositionBaseLog, DecompositionLevelCount, LweSize,
+    /// };
     /// let mut gsw = GswCiphertext::allocate(
     ///     9 as u8,
     ///     LweSize(7),
@@ -204,8 +204,8 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
     /// use concrete_core::commons::crypto::gsw::GswCiphertext;
+    /// use concrete_core::prelude::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
     /// let gsw = GswCiphertext::allocate(
     ///     9 as u8,
     ///     LweSize(7),
@@ -228,8 +228,8 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
     /// use concrete_core::commons::crypto::gsw::GswCiphertext;
+    /// use concrete_core::prelude::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
     /// let gsw = GswCiphertext::allocate(
     ///     9 as u8,
     ///     LweSize(7),
@@ -274,9 +274,9 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
     /// use concrete_core::commons::crypto::gsw::GswCiphertext;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
     /// let mut gsw = GswCiphertext::allocate(
     ///     9 as u8,
     ///     LweSize(7),
@@ -319,9 +319,9 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
     /// use concrete_core::commons::crypto::gsw::GswCiphertext;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::{DecompositionBaseLog, DecompositionLevelCount, LweSize};
     /// use rayon::iter::ParallelIterator;
     /// let mut gsw = GswCiphertext::allocate(
     ///     9 as u8,
@@ -365,10 +365,10 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::dispersion::LogStandardDev;
+    /// use concrete_core::prelude::LogStandardDev;
     ///
-    /// use concrete_commons::parameters::LweDimension;
-    /// use concrete_commons::parameters::LweSize;
+    /// use concrete_core::prelude::LweDimension;
+    /// use concrete_core::prelude::LweSize;
     /// use concrete_core::commons::crypto::encoding::Plaintext;
     /// use concrete_core::commons::crypto::gsw::GswCiphertext;
     /// use concrete_core::commons::crypto::lwe::LweCiphertext;
@@ -376,8 +376,8 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     /// use concrete_core::commons::crypto::secret::generators::{
     ///     EncryptionRandomGenerator, SecretRandomGenerator,
     /// };
-    /// use concrete_commons::parameters::DecompositionLevelCount;
-    /// use concrete_commons::parameters::DecompositionBaseLog;
+    /// use concrete_core::prelude::DecompositionLevelCount;
+    /// use concrete_core::prelude::DecompositionBaseLog;
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
@@ -479,11 +479,8 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::dispersion::LogStandardDev;
+    /// use concrete_core::prelude::LogStandardDev;
     ///
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, LweSize,
-    /// };
     /// use concrete_core::commons::crypto::encoding::Plaintext;
     /// use concrete_core::commons::crypto::gsw::GswCiphertext;
     /// use concrete_core::commons::crypto::lwe::LweCiphertext;
@@ -491,6 +488,9 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     ///     EncryptionRandomGenerator, SecretRandomGenerator,
     /// };
     /// use concrete_core::commons::crypto::secret::LweSecretKey;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, LweSize,
+    /// };
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///

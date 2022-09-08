@@ -1,6 +1,6 @@
 //! A module containing sampling entry points for raw integers
-use concrete_commons::numeric::{CastInto, UnsignedInteger};
 use concrete_core::commons::math::random::RandomGenerator;
+use concrete_core::commons::numeric::{CastInto, UnsignedInteger};
 #[cfg(target_arch = "x86_64")]
 use concrete_csprng::generators::AesniRandomGenerator;
 #[cfg(not(target_arch = "x86_64"))]

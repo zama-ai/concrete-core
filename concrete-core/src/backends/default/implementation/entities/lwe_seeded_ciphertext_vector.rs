@@ -1,8 +1,8 @@
 use crate::commons::crypto::lwe::LweSeededList as ImplLweSeededList;
 use crate::commons::math::random::CompressionSeed;
+use crate::prelude::{LweCiphertextCount, LweDimension};
 use crate::specification::entities::markers::LweSeededCiphertextVectorKind;
 use crate::specification::entities::{AbstractEntity, LweSeededCiphertextVectorEntity};
-use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
 #[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 

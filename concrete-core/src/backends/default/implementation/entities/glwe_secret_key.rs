@@ -1,8 +1,7 @@
 use crate::commons::crypto::secret::GlweSecretKey as ImpGlweSecretKey;
+use crate::prelude::{BinaryKeyKind, GlweDimension, PolynomialSize};
 use crate::specification::entities::markers::GlweSecretKeyKind;
 use crate::specification::entities::{AbstractEntity, GlweSecretKeyEntity};
-use concrete_commons::key_kinds::BinaryKeyKind;
-use concrete_commons::parameters::{GlweDimension, PolynomialSize};
 #[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 

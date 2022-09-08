@@ -26,7 +26,7 @@ use crate::commons::crypto::secret::{
     GlweSecretKey as ImplGlweSecretKey, LweSecretKey as ImplLweSecretKey,
 };
 use crate::prelude::{
-    Cleartext32, Cleartext32Version, Cleartext64, Cleartext64Version, CleartextF64,
+    BinaryKeyKind, Cleartext32, Cleartext32Version, Cleartext64, Cleartext64Version, CleartextF64,
     CleartextF64Version, CleartextVector32, CleartextVector32Version, CleartextVector64,
     CleartextVector64Version, CleartextVectorF64, CleartextVectorF64Version,
     DefaultSerializationEngine, DefaultSerializationError, EntityDeserializationEngine,
@@ -56,7 +56,6 @@ use crate::prelude::{
     Plaintext64, Plaintext64Version, PlaintextVector32, PlaintextVector32Version,
     PlaintextVector64, PlaintextVector64Version,
 };
-use concrete_commons::key_kinds::BinaryKeyKind;
 use serde::Deserialize;
 
 /// # Description:
@@ -233,8 +232,7 @@ impl EntityDeserializationEngine<&[u8], CleartextF64> for DefaultSerializationEn
 impl EntityDeserializationEngine<&[u8], CleartextVector32> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::CleartextCount;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{CleartextCount, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -290,8 +288,7 @@ impl EntityDeserializationEngine<&[u8], CleartextVector32> for DefaultSerializat
 impl EntityDeserializationEngine<&[u8], CleartextVector64> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::CleartextCount;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{CleartextCount, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -347,8 +344,7 @@ impl EntityDeserializationEngine<&[u8], CleartextVector64> for DefaultSerializat
 impl EntityDeserializationEngine<&[u8], CleartextVectorF64> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::CleartextCount;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{CleartextCount, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -404,11 +400,9 @@ impl EntityDeserializationEngine<&[u8], CleartextVectorF64> for DefaultSerializa
 impl EntityDeserializationEngine<&[u8], GgswCiphertext32> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize, Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -478,11 +472,9 @@ impl EntityDeserializationEngine<&[u8], GgswCiphertext32> for DefaultSerializati
 impl EntityDeserializationEngine<&[u8], GgswCiphertext64> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize, Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -624,9 +616,7 @@ impl EntityDeserializationEngine<&[u8], GgswSeededCiphertext64> for DefaultSeria
 impl EntityDeserializationEngine<&[u8], GlweCiphertext32> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweDimension, PolynomialSize, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -694,9 +684,7 @@ impl EntityDeserializationEngine<&[u8], GlweCiphertext32> for DefaultSerializati
 impl EntityDeserializationEngine<&[u8], GlweCiphertext64> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweDimension, PolynomialSize, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -764,9 +752,7 @@ impl EntityDeserializationEngine<&[u8], GlweCiphertext64> for DefaultSerializati
 impl EntityDeserializationEngine<&[u8], GlweCiphertextVector32> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweCiphertextCount, GlweDimension, PolynomialSize, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -834,9 +820,7 @@ impl EntityDeserializationEngine<&[u8], GlweCiphertextVector32> for DefaultSeria
 impl EntityDeserializationEngine<&[u8], GlweCiphertextVector64> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweCiphertextCount, GlweDimension, PolynomialSize, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -904,8 +888,7 @@ impl EntityDeserializationEngine<&[u8], GlweCiphertextVector64> for DefaultSeria
 impl EntityDeserializationEngine<&[u8], GlweSecretKey32> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweDimension, PolynomialSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -966,8 +949,7 @@ impl EntityDeserializationEngine<&[u8], GlweSecretKey32> for DefaultSerializatio
 impl EntityDeserializationEngine<&[u8], GlweSecretKey64> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweDimension, PolynomialSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -1028,9 +1010,7 @@ impl EntityDeserializationEngine<&[u8], GlweSecretKey64> for DefaultSerializatio
 impl EntityDeserializationEngine<&[u8], GlweSeededCiphertext32> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweDimension, PolynomialSize, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -1099,9 +1079,7 @@ impl EntityDeserializationEngine<&[u8], GlweSeededCiphertext32> for DefaultSeria
 impl EntityDeserializationEngine<&[u8], GlweSeededCiphertext64> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweDimension, PolynomialSize, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -1172,9 +1150,7 @@ impl EntityDeserializationEngine<&[u8], GlweSeededCiphertextVector32>
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweCiphertextCount, GlweDimension, PolynomialSize, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -1245,9 +1221,7 @@ impl EntityDeserializationEngine<&[u8], GlweSeededCiphertextVector64>
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweCiphertextCount, GlweDimension, PolynomialSize, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -1316,11 +1290,10 @@ impl EntityDeserializationEngine<&[u8], GlweSeededCiphertextVector64>
 impl EntityDeserializationEngine<&[u8], LweBootstrapKey32> for DefaultSerializationEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -1385,11 +1358,10 @@ impl EntityDeserializationEngine<&[u8], LweBootstrapKey32> for DefaultSerializat
 impl EntityDeserializationEngine<&[u8], LweBootstrapKey64> for DefaultSerializationEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -1454,9 +1426,7 @@ impl EntityDeserializationEngine<&[u8], LweBootstrapKey64> for DefaultSerializat
 impl EntityDeserializationEngine<&[u8], LweCiphertext32> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::LweDimension;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -1521,8 +1491,8 @@ impl EntityDeserializationEngine<&[u8], LweCiphertext32> for DefaultSerializatio
 impl EntityDeserializationEngine<&[u8], LweCiphertext64> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::LweDimension;
+    /// use concrete_core::prelude::Variance;
+    /// use concrete_core::prelude::LweDimension;
     /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
@@ -1587,9 +1557,7 @@ impl EntityDeserializationEngine<&[u8], LweCiphertext64> for DefaultSerializatio
 impl EntityDeserializationEngine<&[u8], LweCiphertextVector32> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -1655,9 +1623,7 @@ impl EntityDeserializationEngine<&[u8], LweCiphertextVector32> for DefaultSerial
 impl EntityDeserializationEngine<&[u8], LweCiphertextVector64> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -1723,11 +1689,9 @@ impl EntityDeserializationEngine<&[u8], LweCiphertextVector64> for DefaultSerial
 impl EntityDeserializationEngine<&[u8], LweKeyswitchKey32> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension,
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -1799,11 +1763,9 @@ impl EntityDeserializationEngine<&[u8], LweKeyswitchKey32> for DefaultSerializat
 impl EntityDeserializationEngine<&[u8], LweKeyswitchKey64> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension,
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -1875,8 +1837,7 @@ impl EntityDeserializationEngine<&[u8], LweKeyswitchKey64> for DefaultSerializat
 impl EntityDeserializationEngine<&[u8], LweSecretKey32> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweDimension;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -1935,8 +1896,7 @@ impl EntityDeserializationEngine<&[u8], LweSecretKey32> for DefaultSerialization
 impl EntityDeserializationEngine<&[u8], LweSecretKey64> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweDimension;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -1995,11 +1955,10 @@ impl EntityDeserializationEngine<&[u8], LweSecretKey64> for DefaultSerialization
 impl EntityDeserializationEngine<&[u8], LweSeededBootstrapKey32> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -2065,11 +2024,10 @@ impl EntityDeserializationEngine<&[u8], LweSeededBootstrapKey32> for DefaultSeri
 impl EntityDeserializationEngine<&[u8], LweSeededBootstrapKey64> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -2135,9 +2093,7 @@ impl EntityDeserializationEngine<&[u8], LweSeededBootstrapKey64> for DefaultSeri
 impl EntityDeserializationEngine<&[u8], LweSeededCiphertext32> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::LweDimension;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -2203,9 +2159,7 @@ impl EntityDeserializationEngine<&[u8], LweSeededCiphertext32> for DefaultSerial
 impl EntityDeserializationEngine<&[u8], LweSeededCiphertext64> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::LweDimension;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -2273,9 +2227,7 @@ impl EntityDeserializationEngine<&[u8], LweSeededCiphertextVector32>
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -2344,9 +2296,7 @@ impl EntityDeserializationEngine<&[u8], LweSeededCiphertextVector64>
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -2413,11 +2363,9 @@ impl EntityDeserializationEngine<&[u8], LweSeededCiphertextVector64>
 impl EntityDeserializationEngine<&[u8], LweSeededKeyswitchKey32> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension,
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -2489,11 +2437,9 @@ impl EntityDeserializationEngine<&[u8], LweSeededKeyswitchKey32> for DefaultSeri
 impl EntityDeserializationEngine<&[u8], LweSeededKeyswitchKey64> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension,
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -2565,11 +2511,9 @@ impl EntityDeserializationEngine<&[u8], LweSeededKeyswitchKey64> for DefaultSeri
 impl EntityDeserializationEngine<&[u8], LwePackingKeyswitchKey32> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension,
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -2641,11 +2585,9 @@ impl EntityDeserializationEngine<&[u8], LwePackingKeyswitchKey32> for DefaultSer
 impl EntityDeserializationEngine<&[u8], LwePackingKeyswitchKey64> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension,
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -2834,8 +2776,7 @@ impl EntityDeserializationEngine<&[u8], Plaintext64> for DefaultSerializationEng
 impl EntityDeserializationEngine<&[u8], PlaintextVector32> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::PlaintextCount;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{PlaintextCount, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -2894,8 +2835,7 @@ impl EntityDeserializationEngine<&[u8], PlaintextVector32> for DefaultSerializat
 impl EntityDeserializationEngine<&[u8], PlaintextVector64> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::PlaintextCount;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{PlaintextCount, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -2954,8 +2894,7 @@ impl EntityDeserializationEngine<&[u8], PlaintextVector64> for DefaultSerializat
 impl EntityDeserializationEngine<&[u8], FloatEncoder> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::PlaintextCount;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{PlaintextCount, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -3017,7 +2956,7 @@ impl EntityDeserializationEngine<&[u8], FloatEncoder> for DefaultSerializationEn
 impl EntityDeserializationEngine<&[u8], FloatEncoderVector> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::PlaintextCount;
+    /// use concrete_core::prelude::PlaintextCount;
     /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///

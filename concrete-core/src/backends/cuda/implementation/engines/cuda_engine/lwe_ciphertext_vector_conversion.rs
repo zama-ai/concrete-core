@@ -32,9 +32,7 @@ impl LweCiphertextVectorConversionEngine<LweCiphertextVector32, CudaLweCiphertex
 {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -113,9 +111,7 @@ impl LweCiphertextVectorConversionEngine<CudaLweCiphertextVector32, LweCiphertex
 {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -184,9 +180,7 @@ impl LweCiphertextVectorConversionEngine<LweCiphertextVector64, CudaLweCiphertex
 {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -265,9 +259,7 @@ impl LweCiphertextVectorConversionEngine<CudaLweCiphertextVector64, LweCiphertex
 {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

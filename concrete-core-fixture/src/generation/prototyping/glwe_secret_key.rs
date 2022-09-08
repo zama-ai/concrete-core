@@ -6,10 +6,9 @@ use crate::generation::prototyping::PrototypesLweSecretKey;
 use crate::generation::{
     BinaryKeyDistribution, IntegerPrecision, KeyDistributionMarker, Maker, Precision32, Precision64,
 };
-use concrete_commons::parameters::{GlweDimension, PolynomialSize};
 use concrete_core::prelude::{
-    GlweSecretKeyGenerationEngine, GlweToLweSecretKeyTransformationEngine,
-    LweToGlweSecretKeyTransformationEngine,
+    GlweDimension, GlweSecretKeyGenerationEngine, GlweToLweSecretKeyTransformationEngine,
+    LweToGlweSecretKeyTransformationEngine, PolynomialSize,
 };
 
 /// A trait allowing to manipulate GLWE secret key prototypes.

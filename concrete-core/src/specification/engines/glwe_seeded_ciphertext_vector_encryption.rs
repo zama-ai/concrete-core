@@ -1,9 +1,9 @@
 use super::engine_error;
+use crate::prelude::Variance;
 use crate::specification::engines::AbstractEngine;
 use crate::specification::entities::{
     GlweSecretKeyEntity, GlweSeededCiphertextVectorEntity, PlaintextVectorEntity,
 };
-use concrete_commons::dispersion::Variance;
 
 engine_error! {
     GlweSeededCiphertextVectorEncryptionError for GlweSeededCiphertextVectorEncryptionEngine @

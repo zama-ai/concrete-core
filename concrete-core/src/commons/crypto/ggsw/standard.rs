@@ -9,10 +9,8 @@ use crate::commons::math::torus::UnsignedTorus;
 
 use super::GgswLevelMatrix;
 
-use concrete_commons::numeric::Numeric;
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-};
+use crate::commons::numeric::Numeric;
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize};
 #[cfg(feature = "__commons_parallel")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
 #[cfg(feature = "__commons_serialization")]
@@ -36,10 +34,10 @@ impl<Scalar> StandardGgswCiphertext<Vec<Scalar>> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::ggsw::StandardGgswCiphertext;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::ggsw::StandardGgswCiphertext;
     ///
     /// let ggsw = StandardGgswCiphertext::allocate(
     ///     9 as u8,
@@ -106,10 +104,10 @@ impl<Cont> StandardGgswCiphertext<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::ggsw::StandardGgswCiphertext;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::ggsw::StandardGgswCiphertext;
     ///
     /// let ggsw = StandardGgswCiphertext::from_container(
     ///     vec![9 as u8; 7 * 7 * 10 * 3],
@@ -145,10 +143,10 @@ impl<Cont> StandardGgswCiphertext<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::ggsw::StandardGgswCiphertext;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::ggsw::StandardGgswCiphertext;
     ///
     /// let ggsw = StandardGgswCiphertext::allocate(
     ///     9 as u8,
@@ -168,10 +166,10 @@ impl<Cont> StandardGgswCiphertext<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::ggsw::StandardGgswCiphertext;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::ggsw::StandardGgswCiphertext;
     ///
     /// let ggsw = StandardGgswCiphertext::allocate(
     ///     9 as u8,
@@ -201,10 +199,10 @@ impl<Cont> StandardGgswCiphertext<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::ggsw::StandardGgswCiphertext;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::ggsw::StandardGgswCiphertext;
     ///
     /// let ggsw = StandardGgswCiphertext::allocate(
     ///     9 as u8,
@@ -224,11 +222,11 @@ impl<Cont> StandardGgswCiphertext<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::ggsw::StandardGgswCiphertext;
+    /// use concrete_core::prelude::{
     ///     CiphertextCount, DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize,
     ///     PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::ggsw::StandardGgswCiphertext;
     ///
     /// let ggsw = StandardGgswCiphertext::allocate(
     ///     9 as u8,
@@ -259,12 +257,12 @@ impl<Cont> StandardGgswCiphertext<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::ggsw::StandardGgswCiphertext;
+    /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::{
     ///     CiphertextCount, DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize,
     ///     PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::ggsw::StandardGgswCiphertext;
-    /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
     ///
     /// let mut ggsw = StandardGgswCiphertext::allocate(
     ///     9 as u8,
@@ -293,10 +291,10 @@ impl<Cont> StandardGgswCiphertext<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::ggsw::StandardGgswCiphertext;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::ggsw::StandardGgswCiphertext;
     ///
     /// let ggsw = StandardGgswCiphertext::allocate(
     ///     9 as u8,
@@ -321,10 +319,10 @@ impl<Cont> StandardGgswCiphertext<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::ggsw::StandardGgswCiphertext;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::ggsw::StandardGgswCiphertext;
     ///
     /// let ggsw = StandardGgswCiphertext::allocate(
     ///     9 as u8,
@@ -375,11 +373,11 @@ impl<Cont> StandardGgswCiphertext<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::ggsw::StandardGgswCiphertext;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+    /// };
     ///
     /// let mut ggsw = StandardGgswCiphertext::allocate(
     ///     9 as u8,
@@ -426,11 +424,11 @@ impl<Cont> StandardGgswCiphertext<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::ggsw::StandardGgswCiphertext;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+    /// };
     /// use rayon::iter::ParallelIterator;
     ///
     /// let mut ggsw = StandardGgswCiphertext::allocate(

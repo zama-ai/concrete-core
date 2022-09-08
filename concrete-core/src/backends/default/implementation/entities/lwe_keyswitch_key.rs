@@ -1,7 +1,7 @@
 use crate::commons::crypto::lwe::LweKeyswitchKey as ImplLweKeyswitchKey;
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
 use crate::specification::entities::markers::LweKeyswitchKeyKind;
 use crate::specification::entities::{AbstractEntity, LweKeyswitchKeyEntity};
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, LweDimension};
 #[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 

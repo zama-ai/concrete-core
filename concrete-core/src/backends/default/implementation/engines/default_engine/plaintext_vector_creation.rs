@@ -9,8 +9,7 @@ use crate::specification::engines::{PlaintextVectorCreationEngine, PlaintextVect
 impl PlaintextVectorCreationEngine<u32, PlaintextVector32> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::PlaintextCount;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{PlaintextCount, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -52,8 +51,7 @@ impl PlaintextVectorCreationEngine<u32, PlaintextVector32> for DefaultEngine {
 impl PlaintextVectorCreationEngine<u64, PlaintextVector64> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::PlaintextCount;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{PlaintextCount, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

@@ -8,14 +8,11 @@ use crate::generation::synthesizing::{
     SynthesizesGlweCiphertext, SynthesizesLweBootstrapKey, SynthesizesLweCiphertext,
 };
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
-use concrete_commons::dispersion::{DispersionParameter, LogStandardDev, Variance};
-use concrete_commons::numeric::{CastInto, Numeric};
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-};
+use concrete_core::commons::numeric::{CastInto, Numeric};
 use concrete_core::prelude::{
-    GlweCiphertextEntity, LweBootstrapKeyEntity, LweCiphertextDiscardingBootstrapEngine,
-    LweCiphertextEntity,
+    DecompositionBaseLog, DecompositionLevelCount, DispersionParameter, GlweCiphertextEntity,
+    GlweDimension, LogStandardDev, LweBootstrapKeyEntity, LweCiphertextDiscardingBootstrapEngine,
+    LweCiphertextEntity, LweDimension, PolynomialSize, Variance,
 };
 
 /// A fixture for the types implementing the `LweCiphertextDiscardingBootstrapEngine` trait.

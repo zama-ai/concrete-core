@@ -15,8 +15,8 @@
 use crate::commons::math::random::{
     Gaussian, RandomGenerable, Uniform, UniformBinary, UniformTernary,
 };
-use concrete_commons::dispersion::LogStandardDev;
-use concrete_commons::numeric::{CastInto, FloatingPoint, Numeric, UnsignedInteger};
+use crate::commons::numeric::{CastInto, FloatingPoint, Numeric, UnsignedInteger};
+use crate::prelude::LogStandardDev;
 use std::fmt::{Debug, Display};
 
 /// A trait that converts a torus element in unsigned integer representation to the closest

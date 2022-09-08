@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use concrete_commons::parameters::{GlweDimension, PolynomialSize};
+use crate::prelude::{GlweDimension, PolynomialSize};
 
 use crate::backends::cuda::private::crypto::glwe::ciphertext::CudaGlweCiphertext;
 use crate::specification::entities::markers::GlweCiphertextKind;

@@ -26,12 +26,10 @@ impl From<CudaError> for LweKeyswitchKeyConversionError<CudaError> {
 impl LweKeyswitchKeyConversionEngine<LweKeyswitchKey32, CudaLweKeyswitchKey32> for CudaEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension,
-    /// };
     /// use concrete_core::backends::cuda::private::device::GpuIndex;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, Variance, *,
+    /// };
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -115,12 +113,10 @@ impl LweKeyswitchKeyConversionEngine<LweKeyswitchKey32, CudaLweKeyswitchKey32> f
 impl LweKeyswitchKeyConversionEngine<CudaLweKeyswitchKey32, LweKeyswitchKey32> for CudaEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension,
-    /// };
     /// use concrete_core::backends::cuda::private::device::GpuIndex;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, Variance, *,
+    /// };
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -196,12 +192,10 @@ impl LweKeyswitchKeyConversionEngine<CudaLweKeyswitchKey32, LweKeyswitchKey32> f
 impl LweKeyswitchKeyConversionEngine<LweKeyswitchKey64, CudaLweKeyswitchKey64> for CudaEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension,
-    /// };
     /// use concrete_core::backends::cuda::private::device::GpuIndex;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, Variance, *,
+    /// };
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -280,12 +274,10 @@ impl LweKeyswitchKeyConversionEngine<LweKeyswitchKey64, CudaLweKeyswitchKey64> f
 impl LweKeyswitchKeyConversionEngine<CudaLweKeyswitchKey64, LweKeyswitchKey64> for CudaEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension,
-    /// };
     /// use concrete_core::backends::cuda::private::device::GpuIndex;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, Variance, *,
+    /// };
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

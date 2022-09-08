@@ -39,8 +39,6 @@ The ecosystem is composed of several crates (packages in the Rust language):
   evolution of the noise in ciphertexts, through homomorphic operations.
 + [`concrete-csprng`](concrete-csprng): A fast cryptographically secure pseudorandom number
   generator used in `concrete-core`.
-+ [`concrete-commons`](concrete-commons): contains types and traits to manipulate objects in a
-  consistent way throughout the ecosystem.
 
 ## Installation
 

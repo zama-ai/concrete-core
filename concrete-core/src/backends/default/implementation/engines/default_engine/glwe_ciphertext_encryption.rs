@@ -1,4 +1,4 @@
-use concrete_commons::dispersion::Variance;
+use crate::prelude::Variance;
 
 use crate::backends::default::implementation::engines::DefaultEngine;
 use crate::backends::default::implementation::entities::{
@@ -19,9 +19,7 @@ impl GlweCiphertextEncryptionEngine<GlweSecretKey32, PlaintextVector32, GlweCiph
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweDimension, PolynomialSize, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -89,9 +87,7 @@ impl GlweCiphertextEncryptionEngine<GlweSecretKey64, PlaintextVector64, GlweCiph
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweDimension, PolynomialSize, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

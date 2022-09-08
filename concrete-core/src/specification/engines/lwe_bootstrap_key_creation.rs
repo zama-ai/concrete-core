@@ -1,9 +1,7 @@
 use super::engine_error;
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize};
 use crate::specification::engines::AbstractEngine;
 use crate::specification::entities::LweBootstrapKeyEntity;
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-};
 
 engine_error! {
     LweBootstrapKeyCreationError for LweBootstrapKeyCreationEngine @

@@ -6,10 +6,9 @@ use crate::generation::synthesizing::{SynthesizesGlweCiphertext, SynthesizesGlwe
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{GlweDimension, PolynomialSize};
 use concrete_core::prelude::{
-    GlweCiphertextEntity, GlweCiphertextZeroEncryptionEngine, GlweSecretKeyEntity,
+    GlweCiphertextEntity, GlweCiphertextZeroEncryptionEngine, GlweDimension, GlweSecretKeyEntity,
+    PolynomialSize, Variance,
 };
 
 /// A fixture for the types implementing the `GlweCiphertextZeroEncryptionEngine` trait.

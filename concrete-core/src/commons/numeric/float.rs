@@ -1,8 +1,7 @@
+use super::Numeric;
 use std::ops::{
     Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Rem, RemAssign, Sub, SubAssign,
 };
-
-use super::Numeric;
 
 /// A trait shared by all the floating point types.
 pub trait FloatingPoint:

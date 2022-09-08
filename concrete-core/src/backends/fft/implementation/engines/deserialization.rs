@@ -3,6 +3,9 @@ use super::super::super::private::crypto::ggsw::FourierGgswCiphertext;
 use super::super::super::private::math::fft::Fft;
 use super::{FftSerializationEngine, FftSerializationError};
 use crate::prelude::{
+    DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+};
+use crate::prelude::{
     EntityDeserializationEngine, EntityDeserializationError, FftFourierGgswCiphertext32,
     FftFourierGgswCiphertext32Version, FftFourierGgswCiphertext64,
     FftFourierGgswCiphertext64Version, FftFourierLweBootstrapKey32,
@@ -10,17 +13,14 @@ use crate::prelude::{
     FftFourierLweBootstrapKey64Version,
 };
 use aligned_vec::avec;
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-};
 use concrete_fft::c64;
 use serde::Deserialize;
 
 impl EntityDeserializationEngine<&[u8], FftFourierGgswCiphertext32> for FftSerializationEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::Variance;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
     /// };
     /// use concrete_core::prelude::*;
@@ -95,8 +95,8 @@ impl EntityDeserializationEngine<&[u8], FftFourierGgswCiphertext32> for FftSeria
 impl EntityDeserializationEngine<&[u8], FftFourierGgswCiphertext64> for FftSerializationEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::Variance;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
     /// };
     /// use concrete_core::prelude::*;
@@ -172,8 +172,8 @@ impl EntityDeserializationEngine<&[u8], FftFourierGgswCiphertext64> for FftSeria
 impl EntityDeserializationEngine<&[u8], FftFourierLweBootstrapKey32> for FftSerializationEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::Variance;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
     /// };
     /// use concrete_core::prelude::*;
@@ -242,8 +242,8 @@ impl EntityDeserializationEngine<&[u8], FftFourierLweBootstrapKey32> for FftSeri
 impl EntityDeserializationEngine<&[u8], FftFourierLweBootstrapKey64> for FftSerializationEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::Variance;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
     /// };
     /// use concrete_core::prelude::*;

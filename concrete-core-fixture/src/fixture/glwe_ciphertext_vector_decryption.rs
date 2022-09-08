@@ -1,7 +1,6 @@
-use concrete_commons::dispersion::Variance;
 use concrete_core::prelude::{
     GlweCiphertextCount, GlweCiphertextVectorDecryptionEngine, GlweCiphertextVectorEntity,
-    GlweDimension, GlweSecretKeyEntity, PlaintextVectorEntity, PolynomialSize,
+    GlweDimension, GlweSecretKeyEntity, PlaintextVectorEntity, PolynomialSize, Variance,
 };
 
 use crate::fixture::Fixture;

@@ -47,8 +47,8 @@ The view API was not primarily created for Rust developers and one of its curren
 It is possible to do that by using the retrieval engines. The following example is taken from a docstring of `concrete-core` to see how to perform the `MutView` -> `View` transformation using the retrieval engine:
 
 ```rust
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::LweDimension;
+use concrete_core::prelude::Variance;
+use concrete_core::prelude::LweDimension;
 use concrete_core::prelude::*;
 use std::error::Error;
 

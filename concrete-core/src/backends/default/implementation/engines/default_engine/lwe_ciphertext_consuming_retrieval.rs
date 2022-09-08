@@ -14,8 +14,7 @@ use crate::specification::engines::{
 impl LweCiphertextConsumingRetrievalEngine<LweCiphertext32, Vec<u32>> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -57,8 +56,7 @@ impl LweCiphertextConsumingRetrievalEngine<LweCiphertext32, Vec<u32>> for Defaul
 impl LweCiphertextConsumingRetrievalEngine<LweCiphertext64, Vec<u64>> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -102,8 +100,7 @@ impl<'data> LweCiphertextConsumingRetrievalEngine<LweCiphertextView32<'data>, &'
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -148,8 +145,7 @@ impl<'data> LweCiphertextConsumingRetrievalEngine<LweCiphertextMutView32<'data>,
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -196,8 +192,7 @@ impl<'data> LweCiphertextConsumingRetrievalEngine<LweCiphertextView64<'data>, &'
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -242,8 +237,7 @@ impl<'data> LweCiphertextConsumingRetrievalEngine<LweCiphertextMutView64<'data>,
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

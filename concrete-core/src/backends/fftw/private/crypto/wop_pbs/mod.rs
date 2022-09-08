@@ -10,7 +10,7 @@ use crate::commons::crypto::lwe::{LweCiphertext, LweKeyswitchKey, LweList};
 use crate::commons::math::polynomial::PolynomialList;
 use crate::commons::math::tensor::{ck_dim_div, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor};
 use crate::commons::math::torus::UnsignedTorus;
-use concrete_commons::parameters::{
+use crate::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, DeltaLog, ExtractedBitsCount, GlweDimension,
     LweDimension, MonomialDegree, PolynomialCount,
 };

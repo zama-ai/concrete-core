@@ -11,9 +11,7 @@ use crate::specification::engines::{
 impl LweCiphertextDiscardingSubtractionEngine<LweCiphertext32, LweCiphertext32> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::LweDimension;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -74,9 +72,7 @@ impl LweCiphertextDiscardingSubtractionEngine<LweCiphertext32, LweCiphertext32> 
 impl LweCiphertextDiscardingSubtractionEngine<LweCiphertext64, LweCiphertext64> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::LweDimension;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
