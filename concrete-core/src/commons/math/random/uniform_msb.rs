@@ -1,5 +1,5 @@
 use super::*;
-use concrete_commons::numeric::Numeric;
+use crate::commons::numeric::Numeric;
 
 /// A distribution type representing random sampling for unsigned integer types, where the `n`
 /// most significant bits are sampled randomly in `[0, 2^n[`.

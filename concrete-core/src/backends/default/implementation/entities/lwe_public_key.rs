@@ -1,7 +1,7 @@
 use crate::commons::crypto::lwe::LweList as ImpLwePublicKey;
+use crate::prelude::{LweDimension, LwePublicKeyZeroEncryptionCount};
 use crate::specification::entities::markers::LwePublicKeyKind;
 use crate::specification::entities::{AbstractEntity, LwePublicKeyEntity};
-use concrete_commons::parameters::{LweDimension, LwePublicKeyZeroEncryptionCount};
 #[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 

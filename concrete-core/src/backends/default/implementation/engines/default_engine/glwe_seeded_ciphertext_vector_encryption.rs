@@ -6,12 +6,11 @@ use crate::backends::default::implementation::entities::{
 };
 use crate::commons::crypto::glwe::GlweSeededList as ImplGlweSeededList;
 use crate::commons::math::random::{CompressionSeed, Seeder};
+use crate::prelude::{CiphertextCount, Variance};
 use crate::specification::engines::{
     GlweSeededCiphertextVectorEncryptionEngine, GlweSeededCiphertextVectorEncryptionError,
 };
 use crate::specification::entities::{GlweSecretKeyEntity, PlaintextVectorEntity};
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::CiphertextCount;
 
 /// # Description:
 /// Implementation of [`GlweSeededCiphertextVectorEncryptionEngine`] for [`DefaultEngine`] that
@@ -25,8 +24,8 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
+    /// use concrete_core::prelude::Variance;
+    /// use concrete_core::prelude::{GlweCiphertextCount, GlweDimension, PolynomialSize};
     /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
@@ -111,8 +110,8 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
+    /// use concrete_core::prelude::Variance;
+    /// use concrete_core::prelude::{GlweCiphertextCount, GlweDimension, PolynomialSize};
     /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///

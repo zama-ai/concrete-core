@@ -6,12 +6,13 @@ use crate::backends::default::implementation::entities::{
 };
 use crate::commons::crypto::bootstrap::StandardSeededBootstrapKey as ImplStandardSeededBootstrapKey;
 use crate::commons::math::random::{CompressionSeed, Seeder};
-use crate::prelude::{GlweSecretKeyEntity, LweSecretKeyEntity};
+use crate::prelude::{
+    DecompositionBaseLog, DecompositionLevelCount, GlweSecretKeyEntity, LweSecretKeyEntity,
+    Variance,
+};
 use crate::specification::engines::{
     LweSeededBootstrapKeyGenerationEngine, LweSeededBootstrapKeyGenerationError,
 };
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
 
 /// # Description:
 /// Implementation of [`LweSeededBootstrapKeyGenerationEngine`] for [`DefaultEngine`] that operates
@@ -21,11 +22,10 @@ impl LweSeededBootstrapKeyGenerationEngine<LweSecretKey32, GlweSecretKey32, LweS
 {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -115,11 +115,10 @@ impl LweSeededBootstrapKeyGenerationEngine<LweSecretKey64, GlweSecretKey64, LweS
 {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

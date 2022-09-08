@@ -1,9 +1,8 @@
 use super::engine_error;
 use crate::specification::engines::AbstractEngine;
 
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, Variance};
 use crate::specification::entities::{LweKeyswitchKeyEntity, LweSecretKeyEntity};
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
 
 engine_error! {
     LweKeyswitchKeyGenerationError for LweKeyswitchKeyGenerationEngine @

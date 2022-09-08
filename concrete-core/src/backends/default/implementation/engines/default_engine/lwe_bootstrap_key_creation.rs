@@ -4,18 +4,16 @@ use crate::backends::default::implementation::entities::{
     LweBootstrapKeyView32, LweBootstrapKeyView64,
 };
 use crate::commons::crypto::bootstrap::StandardBootstrapKey as ImplStandardBootstrapKey;
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize};
 use crate::specification::engines::{LweBootstrapKeyCreationEngine, LweBootstrapKeyCreationError};
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-};
 
 impl LweBootstrapKeyCreationEngine<Vec<u32>, LweBootstrapKey32> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -100,10 +98,10 @@ impl LweBootstrapKeyCreationEngine<Vec<u32>, LweBootstrapKey32> for DefaultEngin
 impl LweBootstrapKeyCreationEngine<Vec<u64>, LweBootstrapKey64> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -190,10 +188,10 @@ impl<'data> LweBootstrapKeyCreationEngine<&'data mut [u32], LweBootstrapKeyMutVi
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -278,10 +276,10 @@ impl<'data> LweBootstrapKeyCreationEngine<&'data mut [u64], LweBootstrapKeyMutVi
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -366,10 +364,10 @@ impl<'data> LweBootstrapKeyCreationEngine<&'data [u32], LweBootstrapKeyView32<'d
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -453,10 +451,10 @@ impl<'data> LweBootstrapKeyCreationEngine<&'data [u64], LweBootstrapKeyView64<'d
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

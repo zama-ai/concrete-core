@@ -2,7 +2,7 @@ use crate::backends::fftw::private::math::fft::{Complex64, Fft, FourierPolynomia
 use crate::commons::crypto::glwe::GlweCiphertext;
 use crate::commons::math::tensor::Tensor;
 use crate::commons::math::torus::UnsignedTorus;
-use concrete_commons::parameters::{GlweSize, PolynomialSize};
+use crate::prelude::{GlweSize, PolynomialSize};
 use concrete_fftw::array::AlignedVec;
 
 #[derive(Debug, Clone)]

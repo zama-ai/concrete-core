@@ -1,5 +1,4 @@
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{CiphertextCount, LweCiphertextCount, PlaintextCount};
+use crate::prelude::{CiphertextCount, LweCiphertextCount, PlaintextCount, Variance};
 
 use crate::backends::default::implementation::engines::DefaultEngine;
 use crate::backends::default::implementation::entities::{
@@ -20,9 +19,7 @@ impl LweCiphertextVectorZeroEncryptionEngine<LweSecretKey32, LweCiphertextVector
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -88,9 +85,7 @@ impl LweCiphertextVectorZeroEncryptionEngine<LweSecretKey64, LweCiphertextVector
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

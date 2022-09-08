@@ -1,4 +1,4 @@
-use concrete_commons::parameters::GlweSize;
+use crate::prelude::GlweSize;
 
 use crate::backends::default::entities::{
     GlweCiphertext32, GlweCiphertext64, PlaintextVector32, PlaintextVector64,
@@ -16,9 +16,7 @@ impl GlweCiphertextTrivialEncryptionEngine<PlaintextVector32, GlweCiphertext32> 
     /// ```
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     ///
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweDimension, PolynomialSize, Variance, *};
     ///
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
     /// let glwe_dimension = GlweDimension(2);
@@ -65,9 +63,7 @@ impl GlweCiphertextTrivialEncryptionEngine<PlaintextVector64, GlweCiphertext64> 
     /// ```
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     ///
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweDimension, PolynomialSize, Variance, *};
     ///
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
     /// let glwe_dimension = GlweDimension(2);

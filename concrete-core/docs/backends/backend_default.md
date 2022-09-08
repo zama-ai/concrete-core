@@ -32,15 +32,14 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-concrete-core = {version = "=1.0.0-gamma", features=["backend_default", "backend_default_parallel"]}
+concrete-core = {version = "=1.0.0-delta", features=["backend_default", "backend_default_parallel"]}
 concrete-csprng = {version = "=0.2.0"}
-concrete-commons = "=0.2.0"
 ```
 So we can use `concrete-core` version 1.0.0-gamma as a dependency. Then, in the `main.rs` file we're going to:
 + import the necessary types and functions:
 ```rust
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{GlweDimension, PolynomialSize};
+use concrete_core::prelude::Variance;
+use concrete_core::prelude::{GlweDimension, PolynomialSize};
 use concrete_core::prelude::*;
 ```
 + set up some cryptographic parameters (recall that the parameters chosen here do not guarantee any security, neither to produce a result unaffected by the noise)
@@ -49,7 +48,7 @@ use concrete_core::prelude::*;
 + destroy the content of the keys
 ```rust
 fn main() {
-    
+
     // 1. Set up cryptographic parameters
     // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
     let (lwe_dim, glwe_dim, poly_size) = (
@@ -65,14 +64,14 @@ fn main() {
     const UNSAFE_SECRET: u128 = 0;
     let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET))).unwrap();
     let mut parallel_engine = DefaultParallelEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET))).unwrap();
-    
+
     // 3. Create the keys
     let lwe_sk: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dim).unwrap();
     let glwe_sk: GlweSecretKey64 = engine.generate_new_glwe_secret_key(glwe_dim, poly_size).unwrap();
     // The bootstrap key is created with multithreading, relying on rayon
     let bsk: LweBootstrapKey64 =
         parallel_engine.generate_new_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise).unwrap();
-    
+
     // 4. Finally, destroy all data
     // Destroying the secret keys is important since their content is reset to 0 before dropping 
     // memory, to defend against potential attacks
@@ -83,7 +82,7 @@ fn main() {
 }
 ```
 In this example, you can see that the bootstrap key was created with a `DefaultParallelEngine`, in order
-to accelerate computation via multithreading. 
+to accelerate computation via multithreading.
 
 To execute this code, simply run:
 ```shell

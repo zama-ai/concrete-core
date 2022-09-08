@@ -1,10 +1,10 @@
 use super::super::super::private::crypto::ggsw::FourierGgswCiphertext;
+use crate::prelude::{
+    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
+};
 use crate::specification::entities::markers::GgswCiphertextKind;
 use crate::specification::entities::{AbstractEntity, GgswCiphertextEntity};
 use aligned_vec::ABox;
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
-};
 use concrete_fft::c64;
 #[cfg(feature = "backend_fft_serialization")]
 use serde::{Deserialize, Serialize};

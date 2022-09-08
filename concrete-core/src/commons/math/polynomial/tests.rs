@@ -1,6 +1,6 @@
 use rand::Rng;
 
-use concrete_commons::parameters::{MonomialDegree, PolynomialSize};
+use crate::prelude::{MonomialDegree, PolynomialSize};
 
 use crate::commons::math::polynomial::Polynomial;
 use crate::commons::math::torus::UnsignedTorus;

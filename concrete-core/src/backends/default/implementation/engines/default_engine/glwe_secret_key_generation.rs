@@ -1,4 +1,4 @@
-use concrete_commons::parameters::{GlweDimension, PolynomialSize};
+use crate::prelude::{GlweDimension, PolynomialSize};
 
 use crate::backends::default::implementation::engines::DefaultEngine;
 use crate::backends::default::implementation::entities::{GlweSecretKey32, GlweSecretKey64};
@@ -11,8 +11,7 @@ use crate::specification::engines::{GlweSecretKeyGenerationEngine, GlweSecretKey
 impl GlweSecretKeyGenerationEngine<GlweSecretKey32> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweDimension, PolynomialSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -62,8 +61,7 @@ impl GlweSecretKeyGenerationEngine<GlweSecretKey32> for DefaultEngine {
 impl GlweSecretKeyGenerationEngine<GlweSecretKey64> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweDimension, PolynomialSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

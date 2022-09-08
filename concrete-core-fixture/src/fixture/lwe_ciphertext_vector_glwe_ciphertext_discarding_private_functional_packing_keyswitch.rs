@@ -14,18 +14,15 @@ use crate::generation::{
 };
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
-use concrete_commons::dispersion::{StandardDev, Variance};
-use concrete_commons::key_kinds::{BinaryKeyKind, GaussianKeyKind, TernaryKeyKind};
-use concrete_commons::numeric::UnsignedInteger;
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-};
 use concrete_core::commons::math::polynomial::Polynomial;
+use concrete_core::commons::numeric::UnsignedInteger;
 use concrete_core::prelude::{
-    CleartextVectorEntity, DispersionParameter, GlweCiphertextEntity, LogStandardDev,
+    BinaryKeyKind, CleartextVectorEntity, DecompositionBaseLog, DecompositionLevelCount,
+    DispersionParameter, GaussianKeyKind, GlweCiphertextEntity, GlweDimension, LogStandardDev,
     LweCiphertextCount, LweCiphertextVectorEntity,
     LweCiphertextVectorGlweCiphertextDiscardingPrivateFunctionalPackingKeyswitchEngine,
-    LwePrivateFunctionalPackingKeyswitchKeyEntity,
+    LweDimension, LwePrivateFunctionalPackingKeyswitchKeyEntity, PolynomialSize, StandardDev,
+    TernaryKeyKind, Variance,
 };
 use std::any::TypeId;
 

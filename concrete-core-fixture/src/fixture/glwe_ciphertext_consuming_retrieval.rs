@@ -4,8 +4,7 @@ use crate::generation::synthesizing::{SynthesizesContainer, SynthesizesGlweCiphe
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{GlweDimension, PolynomialSize};
+use concrete_core::prelude::{GlweDimension, PolynomialSize, Variance};
 
 use concrete_core::prelude::{GlweCiphertextConsumingRetrievalEngine, GlweCiphertextEntity};
 

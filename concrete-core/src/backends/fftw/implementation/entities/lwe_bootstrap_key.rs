@@ -1,10 +1,10 @@
 use crate::backends::fftw::private::crypto::bootstrap::FourierBootstrapKey;
 use crate::backends::fftw::private::math::fft::Complex64;
-use crate::specification::entities::markers::LweBootstrapKeyKind;
-use crate::specification::entities::{AbstractEntity, LweBootstrapKeyEntity};
-use concrete_commons::parameters::{
+use crate::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
 };
+use crate::specification::entities::markers::LweBootstrapKeyKind;
+use crate::specification::entities::{AbstractEntity, LweBootstrapKeyEntity};
 use concrete_fftw::array::AlignedVec;
 #[cfg(feature = "backend_fftw_serialization")]
 use serde::{Deserialize, Serialize};

@@ -1,7 +1,7 @@
 use crate::commons::math::random::CompressionSeed;
+use crate::prelude::LweDimension;
 use crate::specification::entities::markers::LweSeededCiphertextKind;
 use crate::specification::entities::AbstractEntity;
-use concrete_commons::parameters::LweDimension;
 
 /// A trait implemented by types embodying a seeded LWE ciphertext.
 ///

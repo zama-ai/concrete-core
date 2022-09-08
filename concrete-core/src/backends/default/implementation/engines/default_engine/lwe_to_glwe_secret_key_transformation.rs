@@ -4,18 +4,17 @@ use crate::backends::default::entities::{
 };
 use crate::commons::crypto::secret::GlweSecretKey as ImpleGlweSecretKey;
 use crate::commons::math::tensor::IntoTensor;
+use crate::prelude::PolynomialSize;
 use crate::specification::engines::{
     LweToGlweSecretKeyTransformationEngine, LweToGlweSecretKeyTransformationError,
 };
-use concrete_commons::parameters::PolynomialSize;
 
 impl LweToGlweSecretKeyTransformationEngine<LweSecretKey32, GlweSecretKey32> for DefaultEngine {
     /// # Example
     ///
     /// ```
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-    /// use concrete_commons::parameters::{GlweDimension, LweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweDimension, LweDimension, PolynomialSize, *};
     ///
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
     /// let lwe_dimension = LweDimension(8);
@@ -73,8 +72,7 @@ impl LweToGlweSecretKeyTransformationEngine<LweSecretKey64, GlweSecretKey64> for
     ///
     /// ```
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-    /// use concrete_commons::parameters::{GlweDimension, LweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweDimension, LweDimension, PolynomialSize, *};
     ///
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
     /// let lwe_dimension = LweDimension(8);

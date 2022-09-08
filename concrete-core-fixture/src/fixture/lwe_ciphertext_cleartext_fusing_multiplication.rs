@@ -1,8 +1,7 @@
-use concrete_commons::dispersion::{DispersionParameter, LogStandardDev, Variance};
-use concrete_commons::numeric::UnsignedInteger;
-use concrete_commons::parameters::LweDimension;
+use concrete_core::commons::numeric::UnsignedInteger;
 use concrete_core::prelude::{
-    CleartextEntity, LweCiphertextCleartextFusingMultiplicationEngine, LweCiphertextEntity,
+    CleartextEntity, DispersionParameter, LogStandardDev,
+    LweCiphertextCleartextFusingMultiplicationEngine, LweCiphertextEntity, LweDimension, Variance,
 };
 
 use crate::fixture::Fixture;

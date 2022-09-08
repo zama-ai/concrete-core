@@ -28,12 +28,10 @@ pub use super::backends::cuda::engines::*;
 pub use super::backends::cuda::entities::*;
 
 // -------------------------------------------------------------------------------- COMMONS REEXPORT
-// Expose concrete_commons types in the prelude. This avoids having to add concrete-commons as a
-// dependency in crates built on top of concrete-core.
-pub use concrete_commons::dispersion::*;
-pub use concrete_commons::key_kinds::*;
-pub use concrete_commons::parameters::*;
-pub use concrete_commons::*;
+pub use super::specification::dispersion::*;
+pub use super::specification::key_kinds::*;
+pub use super::specification::parameters::*;
+pub use super::specification::*;
 
 // --------------------------------------------------------------------------------- CSPRNG REEXPORT
 // Re-export the different seeders of the `concrete-csprng` crate, which are needed to construct

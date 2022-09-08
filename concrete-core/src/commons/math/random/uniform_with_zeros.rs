@@ -1,5 +1,5 @@
 use super::*;
-use concrete_commons::numeric::Numeric;
+use crate::commons::numeric::Numeric;
 
 /// A distribution type that samples a uniform value with probability `1 - prob_zero`, and a zero
 /// value with probaibility `prob_zero`.

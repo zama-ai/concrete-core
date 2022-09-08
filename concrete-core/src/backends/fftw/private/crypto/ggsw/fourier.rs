@@ -2,9 +2,7 @@ use crate::commons::math::tensor::{
     ck_dim_div, ck_dim_eq, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, IntoTensor, Tensor,
 };
 use crate::commons::utils::{zip, zip_args};
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-};
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize};
 
 use concrete_fftw::array::AlignedVec;
 
@@ -36,11 +34,11 @@ impl<Scalar> FourierGgswCiphertext<AlignedVec<Complex64>, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-    /// };
     /// use concrete_core::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+    /// };
     /// let ggsw: FourierGgswCiphertext<_, u32> = FourierGgswCiphertext::allocate(
     ///     Complex64::new(0., 0.),
     ///     PolynomialSize(10),
@@ -83,11 +81,11 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-    /// };
     /// use concrete_core::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+    /// };
     ///
     /// let ggsw: FourierGgswCiphertext<_, u32> = FourierGgswCiphertext::from_container(
     ///     vec![Complex64::new(0., 0.); 7 * 7 * 10 * 3],
@@ -125,11 +123,11 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-    /// };
     /// use concrete_core::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+    /// };
     ///
     /// let ggsw: FourierGgswCiphertext<_, u32> = FourierGgswCiphertext::allocate(
     ///     Complex64::new(0., 0.),
@@ -149,11 +147,11 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-    /// };
     /// use concrete_core::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+    /// };
     ///
     /// let ggsw: FourierGgswCiphertext<_, u32> = FourierGgswCiphertext::allocate(
     ///     Complex64::new(0., 0.),
@@ -183,11 +181,11 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-    /// };
     /// use concrete_core::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+    /// };
     ///
     /// let ggsw: FourierGgswCiphertext<_, u32> = FourierGgswCiphertext::allocate(
     ///     Complex64::new(0., 0.),
@@ -207,12 +205,12 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
+    /// use concrete_core::backends::fftw::private::math::fft::Complex64;
+    /// use concrete_core::prelude::{
     ///     CiphertextCount, DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize,
     ///     PolynomialSize,
     /// };
-    /// use concrete_core::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
-    /// use concrete_core::backends::fftw::private::math::fft::Complex64;
     ///
     /// let ggsw: FourierGgswCiphertext<_, u32> = FourierGgswCiphertext::allocate(
     ///     Complex64::new(0., 0.),
@@ -243,13 +241,13 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     CiphertextCount, DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize,
-    ///     PolynomialSize,
-    /// };
     /// use concrete_core::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::{
+    ///     CiphertextCount, DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize,
+    ///     PolynomialSize,
+    /// };
     ///
     /// let mut ggsw: FourierGgswCiphertext<_, u32> = FourierGgswCiphertext::allocate(
     ///     Complex64::new(0., 0.),
@@ -281,11 +279,11 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-    /// };
     /// use concrete_core::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+    /// };
     ///
     /// let ggsw: FourierGgswCiphertext<_, u32> = FourierGgswCiphertext::allocate(
     ///     Complex64::new(0., 0.),
@@ -310,11 +308,11 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-    /// };
     /// use concrete_core::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+    /// };
     ///
     /// let ggsw: FourierGgswCiphertext<_, u32> = FourierGgswCiphertext::allocate(
     ///     Complex64::new(0., 0.),
@@ -365,12 +363,12 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-    /// };
     /// use concrete_core::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
+    /// };
     ///
     /// let mut ggsw: FourierGgswCiphertext<_, u32> = FourierGgswCiphertext::allocate(
     ///     Complex64::new(0., 0.),

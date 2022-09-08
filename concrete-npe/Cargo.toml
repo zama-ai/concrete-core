@@ -14,4 +14,4 @@ keywords = ["fully", "homomorphic", "encryption", "fhe", "cryptography"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-concrete-commons = { version = "=0.2.2", path = "../concrete-commons" }
+concrete-core = { version = "1.0.0-delta", path = "../concrete-core" }

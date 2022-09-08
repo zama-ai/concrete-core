@@ -1,8 +1,7 @@
 use super::engine_error;
+use crate::prelude::{GlweCiphertextCount, Variance};
 use crate::specification::engines::AbstractEngine;
 use crate::specification::entities::{GlweCiphertextVectorEntity, GlweSecretKeyEntity};
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::GlweCiphertextCount;
 
 engine_error! {
     GlweCiphertextVectorZeroEncryptionError for GlweCiphertextVectorZeroEncryptionEngine @

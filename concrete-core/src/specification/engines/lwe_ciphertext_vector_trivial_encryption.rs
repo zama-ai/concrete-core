@@ -1,5 +1,5 @@
 use super::engine_error;
-use concrete_commons::parameters::LweSize;
+use crate::prelude::LweSize;
 
 use crate::specification::engines::AbstractEngine;
 use crate::specification::entities::{LweCiphertextVectorEntity, PlaintextVectorEntity};

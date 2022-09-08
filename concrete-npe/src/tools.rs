@@ -1,4 +1,4 @@
-use concrete_commons::dispersion::DispersionParameter;
+use concrete_core::prelude::DispersionParameter;
 use std::ops::Mul;
 
 /// Computes the number of bits affected by the noise with a dispersion

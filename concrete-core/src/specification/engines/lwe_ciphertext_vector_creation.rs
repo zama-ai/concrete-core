@@ -1,7 +1,7 @@
 use super::engine_error;
+use crate::prelude::LweSize;
 use crate::specification::engines::AbstractEngine;
 use crate::specification::entities::LweCiphertextVectorEntity;
-use concrete_commons::parameters::LweSize;
 
 engine_error! {
     LweCiphertextVectorCreationError for LweCiphertextVectorCreationEngine @

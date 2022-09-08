@@ -10,9 +10,9 @@ use crate::backends::fftw::private::math::fft::ALLOWED_POLY_SIZE;
 use crate::commons::math::polynomial::Polynomial;
 use crate::commons::math::tensor::{ck_dim_eq, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor};
 use crate::commons::math::torus::UnsignedTorus;
+use crate::commons::numeric::{CastInto, SignedInteger, UnsignedInteger};
 use crate::commons::utils::{zip, zip_args};
-use concrete_commons::numeric::{CastInto, SignedInteger, UnsignedInteger};
-use concrete_commons::parameters::PolynomialSize;
+use crate::prelude::PolynomialSize;
 
 use super::{Complex64, Correctors, FourierPolynomial};
 
@@ -33,8 +33,8 @@ impl Fft {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::PolynomialSize;
     /// use concrete_core::backends::fftw::private::math::fft::Fft;
+    /// use concrete_core::prelude::PolynomialSize;
     /// let fft = Fft::new(PolynomialSize(256));
     /// assert_eq!(fft.polynomial_size(), PolynomialSize(256));
     /// ```
@@ -63,8 +63,8 @@ impl Fft {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::PolynomialSize;
     /// use concrete_core::backends::fftw::private::math::fft::Fft;
+    /// use concrete_core::prelude::PolynomialSize;
     /// let fft = Fft::new(PolynomialSize(256));
     /// assert_eq!(fft.polynomial_size(), PolynomialSize(256));
     /// ```
@@ -84,11 +84,11 @@ impl Fft {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::PolynomialSize;
     /// use concrete_core::backends::fftw::private::math::fft::{Complex64, Fft, FourierPolynomial};
     /// use concrete_core::commons::math::polynomial::Polynomial;
     /// use concrete_core::commons::math::random::RandomGenerator;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::PolynomialSize;
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::Seed;
     /// let mut generator = RandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
@@ -123,11 +123,11 @@ impl Fft {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::PolynomialSize;
     /// use concrete_core::backends::fftw::private::math::fft::{Complex64, Fft, FourierPolynomial};
     /// use concrete_core::commons::math::polynomial::Polynomial;
     /// use concrete_core::commons::math::random::RandomGenerator;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::PolynomialSize;
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::Seed;
     ///
@@ -201,12 +201,12 @@ impl Fft {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::numeric::UnsignedInteger;
-    /// use concrete_commons::parameters::PolynomialSize;
     /// use concrete_core::backends::fftw::private::math::fft::{Complex64, Fft, FourierPolynomial};
     /// use concrete_core::commons::math::polynomial::Polynomial;
     /// use concrete_core::commons::math::random::RandomGenerator;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::commons::numeric::UnsignedInteger;
+    /// use concrete_core::prelude::PolynomialSize;
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::Seed;
     /// let mut generator = RandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
@@ -241,12 +241,12 @@ impl Fft {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::numeric::UnsignedInteger;
-    /// use concrete_commons::parameters::PolynomialSize;
     /// use concrete_core::backends::fftw::private::math::fft::{Complex64, Fft, FourierPolynomial};
     /// use concrete_core::commons::math::polynomial::Polynomial;
     /// use concrete_core::commons::math::random::RandomGenerator;
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::commons::numeric::UnsignedInteger;
+    /// use concrete_core::prelude::PolynomialSize;
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::Seed;
     /// let mut generator = RandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));

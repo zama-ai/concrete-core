@@ -1,7 +1,7 @@
 use crate::commons::crypto::lwe::LweCiphertext as ImplLweCiphertext;
+use crate::prelude::LweDimension;
 use crate::specification::entities::markers::LweCiphertextKind;
 use crate::specification::entities::{AbstractEntity, LweCiphertextEntity};
-use concrete_commons::parameters::LweDimension;
 #[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 

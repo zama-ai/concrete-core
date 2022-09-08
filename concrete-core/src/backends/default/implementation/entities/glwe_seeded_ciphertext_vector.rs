@@ -1,8 +1,8 @@
 use crate::commons::crypto::glwe::GlweSeededList as ImplGlweSeededList;
 use crate::commons::math::random::CompressionSeed;
+use crate::prelude::{GlweCiphertextCount, GlweDimension, PolynomialSize};
 use crate::specification::entities::markers::GlweSeededCiphertextVectorKind;
 use crate::specification::entities::{AbstractEntity, GlweSeededCiphertextVectorEntity};
-use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
 #[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 

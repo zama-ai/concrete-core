@@ -1,10 +1,10 @@
-/// Contains material needed to estimate the growth of the noise when performing homomorphic
-/// computation
-use concrete_commons::dispersion::{DispersionParameter, Variance};
-use concrete_commons::numeric::{CastInto, UnsignedInteger};
-use concrete_commons::parameters::{
+use concrete_core::commons::numeric::{CastInto, UnsignedInteger};
+use concrete_core::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
 };
+/// Contains material needed to estimate the growth of the noise when performing homomorphic
+/// computation
+use concrete_core::prelude::{DispersionParameter, Variance};
 
 use super::*;
 
@@ -12,7 +12,7 @@ use super::*;
 /// uncorrelated ciphertexts.
 /// # Example:
 /// ```rust
-/// use concrete_commons::dispersion::{DispersionParameter, Variance};
+/// use concrete_core::prelude::{DispersionParameter, Variance};
 /// use concrete_npe::estimate_addition_noise;
 /// let var1 = Variance(2_f64.powf(-25.));
 /// let var2 = Variance(2_f64.powf(-25.));
@@ -40,7 +40,7 @@ where
 /// several uncorrelated ciphertexts.
 /// # Example:
 /// ```rust
-/// use concrete_commons::dispersion::{DispersionParameter, Variance};
+/// use concrete_core::prelude::{DispersionParameter, Variance};
 /// use concrete_npe::estimate_several_additions_noise;
 /// let var1 = Variance(2_f64.powf(-25.));
 /// let var2 = Variance(2_f64.powf(-25.));
@@ -67,7 +67,7 @@ where
 /// of a ciphertext by a scalar.
 /// # Example
 /// ```rust
-/// use concrete_commons::dispersion::Variance;
+/// use concrete_core::prelude::Variance;
 /// use concrete_npe::estimate_integer_plaintext_multiplication_noise;
 /// let variance = Variance(2_f64.powi(-48));
 /// let n: u64 = 543;
@@ -89,7 +89,7 @@ where
 /// \sigma\_i^2$.
 /// # Example
 /// ```rust
-/// use concrete_commons::dispersion::Variance;
+/// use concrete_core::prelude::Variance;
 /// use concrete_npe::estimate_weighted_sum_noise;
 /// let variances = vec![Variance(2_f64.powi(-30)), Variance(2_f64.powi(-32))];
 /// let weights: Vec<u64> = vec![20, 10];
@@ -112,8 +112,7 @@ where
 /// between an RLWE ciphertext and a scalar polynomial.
 /// # Example
 /// ```rust
-/// use concrete_commons::dispersion::Variance;
-/// use concrete_commons::parameters::PolynomialSize;
+/// use concrete_core::prelude::{PolynomialSize, Variance};
 /// use concrete_npe::estimate_polynomial_plaintext_multiplication_noise;
 /// let polynomial_size = PolynomialSize(1024);
 /// let dispersion_rlwe = Variance(2_f64.powi(-40));
@@ -141,10 +140,9 @@ where
 /// GLWEs given a set of parameters.
 /// # Example:
 /// ```rust
-/// use concrete_commons::dispersion::Variance;
-/// use concrete_commons::key_kinds::BinaryKeyKind;
-/// use concrete_commons::parameters::{
-///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
+/// use concrete_core::prelude::{
+///     BinaryKeyKind, DecompositionBaseLog, DecompositionLevelCount, GlweDimension,
+///     PolynomialSize, Variance,
 /// };
 /// use concrete_npe::estimate_tensor_product_noise;
 /// let dimension = GlweDimension(3);
@@ -267,10 +265,9 @@ where
 /// Computes the dispersion of a GLWE after relinearization.
 /// # Example
 /// ```rust
-/// use concrete_commons::dispersion::Variance;
-/// use concrete_commons::key_kinds::BinaryKeyKind;
-/// use concrete_commons::parameters::{
-///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
+/// use concrete_core::prelude::{
+///     BinaryKeyKind, DecompositionBaseLog, DecompositionLevelCount, GlweDimension,
+///     PolynomialSize, Variance,
 /// };
 /// use concrete_npe::estimate_relinearization_noise;
 /// let dimension = GlweDimension(3);
@@ -343,10 +340,9 @@ where
 /// tensor product followed by a relinearization).
 /// # Example
 /// ```rust
-/// use concrete_commons::dispersion::Variance;
-/// use concrete_commons::key_kinds::BinaryKeyKind;
-/// use concrete_commons::parameters::{
-///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
+/// use concrete_core::prelude::{
+///     BinaryKeyKind, DecompositionBaseLog, DecompositionLevelCount, GlweDimension,
+///     PolynomialSize, Variance,
 /// };
 /// use concrete_npe::estimate_multiplication_noise;
 /// let dimension = GlweDimension(3);
@@ -428,8 +424,7 @@ where
 /// Computes the dispersion of a modulus switching of an LWE encrypted with binary keys.
 /// # Example
 /// ```rust
-/// use concrete_commons::dispersion::Variance;
-/// use concrete_commons::parameters::LweDimension;
+/// use concrete_core::prelude::{LweDimension, Variance};
 /// use concrete_npe::estimate_modulus_switching_noise_with_binary_key;
 /// let lwe_mask_size = LweDimension(630);
 /// let number_of_most_significant_bit: usize = 4;
@@ -465,10 +460,8 @@ where
 /// to GLWE keyswitch.
 /// # Example
 /// ```rust
-/// use concrete_commons::dispersion::Variance;
-/// use concrete_commons::key_kinds::BinaryKeyKind;
-/// use concrete_commons::parameters::{
-///     DecompositionBaseLog, DecompositionLevelCount, LweDimension,
+/// use concrete_core::prelude::{
+///     BinaryKeyKind, DecompositionBaseLog, DecompositionLevelCount, LweDimension, Variance,
 /// };
 /// use concrete_npe::estimate_keyswitch_noise_lwe_to_glwe_with_constant_terms;
 /// let lwe_mask_size = LweDimension(630);
@@ -530,10 +523,8 @@ where
 /// to GLWE private functional keyswitch.
 /// # Example
 /// ```rust
-/// use concrete_commons::dispersion::Variance;
-/// use concrete_commons::key_kinds::BinaryKeyKind;
-/// use concrete_commons::parameters::{
-///     DecompositionBaseLog, DecompositionLevelCount, LweDimension,
+/// use concrete_core::prelude::{
+///     BinaryKeyKind, DecompositionBaseLog, DecompositionLevelCount, LweDimension, Variance,
 /// };
 /// use concrete_npe::estimate_private_functional_keyswitch_noise_lwe_to_glwe_with_constant_terms;
 /// let lwe_mask_size = LweDimension(630);
@@ -606,10 +597,8 @@ where
 /// Computes the dispersion of the non-constant GLWE terms after an LWE to GLWE keyswitch.
 /// # Example
 /// ```rust
-/// use concrete_commons::dispersion::Variance;
-/// use concrete_commons::key_kinds::BinaryKeyKind;
-/// use concrete_commons::parameters::{
-///     DecompositionBaseLog, DecompositionLevelCount, LweDimension,
+/// use concrete_core::prelude::{
+///     BinaryKeyKind, DecompositionBaseLog, DecompositionLevelCount, LweDimension, Variance,
 /// };
 /// use concrete_npe::estimate_keyswitch_noise_lwe_to_glwe_with_non_constant_terms;
 /// let lwe_mask_size = LweDimension(630);
@@ -650,9 +639,7 @@ where
 /// Computes the dispersion of the bits greater than $q$ after a modulus switching.
 /// # Example
 /// ```rust
-/// use concrete_commons::dispersion::Variance;
-/// use concrete_commons::key_kinds::BinaryKeyKind;
-/// use concrete_commons::parameters::PolynomialSize;
+/// use concrete_core::prelude::{BinaryKeyKind, PolynomialSize, Variance};
 /// use concrete_npe::estimate_msb_noise_rlwe;
 /// use std::fmt::Binary;
 /// let rlwe_mask_size = PolynomialSize(1024);
@@ -682,10 +669,9 @@ where
 /// encrypting a binary keys (i.e., as in TFHE PBS).
 /// # Example
 /// ```rust
-/// use concrete_commons::dispersion::Variance;
-/// use concrete_commons::key_kinds::BinaryKeyKind;
-/// use concrete_commons::parameters::{
-///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
+/// use concrete_core::prelude::{
+///     BinaryKeyKind, DecompositionBaseLog, DecompositionLevelCount, GlweDimension,
+///     PolynomialSize, Variance,
 /// };
 /// use concrete_npe::estimate_external_product_noise_with_binary_ggsw;
 /// let poly_size = PolynomialSize(1024);
@@ -742,10 +728,9 @@ where
 /// Computes the dispersion of a CMUX controlled with a GGSW encrypting binary keys.
 /// # Example
 /// ```rust
-/// use concrete_commons::dispersion::{DispersionParameter, Variance};
-/// use concrete_commons::key_kinds::BinaryKeyKind;
-/// use concrete_commons::parameters::{
-///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
+/// use concrete_core::prelude::{
+///     BinaryKeyKind, DecompositionBaseLog, DecompositionLevelCount, DispersionParameter,
+///     GlweDimension, PolynomialSize, Variance,
 /// };
 /// use concrete_npe::estimate_cmux_noise_with_binary_ggsw;
 /// let dimension = GlweDimension(3);
@@ -800,10 +785,9 @@ where
 /// binary keys, and the initial noise for the RLWE is equal to zero).
 /// # Example
 /// ```rust
-/// use concrete_commons::dispersion::Variance;
-/// use concrete_commons::key_kinds::BinaryKeyKind;
-/// use concrete_commons::parameters::{
-///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+/// use concrete_core::prelude::{
+///     BinaryKeyKind, DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension,
+///     PolynomialSize, Variance,
 /// };
 /// use concrete_npe::estimate_pbs_noise;
 /// let poly_size = PolynomialSize(1024);
@@ -860,7 +844,7 @@ where
 mod tests_estimate_weighted_sum_noise {
     use super::estimate_weighted_sum_noise;
     use crate::tools::tests::assert_float_eq;
-    use concrete_commons::dispersion::{DispersionParameter, Variance};
+    use concrete_core::prelude::{DispersionParameter, Variance};
     #[test]
     fn no_noise() {
         let weights = [1u8, 1];

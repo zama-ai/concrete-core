@@ -5,11 +5,11 @@ use crate::backends::cuda::implementation::entities::{
     CudaGlweCiphertext64, CudaLweCiphertext32, CudaLweCiphertext64,
 };
 use crate::backends::cuda::private::device::NumberOfSamples;
+use crate::prelude::LweCiphertextIndex;
 use crate::specification::engines::{
     LweCiphertextDiscardingBootstrapEngine, LweCiphertextDiscardingBootstrapError,
 };
 use crate::specification::entities::LweBootstrapKeyEntity;
-use concrete_commons::parameters::LweCiphertextIndex;
 
 impl From<CudaError> for LweCiphertextDiscardingBootstrapError<CudaError> {
     fn from(err: CudaError) -> Self {
@@ -30,13 +30,11 @@ impl
 {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
     /// };
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
@@ -168,13 +166,11 @@ impl
 {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
     /// };
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.

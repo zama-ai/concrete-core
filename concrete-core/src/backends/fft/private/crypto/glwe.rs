@@ -1,7 +1,7 @@
 use super::super::math::polynomial::*;
 use super::super::{Container, IntoChunks};
 use crate::commons::math::torus::UnsignedTorus;
-use concrete_commons::parameters::{GlweSize, PolynomialSize};
+use crate::prelude::{GlweSize, PolynomialSize};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[cfg_attr(

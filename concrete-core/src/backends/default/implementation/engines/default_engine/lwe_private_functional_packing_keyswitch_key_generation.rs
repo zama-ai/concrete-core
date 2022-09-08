@@ -1,5 +1,4 @@
-use concrete_commons::dispersion::StandardDev;
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, PolynomialSize};
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, PolynomialSize, StandardDev};
 
 use crate::backends::default::entities::{
     CleartextVector64, LwePrivateFunctionalPackingKeyswitchKey32,
@@ -34,8 +33,8 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::Variance;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, GlweDimension
     /// };
     /// use concrete_core::prelude::*;
@@ -170,8 +169,8 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::Variance;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, GlweDimension
     /// };
     /// use concrete_core::prelude::*;

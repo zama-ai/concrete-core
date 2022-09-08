@@ -1,7 +1,6 @@
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
 use concrete_core::prelude::{
-    LweCiphertextVectorEntity, LweCiphertextVectorTrivialDecryptionEngine, PlaintextVectorEntity,
+    LweCiphertextCount, LweCiphertextVectorEntity, LweCiphertextVectorTrivialDecryptionEngine,
+    LweDimension, PlaintextVectorEntity, Variance,
 };
 
 use crate::fixture::Fixture;

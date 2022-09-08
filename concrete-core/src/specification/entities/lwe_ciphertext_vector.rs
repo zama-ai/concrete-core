@@ -1,6 +1,6 @@
+use crate::prelude::{LweCiphertextCount, LweDimension};
 use crate::specification::entities::markers::LweCiphertextVectorKind;
 use crate::specification::entities::AbstractEntity;
-use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
 
 /// A trait implemented by types embodying an LWE ciphertext vector.
 ///

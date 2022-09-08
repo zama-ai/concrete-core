@@ -24,11 +24,10 @@ impl From<FftError> for LweBootstrapKeyConversionError<FftError> {
 impl LweBootstrapKeyConversionEngine<LweBootstrapKey32, FftFourierLweBootstrapKey32> for FftEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -124,11 +123,10 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey32, FftFourierLweBootstrapKe
 impl LweBootstrapKeyConversionEngine<LweBootstrapKey64, FftFourierLweBootstrapKey64> for FftEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

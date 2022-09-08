@@ -1,6 +1,4 @@
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-};
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize};
 
 use crate::backends::default::entities::{
     GgswCiphertext32, GgswCiphertext64, Plaintext32, Plaintext64,
@@ -21,11 +19,9 @@ impl GgswCiphertextScalarTrivialEncryptionEngine<Plaintext32, GgswCiphertext32> 
     /// ```
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     ///
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize, Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     ///
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
     /// let glwe_dimension = GlweDimension(2);
@@ -103,11 +99,9 @@ impl GgswCiphertextScalarTrivialEncryptionEngine<Plaintext64, GgswCiphertext64> 
     /// ```
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     ///
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize, Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     ///
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
     /// let glwe_dimension = GlweDimension(2);

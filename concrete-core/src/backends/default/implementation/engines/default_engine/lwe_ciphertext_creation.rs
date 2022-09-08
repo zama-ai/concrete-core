@@ -12,8 +12,7 @@ use crate::specification::engines::{LweCiphertextCreationEngine, LweCiphertextCr
 impl LweCiphertextCreationEngine<Vec<u32>, LweCiphertext32> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -53,8 +52,7 @@ impl LweCiphertextCreationEngine<Vec<u32>, LweCiphertext32> for DefaultEngine {
 impl LweCiphertextCreationEngine<Vec<u64>, LweCiphertext64> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -96,8 +94,7 @@ impl<'data> LweCiphertextCreationEngine<&'data [u32], LweCiphertextView32<'data>
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -141,8 +138,7 @@ impl<'data> LweCiphertextCreationEngine<&'data mut [u32], LweCiphertextMutView32
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -229,8 +225,7 @@ impl<'data> LweCiphertextCreationEngine<&'data mut [u64], LweCiphertextMutView64
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

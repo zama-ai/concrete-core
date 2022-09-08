@@ -5,13 +5,11 @@ use crate::generation::synthesizing::{
     SynthesizesLweSecretKey,
 };
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-};
 use concrete_core::prelude::{
-    GlweSecretKeyEntity, LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysEntity,
-    LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysGenerationEngine, LweSecretKeyEntity,
+    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSecretKeyEntity,
+    LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysEntity,
+    LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysGenerationEngine, LweDimension,
+    LweSecretKeyEntity, PolynomialSize, Variance,
 };
 
 /// A fixture for the types implementing the

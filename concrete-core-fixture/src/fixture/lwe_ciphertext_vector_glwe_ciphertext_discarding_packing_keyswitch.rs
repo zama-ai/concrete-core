@@ -9,14 +9,11 @@ use crate::generation::synthesizing::{
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-};
 use concrete_core::prelude::{
-    DispersionParameter, GlweCiphertextEntity, LogStandardDev, LweCiphertextCount,
-    LweCiphertextVectorEntity, LweCiphertextVectorGlweCiphertextDiscardingPackingKeyswitchEngine,
-    LwePackingKeyswitchKeyEntity,
+    DecompositionBaseLog, DecompositionLevelCount, DispersionParameter, GlweCiphertextEntity,
+    GlweDimension, LogStandardDev, LweCiphertextCount, LweCiphertextVectorEntity,
+    LweCiphertextVectorGlweCiphertextDiscardingPackingKeyswitchEngine, LweDimension,
+    LwePackingKeyswitchKeyEntity, PolynomialSize, Variance,
 };
 
 /// A fixture for the types implementing the

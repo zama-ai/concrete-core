@@ -1,12 +1,10 @@
 use crate::backends::cuda::engines::CudaError;
 use crate::backends::cuda::private::pointers::StreamPointer;
 use crate::backends::cuda::private::vec::CudaVec;
-use crate::prelude::numeric::UnsignedInteger;
-use crate::prelude::SharedMemoryAmount;
-use concrete_commons::numeric::Numeric;
-use concrete_commons::parameters::{
+use crate::commons::numeric::{Numeric, UnsignedInteger};
+use crate::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweCiphertextIndex, LweDimension,
-    PolynomialSize,
+    PolynomialSize, SharedMemoryAmount,
 };
 use concrete_cuda::cuda_bind::*;
 use std::ffi::c_void;

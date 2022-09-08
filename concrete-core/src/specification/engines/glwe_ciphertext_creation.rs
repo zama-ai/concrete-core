@@ -1,7 +1,7 @@
 use super::engine_error;
+use crate::prelude::PolynomialSize;
 use crate::specification::engines::AbstractEngine;
 use crate::specification::entities::GlweCiphertextEntity;
-use concrete_commons::parameters::PolynomialSize;
 
 engine_error! {
     GlweCiphertextCreationError for GlweCiphertextCreationEngine @

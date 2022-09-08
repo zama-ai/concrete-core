@@ -1,6 +1,6 @@
+use crate::prelude::{GlweDimension, PolynomialSize};
 use crate::specification::entities::markers::GlweSecretKeyKind;
 use crate::specification::entities::AbstractEntity;
-use concrete_commons::parameters::{GlweDimension, PolynomialSize};
 
 /// A trait implemented by types embodying a GLWE secret key.
 ///

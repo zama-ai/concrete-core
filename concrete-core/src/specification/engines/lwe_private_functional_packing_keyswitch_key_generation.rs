@@ -4,9 +4,8 @@ use crate::prelude::{
 };
 use crate::specification::engines::AbstractEngine;
 
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, PolynomialSize, StandardDev};
 use crate::specification::entities::LweSecretKeyEntity;
-use concrete_commons::dispersion::StandardDev;
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount, PolynomialSize};
 
 engine_error! {
     LwePrivateFunctionalLwePackingKeyswitchKeyGenerationError for
@@ -75,9 +74,9 @@ impl<EngineError: std::error::Error>
 /// a [`LWE secret key`](`crate::specification::entities::LweSecretKeyEntity`) for the input
 /// secret key, a [`GLWE secret key`](`crate::specification::entities::GlweSecretKeyEntity`) for
 /// the output secret key, a
-/// [`decomposition level`](`concrete_commons::parameters::DecompositionLevelCount`), a
-/// [`decomposition base`](`concrete_commons::parameters::DecompositionBaseLog`), a standard
-/// deviation for the [`noise`](`concrete_commons::dispersion::StandardDev`), and finally the
+/// [`decomposition level`](`crate::prelude::DecompositionLevelCount`), a
+/// [`decomposition base`](`crate::prelude::DecompositionBaseLog`), a standard
+/// deviation for the [`noise`](`crate::prelude::StandardDev`), and finally the
 /// input `polynomial_scalar` given as a
 /// [`cleartext vector`](`crate::specification::entities::CleartextEntity`) starting from the
 /// constant term.

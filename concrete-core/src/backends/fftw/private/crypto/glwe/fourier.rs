@@ -5,7 +5,7 @@ use crate::commons::math::tensor::{
     ck_dim_div, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, IntoTensor, Tensor,
 };
 use crate::commons::math::torus::UnsignedTorus;
-use concrete_commons::parameters::{GlweSize, PolynomialSize};
+use crate::prelude::{GlweSize, PolynomialSize};
 use concrete_fftw::array::AlignedVec;
 #[cfg(feature = "backend_fftw_serialization")]
 use serde::{Deserialize, Serialize};
@@ -26,9 +26,9 @@ impl<Scalar> FourierGlweCiphertext<AlignedVec<Complex64>, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
     /// use concrete_core::backends::fftw::private::crypto::glwe::FourierGlweCiphertext;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
+    /// use concrete_core::prelude::{GlweSize, PolynomialSize};
     /// let glwe: FourierGlweCiphertext<_, u32> =
     ///     FourierGlweCiphertext::allocate(Complex64::new(0., 0.), PolynomialSize(10), GlweSize(7));
     /// assert_eq!(glwe.glwe_size(), GlweSize(7));
@@ -55,9 +55,9 @@ impl<Cont, Scalar: UnsignedTorus> FourierGlweCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
     /// use concrete_core::backends::fftw::private::crypto::glwe::FourierGlweCiphertext;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
+    /// use concrete_core::prelude::{GlweSize, PolynomialSize};
     ///
     /// let glwe: FourierGlweCiphertext<_, u32> = FourierGlweCiphertext::from_container(
     ///     vec![Complex64::new(0., 0.); 7 * 10],
@@ -86,9 +86,9 @@ impl<Cont, Scalar: UnsignedTorus> FourierGlweCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
     /// use concrete_core::backends::fftw::private::crypto::glwe::FourierGlweCiphertext;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
+    /// use concrete_core::prelude::{GlweSize, PolynomialSize};
     ///
     /// let glwe: FourierGlweCiphertext<_, u32> =
     ///     FourierGlweCiphertext::allocate(Complex64::new(0., 0.), PolynomialSize(10), GlweSize(7));
@@ -103,9 +103,9 @@ impl<Cont, Scalar: UnsignedTorus> FourierGlweCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
     /// use concrete_core::backends::fftw::private::crypto::glwe::FourierGlweCiphertext;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
+    /// use concrete_core::prelude::{GlweSize, PolynomialSize};
     ///
     /// let glwe: FourierGlweCiphertext<_, u32> =
     ///     FourierGlweCiphertext::allocate(Complex64::new(0., 0.), PolynomialSize(10), GlweSize(7));
@@ -119,11 +119,11 @@ impl<Cont, Scalar: UnsignedTorus> FourierGlweCiphertext<Cont, Scalar> {
     /// coefficient domain.
     ///
     /// ```
-    /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
     /// use concrete_core::backends::fftw::private::crypto::bootstrap::FourierBuffers;
     /// use concrete_core::backends::fftw::private::crypto::glwe::FourierGlweCiphertext;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
     /// use concrete_core::commons::crypto::glwe::GlweCiphertext;
+    /// use concrete_core::prelude::{GlweSize, PolynomialSize};
     /// let mut fourier_glwe: FourierGlweCiphertext<_, u32> =
     ///     FourierGlweCiphertext::allocate(Complex64::new(0., 0.), PolynomialSize(128), GlweSize(7));
     ///
@@ -159,11 +159,11 @@ impl<Cont, Scalar: UnsignedTorus> FourierGlweCiphertext<Cont, Scalar> {
 
     /// Fills a GLWE ciphertext with the inverse fourier transform of a Fourier GLWE ciphertext
     /// ```
-    /// use concrete_commons::parameters::{GlweSize, PolynomialSize};
     /// use concrete_core::backends::fftw::private::crypto::bootstrap::FourierBuffers;
     /// use concrete_core::backends::fftw::private::crypto::glwe::FourierGlweCiphertext;
     /// use concrete_core::backends::fftw::private::math::fft::Complex64;
     /// use concrete_core::commons::crypto::glwe::GlweCiphertext;
+    /// use concrete_core::prelude::{GlweSize, PolynomialSize};
     ///
     /// let fourier_glwe: FourierGlweCiphertext<_, u32> =
     ///     FourierGlweCiphertext::allocate(Complex64::new(0., 0.), PolynomialSize(128), GlweSize(7));
@@ -220,8 +220,8 @@ impl<Cont, Scalar: UnsignedTorus> FourierGlweCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::PolynomialSize;
     /// use concrete_core::commons::math::polynomial::PolynomialList;
+    /// use concrete_core::prelude::PolynomialSize;
     /// let mut list =
     ///     PolynomialList::from_container(vec![1u8, 2, 3, 4, 5, 6, 7, 8], PolynomialSize(2));
     /// for polynomial in list.polynomial_iter() {
@@ -245,8 +245,8 @@ impl<Cont, Scalar: UnsignedTorus> FourierGlweCiphertext<Cont, Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{MonomialDegree, PolynomialSize};
     /// use concrete_core::commons::math::polynomial::PolynomialList;
+    /// use concrete_core::prelude::{MonomialDegree, PolynomialSize};
     /// let mut list =
     ///     PolynomialList::from_container(vec![1u8, 2, 3, 4, 5, 6, 7, 8], PolynomialSize(2));
     /// for mut polynomial in list.polynomial_iter_mut() {

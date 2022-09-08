@@ -29,12 +29,11 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey32, CudaFourierLweBootstrapK
 {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::backends::cuda::private::device::GpuIndex;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
+    /// };
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -116,12 +115,11 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey64, CudaFourierLweBootstrapK
 {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::backends::cuda::private::device::GpuIndex;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
+    /// };
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

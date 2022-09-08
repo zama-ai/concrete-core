@@ -10,7 +10,7 @@ use rayon::{iter::IndexedParallelIterator, prelude::*};
 #[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
 
-use concrete_commons::numeric::{CastFrom, UnsignedInteger};
+use crate::commons::numeric::{CastFrom, UnsignedInteger};
 
 use crate::commons::utils::zip;
 

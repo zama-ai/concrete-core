@@ -4,8 +4,7 @@ use crate::generation::prototypes::{
 use crate::generation::{
     BinaryKeyDistribution, IntegerPrecision, KeyDistributionMarker, Maker, Precision32, Precision64,
 };
-use concrete_commons::parameters::LweDimension;
-use concrete_core::prelude::LweSecretKeyGenerationEngine;
+use concrete_core::prelude::{LweDimension, LweSecretKeyGenerationEngine};
 
 /// A trait allowing to manipulate lwe secret key prototypes.
 pub trait PrototypesLweSecretKey<

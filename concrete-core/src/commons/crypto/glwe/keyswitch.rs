@@ -12,12 +12,10 @@ use crate::commons::math::tensor::{
     ck_dim_div, ck_dim_eq, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
 use crate::commons::math::torus::UnsignedTorus;
-use concrete_commons::dispersion::DispersionParameter;
-use concrete_commons::key_kinds::BinaryKeyKind;
-use concrete_commons::parameters::{
-    CiphertextCount, DecompositionBaseLog, DecompositionLevelCount,
-    FunctionalPackingKeyswitchKeyCount, GlweDimension, GlweSize, LweDimension, LweSize,
-    MonomialDegree, PlaintextCount, PolynomialSize,
+use crate::prelude::{
+    BinaryKeyKind, CiphertextCount, DecompositionBaseLog, DecompositionLevelCount,
+    DispersionParameter, FunctionalPackingKeyswitchKeyCount, GlweDimension, GlweSize, LweDimension,
+    LweSize, MonomialDegree, PlaintextCount, PolynomialSize,
 };
 #[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
@@ -53,12 +51,12 @@ where
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::glwe::LwePackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize, LweDimension,
     ///     LweSize, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::LwePackingKeyswitchKey;
-    /// use concrete_core::commons::crypto::*;
     /// let pksk = LwePackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
@@ -112,12 +110,12 @@ impl<Cont> LwePackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::glwe::LwePackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize, LweDimension,
     ///     LweSize, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::LwePackingKeyswitchKey;
-    /// use concrete_core::commons::crypto::*;
     /// let input_size = LweDimension(200);
     /// let output_size = GlweDimension(2);
     /// let polynomial_size = PolynomialSize(256);
@@ -166,11 +164,11 @@ impl<Cont> LwePackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::glwe::LwePackingKeyswitchKey;
     /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    /// };
     /// let pksk = LwePackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
@@ -190,12 +188,12 @@ impl<Cont> LwePackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::glwe::LwePackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, LweSize,
     ///     PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::LwePackingKeyswitchKey;
-    /// use concrete_core::commons::crypto::*;
     /// let pksk = LwePackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
@@ -215,11 +213,11 @@ impl<Cont> LwePackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::glwe::LwePackingKeyswitchKey;
     /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    /// };
     /// let pksk = LwePackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
@@ -247,11 +245,11 @@ impl<Cont> LwePackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::glwe::LwePackingKeyswitchKey;
     /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    /// };
     /// let pksk = LwePackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
@@ -279,11 +277,11 @@ impl<Cont> LwePackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::glwe::LwePackingKeyswitchKey;
     /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    /// };
     /// let pksk = LwePackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
@@ -307,11 +305,6 @@ impl<Cont> LwePackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::dispersion::LogStandardDev;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, LweSize,
-    ///     PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::glwe::LwePackingKeyswitchKey;
     /// use concrete_core::commons::crypto::secret::generators::{
     ///     EncryptionRandomGenerator, SecretRandomGenerator,
@@ -319,6 +312,10 @@ impl<Cont> LwePackingKeyswitchKey<Cont> {
     /// use concrete_core::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
     /// use concrete_core::commons::crypto::*;
     /// use concrete_core::commons::math::tensor::AsRefTensor;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LogStandardDev, LweDimension,
+    ///     LweSize, PolynomialSize,
+    /// };
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
@@ -493,11 +490,6 @@ impl<Cont> LwePackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::dispersion::LogStandardDev;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize, LweDimension,
-    ///     LweSize, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::encoding::*;
     /// use concrete_core::commons::crypto::glwe::*;
     /// use concrete_core::commons::crypto::lwe::*;
@@ -507,6 +499,10 @@ impl<Cont> LwePackingKeyswitchKey<Cont> {
     /// use concrete_core::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
     /// use concrete_core::commons::crypto::*;
     /// use concrete_core::commons::math::tensor::AsRefTensor;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize, LogStandardDev,
+    ///     LweDimension, LweSize, PolynomialSize,
+    /// };
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
@@ -663,12 +659,12 @@ where
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize, LweDimension,
     ///     LweSize, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKey;
-    /// use concrete_core::commons::crypto::*;
     /// let pfpksk = LwePrivateFunctionalPackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
@@ -723,12 +719,12 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize, LweDimension,
     ///     LweSize, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKey;
-    /// use concrete_core::commons::crypto::*;
     /// let input_lwe_dim = LweDimension(200);
     /// let output_glwe_dim = GlweDimension(2);
     /// let polynomial_size = PolynomialSize(256);
@@ -780,11 +776,11 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKey;
     /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    /// };
     /// let pfpksk = LwePrivateFunctionalPackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
@@ -804,12 +800,12 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, LweSize,
     ///     PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKey;
-    /// use concrete_core::commons::crypto::*;
     /// let pfpksk = LwePrivateFunctionalPackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
@@ -829,11 +825,11 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKey;
     /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    /// };
     /// let pfpksk = LwePrivateFunctionalPackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
@@ -862,11 +858,11 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKey;
     /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    /// };
     /// let pfpksk = LwePrivateFunctionalPackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
@@ -894,11 +890,11 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKey;
     /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    /// };
     /// let pfpksk = LwePrivateFunctionalPackingKeyswitchKey::allocate(
     ///     0 as u8,
     ///     DecompositionLevelCount(10),
@@ -922,11 +918,6 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::dispersion::LogStandardDev;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, LweSize,
-    ///     PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKey;
     /// use concrete_core::commons::crypto::secret::generators::{
     ///     EncryptionRandomGenerator, SecretRandomGenerator,
@@ -935,6 +926,10 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
     /// use concrete_core::commons::crypto::*;
     /// use concrete_core::commons::math::polynomial::Polynomial;
     /// use concrete_core::commons::math::tensor::AsRefTensor;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LogStandardDev, LweDimension,
+    ///     LweSize, PolynomialSize,
+    /// };
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
@@ -1055,7 +1050,7 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
     ///
     /// ```ignore
     /// use concrete_core::commons::crypto::{*, glwe::LwePrivateFunctionalPackingKeyswitchKey};
-    /// use concrete_commons::parameters::{DecompositionLevelCount, DecompositionBaseLog,
+    /// use concrete_core::prelude::{DecompositionLevelCount, DecompositionBaseLog,
     /// GlweDimension, LweDimension, PolynomialSize};
     /// let pfpksk = LwePrivateFunctionalPackingKeyswitchKey::allocate(
     ///     0 as u8,
@@ -1097,7 +1092,7 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
     /// ```ignore
     /// use concrete_core::commons::crypto::{*, glwe::LwePrivateFunctionalPackingKeyswitchKey};
     /// use concrete_core::commons::math::tensor::{AsRefTensor, AsMutTensor};
-    /// use concrete_commons::parameters::{DecompositionLevelCount, DecompositionBaseLog,
+    /// use concrete_core::prelude::{DecompositionLevelCount, DecompositionBaseLog,
     /// GlweDimension, LweDimension, PolynomialSize};
     /// let mut pfpksk = LwePrivateFunctionalPackingKeyswitchKey::allocate(
     ///     0 as u8,
@@ -1139,11 +1134,6 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::dispersion::LogStandardDev;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize, LweDimension,
-    ///     LweSize, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::encoding::*;
     /// use concrete_core::commons::crypto::glwe::*;
     /// use concrete_core::commons::crypto::lwe::*;
@@ -1154,6 +1144,10 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
     /// use concrete_core::commons::crypto::*;
     /// use concrete_core::commons::math::polynomial::Polynomial;
     /// use concrete_core::commons::math::tensor::AsRefTensor;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize, LogStandardDev,
+    ///     LweDimension, LweSize, PolynomialSize,
+    /// };
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
@@ -1249,11 +1243,6 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::dispersion::LogStandardDev;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize, LweDimension,
-    ///     LweSize, PlaintextCount, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::encoding::*;
     /// use concrete_core::commons::crypto::glwe::*;
     /// use concrete_core::commons::crypto::lwe::*;
@@ -1264,6 +1253,10 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
     /// use concrete_core::commons::crypto::*;
     /// use concrete_core::commons::math::polynomial::Polynomial;
     /// use concrete_core::commons::math::tensor::AsRefTensor;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize, LogStandardDev,
+    ///     LweDimension, LweSize, PlaintextCount, PolynomialSize,
+    /// };
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
@@ -1533,12 +1526,12 @@ where
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKeyList;
+    /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, FunctionalPackingKeyswitchKeyCount,
     ///     GlweDimension, GlweSize, LweDimension, LweSize, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKeyList;
-    /// use concrete_core::commons::crypto::*;
     /// let input_lwe_dim = LweDimension(200);
     /// let output_glwe_dim = GlweDimension(2);
     /// let polynomial_size = PolynomialSize(256);
@@ -1601,12 +1594,12 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKeyList<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKeyList;
+    /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, FunctionalPackingKeyswitchKeyCount,
     ///     GlweDimension, GlweSize, LweDimension, LweSize, PolynomialSize,
     /// };
-    /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKeyList;
-    /// use concrete_core::commons::crypto::*;
     /// let input_lwe_dim = LweDimension(200);
     /// let output_glwe_dim = GlweDimension(2);
     /// let polynomial_size = PolynomialSize(256);

@@ -21,9 +21,7 @@ impl From<CudaError> for GlweCiphertextConversionError<CudaError> {
 impl GlweCiphertextConversionEngine<GlweCiphertext32, CudaGlweCiphertext32> for CudaEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweCiphertextCount, GlweDimension, PolynomialSize, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -90,9 +88,7 @@ impl GlweCiphertextConversionEngine<GlweCiphertext32, CudaGlweCiphertext32> for 
 impl GlweCiphertextConversionEngine<CudaGlweCiphertext32, GlweCiphertext32> for CudaEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweCiphertextCount, GlweDimension, PolynomialSize, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -155,9 +151,7 @@ impl GlweCiphertextConversionEngine<CudaGlweCiphertext32, GlweCiphertext32> for 
 impl GlweCiphertextConversionEngine<GlweCiphertext64, CudaGlweCiphertext64> for CudaEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweCiphertextCount, GlweDimension, PolynomialSize, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -224,9 +218,7 @@ impl GlweCiphertextConversionEngine<GlweCiphertext64, CudaGlweCiphertext64> for 
 impl GlweCiphertextConversionEngine<CudaGlweCiphertext64, GlweCiphertext64> for CudaEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweCiphertextCount, GlweDimension, PolynomialSize, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -288,9 +280,7 @@ impl GlweCiphertextConversionEngine<CudaGlweCiphertext64, GlweCiphertext64> for 
 impl GlweCiphertextConversionEngine<GlweCiphertextView64<'_>, CudaGlweCiphertext64> for CudaEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweCiphertextCount, GlweDimension, PolynomialSize, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

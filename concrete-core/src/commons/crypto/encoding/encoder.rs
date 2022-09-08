@@ -2,8 +2,8 @@ use super::{Cleartext, CleartextList, Plaintext, PlaintextList};
 use crate::commons::math::decomposition::SignedDecomposer;
 use crate::commons::math::tensor::{AsMutTensor, AsRefTensor};
 use crate::commons::math::torus::{FromTorus, IntoTorus, UnsignedTorus};
-use concrete_commons::numeric::{FloatingPoint, Numeric};
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
+use crate::commons::numeric::{FloatingPoint, Numeric};
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount};
 #[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
 
@@ -301,7 +301,7 @@ mod test {
     };
     use crate::commons::math::random::RandomGenerator;
     use crate::commons::math::tensor::{AsMutTensor, AsRefTensor, Tensor};
-    use concrete_commons::parameters::{CleartextCount, PlaintextCount};
+    use crate::prelude::{CleartextCount, PlaintextCount};
     use concrete_csprng::generators::SoftwareRandomGenerator;
     use concrete_csprng::seeders::{Seeder, UnixSeeder};
 

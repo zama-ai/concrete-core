@@ -9,14 +9,12 @@ use crate::generation::synthesizing::{
 };
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::statistical_test::assert_delta_std_dev;
-use concrete_commons::dispersion::{DispersionParameter, LogStandardDev, Variance};
-use concrete_commons::numeric::Numeric;
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-};
+use concrete_core::commons::numeric::Numeric;
 use concrete_core::prelude::{
-    GlweCiphertextCount, GlweCiphertextVectorEntity, LweBootstrapKeyEntity, LweCiphertextCount,
-    LweCiphertextVectorDiscardingBootstrapEngine, LweCiphertextVectorEntity,
+    DecompositionBaseLog, DecompositionLevelCount, DispersionParameter, GlweCiphertextCount,
+    GlweCiphertextVectorEntity, GlweDimension, LogStandardDev, LweBootstrapKeyEntity,
+    LweCiphertextCount, LweCiphertextVectorDiscardingBootstrapEngine, LweCiphertextVectorEntity,
+    LweDimension, PolynomialSize, Variance,
 };
 
 /// A fixture for the types implementing the `LweCiphertextVectorDiscardingBootstrapEngine` trait.

@@ -2,12 +2,11 @@ use crate::backends::default::engines::DefaultEngine;
 use crate::backends::default::entities::{
     LwePublicKey32, LwePublicKey64, LweSecretKey32, LweSecretKey64,
 };
+use crate::prelude::{LweCiphertextCount, LwePublicKeyZeroEncryptionCount, Variance};
 use crate::specification::engines::{
     LweCiphertextVectorZeroEncryptionEngine, LwePublicKeyGenerationEngine,
     LwePublicKeyGenerationError,
 };
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{LweCiphertextCount, LwePublicKeyZeroEncryptionCount};
 
 /// # Description:
 /// Implementation of [`LwePublicKeyGenerationEngine`] for [`DefaultEngine`] that operates on
@@ -15,8 +14,7 @@ use concrete_commons::parameters::{LweCiphertextCount, LwePublicKeyZeroEncryptio
 impl LwePublicKeyGenerationEngine<LweSecretKey32, LwePublicKey32> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::{LweDimension, LwePublicKeyZeroEncryptionCount};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, LwePublicKeyZeroEncryptionCount, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -84,8 +82,7 @@ impl LwePublicKeyGenerationEngine<LweSecretKey32, LwePublicKey32> for DefaultEng
 impl LwePublicKeyGenerationEngine<LweSecretKey64, LwePublicKey64> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::{LweDimension, LwePublicKeyZeroEncryptionCount};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, LwePublicKeyZeroEncryptionCount, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

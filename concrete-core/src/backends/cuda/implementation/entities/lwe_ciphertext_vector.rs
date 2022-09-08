@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
+use crate::prelude::{LweCiphertextCount, LweDimension};
 
 use crate::backends::cuda::private::crypto::lwe::list::CudaLweList;
 use crate::specification::entities::markers::LweCiphertextVectorKind;

@@ -10,13 +10,11 @@ use crate::generation::synthesizing::{
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
-use concrete_commons::dispersion::{DispersionParameter, LogStandardDev, Variance};
-use concrete_commons::numeric::UnsignedInteger;
-use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
+use concrete_core::commons::numeric::UnsignedInteger;
 use concrete_core::prelude::{
-    CleartextVectorEntity, LweCiphertextEntity,
-    LweCiphertextVectorDiscardingAffineTransformationEngine, LweCiphertextVectorEntity,
-    PlaintextEntity,
+    CleartextVectorEntity, DispersionParameter, LogStandardDev, LweCiphertextCount,
+    LweCiphertextEntity, LweCiphertextVectorDiscardingAffineTransformationEngine,
+    LweCiphertextVectorEntity, LweDimension, PlaintextEntity, Variance,
 };
 
 /// A fixture for the types implementing the

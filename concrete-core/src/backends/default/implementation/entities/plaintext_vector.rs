@@ -1,7 +1,7 @@
 use crate::commons::crypto::encoding::PlaintextList as ImplPlaintextList;
+use crate::prelude::PlaintextCount;
 use crate::specification::entities::markers::PlaintextVectorKind;
 use crate::specification::entities::{AbstractEntity, PlaintextVectorEntity};
-use concrete_commons::parameters::PlaintextCount;
 #[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 

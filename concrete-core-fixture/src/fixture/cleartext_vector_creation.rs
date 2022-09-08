@@ -4,8 +4,7 @@ use crate::generation::synthesizing::SynthesizesCleartextVector;
 use crate::generation::{IntegerPrecision, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::CleartextCount;
+use concrete_core::prelude::{CleartextCount, Variance};
 
 use concrete_core::prelude::{CleartextVectorCreationEngine, CleartextVectorEntity};
 

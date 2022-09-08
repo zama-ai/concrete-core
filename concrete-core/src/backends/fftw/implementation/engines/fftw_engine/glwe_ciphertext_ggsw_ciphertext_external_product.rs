@@ -26,8 +26,8 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweDimension, PolynomialSize, DecompositionBaseLog, DecompositionLevelCount};
+    /// use concrete_core::prelude::Variance;
+    /// use concrete_core::prelude::{GlweDimension, PolynomialSize, DecompositionBaseLog, DecompositionLevelCount};
     /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
@@ -120,8 +120,8 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweDimension, PolynomialSize, DecompositionBaseLog, DecompositionLevelCount};
+    /// use concrete_core::prelude::Variance;
+    /// use concrete_core::prelude::{GlweDimension, PolynomialSize, DecompositionBaseLog, DecompositionLevelCount};
     /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///

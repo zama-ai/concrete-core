@@ -23,9 +23,8 @@ mod test {
     use crate::commons::math::random::CompressionSeed;
     use crate::commons::math::torus::UnsignedTorus;
     use crate::commons::test_tools::new_secret_random_generator;
-    use concrete_commons::dispersion::StandardDev;
-    use concrete_commons::parameters::{
-        DecompositionBaseLog, DecompositionLevelCount, LweDimension,
+    use crate::prelude::{
+        DecompositionBaseLog, DecompositionLevelCount, LweDimension, StandardDev,
     };
     use concrete_csprng::generators::SoftwareRandomGenerator;
     use concrete_csprng::seeders::Seed;

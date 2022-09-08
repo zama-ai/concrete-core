@@ -1,7 +1,6 @@
 use crate::commons::crypto::encoding::FloatEncoder;
 use crate::prelude::markers::EncoderVectorKind;
-use crate::prelude::{AbstractEntity, EncoderVectorEntity};
-use concrete_commons::parameters::EncoderCount;
+use crate::prelude::{AbstractEntity, EncoderCount, EncoderVectorEntity};
 #[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 

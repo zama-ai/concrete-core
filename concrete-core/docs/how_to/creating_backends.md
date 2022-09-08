@@ -205,7 +205,7 @@ Now, we can actually implement the entity trait:
 ```rust
 use std::fmt::Debug;
 
-use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
+use concrete_core::prelude::{LweCiphertextCount, LweDimension};
 
 use crate::backends::cuda::private::crypto::lwe::list::GpuLweList;
 use crate::specification::entities::markers::{BinaryKeyDistribution, LweCiphertextVectorKind};
@@ -409,8 +409,8 @@ for GpuEngine
 Now, a user is able to write:
 
 ```rust
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
+use concrete_core::prelude::Variance;
+use concrete_core::prelude::{LweCiphertextCount, LweDimension};
 use concrete_core::prelude::*;
 
 // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.

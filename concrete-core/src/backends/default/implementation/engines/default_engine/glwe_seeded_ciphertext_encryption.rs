@@ -6,11 +6,11 @@ use crate::backends::default::entities::{
 };
 use crate::commons::crypto::glwe::GlweSeededCiphertext as ImplGlweSeededCiphertext;
 use crate::commons::math::random::{CompressionSeed, Seeder};
+use crate::prelude::Variance;
 use crate::specification::engines::{
     GlweSeededCiphertextEncryptionEngine, GlweSeededCiphertextEncryptionError,
 };
 use crate::specification::entities::GlweSecretKeyEntity;
-use concrete_commons::dispersion::Variance;
 
 /// # Description:
 /// Implementation of [`GlweSeededCiphertextEncryptionEngine`] for [`DefaultEngine`] that operates
@@ -21,9 +21,7 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweDimension, PolynomialSize, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -99,9 +97,7 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{GlweDimension, PolynomialSize, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

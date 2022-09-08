@@ -12,15 +12,12 @@ use crate::generation::{
     TernaryKeyDistribution,
 };
 use crate::raw::statistical_test::assert_delta_std_dev;
-use concrete_commons::dispersion::{DispersionParameter, LogStandardDev, Variance};
-use concrete_commons::key_kinds::{BinaryKeyKind, GaussianKeyKind, TernaryKeyKind};
-use concrete_commons::numeric::{Numeric, UnsignedInteger};
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-};
+use concrete_core::commons::numeric::{Numeric, UnsignedInteger};
 use concrete_core::prelude::{
-    GlweCiphertextEntity, LweBootstrapKeyEntity, LweCiphertextDiscardingBootstrapEngine,
-    LweCiphertextEntity,
+    BinaryKeyKind, DecompositionBaseLog, DecompositionLevelCount, DispersionParameter,
+    GaussianKeyKind, GlweCiphertextEntity, GlweDimension, LogStandardDev, LweBootstrapKeyEntity,
+    LweCiphertextDiscardingBootstrapEngine, LweCiphertextEntity, LweDimension, PolynomialSize,
+    TernaryKeyKind, Variance,
 };
 use std::any::TypeId;
 

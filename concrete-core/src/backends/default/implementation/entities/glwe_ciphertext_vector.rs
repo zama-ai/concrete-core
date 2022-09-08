@@ -1,7 +1,7 @@
 use crate::commons::crypto::glwe::GlweList as ImplGlweList;
+use crate::prelude::{GlweCiphertextCount, GlweDimension, PolynomialSize};
 use crate::specification::entities::markers::GlweCiphertextVectorKind;
 use crate::specification::entities::{AbstractEntity, GlweCiphertextVectorEntity};
-use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
 #[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 

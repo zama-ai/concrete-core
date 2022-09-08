@@ -5,12 +5,12 @@ use crate::backends::default::entities::{
     LweSeededCiphertextVector64,
 };
 use crate::commons::crypto::lwe::LweList as ImplLweList;
+use crate::prelude::CiphertextCount;
 use crate::specification::engines::{
     LweSeededCiphertextVectorToLweCiphertextVectorTransformationEngine,
     LweSeededCiphertextVectorToLweCiphertextVectorTransformationError,
 };
 use crate::specification::entities::LweSeededCiphertextVectorEntity;
-use concrete_commons::parameters::CiphertextCount;
 
 /// # Description:
 /// Implementation of [`LweSeededCiphertextVectorToLweCiphertextVectorTransformationEngine`] for
@@ -23,9 +23,7 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -97,9 +95,7 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

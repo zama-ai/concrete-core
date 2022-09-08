@@ -4,7 +4,7 @@ use std::fmt::{Display, Formatter};
 
 use crate::backends::fftw::private::crypto::bootstrap::FourierBuffers;
 use crate::backends::fftw::private::math::fft::ALLOWED_POLY_SIZE;
-use concrete_commons::parameters::{GlweSize, PolynomialSize};
+use crate::prelude::{GlweSize, PolynomialSize};
 
 use crate::specification::engines::sealed::AbstractEngineSeal;
 use crate::specification::engines::AbstractEngine;

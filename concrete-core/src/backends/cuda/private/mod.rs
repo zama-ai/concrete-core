@@ -1,5 +1,5 @@
 use crate::backends::cuda::private::device::{GpuIndex, NumberOfGpus, NumberOfSamples};
-use concrete_commons::parameters::CiphertextCount;
+use crate::prelude::CiphertextCount;
 use std::cmp::min;
 
 pub mod crypto;

@@ -6,10 +6,11 @@ use crate::generation::synthesizing::SynthesizesLweCiphertext;
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
-use concrete_commons::dispersion::{DispersionParameter, LogStandardDev, Variance};
-use concrete_commons::numeric::{Numeric, UnsignedInteger};
-use concrete_commons::parameters::LweDimension;
-use concrete_core::prelude::{LweCiphertextEntity, LweCiphertextFusingSubtractionEngine};
+use concrete_core::commons::numeric::{Numeric, UnsignedInteger};
+use concrete_core::prelude::{
+    DispersionParameter, LogStandardDev, LweCiphertextEntity, LweCiphertextFusingSubtractionEngine,
+    LweDimension, Variance,
+};
 
 /// A fixture for the types implementing the `LweCiphertextFusingSubtractionEngine`
 /// trait.

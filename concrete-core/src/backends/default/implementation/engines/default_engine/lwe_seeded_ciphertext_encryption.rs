@@ -6,11 +6,11 @@ use crate::backends::default::entities::{
 };
 use crate::commons::crypto::lwe::LweSeededCiphertext as ImplLweSeededCiphertext;
 use crate::commons::math::random::{CompressionSeed, Seeder};
+use crate::prelude::Variance;
 use crate::specification::engines::{
     LweSeededCiphertextEncryptionEngine, LweSeededCiphertextEncryptionError,
 };
 use crate::specification::entities::LweSecretKeyEntity;
-use concrete_commons::dispersion::Variance;
 
 /// # Description:
 /// Implementation of [`LweSeededCiphertextEncryptionEngine`] for [`DefaultEngine`] that operates
@@ -20,9 +20,7 @@ impl LweSeededCiphertextEncryptionEngine<LweSecretKey32, Plaintext32, LweSeededC
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::LweDimension;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -88,9 +86,7 @@ impl LweSeededCiphertextEncryptionEngine<LweSecretKey64, Plaintext64, LweSeededC
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::LweDimension;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

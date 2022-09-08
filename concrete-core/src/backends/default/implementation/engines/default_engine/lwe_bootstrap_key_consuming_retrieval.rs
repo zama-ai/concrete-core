@@ -11,10 +11,10 @@ use crate::specification::engines::{
 impl LweBootstrapKeyConsumingRetrievalEngine<LweBootstrapKey32, Vec<u32>> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -65,10 +65,10 @@ impl LweBootstrapKeyConsumingRetrievalEngine<LweBootstrapKey32, Vec<u32>> for De
 impl LweBootstrapKeyConsumingRetrievalEngine<LweBootstrapKey64, Vec<u64>> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -121,10 +121,10 @@ impl<'data>
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -176,10 +176,10 @@ impl<'data>
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -230,10 +230,10 @@ impl<'data> LweBootstrapKeyConsumingRetrievalEngine<LweBootstrapKeyView32<'data>
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -282,10 +282,10 @@ impl<'data> LweBootstrapKeyConsumingRetrievalEngine<LweBootstrapKeyView64<'data>
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

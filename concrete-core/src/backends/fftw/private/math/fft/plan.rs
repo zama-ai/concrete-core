@@ -1,5 +1,5 @@
 use crate::backends::fftw::private::math::fft::{Complex64, ALLOWED_POLY_SIZE};
-use concrete_commons::parameters::PolynomialSize;
+use crate::prelude::PolynomialSize;
 use concrete_fftw::plan::{C2CPlan, C2CPlan64};
 use concrete_fftw::types::{Flag, Sign};
 use lazy_static::lazy_static;

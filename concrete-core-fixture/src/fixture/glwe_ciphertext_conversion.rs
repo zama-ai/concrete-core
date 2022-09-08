@@ -1,6 +1,6 @@
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{GlweDimension, PolynomialSize};
-use concrete_core::prelude::{GlweCiphertextConversionEngine, GlweCiphertextEntity};
+use concrete_core::prelude::{
+    GlweCiphertextConversionEngine, GlweCiphertextEntity, GlweDimension, PolynomialSize, Variance,
+};
 
 use crate::fixture::Fixture;
 use crate::generation::prototyping::{

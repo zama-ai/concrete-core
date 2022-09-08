@@ -1,8 +1,8 @@
 #[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
 
-use concrete_commons::numeric::Numeric;
-use concrete_commons::parameters::{LweDimension, LweSize};
+use crate::commons::numeric::Numeric;
+use crate::prelude::{LweDimension, LweSize};
 
 use crate::commons::math::random::{
     ByteRandomGenerator, CompressionSeed, RandomGenerable, RandomGenerator, Uniform,
@@ -26,9 +26,9 @@ impl<Scalar: Numeric> LweSeededCiphertext<Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{LweDimension, LweSize};
     /// use concrete_core::commons::crypto::lwe::{LweBody, LweSeededCiphertext};
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{LweDimension, LweSize};
     ///
     /// let compression_seed = CompressionSeed { seed: Seed(42) };
     ///
@@ -46,9 +46,9 @@ impl<Scalar: Numeric> LweSeededCiphertext<Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{LweDimension, LweSize};
     /// use concrete_core::commons::crypto::lwe::{LweBody, LweSeededCiphertext};
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{LweDimension, LweSize};
     ///
     /// let compression_seed = CompressionSeed { seed: Seed(42) };
     ///
@@ -70,9 +70,9 @@ impl<Scalar: Numeric> LweSeededCiphertext<Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{LweDimension, LweSize};
     /// use concrete_core::commons::crypto::lwe::LweSeededCiphertext;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{LweDimension, LweSize};
     ///
     /// let compression_seed = CompressionSeed { seed: Seed(42) };
     ///
@@ -88,9 +88,9 @@ impl<Scalar: Numeric> LweSeededCiphertext<Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::LweDimension;
     /// use concrete_core::commons::crypto::lwe::{LweBody, LweSeededCiphertext};
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::LweDimension;
     ///
     /// let compression_seed = CompressionSeed { seed: Seed(42) };
     ///
@@ -107,9 +107,9 @@ impl<Scalar: Numeric> LweSeededCiphertext<Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::LweDimension;
     /// use concrete_core::commons::crypto::lwe::{LweBody, LweSeededCiphertext};
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::LweDimension;
     ///
     /// let compression_seed = CompressionSeed { seed: Seed(42) };
     ///
@@ -129,9 +129,9 @@ impl<Scalar: Numeric> LweSeededCiphertext<Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::LweDimension;
     /// use concrete_core::commons::crypto::lwe::{LweBody, LweSeededCiphertext};
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::LweDimension;
     ///
     /// let compression_seed = CompressionSeed { seed: Seed(42) };
     ///
@@ -147,9 +147,9 @@ impl<Scalar: Numeric> LweSeededCiphertext<Scalar> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{LweDimension, LweSize};
     /// use concrete_core::commons::crypto::lwe::{LweBody, LweCiphertext, LweSeededCiphertext};
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{LweDimension, LweSize};
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     ///
     /// let compression_seed = CompressionSeed { seed: Seed(42) };

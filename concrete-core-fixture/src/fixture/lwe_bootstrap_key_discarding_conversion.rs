@@ -4,11 +4,11 @@ use crate::generation::prototyping::{
 };
 use crate::generation::synthesizing::SynthesizesLweBootstrapKey;
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+use concrete_core::prelude::{
+    DecompositionBaseLog, DecompositionLevelCount, GlweDimension,
+    LweBootstrapKeyDiscardingConversionEngine, LweBootstrapKeyEntity, LweDimension, PolynomialSize,
+    Variance,
 };
-use concrete_core::prelude::{LweBootstrapKeyDiscardingConversionEngine, LweBootstrapKeyEntity};
 
 /// A fixture for the types implementing the `LweBootstrapKeyDiscardingConversionEngine` trait.
 pub struct LweSecretKeyDiscardingConversionFixture;

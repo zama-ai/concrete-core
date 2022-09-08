@@ -1,10 +1,10 @@
 use crate::commons::crypto::ggsw::StandardGgswSeededCiphertext as ImplStandardGgswSeededCiphertext;
 use crate::commons::math::random::CompressionSeed;
-use crate::specification::entities::markers::GgswSeededCiphertextKind;
-use crate::specification::entities::{AbstractEntity, GgswSeededCiphertextEntity};
-use concrete_commons::parameters::{
+use crate::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
 };
+use crate::specification::entities::markers::GgswSeededCiphertextKind;
+use crate::specification::entities::{AbstractEntity, GgswSeededCiphertextEntity};
 #[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 

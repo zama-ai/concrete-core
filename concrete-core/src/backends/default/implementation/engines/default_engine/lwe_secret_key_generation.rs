@@ -1,4 +1,4 @@
-use concrete_commons::parameters::LweDimension;
+use crate::prelude::LweDimension;
 
 use crate::backends::default::implementation::engines::DefaultEngine;
 use crate::backends::default::implementation::entities::{LweSecretKey32, LweSecretKey64};
@@ -11,8 +11,7 @@ use crate::specification::engines::{LweSecretKeyGenerationEngine, LweSecretKeyGe
 impl LweSecretKeyGenerationEngine<LweSecretKey32> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweDimension;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -55,8 +54,7 @@ impl LweSecretKeyGenerationEngine<LweSecretKey32> for DefaultEngine {
 impl LweSecretKeyGenerationEngine<LweSecretKey64> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweDimension;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

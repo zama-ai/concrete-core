@@ -1,7 +1,7 @@
 use super::engine_error;
+use crate::prelude::Variance;
 use crate::specification::engines::AbstractEngine;
 use crate::specification::entities::{GgswCiphertextEntity, GlweSecretKeyEntity, PlaintextEntity};
-use concrete_commons::dispersion::Variance;
 
 engine_error! {
     GgswCiphertextScalarDiscardingEncryptionError for GgswCiphertextScalarDiscardingEncryptionEngine @

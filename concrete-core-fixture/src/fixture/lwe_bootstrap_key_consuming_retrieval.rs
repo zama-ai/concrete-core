@@ -3,7 +3,7 @@ use crate::generation::prototyping::{PrototypesContainer, PrototypesLweBootstrap
 use crate::generation::synthesizing::{SynthesizesContainer, SynthesizesLweBootstrapKey};
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use crate::raw::generation::RawUnsignedIntegers;
-use concrete_commons::parameters::{
+use concrete_core::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
 };
 

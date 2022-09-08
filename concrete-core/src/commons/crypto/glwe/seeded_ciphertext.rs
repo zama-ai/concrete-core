@@ -1,5 +1,5 @@
-use concrete_commons::numeric::Numeric;
-use concrete_commons::parameters::{GlweDimension, GlweSize, PolynomialSize};
+use crate::commons::numeric::Numeric;
+use crate::prelude::{GlweDimension, GlweSize, PolynomialSize};
 #[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
 
@@ -31,9 +31,9 @@ impl<Scalar> GlweSeededCiphertext<Vec<Scalar>> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{GlweDimension, GlweSize, PolynomialSize};
     /// use concrete_core::commons::crypto::glwe::GlweSeededCiphertext;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{GlweDimension, GlweSize, PolynomialSize};
     ///
     /// let polynomial_size = PolynomialSize(10);
     /// let glwe_dimension = GlweDimension(99);
@@ -76,10 +76,10 @@ impl<Cont> GlweSeededCiphertext<Cont> {
     /// represent a valid glwe body.
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{GlweDimension, GlweSize, PolynomialSize};
     /// use concrete_core::commons::crypto::glwe::{GlweBody, GlweSeededCiphertext};
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
     /// use concrete_core::commons::math::tensor::{AsRefSlice, AsRefTensor, Tensor};
+    /// use concrete_core::prelude::{GlweDimension, GlweSize, PolynomialSize};
     ///
     /// let polynomial_size = PolynomialSize(10);
     /// let glwe_dimension = GlweDimension(99);
@@ -116,9 +116,9 @@ impl<Cont> GlweSeededCiphertext<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{GlweDimension, GlweSize, PolynomialSize};
     /// use concrete_core::commons::crypto::glwe::GlweSeededCiphertext;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{GlweDimension, GlweSize, PolynomialSize};
     ///
     /// let polynomial_size = PolynomialSize(10);
     /// let glwe_dimension = GlweDimension(99);
@@ -141,9 +141,9 @@ impl<Cont> GlweSeededCiphertext<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{GlweDimension, GlweSize, PolynomialSize};
     /// use concrete_core::commons::crypto::glwe::GlweSeededCiphertext;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{GlweDimension, GlweSize, PolynomialSize};
     ///
     /// let polynomial_size = PolynomialSize(10);
     /// let glwe_dimension = GlweDimension(99);
@@ -166,9 +166,9 @@ impl<Cont> GlweSeededCiphertext<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{GlweDimension, GlweSize, PolynomialSize};
     /// use concrete_core::commons::crypto::glwe::GlweSeededCiphertext;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{GlweDimension, GlweSize, PolynomialSize};
     ///
     /// let polynomial_size = PolynomialSize(10);
     /// let glwe_dimension = GlweDimension(99);
@@ -192,9 +192,9 @@ impl<Cont> GlweSeededCiphertext<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{GlweDimension, GlweSize, PolynomialSize};
     /// use concrete_core::commons::crypto::glwe::GlweSeededCiphertext;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{GlweDimension, GlweSize, PolynomialSize};
     ///
     /// let polynomial_size = PolynomialSize(10);
     /// let glwe_dimension = GlweDimension(99);
@@ -217,10 +217,10 @@ impl<Cont> GlweSeededCiphertext<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{GlweDimension, GlweSize, PolynomialSize};
     /// use concrete_core::commons::crypto::glwe::{GlweBody, GlweSeededCiphertext};
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
     /// use concrete_core::commons::math::tensor::{AsRefSlice, AsRefTensor, Tensor};
+    /// use concrete_core::prelude::{GlweDimension, GlweSize, PolynomialSize};
     ///
     /// let polynomial_size = PolynomialSize(10);
     /// let glwe_dimension = GlweDimension(99);
@@ -253,12 +253,12 @@ impl<Cont> GlweSeededCiphertext<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{GlweDimension, GlweSize, PolynomialSize};
     /// use concrete_core::commons::crypto::glwe::{GlweBody, GlweSeededCiphertext};
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
     /// use concrete_core::commons::math::tensor::{
     ///     AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
     /// };
+    /// use concrete_core::prelude::{GlweDimension, GlweSize, PolynomialSize};
     ///
     /// let polynomial_size = PolynomialSize(10);
     /// let glwe_dimension = GlweDimension(99);
@@ -324,12 +324,12 @@ impl<Cont> GlweSeededCiphertext<Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::{GlweDimension, GlweSize, PolynomialSize};
     /// use concrete_core::commons::crypto::glwe::{GlweCiphertext, GlweSeededCiphertext};
     /// use concrete_core::commons::crypto::secret::generators::SecretRandomGenerator;
     /// use concrete_core::commons::crypto::secret::*;
     /// use concrete_core::commons::crypto::*;
     /// use concrete_core::commons::math::random::CompressionSeed;
+    /// use concrete_core::prelude::{GlweDimension, GlweSize, PolynomialSize};
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::Seed;
     ///

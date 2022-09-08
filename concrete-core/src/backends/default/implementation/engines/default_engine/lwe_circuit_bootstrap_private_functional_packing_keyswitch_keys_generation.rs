@@ -4,15 +4,14 @@ use crate::backends::default::implementation::entities::{
     LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64, LweSecretKey32, LweSecretKey64,
 };
 use crate::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKeyList as ImplLwePrivateFunctionalPackingKeyswitchKeyList;
+use crate::prelude::{
+    DecompositionBaseLog, DecompositionLevelCount, FunctionalPackingKeyswitchKeyCount, Variance,
+};
 use crate::specification::engines::{
     LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysGenerationEngine,
     LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysGenerationError,
 };
 use crate::specification::entities::{GlweSecretKeyEntity, LweSecretKeyEntity};
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, FunctionalPackingKeyswitchKeyCount,
-};
 
 /// # Description:
 /// Implementation of [`LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysGenerationEngine`]
@@ -26,8 +25,8 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::Variance;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, GlweDimension,FunctionalPackingKeyswitchKeyCount
     /// };
     /// use concrete_core::prelude::*;
@@ -139,8 +138,8 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::Variance;
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, GlweDimension,FunctionalPackingKeyswitchKeyCount
     /// };
     /// use concrete_core::prelude::*;

@@ -10,9 +10,7 @@ impl LweCiphertextTrivialDecryptionEngine<LweCiphertext32, Plaintext32> for Defa
     /// ```
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     ///
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, Variance, *};
     ///
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
     /// let lwe_size = LweSize(10);
@@ -54,9 +52,7 @@ impl LweCiphertextTrivialDecryptionEngine<LweCiphertext64, Plaintext64> for Defa
     /// ```
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     ///
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, Variance, *};
     ///
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
     /// let lwe_size = LweSize(10);

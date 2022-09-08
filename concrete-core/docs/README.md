@@ -51,8 +51,8 @@ homomorphically:
 // This examples shows how to multiply a secret value by a public one homomorphically.
 // First we import the proper symbols:
 
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::LweDimension;
+use concrete_core::prelude::Variance;
+use concrete_core::prelude::LweDimension;
 use concrete_core::prelude::*;
 use std::error::Error;
 

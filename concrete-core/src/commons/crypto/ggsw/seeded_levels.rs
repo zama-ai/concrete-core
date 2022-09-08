@@ -4,7 +4,7 @@ use crate::commons::math::random::CompressionSeed;
 use crate::commons::math::tensor::{
     ck_dim_div, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
-use concrete_commons::parameters::{GlweDimension, GlweSize, PolynomialSize};
+use crate::prelude::{GlweDimension, GlweSize, PolynomialSize};
 #[cfg(feature = "__commons_parallel")]
 use rayon::prelude::*;
 #[cfg(feature = "__commons_serialization")]

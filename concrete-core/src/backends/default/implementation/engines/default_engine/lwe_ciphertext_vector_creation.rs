@@ -5,12 +5,11 @@ use crate::backends::default::implementation::entities::{
 use crate::commons::crypto::lwe::LweList as ImplLweList;
 use crate::prelude::{
     LweCiphertextVector32, LweCiphertextVector64, LweCiphertextVectorMutView32,
-    LweCiphertextVectorView32,
+    LweCiphertextVectorView32, LweSize,
 };
 use crate::specification::engines::{
     LweCiphertextVectorCreationEngine, LweCiphertextVectorCreationError,
 };
-use concrete_commons::parameters::LweSize;
 
 /// # Description:
 /// Implementation of [`LweCiphertextVectorCreationEngine`] for [`DefaultEngine`] which returns a
@@ -163,8 +162,7 @@ impl<'data> LweCiphertextVectorCreationEngine<&'data mut [u32], LweCiphertextVec
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -268,8 +266,7 @@ impl<'data> LweCiphertextVectorCreationEngine<&'data mut [u64], LweCiphertextVec
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::LweSize;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweSize, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

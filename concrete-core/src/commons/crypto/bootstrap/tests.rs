@@ -4,9 +4,9 @@ use crate::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
 use crate::commons::math::random::CompressionSeed;
 use crate::commons::math::torus::UnsignedTorus;
 use crate::commons::test_tools::new_secret_random_generator;
-use concrete_commons::dispersion::StandardDev;
-use concrete_commons::parameters::{
+use crate::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    StandardDev,
 };
 use concrete_csprng::generators::SoftwareRandomGenerator;
 use concrete_csprng::seeders::Seed;
@@ -99,9 +99,9 @@ mod parallel {
     use crate::commons::math::random::CompressionSeed;
     use crate::commons::math::torus::UnsignedTorus;
     use crate::commons::test_tools::{new_secret_random_generator, UnsafeRandSeeder};
-    use concrete_commons::dispersion::StandardDev;
-    use concrete_commons::parameters::{
+    use crate::prelude::{
         DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+        StandardDev,
     };
     use concrete_csprng::generators::SoftwareRandomGenerator;
     use concrete_csprng::seeders::Seed;

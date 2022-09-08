@@ -3,7 +3,7 @@ use crate::commons::math::random::{
 };
 use crate::commons::math::tensor::Tensor;
 use crate::commons::math::torus::UnsignedTorus;
-use concrete_commons::dispersion::DispersionParameter;
+use crate::prelude::DispersionParameter;
 
 /// A random number generator which can be used to generate secret keys.
 pub struct SecretRandomGenerator<G: ByteRandomGenerator>(RandomGenerator<G>);

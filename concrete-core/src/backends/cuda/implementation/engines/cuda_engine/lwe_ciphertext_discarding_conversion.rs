@@ -14,9 +14,7 @@ impl LweCiphertextDiscardingConversionEngine<CudaLweCiphertext32, LweCiphertextM
 {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -81,9 +79,7 @@ impl LweCiphertextDiscardingConversionEngine<CudaLweCiphertext32, LweCiphertextM
 impl LweCiphertextDiscardingConversionEngine<CudaLweCiphertext32, LweCiphertext32> for CudaEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -148,9 +144,7 @@ impl LweCiphertextDiscardingConversionEngine<CudaLweCiphertext32, LweCiphertext3
 impl LweCiphertextDiscardingConversionEngine<LweCiphertext32, CudaLweCiphertext32> for CudaEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -219,9 +213,7 @@ impl LweCiphertextDiscardingConversionEngine<CudaLweCiphertext64, LweCiphertextM
 {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension};
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

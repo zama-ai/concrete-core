@@ -14,7 +14,7 @@
 //! using the [`RandomGenerable`] methods, you should use the various methods exposed by
 //! [`RandomGenerator`] instead.
 use crate::commons::math::tensor::{AsMutTensor, Tensor};
-use concrete_commons::numeric::FloatingPoint;
+use crate::commons::numeric::FloatingPoint;
 
 pub use gaussian::*;
 pub use generator::*;
@@ -70,7 +70,7 @@ where
 /// A marker trait for types representing distributions.
 pub trait Distribution: seal::Sealed + Copy {}
 mod seal {
-    use concrete_commons::numeric::FloatingPoint;
+    use crate::commons::numeric::FloatingPoint;
 
     pub trait Sealed {}
     impl Sealed for super::Uniform {}

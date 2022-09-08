@@ -4,8 +4,7 @@ use crate::commons::crypto::secret::GlweSecretKey;
 use crate::commons::math::random::{CompressionSeed, Seeder};
 use crate::commons::math::torus::UnsignedTorus;
 use crate::commons::test_tools;
-use concrete_commons::dispersion::LogStandardDev;
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, LogStandardDev};
 use concrete_csprng::generators::SoftwareRandomGenerator;
 
 use super::{StandardGgswCiphertext, StandardGgswSeededCiphertext};
@@ -108,8 +107,7 @@ mod parallel {
     use crate::commons::math::random::{CompressionSeed, Seeder};
     use crate::commons::math::torus::UnsignedTorus;
     use crate::commons::test_tools;
-    use concrete_commons::dispersion::LogStandardDev;
-    use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
+    use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, LogStandardDev};
     use concrete_csprng::generators::SoftwareRandomGenerator;
 
     use super::{StandardGgswCiphertext, StandardGgswSeededCiphertext};

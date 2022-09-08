@@ -20,4 +20,4 @@ mod monomial;
 #[allow(clippy::module_inception)]
 mod polynomial;
 
-pub use concrete_commons::parameters::MonomialDegree;
+pub use crate::prelude::MonomialDegree;

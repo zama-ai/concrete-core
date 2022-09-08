@@ -12,12 +12,11 @@ use crate::commons::math::tensor::{
     ck_dim_div, ck_dim_eq, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
 };
 use crate::commons::math::torus::UnsignedTorus;
+use crate::commons::numeric::Numeric;
 use crate::commons::utils::{zip, zip_args};
-use concrete_commons::dispersion::DispersionParameter;
-use concrete_commons::key_kinds::BinaryKeyKind;
-use concrete_commons::numeric::Numeric;
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+use crate::prelude::{
+    BinaryKeyKind, DecompositionBaseLog, DecompositionLevelCount, DispersionParameter, GlweSize,
+    LweDimension, PolynomialSize,
 };
 #[cfg(feature = "__commons_parallel")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
@@ -45,11 +44,11 @@ impl<Scalar> StandardSeededBootstrapKey<Vec<Scalar>> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// let bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
     ///     GlweSize(7),
     ///     PolynomialSize(9),
@@ -99,11 +98,11 @@ impl<Cont> StandardSeededBootstrapKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     ///
     /// let key_size = LweDimension(4);
     /// let decomp_level = DecompositionLevelCount(3);
@@ -162,16 +161,16 @@ impl<Cont> StandardSeededBootstrapKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::dispersion::LogStandardDev;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
     /// use concrete_core::commons::crypto::secret::generators::{
     ///     EncryptionRandomGenerator, SecretRandomGenerator,
     /// };
     /// use concrete_core::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
     /// use concrete_core::commons::math::random::CompressionSeed;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LogStandardDev, LweDimension,
+    ///     PolynomialSize,
+    /// };
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
@@ -252,16 +251,16 @@ impl<Cont> StandardSeededBootstrapKey<Cont> {
     ///
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::LogStandardDev;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
     /// use concrete_core::commons::crypto::secret::generators::{
     ///     EncryptionRandomGenerator, SecretRandomGenerator,
     /// };
     /// use concrete_core::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
     /// use concrete_core::commons::math::random::CompressionSeed;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LogStandardDev, LweDimension,
+    ///     PolynomialSize,
+    /// };
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
@@ -339,11 +338,11 @@ impl<Cont> StandardSeededBootstrapKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// let bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
     ///     GlweSize(7),
     ///     PolynomialSize(9),
@@ -364,11 +363,11 @@ impl<Cont> StandardSeededBootstrapKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// let bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
     ///     GlweSize(7),
     ///     PolynomialSize(9),
@@ -388,11 +387,11 @@ impl<Cont> StandardSeededBootstrapKey<Cont> {
     ///
     /// # Example
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// let bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
     ///     GlweSize(7),
     ///     PolynomialSize(9),
@@ -412,11 +411,11 @@ impl<Cont> StandardSeededBootstrapKey<Cont> {
     ///
     /// # Example
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// let bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
     ///     GlweSize(7),
     ///     PolynomialSize(9),
@@ -436,11 +435,11 @@ impl<Cont> StandardSeededBootstrapKey<Cont> {
     ///
     /// # Example
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// let bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
     ///     GlweSize(7),
     ///     PolynomialSize(9),
@@ -471,11 +470,11 @@ impl<Cont> StandardSeededBootstrapKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// let bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
     ///     GlweSize(7),
     ///     PolynomialSize(9),
@@ -495,11 +494,11 @@ impl<Cont> StandardSeededBootstrapKey<Cont> {
     ///
     /// # Example
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// let bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
     ///     GlweSize(7),
     ///     PolynomialSize(9),
@@ -548,12 +547,12 @@ impl<Cont> StandardSeededBootstrapKey<Cont> {
     ///
     /// # Example
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// use rayon::iter::ParallelIterator;
     /// let mut bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
     ///     GlweSize(7),
@@ -604,12 +603,12 @@ impl<Cont> StandardSeededBootstrapKey<Cont> {
     /// # Example
     /// # Example
     /// ```
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::bootstrap::StandardSeededBootstrapKey;
     /// use concrete_core::commons::math::random::{CompressionSeed, Seed};
     /// use concrete_core::commons::math::tensor::{AsMutTensor, AsRefTensor};
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
+    /// };
     /// use rayon::iter::ParallelIterator;
     /// let mut bsk = StandardSeededBootstrapKey::<Vec<u32>>::allocate(
     ///     GlweSize(7),
@@ -654,11 +653,6 @@ impl<Cont> StandardSeededBootstrapKey<Cont> {
     /// # Example
     ///
     /// ```
-    /// use concrete_commons::dispersion::LogStandardDev;
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize, LweDimension,
-    ///     PolynomialSize,
-    /// };
     /// use concrete_core::commons::crypto::bootstrap::{
     ///     StandardBootstrapKey, StandardSeededBootstrapKey,
     /// };
@@ -667,6 +661,10 @@ impl<Cont> StandardSeededBootstrapKey<Cont> {
     /// };
     /// use concrete_core::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
     /// use concrete_core::commons::math::random::CompressionSeed;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, GlweSize, LogStandardDev,
+    ///     LweDimension, PolynomialSize,
+    /// };
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));

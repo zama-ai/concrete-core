@@ -1,8 +1,8 @@
 use crate::prelude::markers::LwePrivateFunctionalPackingKeyswitchKeyKind;
-use crate::specification::entities::AbstractEntity;
-use concrete_commons::parameters::{
+use crate::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
 };
+use crate::specification::entities::AbstractEntity;
 
 /// A trait implemented by types embodying a private functional packing keyswitch key.
 ///

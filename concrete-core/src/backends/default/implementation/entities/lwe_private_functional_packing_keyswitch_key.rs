@@ -1,10 +1,10 @@
 use crate::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKey as ImplLwePrivateFunctionalPackingKeyswitchKey;
 use crate::prelude::markers::LwePrivateFunctionalPackingKeyswitchKeyKind;
-use crate::prelude::LwePrivateFunctionalPackingKeyswitchKeyEntity;
-use crate::specification::entities::AbstractEntity;
-use concrete_commons::parameters::{
+use crate::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension,
+    LwePrivateFunctionalPackingKeyswitchKeyEntity,
 };
+use crate::specification::entities::AbstractEntity;
 #[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 
@@ -25,7 +25,7 @@ impl LwePrivateFunctionalPackingKeyswitchKeyEntity for LwePrivateFunctionalPacki
         self.0.output_glwe_key_dimension()
     }
 
-    fn output_polynomial_size(&self) -> concrete_commons::parameters::PolynomialSize {
+    fn output_polynomial_size(&self) -> crate::prelude::PolynomialSize {
         self.0.output_polynomial_size()
     }
 
@@ -63,7 +63,7 @@ impl LwePrivateFunctionalPackingKeyswitchKeyEntity for LwePrivateFunctionalPacki
         self.0.output_glwe_key_dimension()
     }
 
-    fn output_polynomial_size(&self) -> concrete_commons::parameters::PolynomialSize {
+    fn output_polynomial_size(&self) -> crate::prelude::PolynomialSize {
         self.0.output_polynomial_size()
     }
 

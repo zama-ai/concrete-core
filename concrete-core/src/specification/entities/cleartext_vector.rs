@@ -1,6 +1,6 @@
+use crate::prelude::CleartextCount;
 use crate::specification::entities::markers::CleartextVectorKind;
 use crate::specification::entities::AbstractEntity;
-use concrete_commons::parameters::CleartextCount;
 
 /// A trait implemented by types embodying a cleartext vector entity.
 ///

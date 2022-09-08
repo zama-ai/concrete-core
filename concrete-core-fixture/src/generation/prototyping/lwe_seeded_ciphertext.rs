@@ -8,9 +8,9 @@ use crate::generation::prototyping::plaintext::PrototypesPlaintext;
 use crate::generation::{
     BinaryKeyDistribution, IntegerPrecision, KeyDistributionMarker, Maker, Precision32, Precision64,
 };
-use concrete_commons::dispersion::Variance;
 use concrete_core::prelude::{
     LweSeededCiphertextEncryptionEngine, LweSeededCiphertextToLweCiphertextTransformationEngine,
+    Variance,
 };
 
 /// A trait allowing to manipulate LWE ciphertext prototypes.

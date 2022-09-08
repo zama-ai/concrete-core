@@ -13,12 +13,11 @@ use crate::commons::math::tensor::{
     ck_dim_eq, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, IntoTensor, Tensor,
 };
 use crate::commons::math::torus::UnsignedTorus;
-use concrete_commons::dispersion::DispersionParameter;
-use concrete_commons::key_kinds::{
-    BinaryKeyKind, GaussianKeyKind, KeyKind, TernaryKeyKind, UniformKeyKind,
+use crate::commons::numeric::Numeric;
+use crate::prelude::{
+    BinaryKeyKind, DispersionParameter, GaussianKeyKind, KeyKind, LweDimension, TernaryKeyKind,
+    UniformKeyKind,
 };
-use concrete_commons::numeric::Numeric;
-use concrete_commons::parameters::LweDimension;
 #[cfg(feature = "__commons_parallel")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
 #[cfg(feature = "__commons_serialization")]
@@ -46,10 +45,10 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::LweDimension;
     /// use concrete_core::commons::crypto::secret::generators::SecretRandomGenerator;
     /// use concrete_core::commons::crypto::secret::*;
     /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::LweDimension;
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::Seed;
     /// let mut generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
@@ -78,10 +77,10 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::LweDimension;
     /// use concrete_core::commons::crypto::secret::generators::SecretRandomGenerator;
     /// use concrete_core::commons::crypto::secret::*;
     /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::LweDimension;
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::Seed;
     /// let mut generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
@@ -111,10 +110,10 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::LweDimension;
     /// use concrete_core::commons::crypto::secret::generators::SecretRandomGenerator;
     /// use concrete_core::commons::crypto::secret::*;
     /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::LweDimension;
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::Seed;
     /// let mut generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
@@ -143,10 +142,10 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::LweDimension;
     /// use concrete_core::commons::crypto::secret::generators::SecretRandomGenerator;
     /// use concrete_core::commons::crypto::secret::*;
     /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::LweDimension;
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::Seed;
     /// let mut generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
@@ -177,9 +176,9 @@ impl<Cont> LweSecretKey<BinaryKeyKind, Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::LweDimension;
     /// use concrete_core::commons::crypto::secret::*;
     /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::LweDimension;
     /// let secret_key = LweSecretKey::binary_from_container(vec![true; 256]);
     /// assert_eq!(secret_key.key_size(), LweDimension(256));
     /// ```
@@ -206,9 +205,9 @@ impl<Cont> LweSecretKey<TernaryKeyKind, Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::LweDimension;
     /// use concrete_core::commons::crypto::secret::*;
     /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::LweDimension;
     /// let secret_key = LweSecretKey::ternary_from_container(vec![true; 256]);
     /// assert_eq!(secret_key.key_size(), LweDimension(256));
     /// ```
@@ -235,9 +234,9 @@ impl<Cont> LweSecretKey<GaussianKeyKind, Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::LweDimension;
     /// use concrete_core::commons::crypto::secret::*;
     /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::LweDimension;
     /// let secret_key = LweSecretKey::gaussian_from_container(vec![true; 256]);
     /// assert_eq!(secret_key.key_size(), LweDimension(256));
     /// ```
@@ -264,9 +263,9 @@ impl<Cont> LweSecretKey<UniformKeyKind, Cont> {
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::LweDimension;
     /// use concrete_core::commons::crypto::secret::*;
     /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::LweDimension;
     /// let secret_key = LweSecretKey::uniform_from_container(vec![true; 256]);
     /// assert_eq!(secret_key.key_size(), LweDimension(256));
     /// ```
@@ -290,9 +289,9 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::parameters::LweDimension;
     /// use concrete_core::commons::crypto::secret::*;
     /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::LweDimension;
     /// let secret_key = LweSecretKey::binary_from_container(vec![true; 256]);
     /// assert_eq!(secret_key.key_size(), LweDimension(256));
     /// ```
@@ -336,8 +335,6 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::dispersion::LogStandardDev;
-    /// use concrete_commons::parameters::{LweDimension, LweSize};
     /// use concrete_core::commons::crypto::encoding::*;
     /// use concrete_core::commons::crypto::lwe::*;
     /// use concrete_core::commons::crypto::secret::generators::{
@@ -345,6 +342,7 @@ where
     /// };
     /// use concrete_core::commons::crypto::secret::*;
     /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::{LogStandardDev, LweDimension, LweSize};
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
@@ -397,14 +395,13 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::dispersion::LogStandardDev;
-    /// use concrete_commons::parameters::{LweDimension, LweSize};
     /// use concrete_core::commons::crypto::encoding::*;
     /// use concrete_core::commons::crypto::lwe::*;
     /// use concrete_core::commons::crypto::secret::generators::SecretRandomGenerator;
     /// use concrete_core::commons::crypto::secret::*;
     /// use concrete_core::commons::crypto::*;
     /// use concrete_core::commons::math::random::CompressionSeed;
+    /// use concrete_core::prelude::{LogStandardDev, LweDimension, LweSize};
     ///
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::{Seed, Seeder, UnixSeeder};
@@ -483,10 +480,6 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::dispersion::LogStandardDev;
-    /// use concrete_commons::parameters::{
-    ///     CiphertextCount, CleartextCount, LweDimension, LweSize, PlaintextCount,
-    /// };
     /// use concrete_core::commons::crypto::encoding::*;
     /// use concrete_core::commons::crypto::lwe::*;
     /// use concrete_core::commons::crypto::secret::generators::{
@@ -494,6 +487,9 @@ where
     /// };
     /// use concrete_core::commons::crypto::secret::*;
     /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::prelude::{
+    ///     CiphertextCount, CleartextCount, LogStandardDev, LweDimension, LweSize, PlaintextCount,
+    /// };
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
@@ -593,8 +589,7 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use concrete_commons::dispersion::LogStandardDev;
-    /// use concrete_commons::parameters::{CiphertextCount, LweDimension, PlaintextCount};
+    /// use concrete_core::prelude::{CiphertextCount, LogStandardDev, LweDimension, PlaintextCount};
     ///
     /// use concrete_core::commons::crypto::encoding::*;
     /// use concrete_core::commons::crypto::lwe::*;
@@ -712,17 +707,17 @@ where
     /// # Examples
     ///
     /// ```rust
-    /// use concrete_commons::dispersion::LogStandardDev;
+    /// use concrete_core::prelude::LogStandardDev;
     ///
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, LweSize,
-    /// };
     /// use concrete_core::commons::crypto::encoding::Plaintext;
     /// use concrete_core::commons::crypto::gsw::GswCiphertext;
     /// use concrete_core::commons::crypto::secret::generators::{
     ///     EncryptionRandomGenerator, SecretRandomGenerator,
     /// };
     /// use concrete_core::commons::crypto::secret::LweSecretKey;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, LweSize,
+    /// };
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
@@ -808,17 +803,17 @@ where
     /// # Examples
     ///
     /// ```rust
-    /// use concrete_commons::dispersion::LogStandardDev;
+    /// use concrete_core::prelude::LogStandardDev;
     ///
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, LweSize,
-    /// };
     /// use concrete_core::commons::crypto::encoding::Plaintext;
     /// use concrete_core::commons::crypto::gsw::GswCiphertext;
     /// use concrete_core::commons::crypto::secret::generators::{
     ///     EncryptionRandomGenerator, SecretRandomGenerator,
     /// };
     /// use concrete_core::commons::crypto::secret::LweSecretKey;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, LweSize,
+    /// };
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///
@@ -906,17 +901,17 @@ where
     /// # Examples
     ///
     /// ```rust
-    /// use concrete_commons::dispersion::LogStandardDev;
+    /// use concrete_core::prelude::LogStandardDev;
     ///
-    /// use concrete_commons::parameters::{
-    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, LweSize,
-    /// };
     /// use concrete_core::commons::crypto::encoding::Plaintext;
     /// use concrete_core::commons::crypto::gsw::GswCiphertext;
     /// use concrete_core::commons::crypto::secret::generators::{
     ///     EncryptionRandomGenerator, SecretRandomGenerator,
     /// };
     /// use concrete_core::commons::crypto::secret::LweSecretKey;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, LweDimension, LweSize,
+    /// };
     /// use concrete_csprng::generators::SoftwareRandomGenerator;
     /// use concrete_csprng::seeders::{Seed, UnixSeeder};
     ///

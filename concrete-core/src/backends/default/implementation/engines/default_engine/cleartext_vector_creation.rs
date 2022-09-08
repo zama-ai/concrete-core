@@ -10,8 +10,7 @@ use crate::specification::engines::{CleartextVectorCreationEngine, CleartextVect
 impl CleartextVectorCreationEngine<u32, CleartextVector32> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::CleartextCount;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{CleartextCount, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -50,8 +49,7 @@ impl CleartextVectorCreationEngine<u32, CleartextVector32> for DefaultEngine {
 impl CleartextVectorCreationEngine<u64, CleartextVector64> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::CleartextCount;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{CleartextCount, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -90,8 +88,7 @@ impl CleartextVectorCreationEngine<u64, CleartextVector64> for DefaultEngine {
 impl CleartextVectorCreationEngine<f64, CleartextVectorF64> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::parameters::CleartextCount;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{CleartextCount, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

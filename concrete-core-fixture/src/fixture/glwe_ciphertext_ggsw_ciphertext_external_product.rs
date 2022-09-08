@@ -10,14 +10,12 @@ use crate::generation::{
 };
 use crate::raw::generation::RawUnsignedIntegers;
 use crate::raw::statistical_test::assert_noise_distribution;
-use concrete_commons::dispersion::{DispersionParameter, LogStandardDev, Variance};
-use concrete_commons::key_kinds::{BinaryKeyKind, GaussianKeyKind, TernaryKeyKind};
-use concrete_commons::numeric::UnsignedInteger;
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
-};
+use concrete_core::commons::numeric::UnsignedInteger;
 use concrete_core::prelude::{
-    GgswCiphertextEntity, GlweCiphertextEntity, GlweCiphertextGgswCiphertextExternalProductEngine,
+    BinaryKeyKind, DecompositionBaseLog, DecompositionLevelCount, DispersionParameter,
+    GaussianKeyKind, GgswCiphertextEntity, GlweCiphertextEntity,
+    GlweCiphertextGgswCiphertextExternalProductEngine, GlweDimension, LogStandardDev,
+    PolynomialSize, TernaryKeyKind, Variance,
 };
 use std::any::TypeId;
 

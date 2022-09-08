@@ -1,6 +1,4 @@
-use concrete_commons::parameters::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize,
-};
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize};
 
 use crate::specification::engines::{engine_error, AbstractEngine};
 use crate::specification::entities::{GgswCiphertextEntity, PlaintextEntity};

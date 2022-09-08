@@ -1,4 +1,4 @@
-use concrete_commons::parameters::PolynomialSize;
+use crate::prelude::PolynomialSize;
 use dyn_stack::DynStack;
 
 use crate::specification::engines::sealed::AbstractEngineSeal;

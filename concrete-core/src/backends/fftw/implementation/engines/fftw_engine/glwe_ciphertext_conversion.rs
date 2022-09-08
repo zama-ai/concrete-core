@@ -21,11 +21,10 @@ impl From<FftwError> for GlweCiphertextConversionError<FftwError> {
 impl GlweCiphertextConversionEngine<GlweCiphertext32, FftwFourierGlweCiphertext32> for FftwEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -91,11 +90,10 @@ impl GlweCiphertextConversionEngine<GlweCiphertext32, FftwFourierGlweCiphertext3
 impl GlweCiphertextConversionEngine<GlweCiphertext64, FftwFourierGlweCiphertext64> for FftwEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -177,11 +175,10 @@ where
 impl GlweCiphertextConversionEngine<FftwFourierGlweCiphertext32, GlweCiphertext32> for FftwEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -254,11 +251,10 @@ impl GlweCiphertextConversionEngine<FftwFourierGlweCiphertext32, GlweCiphertext3
 impl GlweCiphertextConversionEngine<FftwFourierGlweCiphertext64, GlweCiphertext64> for FftwEngine {
     /// # Example
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{
+    /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

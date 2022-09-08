@@ -1,6 +1,6 @@
 use crate::backends::cuda::private::vec::CudaVec;
-use concrete_commons::numeric::UnsignedInteger;
-use concrete_commons::parameters::{GlweCiphertextCount, GlweDimension, PolynomialSize};
+use crate::commons::numeric::UnsignedInteger;
+use crate::prelude::{GlweCiphertextCount, GlweDimension, PolynomialSize};
 
 /// An array of GLWE ciphertexts in the GPU.
 ///

@@ -2,9 +2,8 @@ use super::engine_error;
 use crate::prelude::{GlweSecretKeyEntity, LwePackingKeyswitchKeyEntity};
 use crate::specification::engines::AbstractEngine;
 
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, Variance};
 use crate::specification::entities::LweSecretKeyEntity;
-use concrete_commons::dispersion::Variance;
-use concrete_commons::parameters::{DecompositionBaseLog, DecompositionLevelCount};
 
 engine_error! {
     LwePackingKeyswitchKeyGenerationError for LwePackingKeyswitchKeyGenerationEngine @

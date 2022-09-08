@@ -1,10 +1,10 @@
 use crate::commons::math::random::CompressionSeed;
 
-use crate::specification::entities::markers::GgswSeededCiphertextKind;
-use crate::specification::entities::AbstractEntity;
-use concrete_commons::parameters::{
+use crate::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, PolynomialSize,
 };
+use crate::specification::entities::markers::GgswSeededCiphertextKind;
+use crate::specification::entities::AbstractEntity;
 
 /// A trait implemented by types embodying a seeded GGSW ciphertext.
 ///

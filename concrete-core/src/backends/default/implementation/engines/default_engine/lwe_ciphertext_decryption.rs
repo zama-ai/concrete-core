@@ -12,9 +12,7 @@ use crate::specification::engines::{LweCiphertextDecryptionEngine, LweCiphertext
 impl LweCiphertextDecryptionEngine<LweSecretKey32, LweCiphertext32, Plaintext32> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::LweDimension;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -63,9 +61,7 @@ impl LweCiphertextDecryptionEngine<LweSecretKey32, LweCiphertext32, Plaintext32>
 impl LweCiphertextDecryptionEngine<LweSecretKey64, LweCiphertext64, Plaintext64> for DefaultEngine {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::LweDimension;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -116,9 +112,7 @@ impl LweCiphertextDecryptionEngine<LweSecretKey32, LweCiphertextView32<'_>, Plai
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::LweDimension;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -178,9 +172,7 @@ impl LweCiphertextDecryptionEngine<LweSecretKey64, LweCiphertextView64<'_>, Plai
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::LweDimension;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{LweDimension, Variance, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {

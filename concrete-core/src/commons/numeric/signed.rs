@@ -1,11 +1,8 @@
+use super::{CastFrom, CastInto, Numeric, UnsignedInteger};
 use std::ops::{
     Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div, DivAssign,
     Mul, MulAssign, Neg, Not, Rem, RemAssign, Shl, ShlAssign, Shr, ShrAssign, Sub, SubAssign,
 };
-
-use crate::numeric::CastInto;
-
-use super::{CastFrom, Numeric, UnsignedInteger};
 
 /// A trait shared by all the unsigned integer types.
 pub trait SignedInteger:

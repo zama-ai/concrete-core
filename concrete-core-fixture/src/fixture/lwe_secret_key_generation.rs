@@ -1,8 +1,7 @@
 use crate::fixture::Fixture;
 use crate::generation::synthesizing::SynthesizesLweSecretKey;
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
-use concrete_commons::parameters::LweDimension;
-use concrete_core::prelude::{LweSecretKeyEntity, LweSecretKeyGenerationEngine};
+use concrete_core::prelude::{LweDimension, LweSecretKeyEntity, LweSecretKeyGenerationEngine};
 
 /// A fixture for the types implementing the `LweSecretKeyGenerationEngine` trait.
 pub struct LweSecretKeyGenerationFixture;
