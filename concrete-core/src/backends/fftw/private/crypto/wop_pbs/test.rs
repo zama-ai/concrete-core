@@ -1,7 +1,7 @@
 use crate::backends::fftw::private::crypto::bootstrap::{FourierBootstrapKey, FourierBuffers};
 use crate::backends::fftw::private::crypto::ggsw::FourierGgswCiphertext;
 use crate::backends::fftw::private::crypto::wop_pbs::{
-    circuit_bootstrap_binary, circuit_bootstrap_binary_vertical_packing,
+    circuit_bootstrap_boolean, circuit_bootstrap_boolean_vertical_packing,
     cmux_tree_memory_optimized, extract_bits,
 };
 use crate::backends::fftw::private::math::fft::Complex64;
@@ -251,7 +251,7 @@ pub fn test_circuit_bootstrapping_binary() {
     );
 
     // Execute the CBS
-    circuit_bootstrap_binary(
+    circuit_bootstrap_boolean(
         &fourier_bsk,
         &lwe_in,
         &mut cbs_res,
@@ -628,7 +628,7 @@ pub fn test_extract_bit_circuit_bootstrapping_vertical_packing() {
         );
 
         // Perform circuit bootstrap + vertical packing
-        circuit_bootstrap_binary_vertical_packing(
+        circuit_bootstrap_boolean_vertical_packing(
             &lut_poly_list,
             &mut buffers,
             &fourier_bsk,
