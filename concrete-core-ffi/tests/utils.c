@@ -68,22 +68,22 @@ SeederBuilder *get_best_seeder_unchecked() {
 
 // This is not part of the C FFI but rather is a C util exposed for convenience in tests.
 int clone_transform_lwe_secret_key_to_glwe_secret_key_u64(DefaultEngine *default_engine,
-                                                          LweSecretKey64 *output_lwe_sk,
+                                                          LweSecretKey64 *input_lwe_sk,
                                                           size_t poly_size,
                                                           GlweSecretKey64 **output_glwe_sk) {
-  LweSecretKey64 *output_lwe_sk_clone = NULL;
-  int lwe_out_sk_clone_ok = clone_lwe_secret_key_u64(output_lwe_sk, &output_lwe_sk_clone);
-  if (lwe_out_sk_clone_ok != 0) {
+  LweSecretKey64 *input_lwe_sk_clone = NULL;
+  int lwe_in_sk_clone_ok = clone_lwe_secret_key_u64(input_lwe_sk, &input_lwe_sk_clone);
+  if (lwe_in_sk_clone_ok != 0) {
     return 1;
   }
 
   int glwe_sk_ok = default_engine_transform_lwe_secret_key_to_glwe_secret_key_u64(
-      default_engine, &output_lwe_sk_clone, poly_size, output_glwe_sk);
+      default_engine, &input_lwe_sk_clone, poly_size, output_glwe_sk);
   if (glwe_sk_ok != 0) {
     return 1;
   }
 
-  if (output_lwe_sk_clone != NULL) {
+  if (input_lwe_sk_clone != NULL) {
     return 1;
   }
 
@@ -92,21 +92,68 @@ int clone_transform_lwe_secret_key_to_glwe_secret_key_u64(DefaultEngine *default
 
 // This is not part of the C FFI but rather is a C util exposed for convenience in tests.
 int clone_transform_lwe_secret_key_to_glwe_secret_key_unchecked_u64(
-    DefaultEngine *default_engine, LweSecretKey64 *output_lwe_sk, size_t poly_size,
+    DefaultEngine *default_engine, LweSecretKey64 *input_lwe_sk, size_t poly_size,
     GlweSecretKey64 **output_glwe_sk) {
-  LweSecretKey64 *output_lwe_sk_clone = NULL;
-  int lwe_out_sk_clone_ok = clone_lwe_secret_key_unchecked_u64(output_lwe_sk, &output_lwe_sk_clone);
-  if (lwe_out_sk_clone_ok != 0) {
+  LweSecretKey64 *input_lwe_sk_clone = NULL;
+  int lwe_in_sk_clone_ok = clone_lwe_secret_key_unchecked_u64(input_lwe_sk, &input_lwe_sk_clone);
+  if (lwe_in_sk_clone_ok != 0) {
     return 1;
   }
 
   int glwe_sk_ok = default_engine_transform_lwe_secret_key_to_glwe_secret_key_unchecked_u64(
-      default_engine, &output_lwe_sk_clone, poly_size, output_glwe_sk);
+      default_engine, &input_lwe_sk_clone, poly_size, output_glwe_sk);
   if (glwe_sk_ok != 0) {
     return 1;
   }
 
-  if (output_lwe_sk_clone != NULL) {
+  if (input_lwe_sk_clone != NULL) {
+    return 1;
+  }
+
+  return 0;
+}
+
+// This is not part of the C FFI but rather is a C util exposed for convenience in tests.
+int clone_transform_glwe_secret_key_to_lwe_secret_key_u64(DefaultEngine *default_engine,
+                                                          GlweSecretKey64 *input_glwe_sk,
+                                                          LweSecretKey64 **output_lwe_sk) {
+  GlweSecretKey64 *input_glwe_sk_clone = NULL;
+  int glwe_in_sk_clone_ok = clone_glwe_secret_key_u64(input_glwe_sk, &input_glwe_sk_clone);
+  if (glwe_in_sk_clone_ok != 0) {
+    return 1;
+  }
+
+  int lwe_sk_ok = default_engine_transform_glwe_secret_key_to_lwe_secret_key_u64(
+      default_engine, &input_glwe_sk_clone, output_lwe_sk);
+  if (lwe_sk_ok != 0) {
+    return 1;
+  }
+
+  if (input_glwe_sk_clone != NULL) {
+    return 1;
+  }
+
+  return 0;
+}
+
+// This is not part of the C FFI but rather is a C util exposed for convenience in tests.
+int clone_transform_glwe_secret_key_to_lwe_secret_key_unchecked_u64(
+    DefaultEngine *default_engine, GlweSecretKey64 *input_glwe_sk,
+    LweSecretKey64 **output_lwe_sk) {
+  GlweSecretKey64 *input_glwe_sk_clone = NULL;
+  int glwe_in_sk_clone_ok = clone_glwe_secret_key_unchecked_u64(input_glwe_sk, 
+                                                                &input_glwe_sk_clone);
+  if (glwe_in_sk_clone_ok != 0) {
+    return 1;
+  }
+
+  int lwe_sk_ok = default_engine_transform_glwe_secret_key_to_lwe_secret_key_unchecked_u64(
+      default_engine, &input_glwe_sk_clone, output_lwe_sk);
+  if (lwe_sk_ok != 0) {
+    return 1;
+  }
+
+  if (input_glwe_sk_clone != NULL) {
     return 1;
   }
 

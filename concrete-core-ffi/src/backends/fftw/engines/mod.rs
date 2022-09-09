@@ -131,6 +131,7 @@ pub mod entity_deserialization;
 #[cfg(feature = "backend_fftw_serialization")]
 pub mod entity_serialization;
 pub mod lwe_bootstrap_key_conversion;
+pub mod lwe_ciphertext_discarding_bit_extraction;
 pub mod lwe_ciphertext_discarding_bootstrap;
 
 pub use destroy::*;
@@ -139,4 +140,5 @@ pub use entity_deserialization::*;
 #[cfg(feature = "backend_fftw_serialization")]
 pub use entity_serialization::*;
 pub use lwe_bootstrap_key_conversion::*;
+pub use lwe_ciphertext_discarding_bit_extraction::*;
 pub use lwe_ciphertext_discarding_bootstrap::*;
