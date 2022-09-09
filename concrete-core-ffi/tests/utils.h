@@ -9,11 +9,18 @@ const int SHIFT = 64 - (MESSAGE_BITS + 1);
 SeederBuilder *get_best_seeder();
 SeederBuilder *get_best_seeder_unchecked();
 int clone_transform_lwe_secret_key_to_glwe_secret_key_u64(DefaultEngine *default_engine,
-                                                          LweSecretKey64 *output_lwe_sk,
+                                                          LweSecretKey64 *input_lwe_sk,
                                                           size_t poly_size,
                                                           GlweSecretKey64 **output_glwe_sk);
 int clone_transform_lwe_secret_key_to_glwe_secret_key_unchecked_u64(
-    DefaultEngine *default_engine, LweSecretKey64 *output_lwe_sk, size_t poly_size,
+    DefaultEngine *default_engine, LweSecretKey64 *input_lwe_sk, size_t poly_size,
     GlweSecretKey64 **output_glwe_sk);
+
+int clone_transform_glwe_secret_key_to_lwe_secret_key_u64(DefaultEngine *default_engine,
+                                                          GlweSecretKey64 *input_glwe_sk,
+                                                          LweSecretKey64 **output_lwe_sk);
+int clone_transform_glwe_secret_key_to_lwe_secret_key_unchecked_u64(
+        DefaultEngine *default_engine, GlweSecretKey64 *input_glwe_sk,
+        LweSecretKey64 **output_lwe_sk);
 
 #endif // FFI_TEST_UTILS
