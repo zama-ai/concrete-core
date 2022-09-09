@@ -150,11 +150,11 @@ pub fn extract_bits<Scalar, C1, C2, C3, C4>(
     }
 }
 
-/// Circuit bootstrapping for binary messages, i.e. containing only one bit of message
+/// Circuit bootstrapping for boolean messages, i.e. containing only one bit of message
 ///
 /// The output GGSW ciphertext `ggsw_out` decomposition base log and level count are used as the
-/// circuit_bootstrap_binary decomposition base log and level count.
-pub fn circuit_bootstrap_binary<Scalar, C1, C2, C3, C4>(
+/// circuit_bootstrap_boolean decomposition base log and level count.
+pub fn circuit_bootstrap_boolean<Scalar, C1, C2, C3, C4>(
     fourier_bsk: &FourierBootstrapKey<C1, Scalar>,
     lwe_in: &LweCiphertext<C2>,
     ggsw_out: &mut StandardGgswCiphertext<C3>,
@@ -234,7 +234,7 @@ pub fn circuit_bootstrap_binary<Scalar, C1, C2, C3, C4>(
     let mut out_pfksk_buffer_iter = glwe_out_pfksk_buffer.ciphertext_iter_mut();
 
     for level_idx in 0..level_cbs.0 {
-        homomorphic_shift_binary(
+        homomorphic_shift_boolean(
             fourier_bsk,
             &mut lwe_out_bs_buffer,
             lwe_in,
@@ -255,7 +255,7 @@ pub fn circuit_bootstrap_binary<Scalar, C1, C2, C3, C4>(
 ///
 /// Starts by shifting the message bit at bit #delta_log to the padding bit and then shifts it to
 /// the right by base_log * level.
-pub fn homomorphic_shift_binary<Scalar, C1, C2, C3>(
+pub fn homomorphic_shift_boolean<Scalar, C1, C2, C3>(
     fourier_bsk: &FourierBootstrapKey<C1, Scalar>,
     lwe_out: &mut LweCiphertext<C2>,
     lwe_in: &LweCiphertext<C3>,
@@ -312,14 +312,14 @@ pub fn homomorphic_shift_binary<Scalar, C1, C2, C3>(
         .wrapping_add(Scalar::ONE << (ciphertext_n_bits - 1 - base_log_cbs.0 * level_count_cbs.0));
 }
 
-/// Perform a circuit bootstrap followed by a vertical packing on ciphertexts encrypting binary
+/// Perform a circuit bootstrap followed by a vertical packing on ciphertexts encrypting boolean
 /// messages.
 ///
 /// The circuit bootstrapping uses the private functional packing key switch.
 ///
-/// This is supposed to be used only with binary (1 bit of message) LWE ciphertexts.
+/// This is supposed to be used only with boolean (1 bit of message) LWE ciphertexts.
 #[allow(clippy::too_many_arguments)]
-pub fn circuit_bootstrap_binary_vertical_packing<Scalar, C1, C2, C3, C4, C5>(
+pub fn circuit_bootstrap_boolean_vertical_packing<Scalar, C1, C2, C3, C4, C5>(
     big_lut_as_polynomial_list: &PolynomialList<C1>,
     buffers: &mut FourierBuffers<Scalar>,
     fourier_bsk: &FourierBootstrapKey<C2, Scalar>,
@@ -338,11 +338,10 @@ pub fn circuit_bootstrap_binary_vertical_packing<Scalar, C1, C2, C3, C4, C5>(
 {
     debug_assert!(lwe_list_in.count().0 != 0, "Got empty `lwe_list_in`");
     debug_assert!(
-        lwe_list_out.lwe_size().to_lwe_dimension().0
-            == fourier_bsk.polynomial_size().0 * fourier_bsk.glwe_size().to_glwe_dimension().0,
+        lwe_list_out.lwe_size().to_lwe_dimension() == fourier_bsk.output_lwe_dimension(),
         "Output LWE ciphertext needs to have an LweDimension of {}, got {}",
         lwe_list_out.lwe_size().to_lwe_dimension().0,
-        fourier_bsk.polynomial_size().0 * fourier_bsk.glwe_size().to_glwe_dimension().0
+        fourier_bsk.output_lwe_dimension().0
     );
 
     // TODO: Currently we need split_at and split_at_mut so can't switch to a list-like struct
@@ -365,7 +364,7 @@ pub fn circuit_bootstrap_binary_vertical_packing<Scalar, C1, C2, C3, C4, C5>(
         base_log_cbs,
     );
     for (lwe_in, ggsw) in lwe_list_in.ciphertext_iter().zip(vec_ggsw.iter_mut()) {
-        circuit_bootstrap_binary(
+        circuit_bootstrap_boolean(
             fourier_bsk,
             &lwe_in,
             &mut ggsw_res,
