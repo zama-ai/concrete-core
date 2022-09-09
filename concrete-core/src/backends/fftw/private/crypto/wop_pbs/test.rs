@@ -564,7 +564,7 @@ pub fn test_extract_bit_circuit_bootstrapping_vertical_packing() {
 
     let number_of_test_runs = 10;
 
-    for _ in 0..number_of_test_runs {
+    for run_number in 0..number_of_test_runs {
         let cleartext =
             test_tools::random_uint_between(0..2u64.pow(number_of_bits_in_input_lwe as u32));
 
@@ -608,17 +608,34 @@ pub fn test_extract_bit_circuit_bootstrapping_vertical_packing() {
         // LUT creation
         let number_of_luts_and_output_vp_ciphertexts = 1;
         let mut lut_size = polynomial_size.0;
-        if lut_size < (1 << extracted_bits_lwe_list.count().0) {
-            lut_size = 1 << extracted_bits_lwe_list.count().0;
-        }
-        let mut lut = Vec::with_capacity(lut_size);
 
-        for i in 0..lut_size {
-            lut.push((i as u64) << delta_lut.0);
-        }
+        let lut_poly_list = if run_number % 2 == 0 {
+            // Test with a small lut, only triggering a blind rotate
+            if lut_size < (1 << extracted_bits_lwe_list.count().0) {
+                lut_size = 1 << extracted_bits_lwe_list.count().0;
+            }
+            let mut lut = Vec::with_capacity(lut_size);
 
-        // Here we have a single lut, so store it directly in the polynomial list
-        let lut_poly_list = PolynomialList::from_container(lut, PolynomialSize(lut_size));
+            for i in 0..lut_size {
+                lut.push((i as u64 % (1 << (64 - delta_log.0))) << delta_lut.0);
+            }
+
+            // Here we have a single lut, so store it directly in the polynomial list
+            PolynomialList::from_container(lut, PolynomialSize(lut_size))
+        } else {
+            // Test with a big lut, triggering an actual cmux tree
+            let mut lut_poly_list = PolynomialList::allocate(
+                0u64,
+                PolynomialCount(1 << number_of_bits_in_input_lwe),
+                polynomial_size,
+            );
+            for (i, mut polynomial) in lut_poly_list.polynomial_iter_mut().enumerate() {
+                polynomial
+                    .as_mut_tensor()
+                    .fill_with_element((i as u64 % (1 << (64 - delta_log.0))) << delta_lut.0);
+            }
+            lut_poly_list
+        };
 
         // We need as many output ciphertexts as we have input luts
         let mut vertical_packing_lwe_list_out = LweList::allocate(
