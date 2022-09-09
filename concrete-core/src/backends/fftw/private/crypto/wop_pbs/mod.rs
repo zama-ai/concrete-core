@@ -406,17 +406,10 @@ pub fn vertical_packing<Scalar, C1, C2, C3>(
     let glwe_dimension = vec_ggsw[0].glwe_size().to_glwe_dimension();
 
     debug_assert!(
-        lut.polynomial_count().0 == 1 << vec_ggsw.len(),
-        "Need {} polynomials in `lut`, got {}",
-        1 << vec_ggsw.len(),
-        lut.polynomial_count().0
-    );
-
-    debug_assert!(
         lwe_out.lwe_size().to_lwe_dimension().0 == polynomial_size.0 * glwe_dimension.0,
         "Output LWE ciphertext needs to have an LweDimension of {}, got {}",
+        polynomial_size.0 * glwe_dimension.0,
         lwe_out.lwe_size().to_lwe_dimension().0,
-        polynomial_size.0 * glwe_dimension.0
     );
 
     // Get the base 2 logarithm (rounded down) of the number of polynomials in the list i.e. if
@@ -455,6 +448,8 @@ where
     C1: AsRefSlice<Element = Scalar>,
     C2: AsRefSlice<Element = Complex64>,
 {
+    debug_assert!(lut_per_layer.polynomial_count().0 == 1 << vec_ggsw.len());
+
     if !vec_ggsw.is_empty() {
         let polynomial_size = vec_ggsw[0].polynomial_size();
         let nb_layer = vec_ggsw.len();
@@ -476,8 +471,6 @@ where
         let mut cmux_buffer = empty_glwe;
 
         let mut t_fill = vec![0_usize; nb_layer];
-
-        debug_assert!(lut_per_layer.polynomial_count().0 == 1 << (nb_layer - 1));
 
         // Returns lut[2 * i] polynomial where i is the iteration index
         let lut_iter_0 = lut_per_layer.polynomial_iter().step_by(2);
