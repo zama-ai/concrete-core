@@ -266,7 +266,7 @@ impl<Container> Tensor<Container> {
     /// Returns a parallel iterator over `&Scalar` elements.
     ///
     /// # Notes:
-    /// This iterator is hidden behind the "parallel" feature gate.
+    /// This iterator is hidden behind the "__commons_parallel" feature gate.
     ///
     /// # Example
     /// ```
@@ -311,7 +311,7 @@ impl<Container> Tensor<Container> {
     /// Returns a parallel iterator over `&mut T` elements.
     ///
     /// # Notes:
-    /// This iterator is hidden behind the "parallel" feature gate.
+    /// This iterator is hidden behind the "__commons_parallel" feature gate.
     ///
     /// # Example:
     /// ```
@@ -363,7 +363,7 @@ impl<Container> Tensor<Container> {
     ///
     /// # Note:
     /// The length of the sub-tensors must divide the size of the tensor.
-    /// This iterator is hidden behind the "parallel" feature gate.
+    /// This iterator is hidden behind the "__commons_parallel" feature gate.
     ///
     /// # Example:
     /// ```
@@ -423,7 +423,7 @@ impl<Container> Tensor<Container> {
     /// # Note:
     ///
     /// The length of the sub-tensors must divide the size of the tensor.
-    /// This iterator is hidden behind the "parallel" feature gate.
+    /// This iterator is hidden behind the "__commons_parallel" feature gate.
     ///
     /// # Example:
     /// ```

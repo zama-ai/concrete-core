@@ -308,7 +308,7 @@ fn noise_bytes_per_ggsw(
     level.0 * noise_bytes_per_ggsw_level(glwe_size, poly_size)
 }
 
-#[cfg(all(test, feature = "parallel"))]
+#[cfg(all(test, feature = "__commons_parallel"))]
 mod test {
     use crate::commons::crypto::bootstrap::StandardBootstrapKey;
     use crate::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
