@@ -650,7 +650,7 @@ impl<G: ParallelByteRandomGenerator> RandomGenerator<G> {
     ///
     /// # Notes
     ///
-    /// This method necessitates the "parallel" feature to be used.
+    /// This method necessitates the "__commons_parallel" feature to be used.
     ///
     /// # Example
     ///

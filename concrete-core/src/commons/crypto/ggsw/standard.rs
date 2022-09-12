@@ -419,7 +419,7 @@ impl<Cont> StandardGgswCiphertext<Cont> {
     /// Returns a parallel iterator over mutably borrowed level matrices.
     ///
     /// # Notes
-    /// This iterator is hidden behind the "parallel" feature gate.
+    /// This iterator is hidden behind the "__commons_parallel" feature gate.
     ///
     /// # Example
     ///

@@ -1314,7 +1314,7 @@ where
     /// This function encrypts a message as a GGSW ciphertext, using as many threads as possible.
     ///
     /// # Notes
-    /// This method is hidden behind the "parallel" feature gate.
+    /// This method is hidden behind the "__commons_parallel" feature gate.
     ///
     /// # Examples
     ///

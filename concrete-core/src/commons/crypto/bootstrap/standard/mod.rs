@@ -548,7 +548,7 @@ impl<Cont> StandardBootstrapKey<Cont> {
     ///
     /// # Notes
     ///
-    /// This iterator is hidden behind the "parallel" feature gate.
+    /// This iterator is hidden behind the "__commons_parallel" feature gate.
     ///
     /// # Example
     ///
