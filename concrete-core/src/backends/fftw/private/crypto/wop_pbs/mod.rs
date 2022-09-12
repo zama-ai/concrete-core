@@ -182,16 +182,14 @@ pub fn circuit_bootstrap_boolean<Scalar, C1, C2, C3, C4>(
         base_log_cbs.0
     );
 
-    let bsk_glwe_dimension = fourier_bsk.glwe_size().to_glwe_dimension();
-    let bsk_polynomial_size = fourier_bsk.polynomial_size();
-
     let fpksk_input_lwe_key_dimension = fpksk_list.input_lwe_key_dimension();
+    let fourier_bsk_output_lwe_dimension = fourier_bsk.output_lwe_dimension();
 
     debug_assert!(
-        fpksk_input_lwe_key_dimension.0 == bsk_polynomial_size.0 * bsk_glwe_dimension.0,
-        "The fourier_bsk polynomial_size, got {}, must be equal to the fpksk \
+        fpksk_input_lwe_key_dimension == fourier_bsk_output_lwe_dimension,
+        "The fourier_bsk output_lwe_dimension, got {}, must be equal to the fpksk \
         input_lwe_key_dimension, got {}",
-        bsk_polynomial_size.0 * bsk_glwe_dimension.0,
+        fourier_bsk_output_lwe_dimension.0,
         fpksk_input_lwe_key_dimension.0
     );
 
@@ -215,31 +213,28 @@ pub fn circuit_bootstrap_boolean<Scalar, C1, C2, C3, C4>(
     );
 
     debug_assert!(
-        ggsw_out.glwe_size().0 * ggsw_out.decomposition_level_count().0
-            == fpksk_list.fpksk_count().0,
+        ggsw_out.glwe_size().0 == fpksk_list.fpksk_count().0,
         "The input vector of fpksk needs to have {} (ggsw.glwe_size * \
         ggsw.decomposition_level_count) elements got {}",
-        ggsw_out.glwe_size().0 * ggsw_out.decomposition_level_count().0,
+        ggsw_out.glwe_size().0,
         fpksk_list.fpksk_count().0,
     );
 
     // Output for every bootstrapping
-    let mut lwe_out_bs_buffer = LweCiphertext::allocate(
-        Scalar::ZERO,
-        LweDimension(bsk_glwe_dimension.0 * bsk_polynomial_size.0).to_lwe_size(),
-    );
+    let mut lwe_out_bs_buffer =
+        LweCiphertext::allocate(Scalar::ZERO, fourier_bsk_output_lwe_dimension.to_lwe_size());
     // Output for every pfksk that that come from the output GGSW
     let mut glwe_out_pfksk_buffer = ggsw_out.as_mut_glwe_list();
 
     let mut out_pfksk_buffer_iter = glwe_out_pfksk_buffer.ciphertext_iter_mut();
 
-    for level_idx in 0..level_cbs.0 {
+    for decomposition_level in (1..=level_cbs.0).map(DecompositionLevelCount) {
         homomorphic_shift_boolean(
             fourier_bsk,
             &mut lwe_out_bs_buffer,
             lwe_in,
             buffers,
-            DecompositionLevelCount(level_idx + 1),
+            decomposition_level,
             base_log_cbs,
             delta_log,
         );
@@ -349,8 +344,8 @@ pub fn circuit_bootstrap_boolean_vertical_packing<Scalar, C1, C2, C3, C4, C5>(
     let mut vec_ggsw = vec![
         FourierGgswCiphertext::allocate(
             Complex64::new(0., 0.),
-            fourier_bsk.polynomial_size(),
-            fourier_bsk.glwe_size(),
+            fpksk_list.output_polynomial_size(),
+            fpksk_list.output_glwe_key_dimension().to_glwe_size(),
             level_cbs,
             base_log_cbs,
         );
@@ -358,8 +353,8 @@ pub fn circuit_bootstrap_boolean_vertical_packing<Scalar, C1, C2, C3, C4, C5>(
     ];
     let mut ggsw_res = StandardGgswCiphertext::allocate(
         Scalar::ZERO,
-        fourier_bsk.polynomial_size(),
-        fourier_bsk.glwe_size(),
+        fpksk_list.output_polynomial_size(),
+        fpksk_list.output_glwe_key_dimension().to_glwe_size(),
         level_cbs,
         base_log_cbs,
     );
