@@ -25,7 +25,7 @@ impl<EngineError: std::error::Error>
     pub fn perform_generic_checks(
         decomposition_level_count: DecompositionLevelCount,
         decomposition_base_log: DecompositionBaseLog,
-        integer_precision: usize,
+        ciphertext_modulus_log: usize,
         output_key_polynomial_size: PolynomialSize,
         polynomial_scalar_polynomial_size: PolynomialSize,
     ) -> Result<(), Self> {
@@ -37,7 +37,7 @@ impl<EngineError: std::error::Error>
             return Err(Self::NullDecompositionLevelCount);
         }
 
-        if decomposition_level_count.0 * decomposition_base_log.0 > integer_precision {
+        if decomposition_level_count.0 * decomposition_base_log.0 > ciphertext_modulus_log {
             return Err(Self::DecompositionTooLarge);
         }
 

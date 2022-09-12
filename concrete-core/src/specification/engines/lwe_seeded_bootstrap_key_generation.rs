@@ -17,7 +17,7 @@ impl<EngineError: std::error::Error> LweSeededBootstrapKeyGenerationError<Engine
     pub fn perform_generic_checks(
         decomposition_base_log: DecompositionBaseLog,
         decomposition_level_count: DecompositionLevelCount,
-        integer_precision: usize,
+        ciphertext_modulus_log: usize,
     ) -> Result<(), Self> {
         if decomposition_base_log.0 == 0 {
             return Err(Self::NullDecompositionBaseLog);
@@ -25,7 +25,7 @@ impl<EngineError: std::error::Error> LweSeededBootstrapKeyGenerationError<Engine
         if decomposition_level_count.0 == 0 {
             return Err(Self::NullDecompositionLevelCount);
         }
-        if decomposition_base_log.0 * decomposition_level_count.0 > integer_precision {
+        if decomposition_base_log.0 * decomposition_level_count.0 > ciphertext_modulus_log {
             return Err(Self::DecompositionTooLarge);
         }
         Ok(())
