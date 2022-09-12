@@ -313,8 +313,8 @@ impl<Cont> StandardGgswCiphertext<Cont> {
     ///
     /// # Note
     ///
-    /// This iterator iterates over the levels from the lower to the higher level in the usual
-    /// order. To iterate in the reverse order, you can use `rev()` on the iterator.
+    /// This iterator iterates over the levels from the higher to the lower level, just like for
+    /// the decomposition.
     ///
     /// # Example
     ///
@@ -350,6 +350,7 @@ impl<Cont> StandardGgswCiphertext<Cont> {
         let chunks_size = self.poly_size.0 * self.rlwe_size.0 * self.rlwe_size.0;
         let poly_size = self.poly_size;
         let rlwe_size = self.rlwe_size;
+        let level_count = self.decomposition_level_count().0;
         self.as_tensor()
             .subtensor_iter(chunks_size)
             .enumerate()
@@ -358,7 +359,7 @@ impl<Cont> StandardGgswCiphertext<Cont> {
                     tensor.into_container(),
                     poly_size,
                     rlwe_size,
-                    DecompositionLevel(index + 1),
+                    DecompositionLevel(level_count - index + 1),
                 )
             })
     }
@@ -367,8 +368,8 @@ impl<Cont> StandardGgswCiphertext<Cont> {
     ///
     /// # Note
     ///
-    /// This iterator iterates over the levels from the lower to the higher level in the usual
-    /// order. To iterate in the reverse order, you can use `rev()` on the iterator.
+    /// This iterator iterates over the levels from the higher to the lower level, just like for
+    /// the decomposition.
     ///
     /// # Example
     ///
@@ -403,6 +404,7 @@ impl<Cont> StandardGgswCiphertext<Cont> {
         let chunks_size = self.poly_size.0 * self.rlwe_size.0 * self.rlwe_size.0;
         let poly_size = self.poly_size;
         let rlwe_size = self.rlwe_size;
+        let level_count = self.decomposition_level_count().0;
         self.as_mut_tensor()
             .subtensor_iter_mut(chunks_size)
             .enumerate()
@@ -411,7 +413,7 @@ impl<Cont> StandardGgswCiphertext<Cont> {
                     tensor.into_container(),
                     poly_size,
                     rlwe_size,
-                    DecompositionLevel(index + 1),
+                    DecompositionLevel(level_count - index + 1),
                 )
             })
     }
@@ -458,6 +460,7 @@ impl<Cont> StandardGgswCiphertext<Cont> {
         let chunks_size = self.poly_size.0 * self.rlwe_size.0 * self.rlwe_size.0;
         let poly_size = self.poly_size;
         let rlwe_size = self.rlwe_size;
+        let level_count = self.decomposition_level_count().0;
         self.as_mut_tensor()
             .par_subtensor_iter_mut(chunks_size)
             .enumerate()
@@ -466,7 +469,7 @@ impl<Cont> StandardGgswCiphertext<Cont> {
                     tensor.into_container(),
                     poly_size,
                     rlwe_size,
-                    DecompositionLevel(index + 1),
+                    DecompositionLevel(level_count - index + 1),
                 )
             })
     }

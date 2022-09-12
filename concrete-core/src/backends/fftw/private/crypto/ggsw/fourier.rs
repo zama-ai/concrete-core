@@ -302,8 +302,8 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
     ///
     /// # Note
     ///
-    /// This iterator iterates over the levels from the lower to the higher level in the usual
-    /// order. To iterate in the reverse order, you can use `rev()` on the iterator.
+    /// This iterator iterates over the levels from the higher to the lower level, just like for
+    /// the decomposition.
     ///
     /// # Example
     ///
@@ -340,6 +340,7 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
         let chunks_size = self.poly_size.0 * self.glwe_size.0 * self.glwe_size.0;
         let poly_size = self.poly_size;
         let glwe_size = self.glwe_size;
+        let level_count = self.decomposition_level_count().0;
         self.as_tensor()
             .subtensor_iter(chunks_size)
             .enumerate()
@@ -348,7 +349,7 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
                     tensor.into_container(),
                     poly_size,
                     glwe_size,
-                    DecompositionLevel(index + 1),
+                    DecompositionLevel(level_count - index + 1),
                 )
             })
     }
@@ -357,8 +358,8 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
     ///
     /// # Note
     ///
-    /// This iterator iterates over the levels from the lower to the higher level in the usual
-    /// order. To iterate in the reverse order, you can use `rev()` on the iterator.
+    /// This iterator iterates over the levels from the higher to the lower level, just like for
+    /// the decomposition.
     ///
     /// # Example
     ///
@@ -398,6 +399,7 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
         let chunks_size = self.poly_size.0 * self.glwe_size.0 * self.glwe_size.0;
         let poly_size = self.poly_size;
         let glwe_size = self.glwe_size;
+        let level_count = self.decomposition_level_count().0;
         self.as_mut_tensor()
             .subtensor_iter_mut(chunks_size)
             .enumerate()
@@ -406,7 +408,7 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
                     tensor.into_container(),
                     poly_size,
                     glwe_size,
-                    DecompositionLevel(index + 1),
+                    DecompositionLevel(level_count - index + 1),
                 )
             })
     }
@@ -489,7 +491,7 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
         // the result in the output_fft_buffer variable.
         let mut decomposition = decomposer.decompose_tensor(rounded_input_glwe);
         // We loop through the levels (we reverse to match the order of the decomposition iterator.)
-        for ggsw_decomp_matrix in self.level_matrix_iter().rev() {
+        for ggsw_decomp_matrix in self.level_matrix_iter() {
             // We retrieve the decomposition of this level.
             let glwe_decomp_term = decomposition.next_term().unwrap();
             debug_assert_eq!(

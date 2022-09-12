@@ -222,8 +222,8 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     ///
     /// # Note
     ///
-    /// This iterator iterates over the levels from the lower to the higher level in the usual
-    /// order. To iterate in the reverse order, you can use `rev()` on the iterator.
+    /// This iterator iterates over the levels from the higher to the lower level, just like for
+    /// the decomposition.
     ///
     /// # Example
     ///
@@ -252,6 +252,7 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     {
         let chunks_size = self.lwe_size.0 * self.lwe_size.0;
         let lwe_size = self.lwe_size;
+        let level_count = self.decomposition_level_count().0;
         self.as_tensor()
             .subtensor_iter(chunks_size)
             .enumerate()
@@ -259,7 +260,7 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
                 GswLevelMatrix::from_container(
                     tensor.into_container(),
                     lwe_size,
-                    DecompositionLevel(index + 1),
+                    DecompositionLevel(level_count - index + 1),
                 )
             })
     }
@@ -268,8 +269,8 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     ///
     /// # Note
     ///
-    /// This iterator iterates over the levels from the lower to the higher level in the usual
-    /// order. To iterate in the reverse order, you can use `rev()` on the iterator.
+    /// This iterator iterates over the levels from the higher to the lower level, just like for
+    /// the decomposition.
     ///
     /// # Example
     ///
@@ -299,6 +300,7 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     {
         let chunks_size = self.lwe_size.0 * self.lwe_size.0;
         let lwe_size = self.lwe_size;
+        let level_count = self.decomposition_level_count().0;
         self.as_mut_tensor()
             .subtensor_iter_mut(chunks_size)
             .enumerate()
@@ -306,7 +308,7 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
                 GswLevelMatrix::from_container(
                     tensor.into_container(),
                     lwe_size,
-                    DecompositionLevel(index + 1),
+                    DecompositionLevel(level_count - index + 1),
                 )
             })
     }
@@ -348,6 +350,7 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
     {
         let chunks_size = self.lwe_size.0 * self.lwe_size.0;
         let lwe_size = self.lwe_size;
+        let level_count = self.decomposition_level_count().0;
         self.as_mut_tensor()
             .par_subtensor_iter_mut(chunks_size)
             .enumerate()
@@ -355,7 +358,7 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
                 GswLevelMatrix::from_container(
                     tensor.into_container(),
                     lwe_size,
-                    DecompositionLevel(index + 1),
+                    DecompositionLevel(level_count - index + 1),
                 )
             })
     }
@@ -435,8 +438,8 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
         decomposer.fill_tensor_with_closest_representable(rounded_input_lwe, lwe);
 
         let mut decomposition = decomposer.decompose_tensor(rounded_input_lwe);
-        // We loop through the levels (we reverse to match the order of the decomposition iterator.)
-        for gsw_decomp_matrix in self.level_matrix_iter().rev() {
+        // We loop through the levels
+        for gsw_decomp_matrix in self.level_matrix_iter() {
             // We retrieve the decomposition of this level.
             let lwe_decomp_term = decomposition.next_term().unwrap();
             debug_assert_eq!(

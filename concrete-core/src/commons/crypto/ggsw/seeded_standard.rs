@@ -295,21 +295,12 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
         self.decomp_base_log
     }
 
-    /// Returns an iterator over borrowed seeded level matrices.
-    ///
-    /// # Note
-    ///
-    /// This iterator iterates over the levels from the lower to the higher level in the usual
-    /// order. To iterate in the reverse order, you can use `rev()` on the iterator.
-    ///
-    /// # Example
-    ///
     /// Returns an iterator over mutably borrowed seeded level matrices.
     ///
     /// # Note
     ///
-    /// This iterator iterates over the levels from the lower to the higher level in the usual
-    /// order. To iterate in the reverse order, you can use `rev()` on the iterator.
+    /// This iterator iterates over the levels from the higher to the lower level, just like for
+    /// the decomposition.
     ///
     /// # Example
     ///
@@ -357,6 +348,7 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
         let chunks_size = self.poly_size.0 * self.glwe_size.0;
         let poly_size = self.poly_size;
         let glwe_size = self.glwe_size;
+        let level_count = self.decomposition_level_count().0;
         self.as_tensor()
             .subtensor_iter(chunks_size)
             .enumerate()
@@ -365,7 +357,7 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
                     tensor.into_container(),
                     poly_size,
                     glwe_size,
-                    DecompositionLevel(index + 1),
+                    DecompositionLevel(level_count - index + 1),
                     self.compression_seed,
                 )
             })
@@ -375,8 +367,8 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
     ///
     /// # Note
     ///
-    /// This iterator iterates over the levels from the lower to the higher level in the usual
-    /// order. To iterate in the reverse order, you can use `rev()` on the iterator.
+    /// This iterator iterates over the levels from the higher to the lower level, just like for
+    /// the decomposition.
     ///
     /// # Example
     ///
@@ -423,6 +415,7 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
         let poly_size = self.poly_size;
         let glwe_size = self.glwe_size;
         let compression_seed = self.compression_seed;
+        let level_count = self.decomposition_level_count().0;
         self.as_mut_tensor()
             .subtensor_iter_mut(chunks_size)
             .enumerate()
@@ -431,7 +424,7 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
                     tensor.into_container(),
                     poly_size,
                     glwe_size,
-                    DecompositionLevel(index + 1),
+                    DecompositionLevel(level_count - index + 1),
                     compression_seed,
                 )
             })
@@ -490,6 +483,7 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
         let poly_size = self.poly_size;
         let glwe_size = self.glwe_size;
         let compression_seed = self.compression_seed;
+        let level_count = self.decomposition_level_count().0;
         self.as_mut_tensor()
             .par_subtensor_iter_mut(chunks_size)
             .enumerate()
@@ -498,7 +492,7 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
                     tensor.into_container(),
                     poly_size,
                     glwe_size,
-                    DecompositionLevel(index + 1),
+                    DecompositionLevel(level_count - index + 1),
                     compression_seed,
                 )
             })
