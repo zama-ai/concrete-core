@@ -142,8 +142,8 @@ and `concrete-core/src/backends/gpu/implementation/entities/mod.rs`
 ### Entities
 
 Start by implementing the entities you'll be using. Here, we want to allocate and copy data
-corresponding to LWE ciphertext vectors on the GPU. We need to create a new file:
-`concrete-core/src/backends/gpu/implementation/entities/lwe_ciphertext_vector.rs`
+corresponding to LWE ciphertext arrays on the GPU. We need to create a new file:
+`concrete-core/src/backends/gpu/implementation/entities/lwe_ciphertext_array.rs`
 Modify the entity module file, `concrete-core/src/backends/gpu/implementation/entities/mod.rs`, to
 actually link it to the rest of the sources:
 
@@ -151,15 +151,15 @@ actually link it to the rest of the sources:
 //! A module containing all the [entities](crate::specification::entities) exposed by the GPU
 //! backend.
 
-mod lwe_ciphertext_vector;
+mod lwe_ciphertext_array;
 
-pub use lwe_ciphertext_vector::*;
+pub use lwe_ciphertext_array::*;
 ```
 
-Now, let's implement that entity. What we want is to implement a `GpuLweCiphertextVector32` entity
-for the `LweCiphertextVectorEntity` trait in the specification.
+Now, let's implement that entity. What we want is to implement a `GpuLweCiphertextArray32` entity
+for the `LweCiphertextArrayEntity` trait in the specification.
 
-A proposition of implementation is to have `GpuLweCiphertextVector32` wrap a structure containing a
+A proposition of implementation is to have `GpuLweCiphertextArray32` wrap a structure containing a
 void pointer for the data on the GPU, and some metadata (LWE dimension, etc.). To do this, create a
 new `lwe.rs` file in the `private` module, containing:
 
@@ -188,7 +188,7 @@ impl<T: UnsignedInteger> GpuLweList<T> {
 
     /// Returns a mut pointer to the GPU data on a chosen GPU
     #[allow(dead_code)]
-    pub(crate) unsafe fn get_ptr(&self) -> GpuLweCiphertextVectorPointer {
+    pub(crate) unsafe fn get_ptr(&self) -> GpuLweCiphertextArrayPointer {
         self.d_ptr
     }
 }
@@ -208,18 +208,18 @@ use std::fmt::Debug;
 use concrete_core::prelude::{LweCiphertextCount, LweDimension};
 
 use crate::backends::cuda::private::crypto::lwe::list::GpuLweList;
-use crate::specification::entities::markers::{BinaryKeyDistribution, LweCiphertextVectorKind};
-use crate::specification::entities::{AbstractEntity, LweCiphertextVectorEntity};
+use crate::specification::entities::markers::{BinaryKeyDistribution, LweCiphertextArrayKind};
+use crate::specification::entities::{AbstractEntity, LweCiphertextArrayEntity};
 
-/// A structure representing a vector of LWE ciphertexts with 32 bits of precision on the GPU.
+/// A structure representing an array of LWE ciphertexts with 32 bits of precision on the GPU.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct GpuLweCiphertextVector32(pub(crate) GpuLweList<u32>);
+pub struct GpuLweCiphertextArray32(pub(crate) GpuLweList<u32>);
 
-impl AbstractEntity for GpuLweCiphertextVector32 {
-    type Kind = LweCiphertextVectorKind;
+impl AbstractEntity for GpuLweCiphertextArray32 {
+    type Kind = LweCiphertextArrayKind;
 }
 
-impl LweCiphertextVectorEntity for GpuLweCiphertextVector32 {
+impl LweCiphertextArrayEntity for GpuLweCiphertextArray32 {
     type KeyDistribution = BinaryKeyDistribution;
 
     fn lwe_dimension(&self) -> LweDimension {
@@ -237,7 +237,7 @@ You can do this for all the entity traits you need in your backend.
 ### Engines
 
 Now we have some entities, let's actually do something with them. For this GPU backend example,
-we're going to allocate data on the GPU and copy the LWE ciphertext vector from the CPU to the GPU.
+we're going to allocate data on the GPU and copy the LWE ciphertext array from the CPU to the GPU.
 
 First, let's create the main engine
 in `concrete-core/src/backends/gpu/implementation/engines/mod.rs`. This `GpuEngine` is only
@@ -291,33 +291,33 @@ impl AbstractEngine for GpuEngine {
 }
 
 mod destruction;
-mod lwe_ciphertext_vector_conversion;
+mod lwe_ciphertext_array_conversion;
 ```
 
 As you see at the bottom of the previous code block, we're going to implement two engine traits: one
-to copy the LWE ciphertext vector from the CPU to the GPU, and one to destroy data on the GPU.
+to copy the LWE ciphertext array from the CPU to the GPU, and one to destroy data on the GPU.
 Create the files `concrete-core/src/backends/gpu/implementation/engines/destruction.rs`
-and `concrete-core/src/backends/gpu/implementation/engines/lwe_ciphertext_vector_conversion.rs`.
+and `concrete-core/src/backends/gpu/implementation/engines/lwe_ciphertext_array_conversion.rs`.
 The `destruction.rs` file is going to look like this:
 
 ```rust
 use crate::backends::gpu::implementation::engines::GpuEngine;
 use crate::backends::gpu::implementation::entities::{
-    GpuLweCiphertextVector32,
+    GpuLweCiphertextArray32,
 };
 use crate::specification::engines::{DestructionEngine, DestructionError};
 use fhe_gpu::cuda_drop;
 
-impl DestructionEngine<GpuLweCiphertextVector32> for GpuEngine {
+impl DestructionEngine<GpuLweCiphertextArray32> for GpuEngine {
     fn destroy(
         &mut self,
-        entity: GpuLweCiphertextVector32,
+        entity: GpuLweCiphertextArray32,
     ) -> Result<(), DestructionError<Self::EngineError>> {
         unsafe { self.destroy_unchecked(entity) };
         Ok(())
     }
 
-    unsafe fn destroy_unchecked(&mut self, entity: GpuLweCiphertextVector32) {
+    unsafe fn destroy_unchecked(&mut self, entity: GpuLweCiphertextArray32) {
         // Here deallocate the Gpu memory
         cuda_drop(entity.0.get_ptr().0).unwrap();
     }
@@ -325,52 +325,52 @@ impl DestructionEngine<GpuLweCiphertextVector32> for GpuEngine {
 }
 ```
 
-Finally, the `lwe_ciphertext_vector_conversion.rs` file is going to contain:
+Finally, the `lwe_ciphertext_array_conversion.rs` file is going to contain:
 
 ```rust
-use crate::backends::core::implementation::entities::LweCiphertextVector32;
+use crate::backends::core::implementation::entities::LweCiphertextArray32;
 use crate::commons::crypto::lwe::LweList;
 use crate::commons::math::tensor::{AsRefSlice, AsRefTensor};
 use crate::backends::gpu::implementation::engines::{GpuEngine, GpuError};
 use crate::backends::gpu::implementation::entities::{
-    GpuLweCiphertextVector32,
+    GpuLweCiphertextArray32,
 };
 use crate::backends::gpu::private::crypto::lwe::list::GpuLweList;
 use crate::specification::engines::{
-    LweCiphertextVectorConversionEngine, LweCiphertextVectorConversionError,
+    LweCiphertextArrayConversionEngine, LweCiphertextArrayConversionError,
 };
-use crate::specification::entities::LweCiphertextVectorEntity;
+use crate::specification::entities::LweCiphertextArrayEntity;
 use fhe_gpu::{copy_to_gpu, malloc};
 
-impl From<GpuError> for LweCiphertextVectorConversionError<GpuError> {
+impl From<GpuError> for LweCiphertextArrayConversionError<GpuError> {
     fn from(err: GpuError) -> Self {
         Self::Engine(err)
     }
 }
 
 /// # Description
-/// Convert an LWE ciphertext vector with 32 bits of precision from CPU to GPU.
+/// Convert an LWE ciphertext array with 32 bits of precision from CPU to GPU.
 ///
-impl LweCiphertextVectorConversionEngine<LweCiphertextVector32, GpuLweCiphertextVector32>
+impl LweCiphertextArrayConversionEngine<LweCiphertextArray32, GpuLweCiphertextArray32>
 for GpuEngine
 {
-    fn convert_lwe_ciphertext_vector(
+    fn convert_lwe_ciphertext_array(
         &mut self,
-        input: &LweCiphertextVector32,
-    ) -> Result<GpuLweCiphertextVector32, LweCiphertextVectorConversionError<GpuError>> {
-        Ok(unsafe { self.convert_lwe_ciphertext_vector_unchecked(input) })
+        input: &LweCiphertextArray32,
+    ) -> Result<GpuLweCiphertextArray32, LweCiphertextArrayConversionError<GpuError>> {
+        Ok(unsafe { self.convert_lwe_ciphertext_array_unchecked(input) })
     }
 
-    unsafe fn convert_lwe_ciphertext_vector_unchecked(
+    unsafe fn convert_lwe_ciphertext_array_unchecked(
         &mut self,
-        input: &LweCiphertextVector32,
-    ) -> GpuLweCiphertextVector32 {
+        input: &LweCiphertextArray32,
+    ) -> GpuLweCiphertextArray32 {
         let alloc_size = input.lwe_ciphertext_count().0 * input.lwe_dimension().to_lwe_size().0;
         let input_slice = input.0.as_tensor().as_slice();
         let d_ptr = malloc::<u32>(alloc_size as u32);
         copy_to_gpu::<u32>(d_ptr, input_slice, alloc_size);
 
-        GpuLweCiphertextVector32(GpuLweList::<u32> {
+        GpuLweCiphertextArray32(GpuLweList::<u32> {
             d_ptr,
             lwe_ciphertext_count: input.lwe_ciphertext_count(),
             lwe_dimension: input.lwe_dimension(),
@@ -380,24 +380,24 @@ for GpuEngine
 }
 
 /// # Description
-/// Convert an LWE ciphertext vector with 32 bits of precision from GPU to CPU.
-impl LweCiphertextVectorConversionEngine<GpuLweCiphertextVector32, LweCiphertextVector32>
+/// Convert an LWE ciphertext array with 32 bits of precision from GPU to CPU.
+impl LweCiphertextArrayConversionEngine<GpuLweCiphertextArray32, LweCiphertextArray32>
 for GpuEngine
 {
-    fn convert_lwe_ciphertext_vector(
+    fn convert_lwe_ciphertext_array(
         &mut self,
-        input: &GpuLweCiphertextVector32,
-    ) -> Result<LweCiphertextVector32, LweCiphertextVectorConversionError<GpuError>> {
-        Ok(unsafe { self.convert_lwe_ciphertext_vector_unchecked(input) })
+        input: &GpuLweCiphertextArray32,
+    ) -> Result<LweCiphertextArray32, LweCiphertextArrayConversionError<GpuError>> {
+        Ok(unsafe { self.convert_lwe_ciphertext_array_unchecked(input) })
     }
 
-    unsafe fn convert_lwe_ciphertext_vector_unchecked(
+    unsafe fn convert_lwe_ciphertext_array_unchecked(
         &mut self,
-        input: &GpuLweCiphertextVector32,
-    ) -> LweCiphertextVector32 {
+        input: &GpuLweCiphertextArray32,
+    ) -> LweCiphertextArray32 {
         let mut output = vec![0u32; input.lwe_dimension().to_lwe_size().0 * input.lwe_ciphertext_count().0];
         copy_to_cpu::<u32>(output, input.0.get_ptr(GpuIndex(gpu_index as u32)).0);
-        LweCiphertextVector32(LweList::from_container(
+        LweCiphertextArray32(LweList::from_container(
             output,
             input.lwe_dimension().to_lwe_size(),
         ))
@@ -421,28 +421,28 @@ let noise = Variance(2_f64.powf(-25.));
 
 let mut default_engine = DefaultEngine::new().unwrap();
 let h_key: LweSecretKey32 = default_engine.generate_new_lwe_secret_key(lwe_dimension).unwrap();
-let h_plaintext_vector: PlaintextVector32 = default_engine.create_plaintext_vector_from(&input).unwrap();
-let mut h_ciphertext_vector: LweCiphertextVector32 =
-default_engine.encrypt_lwe_ciphertext_vector(&h_key, &h_plaintext_vector, noise).unwrap();
+let h_plaintext_array: PlaintextArray32 = default_engine.create_plaintext_array_from(&input).unwrap();
+let mut h_ciphertext_array: LweCiphertextArray32 =
+default_engine.encrypt_lwe_ciphertext_array(&h_key, &h_plaintext_array, noise).unwrap();
 
 let mut gpu_engine = GpuEngine::new().unwrap();
-let d_ciphertext_vector: GpuLweCiphertextVector32 =
-gpu_engine.convert_lwe_ciphertext_vector(&h_ciphertext_vector).unwrap();
-let h_output_ciphertext_vector: LweCiphertextVector32 =
-gpu_engine.convert_lwe_ciphertext_vector(&d_ciphertext_vector).unwrap();
+let d_ciphertext_array: GpuLweCiphertextArray32 =
+gpu_engine.convert_lwe_ciphertext_array(&h_ciphertext_array).unwrap();
+let h_output_ciphertext_array: LweCiphertextArray32 =
+gpu_engine.convert_lwe_ciphertext_array(&d_ciphertext_array).unwrap();
 
-assert_eq!(d_ciphertext_vector.lwe_dimension(), lwe_dimension);
+assert_eq!(d_ciphertext_array.lwe_dimension(), lwe_dimension);
 assert_eq!(
-    d_ciphertext_vector.lwe_ciphertext_count(),
+    d_ciphertext_array.lwe_ciphertext_count(),
     LweCiphertextCount(3)
 );
 
 default_engine.destroy(h_key).unwrap();
-default_engine.destroy(h_plaintext_vector).unwrap();
-default_engine.destroy(h_ciphertext_vector).unwrap();
-gpu_engine.destroy(d_ciphertext_vector).unwrap();
-default_engine.destroy(h_output_ciphertext_vector).unwrap();
+default_engine.destroy(h_plaintext_array).unwrap();
+default_engine.destroy(h_ciphertext_array).unwrap();
+gpu_engine.destroy(d_ciphertext_array).unwrap();
+default_engine.destroy(h_output_ciphertext_array).unwrap();
 ```
 
-And this converts an LWE ciphertext vector from the CPU to the GPU! Next step is to test your
+And this converts an LWE ciphertext array from the CPU to the GPU! Next step is to test your
 backend, for this head to the [tests tutorial](testing_backends.md)!

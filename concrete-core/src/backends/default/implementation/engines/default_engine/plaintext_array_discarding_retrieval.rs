@@ -1,0 +1,96 @@
+use crate::backends::default::implementation::engines::DefaultEngine;
+use crate::backends::default::implementation::entities::{PlaintextArray32, PlaintextArray64};
+use crate::commons::math::tensor::AsRefTensor;
+use crate::specification::engines::{
+    PlaintextArrayDiscardingRetrievalEngine, PlaintextArrayDiscardingRetrievalError,
+};
+
+/// # Description:
+/// Implementation of [`PlaintextArrayDiscardingRetrievalEngine`] for [`DefaultEngine`] that
+/// operates on 32 bits integers.
+impl PlaintextArrayDiscardingRetrievalEngine<PlaintextArray32, u32> for DefaultEngine {
+    /// # Example:
+    /// ```
+    /// use concrete_core::prelude::{PlaintextCount, *};
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // Here a hard-set encoding is applied (shift by 20 bits)
+    /// let input = vec![3_u32 << 20; 3];
+    /// let mut output = vec![0_u32; 3];
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let plaintext_array: PlaintextArray32 = engine.create_plaintext_array_from(&input)?;
+    /// engine.discard_retrieve_plaintext_array(output.as_mut_slice(), &plaintext_array)?;
+    /// #
+    /// assert_eq!(output[0], 3_u32 << 20);
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn discard_retrieve_plaintext_array(
+        &mut self,
+        output: &mut [u32],
+        input: &PlaintextArray32,
+    ) -> Result<(), PlaintextArrayDiscardingRetrievalError<Self::EngineError>> {
+        PlaintextArrayDiscardingRetrievalError::perform_generic_checks(output, input)?;
+        unsafe { self.discard_retrieve_plaintext_array_unchecked(output, input) };
+        Ok(())
+    }
+
+    unsafe fn discard_retrieve_plaintext_array_unchecked(
+        &mut self,
+        output: &mut [u32],
+        input: &PlaintextArray32,
+    ) {
+        output.copy_from_slice(input.0.as_tensor().as_container().as_slice());
+    }
+}
+
+/// # Description:
+/// Implementation of [`PlaintextArrayDiscardingRetrievalEngine`] for [`DefaultEngine`] that
+/// operates on 64 bits integers.
+impl PlaintextArrayDiscardingRetrievalEngine<PlaintextArray64, u64> for DefaultEngine {
+    /// # Example:
+    /// ```
+    /// use concrete_core::prelude::{PlaintextCount, *};
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // Here a hard-set encoding is applied (shift by 20 bits)
+    /// let input = vec![3_u64 << 20; 3];
+    /// let mut output = vec![0_u64; 3];
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let plaintext_array: PlaintextArray64 = engine.create_plaintext_array_from(&input)?;
+    /// engine.discard_retrieve_plaintext_array(output.as_mut_slice(), &plaintext_array)?;
+    /// #
+    /// assert_eq!(output[0], 3_u64 << 20);
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn discard_retrieve_plaintext_array(
+        &mut self,
+        output: &mut [u64],
+        input: &PlaintextArray64,
+    ) -> Result<(), PlaintextArrayDiscardingRetrievalError<Self::EngineError>> {
+        PlaintextArrayDiscardingRetrievalError::perform_generic_checks(output, input)?;
+        unsafe { self.discard_retrieve_plaintext_array_unchecked(output, input) };
+        Ok(())
+    }
+
+    unsafe fn discard_retrieve_plaintext_array_unchecked(
+        &mut self,
+        output: &mut [u64],
+        input: &PlaintextArray64,
+    ) {
+        output.copy_from_slice(input.0.as_tensor().as_container().as_slice());
+    }
+}

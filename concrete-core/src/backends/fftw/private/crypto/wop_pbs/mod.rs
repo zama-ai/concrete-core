@@ -217,7 +217,7 @@ pub fn circuit_bootstrap_boolean<Scalar, C1, C2, C3, C4>(
     debug_assert!(
         ggsw_out.glwe_size().0 * ggsw_out.decomposition_level_count().0
             == fpksk_list.fpksk_count().0,
-        "The input vector of fpksk needs to have {} (ggsw.glwe_size * \
+        "The input array of fpksk needs to have {} (ggsw.glwe_size * \
         ggsw.decomposition_level_count) elements got {}",
         ggsw_out.glwe_size().0 * ggsw_out.decomposition_level_count().0,
         fpksk_list.fpksk_count().0,

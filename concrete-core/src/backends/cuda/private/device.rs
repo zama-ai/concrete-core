@@ -1,6 +1,6 @@
 use crate::backends::cuda::engines::CudaError;
+use crate::backends::cuda::private::array::CudaArray;
 use crate::backends::cuda::private::pointers::StreamPointer;
-use crate::backends::cuda::private::vec::CudaVec;
 use crate::commons::numeric::{Numeric, UnsignedInteger};
 use crate::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweCiphertextIndex, LweDimension,
@@ -58,13 +58,13 @@ impl CudaStream {
     }
 
     /// Allocates `elements` on the GPU
-    pub(crate) fn malloc<T>(&self, elements: u32) -> CudaVec<T>
+    pub(crate) fn malloc<T>(&self, elements: u32) -> CudaArray<T>
     where
         T: Numeric,
     {
         let size = elements as u64 * std::mem::size_of::<T>() as u64;
         let ptr = unsafe { cuda_malloc(size, self.gpu_index().0 as u32) };
-        CudaVec {
+        CudaArray {
             ptr,
             idx: self.gpu_index.0 as u32,
             len: elements as usize,
@@ -80,7 +80,7 @@ impl CudaStream {
     /// - [CudaStream::cuda_synchronize_device] __must__ have been called before
     /// - [CudaStream::cuda_synchronize_device] __must__ be called after the copy
     /// as soon as synchronization is required
-    pub(crate) unsafe fn copy_to_gpu_async<T>(&self, dest: &mut CudaVec<T>, src: &[T])
+    pub(crate) unsafe fn copy_to_gpu_async<T>(&self, dest: &mut CudaArray<T>, src: &[T])
     where
         T: Numeric,
     {
@@ -100,7 +100,7 @@ impl CudaStream {
     ///
     /// - `dest` __must__ be a valid pointer
     /// - [CudaStream::cuda_synchronize_device] __must__ have been called before
-    pub(crate) unsafe fn copy_to_gpu<T>(&self, dest: &mut CudaVec<T>, src: &[T])
+    pub(crate) unsafe fn copy_to_gpu<T>(&self, dest: &mut CudaArray<T>, src: &[T])
     where
         T: Numeric,
     {
@@ -116,7 +116,7 @@ impl CudaStream {
     /// - [CudaStream::cuda_synchronize_device] __must__ have been called before
     /// - [CudaStream::cuda_synchronize_device] __must__ be called as soon as synchronization is
     /// required
-    pub(crate) unsafe fn copy_to_cpu_async<T>(&self, dest: &mut [T], src: &CudaVec<T>)
+    pub(crate) unsafe fn copy_to_cpu_async<T>(&self, dest: &mut [T], src: &CudaArray<T>)
     where
         T: Numeric,
     {
@@ -136,7 +136,7 @@ impl CudaStream {
     ///
     /// - `dest` __must__ be a valid pointer
     /// - [CudaStream::cuda_synchronize_device] __must__ have been called before
-    pub(crate) unsafe fn copy_to_cpu<T>(&self, dest: &mut [T], src: &CudaVec<T>)
+    pub(crate) unsafe fn copy_to_cpu<T>(&self, dest: &mut [T], src: &CudaArray<T>)
     where
         T: Numeric,
     {
@@ -170,7 +170,7 @@ impl CudaStream {
     #[allow(dead_code)]
     pub unsafe fn convert_lwe_bootstrap_key<T: UnsignedInteger>(
         &self,
-        dest: &mut CudaVec<f64>,
+        dest: &mut CudaArray<f64>,
         src: &[T],
         input_lwe_dim: LweDimension,
         glwe_dim: GlweDimension,
@@ -202,15 +202,15 @@ impl CudaStream {
         }
     }
 
-    /// Discarding bootstrap on a vector of LWE ciphertexts
+    /// Discarding bootstrap on an array of LWE ciphertexts
     #[allow(dead_code, clippy::too_many_arguments)]
-    pub unsafe fn discard_bootstrap_amortized_lwe_ciphertext_vector<T: UnsignedInteger>(
+    pub unsafe fn discard_bootstrap_amortized_lwe_ciphertext_array<T: UnsignedInteger>(
         &self,
-        lwe_out: &mut CudaVec<T>,
-        test_vector: &CudaVec<T>,
-        test_vector_indexes: &CudaVec<u32>,
-        lwe_in: &CudaVec<T>,
-        bootstrapping_key: &CudaVec<f64>,
+        lwe_out: &mut CudaArray<T>,
+        lut_array: &CudaArray<T>,
+        lut_array_indexes: &CudaArray<u32>,
+        lwe_in: &CudaArray<T>,
+        bootstrapping_key: &CudaArray<f64>,
         lwe_dimension: LweDimension,
         polynomial_size: PolynomialSize,
         base_log: DecompositionBaseLog,
@@ -220,11 +220,11 @@ impl CudaStream {
         max_shared_memory: SharedMemoryAmount,
     ) {
         if T::BITS == 32 {
-            cuda_bootstrap_amortized_lwe_ciphertext_vector_32(
+            cuda_bootstrap_amortized_lwe_ciphertext_array_32(
                 self.stream.0,
                 lwe_out.as_mut_c_ptr(),
-                test_vector.as_c_ptr(),
-                test_vector_indexes.as_c_ptr(),
+                lut_array.as_c_ptr(),
+                lut_array_indexes.as_c_ptr(),
                 lwe_in.as_c_ptr(),
                 bootstrapping_key.as_c_ptr(),
                 lwe_dimension.0 as u32,
@@ -237,11 +237,11 @@ impl CudaStream {
                 max_shared_memory.0 as u32,
             )
         } else if T::BITS == 64 {
-            cuda_bootstrap_amortized_lwe_ciphertext_vector_64(
+            cuda_bootstrap_amortized_lwe_ciphertext_array_64(
                 self.stream.0,
                 lwe_out.as_mut_c_ptr(),
-                test_vector.as_c_ptr(),
-                test_vector_indexes.as_c_ptr(),
+                lut_array.as_c_ptr(),
+                lut_array_indexes.as_c_ptr(),
                 lwe_in.as_c_ptr(),
                 bootstrapping_key.as_c_ptr(),
                 lwe_dimension.0 as u32,
@@ -256,15 +256,15 @@ impl CudaStream {
         }
     }
 
-    /// Discarding bootstrap on a vector of LWE ciphertexts
+    /// Discarding bootstrap on an array of LWE ciphertexts
     #[allow(dead_code, clippy::too_many_arguments)]
-    pub unsafe fn discard_bootstrap_low_latency_lwe_ciphertext_vector<T: UnsignedInteger>(
+    pub unsafe fn discard_bootstrap_low_latency_lwe_ciphertext_array<T: UnsignedInteger>(
         &self,
-        lwe_out: &mut CudaVec<T>,
-        test_vector: &CudaVec<T>,
-        test_vector_indexes: &CudaVec<u32>,
-        lwe_in: &CudaVec<T>,
-        bootstrapping_key: &CudaVec<f64>,
+        lwe_out: &mut CudaArray<T>,
+        lut_array: &CudaArray<T>,
+        lut_array_indexes: &CudaArray<u32>,
+        lwe_in: &CudaArray<T>,
+        bootstrapping_key: &CudaArray<f64>,
         lwe_dimension: LweDimension,
         polynomial_size: PolynomialSize,
         base_log: DecompositionBaseLog,
@@ -274,11 +274,11 @@ impl CudaStream {
         max_shared_memory: SharedMemoryAmount,
     ) {
         if T::BITS == 32 {
-            cuda_bootstrap_low_latency_lwe_ciphertext_vector_32(
+            cuda_bootstrap_low_latency_lwe_ciphertext_array_32(
                 self.stream.0,
                 lwe_out.as_mut_c_ptr(),
-                test_vector.as_c_ptr(),
-                test_vector_indexes.as_c_ptr(),
+                lut_array.as_c_ptr(),
+                lut_array_indexes.as_c_ptr(),
                 lwe_in.as_c_ptr(),
                 bootstrapping_key.as_c_ptr(),
                 lwe_dimension.0 as u32,
@@ -291,11 +291,11 @@ impl CudaStream {
                 max_shared_memory.0 as u32,
             )
         } else if T::BITS == 64 {
-            cuda_bootstrap_low_latency_lwe_ciphertext_vector_64(
+            cuda_bootstrap_low_latency_lwe_ciphertext_array_64(
                 self.stream.0,
                 lwe_out.as_mut_c_ptr(),
-                test_vector.as_c_ptr(),
-                test_vector_indexes.as_c_ptr(),
+                lut_array.as_c_ptr(),
+                lut_array_indexes.as_c_ptr(),
                 lwe_in.as_c_ptr(),
                 bootstrapping_key.as_c_ptr(),
                 lwe_dimension.0 as u32,
@@ -310,21 +310,21 @@ impl CudaStream {
         }
     }
 
-    /// Discarding keyswitch on a vector of LWE ciphertexts
+    /// Discarding keyswitch on an array of LWE ciphertexts
     #[allow(dead_code, clippy::too_many_arguments)]
-    pub unsafe fn discard_keyswitch_lwe_ciphertext_vector<T: UnsignedInteger>(
+    pub unsafe fn discard_keyswitch_lwe_ciphertext_array<T: UnsignedInteger>(
         &self,
-        lwe_out: &mut CudaVec<T>,
-        lwe_in: &CudaVec<T>,
+        lwe_out: &mut CudaArray<T>,
+        lwe_in: &CudaArray<T>,
         input_lwe_dimension: LweDimension,
         output_lwe_dimension: LweDimension,
-        keyswitch_key: &CudaVec<T>,
+        keyswitch_key: &CudaArray<T>,
         base_log: DecompositionBaseLog,
         l_gadget: DecompositionLevelCount,
         num_samples: NumberOfSamples,
     ) {
         if T::BITS == 32 {
-            cuda_keyswitch_lwe_ciphertext_vector_32(
+            cuda_keyswitch_lwe_ciphertext_array_32(
                 self.stream.0,
                 lwe_out.as_mut_c_ptr(),
                 lwe_in.as_c_ptr(),
@@ -336,7 +336,7 @@ impl CudaStream {
                 num_samples.0 as u32,
             )
         } else if T::BITS == 64 {
-            cuda_keyswitch_lwe_ciphertext_vector_64(
+            cuda_keyswitch_lwe_ciphertext_array_64(
                 self.stream.0,
                 lwe_out.as_mut_c_ptr(),
                 lwe_in.as_c_ptr(),
@@ -379,7 +379,7 @@ mod tests {
         let gpu_index = GpuIndex(0);
         let stream = CudaStream::new(gpu_index).unwrap();
         stream.check_device_memory(vec.len() as u64).unwrap();
-        let mut d_vec: CudaVec<u64> = stream.malloc::<u64>(vec.len() as u32);
+        let mut d_vec: CudaArray<u64> = stream.malloc::<u64>(vec.len() as u32);
         unsafe {
             stream.copy_to_gpu(&mut d_vec, &vec);
         }

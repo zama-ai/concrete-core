@@ -106,7 +106,7 @@ mod backend_default {
         }
 
         fn destroy_glwe_ciphertext(&mut self, entity: GlweCiphertextView32) {
-            // Re-construct the vector so that it frees memory when it's dropped
+            // Re-construct the array so that it frees memory when it's dropped
             let slice = self
                 .default_engine
                 .consume_retrieve_glwe_ciphertext(entity)
@@ -155,7 +155,7 @@ mod backend_default {
         }
 
         fn destroy_glwe_ciphertext(&mut self, entity: GlweCiphertextView64) {
-            // Re-construct the vector so that it frees memory when it's dropped
+            // Re-construct the array so that it frees memory when it's dropped
             let slice = self
                 .default_engine
                 .consume_retrieve_glwe_ciphertext(entity)
@@ -205,7 +205,7 @@ mod backend_default {
         }
 
         fn destroy_glwe_ciphertext(&mut self, entity: GlweCiphertextMutView32) {
-            // Re-construct the vector so that it frees memory when it's dropped
+            // Re-construct the array so that it frees memory when it's dropped
             let slice = self
                 .default_engine
                 .consume_retrieve_glwe_ciphertext(entity)
@@ -253,7 +253,7 @@ mod backend_default {
         }
 
         fn destroy_glwe_ciphertext(&mut self, entity: GlweCiphertextMutView64) {
-            // Re-construct the vector so that it frees memory when it's dropped
+            // Re-construct the array so that it frees memory when it's dropped
             let slice = self
                 .default_engine
                 .consume_retrieve_glwe_ciphertext(entity)

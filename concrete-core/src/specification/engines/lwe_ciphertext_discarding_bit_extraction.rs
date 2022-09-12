@@ -1,7 +1,7 @@
 use super::engine_error;
 use crate::prelude::{
     AbstractEngine, CiphertextModulusLog, DeltaLog, ExtractedBitsCount, LweBootstrapKeyEntity,
-    LweCiphertextEntity, LweCiphertextVectorEntity, LweKeyswitchKeyEntity,
+    LweCiphertextArrayEntity, LweCiphertextEntity, LweKeyswitchKeyEntity,
 };
 
 engine_error! {
@@ -10,9 +10,9 @@ engine_error! {
                                   same.",
     InputKeyswitchKeyLweDimensionMismatch => "The input ciphertext LWE dimension must be the same \
                                             as the keyswitch key input LWE dimension.",
-    OutputLweDimensionMismatch => "The output ciphertext vector LWE dimension must be the same \
+    OutputLweDimensionMismatch => "The output ciphertext array LWE dimension must be the same \
                                   as the output LWE dimension of the keyswitch key.",
-    ExtractedBitsCountMismatch => "The output LWE ciphertext vector count must be the same as \
+    ExtractedBitsCountMismatch => "The output LWE ciphertext array count must be the same as \
                                   the number of bits to extract.",
     KeyDimensionMismatch => "The keyswitch key output LWE dimension must be the same as the \
                             bootstrap key input LWE dimension.",
@@ -27,9 +27,9 @@ impl<EngineError: std::error::Error> LweCiphertextDiscardingBitExtractError<Engi
         BootstrapKey,
         KeyswitchKey,
         InputCiphertext,
-        OutputCiphertextVector,
+        OutputCiphertextArray,
     >(
-        output: &OutputCiphertextVector,
+        output: &OutputCiphertextArray,
         input: &InputCiphertext,
         bsk: &BootstrapKey,
         ksk: &KeyswitchKey,
@@ -41,7 +41,7 @@ impl<EngineError: std::error::Error> LweCiphertextDiscardingBitExtractError<Engi
         BootstrapKey: LweBootstrapKeyEntity,
         KeyswitchKey: LweKeyswitchKeyEntity,
         InputCiphertext: LweCiphertextEntity,
-        OutputCiphertextVector: LweCiphertextVectorEntity,
+        OutputCiphertextArray: LweCiphertextArrayEntity,
     {
         if input.lwe_dimension() != bsk.output_lwe_dimension() {
             return Err(Self::InputLweDimensionMismatch);
@@ -69,7 +69,7 @@ impl<EngineError: std::error::Error> LweCiphertextDiscardingBitExtractError<Engi
 ///
 /// # Semantics
 ///
-/// This [discarding](super#operation-semantics) operation fills the `output` LWE ciphertext vector
+/// This [discarding](super#operation-semantics) operation fills the `output` LWE ciphertext array
 /// with the bit extraction of the `input` LWE ciphertext, extracting `number_of_bits_to_extract`
 /// bits starting from the bit at index `delta_log` (0-indexed) included, and going towards the
 /// most significant bits.
@@ -83,17 +83,17 @@ pub trait LweCiphertextDiscardingBitExtractEngine<
     BootstrapKey,
     KeyswitchKey,
     InputCiphertext,
-    OutputCiphertextVector,
+    OutputCiphertextArray,
 >: AbstractEngine where
     BootstrapKey: LweBootstrapKeyEntity,
     KeyswitchKey: LweKeyswitchKeyEntity,
     InputCiphertext: LweCiphertextEntity,
-    OutputCiphertextVector: LweCiphertextVectorEntity,
+    OutputCiphertextArray: LweCiphertextArrayEntity,
 {
     /// Extract bits of an LWE ciphertext.
     fn discard_extract_bits_lwe_ciphertext(
         &mut self,
-        output: &mut OutputCiphertextVector,
+        output: &mut OutputCiphertextArray,
         input: &InputCiphertext,
         bsk: &BootstrapKey,
         ksk: &KeyswitchKey,
@@ -109,7 +109,7 @@ pub trait LweCiphertextDiscardingBitExtractEngine<
     /// refer to the implementer safety section.
     unsafe fn discard_extract_bits_lwe_ciphertext_unchecked(
         &mut self,
-        output: &mut OutputCiphertextVector,
+        output: &mut OutputCiphertextArray,
         input: &InputCiphertext,
         bsk: &BootstrapKey,
         ksk: &KeyswitchKey,

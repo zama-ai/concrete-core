@@ -28,38 +28,38 @@ macro_rules! entity_kind_marker {
 entity_kind_marker! {
         PlaintextKind
             => "An empty type representing the plaintext kind in the type system.",
-        PlaintextVectorKind
-            => "An empty type representing the plaintext vector kind in the type system",
+        PlaintextArrayKind
+            => "An empty type representing the plaintext array kind in the type system",
         CleartextKind
             => "An empty type representing the cleartext kind in the type system.",
-        CleartextVectorKind
-            => "An empty type representing the cleartext vector kind in the type system.",
+        CleartextArrayKind
+            => "An empty type representing the cleartext array kind in the type system.",
         LweCiphertextKind
             => "An empty type representing the LWE ciphertext kind in the type system.",
-        LweCiphertextVectorKind
-            => "An empty type representing the LWE ciphertext vector kind in the type system.",
+        LweCiphertextArrayKind
+            => "An empty type representing the LWE ciphertext array kind in the type system.",
         LweSeededCiphertextKind
             => "An empty type representing the seeded LWE ciphertext kind in the type system.",
-        LweSeededCiphertextVectorKind
-            => "An empty type representing the seeded LWE ciphertext vector kind in the type system.",
+        LweSeededCiphertextArrayKind
+            => "An empty type representing the seeded LWE ciphertext array kind in the type system.",
         GlweCiphertextKind
             => "An empty type representing the GLWE ciphertext kind in the type system.",
-        GlweCiphertextVectorKind
-            => "An empty type representing the GLWE ciphertext vector kind in the type system.",
+        GlweCiphertextArrayKind
+            => "An empty type representing the GLWE ciphertext array kind in the type system.",
         GlweSeededCiphertextKind
             => "An empty type representing the seeded GLWE ciphertext kind in the type system.",
-        GlweSeededCiphertextVectorKind
-            => "An empty type representing the seeded GLWE ciphertext vector kind in the type system.",
+        GlweSeededCiphertextArrayKind
+            => "An empty type representing the seeded GLWE ciphertext array kind in the type system.",
         GgswCiphertextKind
             => "An empty type representing the GGSW ciphertext kind in the type system.",
-        GgswCiphertextVectorKind
-            => "An empty type representing the GGSW ciphertext vector kind in the type system.",
+        GgswCiphertextArrayKind
+            => "An empty type representing the GGSW ciphertext array kind in the type system.",
         GgswSeededCiphertextKind
             => "An empty type representing the seeded GGSW ciphertext kind in the type system.",
         GswCiphertextKind
             => "An empty type representing the GSW ciphertext kind in the type system.",
-        GswCiphertextVectorKind
-            => "An empty type representing the GSW ciphertext vector kind in the type system.",
+        GswCiphertextArrayKind
+            => "An empty type representing the GSW ciphertext array kind in the type system.",
         LwePublicKeyKind
             => "An empty type representing the LWE public key kind in the type system.",
         LweSecretKeyKind
@@ -76,7 +76,7 @@ entity_kind_marker! {
             => "An empty type representing the private functional packing keyswitch key in the \
             type system.",
         LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysKind
-            => "An empty type representing the private functional packing keyswitch key vector \
+            => "An empty type representing the private functional packing keyswitch key array \
             used for a circuit bootstrap in the type system.",
         LweBootstrapKeyKind
             => "An empty type representing the LWE bootstrap key kind in the type system.",
@@ -84,8 +84,8 @@ entity_kind_marker! {
             => "An empty type representing the seeded LWE bootstrap key kind in the type system.",
         EncoderKind
             => "An empty type representing the encoder kind in the type system.",
-        EncoderVectorKind
-            => "An empty type representing the encoder vector kind in the type system"
+        EncoderArrayKind
+            => "An empty type representing the encoder array kind in the type system"
 }
 
 pub(crate) mod seal {

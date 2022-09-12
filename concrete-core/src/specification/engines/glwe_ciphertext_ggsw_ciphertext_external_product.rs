@@ -35,7 +35,7 @@ impl<EngineError: std::error::Error> GlweCiphertextGgswCiphertextExternalProduct
 ///
 /// # Semantics
 ///
-/// This [pure](super#operation-semantics) operation generates a GLWE ciphertext vector containing
+/// This [pure](super#operation-semantics) operation generates a GLWE ciphertext array containing
 /// the result of the external product between a `glwe_input` GLWE ciphertext and a `ggsw_input`
 /// GSW ciphertext.
 ///

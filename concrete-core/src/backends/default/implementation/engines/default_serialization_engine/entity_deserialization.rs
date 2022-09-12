@@ -26,35 +26,34 @@ use crate::commons::crypto::secret::{
     GlweSecretKey as ImplGlweSecretKey, LweSecretKey as ImplLweSecretKey,
 };
 use crate::prelude::{
-    BinaryKeyKind, Cleartext32, Cleartext32Version, Cleartext64, Cleartext64Version, CleartextF64,
-    CleartextF64Version, CleartextVector32, CleartextVector32Version, CleartextVector64,
-    CleartextVector64Version, CleartextVectorF64, CleartextVectorF64Version,
+    BinaryKeyKind, Cleartext32, Cleartext32Version, Cleartext64, Cleartext64Version,
+    CleartextArray32, CleartextArray32Version, CleartextArray64, CleartextArray64Version,
+    CleartextArrayF64, CleartextArrayF64Version, CleartextF64, CleartextF64Version,
     DefaultSerializationEngine, DefaultSerializationError, EntityDeserializationEngine,
-    EntityDeserializationError, FloatEncoder, FloatEncoderVector, FloatEncoderVectorVersion,
+    EntityDeserializationError, FloatEncoder, FloatEncoderArray, FloatEncoderArrayVersion,
     FloatEncoderVersion, GgswCiphertext32, GgswCiphertext32Version, GgswCiphertext64,
     GgswCiphertext64Version, GgswSeededCiphertext32, GgswSeededCiphertext32Version,
     GgswSeededCiphertext64, GgswSeededCiphertext64Version, GlweCiphertext32,
-    GlweCiphertext32Version, GlweCiphertext64, GlweCiphertext64Version, GlweCiphertextVector32,
-    GlweCiphertextVector32Version, GlweCiphertextVector64, GlweCiphertextVector64Version,
+    GlweCiphertext32Version, GlweCiphertext64, GlweCiphertext64Version, GlweCiphertextArray32,
+    GlweCiphertextArray32Version, GlweCiphertextArray64, GlweCiphertextArray64Version,
     GlweSecretKey32, GlweSecretKey32Version, GlweSecretKey64, GlweSecretKey64Version,
     GlweSeededCiphertext32, GlweSeededCiphertext32Version, GlweSeededCiphertext64,
-    GlweSeededCiphertext64Version, GlweSeededCiphertextVector32,
-    GlweSeededCiphertextVector32Version, GlweSeededCiphertextVector64,
-    GlweSeededCiphertextVector64Version, LweBootstrapKey32, LweBootstrapKey32Version,
-    LweBootstrapKey64, LweBootstrapKey64Version, LweCiphertext32, LweCiphertext32Version,
-    LweCiphertext64, LweCiphertext64Version, LweCiphertextVector32, LweCiphertextVector32Version,
-    LweCiphertextVector64, LweCiphertextVector64Version, LweKeyswitchKey32,
-    LweKeyswitchKey32Version, LweKeyswitchKey64, LweKeyswitchKey64Version,
+    GlweSeededCiphertext64Version, GlweSeededCiphertextArray32, GlweSeededCiphertextArray32Version,
+    GlweSeededCiphertextArray64, GlweSeededCiphertextArray64Version, LweBootstrapKey32,
+    LweBootstrapKey32Version, LweBootstrapKey64, LweBootstrapKey64Version, LweCiphertext32,
+    LweCiphertext32Version, LweCiphertext64, LweCiphertext64Version, LweCiphertextArray32,
+    LweCiphertextArray32Version, LweCiphertextArray64, LweCiphertextArray64Version,
+    LweKeyswitchKey32, LweKeyswitchKey32Version, LweKeyswitchKey64, LweKeyswitchKey64Version,
     LwePackingKeyswitchKey32, LwePackingKeyswitchKey32Version, LwePackingKeyswitchKey64,
     LwePackingKeyswitchKey64Version, LweSecretKey32, LweSecretKey32Version, LweSecretKey64,
     LweSecretKey64Version, LweSeededBootstrapKey32, LweSeededBootstrapKey32Version,
     LweSeededBootstrapKey64, LweSeededBootstrapKey64Version, LweSeededCiphertext32,
     LweSeededCiphertext32Version, LweSeededCiphertext64, LweSeededCiphertext64Version,
-    LweSeededCiphertextVector32, LweSeededCiphertextVector32Version, LweSeededCiphertextVector64,
-    LweSeededCiphertextVector64Version, LweSeededKeyswitchKey32, LweSeededKeyswitchKey32Version,
+    LweSeededCiphertextArray32, LweSeededCiphertextArray32Version, LweSeededCiphertextArray64,
+    LweSeededCiphertextArray64Version, LweSeededKeyswitchKey32, LweSeededKeyswitchKey32Version,
     LweSeededKeyswitchKey64, LweSeededKeyswitchKey64Version, Plaintext32, Plaintext32Version,
-    Plaintext64, Plaintext64Version, PlaintextVector32, PlaintextVector32Version,
-    PlaintextVector64, PlaintextVector64Version,
+    Plaintext64, Plaintext64Version, PlaintextArray32, PlaintextArray32Version, PlaintextArray64,
+    PlaintextArray64Version,
 };
 use serde::Deserialize;
 
@@ -228,8 +227,8 @@ impl EntityDeserializationEngine<&[u8], CleartextF64> for DefaultSerializationEn
 
 /// # Description:
 /// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
-/// operates on 32 bits integers. It deserializes a cleartext vector entity.
-impl EntityDeserializationEngine<&[u8], CleartextVector32> for DefaultSerializationEngine {
+/// operates on 32 bits integers. It deserializes a cleartext array entity.
+impl EntityDeserializationEngine<&[u8], CleartextArray32> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_core::prelude::{CleartextCount, *};
@@ -242,11 +241,11 @@ impl EntityDeserializationEngine<&[u8], CleartextVector32> for DefaultSerializat
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let cleartext_vector: CleartextVector32 = engine.create_cleartext_vector_from(&input)?;
+    /// let cleartext_array: CleartextArray32 = engine.create_cleartext_array_from(&input)?;
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&cleartext_vector)?;
+    /// let serialized = serialization_engine.serialize(&cleartext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(cleartext_vector, recovered);
+    /// assert_eq!(cleartext_array, recovered);
     /// #
     /// # Ok(())
     /// # }
@@ -254,38 +253,38 @@ impl EntityDeserializationEngine<&[u8], CleartextVector32> for DefaultSerializat
     fn deserialize(
         &mut self,
         serialized: &[u8],
-    ) -> Result<CleartextVector32, EntityDeserializationError<Self::EngineError>> {
+    ) -> Result<CleartextArray32, EntityDeserializationError<Self::EngineError>> {
         #[derive(Deserialize)]
-        struct DeserializableCleartextVector32 {
-            version: CleartextVector32Version,
+        struct DeserializableCleartextArray32 {
+            version: CleartextArray32Version,
             inner: ImplCleartextList<Vec<u32>>,
         }
-        let deserialized: DeserializableCleartextVector32 = bincode::deserialize(serialized)
+        let deserialized: DeserializableCleartextArray32 = bincode::deserialize(serialized)
             .map_err(DefaultSerializationError::Deserialization)
             .map_err(EntityDeserializationError::Engine)?;
         match deserialized {
-            DeserializableCleartextVector32 {
-                version: CleartextVector32Version::Unsupported,
+            DeserializableCleartextArray32 {
+                version: CleartextArray32Version::Unsupported,
                 ..
             } => Err(EntityDeserializationError::Engine(
                 DefaultSerializationError::UnsupportedVersion,
             )),
-            DeserializableCleartextVector32 {
-                version: CleartextVector32Version::V0,
+            DeserializableCleartextArray32 {
+                version: CleartextArray32Version::V0,
                 inner,
-            } => Ok(CleartextVector32(inner)),
+            } => Ok(CleartextArray32(inner)),
         }
     }
 
-    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> CleartextVector32 {
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> CleartextArray32 {
         self.deserialize(serialized).unwrap()
     }
 }
 
 /// # Description:
 /// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
-/// operates on 64 bits integers. It deserializes a cleartext vector entity.
-impl EntityDeserializationEngine<&[u8], CleartextVector64> for DefaultSerializationEngine {
+/// operates on 64 bits integers. It deserializes a cleartext array entity.
+impl EntityDeserializationEngine<&[u8], CleartextArray64> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_core::prelude::{CleartextCount, *};
@@ -298,11 +297,11 @@ impl EntityDeserializationEngine<&[u8], CleartextVector64> for DefaultSerializat
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let cleartext_vector: CleartextVector64 = engine.create_cleartext_vector_from(&input)?;
+    /// let cleartext_array: CleartextArray64 = engine.create_cleartext_array_from(&input)?;
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&cleartext_vector)?;
+    /// let serialized = serialization_engine.serialize(&cleartext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(cleartext_vector, recovered);
+    /// assert_eq!(cleartext_array, recovered);
     /// #
     /// # Ok(())
     /// # }
@@ -310,38 +309,38 @@ impl EntityDeserializationEngine<&[u8], CleartextVector64> for DefaultSerializat
     fn deserialize(
         &mut self,
         serialized: &[u8],
-    ) -> Result<CleartextVector64, EntityDeserializationError<Self::EngineError>> {
+    ) -> Result<CleartextArray64, EntityDeserializationError<Self::EngineError>> {
         #[derive(Deserialize)]
-        struct DeserializableCleartextVector64 {
-            version: CleartextVector64Version,
+        struct DeserializableCleartextArray64 {
+            version: CleartextArray64Version,
             inner: ImplCleartextList<Vec<u64>>,
         }
-        let deserialized: DeserializableCleartextVector64 = bincode::deserialize(serialized)
+        let deserialized: DeserializableCleartextArray64 = bincode::deserialize(serialized)
             .map_err(DefaultSerializationError::Deserialization)
             .map_err(EntityDeserializationError::Engine)?;
         match deserialized {
-            DeserializableCleartextVector64 {
-                version: CleartextVector64Version::Unsupported,
+            DeserializableCleartextArray64 {
+                version: CleartextArray64Version::Unsupported,
                 ..
             } => Err(EntityDeserializationError::Engine(
                 DefaultSerializationError::UnsupportedVersion,
             )),
-            DeserializableCleartextVector64 {
-                version: CleartextVector64Version::V0,
+            DeserializableCleartextArray64 {
+                version: CleartextArray64Version::V0,
                 inner,
-            } => Ok(CleartextVector64(inner)),
+            } => Ok(CleartextArray64(inner)),
         }
     }
 
-    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> CleartextVector64 {
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> CleartextArray64 {
         self.deserialize(serialized).unwrap()
     }
 }
 
 /// # Description:
 /// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
-/// operates on 64 bits integers. It deserializes a floating point cleartext vector entity.
-impl EntityDeserializationEngine<&[u8], CleartextVectorF64> for DefaultSerializationEngine {
+/// operates on 64 bits integers. It deserializes a floating point cleartext array entity.
+impl EntityDeserializationEngine<&[u8], CleartextArrayF64> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_core::prelude::{CleartextCount, *};
@@ -354,11 +353,11 @@ impl EntityDeserializationEngine<&[u8], CleartextVectorF64> for DefaultSerializa
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let cleartext_vector: CleartextVectorF64 = engine.create_cleartext_vector_from(&input)?;
+    /// let cleartext_array: CleartextArrayF64 = engine.create_cleartext_array_from(&input)?;
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&cleartext_vector)?;
+    /// let serialized = serialization_engine.serialize(&cleartext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(cleartext_vector, recovered);
+    /// assert_eq!(cleartext_array, recovered);
     /// #
     /// # Ok(())
     /// # }
@@ -366,30 +365,30 @@ impl EntityDeserializationEngine<&[u8], CleartextVectorF64> for DefaultSerializa
     fn deserialize(
         &mut self,
         serialized: &[u8],
-    ) -> Result<CleartextVectorF64, EntityDeserializationError<Self::EngineError>> {
+    ) -> Result<CleartextArrayF64, EntityDeserializationError<Self::EngineError>> {
         #[derive(Deserialize)]
-        struct DeserializableCleartextVectorF64 {
-            version: CleartextVectorF64Version,
+        struct DeserializableCleartextArrayF64 {
+            version: CleartextArrayF64Version,
             inner: ImplCleartextList<Vec<f64>>,
         }
-        let deserialized: DeserializableCleartextVectorF64 = bincode::deserialize(serialized)
+        let deserialized: DeserializableCleartextArrayF64 = bincode::deserialize(serialized)
             .map_err(DefaultSerializationError::Deserialization)
             .map_err(EntityDeserializationError::Engine)?;
         match deserialized {
-            DeserializableCleartextVectorF64 {
-                version: CleartextVectorF64Version::Unsupported,
+            DeserializableCleartextArrayF64 {
+                version: CleartextArrayF64Version::Unsupported,
                 ..
             } => Err(EntityDeserializationError::Engine(
                 DefaultSerializationError::UnsupportedVersion,
             )),
-            DeserializableCleartextVectorF64 {
-                version: CleartextVectorF64Version::V0,
+            DeserializableCleartextArrayF64 {
+                version: CleartextArrayF64Version::V0,
                 inner,
-            } => Ok(CleartextVectorF64(inner)),
+            } => Ok(CleartextArrayF64(inner)),
         }
     }
 
-    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> CleartextVectorF64 {
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> CleartextArrayF64 {
         self.deserialize(serialized).unwrap()
     }
 }
@@ -634,9 +633,9 @@ impl EntityDeserializationEngine<&[u8], GlweCiphertext32> for DefaultSerializati
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey32 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&ciphertext)?;
@@ -702,9 +701,9 @@ impl EntityDeserializationEngine<&[u8], GlweCiphertext64> for DefaultSerializati
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey64 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&ciphertext)?;
@@ -748,8 +747,8 @@ impl EntityDeserializationEngine<&[u8], GlweCiphertext64> for DefaultSerializati
 
 /// # Description:
 /// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
-/// operates on 32 bits integers. It deserializes a GLWE ciphertext vector entity.
-impl EntityDeserializationEngine<&[u8], GlweCiphertextVector32> for DefaultSerializationEngine {
+/// operates on 32 bits integers. It deserializes a GLWE ciphertext array entity.
+impl EntityDeserializationEngine<&[u8], GlweCiphertextArray32> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_core::prelude::{GlweCiphertextCount, GlweDimension, PolynomialSize, Variance, *};
@@ -769,15 +768,14 @@ impl EntityDeserializationEngine<&[u8], GlweCiphertextVector32> for DefaultSeria
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey32 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let ciphertext_vector =
-    ///     engine.encrypt_glwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    /// let ciphertext_array = engine.encrypt_glwe_ciphertext_array(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&ciphertext_vector)?;
+    /// let serialized = serialization_engine.serialize(&ciphertext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(ciphertext_vector, recovered);
+    /// assert_eq!(ciphertext_array, recovered);
     ///
     /// #
     /// # Ok(())
@@ -786,38 +784,38 @@ impl EntityDeserializationEngine<&[u8], GlweCiphertextVector32> for DefaultSeria
     fn deserialize(
         &mut self,
         serialized: &[u8],
-    ) -> Result<GlweCiphertextVector32, EntityDeserializationError<Self::EngineError>> {
+    ) -> Result<GlweCiphertextArray32, EntityDeserializationError<Self::EngineError>> {
         #[derive(Deserialize)]
-        struct DeserializableGlweCiphertextVector32 {
-            version: GlweCiphertextVector32Version,
+        struct DeserializableGlweCiphertextArray32 {
+            version: GlweCiphertextArray32Version,
             inner: ImplGlweList<Vec<u32>>,
         }
-        let deserialized: DeserializableGlweCiphertextVector32 = bincode::deserialize(serialized)
+        let deserialized: DeserializableGlweCiphertextArray32 = bincode::deserialize(serialized)
             .map_err(DefaultSerializationError::Deserialization)
             .map_err(EntityDeserializationError::Engine)?;
         match deserialized {
-            DeserializableGlweCiphertextVector32 {
-                version: GlweCiphertextVector32Version::Unsupported,
+            DeserializableGlweCiphertextArray32 {
+                version: GlweCiphertextArray32Version::Unsupported,
                 ..
             } => Err(EntityDeserializationError::Engine(
                 DefaultSerializationError::UnsupportedVersion,
             )),
-            DeserializableGlweCiphertextVector32 {
-                version: GlweCiphertextVector32Version::V0,
+            DeserializableGlweCiphertextArray32 {
+                version: GlweCiphertextArray32Version::V0,
                 inner,
-            } => Ok(GlweCiphertextVector32(inner)),
+            } => Ok(GlweCiphertextArray32(inner)),
         }
     }
 
-    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> GlweCiphertextVector32 {
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> GlweCiphertextArray32 {
         self.deserialize(serialized).unwrap()
     }
 }
 
 /// # Description:
 /// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
-/// operates on 64 bits integers. It deserializes a GLWE ciphertext vector entity.
-impl EntityDeserializationEngine<&[u8], GlweCiphertextVector64> for DefaultSerializationEngine {
+/// operates on 64 bits integers. It deserializes a GLWE ciphertext array entity.
+impl EntityDeserializationEngine<&[u8], GlweCiphertextArray64> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_core::prelude::{GlweCiphertextCount, GlweDimension, PolynomialSize, Variance, *};
@@ -837,15 +835,14 @@ impl EntityDeserializationEngine<&[u8], GlweCiphertextVector64> for DefaultSeria
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey64 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let ciphertext_vector =
-    ///     engine.encrypt_glwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    /// let ciphertext_array = engine.encrypt_glwe_ciphertext_array(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&ciphertext_vector)?;
+    /// let serialized = serialization_engine.serialize(&ciphertext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(ciphertext_vector, recovered);
+    /// assert_eq!(ciphertext_array, recovered);
     ///
     /// #
     /// # Ok(())
@@ -854,30 +851,30 @@ impl EntityDeserializationEngine<&[u8], GlweCiphertextVector64> for DefaultSeria
     fn deserialize(
         &mut self,
         serialized: &[u8],
-    ) -> Result<GlweCiphertextVector64, EntityDeserializationError<Self::EngineError>> {
+    ) -> Result<GlweCiphertextArray64, EntityDeserializationError<Self::EngineError>> {
         #[derive(Deserialize)]
-        struct DeserializableGlweCiphertextVector64 {
-            version: GlweCiphertextVector64Version,
+        struct DeserializableGlweCiphertextArray64 {
+            version: GlweCiphertextArray64Version,
             inner: ImplGlweList<Vec<u64>>,
         }
-        let deserialized: DeserializableGlweCiphertextVector64 = bincode::deserialize(serialized)
+        let deserialized: DeserializableGlweCiphertextArray64 = bincode::deserialize(serialized)
             .map_err(DefaultSerializationError::Deserialization)
             .map_err(EntityDeserializationError::Engine)?;
         match deserialized {
-            DeserializableGlweCiphertextVector64 {
-                version: GlweCiphertextVector64Version::Unsupported,
+            DeserializableGlweCiphertextArray64 {
+                version: GlweCiphertextArray64Version::Unsupported,
                 ..
             } => Err(EntityDeserializationError::Engine(
                 DefaultSerializationError::UnsupportedVersion,
             )),
-            DeserializableGlweCiphertextVector64 {
-                version: GlweCiphertextVector64Version::V0,
+            DeserializableGlweCiphertextArray64 {
+                version: GlweCiphertextArray64Version::V0,
                 inner,
-            } => Ok(GlweCiphertextVector64(inner)),
+            } => Ok(GlweCiphertextArray64(inner)),
         }
     }
 
-    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> GlweCiphertextVector64 {
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> GlweCiphertextArray64 {
         self.deserialize(serialized).unwrap()
     }
 }
@@ -1028,10 +1025,9 @@ impl EntityDeserializationEngine<&[u8], GlweSeededCiphertext32> for DefaultSeria
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey32 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let seeded_ciphertext =
-    ///     engine.encrypt_glwe_seeded_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let seeded_ciphertext = engine.encrypt_glwe_seeded_ciphertext(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&seeded_ciphertext)?;
@@ -1097,10 +1093,9 @@ impl EntityDeserializationEngine<&[u8], GlweSeededCiphertext64> for DefaultSeria
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey64 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let seeded_ciphertext =
-    ///     engine.encrypt_glwe_seeded_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let seeded_ciphertext = engine.encrypt_glwe_seeded_ciphertext(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&seeded_ciphertext)?;
@@ -1144,8 +1139,8 @@ impl EntityDeserializationEngine<&[u8], GlweSeededCiphertext64> for DefaultSeria
 
 /// # Description:
 /// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
-/// operates on 32 bits integers. It deserializes a GLWE seeded ciphertext vector entity.
-impl EntityDeserializationEngine<&[u8], GlweSeededCiphertextVector32>
+/// operates on 32 bits integers. It deserializes a GLWE seeded ciphertext array entity.
+impl EntityDeserializationEngine<&[u8], GlweSeededCiphertextArray32>
     for DefaultSerializationEngine
 {
     /// # Example:
@@ -1167,15 +1162,15 @@ impl EntityDeserializationEngine<&[u8], GlweSeededCiphertextVector32>
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey32 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let seeded_ciphertext_vector =
-    ///     engine.encrypt_glwe_seeded_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    /// let seeded_ciphertext_array =
+    ///     engine.encrypt_glwe_seeded_ciphertext_array(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&seeded_ciphertext_vector)?;
+    /// let serialized = serialization_engine.serialize(&seeded_ciphertext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(seeded_ciphertext_vector, recovered);
+    /// assert_eq!(seeded_ciphertext_array, recovered);
     ///
     /// #
     /// # Ok(())
@@ -1184,39 +1179,39 @@ impl EntityDeserializationEngine<&[u8], GlweSeededCiphertextVector32>
     fn deserialize(
         &mut self,
         serialized: &[u8],
-    ) -> Result<GlweSeededCiphertextVector32, EntityDeserializationError<Self::EngineError>> {
+    ) -> Result<GlweSeededCiphertextArray32, EntityDeserializationError<Self::EngineError>> {
         #[derive(Deserialize)]
-        struct DeserializableGlweSeededCiphertextVector32 {
-            version: GlweSeededCiphertextVector32Version,
+        struct DeserializableGlweSeededCiphertextArray32 {
+            version: GlweSeededCiphertextArray32Version,
             inner: ImplGlweSeededList<Vec<u32>>,
         }
-        let deserialized: DeserializableGlweSeededCiphertextVector32 =
+        let deserialized: DeserializableGlweSeededCiphertextArray32 =
             bincode::deserialize(serialized)
                 .map_err(DefaultSerializationError::Deserialization)
                 .map_err(EntityDeserializationError::Engine)?;
         match deserialized {
-            DeserializableGlweSeededCiphertextVector32 {
-                version: GlweSeededCiphertextVector32Version::Unsupported,
+            DeserializableGlweSeededCiphertextArray32 {
+                version: GlweSeededCiphertextArray32Version::Unsupported,
                 ..
             } => Err(EntityDeserializationError::Engine(
                 DefaultSerializationError::UnsupportedVersion,
             )),
-            DeserializableGlweSeededCiphertextVector32 {
-                version: GlweSeededCiphertextVector32Version::V0,
+            DeserializableGlweSeededCiphertextArray32 {
+                version: GlweSeededCiphertextArray32Version::V0,
                 inner,
-            } => Ok(GlweSeededCiphertextVector32(inner)),
+            } => Ok(GlweSeededCiphertextArray32(inner)),
         }
     }
 
-    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> GlweSeededCiphertextVector32 {
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> GlweSeededCiphertextArray32 {
         self.deserialize(serialized).unwrap()
     }
 }
 
 /// # Description:
 /// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
-/// operates on 64 bits integers. It deserializes a GLWE seeded ciphertext vector entity.
-impl EntityDeserializationEngine<&[u8], GlweSeededCiphertextVector64>
+/// operates on 64 bits integers. It deserializes a GLWE seeded ciphertext array entity.
+impl EntityDeserializationEngine<&[u8], GlweSeededCiphertextArray64>
     for DefaultSerializationEngine
 {
     /// # Example:
@@ -1238,15 +1233,15 @@ impl EntityDeserializationEngine<&[u8], GlweSeededCiphertextVector64>
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey64 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let seeded_ciphertext_vector =
-    ///     engine.encrypt_glwe_seeded_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    /// let seeded_ciphertext_array =
+    ///     engine.encrypt_glwe_seeded_ciphertext_array(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&seeded_ciphertext_vector)?;
+    /// let serialized = serialization_engine.serialize(&seeded_ciphertext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(seeded_ciphertext_vector, recovered);
+    /// assert_eq!(seeded_ciphertext_array, recovered);
     ///
     /// #
     /// # Ok(())
@@ -1255,31 +1250,31 @@ impl EntityDeserializationEngine<&[u8], GlweSeededCiphertextVector64>
     fn deserialize(
         &mut self,
         serialized: &[u8],
-    ) -> Result<GlweSeededCiphertextVector64, EntityDeserializationError<Self::EngineError>> {
+    ) -> Result<GlweSeededCiphertextArray64, EntityDeserializationError<Self::EngineError>> {
         #[derive(Deserialize)]
-        struct DeserializableGlweSeededCiphertextVector64 {
-            version: GlweSeededCiphertextVector64Version,
+        struct DeserializableGlweSeededCiphertextArray64 {
+            version: GlweSeededCiphertextArray64Version,
             inner: ImplGlweSeededList<Vec<u64>>,
         }
-        let deserialized: DeserializableGlweSeededCiphertextVector64 =
+        let deserialized: DeserializableGlweSeededCiphertextArray64 =
             bincode::deserialize(serialized)
                 .map_err(DefaultSerializationError::Deserialization)
                 .map_err(EntityDeserializationError::Engine)?;
         match deserialized {
-            DeserializableGlweSeededCiphertextVector64 {
-                version: GlweSeededCiphertextVector64Version::Unsupported,
+            DeserializableGlweSeededCiphertextArray64 {
+                version: GlweSeededCiphertextArray64Version::Unsupported,
                 ..
             } => Err(EntityDeserializationError::Engine(
                 DefaultSerializationError::UnsupportedVersion,
             )),
-            DeserializableGlweSeededCiphertextVector64 {
-                version: GlweSeededCiphertextVector64Version::V0,
+            DeserializableGlweSeededCiphertextArray64 {
+                version: GlweSeededCiphertextArray64Version::V0,
                 inner,
-            } => Ok(GlweSeededCiphertextVector64(inner)),
+            } => Ok(GlweSeededCiphertextArray64(inner)),
         }
     }
 
-    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> GlweSeededCiphertextVector64 {
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> GlweSeededCiphertextArray64 {
         self.deserialize(serialized).unwrap()
     }
 }
@@ -1553,8 +1548,8 @@ impl EntityDeserializationEngine<&[u8], LweCiphertext64> for DefaultSerializatio
 
 /// # Description:
 /// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
-/// operates on 32 bits integers. It deserializes a LWE ciphertext vector entity.
-impl EntityDeserializationEngine<&[u8], LweCiphertextVector32> for DefaultSerializationEngine {
+/// operates on 32 bits integers. It deserializes a LWE ciphertext array entity.
+impl EntityDeserializationEngine<&[u8], LweCiphertextArray32> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
@@ -1572,15 +1567,15 @@ impl EntityDeserializationEngine<&[u8], LweCiphertextVector32> for DefaultSerial
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array: PlaintextArray32 = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let mut ciphertext_vector: LweCiphertextVector32 =
-    ///     engine.encrypt_lwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    /// let mut ciphertext_array: LweCiphertextArray32 =
+    ///     engine.encrypt_lwe_ciphertext_array(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&ciphertext_vector)?;
+    /// let serialized = serialization_engine.serialize(&ciphertext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(ciphertext_vector, recovered);
+    /// assert_eq!(ciphertext_array, recovered);
     ///
     /// #
     /// # Ok(())
@@ -1589,38 +1584,38 @@ impl EntityDeserializationEngine<&[u8], LweCiphertextVector32> for DefaultSerial
     fn deserialize(
         &mut self,
         serialized: &[u8],
-    ) -> Result<LweCiphertextVector32, EntityDeserializationError<Self::EngineError>> {
+    ) -> Result<LweCiphertextArray32, EntityDeserializationError<Self::EngineError>> {
         #[derive(Deserialize)]
-        struct DeserializableLweCiphertextVector32 {
-            version: LweCiphertextVector32Version,
+        struct DeserializableLweCiphertextArray32 {
+            version: LweCiphertextArray32Version,
             inner: ImplLweList<Vec<u32>>,
         }
-        let deserialized: DeserializableLweCiphertextVector32 = bincode::deserialize(serialized)
+        let deserialized: DeserializableLweCiphertextArray32 = bincode::deserialize(serialized)
             .map_err(DefaultSerializationError::Deserialization)
             .map_err(EntityDeserializationError::Engine)?;
         match deserialized {
-            DeserializableLweCiphertextVector32 {
-                version: LweCiphertextVector32Version::Unsupported,
+            DeserializableLweCiphertextArray32 {
+                version: LweCiphertextArray32Version::Unsupported,
                 ..
             } => Err(EntityDeserializationError::Engine(
                 DefaultSerializationError::UnsupportedVersion,
             )),
-            DeserializableLweCiphertextVector32 {
-                version: LweCiphertextVector32Version::V0,
+            DeserializableLweCiphertextArray32 {
+                version: LweCiphertextArray32Version::V0,
                 inner,
-            } => Ok(LweCiphertextVector32(inner)),
+            } => Ok(LweCiphertextArray32(inner)),
         }
     }
 
-    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> LweCiphertextVector32 {
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> LweCiphertextArray32 {
         self.deserialize(serialized).unwrap()
     }
 }
 
 /// # Description:
 /// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
-/// operates on 64 bits integers. It deserializes a LWE ciphertext vector entity.
-impl EntityDeserializationEngine<&[u8], LweCiphertextVector64> for DefaultSerializationEngine {
+/// operates on 64 bits integers. It deserializes a LWE ciphertext array entity.
+impl EntityDeserializationEngine<&[u8], LweCiphertextArray64> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
@@ -1638,15 +1633,15 @@ impl EntityDeserializationEngine<&[u8], LweCiphertextVector64> for DefaultSerial
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array: PlaintextArray64 = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let mut ciphertext_vector: LweCiphertextVector64 =
-    ///     engine.encrypt_lwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    /// let mut ciphertext_array: LweCiphertextArray64 =
+    ///     engine.encrypt_lwe_ciphertext_array(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&ciphertext_vector)?;
+    /// let serialized = serialization_engine.serialize(&ciphertext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(ciphertext_vector, recovered);
+    /// assert_eq!(ciphertext_array, recovered);
     ///
     /// #
     /// # Ok(())
@@ -1655,30 +1650,30 @@ impl EntityDeserializationEngine<&[u8], LweCiphertextVector64> for DefaultSerial
     fn deserialize(
         &mut self,
         serialized: &[u8],
-    ) -> Result<LweCiphertextVector64, EntityDeserializationError<Self::EngineError>> {
+    ) -> Result<LweCiphertextArray64, EntityDeserializationError<Self::EngineError>> {
         #[derive(Deserialize)]
-        struct DeserializableLweCiphertextVector64 {
-            version: LweCiphertextVector64Version,
+        struct DeserializableLweCiphertextArray64 {
+            version: LweCiphertextArray64Version,
             inner: ImplLweList<Vec<u64>>,
         }
-        let deserialized: DeserializableLweCiphertextVector64 = bincode::deserialize(serialized)
+        let deserialized: DeserializableLweCiphertextArray64 = bincode::deserialize(serialized)
             .map_err(DefaultSerializationError::Deserialization)
             .map_err(EntityDeserializationError::Engine)?;
         match deserialized {
-            DeserializableLweCiphertextVector64 {
-                version: LweCiphertextVector64Version::Unsupported,
+            DeserializableLweCiphertextArray64 {
+                version: LweCiphertextArray64Version::Unsupported,
                 ..
             } => Err(EntityDeserializationError::Engine(
                 DefaultSerializationError::UnsupportedVersion,
             )),
-            DeserializableLweCiphertextVector64 {
-                version: LweCiphertextVector64Version::V0,
+            DeserializableLweCiphertextArray64 {
+                version: LweCiphertextArray64Version::V0,
                 inner,
-            } => Ok(LweCiphertextVector64(inner)),
+            } => Ok(LweCiphertextArray64(inner)),
         }
     }
 
-    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> LweCiphertextVector64 {
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> LweCiphertextArray64 {
         self.deserialize(serialized).unwrap()
     }
 }
@@ -2221,10 +2216,8 @@ impl EntityDeserializationEngine<&[u8], LweSeededCiphertext64> for DefaultSerial
 
 /// # Description:
 /// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
-/// operates on 32 bits integers. It deserializes a seeded LWE ciphertext vector entity.
-impl EntityDeserializationEngine<&[u8], LweSeededCiphertextVector32>
-    for DefaultSerializationEngine
-{
+/// operates on 32 bits integers. It deserializes a seeded LWE ciphertext array entity.
+impl EntityDeserializationEngine<&[u8], LweSeededCiphertextArray32> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
@@ -2242,15 +2235,15 @@ impl EntityDeserializationEngine<&[u8], LweSeededCiphertextVector32>
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array: PlaintextArray32 = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let mut ciphertext_vector: LweSeededCiphertextVector32 =
-    ///     engine.encrypt_lwe_seeded_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    /// let mut ciphertext_array: LweSeededCiphertextArray32 =
+    ///     engine.encrypt_lwe_seeded_ciphertext_array(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&ciphertext_vector)?;
+    /// let serialized = serialization_engine.serialize(&ciphertext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(ciphertext_vector, recovered);
+    /// assert_eq!(ciphertext_array, recovered);
     ///
     /// #
     /// # Ok(())
@@ -2259,41 +2252,39 @@ impl EntityDeserializationEngine<&[u8], LweSeededCiphertextVector32>
     fn deserialize(
         &mut self,
         serialized: &[u8],
-    ) -> Result<LweSeededCiphertextVector32, EntityDeserializationError<Self::EngineError>> {
+    ) -> Result<LweSeededCiphertextArray32, EntityDeserializationError<Self::EngineError>> {
         #[derive(Deserialize)]
-        struct DeserializableLweSeededCiphertextVector32 {
-            version: LweSeededCiphertextVector32Version,
+        struct DeserializableLweSeededCiphertextArray32 {
+            version: LweSeededCiphertextArray32Version,
             inner: ImplLweSeededList<Vec<u32>>,
         }
-        let deserialized: DeserializableLweSeededCiphertextVector32 =
+        let deserialized: DeserializableLweSeededCiphertextArray32 =
             bincode::deserialize(serialized)
                 .map_err(DefaultSerializationError::Deserialization)
                 .map_err(EntityDeserializationError::Engine)?;
         match deserialized {
-            DeserializableLweSeededCiphertextVector32 {
-                version: LweSeededCiphertextVector32Version::Unsupported,
+            DeserializableLweSeededCiphertextArray32 {
+                version: LweSeededCiphertextArray32Version::Unsupported,
                 ..
             } => Err(EntityDeserializationError::Engine(
                 DefaultSerializationError::UnsupportedVersion,
             )),
-            DeserializableLweSeededCiphertextVector32 {
-                version: LweSeededCiphertextVector32Version::V0,
+            DeserializableLweSeededCiphertextArray32 {
+                version: LweSeededCiphertextArray32Version::V0,
                 inner,
-            } => Ok(LweSeededCiphertextVector32(inner)),
+            } => Ok(LweSeededCiphertextArray32(inner)),
         }
     }
 
-    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> LweSeededCiphertextVector32 {
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> LweSeededCiphertextArray32 {
         self.deserialize(serialized).unwrap()
     }
 }
 
 /// # Description:
 /// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
-/// operates on 64 bits integers. It deserializes a seeded LWE ciphertext vector entity.
-impl EntityDeserializationEngine<&[u8], LweSeededCiphertextVector64>
-    for DefaultSerializationEngine
-{
+/// operates on 64 bits integers. It deserializes a seeded LWE ciphertext array entity.
+impl EntityDeserializationEngine<&[u8], LweSeededCiphertextArray64> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
@@ -2311,15 +2302,15 @@ impl EntityDeserializationEngine<&[u8], LweSeededCiphertextVector64>
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array: PlaintextArray64 = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let mut ciphertext_vector: LweSeededCiphertextVector64 =
-    ///     engine.encrypt_lwe_seeded_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    /// let mut ciphertext_array: LweSeededCiphertextArray64 =
+    ///     engine.encrypt_lwe_seeded_ciphertext_array(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&ciphertext_vector)?;
+    /// let serialized = serialization_engine.serialize(&ciphertext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(ciphertext_vector, recovered);
+    /// assert_eq!(ciphertext_array, recovered);
     ///
     /// #
     /// # Ok(())
@@ -2328,31 +2319,31 @@ impl EntityDeserializationEngine<&[u8], LweSeededCiphertextVector64>
     fn deserialize(
         &mut self,
         serialized: &[u8],
-    ) -> Result<LweSeededCiphertextVector64, EntityDeserializationError<Self::EngineError>> {
+    ) -> Result<LweSeededCiphertextArray64, EntityDeserializationError<Self::EngineError>> {
         #[derive(Deserialize)]
-        struct DeserializableLweSeededCiphertextVector64 {
-            version: LweSeededCiphertextVector64Version,
+        struct DeserializableLweSeededCiphertextArray64 {
+            version: LweSeededCiphertextArray64Version,
             inner: ImplLweSeededList<Vec<u64>>,
         }
-        let deserialized: DeserializableLweSeededCiphertextVector64 =
+        let deserialized: DeserializableLweSeededCiphertextArray64 =
             bincode::deserialize(serialized)
                 .map_err(DefaultSerializationError::Deserialization)
                 .map_err(EntityDeserializationError::Engine)?;
         match deserialized {
-            DeserializableLweSeededCiphertextVector64 {
-                version: LweSeededCiphertextVector64Version::Unsupported,
+            DeserializableLweSeededCiphertextArray64 {
+                version: LweSeededCiphertextArray64Version::Unsupported,
                 ..
             } => Err(EntityDeserializationError::Engine(
                 DefaultSerializationError::UnsupportedVersion,
             )),
-            DeserializableLweSeededCiphertextVector64 {
-                version: LweSeededCiphertextVector64Version::V0,
+            DeserializableLweSeededCiphertextArray64 {
+                version: LweSeededCiphertextArray64Version::V0,
                 inner,
-            } => Ok(LweSeededCiphertextVector64(inner)),
+            } => Ok(LweSeededCiphertextArray64(inner)),
         }
     }
 
-    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> LweSeededCiphertextVector64 {
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> LweSeededCiphertextArray64 {
         self.deserialize(serialized).unwrap()
     }
 }
@@ -2772,8 +2763,8 @@ impl EntityDeserializationEngine<&[u8], Plaintext64> for DefaultSerializationEng
 
 /// # Description:
 /// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
-/// operates on 32 bits integers. It deserializes a plaintext vector entity.
-impl EntityDeserializationEngine<&[u8], PlaintextVector32> for DefaultSerializationEngine {
+/// operates on 32 bits integers. It deserializes a plaintext array entity.
+impl EntityDeserializationEngine<&[u8], PlaintextArray32> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_core::prelude::{PlaintextCount, *};
@@ -2787,12 +2778,12 @@ impl EntityDeserializationEngine<&[u8], PlaintextVector32> for DefaultSerializat
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array: PlaintextArray32 = engine.create_plaintext_array_from(&input)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&plaintext_vector)?;
+    /// let serialized = serialization_engine.serialize(&plaintext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(plaintext_vector, recovered);
+    /// assert_eq!(plaintext_array, recovered);
     ///
     /// #
     /// # Ok(())
@@ -2801,38 +2792,38 @@ impl EntityDeserializationEngine<&[u8], PlaintextVector32> for DefaultSerializat
     fn deserialize(
         &mut self,
         serialized: &[u8],
-    ) -> Result<PlaintextVector32, EntityDeserializationError<Self::EngineError>> {
+    ) -> Result<PlaintextArray32, EntityDeserializationError<Self::EngineError>> {
         #[derive(Deserialize)]
-        struct DeserializablePlaintextVector32 {
-            version: PlaintextVector32Version,
+        struct DeserializablePlaintextArray32 {
+            version: PlaintextArray32Version,
             inner: ImplPlaintextList<Vec<u32>>,
         }
-        let deserialized: DeserializablePlaintextVector32 = bincode::deserialize(serialized)
+        let deserialized: DeserializablePlaintextArray32 = bincode::deserialize(serialized)
             .map_err(DefaultSerializationError::Deserialization)
             .map_err(EntityDeserializationError::Engine)?;
         match deserialized {
-            DeserializablePlaintextVector32 {
-                version: PlaintextVector32Version::Unsupported,
+            DeserializablePlaintextArray32 {
+                version: PlaintextArray32Version::Unsupported,
                 ..
             } => Err(EntityDeserializationError::Engine(
                 DefaultSerializationError::UnsupportedVersion,
             )),
-            DeserializablePlaintextVector32 {
-                version: PlaintextVector32Version::V0,
+            DeserializablePlaintextArray32 {
+                version: PlaintextArray32Version::V0,
                 inner,
-            } => Ok(PlaintextVector32(inner)),
+            } => Ok(PlaintextArray32(inner)),
         }
     }
 
-    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> PlaintextVector32 {
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> PlaintextArray32 {
         self.deserialize(serialized).unwrap()
     }
 }
 
 /// # Description:
 /// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
-/// operates on 64 bits integers. It deserializes a plaintext vector entity.
-impl EntityDeserializationEngine<&[u8], PlaintextVector64> for DefaultSerializationEngine {
+/// operates on 64 bits integers. It deserializes a plaintext array entity.
+impl EntityDeserializationEngine<&[u8], PlaintextArray64> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_core::prelude::{PlaintextCount, *};
@@ -2846,12 +2837,12 @@ impl EntityDeserializationEngine<&[u8], PlaintextVector64> for DefaultSerializat
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array: PlaintextArray64 = engine.create_plaintext_array_from(&input)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&plaintext_vector)?;
+    /// let serialized = serialization_engine.serialize(&plaintext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(plaintext_vector, recovered);
+    /// assert_eq!(plaintext_array, recovered);
     ///
     /// #
     /// # Ok(())
@@ -2860,30 +2851,30 @@ impl EntityDeserializationEngine<&[u8], PlaintextVector64> for DefaultSerializat
     fn deserialize(
         &mut self,
         serialized: &[u8],
-    ) -> Result<PlaintextVector64, EntityDeserializationError<Self::EngineError>> {
+    ) -> Result<PlaintextArray64, EntityDeserializationError<Self::EngineError>> {
         #[derive(Deserialize)]
-        struct DeserializablePlaintextVector64 {
-            version: PlaintextVector64Version,
+        struct DeserializablePlaintextArray64 {
+            version: PlaintextArray64Version,
             inner: ImplPlaintextList<Vec<u64>>,
         }
-        let deserialized: DeserializablePlaintextVector64 = bincode::deserialize(serialized)
+        let deserialized: DeserializablePlaintextArray64 = bincode::deserialize(serialized)
             .map_err(DefaultSerializationError::Deserialization)
             .map_err(EntityDeserializationError::Engine)?;
         match deserialized {
-            DeserializablePlaintextVector64 {
-                version: PlaintextVector64Version::Unsupported,
+            DeserializablePlaintextArray64 {
+                version: PlaintextArray64Version::Unsupported,
                 ..
             } => Err(EntityDeserializationError::Engine(
                 DefaultSerializationError::UnsupportedVersion,
             )),
-            DeserializablePlaintextVector64 {
-                version: PlaintextVector64Version::V0,
+            DeserializablePlaintextArray64 {
+                version: PlaintextArray64Version::V0,
                 inner,
-            } => Ok(PlaintextVector64(inner)),
+            } => Ok(PlaintextArray64(inner)),
         }
     }
 
-    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> PlaintextVector64 {
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> PlaintextArray64 {
         self.deserialize(serialized).unwrap()
     }
 }
@@ -2952,12 +2943,11 @@ impl EntityDeserializationEngine<&[u8], FloatEncoder> for DefaultSerializationEn
 
 /// # Description:
 /// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
-/// operates on 64 bits integers. It deserializes a float encoder vector entity.
-impl EntityDeserializationEngine<&[u8], FloatEncoderVector> for DefaultSerializationEngine {
+/// operates on 64 bits integers. It deserializes a float encoder array entity.
+impl EntityDeserializationEngine<&[u8], FloatEncoderArray> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_core::prelude::PlaintextCount;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{PlaintextCount, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -2966,7 +2956,7 @@ impl EntityDeserializationEngine<&[u8], FloatEncoderVector> for DefaultSerializa
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let encoder_vector = engine.create_encoder_vector_from(&vec![
+    /// let encoder_array = engine.create_encoder_array_from(&vec![
     ///     FloatEncoderCenterRadiusConfig {
     ///         center: 10.,
     ///         radius: 5.,
@@ -2977,9 +2967,9 @@ impl EntityDeserializationEngine<&[u8], FloatEncoderVector> for DefaultSerializa
     /// ])?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&encoder_vector)?;
+    /// let serialized = serialization_engine.serialize(&encoder_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(encoder_vector, recovered);
+    /// assert_eq!(encoder_array, recovered);
     ///
     /// #
     /// # Ok(())
@@ -2988,30 +2978,30 @@ impl EntityDeserializationEngine<&[u8], FloatEncoderVector> for DefaultSerializa
     fn deserialize(
         &mut self,
         serialized: &[u8],
-    ) -> Result<FloatEncoderVector, EntityDeserializationError<Self::EngineError>> {
+    ) -> Result<FloatEncoderArray, EntityDeserializationError<Self::EngineError>> {
         #[derive(Deserialize)]
-        struct DeserializableFloatEncoderVector {
-            version: FloatEncoderVectorVersion,
+        struct DeserializableFloatEncoderArray {
+            version: FloatEncoderArrayVersion,
             inner: Vec<ImplFloatEncoder>,
         }
-        let deserialized: DeserializableFloatEncoderVector = bincode::deserialize(serialized)
+        let deserialized: DeserializableFloatEncoderArray = bincode::deserialize(serialized)
             .map_err(DefaultSerializationError::Deserialization)
             .map_err(EntityDeserializationError::Engine)?;
         match deserialized {
-            DeserializableFloatEncoderVector {
-                version: FloatEncoderVectorVersion::Unsupported,
+            DeserializableFloatEncoderArray {
+                version: FloatEncoderArrayVersion::Unsupported,
                 ..
             } => Err(EntityDeserializationError::Engine(
                 DefaultSerializationError::UnsupportedVersion,
             )),
-            DeserializableFloatEncoderVector {
-                version: FloatEncoderVectorVersion::V0,
+            DeserializableFloatEncoderArray {
+                version: FloatEncoderArrayVersion::V0,
                 inner,
-            } => Ok(FloatEncoderVector(inner)),
+            } => Ok(FloatEncoderArray(inner)),
         }
     }
 
-    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> FloatEncoderVector {
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> FloatEncoderArray {
         self.deserialize(serialized).unwrap()
     }
 }

@@ -184,10 +184,10 @@ impl EntitySerializationEngine<FftwFourierGlweCiphertext32, Vec<u8>> for FftwSer
     /// let mut fftw_engine = FftwEngine::new(())?;
     /// let key: GlweSecretKey32 =
     ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = default_engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = default_engine.create_plaintext_array_from(&input)?;
     ///
     /// // We encrypt a GLWE ciphertext in the standard domain
-    /// let ciphertext = default_engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let ciphertext = default_engine.encrypt_glwe_ciphertext(&key, &plaintext_array, noise)?;
     ///
     /// // Then we convert it to the Fourier domain.
     /// let fourier_ciphertext: FftwFourierGlweCiphertext32 =
@@ -252,10 +252,10 @@ impl EntitySerializationEngine<FftwFourierGlweCiphertext64, Vec<u8>> for FftwSer
     /// let mut fftw_engine = FftwEngine::new(())?;
     /// let key: GlweSecretKey64 =
     ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = default_engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = default_engine.create_plaintext_array_from(&input)?;
     ///
     /// // We encrypt a GLWE ciphertext in the standard domain
-    /// let ciphertext = default_engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let ciphertext = default_engine.encrypt_glwe_ciphertext(&key, &plaintext_array, noise)?;
     ///
     /// // Then we convert it to the Fourier domain.
     /// let fourier_ciphertext: FftwFourierGlweCiphertext64 =

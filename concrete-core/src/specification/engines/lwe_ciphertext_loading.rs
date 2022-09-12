@@ -1,51 +1,51 @@
 use super::engine_error;
 use crate::prelude::LweCiphertextIndex;
 use crate::specification::engines::AbstractEngine;
-use crate::specification::entities::{LweCiphertextEntity, LweCiphertextVectorEntity};
+use crate::specification::entities::{LweCiphertextArrayEntity, LweCiphertextEntity};
 
 engine_error! {
     LweCiphertextLoadingError for LweCiphertextLoadingEngine @
-    IndexTooLarge => "The index must not exceed the size of the vector."
+    IndexTooLarge => "The index must not exceed the size of the array."
 }
 
 impl<EngineError: std::error::Error> LweCiphertextLoadingError<EngineError> {
     /// Validates the inputs
-    pub fn perform_generic_checks<Ciphertext, CiphertextVector>(
-        vector: &CiphertextVector,
+    pub fn perform_generic_checks<Ciphertext, CiphertextArray>(
+        array: &CiphertextArray,
         i: LweCiphertextIndex,
     ) -> Result<(), Self>
     where
         Ciphertext: LweCiphertextEntity,
-        CiphertextVector: LweCiphertextVectorEntity,
+        CiphertextArray: LweCiphertextArrayEntity,
     {
-        if i.0 >= vector.lwe_ciphertext_count().0 {
+        if i.0 >= array.lwe_ciphertext_count().0 {
             return Err(Self::IndexTooLarge);
         }
         Ok(())
     }
 }
 
-/// A trait for engines loading LWE ciphertexts from LWE ciphertext vectors.
+/// A trait for engines loading LWE ciphertexts from LWE ciphertext arrays.
 ///
 /// # Semantics
 ///
 /// This [pure](super#operation-semantics) operation generates an LWE ciphertext containing the
-/// `i`th LWE ciphertext of the `vector` LWE ciphertext vector.
+/// `i`th LWE ciphertext of the `array` LWE ciphertext array.
 ///
 /// # Formal Definition
-pub trait LweCiphertextLoadingEngine<CiphertextVector, Ciphertext>: AbstractEngine
+pub trait LweCiphertextLoadingEngine<CiphertextArray, Ciphertext>: AbstractEngine
 where
     Ciphertext: LweCiphertextEntity,
-    CiphertextVector: LweCiphertextVectorEntity,
+    CiphertextArray: LweCiphertextArrayEntity,
 {
-    /// Loads an LWE ciphertext from an LWE ciphertext vector.
+    /// Loads an LWE ciphertext from an LWE ciphertext array.
     fn load_lwe_ciphertext(
         &mut self,
-        vector: &CiphertextVector,
+        array: &CiphertextArray,
         i: LweCiphertextIndex,
     ) -> Result<Ciphertext, LweCiphertextLoadingError<Self::EngineError>>;
 
-    /// Unsafely loads an LWE ciphertext from an LWE ciphertext vector.
+    /// Unsafely loads an LWE ciphertext from an LWE ciphertext array.
     ///
     /// # Safety
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
@@ -53,7 +53,7 @@ where
     /// refer to the implementer safety section.
     unsafe fn load_lwe_ciphertext_unchecked(
         &mut self,
-        vector: &CiphertextVector,
+        array: &CiphertextArray,
         i: LweCiphertextIndex,
     ) -> Ciphertext;
 }

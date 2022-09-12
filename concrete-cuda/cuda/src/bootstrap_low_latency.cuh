@@ -147,15 +147,15 @@ template <typename Torus, class params>
 /*
  * Kernel launched by the low latency version of the
  * bootstrapping, that uses cooperative groups
- * lwe_out vector of output lwe s, with length (polynomial_size+1)*num_samples
- * lut_vector - vector of look up tables with length  polynomial_size * num_samples
- * lut_vector_indexes - mapping between lwe_in and lut_vector
- * lwe_in - vector of lwe inputs with length (lwe_mask_size + 1) * num_samples
+ * lwe_out array of output lwe s, with length (polynomial_size+1)*num_samples
+ * lut_array - array of look up tables with length  polynomial_size * num_samples
+ * lut_array_indexes - mapping between lwe_in and lut_array
+ * lwe_in - array of lwe inputs with length (lwe_mask_size + 1) * num_samples
  *
  */
 __global__ void device_bootstrap_low_latency(
     Torus *lwe_out,
-    Torus *lut_vector,
+    Torus *lut_array,
     Torus *lwe_in,
     double2 *bootstrapping_key,
     double2 *mask_join_buffer,
@@ -186,8 +186,8 @@ __global__ void device_bootstrap_low_latency(
   // this block is operating, in the case of batch bootstraps
   auto block_lwe_in = &lwe_in[blockIdx.z * (lwe_mask_size + 1)];
 
-  auto block_lut_vector =
-          &lut_vector[blockIdx.z * params::degree * 2];
+  auto block_lut_array =
+          &lut_array[blockIdx.z * params::degree * 2];
 
   auto block_mask_join_buffer = &mask_join_buffer[blockIdx.z * l_gadget * params::degree / 2];
   auto block_body_join_buffer = &body_join_buffer[blockIdx.z * l_gadget * params::degree / 2];
@@ -206,12 +206,12 @@ __global__ void device_bootstrap_low_latency(
   if (blockIdx.y == 0) {
       divide_by_monomial_negacyclic_inplace<Torus, params::opt,
               params::degree / params::opt>(
-              accumulator, block_lut_vector, b_hat, false);
+              accumulator, block_lut_array, b_hat, false);
   }
   else {
       divide_by_monomial_negacyclic_inplace<Torus, params::opt,
               params::degree / params::opt>(
-              accumulator, &block_lut_vector[params::degree], b_hat, false);
+              accumulator, &block_lut_array[params::degree], b_hat, false);
   }
 
   for (int i = 0; i < lwe_mask_size; i++) {
@@ -290,8 +290,8 @@ template <typename Torus, class params>
 __host__ void host_bootstrap_low_latency(
     void *v_stream,
     Torus *lwe_out,
-    Torus *lut_vector,
-    uint32_t *lut_vector_indexes,
+    Torus *lut_array,
+    uint32_t *lut_array_indexes,
     Torus *lwe_in,
     double2 *bootstrapping_key,
     uint32_t lwe_mask_size,
@@ -299,7 +299,7 @@ __host__ void host_bootstrap_low_latency(
     uint32_t base_log,
     uint32_t l_gadget,
     uint32_t num_samples,
-    uint32_t num_lut_vectors) {
+    uint32_t num_lut_arrays) {
   auto stream = static_cast<cudaStream_t *>(v_stream);
 
   int buffer_size_per_gpu = l_gadget * num_samples * polynomial_size / 2 * sizeof(double2);
@@ -319,7 +319,7 @@ __host__ void host_bootstrap_low_latency(
 
   void *kernel_args[10];
   kernel_args[0] = &lwe_out;
-  kernel_args[1] = &lut_vector;
+  kernel_args[1] = &lut_array;
   kernel_args[2] = &lwe_in;
   kernel_args[3] = &bootstrapping_key;
   kernel_args[4] = &mask_buffer_fft;

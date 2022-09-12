@@ -52,8 +52,8 @@ impl
     /// let key: GlweSecretKey32 =
     ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
     /// let plaintext_ggsw = default_engine.create_plaintext_from(&input_ggsw)?;
-    /// let plaintext_output_glwe = default_engine.create_plaintext_vector_from(&output_glwe)?;
-    /// let plaintext_input_glwe = default_engine.create_plaintext_vector_from(&input_glwe)?;
+    /// let plaintext_output_glwe = default_engine.create_plaintext_array_from(&output_glwe)?;
+    /// let plaintext_input_glwe = default_engine.create_plaintext_array_from(&input_glwe)?;
     ///
     /// let ggsw = default_engine.encrypt_scalar_ggsw_ciphertext(
     ///     &key,
@@ -172,8 +172,8 @@ impl
     /// let key: GlweSecretKey64 =
     ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
     /// let plaintext_ggsw = default_engine.create_plaintext_from(&input_ggsw)?;
-    /// let plaintext_output_glwe = default_engine.create_plaintext_vector_from(&output_glwe)?;
-    /// let plaintext_input_glwe = default_engine.create_plaintext_vector_from(&input_glwe)?;
+    /// let plaintext_output_glwe = default_engine.create_plaintext_array_from(&output_glwe)?;
+    /// let plaintext_input_glwe = default_engine.create_plaintext_array_from(&input_glwe)?;
     ///
     /// let ggsw = default_engine.encrypt_scalar_ggsw_ciphertext(
     ///     &key,

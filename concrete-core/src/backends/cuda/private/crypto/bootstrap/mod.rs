@@ -1,9 +1,9 @@
 //! Bootstrap key with Cuda.
 use crate::backends::cuda::engines::SharedMemoryAmount;
+use crate::backends::cuda::private::array::CudaArray;
 use crate::backends::cuda::private::crypto::glwe::list::CudaGlweList;
 use crate::backends::cuda::private::crypto::lwe::list::CudaLweList;
 use crate::backends::cuda::private::device::{CudaStream, GpuIndex, NumberOfGpus};
-use crate::backends::cuda::private::vec::CudaVec;
 use crate::backends::cuda::private::{compute_number_of_samples_on_gpu, number_of_active_gpus};
 use crate::commons::crypto::bootstrap::StandardBootstrapKey;
 use crate::commons::math::tensor::{AsRefSlice, AsRefTensor};
@@ -17,7 +17,7 @@ use std::marker::PhantomData;
 #[derive(Debug)]
 pub(crate) struct CudaBootstrapKey<T: UnsignedInteger> {
     // Pointers to GPU data: one cuda vec per GPU
-    pub(crate) d_vecs: Vec<CudaVec<f64>>,
+    pub(crate) d_vecs: Vec<CudaArray<f64>>,
     // Input LWE dimension
     pub(crate) input_lwe_dimension: LweDimension,
     // Size of polynomials in the key
@@ -36,11 +36,11 @@ pub(crate) unsafe fn convert_lwe_bootstrap_key_from_cpu_to_gpu<T: UnsignedIntege
     streams: &[CudaStream],
     input: &StandardBootstrapKey<Cont>,
     number_of_gpus: NumberOfGpus,
-) -> Vec<CudaVec<f64>>
+) -> Vec<CudaArray<f64>>
 where
     Cont: AsRefSlice<Element = T>,
 {
-    // Copy the entire input vector over all GPUs
+    // Copy the entire input array over all GPUs
     let mut vecs = Vec::with_capacity(number_of_gpus.0);
     // TODO
     //   Check if it would be better to have GPU 0 compute the BSK and copy it back to the
@@ -68,7 +68,7 @@ where
     vecs
 }
 
-pub(crate) unsafe fn execute_lwe_ciphertext_vector_low_latency_bootstrap_on_gpu<
+pub(crate) unsafe fn execute_lwe_ciphertext_array_low_latency_bootstrap_on_gpu<
     T: UnsignedInteger,
 >(
     streams: &[CudaStream],
@@ -97,14 +97,14 @@ pub(crate) unsafe fn execute_lwe_ciphertext_vector_low_latency_bootstrap_on_gpu<
         );
         // FIXME this is hard set at the moment because concrete-core does not support a more
         //   general API for the bootstrap
-        let test_vector_indexes = (0..samples.0 as u32).collect::<Vec<u32>>();
-        let mut d_test_vector_indexes = stream.malloc::<u32>(samples.0 as u32);
-        stream.copy_to_gpu(&mut d_test_vector_indexes, &test_vector_indexes);
+        let lut_array_indexes = (0..samples.0 as u32).collect::<Vec<u32>>();
+        let mut d_lut_array_indexes = stream.malloc::<u32>(samples.0 as u32);
+        stream.copy_to_gpu(&mut d_lut_array_indexes, &lut_array_indexes);
 
-        stream.discard_bootstrap_low_latency_lwe_ciphertext_vector::<T>(
+        stream.discard_bootstrap_low_latency_lwe_ciphertext_array::<T>(
             output.d_vecs.get_mut(gpu_index).unwrap(),
             acc.d_vecs.get(gpu_index).unwrap(),
-            &d_test_vector_indexes,
+            &d_lut_array_indexes,
             input.d_vecs.get(gpu_index).unwrap(),
             bsk.d_vecs.get(gpu_index).unwrap(),
             input.lwe_dimension,
@@ -118,9 +118,7 @@ pub(crate) unsafe fn execute_lwe_ciphertext_vector_low_latency_bootstrap_on_gpu<
     }
 }
 
-pub(crate) unsafe fn execute_lwe_ciphertext_vector_amortized_bootstrap_on_gpu<
-    T: UnsignedInteger,
->(
+pub(crate) unsafe fn execute_lwe_ciphertext_array_amortized_bootstrap_on_gpu<T: UnsignedInteger>(
     streams: &[CudaStream],
     output: &mut CudaLweList<T>,
     input: &CudaLweList<T>,
@@ -147,14 +145,14 @@ pub(crate) unsafe fn execute_lwe_ciphertext_vector_amortized_bootstrap_on_gpu<
         );
         // FIXME this is hard set at the moment because concrete-core does not support a more
         //   general API for the bootstrap
-        let test_vector_indexes = (0..samples.0 as u32).collect::<Vec<u32>>();
-        let mut d_test_vector_indexes = stream.malloc::<u32>(samples.0 as u32);
-        stream.copy_to_gpu(&mut d_test_vector_indexes, &test_vector_indexes);
+        let lut_array_indexes = (0..samples.0 as u32).collect::<Vec<u32>>();
+        let mut d_lut_array_indexes = stream.malloc::<u32>(samples.0 as u32);
+        stream.copy_to_gpu(&mut d_lut_array_indexes, &lut_array_indexes);
 
-        stream.discard_bootstrap_amortized_lwe_ciphertext_vector::<T>(
+        stream.discard_bootstrap_amortized_lwe_ciphertext_array::<T>(
             output.d_vecs.get_mut(gpu_index).unwrap(),
             acc.d_vecs.get(gpu_index).unwrap(),
-            &d_test_vector_indexes,
+            &d_lut_array_indexes,
             input.d_vecs.get(gpu_index).unwrap(),
             bsk.d_vecs.get(gpu_index).unwrap(),
             input.lwe_dimension,

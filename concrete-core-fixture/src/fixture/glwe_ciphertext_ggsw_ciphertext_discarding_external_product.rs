@@ -1,7 +1,7 @@
 use crate::fixture::Fixture;
 use crate::generation::prototyping::{
     PrototypesGgswCiphertext, PrototypesGlweCiphertext, PrototypesGlweSecretKey,
-    PrototypesPlaintext, PrototypesPlaintextVector,
+    PrototypesPlaintext, PrototypesPlaintextArray,
 };
 use crate::generation::synthesizing::{SynthesizesGgswCiphertext, SynthesizesGlweCiphertext};
 use crate::generation::{
@@ -60,7 +60,7 @@ where
         <Maker as PrototypesGgswCiphertext<Precision, KeyDistribution>>::GgswCiphertextProto,
     );
     type SamplePrototypes = (
-        <Maker as PrototypesPlaintextVector<Precision>>::PlaintextVectorProto,
+        <Maker as PrototypesPlaintextArray<Precision>>::PlaintextArrayProto,
         <Maker as PrototypesGlweCiphertext<Precision, KeyDistribution>>::GlweCiphertextProto,
         <Maker as PrototypesGlweCiphertext<Precision, KeyDistribution>>::GlweCiphertextProto,
     );
@@ -127,12 +127,12 @@ where
         repetition_proto: &Self::RepetitionPrototypes,
     ) -> Self::SamplePrototypes {
         let (_, proto_secret_key, _) = repetition_proto;
-        let raw_plaintext_vector = Precision::Raw::uniform_vec(parameters.polynomial_size.0);
-        let proto_plaintext_vector =
-            maker.transform_raw_vec_to_plaintext_vector(&raw_plaintext_vector);
-        let proto_glwe_ciphertext = maker.encrypt_plaintext_vector_to_glwe_ciphertext(
+        let raw_plaintext_array = Precision::Raw::uniform_vec(parameters.polynomial_size.0);
+        let proto_plaintext_array =
+            maker.transform_raw_vec_to_plaintext_array(&raw_plaintext_array);
+        let proto_glwe_ciphertext = maker.encrypt_plaintext_array_to_glwe_ciphertext(
             proto_secret_key,
-            &proto_plaintext_vector,
+            &proto_plaintext_array,
             parameters.glwe_noise,
         );
         let proto_output_glwe_ciphertext = maker.trivially_encrypt_zeros_to_glwe_ciphertext(
@@ -140,7 +140,7 @@ where
             parameters.polynomial_size,
         );
         (
-            proto_plaintext_vector,
+            proto_plaintext_array,
             proto_glwe_ciphertext,
             proto_output_glwe_ciphertext,
         )
@@ -190,24 +190,24 @@ where
     ) -> Self::Outcome {
         let (glwe_ciphertext, ggsw_ciphertext, output_glwe_ciphertext) = context;
         let (proto_plaintext, proto_secret_key, _) = repetition_proto;
-        let (proto_input_plaintext_vector, ..) = sample_proto;
+        let (proto_input_plaintext_array, ..) = sample_proto;
         let proto_output_glwe_ciphertext =
             maker.unsynthesize_glwe_ciphertext(output_glwe_ciphertext);
         maker.destroy_ggsw_ciphertext(ggsw_ciphertext);
         maker.destroy_glwe_ciphertext(glwe_ciphertext);
-        let proto_output_plaintext_vector = maker.decrypt_glwe_ciphertext_to_plaintext_vector(
+        let proto_output_plaintext_array = maker.decrypt_glwe_ciphertext_to_plaintext_array(
             proto_secret_key,
             &proto_output_glwe_ciphertext,
         );
         let raw_input_plaintext = maker.transform_plaintext_to_raw(proto_plaintext);
-        let raw_input_plaintext_vector = maker
-            .transform_plaintext_vector_to_raw_vec(proto_input_plaintext_vector)
+        let raw_input_plaintext_array = maker
+            .transform_plaintext_array_to_raw_vec(proto_input_plaintext_array)
             .into_iter()
             .map(|v| v * raw_input_plaintext)
             .collect();
         (
-            raw_input_plaintext_vector,
-            maker.transform_plaintext_vector_to_raw_vec(&proto_output_plaintext_vector),
+            raw_input_plaintext_array,
+            maker.transform_plaintext_array_to_raw_vec(&proto_output_plaintext_array),
         )
     }
 

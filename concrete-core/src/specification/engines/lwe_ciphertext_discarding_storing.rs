@@ -1,30 +1,30 @@
 use super::engine_error;
 use crate::prelude::LweCiphertextIndex;
 use crate::specification::engines::AbstractEngine;
-use crate::specification::entities::{LweCiphertextEntity, LweCiphertextVectorEntity};
+use crate::specification::entities::{LweCiphertextArrayEntity, LweCiphertextEntity};
 
 engine_error! {
     LweCiphertextDiscardingStoringError for LweCiphertextDiscardingStoringEngine @
     LweDimensionMismatch => "The input and output LWE dimensions must be the same.",
-    IndexTooLarge => "The index must not exceed the size of the vector."
+    IndexTooLarge => "The index must not exceed the size of the array."
 }
 
 impl<EngineError: std::error::Error> LweCiphertextDiscardingStoringError<EngineError> {
     /// Validates the inputs
-    pub fn perform_generic_checks<Ciphertext, CiphertextVector>(
-        vector: &CiphertextVector,
+    pub fn perform_generic_checks<Ciphertext, CiphertextArray>(
+        array: &CiphertextArray,
         ciphertext: &Ciphertext,
         i: LweCiphertextIndex,
     ) -> Result<(), Self>
     where
-        CiphertextVector: LweCiphertextVectorEntity,
+        CiphertextArray: LweCiphertextArrayEntity,
         Ciphertext: LweCiphertextEntity,
     {
-        if vector.lwe_dimension() != ciphertext.lwe_dimension() {
+        if array.lwe_dimension() != ciphertext.lwe_dimension() {
             return Err(Self::LweDimensionMismatch);
         }
 
-        if i.0 >= vector.lwe_ciphertext_count().0 {
+        if i.0 >= array.lwe_ciphertext_count().0 {
             return Err(Self::IndexTooLarge);
         }
 
@@ -32,29 +32,29 @@ impl<EngineError: std::error::Error> LweCiphertextDiscardingStoringError<EngineE
     }
 }
 
-/// A trait for engines storing (discarding) LWE ciphertexts in LWE ciphertext vectors.
+/// A trait for engines storing (discarding) LWE ciphertexts in LWE ciphertext arrays.
 ///
 /// # Semantics
 ///
 /// This [discarding](super#operation-semantics) operation fills the `i`th LWE ciphertext of the
-/// `vector` LWE ciphertext vector, with the `ciphertext` LWE ciphertext.
+/// `array` LWE ciphertext array, with the `ciphertext` LWE ciphertext.
 ///
 /// # Formal Definition
-pub trait LweCiphertextDiscardingStoringEngine<Ciphertext, CiphertextVector>:
+pub trait LweCiphertextDiscardingStoringEngine<Ciphertext, CiphertextArray>:
     AbstractEngine
 where
-    CiphertextVector: LweCiphertextVectorEntity,
+    CiphertextArray: LweCiphertextArrayEntity,
     Ciphertext: LweCiphertextEntity,
 {
-    /// Stores an LWE ciphertext in an LWE ciphertext vector.
+    /// Stores an LWE ciphertext in an LWE ciphertext array.
     fn discard_store_lwe_ciphertext(
         &mut self,
-        vector: &mut CiphertextVector,
+        array: &mut CiphertextArray,
         ciphertext: &Ciphertext,
         i: LweCiphertextIndex,
     ) -> Result<(), LweCiphertextDiscardingStoringError<Self::EngineError>>;
 
-    /// Unsafely stores an LWE ciphertext in a LWE ciphertext vector.
+    /// Unsafely stores an LWE ciphertext in a LWE ciphertext array.
     ///
     /// # Safety
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
@@ -62,7 +62,7 @@ where
     /// refer to the implementer safety section.
     unsafe fn discard_store_lwe_ciphertext_unchecked(
         &mut self,
-        vector: &mut CiphertextVector,
+        array: &mut CiphertextArray,
         ciphertext: &Ciphertext,
         i: LweCiphertextIndex,
     );

@@ -6,7 +6,7 @@ use crate::backends::cuda::private::crypto::lwe::ciphertext::CudaLweCiphertext;
 use crate::specification::entities::markers::LweCiphertextKind;
 use crate::specification::entities::{AbstractEntity, LweCiphertextEntity};
 
-/// A structure representing a vector of LWE ciphertexts with 32 bits of precision on the GPU.
+/// A structure representing an array of LWE ciphertexts with 32 bits of precision on the GPU.
 #[derive(Debug)]
 pub struct CudaLweCiphertext32(pub(crate) CudaLweCiphertext<u32>);
 
@@ -20,7 +20,7 @@ impl LweCiphertextEntity for CudaLweCiphertext32 {
     }
 }
 
-/// A structure representing a vector of LWE ciphertexts with 64 bits of precision on the GPU.
+/// A structure representing an array of LWE ciphertexts with 64 bits of precision on the GPU.
 #[derive(Debug)]
 pub struct CudaLweCiphertext64(pub(crate) CudaLweCiphertext<u64>);
 

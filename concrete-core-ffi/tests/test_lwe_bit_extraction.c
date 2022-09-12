@@ -73,7 +73,7 @@ void extract_bits_raw_ptr_buffers_test(void) {
   // We generate the ciphertexts
   uint64_t *input_ct_buffer =
       aligned_alloc(U64_ALIGNMENT, sizeof(uint64_t) * (input_lwe_dimension + 1));
-  uint64_t *output_ct_vector_buffer =
+  uint64_t *output_ct_array_buffer =
       aligned_alloc(U64_ALIGNMENT, sizeof(uint64_t) * (output_lwe_dimension + 1) * extracted_bits_count);
   uint64_t plaintext = ((uint64_t)1) << delta_log;
 
@@ -83,14 +83,14 @@ void extract_bits_raw_ptr_buffers_test(void) {
 
   // We perform the bit extraction
   int result_ok = fftw_engine_lwe_ciphertext_discarding_bit_extraction_u64_raw_ptr_buffers(
-      fftw_engine, default_engine, fbsk, ksk, output_ct_vector_buffer, input_ct_buffer, 
+      fftw_engine, default_engine, fbsk, ksk, output_ct_array_buffer, input_ct_buffer, 
       extracted_bits_count, delta_log);
   assert(result_ok == 0);
 
   // Since we only extract one bit the output is a single value
   uint64_t output = -1;
-  int decrypt_ok = default_engine_decrypt_lwe_ciphertext_vector_u64_raw_ptr_buffers(
-      default_engine, output_lwe_sk, output_ct_vector_buffer, &output, extracted_bits_count);
+  int decrypt_ok = default_engine_decrypt_lwe_ciphertext_array_u64_raw_ptr_buffers(
+      default_engine, output_lwe_sk, output_ct_array_buffer, &output, extracted_bits_count);
   assert(decrypt_ok == 0);
 
   // We check that the output are the same
@@ -113,7 +113,7 @@ void extract_bits_raw_ptr_buffers_test(void) {
   destroy_fftw_engine(fftw_engine);
   destroy_seeder_builder(builder);
   free(input_ct_buffer);
-  free(output_ct_vector_buffer);
+  free(output_ct_array_buffer);
 }
 
 
@@ -183,7 +183,7 @@ void extract_bits_unchecked_raw_ptr_buffers_test(void) {
   // We generate the ciphertexts
   uint64_t *input_ct_buffer =
       aligned_alloc(U64_ALIGNMENT, sizeof(uint64_t) * (input_lwe_dimension + 1));
-  uint64_t *output_ct_vector_buffer =
+  uint64_t *output_ct_array_buffer =
       aligned_alloc(U64_ALIGNMENT, sizeof(uint64_t) * (output_lwe_dimension + 1) * extracted_bits_count);
   uint64_t plaintext = ((uint64_t)1) << delta_log;
 
@@ -193,14 +193,14 @@ void extract_bits_unchecked_raw_ptr_buffers_test(void) {
 
   // We perform the bit extraction
   int result_ok = fftw_engine_lwe_ciphertext_discarding_bit_extraction_unchecked_u64_raw_ptr_buffers(
-      fftw_engine, default_engine, fbsk, ksk, output_ct_vector_buffer, input_ct_buffer,
+      fftw_engine, default_engine, fbsk, ksk, output_ct_array_buffer, input_ct_buffer,
       extracted_bits_count, delta_log);
   assert(result_ok == 0);
 
   // Since we only extract one bit the output is a single value
   uint64_t output = -1;
-  int decrypt_ok = default_engine_decrypt_lwe_ciphertext_vector_unchecked_u64_raw_ptr_buffers(
-      default_engine, output_lwe_sk, output_ct_vector_buffer, &output, extracted_bits_count);
+  int decrypt_ok = default_engine_decrypt_lwe_ciphertext_array_unchecked_u64_raw_ptr_buffers(
+      default_engine, output_lwe_sk, output_ct_array_buffer, &output, extracted_bits_count);
   assert(decrypt_ok == 0);
 
   // We check that the output are the same
@@ -223,7 +223,7 @@ void extract_bits_unchecked_raw_ptr_buffers_test(void) {
   destroy_fftw_engine_unchecked(fftw_engine);
   destroy_seeder_builder_unchecked(builder);
   free(input_ct_buffer);
-  free(output_ct_vector_buffer);
+  free(output_ct_array_buffer);
 }
 
 int main(void) {

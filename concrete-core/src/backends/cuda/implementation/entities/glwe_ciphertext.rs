@@ -6,7 +6,7 @@ use crate::backends::cuda::private::crypto::glwe::ciphertext::CudaGlweCiphertext
 use crate::specification::entities::markers::GlweCiphertextKind;
 use crate::specification::entities::{AbstractEntity, GlweCiphertextEntity};
 
-/// A structure representing a vector of GLWE ciphertexts with 32 bits of precision on the GPU.
+/// A structure representing an array of GLWE ciphertexts with 32 bits of precision on the GPU.
 /// It is used as input to the Cuda bootstrap for the array of lookup tables.
 #[derive(Debug)]
 pub struct CudaGlweCiphertext32(pub(crate) CudaGlweCiphertext<u32>);
@@ -25,7 +25,7 @@ impl GlweCiphertextEntity for CudaGlweCiphertext32 {
     }
 }
 
-/// A structure representing a vector of GLWE ciphertexts with 64 bits of precision on the GPU.
+/// A structure representing an array of GLWE ciphertexts with 64 bits of precision on the GPU.
 /// It is used as input to the Cuda bootstrap for the array of lookup tables.
 #[derive(Debug)]
 pub struct CudaGlweCiphertext64(pub(crate) CudaGlweCiphertext<u64>);

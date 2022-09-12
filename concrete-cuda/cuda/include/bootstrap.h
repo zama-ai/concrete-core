@@ -15,11 +15,11 @@ void cuda_convert_lwe_bootstrap_key_64(void *dest, void *src, void *v_stream,
                                   uint32_t gpu_index, uint32_t input_lwe_dim, uint32_t glwe_dim,
                                   uint32_t l_gadget, uint32_t polynomial_size);
 
-void cuda_bootstrap_amortized_lwe_ciphertext_vector_32(
+void cuda_bootstrap_amortized_lwe_ciphertext_array_32(
     void *v_stream,
     void *lwe_out,
-    void *test_vector,
-    void *test_vector_indexes,
+    void *lut_array,
+    void *lut_array_indexes,
     void *lwe_in,
     void *bootstrapping_key,
     uint32_t input_lwe_dimension,
@@ -27,15 +27,15 @@ void cuda_bootstrap_amortized_lwe_ciphertext_vector_32(
     uint32_t base_log,
     uint32_t l_gadget,
     uint32_t num_samples,
-    uint32_t num_test_vectors,
+    uint32_t num_lut_arrays,
     uint32_t lwe_idx,
     uint32_t max_shared_memory);
 
-void cuda_bootstrap_amortized_lwe_ciphertext_vector_64(
+void cuda_bootstrap_amortized_lwe_ciphertext_array_64(
     void *v_stream,
     void *lwe_out,
-    void *test_vector,
-    void *test_vector_indexes,
+    void *lut_array,
+    void *lut_array_indexes,
     void *lwe_in,
     void *bootstrapping_key,
     uint32_t input_lwe_dimension,
@@ -43,15 +43,15 @@ void cuda_bootstrap_amortized_lwe_ciphertext_vector_64(
     uint32_t base_log,
     uint32_t l_gadget,
     uint32_t num_samples,
-    uint32_t num_test_vectors,
+    uint32_t num_lut_arrays,
     uint32_t lwe_idx,
     uint32_t max_shared_memory);
 
-void cuda_bootstrap_low_latency_lwe_ciphertext_vector_32(
+void cuda_bootstrap_low_latency_lwe_ciphertext_array_32(
     void *v_stream,
     void *lwe_out,
-    void *test_vector,
-    void *test_vector_indexes,
+    void *lut_array,
+    void *lut_array_indexes,
     void *lwe_in,
     void *bootstrapping_key,
     uint32_t input_lwe_dimension,
@@ -59,15 +59,15 @@ void cuda_bootstrap_low_latency_lwe_ciphertext_vector_32(
     uint32_t base_log,
     uint32_t l_gadget,
     uint32_t num_samples,
-    uint32_t num_test_vectors,
+    uint32_t num_lut_arrays,
     uint32_t lwe_idx,
     uint32_t max_shared_memory);
 
-void cuda_bootstrap_low_latency_lwe_ciphertext_vector_64(
+void cuda_bootstrap_low_latency_lwe_ciphertext_array_64(
     void *v_stream,
     void *lwe_out,
-    void *test_vector,
-    void *test_vector_indexes,
+    void *lut_array,
+    void *lut_array_indexes,
     void *lwe_in,
     void *bootstrapping_key,
     uint32_t input_lwe_dimension,
@@ -75,7 +75,7 @@ void cuda_bootstrap_low_latency_lwe_ciphertext_vector_64(
     uint32_t base_log,
     uint32_t l_gadget,
     uint32_t num_samples,
-    uint32_t num_test_vectors,
+    uint32_t num_lut_arrays,
     uint32_t lwe_idx,
     uint32_t max_shared_memory);
 };

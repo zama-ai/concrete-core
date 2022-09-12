@@ -33,10 +33,10 @@ macro_rules! test {
 }
 
 test! {
-    ((BinaryKeyDistribution), LweCiphertextVectorConversionFixture, (CudaLweCiphertextVector, LweCiphertextVector)),
+    ((BinaryKeyDistribution), LweCiphertextArrayConversionFixture, (CudaLweCiphertextArray, LweCiphertextArray)),
     ((BinaryKeyDistribution), LweCiphertextConversionFixture, (CudaLweCiphertext, LweCiphertext)),
-    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingKeyswitchFixture, (CudaLweKeyswitchKey, CudaLweCiphertextVector,
-        CudaLweCiphertextVector)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextArrayDiscardingKeyswitchFixture, (CudaLweKeyswitchKey, CudaLweCiphertextArray,
+        CudaLweCiphertextArray)),
     ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextDiscardingKeyswitchFixture, (CudaLweKeyswitchKey, CudaLweCiphertext,
         CudaLweCiphertext)),
     ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextDiscardingBootstrapFixture1, (CudaFourierLweBootstrapKey,
@@ -45,12 +45,12 @@ test! {
     ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextDiscardingBootstrapFixture2, (CudaFourierLweBootstrapKey,
         CudaGlweCiphertext,
         CudaLweCiphertext, CudaLweCiphertext)),
-    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingBootstrapFixture1, (CudaFourierLweBootstrapKey,
-        CudaGlweCiphertextVector,
-        CudaLweCiphertextVector, CudaLweCiphertextVector)),
-    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingBootstrapFixture2, (CudaFourierLweBootstrapKey,
-        CudaGlweCiphertextVector,
-        CudaLweCiphertextVector, CudaLweCiphertextVector))
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextArrayDiscardingBootstrapFixture1, (CudaFourierLweBootstrapKey,
+        CudaGlweCiphertextArray,
+        CudaLweCiphertextArray, CudaLweCiphertextArray)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextArrayDiscardingBootstrapFixture2, (CudaFourierLweBootstrapKey,
+        CudaGlweCiphertextArray,
+        CudaLweCiphertextArray, CudaLweCiphertextArray))
 }
 
 macro_rules! test_amortized {
@@ -82,10 +82,10 @@ macro_rules! test_amortized {
 }
 
 test_amortized! {
-    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingBootstrapFixture1, (CudaFourierLweBootstrapKey,
-        CudaGlweCiphertextVector,
-        CudaLweCiphertextVector, CudaLweCiphertextVector)),
-    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingBootstrapFixture2, (CudaFourierLweBootstrapKey,
-        CudaGlweCiphertextVector,
-        CudaLweCiphertextVector, CudaLweCiphertextVector))
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextArrayDiscardingBootstrapFixture1, (CudaFourierLweBootstrapKey,
+        CudaGlweCiphertextArray,
+        CudaLweCiphertextArray, CudaLweCiphertextArray)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextArrayDiscardingBootstrapFixture2, (CudaFourierLweBootstrapKey,
+        CudaGlweCiphertextArray,
+        CudaLweCiphertextArray, CudaLweCiphertextArray))
 }

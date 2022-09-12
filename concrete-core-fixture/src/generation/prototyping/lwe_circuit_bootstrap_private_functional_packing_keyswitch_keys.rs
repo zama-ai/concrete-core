@@ -15,7 +15,7 @@ use concrete_core::prelude::{
     LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysGenerationEngine,
 };
 
-/// A trait allowing to manipulate prototypes of private functional packing keyswitch keys vector
+/// A trait allowing to manipulate prototypes of private functional packing keyswitch keys array
 /// used in circuit bootstrapping.
 pub trait PrototypesLweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys<
     Precision: IntegerPrecision,

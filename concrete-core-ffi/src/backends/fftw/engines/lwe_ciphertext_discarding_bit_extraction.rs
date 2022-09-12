@@ -15,7 +15,7 @@ pub unsafe extern "C" fn fftw_engine_lwe_ciphertext_discarding_bit_extraction_u6
     engine: *mut FftwEngine,
     bootstrap_key: *const FftwFourierLweBootstrapKey64,
     keyswitch_key: *const LweKeyswitchKey64,
-    output: *mut LweCiphertextVectorMutView64,
+    output: *mut LweCiphertextArrayMutView64,
     input: *const LweCiphertextView64,
     extracted_bits_count: usize,
     delta_log: usize,
@@ -51,7 +51,7 @@ pub unsafe extern "C" fn fftw_engine_lwe_ciphertext_discarding_bit_extraction_un
     engine: *mut FftwEngine,
     bootstrap_key: *const FftwFourierLweBootstrapKey64,
     keyswitch_key: *const LweKeyswitchKey64,
-    output: *mut LweCiphertextVectorMutView64,
+    output: *mut LweCiphertextArrayMutView64,
     input: *const LweCiphertextView64,
     extracted_bits_count: usize,
     delta_log: usize,
@@ -104,7 +104,7 @@ pub unsafe extern "C" fn fftw_engine_lwe_ciphertext_discarding_bit_extraction_u6
         let output_as_slice =
             std::slice::from_raw_parts_mut(output, output_lwe_size * output_lwe_count);
         let mut output = default_engine
-            .create_lwe_ciphertext_vector_from(output_as_slice, LweSize(output_lwe_size))
+            .create_lwe_ciphertext_array_from(output_as_slice, LweSize(output_lwe_size))
             .or_else(engine_error_as_readable_string)
             .unwrap();
 
@@ -156,7 +156,7 @@ pub unsafe extern "C" fn fftw_engine_lwe_ciphertext_discarding_bit_extraction_un
         let output_as_slice =
             std::slice::from_raw_parts_mut(output, output_lwe_size * output_lwe_count);
         let mut output = default_engine
-            .create_lwe_ciphertext_vector_from_unchecked(output_as_slice, LweSize(output_lwe_size));
+            .create_lwe_ciphertext_array_from_unchecked(output_as_slice, LweSize(output_lwe_size));
 
         let input_as_slice = std::slice::from_raw_parts(input, input_lwe_size);
         let input = default_engine.create_lwe_ciphertext_from_unchecked(input_as_slice);

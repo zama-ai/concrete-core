@@ -14,13 +14,13 @@
  * This function calls a wrapper to a device kernel that performs the keyswitch
  * 	- num_samples blocks of threads are launched
  */
-void cuda_keyswitch_lwe_ciphertext_vector_32(void *v_stream, void *lwe_out, void *lwe_in,
+void cuda_keyswitch_lwe_ciphertext_array_32(void *v_stream, void *lwe_out, void *lwe_in,
                         void *ksk,
                         uint32_t lwe_dimension_before,
                         uint32_t lwe_dimension_after,
                         uint32_t base_log, uint32_t l_gadget,
                         uint32_t num_samples) {
-    cuda_keyswitch_lwe_ciphertext_vector(
+    cuda_keyswitch_lwe_ciphertext_array(
             v_stream, static_cast<uint32_t *>(lwe_out), static_cast<uint32_t *>(lwe_in),
             static_cast<uint32_t*>(ksk),
             lwe_dimension_before, lwe_dimension_after,
@@ -38,13 +38,13 @@ void cuda_keyswitch_lwe_ciphertext_vector_32(void *v_stream, void *lwe_out, void
  * This function calls a wrapper to a device kernel that performs the keyswitch
  * 	- num_samples blocks of threads are launched
  */
-void cuda_keyswitch_lwe_ciphertext_vector_64(void *v_stream, void *lwe_out, void *lwe_in,
+void cuda_keyswitch_lwe_ciphertext_array_64(void *v_stream, void *lwe_out, void *lwe_in,
                         void *ksk,
                         uint32_t lwe_dimension_before,
                         uint32_t lwe_dimension_after,
                         uint32_t base_log, uint32_t l_gadget,
                         uint32_t num_samples) {
-    cuda_keyswitch_lwe_ciphertext_vector(
+    cuda_keyswitch_lwe_ciphertext_array(
             v_stream, static_cast<uint64_t *>(lwe_out), static_cast<uint64_t *> (lwe_in),
             static_cast<uint64_t*>(ksk),
             lwe_dimension_before, lwe_dimension_after,

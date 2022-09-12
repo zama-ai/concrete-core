@@ -1,4 +1,4 @@
-use crate::backends::cuda::private::vec::CudaVec;
+use crate::backends::cuda::private::array::CudaArray;
 use crate::commons::numeric::UnsignedInteger;
 use crate::prelude::{GlweDimension, PolynomialSize};
 
@@ -10,7 +10,7 @@ use crate::prelude::{GlweDimension, PolynomialSize};
 #[derive(Debug)]
 pub(crate) struct CudaGlweCiphertext<T: UnsignedInteger> {
     // Pointer to GPU data: one cuda vec on GPU 0
-    pub(crate) d_vec: CudaVec<T>,
+    pub(crate) d_vec: CudaArray<T>,
     // Glwe dimension
     pub(crate) glwe_dimension: GlweDimension,
     // Polynomial size

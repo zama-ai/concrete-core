@@ -220,11 +220,11 @@ associated type.
 ## Error Management
 
 Every `*Engine` trait is tied to a special `*Error` of the same name. For instance,
-`LweCiphertextVectorFusingAdditionEngine` is tied to the `LweCiphertextVectorFusingAdditionError`
+`LweCiphertextArrayFusingAdditionEngine` is tied to the `LweCiphertextArrayFusingAdditionError`
 enum whose definition is:
 
 ```rust
-pub enum LweCiphertextVectorFusingAdditionError<EngineError: Error> {
+pub enum LweCiphertextArrayFusingAdditionError<EngineError: Error> {
     LweDimensionMismatch,
     // General error case
     CiphertextCountMismatch,
@@ -235,7 +235,7 @@ pub enum LweCiphertextVectorFusingAdditionError<EngineError: Error> {
 
 This error is returned by the engine, if an error occurred while performing the operation. The two
 first error cases are _general_, in the sense that they can be produced by any engine implementing
-`LweCiphertextVectorFusingAdditionEngine`. The last error case is a placeholder for an `EngineError`
+`LweCiphertextArrayFusingAdditionEngine`. The last error case is a placeholder for an `EngineError`
 type parameter, associated to the engine itself. This `EngineError` will be different for any
 engine, and contains error cases specific to a given engine.
 

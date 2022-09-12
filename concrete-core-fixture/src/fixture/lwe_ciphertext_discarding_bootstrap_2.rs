@@ -1,8 +1,7 @@
 use crate::fixture::Fixture;
 use crate::generation::prototyping::{
     PrototypesGlweCiphertext, PrototypesGlweSecretKey, PrototypesLweBootstrapKey,
-    PrototypesLweCiphertext, PrototypesLweSecretKey, PrototypesPlaintext,
-    PrototypesPlaintextVector,
+    PrototypesLweCiphertext, PrototypesLweSecretKey, PrototypesPlaintext, PrototypesPlaintextArray,
 };
 use crate::generation::synthesizing::{
     SynthesizesGlweCiphertext, SynthesizesLweBootstrapKey, SynthesizesLweCiphertext,
@@ -108,16 +107,16 @@ where
         maker: &mut Maker,
     ) -> Self::RepetitionPrototypes {
         let log_degree = f64::log2(parameters.poly_size.0 as f64) as i32;
-        let raw_plaintext_vector: Vec<Precision::Raw> = (0..parameters.poly_size.0)
+        let raw_plaintext_array: Vec<Precision::Raw> = (0..parameters.poly_size.0)
             .map(|i| {
                 (i as f64 * 2_f64.powi(Precision::Raw::BITS as i32 - log_degree - 1)).cast_into()
             })
             .collect();
-        let proto_plaintext_vector =
-            maker.transform_raw_vec_to_plaintext_vector(raw_plaintext_vector.as_slice());
-        let proto_accumulator = maker.trivially_encrypt_plaintext_vector_to_glwe_ciphertext(
+        let proto_plaintext_array =
+            maker.transform_raw_vec_to_plaintext_array(raw_plaintext_array.as_slice());
+        let proto_accumulator = maker.trivially_encrypt_plaintext_array_to_glwe_ciphertext(
             parameters.glwe_dimension,
-            &proto_plaintext_vector,
+            &proto_plaintext_array,
         );
         let proto_lwe_secret_key = <Maker as PrototypesLweSecretKey<
             Precision,

@@ -22,7 +22,7 @@ where
     Ciphertext: LweCiphertextEntity,
     Plaintext: PlaintextEntity,
 {
-    /// Decrypts an LWE ciphertext vector into a plaintext vector.
+    /// Decrypts an LWE ciphertext array into a plaintext array.
     fn trivially_decrypt_lwe_ciphertext(
         &mut self,
         input: &Ciphertext,

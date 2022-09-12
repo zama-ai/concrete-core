@@ -9,14 +9,14 @@ use crate::specification::entities::AbstractEntity;
 /// # GSW Ciphertext
 ///
 /// An GSW ciphertext is an encryption of a plaintext.
-/// It is a vector of Lev ciphertexts.
+/// It is an array of Lev ciphertexts.
 /// It is a specialization of
 /// [`GGSW ciphertexts`](`crate::specification::entities::GgswCiphertextEntity`).
 ///
 /// We call $q$ the ciphertext modulus.
 ///
 /// We indicate a GSW ciphertext of a plaintext $\mathsf{pt} \in\mathbb{Z}\_q$ as the following
-/// vector: $$\overline{\overline{\mathsf{ct}}} = \left( \overline{\mathsf{ct}\_0} , \cdots ,
+/// array: $$\overline{\overline{\mathsf{ct}}} = \left( \overline{\mathsf{ct}\_0} , \cdots ,
 /// \overline{\mathsf{ct}\_{n}} \right) \in \mathsf{GSW}\_{\vec{s}}^{\beta,
 /// \ell}\left(\mathsf{pt}\right) \subseteq \mathbb{Z}\_q^{(n+1)\cdot\ell\cdot(n+1)}$$
 ///
@@ -87,13 +87,13 @@ use crate::specification::entities::AbstractEntity;
 /// description helps understanding GSW ciphertext.
 ///
 /// An Lev ciphertext is an encryption of a plaintext.
-/// It is a vector of [`LWE ciphertexts`](`crate::specification::entities::LweCiphertextEntity`).
+/// It is an array of [`LWE ciphertexts`](`crate::specification::entities::LweCiphertextEntity`).
 /// It is a specialization of GLev ciphertexts.
 ///
 /// We call $q$ the ciphertext modulus.
 ///
 /// We indicate a Lev ciphertext of a plaintext $\mathsf{pt} \in\mathbb{Z}\_q$ as the following
-/// vector: $$\overline{\mathsf{ct}} = \left( \mathsf{ct}\_0 , \cdots , \mathsf{ct}\_{\ell-1}
+/// array: $$\overline{\mathsf{ct}} = \left( \mathsf{ct}\_0 , \cdots , \mathsf{ct}\_{\ell-1}
 /// \right) \in \mathsf{Lev}\_{\vec{s}}^{\beta, \ell}\left(\mathsf{pt}\right) \subseteq
 /// \mathbb{Z}\_q^{(n+1)\cdot\ell}$$
 ///

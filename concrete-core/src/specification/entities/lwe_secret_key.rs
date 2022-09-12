@@ -10,7 +10,7 @@ use crate::specification::entities::AbstractEntity;
 ///
 /// We consider a secret key:
 /// $$\vec{s} \in \mathbb{Z}^n$$
-/// This vector contains $n$ integers that have been sampled for some distribution which is either
+/// This array contains $n$ integers that have been sampled for some distribution which is either
 /// uniformly binary, uniformly ternary, gaussian or even uniform.
 pub trait LweSecretKeyEntity: AbstractEntity<Kind = LweSecretKeyKind> {
     /// Returns the LWE dimension of the key.

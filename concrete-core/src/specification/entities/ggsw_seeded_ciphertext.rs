@@ -13,7 +13,7 @@ use crate::specification::entities::AbstractEntity;
 /// # Seeded GGSW Ciphertext
 ///
 /// A seeded GGSW ciphertext is an encryption of a polynomial plaintext.
-/// It is a [`seeded vector`](`crate::specification::entities::GlweSeededCiphertextVectorEntity`)
+/// It is a [`seeded array`](`crate::specification::entities::GlweSeededCiphertextArrayEntity`)
 /// of GLWE ciphertexts.
 /// It is a generalization of both GSW ciphertexts and RGSW ciphertexts.
 ///

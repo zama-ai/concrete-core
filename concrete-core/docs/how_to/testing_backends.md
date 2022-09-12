@@ -5,7 +5,7 @@ The `concrete-core-test` crate has been developed for this purpose. It relies on
 the `concrete-core-fixture` crate, that implements generic functions to sample and test engines.
 
 Let's continue with our GPU backend example. We now have a `GpuEngine` that implements a conversion
-engine for LWE ciphertext vectors from the CPU to the GPU, and back. For this engine, we can easily
+engine for LWE ciphertext arrays from the CPU to the GPU, and back. For this engine, we can easily
 check that the ciphertext copied back from the GPU is identical to the original one on the CPU.
 However, for more complex engines like the keyswitch, the bootstrap, etc., we need to make sure that
 the amount of noise introduced by the operation corresponds to what's expected, i.e. that it matches
@@ -13,9 +13,9 @@ the noise formula implemented in the `concrete-npe` crate. For the sake of this 
 continue with the simple conversion engines that copy data back and forth between the CPU and the
 GPU, and then implement this verification.
 
-For this, we're going to use the available fixture for LWE ciphertext vector conversion. The only
+For this, we're going to use the available fixture for LWE ciphertext array conversion. The only
 thing we need to implement in `concrete-core-fixture` is the synthesis stage, where data will be
-copied to the GPU, and back again. Then we'll use the existing fixture for LWE ciphertext vector
+copied to the GPU, and back again. Then we'll use the existing fixture for LWE ciphertext array
 conversion to execute the test.
 
 ## Add the GPU backend in the fixtures
@@ -49,42 +49,42 @@ impl Default for Maker {
 }
 ```
 
-Now, in `concrete-core-fixture/src/generation/synthesizing/lwe_ciphertext_vector.rs`, let us
+Now, in `concrete-core-fixture/src/generation/synthesizing/lwe_ciphertext_array.rs`, let us
 introduce the necessary implementations to copy data to the GPU, retrieve and destroy it:
 
 ```rust
 #[cfg(feature = "backend_gpu")]
 mod backend_gpu {
     use crate::generation::prototypes::{
-        ProtoBinaryLweCiphertextVector32,
+        ProtoBinaryLweCiphertextArray32,
     };
-    use crate::generation::synthesizing::SynthesizesLweCiphertextVector;
+    use crate::generation::synthesizing::SynthesizesLweCiphertextArray;
     use crate::generation::{Maker, Precision32};
     use concrete_core::prelude::{
-        GpuLweCiphertextVector32, DestructionEngine,
-        LweCiphertextVectorConversionEngine,
+        GpuLweCiphertextArray32, DestructionEngine,
+        LweCiphertextArrayConversionEngine,
     };
 
-    impl SynthesizesLweCiphertextVector<Precision32, GpuLweCiphertextVector32> for Maker {
-        fn synthesize_lwe_ciphertext_vector(
+    impl SynthesizesLweCiphertextArray<Precision32, GpuLweCiphertextArray32> for Maker {
+        fn synthesize_lwe_ciphertext_array(
             &mut self,
-            prototype: &Self::LweCiphertextVectorProto,
-        ) -> GpuLweCiphertextVector32 {
+            prototype: &Self::LweCiphertextArrayProto,
+        ) -> GpuLweCiphertextArray32 {
             self.gpu_engine
-                .convert_lwe_ciphertext_vector(&prototype.0)
+                .convert_lwe_ciphertext_array(&prototype.0)
                 .unwrap()
         }
-        fn unsynthesize_lwe_ciphertext_vector(
+        fn unsynthesize_lwe_ciphertext_array(
             &mut self,
-            entity: &GpuLweCiphertextVector32,
-        ) -> Self::LweCiphertextVectorProto {
+            entity: &GpuLweCiphertextArray32,
+        ) -> Self::LweCiphertextArrayProto {
             let proto = self
                 .gpu_engine
-                .convert_lwe_ciphertext_vector(entity)
+                .convert_lwe_ciphertext_array(entity)
                 .unwrap();
-            ProtoBinaryLweCiphertextVector32(proto)
+            ProtoBinaryLweCiphertextArray32(proto)
         }
-        fn destroy_lwe_ciphertext_vector(&mut self, entity: GpuLweCiphertextVector32) {
+        fn destroy_lwe_ciphertext_array(&mut self, entity: GpuLweCiphertextArray32) {
             self.gpu_engine.destroy(entity).unwrap();
         }
     }
@@ -127,12 +127,12 @@ use concrete_core::prelude::*;
 use concrete_core_fixture::fixture::*;
 use concrete_core_fixture::generation::{Maker, Precision32};
 
-pub fn test_lwe_ciphertext_vector_conversion_32() {
+pub fn test_lwe_ciphertext_array_conversion_32() {
     let mut criterion = Criterion::default().configure_from_args();
     let mut maker = Maker::default();
     let mut engine = GpuEngine::new().unwrap();
-    let test_result = <LweCiphertextVectorConversionFixture as Fixture<Precision32, GpuEngine, (
-        GpuLweCiphertextVector, LweCiphertextVector),
+    let test_result = <LweCiphertextArrayConversionFixture as Fixture<Precision32, GpuEngine, (
+        GpuLweCiphertextArray, LweCiphertextArray),
     >>::stress_all_parameters(
         &mut maker,
         engine,
@@ -165,7 +165,7 @@ You should get as the output:
      Running unittests (target/release/deps/concrete_core_test-c662f8b6b8aa1434)
 
 running 1 test
-test cuda::test_lwe_ciphertext_vector_conversion_fixture_precision32_cuda_lwe_ciphertext_vector32_lwe_ciphertext_vector32 ... ok
+test cuda::test_lwe_ciphertext_array_conversion_fixture_precision32_cuda_lwe_ciphertext_array32_lwe_ciphertext_array32 ... ok
 
 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 42.33s
 

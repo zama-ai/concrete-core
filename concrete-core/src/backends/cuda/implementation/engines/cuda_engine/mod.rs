@@ -82,15 +82,15 @@ macro_rules! check_glwe_dim {
     };
 }
 
+mod glwe_ciphertext_array_conversion;
 mod glwe_ciphertext_conversion;
 mod glwe_ciphertext_discarding_conversion;
-mod glwe_ciphertext_vector_conversion;
 mod lwe_bootstrap_key_conversion;
+mod lwe_ciphertext_array_conversion;
+mod lwe_ciphertext_array_discarding_bootstrap;
+mod lwe_ciphertext_array_discarding_keyswitch;
 mod lwe_ciphertext_conversion;
 mod lwe_ciphertext_discarding_bootstrap;
 mod lwe_ciphertext_discarding_conversion;
 mod lwe_ciphertext_discarding_keyswitch;
-mod lwe_ciphertext_vector_conversion;
-mod lwe_ciphertext_vector_discarding_bootstrap;
-mod lwe_ciphertext_vector_discarding_keyswitch;
 mod lwe_keyswitch_key_conversion;

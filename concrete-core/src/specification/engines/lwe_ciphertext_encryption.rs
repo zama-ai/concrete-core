@@ -28,7 +28,7 @@ engine_error! {
 ///   \mathbb{Z}\_q^{(n+1)}$: an LWE ciphertext
 ///
 /// ###### algorithm:
-/// 1. uniformly sample a vector $\vec{a}\in\mathbb{Z}\_q^n$
+/// 1. uniformly sample an array $\vec{a}\in\mathbb{Z}\_q^n$
 /// 2. sample an integer error term $e \hookleftarrow \mathcal{D\_{\sigma^2,\mu}}$
 /// 3. compute $b = \left\langle \vec{a} , \vec{s} \right\rangle + \mathsf{pt} + e \in\mathbb{Z}\_q$
 /// 4. output $\left( \vec{a} , b\right)$

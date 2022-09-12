@@ -94,7 +94,7 @@ __global__ void keyswitch(Torus *lwe_out, Torus *lwe_in,
 
 /// assume lwe_in in the gpu
 template <typename Torus>
-__host__ void cuda_keyswitch_lwe_ciphertext_vector(void *v_stream, Torus *lwe_out, Torus *lwe_in,
+__host__ void cuda_keyswitch_lwe_ciphertext_array(void *v_stream, Torus *lwe_out, Torus *lwe_in,
                                    Torus *ksk,
                                    uint32_t lwe_dimension_before,
                                    uint32_t lwe_dimension_after,

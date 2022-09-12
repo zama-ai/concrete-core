@@ -33,15 +33,15 @@ macro_rules! bench {
 }
 
 bench! {
-    ((BinaryKeyDistribution), LweCiphertextVectorConversionFixture, (CudaLweCiphertextVector, LweCiphertextVector)),
-    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingKeyswitchFixture, (CudaLweKeyswitchKey, CudaLweCiphertextVector,
-        CudaLweCiphertextVector)),
-    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingBootstrapFixture1, (CudaFourierLweBootstrapKey,
-        CudaGlweCiphertextVector,
-        CudaLweCiphertextVector, CudaLweCiphertextVector)),
-    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingBootstrapFixture2, (CudaFourierLweBootstrapKey,
-        CudaGlweCiphertextVector,
-        CudaLweCiphertextVector, CudaLweCiphertextVector))
+    ((BinaryKeyDistribution), LweCiphertextArrayConversionFixture, (CudaLweCiphertextArray, LweCiphertextArray)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextArrayDiscardingKeyswitchFixture, (CudaLweKeyswitchKey, CudaLweCiphertextArray,
+        CudaLweCiphertextArray)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextArrayDiscardingBootstrapFixture1, (CudaFourierLweBootstrapKey,
+        CudaGlweCiphertextArray,
+        CudaLweCiphertextArray, CudaLweCiphertextArray)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextArrayDiscardingBootstrapFixture2, (CudaFourierLweBootstrapKey,
+        CudaGlweCiphertextArray,
+        CudaLweCiphertextArray, CudaLweCiphertextArray))
 }
 
 macro_rules! bench_amortized {
@@ -74,10 +74,10 @@ macro_rules! bench_amortized {
 }
 
 bench_amortized! {
-    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingBootstrapFixture1, (CudaFourierLweBootstrapKey,
-        CudaGlweCiphertextVector,
-        CudaLweCiphertextVector, CudaLweCiphertextVector)),
-    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingBootstrapFixture2, (CudaFourierLweBootstrapKey,
-        CudaGlweCiphertextVector,
-        CudaLweCiphertextVector, CudaLweCiphertextVector))
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextArrayDiscardingBootstrapFixture1, (CudaFourierLweBootstrapKey,
+        CudaGlweCiphertextArray,
+        CudaLweCiphertextArray, CudaLweCiphertextArray)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextArrayDiscardingBootstrapFixture2, (CudaFourierLweBootstrapKey,
+        CudaGlweCiphertextArray,
+        CudaLweCiphertextArray, CudaLweCiphertextArray))
 }

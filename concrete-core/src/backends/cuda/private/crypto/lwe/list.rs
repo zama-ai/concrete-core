@@ -1,5 +1,5 @@
+use crate::backends::cuda::private::array::CudaArray;
 use crate::backends::cuda::private::device::{CudaStream, GpuIndex, NumberOfGpus};
-use crate::backends::cuda::private::vec::CudaVec;
 use crate::backends::cuda::private::{compute_number_of_samples_on_gpu, number_of_active_gpus};
 use crate::commons::crypto::lwe::LweList;
 use crate::commons::math::tensor::{AsRefSlice, AsRefTensor};
@@ -8,7 +8,7 @@ use crate::prelude::{CiphertextCount, LweCiphertextCount, LweDimension};
 
 /// An array of LWE ciphertexts in the GPU.
 ///
-/// In the Cuda Engine, the logic is that vectors of LWE ciphertexts get
+/// In the Cuda Engine, the logic is that arrays of LWE ciphertexts get
 /// chunked and each chunk is sent to a given GPU.
 /// The amount of ciphertexts per GPU is hard set to the total amount of
 /// ciphertexts divided by the number of GPUs.
@@ -25,18 +25,18 @@ use crate::prelude::{CiphertextCount, LweCiphertextCount, LweDimension};
 #[derive(Debug)]
 pub(crate) struct CudaLweList<T: UnsignedInteger> {
     // Pointers to GPU data: one cuda vec per GPU
-    pub(crate) d_vecs: Vec<CudaVec<T>>,
+    pub(crate) d_vecs: Vec<CudaArray<T>>,
     // Number of ciphertexts in the array
     pub(crate) lwe_ciphertext_count: LweCiphertextCount,
     // Lwe dimension
     pub(crate) lwe_dimension: LweDimension,
 }
 
-pub(crate) unsafe fn copy_lwe_ciphertext_vector_from_cpu_to_gpu<T: UnsignedInteger, Cont>(
+pub(crate) unsafe fn copy_lwe_ciphertext_array_from_cpu_to_gpu<T: UnsignedInteger, Cont>(
     streams: &[CudaStream],
     input: &LweList<Cont>,
     number_of_available_gpus: NumberOfGpus,
-) -> Vec<CudaVec<T>>
+) -> Vec<CudaArray<T>>
 where
     Cont: AsRefSlice<Element = T>,
 {
@@ -67,7 +67,7 @@ where
     vecs
 }
 
-pub(crate) unsafe fn copy_lwe_ciphertext_vector_from_gpu_to_cpu<T: UnsignedInteger>(
+pub(crate) unsafe fn copy_lwe_ciphertext_array_from_gpu_to_cpu<T: UnsignedInteger>(
     streams: &[CudaStream],
     input: &CudaLweList<T>,
     number_of_available_gpus: NumberOfGpus,

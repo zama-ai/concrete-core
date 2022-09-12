@@ -1,23 +1,23 @@
 use super::engine_error;
-use crate::prelude::PlaintextVectorEntity;
+use crate::prelude::PlaintextArrayEntity;
 
 use crate::specification::engines::AbstractEngine;
 use crate::specification::entities::GlweCiphertextEntity;
 
 engine_error! {
     GlweCiphertextDiscardingTrivialEncryptionError for GlweCiphertextDiscardingTrivialEncryptionEngine @
-    MismatchedPolynomialSizeAndPlaintextVectorCount => "The input plaintext count must be the same\
+    MismatchedPolynomialSizeAndPlaintextArrayCount => "The input plaintext count must be the same\
                                                         as the output ciphertext polynomial size."
 }
 
 impl<EngineError: std::error::Error> GlweCiphertextDiscardingTrivialEncryptionError<EngineError> {
     /// Validates the inputs
-    pub fn perform_generic_checks<Input: PlaintextVectorEntity, Output: GlweCiphertextEntity>(
+    pub fn perform_generic_checks<Input: PlaintextArrayEntity, Output: GlweCiphertextEntity>(
         output: &Output,
         input: &Input,
     ) -> Result<(), Self> {
         if output.polynomial_size().0 != input.plaintext_count().0 {
-            return Err(Self::MismatchedPolynomialSizeAndPlaintextVectorCount);
+            return Err(Self::MismatchedPolynomialSizeAndPlaintextArrayCount);
         }
         Ok(())
     }
@@ -28,7 +28,7 @@ impl<EngineError: std::error::Error> GlweCiphertextDiscardingTrivialEncryptionEr
 /// # Semantics
 ///
 /// This [discarding](super#operation-semantics) operation fills a GLWE ciphertext with the trivial
-/// encryption of the `input` plaintext vector with the requested `glwe_size`.
+/// encryption of the `input` plaintext array with the requested `glwe_size`.
 ///
 /// # Formal Definition
 ///
@@ -36,20 +36,20 @@ impl<EngineError: std::error::Error> GlweCiphertextDiscardingTrivialEncryptionEr
 /// It is absolutely not secure, as the body contains a direct copy of the plaintext.
 /// However, it is useful for some FHE algorithms taking public information as input. For
 /// example, a trivial GLWE encryption of a public lookup table is used in the bootstrap.
-pub trait GlweCiphertextDiscardingTrivialEncryptionEngine<PlaintextVector, Ciphertext>:
+pub trait GlweCiphertextDiscardingTrivialEncryptionEngine<PlaintextArray, Ciphertext>:
     AbstractEngine
 where
-    PlaintextVector: PlaintextVectorEntity,
+    PlaintextArray: PlaintextArrayEntity,
     Ciphertext: GlweCiphertextEntity,
 {
-    /// Trivially encrypts a plaintext vector into a GLWE ciphertext.
+    /// Trivially encrypts a plaintext array into a GLWE ciphertext.
     fn discard_trivially_encrypt_glwe_ciphertext(
         &mut self,
         output: &mut Ciphertext,
-        input: &PlaintextVector,
+        input: &PlaintextArray,
     ) -> Result<(), GlweCiphertextDiscardingTrivialEncryptionError<Self::EngineError>>;
 
-    /// Unsafely trivially encrypts a plaintext vector into a GLWE ciphertext.
+    /// Unsafely trivially encrypts a plaintext array into a GLWE ciphertext.
     ///
     /// # Safety
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
@@ -58,6 +58,6 @@ where
     unsafe fn discard_trivially_encrypt_glwe_ciphertext_unchecked(
         &mut self,
         output: &mut Ciphertext,
-        input: &PlaintextVector,
+        input: &PlaintextArray,
     );
 }

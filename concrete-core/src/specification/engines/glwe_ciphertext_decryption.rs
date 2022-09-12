@@ -1,7 +1,7 @@
 use super::engine_error;
 use crate::specification::engines::AbstractEngine;
 use crate::specification::entities::{
-    GlweCiphertextEntity, GlweSecretKeyEntity, PlaintextVectorEntity,
+    GlweCiphertextEntity, GlweSecretKeyEntity, PlaintextArrayEntity,
 };
 
 engine_error! {
@@ -34,7 +34,7 @@ impl<EngineError: std::error::Error> GlweCiphertextDecryptionError<EngineError> 
 ///
 /// # Semantics
 ///
-/// This [pure](super#operation-semantics) operation generates a plaintext vector containing the
+/// This [pure](super#operation-semantics) operation generates a plaintext array containing the
 /// decryption of the `input` ciphertext, under the `key` secret key.
 ///
 /// # Formal Definition
@@ -55,21 +55,21 @@ impl<EngineError: std::error::Error> GlweCiphertextDecryptionError<EngineError> 
 ///
 /// **Remark:** Observe that the decryption is followed by a decoding phase that will contain a
 /// rounding.
-pub trait GlweCiphertextDecryptionEngine<SecretKey, Ciphertext, PlaintextVector>:
+pub trait GlweCiphertextDecryptionEngine<SecretKey, Ciphertext, PlaintextArray>:
     AbstractEngine
 where
     SecretKey: GlweSecretKeyEntity,
     Ciphertext: GlweCiphertextEntity,
-    PlaintextVector: PlaintextVectorEntity,
+    PlaintextArray: PlaintextArrayEntity,
 {
-    /// Decrypts a GLWE ciphertext into a plaintext vector.
+    /// Decrypts a GLWE ciphertext into a plaintext array.
     fn decrypt_glwe_ciphertext(
         &mut self,
         key: &SecretKey,
         input: &Ciphertext,
-    ) -> Result<PlaintextVector, GlweCiphertextDecryptionError<Self::EngineError>>;
+    ) -> Result<PlaintextArray, GlweCiphertextDecryptionError<Self::EngineError>>;
 
-    /// Unsafely decrypts a GLWE ciphertext into a plaintext vector.
+    /// Unsafely decrypts a GLWE ciphertext into a plaintext array.
     ///
     /// # Safety
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
@@ -79,5 +79,5 @@ where
         &mut self,
         key: &SecretKey,
         input: &Ciphertext,
-    ) -> PlaintextVector;
+    ) -> PlaintextArray;
 }

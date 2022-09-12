@@ -5,7 +5,7 @@ use crate::prelude::{
 };
 use crate::specification::entities::AbstractEntity;
 
-/// A trait implemented by types embodying a private functional packing keyswitch key vector used
+/// A trait implemented by types embodying a private functional packing keyswitch key array used
 /// for circuit bootstrapping.
 ///
 /// # Formal Definition
@@ -27,6 +27,6 @@ pub trait LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysEntity:
     /// Returns the logarithm of the base used in the keys.
     fn decomposition_base_log(&self) -> DecompositionBaseLog;
 
-    /// Returns the number of keys contained in the vector.
+    /// Returns the number of keys contained in the array.
     fn key_count(&self) -> FunctionalPackingKeyswitchKeyCount;
 }

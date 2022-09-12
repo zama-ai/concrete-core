@@ -4,7 +4,7 @@ use concrete_core::prelude::{
 
 use crate::fixture::Fixture;
 use crate::generation::prototyping::{
-    PrototypesGlweCiphertext, PrototypesGlweSecretKey, PrototypesPlaintextVector,
+    PrototypesGlweCiphertext, PrototypesGlweSecretKey, PrototypesPlaintextArray,
 };
 use crate::generation::synthesizing::SynthesizesGlweCiphertext;
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
@@ -82,15 +82,15 @@ where
     ) -> Self::SamplePrototypes {
         let (key,) = repetition_proto;
 
-        let raw_plaintext_vector = Precision::Raw::uniform_vec(parameters.polynomial_size.0);
-        let proto_plaintext_vector =
-            maker.transform_raw_vec_to_plaintext_vector(raw_plaintext_vector.as_slice());
-        let proto_ciphertext_vector = maker.encrypt_plaintext_vector_to_glwe_ciphertext(
+        let raw_plaintext_array = Precision::Raw::uniform_vec(parameters.polynomial_size.0);
+        let proto_plaintext_array =
+            maker.transform_raw_vec_to_plaintext_array(raw_plaintext_array.as_slice());
+        let proto_ciphertext_array = maker.encrypt_plaintext_array_to_glwe_ciphertext(
             key,
-            &proto_plaintext_vector,
+            &proto_plaintext_array,
             parameters.noise,
         );
-        (proto_ciphertext_vector,)
+        (proto_ciphertext_array,)
     }
 
     fn prepare_context(
@@ -138,18 +138,18 @@ where
             maker, output_ciphertext
         );
 
-        let proto_plaintext_vector =
-            maker.decrypt_glwe_ciphertext_to_plaintext_vector(key, proto_ciphertext);
-        let proto_output_plaintext_vector = <Maker as PrototypesGlweCiphertext<
+        let proto_plaintext_array =
+            maker.decrypt_glwe_ciphertext_to_plaintext_array(key, proto_ciphertext);
+        let proto_output_plaintext_array = <Maker as PrototypesGlweCiphertext<
             Precision,
             KeyDistribution,
-        >>::decrypt_glwe_ciphertext_to_plaintext_vector(
+        >>::decrypt_glwe_ciphertext_to_plaintext_array(
             maker, key, &proto_output_ciphertext
         );
         maker.destroy_glwe_ciphertext(input_ciphertext);
         (
-            maker.transform_plaintext_vector_to_raw_vec(&proto_plaintext_vector),
-            maker.transform_plaintext_vector_to_raw_vec(&proto_output_plaintext_vector),
+            maker.transform_plaintext_array_to_raw_vec(&proto_plaintext_array),
+            maker.transform_plaintext_array_to_raw_vec(&proto_output_plaintext_array),
         )
     }
 

@@ -3,24 +3,24 @@ use super::engine_error;
 use crate::prelude::Variance;
 use crate::specification::engines::AbstractEngine;
 use crate::specification::entities::{
-    GlweSecretKeyEntity, GlweSeededCiphertextEntity, PlaintextVectorEntity,
+    GlweSecretKeyEntity, GlweSeededCiphertextEntity, PlaintextArrayEntity,
 };
 
 engine_error! {
     GlweSeededCiphertextEncryptionError for GlweSeededCiphertextEncryptionEngine @
-    PlaintextCountMismatch => "The plaintext count of the input vector and the key polynomial size \
+    PlaintextCountMismatch => "The plaintext count of the input array and the key polynomial size \
     must be the same."
 }
 
 impl<EngineError: std::error::Error> GlweSeededCiphertextEncryptionError<EngineError> {
     /// Validates the inputs
-    pub fn perform_generic_checks<SecretKey, PlaintextVector>(
+    pub fn perform_generic_checks<SecretKey, PlaintextArray>(
         key: &SecretKey,
-        input: &PlaintextVector,
+        input: &PlaintextArray,
     ) -> Result<(), Self>
     where
         SecretKey: GlweSecretKeyEntity,
-        PlaintextVector: PlaintextVectorEntity,
+        PlaintextArray: PlaintextArrayEntity,
     {
         if key.polynomial_size().0 != input.plaintext_count().0 {
             return Err(Self::PlaintextCountMismatch);
@@ -51,25 +51,25 @@ impl<EngineError: std::error::Error> GlweSeededCiphertextEncryptionError<EngineE
 ///   G}( \mathsf{PT} )\subseteq \mathcal{S}\times \mathcal{R}\_q$: a seeded GLWE ciphertext
 ///
 /// ###### algorithm:
-/// 1. uniformly sample each coefficient of the polynomial vector $\vec{A}\in\mathcal{R}^k\_q$ from
+/// 1. uniformly sample each coefficient of the polynomial array $\vec{A}\in\mathcal{R}^k\_q$ from
 /// $G$ with the seed $\mathsf{seed}\in\mathcal{S}$
 /// 2. sample each integer error coefficient of an error polynomial $E\in\mathcal{R}\_q$ from
 /// $\mathcal{D\_{\sigma^2,\mu}}$
 /// 3. compute $B = \left\langle \vec{A} , \vec{S} \right\rangle + \mathsf{PT} + E
 /// \in\mathcal{R}\_q$
 /// 4. output $\left( \mathsf{seed} , B \right)$
-pub trait GlweSeededCiphertextEncryptionEngine<SecretKey, PlaintextVector, Ciphertext>:
+pub trait GlweSeededCiphertextEncryptionEngine<SecretKey, PlaintextArray, Ciphertext>:
     AbstractEngine
 where
     SecretKey: GlweSecretKeyEntity,
-    PlaintextVector: PlaintextVectorEntity,
+    PlaintextArray: PlaintextArrayEntity,
     Ciphertext: GlweSeededCiphertextEntity,
 {
     /// Encrypts a seeded GLWE ciphertext.
     fn encrypt_glwe_seeded_ciphertext(
         &mut self,
         key: &SecretKey,
-        input: &PlaintextVector,
+        input: &PlaintextArray,
         noise: Variance,
     ) -> Result<Ciphertext, GlweSeededCiphertextEncryptionError<Self::EngineError>>;
 
@@ -82,7 +82,7 @@ where
     unsafe fn encrypt_glwe_seeded_ciphertext_unchecked(
         &mut self,
         key: &SecretKey,
-        input: &PlaintextVector,
+        input: &PlaintextArray,
         noise: Variance,
     ) -> Ciphertext;
 }

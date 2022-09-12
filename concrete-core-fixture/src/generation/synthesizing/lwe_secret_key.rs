@@ -2,7 +2,7 @@ use crate::generation::prototyping::PrototypesLweSecretKey;
 use crate::generation::{IntegerPrecision, KeyDistributionMarker};
 use concrete_core::prelude::LweSecretKeyEntity;
 
-/// A trait allowing to synthesize an actual lwe secret key vector entity from a prototype.
+/// A trait allowing to synthesize an actual lwe secret key array entity from a prototype.
 pub trait SynthesizesLweSecretKey<
     Precision: IntegerPrecision,
     KeyDistribution: KeyDistributionMarker,

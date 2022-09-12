@@ -62,11 +62,11 @@ extern "C" {
         polynomial_size: u32,
     );
 
-    pub fn cuda_bootstrap_amortized_lwe_ciphertext_vector_32(
+    pub fn cuda_bootstrap_amortized_lwe_ciphertext_array_32(
         v_stream: *mut c_void,
         lwe_out: *mut c_void,
-        test_vector: *const c_void,
-        test_vector_indexes: *const c_void,
+        lut_array: *const c_void,
+        lut_array_indexes: *const c_void,
         lwe_in: *const c_void,
         bootstrapping_key: *const c_void,
         input_lwe_dimension: u32,
@@ -74,16 +74,16 @@ extern "C" {
         base_log: u32,
         level: u32,
         num_samples: u32,
-        num_test_vectors: u32,
+        num_lut_arrays: u32,
         lwe_idx: u32,
         max_shared_memory: u32,
     );
 
-    pub fn cuda_bootstrap_amortized_lwe_ciphertext_vector_64(
+    pub fn cuda_bootstrap_amortized_lwe_ciphertext_array_64(
         v_stream: *mut c_void,
         lwe_out: *mut c_void,
-        test_vector: *const c_void,
-        test_vector_indexes: *const c_void,
+        lut_array: *const c_void,
+        lut_array_indexes: *const c_void,
         lwe_in: *const c_void,
         bootstrapping_key: *const c_void,
         input_lwe_dimension: u32,
@@ -91,16 +91,16 @@ extern "C" {
         base_log: u32,
         level: u32,
         num_samples: u32,
-        num_test_vectors: u32,
+        num_lut_arrays: u32,
         lwe_idx: u32,
         max_shared_memory: u32,
     );
 
-    pub fn cuda_bootstrap_low_latency_lwe_ciphertext_vector_32(
+    pub fn cuda_bootstrap_low_latency_lwe_ciphertext_array_32(
         v_stream: *mut c_void,
         lwe_out: *mut c_void,
-        lut_vector: *const c_void,
-        lut_vector_indexes: *const c_void,
+        lut_array: *const c_void,
+        lut_array_indexes: *const c_void,
         lwe_in: *const c_void,
         bootstrapping_key: *const c_void,
         input_lwe_dimension: u32,
@@ -108,16 +108,16 @@ extern "C" {
         base_log: u32,
         level: u32,
         num_samples: u32,
-        num_lut_vectors: u32,
+        num_lut_arrays: u32,
         lwe_idx: u32,
         max_shared_memory: u32,
     );
 
-    pub fn cuda_bootstrap_low_latency_lwe_ciphertext_vector_64(
+    pub fn cuda_bootstrap_low_latency_lwe_ciphertext_array_64(
         v_stream: *mut c_void,
         lwe_out: *mut c_void,
-        lut_vector: *const c_void,
-        lut_vector_indexes: *const c_void,
+        lut_array: *const c_void,
+        lut_array_indexes: *const c_void,
         lwe_in: *const c_void,
         bootstrapping_key: *const c_void,
         input_lwe_dimension: u32,
@@ -125,12 +125,12 @@ extern "C" {
         base_log: u32,
         level: u32,
         num_samples: u32,
-        num_lut_vectors: u32,
+        num_lut_arrays: u32,
         lwe_idx: u32,
         max_shared_memory: u32,
     );
 
-    pub fn cuda_keyswitch_lwe_ciphertext_vector_32(
+    pub fn cuda_keyswitch_lwe_ciphertext_array_32(
         v_stream: *const c_void,
         lwe_out: *mut c_void,
         lwe_in: *const c_void,
@@ -142,7 +142,7 @@ extern "C" {
         num_samples: u32,
     );
 
-    pub fn cuda_keyswitch_lwe_ciphertext_vector_64(
+    pub fn cuda_keyswitch_lwe_ciphertext_array_64(
         v_stream: *const c_void,
         lwe_out: *mut c_void,
         lwe_in: *const c_void,

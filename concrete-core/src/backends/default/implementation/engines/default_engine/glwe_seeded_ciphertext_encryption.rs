@@ -2,7 +2,7 @@ use super::ActivatedRandomGenerator;
 use crate::backends::default::engines::DefaultEngine;
 use crate::backends::default::entities::{
     GlweSecretKey32, GlweSecretKey64, GlweSeededCiphertext32, GlweSeededCiphertext64,
-    PlaintextVector32, PlaintextVector64,
+    PlaintextArray32, PlaintextArray64,
 };
 use crate::commons::crypto::glwe::GlweSeededCiphertext as ImplGlweSeededCiphertext;
 use crate::commons::math::random::{CompressionSeed, Seeder};
@@ -15,8 +15,7 @@ use crate::specification::entities::GlweSecretKeyEntity;
 /// # Description:
 /// Implementation of [`GlweSeededCiphertextEncryptionEngine`] for [`DefaultEngine`] that operates
 /// on 32 bits integers.
-impl
-    GlweSeededCiphertextEncryptionEngine<GlweSecretKey32, PlaintextVector32, GlweSeededCiphertext32>
+impl GlweSeededCiphertextEncryptionEngine<GlweSecretKey32, PlaintextArray32, GlweSeededCiphertext32>
     for DefaultEngine
 {
     /// # Example:
@@ -39,10 +38,9 @@ impl
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey32 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let seeded_ciphertext =
-    ///     engine.encrypt_glwe_seeded_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let seeded_ciphertext = engine.encrypt_glwe_seeded_ciphertext(&key, &plaintext_array, noise)?;
     /// #
     /// assert_eq!(seeded_ciphertext.glwe_dimension(), glwe_dimension);
     /// assert_eq!(seeded_ciphertext.polynomial_size(), polynomial_size);
@@ -54,7 +52,7 @@ impl
     fn encrypt_glwe_seeded_ciphertext(
         &mut self,
         key: &GlweSecretKey32,
-        input: &PlaintextVector32,
+        input: &PlaintextArray32,
         noise: Variance,
     ) -> Result<GlweSeededCiphertext32, GlweSeededCiphertextEncryptionError<Self::EngineError>>
     {
@@ -65,7 +63,7 @@ impl
     unsafe fn encrypt_glwe_seeded_ciphertext_unchecked(
         &mut self,
         key: &GlweSecretKey32,
-        input: &PlaintextVector32,
+        input: &PlaintextArray32,
         noise: Variance,
     ) -> GlweSeededCiphertext32 {
         let mut output = ImplGlweSeededCiphertext::allocate(
@@ -91,8 +89,7 @@ impl
 /// # Description:
 /// Implementation of [`GlweSeededCiphertextEncryptionEngine`] for [`DefaultEngine`] that operates
 /// on 64 bits integers.
-impl
-    GlweSeededCiphertextEncryptionEngine<GlweSecretKey64, PlaintextVector64, GlweSeededCiphertext64>
+impl GlweSeededCiphertextEncryptionEngine<GlweSecretKey64, PlaintextArray64, GlweSeededCiphertext64>
     for DefaultEngine
 {
     /// # Example:
@@ -115,10 +112,9 @@ impl
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey64 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let seeded_ciphertext =
-    ///     engine.encrypt_glwe_seeded_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let seeded_ciphertext = engine.encrypt_glwe_seeded_ciphertext(&key, &plaintext_array, noise)?;
     /// #
     /// assert_eq!(seeded_ciphertext.glwe_dimension(), glwe_dimension);
     /// assert_eq!(seeded_ciphertext.polynomial_size(), polynomial_size);
@@ -130,7 +126,7 @@ impl
     fn encrypt_glwe_seeded_ciphertext(
         &mut self,
         key: &GlweSecretKey64,
-        input: &PlaintextVector64,
+        input: &PlaintextArray64,
         noise: Variance,
     ) -> Result<GlweSeededCiphertext64, GlweSeededCiphertextEncryptionError<Self::EngineError>>
     {
@@ -141,7 +137,7 @@ impl
     unsafe fn encrypt_glwe_seeded_ciphertext_unchecked(
         &mut self,
         key: &GlweSecretKey64,
-        input: &PlaintextVector64,
+        input: &PlaintextArray64,
         noise: Variance,
     ) -> GlweSeededCiphertext64 {
         let mut output = ImplGlweSeededCiphertext::allocate(

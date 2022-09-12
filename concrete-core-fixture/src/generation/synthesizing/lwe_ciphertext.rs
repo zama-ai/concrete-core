@@ -98,7 +98,7 @@ mod backend_default {
         }
 
         fn destroy_lwe_ciphertext(&mut self, entity: LweCiphertextView32) {
-            // Re-construct the vector so that it frees memory when it's dropped
+            // Re-construct the array so that it frees memory when it's dropped
             let slice = self
                 .default_engine
                 .consume_retrieve_lwe_ciphertext(entity)
@@ -143,7 +143,7 @@ mod backend_default {
         }
 
         fn destroy_lwe_ciphertext(&mut self, entity: LweCiphertextView64) {
-            // Re-construct the vector so that it frees memory when it's dropped
+            // Re-construct the array so that it frees memory when it's dropped
             let slice = self
                 .default_engine
                 .consume_retrieve_lwe_ciphertext(entity)
@@ -190,7 +190,7 @@ mod backend_default {
         }
 
         fn destroy_lwe_ciphertext(&mut self, entity: LweCiphertextMutView32) {
-            // Re-construct the vector so that it frees memory when it's dropped
+            // Re-construct the array so that it frees memory when it's dropped
             let slice = self
                 .default_engine
                 .consume_retrieve_lwe_ciphertext(entity)
@@ -235,7 +235,7 @@ mod backend_default {
         }
 
         fn destroy_lwe_ciphertext(&mut self, entity: LweCiphertextMutView64) {
-            // Re-construct the vector so that it frees memory when it's dropped
+            // Re-construct the array so that it frees memory when it's dropped
             let slice = self
                 .default_engine
                 .consume_retrieve_lwe_ciphertext(entity)

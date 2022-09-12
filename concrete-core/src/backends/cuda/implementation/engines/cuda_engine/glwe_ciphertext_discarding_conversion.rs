@@ -4,7 +4,7 @@ use crate::prelude::{GlweCiphertextDiscardingConversionError, GlweCiphertextMutV
 use crate::specification::engines::GlweCiphertextDiscardingConversionEngine;
 
 /// # Description
-/// Convert a GLWE ciphertext vector with 64 bits of precision from GPU 0 to a view on the CPU.
+/// Convert a GLWE ciphertext array with 64 bits of precision from GPU 0 to a view on the CPU.
 impl GlweCiphertextDiscardingConversionEngine<CudaGlweCiphertext64, GlweCiphertextMutView64<'_>>
     for CudaEngine
 {
@@ -28,10 +28,9 @@ impl GlweCiphertextDiscardingConversionEngine<CudaGlweCiphertext64, GlweCipherte
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let h_key: GlweSecretKey64 =
     ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let h_plaintext_vector: PlaintextVector64 =
-    ///     default_engine.create_plaintext_vector_from(&input)?;
+    /// let h_plaintext_array: PlaintextArray64 = default_engine.create_plaintext_array_from(&input)?;
     /// let mut h_ciphertext: GlweCiphertext64 =
-    ///     default_engine.encrypt_glwe_ciphertext(&h_key, &h_plaintext_vector, noise)?;
+    ///     default_engine.encrypt_glwe_ciphertext(&h_key, &h_plaintext_array, noise)?;
     ///
     /// let mut cuda_engine = CudaEngine::new(())?;
     /// let d_ciphertext: CudaGlweCiphertext64 = cuda_engine.convert_glwe_ciphertext(&h_ciphertext)?;

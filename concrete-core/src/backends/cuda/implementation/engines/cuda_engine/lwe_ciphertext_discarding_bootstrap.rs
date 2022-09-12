@@ -61,17 +61,17 @@ impl
     /// // 1. default engine
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// // create a vector of LWE ciphertexts
+    /// // create an array of LWE ciphertexts
     /// let h_input_key: LweSecretKey32 = default_engine.generate_new_lwe_secret_key(lwe_dim)?;
     /// let h_input_plaintext: Plaintext32 = default_engine.create_plaintext_from(&input)?;
     /// let mut h_input_ciphertext: LweCiphertext32 =
     ///     default_engine.encrypt_lwe_ciphertext(&h_input_key, &h_input_plaintext, noise)?;
     /// // create a GLWE ciphertext containing an encryption of the LUT
-    /// let h_lut_plaintext_vector = default_engine.create_plaintext_vector_from(&lut)?;
+    /// let h_lut_plaintext_array = default_engine.create_plaintext_array_from(&lut)?;
     /// let h_lut_key: GlweSecretKey32 =
     ///     default_engine.generate_new_glwe_secret_key(glwe_dim, poly_size)?;
     /// let h_lut =
-    ///     default_engine.encrypt_glwe_ciphertext(&h_lut_key, &h_lut_plaintext_vector, noise)?;
+    ///     default_engine.encrypt_glwe_ciphertext(&h_lut_key, &h_lut_plaintext_array, noise)?;
     /// // create a BSK
     /// let h_bootstrap_key: LweBootstrapKey32 = default_engine.generate_new_lwe_bootstrap_key(
     ///     &h_input_key,
@@ -80,7 +80,7 @@ impl
     ///     dec_lc,
     ///     noise,
     /// )?;
-    /// // initialize an output LWE ciphertext vector
+    /// // initialize an output LWE ciphertext array
     /// let h_dummy_key: LweSecretKey32 = default_engine.generate_new_lwe_secret_key(lwe_dim_output)?;
     ///
     /// // 2. cuda engine
@@ -133,13 +133,13 @@ impl
         bsk: &CudaFourierLweBootstrapKey32,
     ) {
         let stream = self.streams.first().unwrap();
-        let mut test_vector_indexes = stream.malloc::<u32>(1);
-        stream.copy_to_gpu(&mut test_vector_indexes, &[0]);
+        let mut test_array_indexes = stream.malloc::<u32>(1);
+        stream.copy_to_gpu(&mut test_array_indexes, &[0]);
 
-        stream.discard_bootstrap_low_latency_lwe_ciphertext_vector::<u32>(
+        stream.discard_bootstrap_low_latency_lwe_ciphertext_array::<u32>(
             &mut output.0.d_vec,
             &acc.0.d_vec,
-            &test_vector_indexes,
+            &test_array_indexes,
             &input.0.d_vec,
             bsk.0.d_vecs.first().unwrap(),
             input.0.lwe_dimension,
@@ -197,17 +197,17 @@ impl
     /// // 1. default engine
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// // create a vector of LWE ciphertexts
+    /// // create an array of LWE ciphertexts
     /// let h_input_key: LweSecretKey64 = default_engine.generate_new_lwe_secret_key(lwe_dim)?;
     /// let h_input_plaintext: Plaintext64 = default_engine.create_plaintext_from(&input)?;
     /// let mut h_input_ciphertext: LweCiphertext64 =
     ///     default_engine.encrypt_lwe_ciphertext(&h_input_key, &h_input_plaintext, noise)?;
     /// // create a GLWE ciphertext containing an encryption of the LUT
-    /// let h_lut_plaintext_vector = default_engine.create_plaintext_vector_from(&lut)?;
+    /// let h_lut_plaintext_array = default_engine.create_plaintext_array_from(&lut)?;
     /// let h_lut_key: GlweSecretKey64 =
     ///     default_engine.generate_new_glwe_secret_key(glwe_dim, poly_size)?;
     /// let h_lut =
-    ///     default_engine.encrypt_glwe_ciphertext(&h_lut_key, &h_lut_plaintext_vector, noise)?;
+    ///     default_engine.encrypt_glwe_ciphertext(&h_lut_key, &h_lut_plaintext_array, noise)?;
     /// // create a BSK
     /// let h_bootstrap_key: LweBootstrapKey64 = default_engine.generate_new_lwe_bootstrap_key(
     ///     &h_input_key,
@@ -216,7 +216,7 @@ impl
     ///     dec_lc,
     ///     noise,
     /// )?;
-    /// // initialize an output LWE ciphertext vector
+    /// // initialize an output LWE ciphertext array
     /// let h_dummy_key: LweSecretKey64 = default_engine.generate_new_lwe_secret_key(lwe_dim_output)?;
     ///
     /// // 2. cuda engine
@@ -269,13 +269,13 @@ impl
         bsk: &CudaFourierLweBootstrapKey64,
     ) {
         let stream = self.streams.first().unwrap();
-        let mut test_vector_indexes = stream.malloc::<u32>(1);
-        stream.copy_to_gpu(&mut test_vector_indexes, &[0]);
+        let mut test_array_indexes = stream.malloc::<u32>(1);
+        stream.copy_to_gpu(&mut test_array_indexes, &[0]);
 
-        stream.discard_bootstrap_low_latency_lwe_ciphertext_vector::<u64>(
+        stream.discard_bootstrap_low_latency_lwe_ciphertext_array::<u64>(
             &mut output.0.d_vec,
             &acc.0.d_vec,
-            &test_vector_indexes,
+            &test_array_indexes,
             &input.0.d_vec,
             bsk.0.d_vecs.first().unwrap(),
             input.0.lwe_dimension,

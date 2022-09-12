@@ -27,7 +27,7 @@ engine_error! {
 ///   \mathcal{R}\_q^{k+1}$: a GLWE ciphertext
 ///
 /// ###### algorithm:
-/// 1. uniformly sample each coefficient of the polynomial vector $\vec{A}\in\mathcal{R}^k\_q$ from
+/// 1. uniformly sample each coefficient of the polynomial array $\vec{A}\in\mathcal{R}^k\_q$ from
 /// $G$ with the seed $\mathsf{seed}\in\mathcal{S}$
 /// 2. output $\left( \vec{A} , B \right)$
 pub trait GlweSeededCiphertextToGlweCiphertextTransformationEngine<

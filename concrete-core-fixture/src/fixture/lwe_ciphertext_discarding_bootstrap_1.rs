@@ -1,8 +1,7 @@
 use crate::fixture::Fixture;
 use crate::generation::prototyping::{
     PrototypesGlweCiphertext, PrototypesGlweSecretKey, PrototypesLweBootstrapKey,
-    PrototypesLweCiphertext, PrototypesLweSecretKey, PrototypesPlaintext,
-    PrototypesPlaintextVector,
+    PrototypesLweCiphertext, PrototypesLweSecretKey, PrototypesPlaintext, PrototypesPlaintextArray,
 };
 use crate::generation::synthesizing::{
     SynthesizesGlweCiphertext, SynthesizesLweBootstrapKey, SynthesizesLweCiphertext,
@@ -131,13 +130,13 @@ where
         parameters: &Self::Parameters,
         maker: &mut Maker,
     ) -> Self::RepetitionPrototypes {
-        let raw_plaintext_vector =
+        let raw_plaintext_array =
             vec![Precision::Raw::ONE << (Precision::Raw::BITS - 3); parameters.poly_size.0];
-        let proto_plaintext_vector =
-            maker.transform_raw_vec_to_plaintext_vector(raw_plaintext_vector.as_slice());
-        let proto_accumulator = maker.trivially_encrypt_plaintext_vector_to_glwe_ciphertext(
+        let proto_plaintext_array =
+            maker.transform_raw_vec_to_plaintext_array(raw_plaintext_array.as_slice());
+        let proto_accumulator = maker.trivially_encrypt_plaintext_array_to_glwe_ciphertext(
             parameters.glwe_dimension,
-            &proto_plaintext_vector,
+            &proto_plaintext_array,
         );
         let proto_lwe_secret_key = <Maker as PrototypesLweSecretKey<
             Precision,

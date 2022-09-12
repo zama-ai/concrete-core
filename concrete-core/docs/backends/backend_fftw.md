@@ -59,10 +59,10 @@ We're now going to encrypt the input message and the lookup table:
     let plaintext = engine.create_plaintext_from(&input).unwrap();
     let input = engine.encrypt_lwe_ciphertext(&lwe_sk, &plaintext, noise).unwrap();
     // Then the encryption of the LUT for the bootstrap
-    let lut_plaintext_vector = engine.create_plaintext_vector_from(&lut).unwrap();
+    let lut_plaintext_array = engine.create_plaintext_array_from(&lut).unwrap();
     let acc =
     engine.trivially_encrypt_glwe_ciphertext(glwe_dim.to_glwe_size(),
-    &lut_plaintext_vector).unwrap();
+    &lut_plaintext_array).unwrap();
 ```
 We also need to prepare a container for the output LWE of the bootstrap. For this we can simply use a trivial encryption:
 ```rust
@@ -102,7 +102,7 @@ Finally, we can destroy all data:
 
     fftw_engine.destroy(fourier_bsk).unwrap();
     engine.destroy(plaintext).unwrap();
-    engine.destroy(lut_plaintext_vector).unwrap();
+    engine.destroy(lut_plaintext_array).unwrap();
     engine.destroy(acc).unwrap();
     engine.destroy(input).unwrap();
     engine.destroy(output_ciphertext).unwrap();

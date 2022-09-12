@@ -112,57 +112,57 @@ pub unsafe extern "C" fn destroy_lwe_ciphertext_mut_view_unchecked_u64(
     })
 }
 
-/// Destroy an `LweCiphertextVectorView64`.
+/// Destroy an `LweCiphertextArrayView64`.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_ciphertext_vector_view_u64(
-    lwe_ciphertext_vector_view: *mut LweCiphertextVectorView64,
+pub unsafe extern "C" fn destroy_lwe_ciphertext_array_view_u64(
+    lwe_ciphertext_array_view: *mut LweCiphertextArrayView64,
 ) -> c_int {
     catch_panic(|| {
-        check_ptr_is_non_null_and_aligned(lwe_ciphertext_vector_view).unwrap();
+        check_ptr_is_non_null_and_aligned(lwe_ciphertext_array_view).unwrap();
 
         // Reconstruct the box, so that the memory is dropped at the end of the scope
-        Box::from_raw(lwe_ciphertext_vector_view);
+        Box::from_raw(lwe_ciphertext_array_view);
     })
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`destroy_lwe_ciphertext_vector_view_u64`]
+/// [`destroy_lwe_ciphertext_array_view_u64`]
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_ciphertext_vector_view_unchecked_u64(
-    lwe_ciphertext_vector_view: *mut LweCiphertextVectorView64,
+pub unsafe extern "C" fn destroy_lwe_ciphertext_array_view_unchecked_u64(
+    lwe_ciphertext_array_view: *mut LweCiphertextArrayView64,
 ) -> c_int {
     catch_panic(|| {
         // Reconstruct the box, so that the memory is dropped at the end of the scope
-        Box::from_raw(lwe_ciphertext_vector_view);
+        Box::from_raw(lwe_ciphertext_array_view);
     })
 }
 
-/// Destroy an `LweCiphertextVectorMutView64`.
+/// Destroy an `LweCiphertextArrayMutView64`.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_ciphertext_vector_mut_view_u64(
-    lwe_ciphertext_vector_mut_view: *mut LweCiphertextVectorMutView64,
+pub unsafe extern "C" fn destroy_lwe_ciphertext_array_mut_view_u64(
+    lwe_ciphertext_array_mut_view: *mut LweCiphertextArrayMutView64,
 ) -> c_int {
     catch_panic(|| {
-        check_ptr_is_non_null_and_aligned(lwe_ciphertext_vector_mut_view).unwrap();
+        check_ptr_is_non_null_and_aligned(lwe_ciphertext_array_mut_view).unwrap();
 
         // Reconstruct the box, so that the memory is dropped at the end of the scope
-        Box::from_raw(lwe_ciphertext_vector_mut_view);
+        Box::from_raw(lwe_ciphertext_array_mut_view);
     })
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`destroy_lwe_ciphertext_vector_mut_view_u64`]
+/// [`destroy_lwe_ciphertext_array_mut_view_u64`]
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_ciphertext_vector_mut_view_unchecked_u64(
-    lwe_ciphertext_vector_mut_view: *mut LweCiphertextVectorMutView64,
+pub unsafe extern "C" fn destroy_lwe_ciphertext_array_mut_view_unchecked_u64(
+    lwe_ciphertext_array_mut_view: *mut LweCiphertextArrayMutView64,
 ) -> c_int {
     catch_panic(|| {
         // Reconstruct the box, so that the memory is dropped at the end of the scope
-        Box::from_raw(lwe_ciphertext_vector_mut_view);
+        Box::from_raw(lwe_ciphertext_array_mut_view);
     })
 }
 

@@ -234,14 +234,14 @@ pub use cleartext_retrieval::*;
 mod cleartext_discarding_retrieval;
 pub use cleartext_discarding_retrieval::*;
 
-mod cleartext_vector_creation;
-pub use cleartext_vector_creation::*;
+mod cleartext_array_creation;
+pub use cleartext_array_creation::*;
 
-mod cleartext_vector_discarding_retrieval;
-pub use cleartext_vector_discarding_retrieval::*;
+mod cleartext_array_discarding_retrieval;
+pub use cleartext_array_discarding_retrieval::*;
 
-mod cleartext_vector_retrieval;
-pub use cleartext_vector_retrieval::*;
+mod cleartext_array_retrieval;
+pub use cleartext_array_retrieval::*;
 
 mod glwe_ciphertext_creation;
 pub use glwe_ciphertext_creation::*;
@@ -267,32 +267,32 @@ pub use glwe_ciphertext_discarding_decryption::*;
 mod glwe_ciphertext_discarding_trivial_encryption;
 pub use glwe_ciphertext_discarding_trivial_encryption::*;
 
-mod glwe_ciphertext_vector_encryption;
-pub use glwe_ciphertext_vector_encryption::*;
+mod glwe_ciphertext_array_encryption;
+pub use glwe_ciphertext_array_encryption::*;
 
-mod glwe_ciphertext_vector_decryption;
-pub use glwe_ciphertext_vector_decryption::*;
+mod glwe_ciphertext_array_decryption;
+pub use glwe_ciphertext_array_decryption::*;
 
-mod glwe_ciphertext_vector_discarding_decryption;
-pub use glwe_ciphertext_vector_discarding_decryption::*;
+mod glwe_ciphertext_array_discarding_decryption;
+pub use glwe_ciphertext_array_discarding_decryption::*;
 
-mod glwe_ciphertext_vector_discarding_encryption;
-pub use glwe_ciphertext_vector_discarding_encryption::*;
+mod glwe_ciphertext_array_discarding_encryption;
+pub use glwe_ciphertext_array_discarding_encryption::*;
 
-mod glwe_ciphertext_vector_zero_encryption;
-pub use glwe_ciphertext_vector_zero_encryption::*;
+mod glwe_ciphertext_array_zero_encryption;
+pub use glwe_ciphertext_array_zero_encryption::*;
 
-mod glwe_ciphertext_vector_trivial_decryption;
-pub use glwe_ciphertext_vector_trivial_decryption::*;
+mod glwe_ciphertext_array_trivial_decryption;
+pub use glwe_ciphertext_array_trivial_decryption::*;
 
-mod glwe_ciphertext_vector_trivial_encryption;
-pub use glwe_ciphertext_vector_trivial_encryption::*;
+mod glwe_ciphertext_array_trivial_encryption;
+pub use glwe_ciphertext_array_trivial_encryption::*;
 
 mod glwe_ciphertexts_ggsw_ciphertext_fusing_cmux;
 pub use glwe_ciphertexts_ggsw_ciphertext_fusing_cmux::*;
 
-mod lwe_ciphertext_vector_zero_encryption;
-pub use lwe_ciphertext_vector_zero_encryption::*;
+mod lwe_ciphertext_array_zero_encryption;
+pub use lwe_ciphertext_array_zero_encryption::*;
 
 mod lwe_ciphertext_encryption;
 pub use lwe_ciphertext_encryption::*;
@@ -309,8 +309,8 @@ pub use lwe_ciphertext_decryption::*;
 mod lwe_ciphertext_discarding_encryption;
 pub use lwe_ciphertext_discarding_encryption::*;
 
-mod lwe_ciphertext_vector_decryption;
-pub use lwe_ciphertext_vector_decryption::*;
+mod lwe_ciphertext_array_decryption;
+pub use lwe_ciphertext_array_decryption::*;
 
 mod lwe_ciphertext_cleartext_discarding_multiplication;
 pub use lwe_ciphertext_cleartext_discarding_multiplication::*;
@@ -324,20 +324,20 @@ pub use lwe_ciphertext_consuming_retrieval::*;
 mod lwe_ciphertext_creation;
 pub use lwe_ciphertext_creation::*;
 
-mod lwe_ciphertext_vector_discarding_affine_transformation;
-pub use lwe_ciphertext_vector_discarding_affine_transformation::*;
+mod lwe_ciphertext_array_discarding_affine_transformation;
+pub use lwe_ciphertext_array_discarding_affine_transformation::*;
 
-mod lwe_ciphertext_vector_trivial_decryption;
-pub use lwe_ciphertext_vector_trivial_decryption::*;
+mod lwe_ciphertext_array_trivial_decryption;
+pub use lwe_ciphertext_array_trivial_decryption::*;
 
-mod lwe_ciphertext_vector_trivial_encryption;
-pub use lwe_ciphertext_vector_trivial_encryption::*;
+mod lwe_ciphertext_array_trivial_encryption;
+pub use lwe_ciphertext_array_trivial_encryption::*;
 
-mod lwe_ciphertext_vector_discarding_decryption;
-pub use lwe_ciphertext_vector_discarding_decryption::*;
+mod lwe_ciphertext_array_discarding_decryption;
+pub use lwe_ciphertext_array_discarding_decryption::*;
 
-mod lwe_ciphertext_vector_discarding_encryption;
-pub use lwe_ciphertext_vector_discarding_encryption::*;
+mod lwe_ciphertext_array_discarding_encryption;
+pub use lwe_ciphertext_array_discarding_encryption::*;
 
 mod lwe_ciphertext_discarding_keyswitch;
 pub use lwe_ciphertext_discarding_keyswitch::*;
@@ -378,26 +378,26 @@ pub use lwe_ciphertext_plaintext_fusing_subtraction::*;
 mod lwe_ciphertext_plaintext_discarding_subtraction;
 pub use lwe_ciphertext_plaintext_discarding_subtraction::*;
 
-mod lwe_ciphertext_vector_discarding_subtraction;
-pub use lwe_ciphertext_vector_discarding_subtraction::*;
+mod lwe_ciphertext_array_discarding_subtraction;
+pub use lwe_ciphertext_array_discarding_subtraction::*;
 
-mod lwe_ciphertext_vector_encryption;
-pub use lwe_ciphertext_vector_encryption::*;
+mod lwe_ciphertext_array_encryption;
+pub use lwe_ciphertext_array_encryption::*;
 
-mod lwe_ciphertext_vector_conversion;
-pub use lwe_ciphertext_vector_conversion::*;
+mod lwe_ciphertext_array_conversion;
+pub use lwe_ciphertext_array_conversion::*;
 
-mod lwe_ciphertext_vector_fusing_addition;
-pub use lwe_ciphertext_vector_fusing_addition::*;
+mod lwe_ciphertext_array_fusing_addition;
+pub use lwe_ciphertext_array_fusing_addition::*;
 
-mod lwe_ciphertext_vector_discarding_addition;
-pub use lwe_ciphertext_vector_discarding_addition::*;
+mod lwe_ciphertext_array_discarding_addition;
+pub use lwe_ciphertext_array_discarding_addition::*;
 
-mod lwe_ciphertext_vector_fusing_subtraction;
-pub use lwe_ciphertext_vector_fusing_subtraction::*;
+mod lwe_ciphertext_array_fusing_subtraction;
+pub use lwe_ciphertext_array_fusing_subtraction::*;
 
-mod lwe_ciphertext_vector_discarding_keyswitch;
-pub use lwe_ciphertext_vector_discarding_keyswitch::*;
+mod lwe_ciphertext_array_discarding_keyswitch;
+pub use lwe_ciphertext_array_discarding_keyswitch::*;
 
 mod lwe_ciphertext_trivial_encryption;
 pub use lwe_ciphertext_trivial_encryption::*;
@@ -411,8 +411,8 @@ pub use lwe_ciphertext_discarding_bootstrap_1::*;
 mod lwe_ciphertext_discarding_bootstrap_2;
 pub use lwe_ciphertext_discarding_bootstrap_2::*;
 
-mod lwe_ciphertext_vector_discarding_bootstrap_1;
-pub use lwe_ciphertext_vector_discarding_bootstrap_1::*;
+mod lwe_ciphertext_array_discarding_bootstrap_1;
+pub use lwe_ciphertext_array_discarding_bootstrap_1::*;
 
 mod lwe_ciphertext_discarding_extraction;
 pub use lwe_ciphertext_discarding_extraction::*;
@@ -420,8 +420,8 @@ pub use lwe_ciphertext_discarding_extraction::*;
 mod plaintext_creation;
 pub use plaintext_creation::*;
 
-mod lwe_ciphertext_vector_discarding_bootstrap_2;
-pub use lwe_ciphertext_vector_discarding_bootstrap_2::*;
+mod lwe_ciphertext_array_discarding_bootstrap_2;
+pub use lwe_ciphertext_array_discarding_bootstrap_2::*;
 
 mod glwe_ciphertext_ggsw_ciphertext_discarding_external_product;
 pub use glwe_ciphertext_ggsw_ciphertext_discarding_external_product::*;
@@ -438,14 +438,14 @@ pub use plaintext_discarding_retrieval::*;
 mod plaintext_retrieval;
 pub use plaintext_retrieval::*;
 
-mod plaintext_vector_discarding_retrieval;
-pub use plaintext_vector_discarding_retrieval::*;
+mod plaintext_array_discarding_retrieval;
+pub use plaintext_array_discarding_retrieval::*;
 
-mod plaintext_vector_creation;
-pub use plaintext_vector_creation::*;
+mod plaintext_array_creation;
+pub use plaintext_array_creation::*;
 
-mod plaintext_vector_retrieval;
-pub use plaintext_vector_retrieval::*;
+mod plaintext_array_retrieval;
+pub use plaintext_array_retrieval::*;
 
 mod lwe_keyswitch_key_generation;
 pub use lwe_keyswitch_key_generation::*;
@@ -462,8 +462,8 @@ pub use lwe_seeded_bootstrap_key_to_lwe_bootstrap_key_transformation::*;
 mod lwe_seeded_ciphertext_encryption;
 pub use lwe_seeded_ciphertext_encryption::*;
 
-mod lwe_seeded_ciphertext_vector_encryption;
-pub use lwe_seeded_ciphertext_vector_encryption::*;
+mod lwe_seeded_ciphertext_array_encryption;
+pub use lwe_seeded_ciphertext_array_encryption::*;
 
 mod lwe_seeded_keyswitch_key_generation;
 pub use lwe_seeded_keyswitch_key_generation::*;
@@ -474,8 +474,8 @@ pub use lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_transformation::*;
 mod lwe_seeded_ciphertext_to_lwe_ciphertext_transformation;
 pub use lwe_seeded_ciphertext_to_lwe_ciphertext_transformation::*;
 
-mod lwe_seeded_ciphertext_vector_to_lwe_ciphertext_vector_transformation;
-pub use lwe_seeded_ciphertext_vector_to_lwe_ciphertext_vector_transformation::*;
+mod lwe_seeded_ciphertext_array_to_lwe_ciphertext_array_transformation;
+pub use lwe_seeded_ciphertext_array_to_lwe_ciphertext_array_transformation::*;
 
 mod lwe_to_glwe_secret_key_transformation;
 pub use lwe_to_glwe_secret_key_transformation::*;
@@ -489,11 +489,11 @@ pub use glwe_seeded_ciphertext_encryption::*;
 mod glwe_seeded_ciphertext_to_glwe_ciphertext_transformation;
 pub use glwe_seeded_ciphertext_to_glwe_ciphertext_transformation::*;
 
-mod glwe_seeded_ciphertext_vector_encryption;
-pub use glwe_seeded_ciphertext_vector_encryption::*;
+mod glwe_seeded_ciphertext_array_encryption;
+pub use glwe_seeded_ciphertext_array_encryption::*;
 
-mod glwe_seeded_ciphertext_vector_to_glwe_ciphertext_vector_transformation;
-pub use glwe_seeded_ciphertext_vector_to_glwe_ciphertext_vector_transformation::*;
+mod glwe_seeded_ciphertext_array_to_glwe_ciphertext_array_transformation;
+pub use glwe_seeded_ciphertext_array_to_glwe_ciphertext_array_transformation::*;
 
 mod glwe_to_lwe_secret_key_transformation;
 pub use glwe_to_lwe_secret_key_transformation::*;
@@ -513,11 +513,11 @@ pub use lwe_bootstrap_key_generation::*;
 mod lwe_bootstrap_key_discarding_conversion;
 pub use lwe_bootstrap_key_discarding_conversion::*;
 
-mod lwe_ciphertext_vector_glwe_ciphertext_discarding_packing_keyswitch;
-pub use lwe_ciphertext_vector_glwe_ciphertext_discarding_packing_keyswitch::*;
+mod lwe_ciphertext_array_glwe_ciphertext_discarding_packing_keyswitch;
+pub use lwe_ciphertext_array_glwe_ciphertext_discarding_packing_keyswitch::*;
 
-mod lwe_ciphertext_vector_glwe_ciphertext_discarding_private_functional_packing_keyswitch;
-pub use lwe_ciphertext_vector_glwe_ciphertext_discarding_private_functional_packing_keyswitch::*;
+mod lwe_ciphertext_array_glwe_ciphertext_discarding_private_functional_packing_keyswitch;
+pub use lwe_ciphertext_array_glwe_ciphertext_discarding_private_functional_packing_keyswitch::*;
 
 mod glwe_ciphertext_conversion;
 pub use glwe_ciphertext_conversion::*;

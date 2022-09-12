@@ -5,10 +5,10 @@ use crate::utils::*;
 use concrete_core::prelude::*;
 use std::os::raw::c_int;
 
-/// Trivially encrypt the `input` plaintext vector into a `GlweCiphertextMutView64`. View buffer
+/// Trivially encrypt the `input` plaintext array into a `GlweCiphertextMutView64`. View buffer
 /// variant.
 ///
-/// This function creates a temporary copy of the input buffer in a `PlaintextVector64`.
+/// This function creates a temporary copy of the input buffer in a `PlaintextArray64`.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
@@ -28,13 +28,13 @@ pub unsafe extern "C" fn default_engine_discard_trivially_encrypt_glwe_ciphertex
         let input = get_ref_checked(input).unwrap();
         let input_as_slice = std::slice::from_raw_parts(input, polynomial_size);
 
-        let plaintext_vector = engine
-            .create_plaintext_vector_from(input_as_slice)
+        let plaintext_array = engine
+            .create_plaintext_array_from(input_as_slice)
             .or_else(engine_error_as_readable_string)
             .unwrap();
 
         engine
-            .discard_trivially_encrypt_glwe_ciphertext(output, &plaintext_vector)
+            .discard_trivially_encrypt_glwe_ciphertext(output, &plaintext_array)
             .or_else(engine_error_as_readable_string)
             .unwrap();
     })
@@ -56,9 +56,9 @@ pub unsafe extern "C" fn default_engine_discard_trivially_encrypt_glwe_ciphertex
 
         let input_as_slice = std::slice::from_raw_parts(input, polynomial_size);
 
-        let plaintext_vector = engine.create_plaintext_vector_from_unchecked(input_as_slice);
+        let plaintext_array = engine.create_plaintext_array_from_unchecked(input_as_slice);
 
-        engine.discard_trivially_encrypt_glwe_ciphertext_unchecked(output, &plaintext_vector);
+        engine.discard_trivially_encrypt_glwe_ciphertext_unchecked(output, &plaintext_array);
     })
 }
 
@@ -85,13 +85,13 @@ pub unsafe extern "C" fn default_engine_discard_trivially_encrypt_glwe_ciphertex
         let input = get_ref_checked(input).unwrap();
         let input_as_slice = std::slice::from_raw_parts(input, polynomial_size);
 
-        let plaintext_vector = engine
-            .create_plaintext_vector_from(input_as_slice)
+        let plaintext_array = engine
+            .create_plaintext_array_from(input_as_slice)
             .or_else(engine_error_as_readable_string)
             .unwrap();
 
         engine
-            .discard_trivially_encrypt_glwe_ciphertext(&mut output, &plaintext_vector)
+            .discard_trivially_encrypt_glwe_ciphertext(&mut output, &plaintext_array)
             .or_else(engine_error_as_readable_string)
             .unwrap();
     })
@@ -118,8 +118,8 @@ pub unsafe extern "C" fn default_engine_discard_trivially_encrypt_glwe_ciphertex
 
         let input_as_slice = std::slice::from_raw_parts(input, polynomial_size);
 
-        let plaintext_vector = engine.create_plaintext_vector_from_unchecked(input_as_slice);
+        let plaintext_array = engine.create_plaintext_array_from_unchecked(input_as_slice);
 
-        engine.discard_trivially_encrypt_glwe_ciphertext_unchecked(&mut output, &plaintext_vector);
+        engine.discard_trivially_encrypt_glwe_ciphertext_unchecked(&mut output, &plaintext_array);
     })
 }

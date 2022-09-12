@@ -2,8 +2,8 @@ use crate::prelude::PlaintextCount;
 
 use crate::backends::default::implementation::engines::DefaultEngine;
 use crate::backends::default::implementation::entities::{
-    GlweCiphertext32, GlweCiphertext64, GlweSecretKey32, GlweSecretKey64, PlaintextVector32,
-    PlaintextVector64,
+    GlweCiphertext32, GlweCiphertext64, GlweSecretKey32, GlweSecretKey64, PlaintextArray32,
+    PlaintextArray64,
 };
 use crate::commons::crypto::encoding::PlaintextList as ImplPlaintextList;
 use crate::specification::engines::{
@@ -14,7 +14,7 @@ use crate::specification::entities::GlweSecretKeyEntity;
 /// # Description:
 /// Implementation of [`GlweCiphertextDecryptionEngine`] for [`DefaultEngine`] that operates on 32
 /// bits integers.
-impl GlweCiphertextDecryptionEngine<GlweSecretKey32, GlweCiphertext32, PlaintextVector32>
+impl GlweCiphertextDecryptionEngine<GlweSecretKey32, GlweCiphertext32, PlaintextArray32>
     for DefaultEngine
 {
     /// # Example:
@@ -37,14 +37,14 @@ impl GlweCiphertextDecryptionEngine<GlweSecretKey32, GlweCiphertext32, Plaintext
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey32 = engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
-    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
+    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_array, noise)?;
     ///
-    /// let decrypted_plaintext_vector = engine.decrypt_glwe_ciphertext(&key, &ciphertext)?;
+    /// let decrypted_plaintext_array = engine.decrypt_glwe_ciphertext(&key, &ciphertext)?;
     /// #
     /// assert_eq!(
-    /// #     decrypted_plaintext_vector.plaintext_count(),
-    /// #     plaintext_vector.plaintext_count()
+    /// #     decrypted_plaintext_array.plaintext_count(),
+    /// #     plaintext_array.plaintext_count()
     /// # );
     ///
     /// #
@@ -55,7 +55,7 @@ impl GlweCiphertextDecryptionEngine<GlweSecretKey32, GlweCiphertext32, Plaintext
         &mut self,
         key: &GlweSecretKey32,
         input: &GlweCiphertext32,
-    ) -> Result<PlaintextVector32, GlweCiphertextDecryptionError<Self::EngineError>> {
+    ) -> Result<PlaintextArray32, GlweCiphertextDecryptionError<Self::EngineError>> {
         GlweCiphertextDecryptionError::perform_generic_checks(key, input)?;
         Ok(unsafe { self.decrypt_glwe_ciphertext_unchecked(key, input) })
     }
@@ -64,18 +64,18 @@ impl GlweCiphertextDecryptionEngine<GlweSecretKey32, GlweCiphertext32, Plaintext
         &mut self,
         key: &GlweSecretKey32,
         input: &GlweCiphertext32,
-    ) -> PlaintextVector32 {
+    ) -> PlaintextArray32 {
         let mut plaintext =
             ImplPlaintextList::allocate(0u32, PlaintextCount(key.polynomial_size().0));
         key.0.decrypt_glwe(&mut plaintext, &input.0);
-        PlaintextVector32(plaintext)
+        PlaintextArray32(plaintext)
     }
 }
 
 /// # Description:
 /// Implementation of [`GlweCiphertextDecryptionEngine`] for [`DefaultEngine`] that operates on 64
 /// bits integers.
-impl GlweCiphertextDecryptionEngine<GlweSecretKey64, GlweCiphertext64, PlaintextVector64>
+impl GlweCiphertextDecryptionEngine<GlweSecretKey64, GlweCiphertext64, PlaintextArray64>
     for DefaultEngine
 {
     /// # Example:
@@ -98,14 +98,14 @@ impl GlweCiphertextDecryptionEngine<GlweSecretKey64, GlweCiphertext64, Plaintext
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey64 = engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
-    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
+    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_array, noise)?;
     ///
-    /// let decrypted_plaintext_vector = engine.decrypt_glwe_ciphertext(&key, &ciphertext)?;
+    /// let decrypted_plaintext_array = engine.decrypt_glwe_ciphertext(&key, &ciphertext)?;
     /// #
     /// assert_eq!(
-    /// #     decrypted_plaintext_vector.plaintext_count(),
-    /// #     plaintext_vector.plaintext_count()
+    /// #     decrypted_plaintext_array.plaintext_count(),
+    /// #     plaintext_array.plaintext_count()
     /// # );
     ///
     /// #
@@ -116,7 +116,7 @@ impl GlweCiphertextDecryptionEngine<GlweSecretKey64, GlweCiphertext64, Plaintext
         &mut self,
         key: &GlweSecretKey64,
         input: &GlweCiphertext64,
-    ) -> Result<PlaintextVector64, GlweCiphertextDecryptionError<Self::EngineError>> {
+    ) -> Result<PlaintextArray64, GlweCiphertextDecryptionError<Self::EngineError>> {
         GlweCiphertextDecryptionError::perform_generic_checks(key, input)?;
         Ok(unsafe { self.decrypt_glwe_ciphertext_unchecked(key, input) })
     }
@@ -125,10 +125,10 @@ impl GlweCiphertextDecryptionEngine<GlweSecretKey64, GlweCiphertext64, Plaintext
         &mut self,
         key: &GlweSecretKey64,
         input: &GlweCiphertext64,
-    ) -> PlaintextVector64 {
+    ) -> PlaintextArray64 {
         let mut plaintext =
             ImplPlaintextList::allocate(0u64, PlaintextCount(key.polynomial_size().0));
         key.0.decrypt_glwe(&mut plaintext, &input.0);
-        PlaintextVector64(plaintext)
+        PlaintextArray64(plaintext)
     }
 }

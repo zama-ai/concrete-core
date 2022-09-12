@@ -13,9 +13,9 @@ and forth between the CPU and the GPU, to create and destroy Cuda streams, etc.:
 - `cuda_get_number_of_gpus`
 - `cuda_synchronize_device`
 The cryptographic operations it provides are:
-- an amortized implementation of the TFHE programmable bootstrap: `cuda_bootstrap_amortized_lwe_ciphertext_vector_32` and `cuda_bootstrap_amortized_lwe_ciphertext_vector_64`
-- a low latency implementation of the TFHE programmable bootstrap: `cuda_bootstrap_low latency_lwe_ciphertext_vector_32` and `cuda_bootstrap_low_latency_lwe_ciphertext_vector_64`
-- the keyswitch: `cuda_keyswitch_lwe_ciphertext_vector_32` and `cuda_keyswitch_lwe_ciphertext_vector_64`
+- an amortized implementation of the TFHE programmable bootstrap: `cuda_bootstrap_amortized_lwe_ciphertext_array_32` and `cuda_bootstrap_amortized_lwe_ciphertext_array_64`
+- a low latency implementation of the TFHE programmable bootstrap: `cuda_bootstrap_low latency_lwe_ciphertext_array_32` and `cuda_bootstrap_low_latency_lwe_ciphertext_array_64`
+- the keyswitch: `cuda_keyswitch_lwe_ciphertext_array_32` and `cuda_keyswitch_lwe_ciphertext_array_64`
 
 These C++/CUDA functions are available to the [Concrete-core](https://github.com/zama-ai/concrete-core) 
 implementation via a dedicated Rust API, which is wrapped in the `backend_cuda` of 

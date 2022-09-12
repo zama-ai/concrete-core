@@ -1,6 +1,6 @@
 # Cuda backend
 
-This backend implements Cuda accelerated versions of the bootstrap and the keyswitch over single inputs, or over vectors of inputs.
+This backend implements Cuda accelerated versions of the bootstrap and the keyswitch over single inputs, or over arrays of inputs.
 It also implements conversion engines to be able to transfer data to the GPU and back to the CPU.
 
 ## Dependencies
@@ -14,23 +14,23 @@ There are two engine structures in the Cuda backend: the `CudaEngine` and the `A
 
 ### Cuda engine
 This engine implements some data conversions, to copy from the CPU to the GPU:
-+ LWE ciphertexts and vectors of ciphertexts
-+ GLWE ciphertexts and vectors of ciphertexts
++ LWE ciphertexts and arrays of ciphertexts
++ GLWE ciphertexts and arrays of ciphertexts
 + Bootstrap keys
 + Keyswitch keys
 
 And to copy from the GPU to the CPU:
-+ LWE ciphertexts and vectors of ciphertexts
++ LWE ciphertexts and arrays of ciphertexts
 
-It also implements a Cuda accelerated version of the keyswitch over single LWE inputs, or vectors of inputs.
-Finally, it implements the bootstrap over single LWE inputs or vectors of inputs, relying on a Cuda kernel that accelerates the whole bootstrap (or a whole set of bootstraps).
+It also implements a Cuda accelerated version of the keyswitch over single LWE inputs, or arrays of inputs.
+Finally, it implements the bootstrap over single LWE inputs or arrays of inputs, relying on a Cuda kernel that accelerates the whole bootstrap (or a whole set of bootstraps).
 This kernel relies on an in-house negacyclic FFT and iFFT implementations for the Fourier transformations.
 This bootstrap implementation performs best for small amounts of bootstraps at once, and is actually limited in the number of bootstraps it can handle at once.
 Each bootstrap is executed using several Cuda blocks, and synchronization between blocks is performed using the cooperative groups feature of Cuda. 
 It is best suited to the computation of the bootstrap over 1 to about 10 input ciphertexts (we refer to it as the Low Latency Bootstrap).
 
 ### Amortized Cuda engine
-This engine only implements the bootstrap over input vectors of LWE ciphertexts. It performs best when computing the bootstrap over quite large
+This engine only implements the bootstrap over input arrays of LWE ciphertexts. It performs best when computing the bootstrap over quite large
 amounts of inputs (it starts being interesting from about 10 simultaneous inputs). Once again the Cuda kernel accelerates the full set of bootstraps, each bootstrap being computed in one Cuda block.
 The implementation is very similar to the one proposed by nuFHE, but we support more parameter sets. We refer to this implementation as the Amortized Bootstrap.
 
@@ -98,9 +98,9 @@ designate data on the GPU (device). Let's start by creating the necessary data o
      let mut h_input_ciphertext: LweCiphertext64 =
          default_engine.encrypt_lwe_ciphertext(&h_input_key, &h_input_plaintext, noise).unwrap();
      // create a GLWE ciphertext containing an encryption of the LUT
-     let h_lut_plaintext_vector = default_engine.create_plaintext_vector_from(&lut).unwrap();
+     let h_lut_plaintext_array = default_engine.create_plaintext_array_from(&lut).unwrap();
      let h_lut_key: GlweSecretKey64 = default_engine.generate_new_glwe_secret_key(glwe_dim, poly_size).unwrap();
-     let h_lut = default_engine.trivially_encrypt_glwe_ciphertext(glwe_dim.to_glwe_size(), &lut_plaintext_vector).unwrap();
+     let h_lut = default_engine.trivially_encrypt_glwe_ciphertext(glwe_dim.to_glwe_size(), &lut_plaintext_array).unwrap();
      // create a BSK with multithreading
      let h_bootstrap_key: LweBootstrapKey64 =
          parallel_engine.generate_new_lwe_bootstrap_key(&h_input_key, &h_lut_key, dec_bl, dec_lc, noise).unwrap();
@@ -142,7 +142,7 @@ Finally, and **very importantly**, we need to destroy the data! This is especial
      default_engine.destroy(h_input_key).unwrap();
      default_engine.destroy(h_input_plaintext).unwrap();
      default_engine.destroy(h_input_ciphertext).unwrap();
-     default_engine.destroy(h_lut_plaintext_vector).unwrap();
+     default_engine.destroy(h_lut_plaintext_array).unwrap();
      default_engine.destroy(h_lut_key).unwrap();
      default_engine.destroy(h_lut).unwrap();
      default_engine.destroy(h_bootstrap_key).unwrap();

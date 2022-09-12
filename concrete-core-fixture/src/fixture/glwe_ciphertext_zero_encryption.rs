@@ -1,6 +1,6 @@
 use crate::fixture::Fixture;
 use crate::generation::prototyping::{
-    PrototypesGlweCiphertext, PrototypesGlweSecretKey, PrototypesPlaintextVector,
+    PrototypesGlweCiphertext, PrototypesGlweSecretKey, PrototypesPlaintextArray,
 };
 use crate::generation::synthesizing::{SynthesizesGlweCiphertext, SynthesizesGlweSecretKey};
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
@@ -107,14 +107,12 @@ where
         let (proto_secret_key,) = repetition_proto;
         let (secret_key, ciphertext) = context;
         let proto_output_ciphertext = maker.unsynthesize_glwe_ciphertext(ciphertext);
-        let proto_output_plaintext_vector = maker.decrypt_glwe_ciphertext_to_plaintext_vector(
-            proto_secret_key,
-            &proto_output_ciphertext,
-        );
+        let proto_output_plaintext_array = maker
+            .decrypt_glwe_ciphertext_to_plaintext_array(proto_secret_key, &proto_output_ciphertext);
         maker.destroy_glwe_secret_key(secret_key);
         (
             Precision::Raw::zero_vec(parameters.polynomial_size.0),
-            maker.transform_plaintext_vector_to_raw_vec(&proto_output_plaintext_vector),
+            maker.transform_plaintext_array_to_raw_vec(&proto_output_plaintext_array),
         )
     }
 

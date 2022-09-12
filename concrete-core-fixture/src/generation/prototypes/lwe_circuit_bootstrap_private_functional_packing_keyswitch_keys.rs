@@ -6,7 +6,7 @@ use concrete_core::prelude::{
     LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
 };
 
-/// A trait implemented by prototypes of private functional packing keyswitch keys vector used in
+/// A trait implemented by prototypes of private functional packing keyswitch keys array used in
 /// circuit bootstrapping.
 pub trait LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysPrototype {
     type InputKeyDistribution: KeyDistributionMarker;
@@ -15,7 +15,7 @@ pub trait LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysPrototype {
 }
 
 /// A type representing the prototype of a 32 bit binary private functional packing keyswitch keys
-/// vector entity used in circuit bootstrapping.
+/// array entity used in circuit bootstrapping.
 pub struct ProtoBinaryBinaryLweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32(
     pub(crate) LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32,
 );
@@ -28,7 +28,7 @@ impl LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysPrototype
 }
 
 /// A type representing the prototype of a 64 bit binary private functional packing keyswitch keys
-/// vector entity used in circuit bootstrapping.
+/// array entity used in circuit bootstrapping.
 pub struct ProtoBinaryBinaryLweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64(
     pub(crate) LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
 );

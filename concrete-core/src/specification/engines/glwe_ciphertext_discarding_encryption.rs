@@ -2,27 +2,27 @@ use super::engine_error;
 use crate::prelude::Variance;
 use crate::specification::engines::AbstractEngine;
 use crate::specification::entities::{
-    GlweCiphertextEntity, GlweSecretKeyEntity, PlaintextVectorEntity,
+    GlweCiphertextEntity, GlweSecretKeyEntity, PlaintextArrayEntity,
 };
 
 engine_error! {
     GlweCiphertextDiscardingEncryptionError for GlweCiphertextDiscardingEncryptionEngine @
     GlweDimensionMismatch => "The GLWE dimension of the key and ciphertext must be the same.",
     PolynomialSizeMismatch => "The polynomial size of the key and ciphertext must be the same.",
-    PlaintextCountMismatch => "The size of the input plaintext vector and the output ciphertext \
+    PlaintextCountMismatch => "The size of the input plaintext array and the output ciphertext \
                                polynomial size must be the same."
 }
 
 impl<EngineError: std::error::Error> GlweCiphertextDiscardingEncryptionError<EngineError> {
     /// Validates the inputs
-    pub fn perform_generic_checks<SecretKey, PlaintextVector, Ciphertext>(
+    pub fn perform_generic_checks<SecretKey, PlaintextArray, Ciphertext>(
         key: &SecretKey,
         output: &Ciphertext,
-        input: &PlaintextVector,
+        input: &PlaintextArray,
     ) -> Result<(), Self>
     where
         SecretKey: GlweSecretKeyEntity,
-        PlaintextVector: PlaintextVectorEntity,
+        PlaintextArray: PlaintextArrayEntity,
         Ciphertext: GlweCiphertextEntity,
     {
         if key.polynomial_size() != output.polynomial_size() {
@@ -43,16 +43,16 @@ impl<EngineError: std::error::Error> GlweCiphertextDiscardingEncryptionError<Eng
 /// # Semantics
 ///
 /// This [discarding](super#operation-semantics) operation fills the `output` GLWE ciphertext with
-/// the encryption of the `input` plaintext vector, under the `key` secret key.
+/// the encryption of the `input` plaintext array, under the `key` secret key.
 ///
 /// # Formal Definition
 ///
 /// cf [`here`](`crate::specification::engines::GlweCiphertextEncryptionEngine`)
-pub trait GlweCiphertextDiscardingEncryptionEngine<SecretKey, PlaintextVector, Ciphertext>:
+pub trait GlweCiphertextDiscardingEncryptionEngine<SecretKey, PlaintextArray, Ciphertext>:
     AbstractEngine
 where
     SecretKey: GlweSecretKeyEntity,
-    PlaintextVector: PlaintextVectorEntity,
+    PlaintextArray: PlaintextArrayEntity,
     Ciphertext: GlweCiphertextEntity,
 {
     /// Encrypts a GLWE ciphertext .
@@ -60,7 +60,7 @@ where
         &mut self,
         key: &SecretKey,
         output: &mut Ciphertext,
-        input: &PlaintextVector,
+        input: &PlaintextArray,
         noise: Variance,
     ) -> Result<(), GlweCiphertextDiscardingEncryptionError<Self::EngineError>>;
 
@@ -74,7 +74,7 @@ where
         &mut self,
         key: &SecretKey,
         output: &mut Ciphertext,
-        input: &PlaintextVector,
+        input: &PlaintextArray,
         noise: Variance,
     );
 }

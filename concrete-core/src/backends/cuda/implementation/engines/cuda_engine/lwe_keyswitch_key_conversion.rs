@@ -85,7 +85,7 @@ impl LweKeyswitchKeyConversionEngine<LweKeyswitchKey32, CudaLweKeyswitchKey32> f
         &mut self,
         input: &LweKeyswitchKey32,
     ) -> CudaLweKeyswitchKey32 {
-        // Copy the entire input vector over all GPUs
+        // Copy the entire input array over all GPUs
         let mut d_vecs = Vec::with_capacity(self.get_number_of_gpus().0);
 
         let data_per_gpu = input.decomposition_level_count().0
@@ -250,7 +250,7 @@ impl LweKeyswitchKeyConversionEngine<LweKeyswitchKey64, CudaLweKeyswitchKey64> f
         &mut self,
         input: &LweKeyswitchKey64,
     ) -> CudaLweKeyswitchKey64 {
-        // Copy the entire input vector over all GPUs
+        // Copy the entire input array over all GPUs
         let mut d_vecs = Vec::with_capacity(self.get_number_of_gpus().0);
 
         let data_per_gpu = input.decomposition_level_count().0

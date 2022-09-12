@@ -37,10 +37,9 @@ impl GlweCiphertextConversionEngine<GlweCiphertext32, CudaGlweCiphertext32> for 
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let h_key: GlweSecretKey32 =
     ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let h_plaintext_vector: PlaintextVector32 =
-    ///     default_engine.create_plaintext_vector_from(&input)?;
+    /// let h_plaintext_array: PlaintextArray32 = default_engine.create_plaintext_array_from(&input)?;
     /// let mut h_ciphertext: GlweCiphertext32 =
-    ///     default_engine.encrypt_glwe_ciphertext(&h_key, &h_plaintext_vector, noise)?;
+    ///     default_engine.encrypt_glwe_ciphertext(&h_key, &h_plaintext_array, noise)?;
     ///
     /// let mut cuda_engine = CudaEngine::new(())?;
     /// let d_ciphertext: CudaGlweCiphertext32 = cuda_engine.convert_glwe_ciphertext(&h_ciphertext)?;
@@ -67,7 +66,7 @@ impl GlweCiphertextConversionEngine<GlweCiphertext32, CudaGlweCiphertext32> for 
         &mut self,
         input: &GlweCiphertext32,
     ) -> CudaGlweCiphertext32 {
-        // Copy the entire input vector over all GPUs
+        // Copy the entire input array over all GPUs
         let data_per_gpu = input.glwe_dimension().to_glwe_size().0 * input.polynomial_size().0;
         let stream = &self.streams[0];
         let mut vec = stream.malloc::<u32>(data_per_gpu as u32);
@@ -82,7 +81,7 @@ impl GlweCiphertextConversionEngine<GlweCiphertext32, CudaGlweCiphertext32> for 
 }
 
 /// # Description
-/// Convert a GLWE ciphertext vector with 32 bits of precision from GPU 0 to CPU.
+/// Convert a GLWE ciphertext array with 32 bits of precision from GPU 0 to CPU.
 /// This conversion is not necessary to run the bootstrap on the GPU.
 /// It is implemented for testing purposes only.
 impl GlweCiphertextConversionEngine<CudaGlweCiphertext32, GlweCiphertext32> for CudaEngine {
@@ -104,10 +103,9 @@ impl GlweCiphertextConversionEngine<CudaGlweCiphertext32, GlweCiphertext32> for 
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let h_key: GlweSecretKey32 =
     ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let h_plaintext_vector: PlaintextVector32 =
-    ///     default_engine.create_plaintext_vector_from(&input)?;
+    /// let h_plaintext_array: PlaintextArray32 = default_engine.create_plaintext_array_from(&input)?;
     /// let mut h_ciphertext: GlweCiphertext32 =
-    ///     default_engine.encrypt_glwe_ciphertext(&h_key, &h_plaintext_vector, noise)?;
+    ///     default_engine.encrypt_glwe_ciphertext(&h_key, &h_plaintext_array, noise)?;
     ///
     /// let mut cuda_engine = CudaEngine::new(())?;
     /// let d_ciphertext: CudaGlweCiphertext32 = cuda_engine.convert_glwe_ciphertext(&h_ciphertext)?;
@@ -167,10 +165,9 @@ impl GlweCiphertextConversionEngine<GlweCiphertext64, CudaGlweCiphertext64> for 
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let h_key: GlweSecretKey64 =
     ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let h_plaintext_vector: PlaintextVector64 =
-    ///     default_engine.create_plaintext_vector_from(&input)?;
+    /// let h_plaintext_array: PlaintextArray64 = default_engine.create_plaintext_array_from(&input)?;
     /// let mut h_ciphertext: GlweCiphertext64 =
-    ///     default_engine.encrypt_glwe_ciphertext(&h_key, &h_plaintext_vector, noise)?;
+    ///     default_engine.encrypt_glwe_ciphertext(&h_key, &h_plaintext_array, noise)?;
     ///
     /// let mut cuda_engine = CudaEngine::new(())?;
     /// let d_ciphertext: CudaGlweCiphertext64 = cuda_engine.convert_glwe_ciphertext(&h_ciphertext)?;
@@ -197,7 +194,7 @@ impl GlweCiphertextConversionEngine<GlweCiphertext64, CudaGlweCiphertext64> for 
         &mut self,
         input: &GlweCiphertext64,
     ) -> CudaGlweCiphertext64 {
-        // Copy the entire input vector over all GPUs
+        // Copy the entire input array over all GPUs
         let data_per_gpu = input.glwe_dimension().to_glwe_size().0 * input.polynomial_size().0;
         let stream = &self.streams[0];
         let mut vec = stream.malloc::<u64>(data_per_gpu as u32);
@@ -212,7 +209,7 @@ impl GlweCiphertextConversionEngine<GlweCiphertext64, CudaGlweCiphertext64> for 
 }
 
 /// # Description
-/// Convert a GLWE ciphertext vector with 64 bits of precision from GPU 0 to CPU.
+/// Convert a GLWE ciphertext array with 64 bits of precision from GPU 0 to CPU.
 /// This conversion is not necessary to run the bootstrap on the GPU.
 /// It is implemented for testing purposes only.
 impl GlweCiphertextConversionEngine<CudaGlweCiphertext64, GlweCiphertext64> for CudaEngine {
@@ -234,10 +231,9 @@ impl GlweCiphertextConversionEngine<CudaGlweCiphertext64, GlweCiphertext64> for 
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let h_key: GlweSecretKey64 =
     ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let h_plaintext_vector: PlaintextVector64 =
-    ///     default_engine.create_plaintext_vector_from(&input)?;
+    /// let h_plaintext_array: PlaintextArray64 = default_engine.create_plaintext_array_from(&input)?;
     /// let mut h_ciphertext: GlweCiphertext64 =
-    ///     default_engine.encrypt_glwe_ciphertext(&h_key, &h_plaintext_vector, noise)?;
+    ///     default_engine.encrypt_glwe_ciphertext(&h_key, &h_plaintext_array, noise)?;
     ///
     /// let mut cuda_engine = CudaEngine::new(())?;
     /// let d_ciphertext: CudaGlweCiphertext64 = cuda_engine.convert_glwe_ciphertext(&h_ciphertext)?;
@@ -296,10 +292,9 @@ impl GlweCiphertextConversionEngine<GlweCiphertextView64<'_>, CudaGlweCiphertext
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let h_key: GlweSecretKey64 =
     ///     default_engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let h_plaintext_vector: PlaintextVector64 =
-    ///     default_engine.create_plaintext_vector_from(&input)?;
+    /// let h_plaintext_array: PlaintextArray64 = default_engine.create_plaintext_array_from(&input)?;
     /// let mut h_ciphertext: GlweCiphertext64 =
-    ///     default_engine.encrypt_glwe_ciphertext(&h_key, &h_plaintext_vector, noise)?;
+    ///     default_engine.encrypt_glwe_ciphertext(&h_key, &h_plaintext_array, noise)?;
     /// let h_raw_ciphertext: Vec<u64> =
     ///     default_engine.consume_retrieve_glwe_ciphertext(h_ciphertext)?;
     /// let mut h_view_ciphertext: GlweCiphertextView64 =
@@ -338,7 +333,7 @@ impl GlweCiphertextConversionEngine<GlweCiphertextView64<'_>, CudaGlweCiphertext
         &mut self,
         input: &GlweCiphertextView64,
     ) -> CudaGlweCiphertext64 {
-        // Copy the entire input vector over all GPUs
+        // Copy the entire input array over all GPUs
         let data_per_gpu = input.glwe_dimension().to_glwe_size().0 * input.polynomial_size().0;
         let stream = &self.streams[0];
         let mut vec = stream.malloc::<u64>(data_per_gpu as u32);

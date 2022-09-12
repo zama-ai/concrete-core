@@ -1,7 +1,7 @@
 //! Keyswitch key with Cuda.
+use crate::backends::cuda::private::array::CudaArray;
 use crate::backends::cuda::private::crypto::lwe::list::CudaLweList;
 use crate::backends::cuda::private::device::{CudaStream, GpuIndex, NumberOfGpus};
-use crate::backends::cuda::private::vec::CudaVec;
 use crate::backends::cuda::private::{compute_number_of_samples_on_gpu, number_of_active_gpus};
 use crate::commons::numeric::UnsignedInteger;
 use crate::prelude::{
@@ -11,7 +11,7 @@ use crate::prelude::{
 #[derive(Debug)]
 pub(crate) struct CudaLweKeyswitchKey<T: UnsignedInteger> {
     // Pointers to GPU data: one cuda vec per GPU
-    pub(crate) d_vecs: Vec<CudaVec<T>>,
+    pub(crate) d_vecs: Vec<CudaArray<T>>,
     // Input LWE dimension
     pub(crate) input_lwe_dimension: LweDimension,
     // Output LWE dimension
@@ -22,7 +22,7 @@ pub(crate) struct CudaLweKeyswitchKey<T: UnsignedInteger> {
     pub(crate) decomp_base_log: DecompositionBaseLog,
 }
 
-pub(crate) unsafe fn execute_lwe_ciphertext_vector_keyswitch_on_gpu<T: UnsignedInteger>(
+pub(crate) unsafe fn execute_lwe_ciphertext_array_keyswitch_on_gpu<T: UnsignedInteger>(
     streams: &[CudaStream],
     output: &mut CudaLweList<T>,
     input: &CudaLweList<T>,
@@ -42,7 +42,7 @@ pub(crate) unsafe fn execute_lwe_ciphertext_vector_keyswitch_on_gpu<T: UnsignedI
         );
         let stream = &streams.get(gpu_index).unwrap();
 
-        stream.discard_keyswitch_lwe_ciphertext_vector::<T>(
+        stream.discard_keyswitch_lwe_ciphertext_array::<T>(
             output.d_vecs.get_mut(gpu_index).unwrap(),
             input.d_vecs.get(gpu_index).unwrap(),
             input.lwe_dimension,

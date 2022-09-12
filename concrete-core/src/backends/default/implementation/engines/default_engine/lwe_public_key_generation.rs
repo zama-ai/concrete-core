@@ -4,7 +4,7 @@ use crate::backends::default::entities::{
 };
 use crate::prelude::{LweCiphertextCount, LwePublicKeyZeroEncryptionCount, Variance};
 use crate::specification::engines::{
-    LweCiphertextVectorZeroEncryptionEngine, LwePublicKeyGenerationEngine,
+    LweCiphertextArrayZeroEncryptionEngine, LwePublicKeyGenerationEngine,
     LwePublicKeyGenerationError,
 };
 
@@ -67,7 +67,7 @@ impl LwePublicKeyGenerationEngine<LweSecretKey32, LwePublicKey32> for DefaultEng
         noise: Variance,
         lwe_public_key_zero_encryption_count: LwePublicKeyZeroEncryptionCount,
     ) -> LwePublicKey32 {
-        let encrypted_zeros = self.zero_encrypt_lwe_ciphertext_vector_unchecked(
+        let encrypted_zeros = self.zero_encrypt_lwe_ciphertext_array_unchecked(
             lwe_secret_key,
             noise,
             LweCiphertextCount(lwe_public_key_zero_encryption_count.0),
@@ -135,7 +135,7 @@ impl LwePublicKeyGenerationEngine<LweSecretKey64, LwePublicKey64> for DefaultEng
         noise: Variance,
         lwe_public_key_zero_encryption_count: LwePublicKeyZeroEncryptionCount,
     ) -> LwePublicKey64 {
-        let encrypted_zeros = self.zero_encrypt_lwe_ciphertext_vector_unchecked(
+        let encrypted_zeros = self.zero_encrypt_lwe_ciphertext_array_unchecked(
             lwe_secret_key,
             noise,
             LweCiphertextCount(lwe_public_key_zero_encryption_count.0),

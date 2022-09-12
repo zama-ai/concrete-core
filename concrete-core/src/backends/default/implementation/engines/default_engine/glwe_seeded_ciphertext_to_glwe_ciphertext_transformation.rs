@@ -39,10 +39,9 @@ impl
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey32 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let seeded_ciphertext =
-    ///     engine.encrypt_glwe_seeded_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let seeded_ciphertext = engine.encrypt_glwe_seeded_ciphertext(&key, &plaintext_array, noise)?;
     ///
     /// let ciphertext =
     ///     engine.transform_glwe_seeded_ciphertext_to_glwe_ciphertext(seeded_ciphertext)?;
@@ -116,10 +115,9 @@ impl
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey64 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let seeded_ciphertext =
-    ///     engine.encrypt_glwe_seeded_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let seeded_ciphertext = engine.encrypt_glwe_seeded_ciphertext(&key, &plaintext_array, noise)?;
     ///
     /// let ciphertext =
     ///     engine.transform_glwe_seeded_ciphertext_to_glwe_ciphertext(seeded_ciphertext)?;

@@ -1,7 +1,7 @@
 use crate::backends::default::implementation::engines::DefaultEngine;
 use crate::backends::default::implementation::entities::{
-    GlweCiphertext32, GlweCiphertext64, GlweSecretKey32, GlweSecretKey64, PlaintextVector32,
-    PlaintextVector64,
+    GlweCiphertext32, GlweCiphertext64, GlweSecretKey32, GlweSecretKey64, PlaintextArray32,
+    PlaintextArray64,
 };
 use crate::specification::engines::{
     GlweCiphertextDiscardingDecryptionEngine, GlweCiphertextDiscardingDecryptionError,
@@ -10,7 +10,7 @@ use crate::specification::engines::{
 /// # Description:
 /// Implementation of [`GlweCiphertextDiscardingDecryptionEngine`] for [`DefaultEngine`] that
 /// operates on 32 bits integers.
-impl GlweCiphertextDiscardingDecryptionEngine<GlweSecretKey32, GlweCiphertext32, PlaintextVector32>
+impl GlweCiphertextDiscardingDecryptionEngine<GlweSecretKey32, GlweCiphertext32, PlaintextArray32>
     for DefaultEngine
 {
     /// # Example:
@@ -32,12 +32,12 @@ impl GlweCiphertextDiscardingDecryptionEngine<GlweSecretKey32, GlweCiphertext32,
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey32 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let mut plaintext_vector = engine.create_plaintext_vector_from(&input)?;
-    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let mut plaintext_array = engine.create_plaintext_array_from(&input)?;
+    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_array, noise)?;
     ///
-    /// engine.discard_decrypt_glwe_ciphertext(&key, &mut plaintext_vector, &ciphertext)?;
+    /// engine.discard_decrypt_glwe_ciphertext(&key, &mut plaintext_array, &ciphertext)?;
     /// #
-    /// assert_eq!(plaintext_vector.plaintext_count(), PlaintextCount(4));
+    /// assert_eq!(plaintext_array.plaintext_count(), PlaintextCount(4));
     ///
     /// #
     /// # Ok(())
@@ -46,7 +46,7 @@ impl GlweCiphertextDiscardingDecryptionEngine<GlweSecretKey32, GlweCiphertext32,
     fn discard_decrypt_glwe_ciphertext(
         &mut self,
         key: &GlweSecretKey32,
-        output: &mut PlaintextVector32,
+        output: &mut PlaintextArray32,
         input: &GlweCiphertext32,
     ) -> Result<(), GlweCiphertextDiscardingDecryptionError<Self::EngineError>> {
         GlweCiphertextDiscardingDecryptionError::perform_generic_checks(key, output, input)?;
@@ -57,7 +57,7 @@ impl GlweCiphertextDiscardingDecryptionEngine<GlweSecretKey32, GlweCiphertext32,
     unsafe fn discard_decrypt_glwe_ciphertext_unchecked(
         &mut self,
         key: &GlweSecretKey32,
-        output: &mut PlaintextVector32,
+        output: &mut PlaintextArray32,
         input: &GlweCiphertext32,
     ) {
         key.0.decrypt_glwe(&mut output.0, &input.0);
@@ -67,7 +67,7 @@ impl GlweCiphertextDiscardingDecryptionEngine<GlweSecretKey32, GlweCiphertext32,
 /// # Description:
 /// Implementation of [`GlweCiphertextDiscardingDecryptionEngine`] for [`DefaultEngine`] that
 /// operates on 64 bits integers.
-impl GlweCiphertextDiscardingDecryptionEngine<GlweSecretKey64, GlweCiphertext64, PlaintextVector64>
+impl GlweCiphertextDiscardingDecryptionEngine<GlweSecretKey64, GlweCiphertext64, PlaintextArray64>
     for DefaultEngine
 {
     /// # Example:
@@ -89,12 +89,12 @@ impl GlweCiphertextDiscardingDecryptionEngine<GlweSecretKey64, GlweCiphertext64,
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey64 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let mut plaintext_vector = engine.create_plaintext_vector_from(&input)?;
-    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let mut plaintext_array = engine.create_plaintext_array_from(&input)?;
+    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_array, noise)?;
     ///
-    /// engine.discard_decrypt_glwe_ciphertext(&key, &mut plaintext_vector, &ciphertext)?;
+    /// engine.discard_decrypt_glwe_ciphertext(&key, &mut plaintext_array, &ciphertext)?;
     /// #
-    /// assert_eq!(plaintext_vector.plaintext_count(), PlaintextCount(4));
+    /// assert_eq!(plaintext_array.plaintext_count(), PlaintextCount(4));
     ///
     /// #
     /// # Ok(())
@@ -103,7 +103,7 @@ impl GlweCiphertextDiscardingDecryptionEngine<GlweSecretKey64, GlweCiphertext64,
     fn discard_decrypt_glwe_ciphertext(
         &mut self,
         key: &GlweSecretKey64,
-        output: &mut PlaintextVector64,
+        output: &mut PlaintextArray64,
         input: &GlweCiphertext64,
     ) -> Result<(), GlweCiphertextDiscardingDecryptionError<Self::EngineError>> {
         GlweCiphertextDiscardingDecryptionError::perform_generic_checks(key, output, input)?;
@@ -114,7 +114,7 @@ impl GlweCiphertextDiscardingDecryptionEngine<GlweSecretKey64, GlweCiphertext64,
     unsafe fn discard_decrypt_glwe_ciphertext_unchecked(
         &mut self,
         key: &GlweSecretKey64,
-        output: &mut PlaintextVector64,
+        output: &mut PlaintextArray64,
         input: &GlweCiphertext64,
     ) {
         key.0.decrypt_glwe(&mut output.0, &input.0);

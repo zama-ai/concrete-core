@@ -4,7 +4,7 @@ use crate::generation::prototypes::{
 };
 use crate::generation::prototyping::glwe_ciphertext::PrototypesGlweCiphertext;
 use crate::generation::prototyping::glwe_secret_key::PrototypesGlweSecretKey;
-use crate::generation::prototyping::plaintext_vector::PrototypesPlaintextVector;
+use crate::generation::prototyping::plaintext_array::PrototypesPlaintextArray;
 use crate::generation::{
     BinaryKeyDistribution, IntegerPrecision, KeyDistributionMarker, Maker, Precision32, Precision64,
 };
@@ -18,7 +18,7 @@ pub trait PrototypesGlweSeededCiphertext<
     Precision: IntegerPrecision,
     KeyDistribution: KeyDistributionMarker,
 >:
-    PrototypesPlaintextVector<Precision>
+    PrototypesPlaintextArray<Precision>
     + PrototypesGlweSecretKey<Precision, KeyDistribution>
     + PrototypesGlweCiphertext<Precision, KeyDistribution>
 {
@@ -26,10 +26,10 @@ pub trait PrototypesGlweSeededCiphertext<
         Precision = Precision,
         KeyDistribution = KeyDistribution,
     >;
-    fn encrypt_plaintext_vector_to_glwe_seeded_ciphertext(
+    fn encrypt_plaintext_array_to_glwe_seeded_ciphertext(
         &mut self,
         secret_key: &Self::GlweSecretKeyProto,
-        plaintext_vector: &Self::PlaintextVectorProto,
+        plaintext_array: &Self::PlaintextArrayProto,
         noise: Variance,
     ) -> Self::GlweSeededCiphertextProto;
     fn transform_glwe_seeded_ciphertext_to_glwe_ciphertext(
@@ -41,15 +41,15 @@ pub trait PrototypesGlweSeededCiphertext<
 impl PrototypesGlweSeededCiphertext<Precision32, BinaryKeyDistribution> for Maker {
     type GlweSeededCiphertextProto = ProtoBinaryGlweSeededCiphertext32;
 
-    fn encrypt_plaintext_vector_to_glwe_seeded_ciphertext(
+    fn encrypt_plaintext_array_to_glwe_seeded_ciphertext(
         &mut self,
         secret_key: &Self::GlweSecretKeyProto,
-        plaintext_vector: &Self::PlaintextVectorProto,
+        plaintext_array: &Self::PlaintextArrayProto,
         noise: Variance,
     ) -> Self::GlweSeededCiphertextProto {
         ProtoBinaryGlweSeededCiphertext32(
             self.default_engine
-                .encrypt_glwe_seeded_ciphertext(&secret_key.0, &plaintext_vector.0, noise)
+                .encrypt_glwe_seeded_ciphertext(&secret_key.0, &plaintext_array.0, noise)
                 .unwrap(),
         )
     }
@@ -69,15 +69,15 @@ impl PrototypesGlweSeededCiphertext<Precision32, BinaryKeyDistribution> for Make
 impl PrototypesGlweSeededCiphertext<Precision64, BinaryKeyDistribution> for Maker {
     type GlweSeededCiphertextProto = ProtoBinaryGlweSeededCiphertext64;
 
-    fn encrypt_plaintext_vector_to_glwe_seeded_ciphertext(
+    fn encrypt_plaintext_array_to_glwe_seeded_ciphertext(
         &mut self,
         secret_key: &Self::GlweSecretKeyProto,
-        plaintext_vector: &Self::PlaintextVectorProto,
+        plaintext_array: &Self::PlaintextArrayProto,
         noise: Variance,
     ) -> Self::GlweSeededCiphertextProto {
         ProtoBinaryGlweSeededCiphertext64(
             self.default_engine
-                .encrypt_glwe_seeded_ciphertext(&secret_key.0, &plaintext_vector.0, noise)
+                .encrypt_glwe_seeded_ciphertext(&secret_key.0, &plaintext_array.0, noise)
                 .unwrap(),
         )
     }

@@ -8,7 +8,7 @@ use crate::specification::entities::AbstractEntity;
 #[cfg(feature = "backend_default_serialization")]
 use serde::{Deserialize, Serialize};
 
-/// A structure representing a vector of private functional packing keyswitch keys used for a
+/// A structure representing an array of private functional packing keyswitch keys used for a
 /// circuit bootsrap with 32 bits of precision.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32(
@@ -53,7 +53,7 @@ pub(crate) enum LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32Versio
     Unsupported,
 }
 
-/// A structure representing a vector of private functional packing keyswitch keys used for a
+/// A structure representing an array of private functional packing keyswitch keys used for a
 /// circuit bootsrap with 64 bits of precision.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64(

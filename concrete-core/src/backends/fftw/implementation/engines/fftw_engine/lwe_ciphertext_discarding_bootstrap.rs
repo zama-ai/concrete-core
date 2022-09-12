@@ -63,9 +63,9 @@ impl
     /// let lwe_sk_output: LweSecretKey32 =
     ///     default_engine.generate_new_lwe_secret_key(lwe_dim_output)?;
     /// let plaintext = default_engine.create_plaintext_from(&input)?;
-    /// let plaintext_vector = default_engine.create_plaintext_vector_from(&lut)?;
+    /// let plaintext_array = default_engine.create_plaintext_array_from(&lut)?;
     /// let acc = default_engine
-    ///     .trivially_encrypt_glwe_ciphertext(glwe_dim.to_glwe_size(), &plaintext_vector)?;
+    ///     .trivially_encrypt_glwe_ciphertext(glwe_dim.to_glwe_size(), &plaintext_array)?;
     /// let input = default_engine.encrypt_lwe_ciphertext(&lwe_sk, &plaintext, noise)?;
     /// let mut output = default_engine.zero_encrypt_lwe_ciphertext(&lwe_sk_output, noise)?;
     ///
@@ -151,9 +151,9 @@ impl
     /// let lwe_sk_output: LweSecretKey64 =
     ///     default_engine.generate_new_lwe_secret_key(lwe_dim_output)?;
     /// let plaintext = default_engine.create_plaintext_from(&input)?;
-    /// let plaintext_vector = default_engine.create_plaintext_vector_from(&lut)?;
+    /// let plaintext_array = default_engine.create_plaintext_array_from(&lut)?;
     /// let acc = default_engine
-    ///     .trivially_encrypt_glwe_ciphertext(glwe_dim.to_glwe_size(), &plaintext_vector)?;
+    ///     .trivially_encrypt_glwe_ciphertext(glwe_dim.to_glwe_size(), &plaintext_array)?;
     /// let input = default_engine.encrypt_lwe_ciphertext(&lwe_sk, &plaintext, noise)?;
     /// let mut output = default_engine.zero_encrypt_lwe_ciphertext(&lwe_sk_output, noise)?;
     ///
@@ -242,9 +242,9 @@ impl
     /// let lwe_sk_output: LweSecretKey32 =
     ///     default_engine.generate_new_lwe_secret_key(lwe_dim_output)?;
     /// let plaintext = default_engine.create_plaintext_from(&input)?;
-    /// let plaintext_vector = default_engine.create_plaintext_vector_from(&lut)?;
+    /// let plaintext_array = default_engine.create_plaintext_array_from(&lut)?;
     /// let acc = default_engine
-    ///     .trivially_encrypt_glwe_ciphertext(glwe_dim.to_glwe_size(), &plaintext_vector)?;
+    ///     .trivially_encrypt_glwe_ciphertext(glwe_dim.to_glwe_size(), &plaintext_array)?;
     ///
     /// // Get the GlweCiphertext as a View
     /// let raw_glwe = default_engine.consume_retrieve_glwe_ciphertext(acc)?;
@@ -348,9 +348,9 @@ impl
     /// let lwe_sk_output: LweSecretKey64 =
     ///     default_engine.generate_new_lwe_secret_key(lwe_dim_output)?;
     /// let plaintext = default_engine.create_plaintext_from(&input)?;
-    /// let plaintext_vector = default_engine.create_plaintext_vector_from(&lut)?;
+    /// let plaintext_array = default_engine.create_plaintext_array_from(&lut)?;
     /// let acc = default_engine
-    ///     .trivially_encrypt_glwe_ciphertext(glwe_dim.to_glwe_size(), &plaintext_vector)?;
+    ///     .trivially_encrypt_glwe_ciphertext(glwe_dim.to_glwe_size(), &plaintext_array)?;
     ///
     /// // Get the GlweCiphertext as a View
     /// let raw_glwe = default_engine.consume_retrieve_glwe_ciphertext(acc)?;

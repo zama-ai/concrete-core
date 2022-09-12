@@ -27,38 +27,37 @@ use crate::commons::crypto::secret::{
     GlweSecretKey as ImplGlweSecretKey, LweSecretKey as ImplLweSecretKey,
 };
 use crate::prelude::{
-    BinaryKeyKind, Cleartext32, Cleartext32Version, Cleartext64, Cleartext64Version, CleartextF64,
-    CleartextF64Version, CleartextVector32, CleartextVector32Version, CleartextVector64,
-    CleartextVector64Version, CleartextVectorF64, CleartextVectorF64Version,
+    BinaryKeyKind, Cleartext32, Cleartext32Version, Cleartext64, Cleartext64Version,
+    CleartextArray32, CleartextArray32Version, CleartextArray64, CleartextArray64Version,
+    CleartextArrayF64, CleartextArrayF64Version, CleartextF64, CleartextF64Version,
     DefaultSerializationEngine, DefaultSerializationError, EntitySerializationEngine,
-    EntitySerializationError, FloatEncoder, FloatEncoderVector, FloatEncoderVectorVersion,
+    EntitySerializationError, FloatEncoder, FloatEncoderArray, FloatEncoderArrayVersion,
     FloatEncoderVersion, GgswCiphertext32, GgswCiphertext32Version, GgswCiphertext64,
     GgswCiphertext64Version, GgswSeededCiphertext32, GgswSeededCiphertext32Version,
     GgswSeededCiphertext64, GgswSeededCiphertext64Version, GlweCiphertext32,
-    GlweCiphertext32Version, GlweCiphertext64, GlweCiphertext64Version, GlweCiphertextMutView32,
-    GlweCiphertextMutView64, GlweCiphertextVector32, GlweCiphertextVector32Version,
-    GlweCiphertextVector64, GlweCiphertextVector64Version, GlweCiphertextView32,
-    GlweCiphertextView64, GlweSecretKey32, GlweSecretKey32Version, GlweSecretKey64,
-    GlweSecretKey64Version, GlweSeededCiphertext32, GlweSeededCiphertext32Version,
-    GlweSeededCiphertext64, GlweSeededCiphertext64Version, GlweSeededCiphertextVector32,
-    GlweSeededCiphertextVector32Version, GlweSeededCiphertextVector64,
-    GlweSeededCiphertextVector64Version, LweBootstrapKey32, LweBootstrapKey32Version,
-    LweBootstrapKey64, LweBootstrapKey64Version, LweCiphertext32, LweCiphertext32Version,
-    LweCiphertext64, LweCiphertext64Version, LweCiphertextMutView32, LweCiphertextMutView64,
-    LweCiphertextVector32, LweCiphertextVector32Version, LweCiphertextVector64,
-    LweCiphertextVector64Version, LweCiphertextVectorMutView32, LweCiphertextVectorMutView64,
-    LweCiphertextVectorView32, LweCiphertextVectorView64, LweCiphertextView32, LweCiphertextView64,
-    LweKeyswitchKey32, LweKeyswitchKey32Version, LweKeyswitchKey64, LweKeyswitchKey64Version,
-    LwePackingKeyswitchKey32, LwePackingKeyswitchKey32Version, LwePackingKeyswitchKey64,
-    LwePackingKeyswitchKey64Version, LweSecretKey32, LweSecretKey32Version, LweSecretKey64,
-    LweSecretKey64Version, LweSeededBootstrapKey32, LweSeededBootstrapKey32Version,
-    LweSeededBootstrapKey64, LweSeededBootstrapKey64Version, LweSeededCiphertext32,
-    LweSeededCiphertext32Version, LweSeededCiphertext64, LweSeededCiphertext64Version,
-    LweSeededCiphertextVector32, LweSeededCiphertextVector32Version, LweSeededCiphertextVector64,
-    LweSeededCiphertextVector64Version, LweSeededKeyswitchKey32, LweSeededKeyswitchKey32Version,
-    LweSeededKeyswitchKey64, LweSeededKeyswitchKey64Version, Plaintext32, Plaintext32Version,
-    Plaintext64, Plaintext64Version, PlaintextVector32, PlaintextVector32Version,
-    PlaintextVector64, PlaintextVector64Version,
+    GlweCiphertext32Version, GlweCiphertext64, GlweCiphertext64Version, GlweCiphertextArray32,
+    GlweCiphertextArray32Version, GlweCiphertextArray64, GlweCiphertextArray64Version,
+    GlweCiphertextMutView32, GlweCiphertextMutView64, GlweCiphertextView32, GlweCiphertextView64,
+    GlweSecretKey32, GlweSecretKey32Version, GlweSecretKey64, GlweSecretKey64Version,
+    GlweSeededCiphertext32, GlweSeededCiphertext32Version, GlweSeededCiphertext64,
+    GlweSeededCiphertext64Version, GlweSeededCiphertextArray32, GlweSeededCiphertextArray32Version,
+    GlweSeededCiphertextArray64, GlweSeededCiphertextArray64Version, LweBootstrapKey32,
+    LweBootstrapKey32Version, LweBootstrapKey64, LweBootstrapKey64Version, LweCiphertext32,
+    LweCiphertext32Version, LweCiphertext64, LweCiphertext64Version, LweCiphertextArray32,
+    LweCiphertextArray32Version, LweCiphertextArray64, LweCiphertextArray64Version,
+    LweCiphertextArrayMutView32, LweCiphertextArrayMutView64, LweCiphertextArrayView32,
+    LweCiphertextArrayView64, LweCiphertextMutView32, LweCiphertextMutView64, LweCiphertextView32,
+    LweCiphertextView64, LweKeyswitchKey32, LweKeyswitchKey32Version, LweKeyswitchKey64,
+    LweKeyswitchKey64Version, LwePackingKeyswitchKey32, LwePackingKeyswitchKey32Version,
+    LwePackingKeyswitchKey64, LwePackingKeyswitchKey64Version, LweSecretKey32,
+    LweSecretKey32Version, LweSecretKey64, LweSecretKey64Version, LweSeededBootstrapKey32,
+    LweSeededBootstrapKey32Version, LweSeededBootstrapKey64, LweSeededBootstrapKey64Version,
+    LweSeededCiphertext32, LweSeededCiphertext32Version, LweSeededCiphertext64,
+    LweSeededCiphertext64Version, LweSeededCiphertextArray32, LweSeededCiphertextArray32Version,
+    LweSeededCiphertextArray64, LweSeededCiphertextArray64Version, LweSeededKeyswitchKey32,
+    LweSeededKeyswitchKey32Version, LweSeededKeyswitchKey64, LweSeededKeyswitchKey64Version,
+    Plaintext32, Plaintext32Version, Plaintext64, Plaintext64Version, PlaintextArray32,
+    PlaintextArray32Version, PlaintextArray64, PlaintextArray64Version,
 };
 use serde::Serialize;
 
@@ -208,8 +207,8 @@ impl EntitySerializationEngine<CleartextF64, Vec<u8>> for DefaultSerializationEn
 
 /// # Description:
 /// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
-/// on 32 bits integers. It serializes a cleartext vector entity.
-impl EntitySerializationEngine<CleartextVector32, Vec<u8>> for DefaultSerializationEngine {
+/// on 32 bits integers. It serializes a cleartext array entity.
+impl EntitySerializationEngine<CleartextArray32, Vec<u8>> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_core::prelude::{CleartextCount, *};
@@ -222,26 +221,26 @@ impl EntitySerializationEngine<CleartextVector32, Vec<u8>> for DefaultSerializat
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let cleartext_vector: CleartextVector32 = engine.create_cleartext_vector_from(&input)?;
+    /// let cleartext_array: CleartextArray32 = engine.create_cleartext_array_from(&input)?;
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&cleartext_vector)?;
+    /// let serialized = serialization_engine.serialize(&cleartext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(cleartext_vector, recovered);
+    /// assert_eq!(cleartext_array, recovered);
     /// #
     /// # Ok(())
     /// # }
     /// ```
     fn serialize(
         &mut self,
-        entity: &CleartextVector32,
+        entity: &CleartextArray32,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
         #[derive(Serialize)]
-        struct SerializableCleartextVector32<'a> {
-            version: CleartextVector32Version,
+        struct SerializableCleartextArray32<'a> {
+            version: CleartextArray32Version,
             inner: &'a ImplCleartextList<Vec<u32>>,
         }
-        let serializable = SerializableCleartextVector32 {
-            version: CleartextVector32Version::V0,
+        let serializable = SerializableCleartextArray32 {
+            version: CleartextArray32Version::V0,
             inner: &entity.0,
         };
         bincode::serialize(&serializable)
@@ -249,15 +248,15 @@ impl EntitySerializationEngine<CleartextVector32, Vec<u8>> for DefaultSerializat
             .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn serialize_unchecked(&mut self, entity: &CleartextVector32) -> Vec<u8> {
+    unsafe fn serialize_unchecked(&mut self, entity: &CleartextArray32) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
 
 /// # Description:
 /// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
-/// on 64 bits integers. It serializes a cleartext vector entity.
-impl EntitySerializationEngine<CleartextVector64, Vec<u8>> for DefaultSerializationEngine {
+/// on 64 bits integers. It serializes a cleartext array entity.
+impl EntitySerializationEngine<CleartextArray64, Vec<u8>> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_core::prelude::{CleartextCount, *};
@@ -270,26 +269,26 @@ impl EntitySerializationEngine<CleartextVector64, Vec<u8>> for DefaultSerializat
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let cleartext_vector: CleartextVector64 = engine.create_cleartext_vector_from(&input)?;
+    /// let cleartext_array: CleartextArray64 = engine.create_cleartext_array_from(&input)?;
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&cleartext_vector)?;
+    /// let serialized = serialization_engine.serialize(&cleartext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(cleartext_vector, recovered);
+    /// assert_eq!(cleartext_array, recovered);
     /// #
     /// # Ok(())
     /// # }
     /// ```
     fn serialize(
         &mut self,
-        entity: &CleartextVector64,
+        entity: &CleartextArray64,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
         #[derive(Serialize)]
-        struct SerializableCleartextVector64<'a> {
-            version: CleartextVector64Version,
+        struct SerializableCleartextArray64<'a> {
+            version: CleartextArray64Version,
             inner: &'a ImplCleartextList<Vec<u64>>,
         }
-        let serializable = SerializableCleartextVector64 {
-            version: CleartextVector64Version::V0,
+        let serializable = SerializableCleartextArray64 {
+            version: CleartextArray64Version::V0,
             inner: &entity.0,
         };
         bincode::serialize(&serializable)
@@ -297,15 +296,15 @@ impl EntitySerializationEngine<CleartextVector64, Vec<u8>> for DefaultSerializat
             .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn serialize_unchecked(&mut self, entity: &CleartextVector64) -> Vec<u8> {
+    unsafe fn serialize_unchecked(&mut self, entity: &CleartextArray64) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
 
 /// # Description:
 /// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
-/// on 64 bits integers. It serializes a floating point cleartext vector entity.
-impl EntitySerializationEngine<CleartextVectorF64, Vec<u8>> for DefaultSerializationEngine {
+/// on 64 bits integers. It serializes a floating point cleartext array entity.
+impl EntitySerializationEngine<CleartextArrayF64, Vec<u8>> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_core::prelude::{CleartextCount, *};
@@ -318,26 +317,26 @@ impl EntitySerializationEngine<CleartextVectorF64, Vec<u8>> for DefaultSerializa
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let cleartext_vector: CleartextVectorF64 = engine.create_cleartext_vector_from(&input)?;
+    /// let cleartext_array: CleartextArrayF64 = engine.create_cleartext_array_from(&input)?;
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&cleartext_vector)?;
+    /// let serialized = serialization_engine.serialize(&cleartext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(cleartext_vector, recovered);
+    /// assert_eq!(cleartext_array, recovered);
     /// #
     /// # Ok(())
     /// # }
     /// ```
     fn serialize(
         &mut self,
-        entity: &CleartextVectorF64,
+        entity: &CleartextArrayF64,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
         #[derive(Serialize)]
-        struct SerializableCleartextVectorF64<'a> {
-            version: CleartextVectorF64Version,
+        struct SerializableCleartextArrayF64<'a> {
+            version: CleartextArrayF64Version,
             inner: &'a ImplCleartextList<Vec<f64>>,
         }
-        let serializable = SerializableCleartextVectorF64 {
-            version: CleartextVectorF64Version::V0,
+        let serializable = SerializableCleartextArrayF64 {
+            version: CleartextArrayF64Version::V0,
             inner: &entity.0,
         };
         bincode::serialize(&serializable)
@@ -345,7 +344,7 @@ impl EntitySerializationEngine<CleartextVectorF64, Vec<u8>> for DefaultSerializa
             .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn serialize_unchecked(&mut self, entity: &CleartextVectorF64) -> Vec<u8> {
+    unsafe fn serialize_unchecked(&mut self, entity: &CleartextArrayF64) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
@@ -558,9 +557,9 @@ impl EntitySerializationEngine<GlweCiphertext32, Vec<u8>> for DefaultSerializati
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey32 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&ciphertext)?;
@@ -618,9 +617,9 @@ impl EntitySerializationEngine<GlweCiphertext64, Vec<u8>> for DefaultSerializati
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey64 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&ciphertext)?;
@@ -680,9 +679,9 @@ impl<'b> EntitySerializationEngine<GlweCiphertextView32<'b>, Vec<u8>>
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey32 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_array, noise)?;
     /// let raw_buffer = engine.consume_retrieve_glwe_ciphertext(ciphertext)?;
     /// let view: GlweCiphertextView32 =
     ///     engine.create_glwe_ciphertext_from(raw_buffer.as_slice(), polynomial_size)?;
@@ -746,8 +745,8 @@ impl<'b> EntitySerializationEngine<GlweCiphertextView64<'b>, Vec<u8>>
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey64 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
-    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
+    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_array, noise)?;
     ///
     /// let raw_buffer = engine.consume_retrieve_glwe_ciphertext(ciphertext)?;
     /// let view: GlweCiphertextView64 =
@@ -812,9 +811,9 @@ impl<'b> EntitySerializationEngine<GlweCiphertextMutView32<'b>, Vec<u8>>
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey32 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_array, noise)?;
     /// let mut raw_buffer = engine.consume_retrieve_glwe_ciphertext(ciphertext)?;
     /// let view: GlweCiphertextMutView32 =
     ///     engine.create_glwe_ciphertext_from(raw_buffer.as_mut_slice(), polynomial_size)?;
@@ -878,8 +877,8 @@ impl<'b> EntitySerializationEngine<GlweCiphertextMutView64<'b>, Vec<u8>>
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey64 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
-    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
+    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_array, noise)?;
     ///
     /// let mut raw_buffer = engine.consume_retrieve_glwe_ciphertext(ciphertext)?;
     /// let view: GlweCiphertextMutView64 =
@@ -920,8 +919,8 @@ impl<'b> EntitySerializationEngine<GlweCiphertextMutView64<'b>, Vec<u8>>
 
 /// # Description:
 /// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
-/// on 32 bits integers. It serializes a GLWE ciphertext vector entity.
-impl EntitySerializationEngine<GlweCiphertextVector32, Vec<u8>> for DefaultSerializationEngine {
+/// on 32 bits integers. It serializes a GLWE ciphertext array entity.
+impl EntitySerializationEngine<GlweCiphertextArray32, Vec<u8>> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_core::prelude::{GlweCiphertextCount, GlweDimension, PolynomialSize, Variance, *};
@@ -941,15 +940,14 @@ impl EntitySerializationEngine<GlweCiphertextVector32, Vec<u8>> for DefaultSeria
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey32 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let ciphertext_vector =
-    ///     engine.encrypt_glwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    /// let ciphertext_array = engine.encrypt_glwe_ciphertext_array(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&ciphertext_vector)?;
+    /// let serialized = serialization_engine.serialize(&ciphertext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(ciphertext_vector, recovered);
+    /// assert_eq!(ciphertext_array, recovered);
     ///
     /// #
     /// # Ok(())
@@ -957,15 +955,15 @@ impl EntitySerializationEngine<GlweCiphertextVector32, Vec<u8>> for DefaultSeria
     /// ```
     fn serialize(
         &mut self,
-        entity: &GlweCiphertextVector32,
+        entity: &GlweCiphertextArray32,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
         #[derive(Serialize)]
-        struct SerializableGlweCiphertextVector32<'a> {
-            version: GlweCiphertextVector32Version,
+        struct SerializableGlweCiphertextArray32<'a> {
+            version: GlweCiphertextArray32Version,
             inner: &'a ImplGlweList<Vec<u32>>,
         }
-        let serializable = SerializableGlweCiphertextVector32 {
-            version: GlweCiphertextVector32Version::V0,
+        let serializable = SerializableGlweCiphertextArray32 {
+            version: GlweCiphertextArray32Version::V0,
             inner: &entity.0,
         };
         bincode::serialize(&serializable)
@@ -973,15 +971,15 @@ impl EntitySerializationEngine<GlweCiphertextVector32, Vec<u8>> for DefaultSeria
             .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn serialize_unchecked(&mut self, entity: &GlweCiphertextVector32) -> Vec<u8> {
+    unsafe fn serialize_unchecked(&mut self, entity: &GlweCiphertextArray32) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
 
 /// # Description:
 /// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
-/// on 64 bits integers. It serializes a GLWE ciphertext vector entity.
-impl EntitySerializationEngine<GlweCiphertextVector64, Vec<u8>> for DefaultSerializationEngine {
+/// on 64 bits integers. It serializes a GLWE ciphertext array entity.
+impl EntitySerializationEngine<GlweCiphertextArray64, Vec<u8>> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_core::prelude::{GlweCiphertextCount, GlweDimension, PolynomialSize, Variance, *};
@@ -1001,15 +999,14 @@ impl EntitySerializationEngine<GlweCiphertextVector64, Vec<u8>> for DefaultSeria
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey64 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let ciphertext_vector =
-    ///     engine.encrypt_glwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    /// let ciphertext_array = engine.encrypt_glwe_ciphertext_array(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&ciphertext_vector)?;
+    /// let serialized = serialization_engine.serialize(&ciphertext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(ciphertext_vector, recovered);
+    /// assert_eq!(ciphertext_array, recovered);
     ///
     /// #
     /// # Ok(())
@@ -1017,15 +1014,15 @@ impl EntitySerializationEngine<GlweCiphertextVector64, Vec<u8>> for DefaultSeria
     /// ```
     fn serialize(
         &mut self,
-        entity: &GlweCiphertextVector64,
+        entity: &GlweCiphertextArray64,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
         #[derive(Serialize)]
-        struct SerializableGlweCiphertextVector64<'a> {
-            version: GlweCiphertextVector64Version,
+        struct SerializableGlweCiphertextArray64<'a> {
+            version: GlweCiphertextArray64Version,
             inner: &'a ImplGlweList<Vec<u64>>,
         }
-        let serializable = SerializableGlweCiphertextVector64 {
-            version: GlweCiphertextVector64Version::V0,
+        let serializable = SerializableGlweCiphertextArray64 {
+            version: GlweCiphertextArray64Version::V0,
             inner: &entity.0,
         };
         bincode::serialize(&serializable)
@@ -1033,7 +1030,7 @@ impl EntitySerializationEngine<GlweCiphertextVector64, Vec<u8>> for DefaultSeria
             .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn serialize_unchecked(&mut self, entity: &GlweCiphertextVector64) -> Vec<u8> {
+    unsafe fn serialize_unchecked(&mut self, entity: &GlweCiphertextArray64) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
@@ -1168,10 +1165,9 @@ impl EntitySerializationEngine<GlweSeededCiphertext32, Vec<u8>> for DefaultSeria
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey32 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let seeded_ciphertext =
-    ///     engine.encrypt_glwe_seeded_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let seeded_ciphertext = engine.encrypt_glwe_seeded_ciphertext(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&seeded_ciphertext)?;
@@ -1229,10 +1225,9 @@ impl EntitySerializationEngine<GlweSeededCiphertext64, Vec<u8>> for DefaultSeria
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey64 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let seeded_ciphertext =
-    ///     engine.encrypt_glwe_seeded_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let seeded_ciphertext = engine.encrypt_glwe_seeded_ciphertext(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&seeded_ciphertext)?;
@@ -1268,8 +1263,8 @@ impl EntitySerializationEngine<GlweSeededCiphertext64, Vec<u8>> for DefaultSeria
 
 /// # Description:
 /// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
-/// on 32 bits integers. It serializes a seeded GLWE ciphertext vector entity.
-impl EntitySerializationEngine<GlweSeededCiphertextVector32, Vec<u8>>
+/// on 32 bits integers. It serializes a seeded GLWE ciphertext array entity.
+impl EntitySerializationEngine<GlweSeededCiphertextArray32, Vec<u8>>
     for DefaultSerializationEngine
 {
     /// # Example:
@@ -1291,15 +1286,15 @@ impl EntitySerializationEngine<GlweSeededCiphertextVector32, Vec<u8>>
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey32 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let seeded_ciphertext_vector =
-    ///     engine.encrypt_glwe_seeded_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    /// let seeded_ciphertext_array =
+    ///     engine.encrypt_glwe_seeded_ciphertext_array(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&seeded_ciphertext_vector)?;
+    /// let serialized = serialization_engine.serialize(&seeded_ciphertext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(seeded_ciphertext_vector, recovered);
+    /// assert_eq!(seeded_ciphertext_array, recovered);
     ///
     /// #
     /// # Ok(())
@@ -1307,15 +1302,15 @@ impl EntitySerializationEngine<GlweSeededCiphertextVector32, Vec<u8>>
     /// ```
     fn serialize(
         &mut self,
-        entity: &GlweSeededCiphertextVector32,
+        entity: &GlweSeededCiphertextArray32,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
         #[derive(Serialize)]
-        struct SerializableGlweSeededCiphertextVector32<'a> {
-            version: GlweSeededCiphertextVector32Version,
+        struct SerializableGlweSeededCiphertextArray32<'a> {
+            version: GlweSeededCiphertextArray32Version,
             inner: &'a ImplGlweSeededList<Vec<u32>>,
         }
-        let serializable = SerializableGlweSeededCiphertextVector32 {
-            version: GlweSeededCiphertextVector32Version::V0,
+        let serializable = SerializableGlweSeededCiphertextArray32 {
+            version: GlweSeededCiphertextArray32Version::V0,
             inner: &entity.0,
         };
         bincode::serialize(&serializable)
@@ -1323,15 +1318,15 @@ impl EntitySerializationEngine<GlweSeededCiphertextVector32, Vec<u8>>
             .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn serialize_unchecked(&mut self, entity: &GlweSeededCiphertextVector32) -> Vec<u8> {
+    unsafe fn serialize_unchecked(&mut self, entity: &GlweSeededCiphertextArray32) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
 
 /// # Description:
 /// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
-/// on 64 bits integers. It serializes a seeded GLWE ciphertext vector entity.
-impl EntitySerializationEngine<GlweSeededCiphertextVector64, Vec<u8>>
+/// on 64 bits integers. It serializes a seeded GLWE ciphertext array entity.
+impl EntitySerializationEngine<GlweSeededCiphertextArray64, Vec<u8>>
     for DefaultSerializationEngine
 {
     /// # Example:
@@ -1353,15 +1348,15 @@ impl EntitySerializationEngine<GlweSeededCiphertextVector64, Vec<u8>>
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey64 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let seeded_ciphertext_vector =
-    ///     engine.encrypt_glwe_seeded_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    /// let seeded_ciphertext_array =
+    ///     engine.encrypt_glwe_seeded_ciphertext_array(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&seeded_ciphertext_vector)?;
+    /// let serialized = serialization_engine.serialize(&seeded_ciphertext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(seeded_ciphertext_vector, recovered);
+    /// assert_eq!(seeded_ciphertext_array, recovered);
     ///
     /// #
     /// # Ok(())
@@ -1369,15 +1364,15 @@ impl EntitySerializationEngine<GlweSeededCiphertextVector64, Vec<u8>>
     /// ```
     fn serialize(
         &mut self,
-        entity: &GlweSeededCiphertextVector64,
+        entity: &GlweSeededCiphertextArray64,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
         #[derive(Serialize)]
-        struct SerializableGlweSeededCiphertextVector64<'a> {
-            version: GlweSeededCiphertextVector64Version,
+        struct SerializableGlweSeededCiphertextArray64<'a> {
+            version: GlweSeededCiphertextArray64Version,
             inner: &'a ImplGlweSeededList<Vec<u64>>,
         }
-        let serializable = SerializableGlweSeededCiphertextVector64 {
-            version: GlweSeededCiphertextVector64Version::V0,
+        let serializable = SerializableGlweSeededCiphertextArray64 {
+            version: GlweSeededCiphertextArray64Version::V0,
             inner: &entity.0,
         };
         bincode::serialize(&serializable)
@@ -1385,7 +1380,7 @@ impl EntitySerializationEngine<GlweSeededCiphertextVector64, Vec<u8>>
             .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn serialize_unchecked(&mut self, entity: &GlweSeededCiphertextVector64) -> Vec<u8> {
+    unsafe fn serialize_unchecked(&mut self, entity: &GlweSeededCiphertextArray64) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
@@ -1880,8 +1875,8 @@ impl<'b> EntitySerializationEngine<LweCiphertextMutView64<'b>, Vec<u8>>
 
 /// # Description:
 /// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
-/// on 32 bits integers. It serializes a LWE ciphertext vector entity.
-impl EntitySerializationEngine<LweCiphertextVector32, Vec<u8>> for DefaultSerializationEngine {
+/// on 32 bits integers. It serializes a LWE ciphertext array entity.
+impl EntitySerializationEngine<LweCiphertextArray32, Vec<u8>> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
@@ -1899,15 +1894,15 @@ impl EntitySerializationEngine<LweCiphertextVector32, Vec<u8>> for DefaultSerial
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array: PlaintextArray32 = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let mut ciphertext_vector: LweCiphertextVector32 =
-    ///     engine.encrypt_lwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    /// let mut ciphertext_array: LweCiphertextArray32 =
+    ///     engine.encrypt_lwe_ciphertext_array(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&ciphertext_vector)?;
+    /// let serialized = serialization_engine.serialize(&ciphertext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(ciphertext_vector, recovered);
+    /// assert_eq!(ciphertext_array, recovered);
     ///
     /// #
     /// # Ok(())
@@ -1915,15 +1910,15 @@ impl EntitySerializationEngine<LweCiphertextVector32, Vec<u8>> for DefaultSerial
     /// ```
     fn serialize(
         &mut self,
-        entity: &LweCiphertextVector32,
+        entity: &LweCiphertextArray32,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
         #[derive(Serialize)]
-        struct SerializableLweCiphertextVector32<'a> {
-            version: LweCiphertextVector32Version,
+        struct SerializableLweCiphertextArray32<'a> {
+            version: LweCiphertextArray32Version,
             inner: &'a ImplLweList<Vec<u32>>,
         }
-        let serializable = SerializableLweCiphertextVector32 {
-            version: LweCiphertextVector32Version::V0,
+        let serializable = SerializableLweCiphertextArray32 {
+            version: LweCiphertextArray32Version::V0,
             inner: &entity.0,
         };
         bincode::serialize(&serializable)
@@ -1931,15 +1926,15 @@ impl EntitySerializationEngine<LweCiphertextVector32, Vec<u8>> for DefaultSerial
             .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn serialize_unchecked(&mut self, entity: &LweCiphertextVector32) -> Vec<u8> {
+    unsafe fn serialize_unchecked(&mut self, entity: &LweCiphertextArray32) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
 
 /// # Description:
 /// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
-/// on 64 bits integers. It serializes a LWE ciphertext vector entity.
-impl EntitySerializationEngine<LweCiphertextVector64, Vec<u8>> for DefaultSerializationEngine {
+/// on 64 bits integers. It serializes a LWE ciphertext array entity.
+impl EntitySerializationEngine<LweCiphertextArray64, Vec<u8>> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
@@ -1957,15 +1952,15 @@ impl EntitySerializationEngine<LweCiphertextVector64, Vec<u8>> for DefaultSerial
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array: PlaintextArray64 = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let mut ciphertext_vector: LweCiphertextVector64 =
-    ///     engine.encrypt_lwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    /// let mut ciphertext_array: LweCiphertextArray64 =
+    ///     engine.encrypt_lwe_ciphertext_array(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&ciphertext_vector)?;
+    /// let serialized = serialization_engine.serialize(&ciphertext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(ciphertext_vector, recovered);
+    /// assert_eq!(ciphertext_array, recovered);
     ///
     /// #
     /// # Ok(())
@@ -1973,15 +1968,15 @@ impl EntitySerializationEngine<LweCiphertextVector64, Vec<u8>> for DefaultSerial
     /// ```
     fn serialize(
         &mut self,
-        entity: &LweCiphertextVector64,
+        entity: &LweCiphertextArray64,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
         #[derive(Serialize)]
-        struct SerializableLweCiphertextVector64<'a> {
-            version: LweCiphertextVector64Version,
+        struct SerializableLweCiphertextArray64<'a> {
+            version: LweCiphertextArray64Version,
             inner: &'a ImplLweList<Vec<u64>>,
         }
-        let serializable = SerializableLweCiphertextVector64 {
-            version: LweCiphertextVector64Version::V0,
+        let serializable = SerializableLweCiphertextArray64 {
+            version: LweCiphertextArray64Version::V0,
             inner: &entity.0,
         };
         bincode::serialize(&serializable)
@@ -1989,15 +1984,15 @@ impl EntitySerializationEngine<LweCiphertextVector64, Vec<u8>> for DefaultSerial
             .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn serialize_unchecked(&mut self, entity: &LweCiphertextVector64) -> Vec<u8> {
+    unsafe fn serialize_unchecked(&mut self, entity: &LweCiphertextArray64) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
 
 /// # Description:
 /// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
-/// on 32 bits integers. It serializes a LWE ciphertext vector view entity. Immutable variant.
-impl<'b> EntitySerializationEngine<LweCiphertextVectorView32<'b>, Vec<u8>>
+/// on 32 bits integers. It serializes a LWE ciphertext array view entity. Immutable variant.
+impl<'b> EntitySerializationEngine<LweCiphertextArrayView32<'b>, Vec<u8>>
     for DefaultSerializationEngine
 {
     /// # Example:
@@ -2018,19 +2013,19 @@ impl<'b> EntitySerializationEngine<LweCiphertextVectorView32<'b>, Vec<u8>>
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array: PlaintextArray32 = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let mut ciphertext_vector: LweCiphertextVector32 =
-    ///     engine.encrypt_lwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
-    /// let raw_buffer = engine.consume_retrieve_lwe_ciphertext_vector(ciphertext_vector)?;
-    /// let view: LweCiphertextVectorView32 = engine
-    ///     .create_lwe_ciphertext_vector_from(raw_buffer.as_slice(), lwe_dimension.to_lwe_size())?;
+    /// let mut ciphertext_array: LweCiphertextArray32 =
+    ///     engine.encrypt_lwe_ciphertext_array(&key, &plaintext_array, noise)?;
+    /// let raw_buffer = engine.consume_retrieve_lwe_ciphertext_array(ciphertext_array)?;
+    /// let view: LweCiphertextArrayView32 = engine
+    ///     .create_lwe_ciphertext_array_from(raw_buffer.as_slice(), lwe_dimension.to_lwe_size())?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&view)?;
-    /// let recovered: LweCiphertextVector32 =
+    /// let recovered: LweCiphertextArray32 =
     ///     serialization_engine.deserialize(serialized.as_slice())?;
-    /// let recovered_buffer = engine.consume_retrieve_lwe_ciphertext_vector(recovered)?;
+    /// let recovered_buffer = engine.consume_retrieve_lwe_ciphertext_array(recovered)?;
     /// assert_eq!(raw_buffer, recovered_buffer);
     ///
     /// #
@@ -2039,16 +2034,16 @@ impl<'b> EntitySerializationEngine<LweCiphertextVectorView32<'b>, Vec<u8>>
     /// ```
     fn serialize(
         &mut self,
-        entity: &LweCiphertextVectorView32<'b>,
+        entity: &LweCiphertextArrayView32<'b>,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
         #[derive(Serialize)]
-        struct SerializableLweCiphertextVectorView32<'a, 'b> {
-            version: LweCiphertextVector32Version,
+        struct SerializableLweCiphertextArrayView32<'a, 'b> {
+            version: LweCiphertextArray32Version,
             inner: &'a ImplLweList<&'b [u32]>,
         }
 
-        let serializable = SerializableLweCiphertextVectorView32 {
-            version: LweCiphertextVector32Version::V0,
+        let serializable = SerializableLweCiphertextArrayView32 {
+            version: LweCiphertextArray32Version::V0,
             inner: &entity.0,
         };
         bincode::serialize(&serializable)
@@ -2056,15 +2051,15 @@ impl<'b> EntitySerializationEngine<LweCiphertextVectorView32<'b>, Vec<u8>>
             .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn serialize_unchecked(&mut self, entity: &LweCiphertextVectorView32<'b>) -> Vec<u8> {
+    unsafe fn serialize_unchecked(&mut self, entity: &LweCiphertextArrayView32<'b>) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
 
 /// # Description:
 /// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
-/// on 64 bits integers. It serializes a LWE ciphertext vector view entity. Immutable variant.
-impl<'b> EntitySerializationEngine<LweCiphertextVectorView64<'b>, Vec<u8>>
+/// on 64 bits integers. It serializes a LWE ciphertext array view entity. Immutable variant.
+impl<'b> EntitySerializationEngine<LweCiphertextArrayView64<'b>, Vec<u8>>
     for DefaultSerializationEngine
 {
     /// # Example:
@@ -2085,19 +2080,19 @@ impl<'b> EntitySerializationEngine<LweCiphertextVectorView64<'b>, Vec<u8>>
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array: PlaintextArray64 = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let mut ciphertext_vector: LweCiphertextVector64 =
-    ///     engine.encrypt_lwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
-    /// let raw_buffer = engine.consume_retrieve_lwe_ciphertext_vector(ciphertext_vector)?;
-    /// let view: LweCiphertextVectorView64 = engine
-    ///     .create_lwe_ciphertext_vector_from(raw_buffer.as_slice(), lwe_dimension.to_lwe_size())?;
+    /// let mut ciphertext_array: LweCiphertextArray64 =
+    ///     engine.encrypt_lwe_ciphertext_array(&key, &plaintext_array, noise)?;
+    /// let raw_buffer = engine.consume_retrieve_lwe_ciphertext_array(ciphertext_array)?;
+    /// let view: LweCiphertextArrayView64 = engine
+    ///     .create_lwe_ciphertext_array_from(raw_buffer.as_slice(), lwe_dimension.to_lwe_size())?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&view)?;
-    /// let recovered: LweCiphertextVector64 =
+    /// let recovered: LweCiphertextArray64 =
     ///     serialization_engine.deserialize(serialized.as_slice())?;
-    /// let recovered_buffer = engine.consume_retrieve_lwe_ciphertext_vector(recovered)?;
+    /// let recovered_buffer = engine.consume_retrieve_lwe_ciphertext_array(recovered)?;
     /// assert_eq!(raw_buffer, recovered_buffer);
     ///
     /// #
@@ -2106,16 +2101,16 @@ impl<'b> EntitySerializationEngine<LweCiphertextVectorView64<'b>, Vec<u8>>
     /// ```
     fn serialize(
         &mut self,
-        entity: &LweCiphertextVectorView64<'b>,
+        entity: &LweCiphertextArrayView64<'b>,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
         #[derive(Serialize)]
-        struct SerializableLweCiphertextVectorView64<'a, 'b> {
-            version: LweCiphertextVector64Version,
+        struct SerializableLweCiphertextArrayView64<'a, 'b> {
+            version: LweCiphertextArray64Version,
             inner: &'a ImplLweList<&'b [u64]>,
         }
 
-        let serializable = SerializableLweCiphertextVectorView64 {
-            version: LweCiphertextVector64Version::V0,
+        let serializable = SerializableLweCiphertextArrayView64 {
+            version: LweCiphertextArray64Version::V0,
             inner: &entity.0,
         };
         bincode::serialize(&serializable)
@@ -2123,15 +2118,15 @@ impl<'b> EntitySerializationEngine<LweCiphertextVectorView64<'b>, Vec<u8>>
             .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn serialize_unchecked(&mut self, entity: &LweCiphertextVectorView64<'b>) -> Vec<u8> {
+    unsafe fn serialize_unchecked(&mut self, entity: &LweCiphertextArrayView64<'b>) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
 
 /// # Description:
 /// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
-/// on 32 bits integers. It serializes a LWE ciphertext vector view entity. Mutable variant.
-impl<'b> EntitySerializationEngine<LweCiphertextVectorMutView32<'b>, Vec<u8>>
+/// on 32 bits integers. It serializes a LWE ciphertext array view entity. Mutable variant.
+impl<'b> EntitySerializationEngine<LweCiphertextArrayMutView32<'b>, Vec<u8>>
     for DefaultSerializationEngine
 {
     /// # Example:
@@ -2152,21 +2147,19 @@ impl<'b> EntitySerializationEngine<LweCiphertextVectorMutView32<'b>, Vec<u8>>
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array: PlaintextArray32 = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let mut ciphertext_vector: LweCiphertextVector32 =
-    ///     engine.encrypt_lwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
-    /// let mut raw_buffer = engine.consume_retrieve_lwe_ciphertext_vector(ciphertext_vector)?;
-    /// let view: LweCiphertextVectorMutView32 = engine.create_lwe_ciphertext_vector_from(
-    ///     raw_buffer.as_mut_slice(),
-    ///     lwe_dimension.to_lwe_size(),
-    /// )?;
+    /// let mut ciphertext_array: LweCiphertextArray32 =
+    ///     engine.encrypt_lwe_ciphertext_array(&key, &plaintext_array, noise)?;
+    /// let mut raw_buffer = engine.consume_retrieve_lwe_ciphertext_array(ciphertext_array)?;
+    /// let view: LweCiphertextArrayMutView32 = engine
+    ///     .create_lwe_ciphertext_array_from(raw_buffer.as_mut_slice(), lwe_dimension.to_lwe_size())?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&view)?;
-    /// let recovered: LweCiphertextVector32 =
+    /// let recovered: LweCiphertextArray32 =
     ///     serialization_engine.deserialize(serialized.as_slice())?;
-    /// let recovered_buffer = engine.consume_retrieve_lwe_ciphertext_vector(recovered)?;
+    /// let recovered_buffer = engine.consume_retrieve_lwe_ciphertext_array(recovered)?;
     /// assert_eq!(raw_buffer, recovered_buffer);
     ///
     /// #
@@ -2175,16 +2168,16 @@ impl<'b> EntitySerializationEngine<LweCiphertextVectorMutView32<'b>, Vec<u8>>
     /// ```
     fn serialize(
         &mut self,
-        entity: &LweCiphertextVectorMutView32<'b>,
+        entity: &LweCiphertextArrayMutView32<'b>,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
         #[derive(Serialize)]
-        struct SerializableLweCiphertextVectorMutView32<'a, 'b> {
-            version: LweCiphertextVector32Version,
+        struct SerializableLweCiphertextArrayMutView32<'a, 'b> {
+            version: LweCiphertextArray32Version,
             inner: &'a ImplLweList<&'b mut [u32]>,
         }
 
-        let serializable = SerializableLweCiphertextVectorMutView32 {
-            version: LweCiphertextVector32Version::V0,
+        let serializable = SerializableLweCiphertextArrayMutView32 {
+            version: LweCiphertextArray32Version::V0,
             inner: &entity.0,
         };
         bincode::serialize(&serializable)
@@ -2192,15 +2185,15 @@ impl<'b> EntitySerializationEngine<LweCiphertextVectorMutView32<'b>, Vec<u8>>
             .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn serialize_unchecked(&mut self, entity: &LweCiphertextVectorMutView32<'b>) -> Vec<u8> {
+    unsafe fn serialize_unchecked(&mut self, entity: &LweCiphertextArrayMutView32<'b>) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
 
 /// # Description:
 /// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
-/// on 64 bits integers. It serializes a LWE ciphertext vector view entity. Mutable variant.
-impl<'b> EntitySerializationEngine<LweCiphertextVectorMutView64<'b>, Vec<u8>>
+/// on 64 bits integers. It serializes a LWE ciphertext array view entity. Mutable variant.
+impl<'b> EntitySerializationEngine<LweCiphertextArrayMutView64<'b>, Vec<u8>>
     for DefaultSerializationEngine
 {
     /// # Example:
@@ -2221,21 +2214,19 @@ impl<'b> EntitySerializationEngine<LweCiphertextVectorMutView64<'b>, Vec<u8>>
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array: PlaintextArray64 = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let mut ciphertext_vector: LweCiphertextVector64 =
-    ///     engine.encrypt_lwe_ciphertext_vector(&key, &plaintext_vector, noise)?;
-    /// let mut raw_buffer = engine.consume_retrieve_lwe_ciphertext_vector(ciphertext_vector)?;
-    /// let view: LweCiphertextVectorMutView64 = engine.create_lwe_ciphertext_vector_from(
-    ///     raw_buffer.as_mut_slice(),
-    ///     lwe_dimension.to_lwe_size(),
-    /// )?;
+    /// let mut ciphertext_array: LweCiphertextArray64 =
+    ///     engine.encrypt_lwe_ciphertext_array(&key, &plaintext_array, noise)?;
+    /// let mut raw_buffer = engine.consume_retrieve_lwe_ciphertext_array(ciphertext_array)?;
+    /// let view: LweCiphertextArrayMutView64 = engine
+    ///     .create_lwe_ciphertext_array_from(raw_buffer.as_mut_slice(), lwe_dimension.to_lwe_size())?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
     /// let serialized = serialization_engine.serialize(&view)?;
-    /// let recovered: LweCiphertextVector64 =
+    /// let recovered: LweCiphertextArray64 =
     ///     serialization_engine.deserialize(serialized.as_slice())?;
-    /// let recovered_buffer = engine.consume_retrieve_lwe_ciphertext_vector(recovered)?;
+    /// let recovered_buffer = engine.consume_retrieve_lwe_ciphertext_array(recovered)?;
     /// assert_eq!(raw_buffer, recovered_buffer);
     ///
     /// #
@@ -2244,16 +2235,16 @@ impl<'b> EntitySerializationEngine<LweCiphertextVectorMutView64<'b>, Vec<u8>>
     /// ```
     fn serialize(
         &mut self,
-        entity: &LweCiphertextVectorMutView64<'b>,
+        entity: &LweCiphertextArrayMutView64<'b>,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
         #[derive(Serialize)]
-        struct SerializableLweCiphertextVectorMutView64<'a, 'b> {
-            version: LweCiphertextVector64Version,
+        struct SerializableLweCiphertextArrayMutView64<'a, 'b> {
+            version: LweCiphertextArray64Version,
             inner: &'a ImplLweList<&'b mut [u64]>,
         }
 
-        let serializable = SerializableLweCiphertextVectorMutView64 {
-            version: LweCiphertextVector64Version::V0,
+        let serializable = SerializableLweCiphertextArrayMutView64 {
+            version: LweCiphertextArray64Version::V0,
             inner: &entity.0,
         };
         bincode::serialize(&serializable)
@@ -2261,7 +2252,7 @@ impl<'b> EntitySerializationEngine<LweCiphertextVectorMutView64<'b>, Vec<u8>>
             .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn serialize_unchecked(&mut self, entity: &LweCiphertextVectorMutView64<'b>) -> Vec<u8> {
+    unsafe fn serialize_unchecked(&mut self, entity: &LweCiphertextArrayMutView64<'b>) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
@@ -2741,10 +2732,8 @@ impl EntitySerializationEngine<LweSeededCiphertext64, Vec<u8>> for DefaultSerial
 
 /// # Description:
 /// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
-/// on 32 bits integers. It serializes a seeded LWE ciphertext vector entity.
-impl EntitySerializationEngine<LweSeededCiphertextVector32, Vec<u8>>
-    for DefaultSerializationEngine
-{
+/// on 32 bits integers. It serializes a seeded LWE ciphertext array entity.
+impl EntitySerializationEngine<LweSeededCiphertextArray32, Vec<u8>> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
@@ -2762,15 +2751,15 @@ impl EntitySerializationEngine<LweSeededCiphertextVector32, Vec<u8>>
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array: PlaintextArray32 = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let mut ciphertext_vector: LweSeededCiphertextVector32 =
-    ///     engine.encrypt_lwe_seeded_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    /// let mut ciphertext_array: LweSeededCiphertextArray32 =
+    ///     engine.encrypt_lwe_seeded_ciphertext_array(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&ciphertext_vector)?;
+    /// let serialized = serialization_engine.serialize(&ciphertext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(ciphertext_vector, recovered);
+    /// assert_eq!(ciphertext_array, recovered);
     ///
     /// #
     /// # Ok(())
@@ -2778,15 +2767,15 @@ impl EntitySerializationEngine<LweSeededCiphertextVector32, Vec<u8>>
     /// ```
     fn serialize(
         &mut self,
-        entity: &LweSeededCiphertextVector32,
+        entity: &LweSeededCiphertextArray32,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
         #[derive(Serialize)]
-        struct SerializableLweSeededCiphertextVector32<'a> {
-            version: LweSeededCiphertextVector32Version,
+        struct SerializableLweSeededCiphertextArray32<'a> {
+            version: LweSeededCiphertextArray32Version,
             inner: &'a ImplLweSeededList<Vec<u32>>,
         }
-        let serializable = SerializableLweSeededCiphertextVector32 {
-            version: LweSeededCiphertextVector32Version::V0,
+        let serializable = SerializableLweSeededCiphertextArray32 {
+            version: LweSeededCiphertextArray32Version::V0,
             inner: &entity.0,
         };
         bincode::serialize(&serializable)
@@ -2794,17 +2783,15 @@ impl EntitySerializationEngine<LweSeededCiphertextVector32, Vec<u8>>
             .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn serialize_unchecked(&mut self, entity: &LweSeededCiphertextVector32) -> Vec<u8> {
+    unsafe fn serialize_unchecked(&mut self, entity: &LweSeededCiphertextArray32) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
 
 /// # Description:
 /// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
-/// on 64 bits integers. It serializes a seeded LWE ciphertext vector entity.
-impl EntitySerializationEngine<LweSeededCiphertextVector64, Vec<u8>>
-    for DefaultSerializationEngine
-{
+/// on 64 bits integers. It serializes a seeded LWE ciphertext array entity.
+impl EntitySerializationEngine<LweSeededCiphertextArray64, Vec<u8>> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_core::prelude::{LweCiphertextCount, LweDimension, Variance, *};
@@ -2822,15 +2809,15 @@ impl EntitySerializationEngine<LweSeededCiphertextVector64, Vec<u8>>
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
-    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array: PlaintextArray64 = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let mut ciphertext_vector: LweSeededCiphertextVector64 =
-    ///     engine.encrypt_lwe_seeded_ciphertext_vector(&key, &plaintext_vector, noise)?;
+    /// let mut ciphertext_array: LweSeededCiphertextArray64 =
+    ///     engine.encrypt_lwe_seeded_ciphertext_array(&key, &plaintext_array, noise)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&ciphertext_vector)?;
+    /// let serialized = serialization_engine.serialize(&ciphertext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(ciphertext_vector, recovered);
+    /// assert_eq!(ciphertext_array, recovered);
     ///
     /// #
     /// # Ok(())
@@ -2838,15 +2825,15 @@ impl EntitySerializationEngine<LweSeededCiphertextVector64, Vec<u8>>
     /// ```
     fn serialize(
         &mut self,
-        entity: &LweSeededCiphertextVector64,
+        entity: &LweSeededCiphertextArray64,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
         #[derive(Serialize)]
-        struct SerializableLweSeededCiphertextVector64<'a> {
-            version: LweSeededCiphertextVector64Version,
+        struct SerializableLweSeededCiphertextArray64<'a> {
+            version: LweSeededCiphertextArray64Version,
             inner: &'a ImplLweSeededList<Vec<u64>>,
         }
-        let serializable = SerializableLweSeededCiphertextVector64 {
-            version: LweSeededCiphertextVector64Version::V0,
+        let serializable = SerializableLweSeededCiphertextArray64 {
+            version: LweSeededCiphertextArray64Version::V0,
             inner: &entity.0,
         };
         bincode::serialize(&serializable)
@@ -2854,7 +2841,7 @@ impl EntitySerializationEngine<LweSeededCiphertextVector64, Vec<u8>>
             .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn serialize_unchecked(&mut self, entity: &LweSeededCiphertextVector64) -> Vec<u8> {
+    unsafe fn serialize_unchecked(&mut self, entity: &LweSeededCiphertextArray64) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
@@ -3226,8 +3213,8 @@ impl EntitySerializationEngine<Plaintext64, Vec<u8>> for DefaultSerializationEng
 
 /// # Description:
 /// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
-/// on 32 bits integers. It serializes a plaintext vector entity.
-impl EntitySerializationEngine<PlaintextVector32, Vec<u8>> for DefaultSerializationEngine {
+/// on 32 bits integers. It serializes a plaintext array entity.
+impl EntitySerializationEngine<PlaintextArray32, Vec<u8>> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_core::prelude::{PlaintextCount, *};
@@ -3241,12 +3228,12 @@ impl EntitySerializationEngine<PlaintextVector32, Vec<u8>> for DefaultSerializat
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array: PlaintextArray32 = engine.create_plaintext_array_from(&input)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&plaintext_vector)?;
+    /// let serialized = serialization_engine.serialize(&plaintext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(plaintext_vector, recovered);
+    /// assert_eq!(plaintext_array, recovered);
     ///
     /// #
     /// # Ok(())
@@ -3254,15 +3241,15 @@ impl EntitySerializationEngine<PlaintextVector32, Vec<u8>> for DefaultSerializat
     /// ```
     fn serialize(
         &mut self,
-        entity: &PlaintextVector32,
+        entity: &PlaintextArray32,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
         #[derive(Serialize)]
-        struct SerializablePlaintextVector32<'a> {
-            version: PlaintextVector32Version,
+        struct SerializablePlaintextArray32<'a> {
+            version: PlaintextArray32Version,
             inner: &'a ImplPlaintextList<Vec<u32>>,
         }
-        let serializable = SerializablePlaintextVector32 {
-            version: PlaintextVector32Version::V0,
+        let serializable = SerializablePlaintextArray32 {
+            version: PlaintextArray32Version::V0,
             inner: &entity.0,
         };
         bincode::serialize(&serializable)
@@ -3270,15 +3257,15 @@ impl EntitySerializationEngine<PlaintextVector32, Vec<u8>> for DefaultSerializat
             .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn serialize_unchecked(&mut self, entity: &PlaintextVector32) -> Vec<u8> {
+    unsafe fn serialize_unchecked(&mut self, entity: &PlaintextArray32) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
 
 /// # Description:
 /// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
-/// on 64 bits integers. It serializes a plaintext vector entity.
-impl EntitySerializationEngine<PlaintextVector64, Vec<u8>> for DefaultSerializationEngine {
+/// on 64 bits integers. It serializes a plaintext array entity.
+impl EntitySerializationEngine<PlaintextArray64, Vec<u8>> for DefaultSerializationEngine {
     /// # Example:
     /// ```
     /// use concrete_core::prelude::{PlaintextCount, *};
@@ -3292,12 +3279,12 @@ impl EntitySerializationEngine<PlaintextVector64, Vec<u8>> for DefaultSerializat
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array: PlaintextArray64 = engine.create_plaintext_array_from(&input)?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&plaintext_vector)?;
+    /// let serialized = serialization_engine.serialize(&plaintext_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(plaintext_vector, recovered);
+    /// assert_eq!(plaintext_array, recovered);
     ///
     /// #
     /// # Ok(())
@@ -3305,15 +3292,15 @@ impl EntitySerializationEngine<PlaintextVector64, Vec<u8>> for DefaultSerializat
     /// ```
     fn serialize(
         &mut self,
-        entity: &PlaintextVector64,
+        entity: &PlaintextArray64,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
         #[derive(Serialize)]
-        struct SerializablePlaintextVector64<'a> {
-            version: PlaintextVector64Version,
+        struct SerializablePlaintextArray64<'a> {
+            version: PlaintextArray64Version,
             inner: &'a ImplPlaintextList<Vec<u64>>,
         }
-        let serializable = SerializablePlaintextVector64 {
-            version: PlaintextVector64Version::V0,
+        let serializable = SerializablePlaintextArray64 {
+            version: PlaintextArray64Version::V0,
             inner: &entity.0,
         };
         bincode::serialize(&serializable)
@@ -3321,7 +3308,7 @@ impl EntitySerializationEngine<PlaintextVector64, Vec<u8>> for DefaultSerializat
             .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn serialize_unchecked(&mut self, entity: &PlaintextVector64) -> Vec<u8> {
+    unsafe fn serialize_unchecked(&mut self, entity: &PlaintextArray64) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
@@ -3382,12 +3369,11 @@ impl EntitySerializationEngine<FloatEncoder, Vec<u8>> for DefaultSerializationEn
 
 /// # Description:
 /// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
-/// on 64 bits integers. It serializes a float encoder vector entity.
-impl EntitySerializationEngine<FloatEncoderVector, Vec<u8>> for DefaultSerializationEngine {
+/// on 64 bits integers. It serializes a float encoder array entity.
+impl EntitySerializationEngine<FloatEncoderArray, Vec<u8>> for DefaultSerializationEngine {
     /// # Example:
     /// ```
-    /// use concrete_core::prelude::PlaintextCount;
-    /// use concrete_core::prelude::*;
+    /// use concrete_core::prelude::{PlaintextCount, *};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -3396,7 +3382,7 @@ impl EntitySerializationEngine<FloatEncoderVector, Vec<u8>> for DefaultSerializa
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let encoder_vector = engine.create_encoder_vector_from(&vec![
+    /// let encoder_array = engine.create_encoder_array_from(&vec![
     ///     FloatEncoderCenterRadiusConfig {
     ///         center: 10.,
     ///         radius: 5.,
@@ -3407,9 +3393,9 @@ impl EntitySerializationEngine<FloatEncoderVector, Vec<u8>> for DefaultSerializa
     /// ])?;
     ///
     /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
-    /// let serialized = serialization_engine.serialize(&encoder_vector)?;
+    /// let serialized = serialization_engine.serialize(&encoder_array)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
-    /// assert_eq!(encoder_vector, recovered);
+    /// assert_eq!(encoder_array, recovered);
     ///
     /// #
     /// # Ok(())
@@ -3417,15 +3403,15 @@ impl EntitySerializationEngine<FloatEncoderVector, Vec<u8>> for DefaultSerializa
     /// ```
     fn serialize(
         &mut self,
-        entity: &FloatEncoderVector,
+        entity: &FloatEncoderArray,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
         #[derive(Serialize)]
-        struct SerializableFloatEncoderVector<'a> {
-            version: FloatEncoderVectorVersion,
+        struct SerializableFloatEncoderArray<'a> {
+            version: FloatEncoderArrayVersion,
             inner: &'a Vec<ImplFloatEncoder>,
         }
-        let serializable = SerializableFloatEncoderVector {
-            version: FloatEncoderVectorVersion::V0,
+        let serializable = SerializableFloatEncoderArray {
+            version: FloatEncoderArrayVersion::V0,
             inner: &entity.0,
         };
         bincode::serialize(&serializable)
@@ -3433,7 +3419,7 @@ impl EntitySerializationEngine<FloatEncoderVector, Vec<u8>> for DefaultSerializa
             .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn serialize_unchecked(&mut self, entity: &FloatEncoderVector) -> Vec<u8> {
+    unsafe fn serialize_unchecked(&mut self, entity: &FloatEncoderArray) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }

@@ -3,8 +3,8 @@ use crate::backends::fftw::entities::{FftwFourierLweBootstrapKey32, FftwFourierL
 use crate::backends::fftw::private::crypto::wop_pbs::extract_bits;
 use crate::prelude::{
     CiphertextModulusLog, DeltaLog, ExtractedBitsCount, LweBootstrapKeyEntity, LweCiphertext32,
-    LweCiphertext64, LweCiphertextVector32, LweCiphertextVector64, LweCiphertextVectorMutView32,
-    LweCiphertextVectorMutView64, LweCiphertextView32, LweCiphertextView64, LweKeyswitchKey32,
+    LweCiphertext64, LweCiphertextArray32, LweCiphertextArray64, LweCiphertextArrayMutView32,
+    LweCiphertextArrayMutView64, LweCiphertextView32, LweCiphertextView64, LweKeyswitchKey32,
     LweKeyswitchKey64,
 };
 use crate::specification::engines::{
@@ -25,7 +25,7 @@ impl
         FftwFourierLweBootstrapKey32,
         LweKeyswitchKey32,
         LweCiphertext32,
-        LweCiphertextVector32,
+        LweCiphertextArray32,
     > for FftwEngine
 {
     /// # Example
@@ -74,7 +74,7 @@ impl
     /// let bsk: FftwFourierLweBootstrapKey32 = fftw_engine.convert_lwe_bootstrap_key(&bsk)?;
     /// let plaintext = default_engine.create_plaintext_from(&input)?;
     /// let input = default_engine.encrypt_lwe_ciphertext(&input_lwe_sk, &plaintext, noise)?;
-    /// let mut output = default_engine.zero_encrypt_lwe_ciphertext_vector(
+    /// let mut output = default_engine.zero_encrypt_lwe_ciphertext_array(
     ///     &output_lwe_sk,
     ///     noise,
     ///     LweCiphertextCount(extracted_bits_count.0),
@@ -101,7 +101,7 @@ impl
     /// ```
     fn discard_extract_bits_lwe_ciphertext(
         &mut self,
-        output: &mut LweCiphertextVector32,
+        output: &mut LweCiphertextArray32,
         input: &LweCiphertext32,
         bsk: &FftwFourierLweBootstrapKey32,
         ksk: &LweKeyswitchKey32,
@@ -133,7 +133,7 @@ impl
 
     unsafe fn discard_extract_bits_lwe_ciphertext_unchecked(
         &mut self,
-        output: &mut LweCiphertextVector32,
+        output: &mut LweCiphertextArray32,
         input: &LweCiphertext32,
         bsk: &FftwFourierLweBootstrapKey32,
         ksk: &LweKeyswitchKey32,
@@ -162,7 +162,7 @@ impl
         FftwFourierLweBootstrapKey64,
         LweKeyswitchKey64,
         LweCiphertext64,
-        LweCiphertextVector64,
+        LweCiphertextArray64,
     > for FftwEngine
 {
     /// # Example
@@ -211,7 +211,7 @@ impl
     /// let bsk: FftwFourierLweBootstrapKey64 = fftw_engine.convert_lwe_bootstrap_key(&bsk)?;
     /// let plaintext = default_engine.create_plaintext_from(&input)?;
     /// let input = default_engine.encrypt_lwe_ciphertext(&input_lwe_sk, &plaintext, noise)?;
-    /// let mut output = default_engine.zero_encrypt_lwe_ciphertext_vector(
+    /// let mut output = default_engine.zero_encrypt_lwe_ciphertext_array(
     ///     &output_lwe_sk,
     ///     noise,
     ///     LweCiphertextCount(extracted_bits_count.0),
@@ -238,7 +238,7 @@ impl
     /// ```
     fn discard_extract_bits_lwe_ciphertext(
         &mut self,
-        output: &mut LweCiphertextVector64,
+        output: &mut LweCiphertextArray64,
         input: &LweCiphertext64,
         bsk: &FftwFourierLweBootstrapKey64,
         ksk: &LweKeyswitchKey64,
@@ -270,7 +270,7 @@ impl
 
     unsafe fn discard_extract_bits_lwe_ciphertext_unchecked(
         &mut self,
-        output: &mut LweCiphertextVector64,
+        output: &mut LweCiphertextArray64,
         input: &LweCiphertext64,
         bsk: &FftwFourierLweBootstrapKey64,
         ksk: &LweKeyswitchKey64,
@@ -299,7 +299,7 @@ impl
         FftwFourierLweBootstrapKey32,
         LweKeyswitchKey32,
         LweCiphertextView32<'_>,
-        LweCiphertextVectorMutView32<'_>,
+        LweCiphertextArrayMutView32<'_>,
     > for FftwEngine
 {
     /// # Example
@@ -354,11 +354,10 @@ impl
     ///
     /// let mut output_ct_vec_container =
     ///     vec![0u32; output_lwe_sk.lwe_dimension().to_lwe_size().0 * extracted_bits_count.0];
-    /// let mut output: LweCiphertextVectorMutView32 = default_engine
-    ///     .create_lwe_ciphertext_vector_from(
-    ///         output_ct_vec_container.as_mut_slice(),
-    ///         output_lwe_sk.lwe_dimension().to_lwe_size(),
-    ///     )?;
+    /// let mut output: LweCiphertextArrayMutView32 = default_engine.create_lwe_ciphertext_array_from(
+    ///     output_ct_vec_container.as_mut_slice(),
+    ///     output_lwe_sk.lwe_dimension().to_lwe_size(),
+    /// )?;
     ///
     /// default_engine.discard_encrypt_lwe_ciphertext(&input_lwe_sk, &mut input, &plaintext, noise)?;
     ///
@@ -386,7 +385,7 @@ impl
     /// ```
     fn discard_extract_bits_lwe_ciphertext(
         &mut self,
-        output: &mut LweCiphertextVectorMutView32<'_>,
+        output: &mut LweCiphertextArrayMutView32<'_>,
         input: &LweCiphertextView32<'_>,
         bsk: &FftwFourierLweBootstrapKey32,
         ksk: &LweKeyswitchKey32,
@@ -418,7 +417,7 @@ impl
 
     unsafe fn discard_extract_bits_lwe_ciphertext_unchecked(
         &mut self,
-        output: &mut LweCiphertextVectorMutView32<'_>,
+        output: &mut LweCiphertextArrayMutView32<'_>,
         input: &LweCiphertextView32<'_>,
         bsk: &FftwFourierLweBootstrapKey32,
         ksk: &LweKeyswitchKey32,
@@ -447,7 +446,7 @@ impl
         FftwFourierLweBootstrapKey64,
         LweKeyswitchKey64,
         LweCiphertextView64<'_>,
-        LweCiphertextVectorMutView64<'_>,
+        LweCiphertextArrayMutView64<'_>,
     > for FftwEngine
 {
     /// # Example
@@ -502,11 +501,10 @@ impl
     ///
     /// let mut output_ct_vec_container =
     ///     vec![0u64; output_lwe_sk.lwe_dimension().to_lwe_size().0 * extracted_bits_count.0];
-    /// let mut output: LweCiphertextVectorMutView64 = default_engine
-    ///     .create_lwe_ciphertext_vector_from(
-    ///         output_ct_vec_container.as_mut_slice(),
-    ///         output_lwe_sk.lwe_dimension().to_lwe_size(),
-    ///     )?;
+    /// let mut output: LweCiphertextArrayMutView64 = default_engine.create_lwe_ciphertext_array_from(
+    ///     output_ct_vec_container.as_mut_slice(),
+    ///     output_lwe_sk.lwe_dimension().to_lwe_size(),
+    /// )?;
     ///
     /// default_engine.discard_encrypt_lwe_ciphertext(&input_lwe_sk, &mut input, &plaintext, noise)?;
     ///
@@ -534,7 +532,7 @@ impl
     /// ```
     fn discard_extract_bits_lwe_ciphertext(
         &mut self,
-        output: &mut LweCiphertextVectorMutView64<'_>,
+        output: &mut LweCiphertextArrayMutView64<'_>,
         input: &LweCiphertextView64<'_>,
         bsk: &FftwFourierLweBootstrapKey64,
         ksk: &LweKeyswitchKey64,
@@ -566,7 +564,7 @@ impl
 
     unsafe fn discard_extract_bits_lwe_ciphertext_unchecked(
         &mut self,
-        output: &mut LweCiphertextVectorMutView64<'_>,
+        output: &mut LweCiphertextArrayMutView64<'_>,
         input: &LweCiphertextView64<'_>,
         bsk: &FftwFourierLweBootstrapKey64,
         ksk: &LweKeyswitchKey64,

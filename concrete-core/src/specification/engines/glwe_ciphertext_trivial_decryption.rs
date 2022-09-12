@@ -1,6 +1,6 @@
 use super::engine_error;
 use crate::specification::engines::AbstractEngine;
-use crate::specification::entities::{GlweCiphertextEntity, PlaintextVectorEntity};
+use crate::specification::entities::{GlweCiphertextEntity, PlaintextArrayEntity};
 
 engine_error! {
     GlweCiphertextTrivialDecryptionError for GlweCiphertextTrivialDecryptionEngine @
@@ -10,25 +10,25 @@ engine_error! {
 ///
 /// # Semantics
 ///
-/// This [pure](super#operation-semantics) operation generates a plaintext vector containing the
+/// This [pure](super#operation-semantics) operation generates a plaintext array containing the
 /// trivial decryption of the `input` ciphertext.
 ///
 /// # Formal Definition
 ///
 /// see [here](../engines/trait.GlweCiphertextTrivialEncryptionEngine.html)
-pub trait GlweCiphertextTrivialDecryptionEngine<Ciphertext, PlaintextVector>:
+pub trait GlweCiphertextTrivialDecryptionEngine<Ciphertext, PlaintextArray>:
     AbstractEngine
 where
     Ciphertext: GlweCiphertextEntity,
-    PlaintextVector: PlaintextVectorEntity,
+    PlaintextArray: PlaintextArrayEntity,
 {
-    /// Decrypts a GLWE ciphertext into a plaintext vector.
+    /// Decrypts a GLWE ciphertext into a plaintext array.
     fn trivially_decrypt_glwe_ciphertext(
         &mut self,
         input: &Ciphertext,
-    ) -> Result<PlaintextVector, GlweCiphertextTrivialDecryptionError<Self::EngineError>>;
+    ) -> Result<PlaintextArray, GlweCiphertextTrivialDecryptionError<Self::EngineError>>;
 
-    /// Unsafely trivially decrypts a GLWE ciphertext into a plaintext vector.
+    /// Unsafely trivially decrypts a GLWE ciphertext into a plaintext array.
     ///
     /// # Safety
     /// For the _general_ safety concerns regarding this operation, refer to the different variants
@@ -37,5 +37,5 @@ where
     unsafe fn trivially_decrypt_glwe_ciphertext_unchecked(
         &mut self,
         input: &Ciphertext,
-    ) -> PlaintextVector;
+    ) -> PlaintextArray;
 }

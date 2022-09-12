@@ -4,7 +4,7 @@ pub use crate::generation::prototypes::{
     ProtoBinaryBinaryLwePrivateFunctionalPackingKeyswitchKey64,
 };
 use crate::generation::prototyping::lwe_secret_key::PrototypesLweSecretKey;
-use crate::generation::prototyping::PrototypesCleartextVector;
+use crate::generation::prototyping::PrototypesCleartextArray;
 use crate::generation::{
     BinaryKeyDistribution, IntegerPrecision, KeyDistributionMarker, Maker, Precision32, Precision64,
 };
@@ -25,7 +25,7 @@ pub trait PrototypesLwePrivateFunctionalPackingKeyswitchKey<
 >:
     PrototypesLweSecretKey<Precision, InputKeyDistribution>
     + PrototypesGlweSecretKey<Precision, OutputKeyDistribution>
-    + PrototypesCleartextVector<Precision>
+    + PrototypesCleartextArray<Precision>
 {
     type LwePrivateFunctionalPackingKeyswitchKeyProto: LwePrivateFunctionalPackingKeyswitchKeyPrototype<
         Precision = Precision,
@@ -47,7 +47,7 @@ pub trait PrototypesLwePrivateFunctionalPackingKeyswitchKey<
         decomposition_base_log: DecompositionBaseLog,
         noise: StandardDev,
         f: &dyn Fn(Precision::Raw) -> Precision::Raw,
-        polynomial: &<Self as PrototypesCleartextVector<Precision>>::CleartextVectorProto,
+        polynomial: &<Self as PrototypesCleartextArray<Precision>>::CleartextArrayProto,
     ) -> Self::LwePrivateFunctionalPackingKeyswitchKeyProto;
 }
 
@@ -69,7 +69,7 @@ impl
         decomposition_base_log: DecompositionBaseLog,
         noise: StandardDev,
         f: &dyn Fn(u32) -> u32,
-        polynomial_scalar: &Self::CleartextVectorProto,
+        polynomial_scalar: &Self::CleartextArrayProto,
     ) -> Self::LwePrivateFunctionalPackingKeyswitchKeyProto {
         ProtoBinaryBinaryLwePrivateFunctionalPackingKeyswitchKey32(
             self.default_engine
@@ -105,7 +105,7 @@ impl
         decomposition_base_log: DecompositionBaseLog,
         noise: StandardDev,
         f: &dyn Fn(u64) -> u64,
-        polynomial_scalar: &Self::CleartextVectorProto,
+        polynomial_scalar: &Self::CleartextArrayProto,
     ) -> Self::LwePrivateFunctionalPackingKeyswitchKeyProto {
         ProtoBinaryBinaryLwePrivateFunctionalPackingKeyswitchKey64(
             self.default_engine

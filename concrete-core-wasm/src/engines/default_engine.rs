@@ -23,54 +23,42 @@ impl DefaultEngine {
         wrap!(Plaintext64, self.0.create_plaintext_from(&input))
     }
 
-    pub fn create_plaintext_vector_64(&mut self, input: Vec<u64>) -> JsResult<PlaintextVector64> {
-        wrap!(
-            PlaintextVector64,
-            self.0.create_plaintext_vector_from(&input)
-        )
+    pub fn create_plaintext_array_64(&mut self, input: Vec<u64>) -> JsResult<PlaintextArray64> {
+        wrap!(PlaintextArray64, self.0.create_plaintext_array_from(&input))
     }
 
     pub fn retrieve_plaintext_64(&mut self, input: &Plaintext64) -> JsResult<u64> {
         jserr!(self.0.retrieve_plaintext(&input.0))
     }
 
-    pub fn retrieve_plaintext_vector_64(
-        &mut self,
-        input: &PlaintextVector64,
-    ) -> JsResult<Vec<u64>> {
-        jserr!(self.0.retrieve_plaintext_vector(&input.0))
+    pub fn retrieve_plaintext_array_64(&mut self, input: &PlaintextArray64) -> JsResult<Vec<u64>> {
+        jserr!(self.0.retrieve_plaintext_array(&input.0))
     }
 
     pub fn create_plaintext_32(&mut self, input: u32) -> JsResult<Plaintext32> {
         wrap!(Plaintext32, self.0.create_plaintext_from(&input))
     }
 
-    pub fn create_plaintext_vector_32(&mut self, input: Vec<u32>) -> JsResult<PlaintextVector32> {
-        wrap!(
-            PlaintextVector32,
-            self.0.create_plaintext_vector_from(&input)
-        )
+    pub fn create_plaintext_array_32(&mut self, input: Vec<u32>) -> JsResult<PlaintextArray32> {
+        wrap!(PlaintextArray32, self.0.create_plaintext_array_from(&input))
     }
 
     pub fn retrieve_plaintext_32(&mut self, input: &Plaintext32) -> JsResult<u32> {
         jserr!(self.0.retrieve_plaintext(&input.0))
     }
 
-    pub fn retrieve_plaintext_vector_32(
-        &mut self,
-        input: &PlaintextVector32,
-    ) -> JsResult<Vec<u32>> {
-        jserr!(self.0.retrieve_plaintext_vector(&input.0))
+    pub fn retrieve_plaintext_array_32(&mut self, input: &PlaintextArray32) -> JsResult<Vec<u32>> {
+        jserr!(self.0.retrieve_plaintext_array(&input.0))
     }
 
     pub fn create_cleartext_f64(&mut self, input: f64) -> JsResult<CleartextF64> {
         wrap!(CleartextF64, self.0.create_cleartext_from(&input))
     }
 
-    pub fn create_cleartext_vector_f64(&mut self, input: Vec<f64>) -> JsResult<CleartextVectorF64> {
+    pub fn create_cleartext_array_f64(&mut self, input: Vec<f64>) -> JsResult<CleartextArrayF64> {
         wrap!(
-            CleartextVectorF64,
-            self.0.create_cleartext_vector_from(input.as_slice())
+            CleartextArrayF64,
+            self.0.create_cleartext_array_from(input.as_slice())
         )
     }
 
@@ -78,11 +66,11 @@ impl DefaultEngine {
         jserr!(self.0.retrieve_cleartext(&cleartext.0))
     }
 
-    pub fn retrieve_cleartext_vector_f64(
+    pub fn retrieve_cleartext_array_f64(
         &mut self,
-        input: &CleartextVectorF64,
+        input: &CleartextArrayF64,
     ) -> JsResult<Vec<f64>> {
-        jserr!(self.0.retrieve_cleartext_vector(&input.0))
+        jserr!(self.0.retrieve_cleartext_array(&input.0))
     }
 
     pub fn create_encoder_f64_min_max(&mut self, config: &JsValue) -> JsResult<FloatEncoder> {
@@ -146,10 +134,10 @@ impl DefaultEngine {
     }
 
     #[allow(clippy::boxed_local)]
-    pub fn create_encoder_vector_f64_min_max(
+    pub fn create_encoder_array_f64_min_max(
         &mut self,
         config: Box<[JsValue]>,
-    ) -> JsResult<FloatEncoderVector> {
+    ) -> JsResult<FloatEncoderArray> {
         #[derive(Deserialize)]
         struct Config {
             min: f64,
@@ -179,16 +167,16 @@ impl DefaultEngine {
             })
             .collect();
         wrap!(
-            FloatEncoderVector,
-            self.0.create_encoder_vector_from(configs.as_slice())
+            FloatEncoderArray,
+            self.0.create_encoder_array_from(configs.as_slice())
         )
     }
 
     #[allow(clippy::boxed_local)]
-    pub fn create_encoder_vector_f64_center_radius(
+    pub fn create_encoder_array_f64_center_radius(
         &mut self,
         config: Box<[JsValue]>,
-    ) -> JsResult<FloatEncoderVector> {
+    ) -> JsResult<FloatEncoderArray> {
         #[derive(Deserialize)]
         struct Config {
             center: f64,
@@ -218,8 +206,8 @@ impl DefaultEngine {
             })
             .collect();
         wrap!(
-            FloatEncoderVector,
-            self.0.create_encoder_vector_from(configs.as_slice())
+            FloatEncoderArray,
+            self.0.create_encoder_array_from(configs.as_slice())
         )
     }
 
@@ -245,27 +233,27 @@ impl DefaultEngine {
         )
     }
 
-    pub fn encode_cleartext_vector_f64_plaintext_vector_32(
+    pub fn encode_cleartext_array_f64_plaintext_array_32(
         &mut self,
-        encoder_vector: &FloatEncoderVector,
-        cleartext_vector: &CleartextVectorF64,
-    ) -> JsResult<PlaintextVector32> {
+        encoder_array: &FloatEncoderArray,
+        cleartext_array: &CleartextArrayF64,
+    ) -> JsResult<PlaintextArray32> {
         wrap!(
-            PlaintextVector32,
+            PlaintextArray32,
             self.0
-                .encode_cleartext_vector(&encoder_vector.0, &cleartext_vector.0)
+                .encode_cleartext_array(&encoder_array.0, &cleartext_array.0)
         )
     }
 
-    pub fn encode_cleartext_vector_f64_plaintext_vector_64(
+    pub fn encode_cleartext_array_f64_plaintext_array_64(
         &mut self,
-        encoder_vector: &FloatEncoderVector,
-        cleartext_vector: &CleartextVectorF64,
-    ) -> JsResult<PlaintextVector64> {
+        encoder_array: &FloatEncoderArray,
+        cleartext_array: &CleartextArrayF64,
+    ) -> JsResult<PlaintextArray64> {
         wrap!(
-            PlaintextVector64,
+            PlaintextArray64,
             self.0
-                .encode_cleartext_vector(&encoder_vector.0, &cleartext_vector.0)
+                .encode_cleartext_array(&encoder_array.0, &cleartext_array.0)
         )
     }
 
@@ -291,27 +279,27 @@ impl DefaultEngine {
         )
     }
 
-    pub fn decode_plaintext_vector_32_cleartext_vector_f64(
+    pub fn decode_plaintext_array_32_cleartext_array_f64(
         &mut self,
-        encoder_vector: &FloatEncoderVector,
-        plaintext_vector: &PlaintextVector32,
-    ) -> JsResult<CleartextVectorF64> {
+        encoder_array: &FloatEncoderArray,
+        plaintext_array: &PlaintextArray32,
+    ) -> JsResult<CleartextArrayF64> {
         wrap!(
-            CleartextVectorF64,
+            CleartextArrayF64,
             self.0
-                .decode_plaintext_vector(&encoder_vector.0, &plaintext_vector.0)
+                .decode_plaintext_array(&encoder_array.0, &plaintext_array.0)
         )
     }
 
-    pub fn decode_plaintext_vector_64_cleartext_vector_f64(
+    pub fn decode_plaintext_array_64_cleartext_array_f64(
         &mut self,
-        encoder_vector: &FloatEncoderVector,
-        plaintext_vector: &PlaintextVector64,
-    ) -> JsResult<CleartextVectorF64> {
+        encoder_array: &FloatEncoderArray,
+        plaintext_array: &PlaintextArray64,
+    ) -> JsResult<CleartextArrayF64> {
         wrap!(
-            CleartextVectorF64,
+            CleartextArrayF64,
             self.0
-                .decode_plaintext_vector(&encoder_vector.0, &plaintext_vector.0)
+                .decode_plaintext_array(&encoder_array.0, &plaintext_array.0)
         )
     }
 
@@ -423,36 +411,36 @@ impl DefaultEngine {
         )
     }
 
-    pub fn encrypt_lwe_ciphertext_vector_32(
+    pub fn encrypt_lwe_ciphertext_array_32(
         &mut self,
         key: &LweSecretKey32,
-        input: &PlaintextVector32,
+        input: &PlaintextArray32,
         noise: Variance,
-    ) -> JsResult<LweCiphertextVector32> {
+    ) -> JsResult<LweCiphertextArray32> {
         wrap!(
-            LweCiphertextVector32,
+            LweCiphertextArray32,
             self.0
-                .encrypt_lwe_ciphertext_vector(&key.0, &input.0, noise.0)
+                .encrypt_lwe_ciphertext_array(&key.0, &input.0, noise.0)
         )
     }
 
-    pub fn encrypt_lwe_ciphertext_vector_64(
+    pub fn encrypt_lwe_ciphertext_array_64(
         &mut self,
         key: &LweSecretKey64,
-        input: &PlaintextVector64,
+        input: &PlaintextArray64,
         noise: Variance,
-    ) -> JsResult<LweCiphertextVector64> {
+    ) -> JsResult<LweCiphertextArray64> {
         wrap!(
-            LweCiphertextVector64,
+            LweCiphertextArray64,
             self.0
-                .encrypt_lwe_ciphertext_vector(&key.0, &input.0, noise.0)
+                .encrypt_lwe_ciphertext_array(&key.0, &input.0, noise.0)
         )
     }
 
     pub fn encrypt_glwe_ciphertext_32(
         &mut self,
         key: &GlweSecretKey32,
-        input: &PlaintextVector32,
+        input: &PlaintextArray32,
         noise: Variance,
     ) -> JsResult<GlweCiphertext32> {
         wrap!(
@@ -464,7 +452,7 @@ impl DefaultEngine {
     pub fn encrypt_glwe_ciphertext_64(
         &mut self,
         key: &GlweSecretKey64,
-        input: &PlaintextVector64,
+        input: &PlaintextArray64,
         noise: Variance,
     ) -> JsResult<GlweCiphertext64> {
         wrap!(
@@ -473,29 +461,29 @@ impl DefaultEngine {
         )
     }
 
-    pub fn encrypt_glwe_ciphertext_vector_32(
+    pub fn encrypt_glwe_ciphertext_array_32(
         &mut self,
         key: &GlweSecretKey32,
-        input: &PlaintextVector32,
+        input: &PlaintextArray32,
         noise: Variance,
-    ) -> JsResult<GlweCiphertextVector32> {
+    ) -> JsResult<GlweCiphertextArray32> {
         wrap!(
-            GlweCiphertextVector32,
+            GlweCiphertextArray32,
             self.0
-                .encrypt_glwe_ciphertext_vector(&key.0, &input.0, noise.0)
+                .encrypt_glwe_ciphertext_array(&key.0, &input.0, noise.0)
         )
     }
 
-    pub fn encrypt_glwe_ciphertext_vector_64(
+    pub fn encrypt_glwe_ciphertext_array_64(
         &mut self,
         key: &GlweSecretKey64,
-        input: &PlaintextVector64,
+        input: &PlaintextArray64,
         noise: Variance,
-    ) -> JsResult<GlweCiphertextVector64> {
+    ) -> JsResult<GlweCiphertextArray64> {
         wrap!(
-            GlweCiphertextVector64,
+            GlweCiphertextArray64,
             self.0
-                .encrypt_glwe_ciphertext_vector(&key.0, &input.0, noise.0)
+                .encrypt_glwe_ciphertext_array(&key.0, &input.0, noise.0)
         )
     }
 
@@ -515,25 +503,25 @@ impl DefaultEngine {
         wrap!(Plaintext64, self.0.decrypt_lwe_ciphertext(&key.0, &input.0))
     }
 
-    pub fn decrypt_lwe_ciphertext_vector_32(
+    pub fn decrypt_lwe_ciphertext_array_32(
         &mut self,
         key: &LweSecretKey32,
-        input: &LweCiphertextVector32,
-    ) -> JsResult<PlaintextVector32> {
+        input: &LweCiphertextArray32,
+    ) -> JsResult<PlaintextArray32> {
         wrap!(
-            PlaintextVector32,
-            self.0.decrypt_lwe_ciphertext_vector(&key.0, &input.0)
+            PlaintextArray32,
+            self.0.decrypt_lwe_ciphertext_array(&key.0, &input.0)
         )
     }
 
-    pub fn decrypt_lwe_ciphertext_vector_64(
+    pub fn decrypt_lwe_ciphertext_array_64(
         &mut self,
         key: &LweSecretKey64,
-        input: &LweCiphertextVector64,
-    ) -> JsResult<PlaintextVector64> {
+        input: &LweCiphertextArray64,
+    ) -> JsResult<PlaintextArray64> {
         wrap!(
-            PlaintextVector64,
-            self.0.decrypt_lwe_ciphertext_vector(&key.0, &input.0)
+            PlaintextArray64,
+            self.0.decrypt_lwe_ciphertext_array(&key.0, &input.0)
         )
     }
 
@@ -541,9 +529,9 @@ impl DefaultEngine {
         &mut self,
         key: &GlweSecretKey32,
         input: &GlweCiphertext32,
-    ) -> JsResult<PlaintextVector32> {
+    ) -> JsResult<PlaintextArray32> {
         wrap!(
-            PlaintextVector32,
+            PlaintextArray32,
             self.0.decrypt_glwe_ciphertext(&key.0, &input.0)
         )
     }
@@ -552,32 +540,32 @@ impl DefaultEngine {
         &mut self,
         key: &GlweSecretKey64,
         input: &GlweCiphertext64,
-    ) -> JsResult<PlaintextVector64> {
+    ) -> JsResult<PlaintextArray64> {
         wrap!(
-            PlaintextVector64,
+            PlaintextArray64,
             self.0.decrypt_glwe_ciphertext(&key.0, &input.0)
         )
     }
 
-    pub fn decrypt_glwe_ciphertext_vector_32(
+    pub fn decrypt_glwe_ciphertext_array_32(
         &mut self,
         key: &GlweSecretKey32,
-        input: &GlweCiphertextVector32,
-    ) -> JsResult<PlaintextVector32> {
+        input: &GlweCiphertextArray32,
+    ) -> JsResult<PlaintextArray32> {
         wrap!(
-            PlaintextVector32,
-            self.0.decrypt_glwe_ciphertext_vector(&key.0, &input.0)
+            PlaintextArray32,
+            self.0.decrypt_glwe_ciphertext_array(&key.0, &input.0)
         )
     }
 
-    pub fn decrypt_glwe_ciphertext_vector_64(
+    pub fn decrypt_glwe_ciphertext_array_64(
         &mut self,
         key: &GlweSecretKey64,
-        input: &GlweCiphertextVector64,
-    ) -> JsResult<PlaintextVector64> {
+        input: &GlweCiphertextArray64,
+    ) -> JsResult<PlaintextArray64> {
         wrap!(
-            PlaintextVector64,
-            self.0.decrypt_glwe_ciphertext_vector(&key.0, &input.0)
+            PlaintextArray64,
+            self.0.decrypt_glwe_ciphertext_array(&key.0, &input.0)
         )
     }
 }

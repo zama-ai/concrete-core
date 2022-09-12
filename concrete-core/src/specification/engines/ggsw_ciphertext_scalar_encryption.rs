@@ -32,7 +32,7 @@ where
         decomposition_base_log: DecompositionBaseLog,
     ) -> Result<Ciphertext, GgswCiphertextScalarEncryptionError<Self::EngineError>>;
 
-    /// Unsafely encrypts a plaintext vector into a GGSW ciphertext.
+    /// Unsafely encrypts a plaintext array into a GGSW ciphertext.
     ///
     /// # Safety
     /// For the _general_ safety concerns regarding this operation, refer to the different variants

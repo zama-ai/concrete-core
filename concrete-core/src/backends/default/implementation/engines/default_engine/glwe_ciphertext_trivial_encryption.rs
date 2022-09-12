@@ -1,7 +1,7 @@
 use crate::prelude::GlweSize;
 
 use crate::backends::default::entities::{
-    GlweCiphertext32, GlweCiphertext64, PlaintextVector32, PlaintextVector64,
+    GlweCiphertext32, GlweCiphertext64, PlaintextArray32, PlaintextArray64,
 };
 use crate::commons::crypto::glwe::GlweCiphertext as ImplGlweCiphertext;
 use crate::specification::engines::{
@@ -10,7 +10,7 @@ use crate::specification::engines::{
 
 use crate::backends::default::engines::DefaultEngine;
 
-impl GlweCiphertextTrivialEncryptionEngine<PlaintextVector32, GlweCiphertext32> for DefaultEngine {
+impl GlweCiphertextTrivialEncryptionEngine<PlaintextArray32, GlweCiphertext32> for DefaultEngine {
     /// # Example:
     ///
     /// ```
@@ -27,10 +27,10 @@ impl GlweCiphertextTrivialEncryptionEngine<PlaintextVector32, GlweCiphertext32> 
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let plaintext_vector: PlaintextVector32 = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array: PlaintextArray32 = engine.create_plaintext_array_from(&input)?;
     /// // DISCLAIMER: trivial encryption is NOT secure, and DOES NOT hide the message at all.
     /// let ciphertext: GlweCiphertext32 = engine
-    ///     .trivially_encrypt_glwe_ciphertext(glwe_dimension.to_glwe_size(), &plaintext_vector)?;
+    ///     .trivially_encrypt_glwe_ciphertext(glwe_dimension.to_glwe_size(), &plaintext_array)?;
     ///
     /// assert_eq!(ciphertext.glwe_dimension(), glwe_dimension);
     /// assert_eq!(ciphertext.polynomial_size(), polynomial_size);
@@ -41,7 +41,7 @@ impl GlweCiphertextTrivialEncryptionEngine<PlaintextVector32, GlweCiphertext32> 
     fn trivially_encrypt_glwe_ciphertext(
         &mut self,
         glwe_size: GlweSize,
-        input: &PlaintextVector32,
+        input: &PlaintextArray32,
     ) -> Result<GlweCiphertext32, GlweCiphertextTrivialEncryptionError<Self::EngineError>> {
         unsafe { Ok(self.trivially_encrypt_glwe_ciphertext_unchecked(glwe_size, input)) }
     }
@@ -49,7 +49,7 @@ impl GlweCiphertextTrivialEncryptionEngine<PlaintextVector32, GlweCiphertext32> 
     unsafe fn trivially_encrypt_glwe_ciphertext_unchecked(
         &mut self,
         glwe_size: GlweSize,
-        input: &PlaintextVector32,
+        input: &PlaintextArray32,
     ) -> GlweCiphertext32 {
         let ciphertext: ImplGlweCiphertext<Vec<u32>> =
             ImplGlweCiphertext::new_trivial_encryption(glwe_size, &input.0);
@@ -57,7 +57,7 @@ impl GlweCiphertextTrivialEncryptionEngine<PlaintextVector32, GlweCiphertext32> 
     }
 }
 
-impl GlweCiphertextTrivialEncryptionEngine<PlaintextVector64, GlweCiphertext64> for DefaultEngine {
+impl GlweCiphertextTrivialEncryptionEngine<PlaintextArray64, GlweCiphertext64> for DefaultEngine {
     /// # Example:
     ///
     /// ```
@@ -74,10 +74,10 @@ impl GlweCiphertextTrivialEncryptionEngine<PlaintextVector64, GlweCiphertext64> 
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
-    /// let plaintext_vector: PlaintextVector64 = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array: PlaintextArray64 = engine.create_plaintext_array_from(&input)?;
     /// // DISCLAIMER: trivial encryption is NOT secure, and DOES NOT hide the message at all.
     /// let ciphertext: GlweCiphertext64 = engine
-    ///     .trivially_encrypt_glwe_ciphertext(glwe_dimension.to_glwe_size(), &plaintext_vector)?;
+    ///     .trivially_encrypt_glwe_ciphertext(glwe_dimension.to_glwe_size(), &plaintext_array)?;
     ///
     /// assert_eq!(ciphertext.glwe_dimension(), glwe_dimension);
     /// assert_eq!(ciphertext.polynomial_size(), polynomial_size);
@@ -88,7 +88,7 @@ impl GlweCiphertextTrivialEncryptionEngine<PlaintextVector64, GlweCiphertext64> 
     fn trivially_encrypt_glwe_ciphertext(
         &mut self,
         glwe_size: GlweSize,
-        input: &PlaintextVector64,
+        input: &PlaintextArray64,
     ) -> Result<GlweCiphertext64, GlweCiphertextTrivialEncryptionError<Self::EngineError>> {
         unsafe { Ok(self.trivially_encrypt_glwe_ciphertext_unchecked(glwe_size, input)) }
     }
@@ -96,7 +96,7 @@ impl GlweCiphertextTrivialEncryptionEngine<PlaintextVector64, GlweCiphertext64> 
     unsafe fn trivially_encrypt_glwe_ciphertext_unchecked(
         &mut self,
         glwe_size: GlweSize,
-        input: &PlaintextVector64,
+        input: &PlaintextArray64,
     ) -> GlweCiphertext64 {
         let ciphertext: ImplGlweCiphertext<Vec<u64>> =
             ImplGlweCiphertext::new_trivial_encryption(glwe_size, &input.0);

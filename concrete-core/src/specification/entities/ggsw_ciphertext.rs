@@ -11,7 +11,7 @@ use crate::specification::entities::AbstractEntity;
 /// # GGSW Ciphertext
 ///
 /// A GGSW ciphertext is an encryption of a polynomial plaintext.
-/// It is a vector of [`GLWE ciphertexts`](`crate::specification::entities::GlweCiphertextEntity`).
+/// It is an array of [`GLWE ciphertexts`](`crate::specification::entities::GlweCiphertextEntity`).
 /// It is a generalization of both GSW ciphertexts and RGSW ciphertexts.
 ///
 /// We call $q$ the ciphertext modulus.
@@ -20,7 +20,7 @@ use crate::specification::entities::AbstractEntity;
 /// power of two.
 ///
 /// We indicate a GGSW ciphertext of a polynomial plaintext $\mathsf{PT} \in\mathcal{R}\_q$
-/// as the following vector:
+/// as the following array:
 ///
 /// $$\overline{\overline{\mathsf{CT}}} = \left( \overline{\mathsf{CT}\_0}, \cdots
 /// , \overline{\mathsf{CT}\_{k}} \right) \in \mathsf{GGSW}\_{\vec{S}}^{\beta,
@@ -94,7 +94,7 @@ use crate::specification::entities::AbstractEntity;
 /// description helps understanding GGSW ciphertext.
 ///
 /// A GLev ciphertext is an encryption of a polynomial plaintext.
-/// It is a vector of GLev ciphertexts.
+/// It is an array of GLev ciphertexts.
 /// It is a generalization of both Lev ciphertexts and RLev ciphertexts.
 ///
 /// We call $q$ the ciphertext modulus.
@@ -102,7 +102,7 @@ use crate::specification::entities::AbstractEntity;
 /// $\mathbb{Z}\_q\[X\]/\left\langle X^N + 1\right\rangle$ where $N\in\mathbb{N}$ is a power of two.
 ///
 /// We indicate a GLev ciphertext of a polynomial plaintext $\mathsf{PT} \in\mathcal{R}\_q^{k+1}$ as
-/// the following vector: $$\overline{\mathsf{CT}} = \left( \mathsf{CT}\_0 , \cdots ,
+/// the following array: $$\overline{\mathsf{CT}} = \left( \mathsf{CT}\_0 , \cdots ,
 /// \mathsf{CT}\_{\ell-1} \right) \in \mathsf{GLev}\_{\vec{S}}^{\beta, \ell}\left(\mathsf{PT}\right)
 /// \subseteq \mathcal{R}\_q^{(k+1)\cdot \ell}$$
 ///

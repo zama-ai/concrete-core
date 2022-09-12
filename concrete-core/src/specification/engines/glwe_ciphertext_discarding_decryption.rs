@@ -1,28 +1,28 @@
 use super::engine_error;
 use crate::specification::engines::AbstractEngine;
 use crate::specification::entities::{
-    GlweCiphertextEntity, GlweSecretKeyEntity, PlaintextVectorEntity,
+    GlweCiphertextEntity, GlweSecretKeyEntity, PlaintextArrayEntity,
 };
 
 engine_error! {
     GlweCiphertextDiscardingDecryptionError for GlweCiphertextDiscardingDecryptionEngine @
     GlweDimensionMismatch => "The GLWE dimension of the key and ciphertext must be the same.",
     PolynomialSizeMismatch => "The polynomial size of the key and ciphertext must be the same.",
-    PlaintextCountMismatch => "The size of the output plaintext vector and the input ciphertext \
+    PlaintextCountMismatch => "The size of the output plaintext array and the input ciphertext \
                                polynomial size must be the same."
 }
 
 impl<EngineError: std::error::Error> GlweCiphertextDiscardingDecryptionError<EngineError> {
     /// Validates the inputs
-    pub fn perform_generic_checks<SecretKey, Ciphertext, PlaintextVector>(
+    pub fn perform_generic_checks<SecretKey, Ciphertext, PlaintextArray>(
         key: &SecretKey,
-        output: &PlaintextVector,
+        output: &PlaintextArray,
         input: &Ciphertext,
     ) -> Result<(), Self>
     where
         SecretKey: GlweSecretKeyEntity,
         Ciphertext: GlweCiphertextEntity,
-        PlaintextVector: PlaintextVectorEntity,
+        PlaintextArray: PlaintextArrayEntity,
     {
         if key.polynomial_size() != input.polynomial_size() {
             return Err(Self::PolynomialSizeMismatch);
@@ -41,24 +41,24 @@ impl<EngineError: std::error::Error> GlweCiphertextDiscardingDecryptionError<Eng
 ///
 /// # Semantics
 ///
-/// This [discarding](super#operation-semantics) operation fills the `output` plaintext vector with
+/// This [discarding](super#operation-semantics) operation fills the `output` plaintext array with
 /// the decryption of the `input` GLWE ciphertext, under the `key` secret key.
 ///
 /// # Formal Definition
 ///
 /// cf [`here`](`crate::specification::engines::GlweCiphertextDecryptionEngine`)
-pub trait GlweCiphertextDiscardingDecryptionEngine<SecretKey, Ciphertext, PlaintextVector>:
+pub trait GlweCiphertextDiscardingDecryptionEngine<SecretKey, Ciphertext, PlaintextArray>:
     AbstractEngine
 where
     SecretKey: GlweSecretKeyEntity,
     Ciphertext: GlweCiphertextEntity,
-    PlaintextVector: PlaintextVectorEntity,
+    PlaintextArray: PlaintextArrayEntity,
 {
     /// Decrypts a GLWE ciphertext .
     fn discard_decrypt_glwe_ciphertext(
         &mut self,
         key: &SecretKey,
-        output: &mut PlaintextVector,
+        output: &mut PlaintextArray,
         input: &Ciphertext,
     ) -> Result<(), GlweCiphertextDiscardingDecryptionError<Self::EngineError>>;
 
@@ -71,7 +71,7 @@ where
     unsafe fn discard_decrypt_glwe_ciphertext_unchecked(
         &mut self,
         key: &SecretKey,
-        output: &mut PlaintextVector,
+        output: &mut PlaintextArray,
         input: &Ciphertext,
     );
 }

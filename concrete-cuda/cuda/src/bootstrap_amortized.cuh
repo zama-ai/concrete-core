@@ -32,20 +32,20 @@ template <typename Torus, class params, sharedMemDegree SMD>
  * Uses shared memory to increase performance
  *  - lwe_out: output batch of num_samples bootstrapped ciphertexts c =
  * (a0,..an-1,b) where n is the LWE dimension
- *  - lut_vector: should hold as many test vectors of size polynomial_size
+ *  - lut_array: should hold as many LUT arrays of size polynomial_size
  * as there are input ciphertexts, but actually holds
- * num_lut_vectors vectors to reduce memory usage
- *  - lut_vector_indexes: stores the index corresponding to which test vector
- * to use for each sample in lut_vector
+ * num_lut_arrays arrays to reduce memory usage
+ *  - lut_array_indexes: stores the index corresponding to which LUT array
+ * to use for each sample in lut_array
  *  - lwe_in: input batch of num_samples LWE ciphertexts, containing n mask
  * values + 1 body value
  *  - bootstrapping_key: RGSW encryption of the LWE secret key sk1 under secret
  * key sk2
  *  - device_mem: pointer to the device's global memory in case we use it (SMD
  * == NOSM or PARTIALSM)
- *  - lwe_mask_size: size of the Torus vector used to encrypt the input
+ *  - lwe_mask_size: size of the Torus array used to encrypt the input
  * LWE ciphertexts - referred to as n above (~ 600)
- *  - polynomial_size: size of the test polynomial (test vector) and size of the
+ *  - polynomial_size: size of the test polynomial (LUT array) and size of the
  * GLWE polynomial (~1024)
  *  - base_log: log base used for the gadget matrix - B = 2^base_log (~8)
  *  - l_gadget: number of decomposition levels in the gadget matrix (~4)
@@ -56,8 +56,8 @@ template <typename Torus, class params, sharedMemDegree SMD>
  */
 __global__ void device_bootstrap_amortized(
     Torus *lwe_out,
-    Torus *lut_vector,
-    uint32_t *lut_vector_indexes,
+    Torus *lut_array,
+    uint32_t *lut_array_indexes,
     Torus *lwe_in,
     double2 *bootstrapping_key,
     char *device_mem,
@@ -119,8 +119,8 @@ __global__ void device_bootstrap_amortized(
   */
 
   auto block_lwe_in = &lwe_in[blockIdx.x * (lwe_mask_size + 1)];
-  Torus *block_lut_vector =
-      &lut_vector[lut_vector_indexes[lwe_idx + blockIdx.x] * params::degree * 2];
+  Torus *block_lut_array =
+      &lut_array[lut_array_indexes[lwe_idx + blockIdx.x] * params::degree * 2];
 
   // TODO (Agnes) try to store the gadget matrix in const memory to see if
   // register use decreases Since all const mem is used for twiddles currently,
@@ -134,11 +134,11 @@ __global__ void device_bootstrap_amortized(
 
   divide_by_monomial_negacyclic_inplace<Torus, params::opt,
       params::degree / params::opt>(
-      accumulator_mask, block_lut_vector, b_hat, false);
+      accumulator_mask, block_lut_array, b_hat, false);
 
   divide_by_monomial_negacyclic_inplace<Torus, params::opt,
       params::degree / params::opt>(
-      accumulator_body, &block_lut_vector[params::degree], b_hat, false);
+      accumulator_body, &block_lut_array[params::degree], b_hat, false);
 
   // Loop over all the mask elements of the sample to accumulate
   // (X^a_i-1) multiplication, decomposition of the resulting polynomial
@@ -342,8 +342,8 @@ template <typename Torus, class params>
 __host__ void host_bootstrap_amortized(
     void *v_stream,
     Torus *lwe_out,
-    Torus *lut_vector,
-    uint32_t *lut_vector_indexes,
+    Torus *lut_array,
+    uint32_t *lut_array_indexes,
     Torus *lwe_in,
     double2 *bootstrapping_key,
     uint32_t input_lwe_dimension,
@@ -351,7 +351,7 @@ __host__ void host_bootstrap_amortized(
     uint32_t base_log,
     uint32_t l_gadget,
     uint32_t input_lwe_ciphertext_count,
-    uint32_t num_lut_vectors,
+    uint32_t num_lut_arrays,
     uint32_t lwe_idx,
     uint32_t max_shared_memory) {
 
@@ -397,7 +397,7 @@ __host__ void host_bootstrap_amortized(
     checkCudaErrors(cudaMalloc((void **)&d_mem, DM_FULL * input_lwe_ciphertext_count));
     device_bootstrap_amortized<Torus, params, NOSM>
     <<<grid, thds, 0, *stream>>>(
-        lwe_out, lut_vector, lut_vector_indexes, lwe_in,
+        lwe_out, lut_array, lut_array_indexes, lwe_in,
         bootstrapping_key, d_mem,
         input_lwe_dimension, polynomial_size,
         base_log, l_gadget, lwe_idx, DM_FULL);
@@ -411,7 +411,7 @@ __host__ void host_bootstrap_amortized(
     checkCudaErrors(cudaMalloc((void **)&d_mem, DM_PART * input_lwe_ciphertext_count));
     device_bootstrap_amortized<Torus, params, PARTIALSM>
     <<<grid, thds, SM_PART, *stream>>>(
-        lwe_out, lut_vector, lut_vector_indexes,
+        lwe_out, lut_array, lut_array_indexes,
         lwe_in, bootstrapping_key,
         d_mem, input_lwe_dimension, polynomial_size,
         base_log, l_gadget, lwe_idx,
@@ -434,7 +434,7 @@ __host__ void host_bootstrap_amortized(
 
     device_bootstrap_amortized<Torus, params, FULLSM>
     <<<grid, thds, SM_FULL, *stream>>>(
-        lwe_out, lut_vector, lut_vector_indexes,
+        lwe_out, lut_array, lut_array_indexes,
         lwe_in, bootstrapping_key,
         d_mem, input_lwe_dimension, polynomial_size,
         base_log, l_gadget, lwe_idx,

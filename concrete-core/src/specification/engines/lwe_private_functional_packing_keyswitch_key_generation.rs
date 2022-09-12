@@ -1,6 +1,6 @@
 use super::engine_error;
 use crate::prelude::{
-    CleartextVectorEntity, GlweSecretKeyEntity, LwePrivateFunctionalPackingKeyswitchKeyEntity,
+    CleartextArrayEntity, GlweSecretKeyEntity, LwePrivateFunctionalPackingKeyswitchKeyEntity,
 };
 use crate::specification::engines::AbstractEngine;
 
@@ -58,7 +58,7 @@ impl<EngineError: std::error::Error>
 ///
 /// # Formal Definition
 ///
-/// A private functional packing keyswitch key is a public key which allows to go from a vector
+/// A private functional packing keyswitch key is a public key which allows to go from an array
 /// of LWE ciphertexts encrypting messages $m\_1,\dotsc,m_t$ under the input secret key, to a GLWE
 /// ciphertext under the output secret key encrypting the
 /// message $F(m\_1)+F(m\_2) X+\dotsb+F(m\_t) X^{t-1}$ in the ring $\mathbb{Z}\_q\lbrack X\rbrack/
@@ -78,18 +78,18 @@ impl<EngineError: std::error::Error>
 /// [`decomposition base`](`crate::prelude::DecompositionBaseLog`), a standard
 /// deviation for the [`noise`](`crate::prelude::StandardDev`), and finally the
 /// input `polynomial_scalar` given as a
-/// [`cleartext vector`](`crate::specification::entities::CleartextEntity`) starting from the
+/// [`cleartext array`](`crate::specification::entities::CleartextEntity`) starting from the
 /// constant term.
 pub trait LwePrivateFunctionalLwePackingKeyswitchKeyGenerationEngine<
     InputSecretKey,
     OutputSecretKey,
     LwePrivateFunctionalPackingKeyswitchKey,
-    CleartextVector,
+    CleartextArray,
     FunctionScalarType,
 >: AbstractEngine where
     InputSecretKey: LweSecretKeyEntity,
     OutputSecretKey: GlweSecretKeyEntity,
-    CleartextVector: CleartextVectorEntity,
+    CleartextArray: CleartextArrayEntity,
     LwePrivateFunctionalPackingKeyswitchKey: LwePrivateFunctionalPackingKeyswitchKeyEntity,
 {
     /// Generates a new private functional packing keyswitch key.
@@ -102,7 +102,7 @@ pub trait LwePrivateFunctionalLwePackingKeyswitchKeyGenerationEngine<
         decomposition_base_log: DecompositionBaseLog,
         noise: StandardDev,
         f: &dyn Fn(FunctionScalarType) -> FunctionScalarType,
-        polynomial: &CleartextVector,
+        polynomial: &CleartextArray,
     ) -> Result<
         LwePrivateFunctionalPackingKeyswitchKey,
         LwePrivateFunctionalLwePackingKeyswitchKeyGenerationError<Self::EngineError>,
@@ -123,6 +123,6 @@ pub trait LwePrivateFunctionalLwePackingKeyswitchKeyGenerationEngine<
         decomposition_base_log: DecompositionBaseLog,
         noise: StandardDev,
         f: &dyn Fn(FunctionScalarType) -> FunctionScalarType,
-        polynomial: &CleartextVector,
+        polynomial: &CleartextArray,
     ) -> LwePrivateFunctionalPackingKeyswitchKey;
 }

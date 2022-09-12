@@ -19,7 +19,7 @@ use crate::specification::entities::AbstractEntity;
 ///
 /// ## LWE dimension
 /// It corresponds to the number of element in the LWE secret key.
-/// In an LWE ciphertext, it is the length of the vector $\vec{a}$.
+/// In an LWE ciphertext, it is the length of the array $\vec{a}$.
 /// At [`encryption`](`crate::specification::engines::LweCiphertextEncryptionEngine`) time, it is
 /// the number of uniformly random
 /// integers generated.

@@ -23,10 +23,10 @@ fn test_seeded_ggsw<T: UnsignedTorus>() {
     let sk = GlweSecretKey::generate_binary(dimension, polynomial_size, &mut secret_generator);
 
     // generates random plaintexts
-    let plaintext_vector =
+    let plaintext_list =
         PlaintextList::from_tensor(secret_generator.random_uniform_tensor(nb_ct.0));
 
-    for plaintext in plaintext_vector.plaintext_iter() {
+    for plaintext in plaintext_list.plaintext_iter() {
         let main_seed = test_tools::random_seed();
 
         // Use a deterministic seeder to get the seeds that will be used during the tests
@@ -126,10 +126,10 @@ mod parallel {
         let sk = GlweSecretKey::generate_binary(dimension, polynomial_size, &mut secret_generator);
 
         // generates random plaintexts
-        let plaintext_vector =
+        let plaintext_list =
             PlaintextList::from_tensor(secret_generator.random_uniform_tensor(nb_ct.0));
 
-        for plaintext in plaintext_vector.plaintext_iter() {
+        for plaintext in plaintext_list.plaintext_iter() {
             let main_seed = test_tools::random_seed();
 
             // Use a deterministic seeder to get the seeds that will be used during the tests

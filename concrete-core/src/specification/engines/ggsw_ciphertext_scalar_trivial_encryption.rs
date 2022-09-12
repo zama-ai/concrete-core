@@ -26,7 +26,7 @@ where
     Plaintext: PlaintextEntity,
     Ciphertext: GgswCiphertextEntity,
 {
-    /// Trivially encrypts a plaintext vector into a GGSW ciphertext.
+    /// Trivially encrypts a plaintext array into a GGSW ciphertext.
     fn trivially_encrypt_scalar_ggsw_ciphertext(
         &mut self,
         polynomial_size: PolynomialSize,

@@ -2,8 +2,8 @@ use crate::prelude::Variance;
 
 use crate::backends::default::implementation::engines::DefaultEngine;
 use crate::backends::default::implementation::entities::{
-    GlweCiphertext32, GlweCiphertext64, GlweSecretKey32, GlweSecretKey64, PlaintextVector32,
-    PlaintextVector64,
+    GlweCiphertext32, GlweCiphertext64, GlweSecretKey32, GlweSecretKey64, PlaintextArray32,
+    PlaintextArray64,
 };
 use crate::commons::crypto::glwe::GlweCiphertext as ImplGlweCiphertext;
 use crate::specification::engines::{
@@ -14,7 +14,7 @@ use crate::specification::entities::GlweSecretKeyEntity;
 /// # Description:
 /// Implementation of [`GlweCiphertextEncryptionEngine`] for [`DefaultEngine`] that operates on 32
 /// bits integers.
-impl GlweCiphertextEncryptionEngine<GlweSecretKey32, PlaintextVector32, GlweCiphertext32>
+impl GlweCiphertextEncryptionEngine<GlweSecretKey32, PlaintextArray32, GlweCiphertext32>
     for DefaultEngine
 {
     /// # Example:
@@ -37,9 +37,9 @@ impl GlweCiphertextEncryptionEngine<GlweSecretKey32, PlaintextVector32, GlweCiph
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey32 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_array, noise)?;
     /// #
     /// assert_eq!(ciphertext.glwe_dimension(), glwe_dimension);
     /// assert_eq!(ciphertext.polynomial_size(), polynomial_size);
@@ -51,7 +51,7 @@ impl GlweCiphertextEncryptionEngine<GlweSecretKey32, PlaintextVector32, GlweCiph
     fn encrypt_glwe_ciphertext(
         &mut self,
         key: &GlweSecretKey32,
-        input: &PlaintextVector32,
+        input: &PlaintextArray32,
         noise: Variance,
     ) -> Result<GlweCiphertext32, GlweCiphertextEncryptionError<Self::EngineError>> {
         GlweCiphertextEncryptionError::perform_generic_checks(key, input)?;
@@ -61,7 +61,7 @@ impl GlweCiphertextEncryptionEngine<GlweSecretKey32, PlaintextVector32, GlweCiph
     unsafe fn encrypt_glwe_ciphertext_unchecked(
         &mut self,
         key: &GlweSecretKey32,
-        input: &PlaintextVector32,
+        input: &PlaintextArray32,
         noise: Variance,
     ) -> GlweCiphertext32 {
         let mut ciphertext = ImplGlweCiphertext::allocate(
@@ -82,7 +82,7 @@ impl GlweCiphertextEncryptionEngine<GlweSecretKey32, PlaintextVector32, GlweCiph
 /// # Description:
 /// Implementation of [`GlweCiphertextEncryptionEngine`] for [`DefaultEngine`] that operates on 64
 /// bits integers.
-impl GlweCiphertextEncryptionEngine<GlweSecretKey64, PlaintextVector64, GlweCiphertext64>
+impl GlweCiphertextEncryptionEngine<GlweSecretKey64, PlaintextArray64, GlweCiphertext64>
     for DefaultEngine
 {
     /// # Example:
@@ -105,9 +105,9 @@ impl GlweCiphertextEncryptionEngine<GlweSecretKey64, PlaintextVector64, GlweCiph
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let key: GlweSecretKey64 =
     ///     engine.generate_new_glwe_secret_key(glwe_dimension, polynomial_size)?;
-    /// let plaintext_vector = engine.create_plaintext_vector_from(&input)?;
+    /// let plaintext_array = engine.create_plaintext_array_from(&input)?;
     ///
-    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_vector, noise)?;
+    /// let ciphertext = engine.encrypt_glwe_ciphertext(&key, &plaintext_array, noise)?;
     /// #
     /// assert_eq!(ciphertext.glwe_dimension(), glwe_dimension);
     /// assert_eq!(ciphertext.polynomial_size(), polynomial_size);
@@ -119,7 +119,7 @@ impl GlweCiphertextEncryptionEngine<GlweSecretKey64, PlaintextVector64, GlweCiph
     fn encrypt_glwe_ciphertext(
         &mut self,
         key: &GlweSecretKey64,
-        input: &PlaintextVector64,
+        input: &PlaintextArray64,
         noise: Variance,
     ) -> Result<GlweCiphertext64, GlweCiphertextEncryptionError<Self::EngineError>> {
         GlweCiphertextEncryptionError::perform_generic_checks(key, input)?;
@@ -129,7 +129,7 @@ impl GlweCiphertextEncryptionEngine<GlweSecretKey64, PlaintextVector64, GlweCiph
     unsafe fn encrypt_glwe_ciphertext_unchecked(
         &mut self,
         key: &GlweSecretKey64,
-        input: &PlaintextVector64,
+        input: &PlaintextArray64,
         noise: Variance,
     ) -> GlweCiphertext64 {
         let mut ciphertext = ImplGlweCiphertext::allocate(

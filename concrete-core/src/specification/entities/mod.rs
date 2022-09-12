@@ -27,7 +27,7 @@ pub trait AbstractEntity: Debug {
     // more boilerplate though.
     //
     // Also, this prevents a single type to implement different downstream traits (a type being both
-    // a GGSW ciphertext vector and an LWE bootstrap key). Again, I think this is for the best, as
+    // a GGSW ciphertext array and an LWE bootstrap key). Again, I think this is for the best, as
     // it will help us design better backend-level apis.
 
     /// The _kind_ of the entity.
@@ -35,22 +35,22 @@ pub trait AbstractEntity: Debug {
 }
 
 mod cleartext;
-mod cleartext_vector;
+mod cleartext_array;
 mod encoder;
-mod encoder_vector;
+mod encoder_array;
 mod ggsw_ciphertext;
-mod ggsw_ciphertext_vector;
+mod ggsw_ciphertext_array;
 mod ggsw_seeded_ciphertext;
 mod glwe_ciphertext;
-mod glwe_ciphertext_vector;
+mod glwe_ciphertext_array;
 mod glwe_secret_key;
 mod glwe_seeded_ciphertext;
-mod glwe_seeded_ciphertext_vector;
+mod glwe_seeded_ciphertext_array;
 mod gsw_ciphertext;
-mod gsw_ciphertext_vector;
+mod gsw_ciphertext_array;
 mod lwe_bootstrap_key;
 mod lwe_ciphertext;
-mod lwe_ciphertext_vector;
+mod lwe_ciphertext_array;
 mod lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys;
 mod lwe_keyswitch_key;
 mod lwe_packing_keyswitch_key;
@@ -59,28 +59,28 @@ mod lwe_public_key;
 mod lwe_secret_key;
 mod lwe_seeded_bootstrap_key;
 mod lwe_seeded_ciphertext;
-mod lwe_seeded_ciphertext_vector;
+mod lwe_seeded_ciphertext_array;
 mod lwe_seeded_keyswitch_key;
 mod plaintext;
-mod plaintext_vector;
+mod plaintext_array;
 
 pub use cleartext::*;
-pub use cleartext_vector::*;
+pub use cleartext_array::*;
 pub use encoder::*;
-pub use encoder_vector::*;
+pub use encoder_array::*;
 pub use ggsw_ciphertext::*;
-pub use ggsw_ciphertext_vector::*;
+pub use ggsw_ciphertext_array::*;
 pub use ggsw_seeded_ciphertext::*;
 pub use glwe_ciphertext::*;
-pub use glwe_ciphertext_vector::*;
+pub use glwe_ciphertext_array::*;
 pub use glwe_secret_key::*;
 pub use glwe_seeded_ciphertext::*;
-pub use glwe_seeded_ciphertext_vector::*;
+pub use glwe_seeded_ciphertext_array::*;
 pub use gsw_ciphertext::*;
-pub use gsw_ciphertext_vector::*;
+pub use gsw_ciphertext_array::*;
 pub use lwe_bootstrap_key::*;
 pub use lwe_ciphertext::*;
-pub use lwe_ciphertext_vector::*;
+pub use lwe_ciphertext_array::*;
 pub use lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys::*;
 pub use lwe_keyswitch_key::*;
 pub use lwe_packing_keyswitch_key::*;
@@ -89,7 +89,7 @@ pub use lwe_public_key::*;
 pub use lwe_secret_key::*;
 pub use lwe_seeded_bootstrap_key::*;
 pub use lwe_seeded_ciphertext::*;
-pub use lwe_seeded_ciphertext_vector::*;
+pub use lwe_seeded_ciphertext_array::*;
 pub use lwe_seeded_keyswitch_key::*;
 pub use plaintext::*;
-pub use plaintext_vector::*;
+pub use plaintext_array::*;

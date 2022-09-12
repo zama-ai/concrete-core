@@ -1,7 +1,7 @@
 //! A module containing the [engines](crate::specification::engines) exposed by the fftw backend.
 
 use crate::backends::cuda::private::device::GpuIndex;
-use crate::specification::engines::LweCiphertextVectorDiscardingBootstrapError;
+use crate::specification::engines::LweCiphertextArrayDiscardingBootstrapError;
 
 use std::error::Error;
 use std::fmt::{Display, Formatter};
@@ -66,7 +66,7 @@ impl Display for CudaError {
 }
 impl Error for CudaError {}
 
-impl From<CudaError> for LweCiphertextVectorDiscardingBootstrapError<CudaError> {
+impl From<CudaError> for LweCiphertextArrayDiscardingBootstrapError<CudaError> {
     fn from(err: CudaError) -> Self {
         Self::Engine(err)
     }

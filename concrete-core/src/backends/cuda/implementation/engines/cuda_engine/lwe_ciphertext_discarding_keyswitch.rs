@@ -16,7 +16,7 @@ impl From<CudaError> for LweCiphertextDiscardingKeyswitchError<CudaError> {
 }
 
 /// # Description
-/// A discard keyswitch on a vector of input ciphertext vectors with 32 bits of precision.
+/// A discard keyswitch on an array of input ciphertext arrays with 32 bits of precision.
 impl
     LweCiphertextDiscardingKeyswitchEngine<
         CudaLweKeyswitchKey32,
@@ -109,7 +109,7 @@ impl
     ) {
         let stream = &self.streams[0];
 
-        stream.discard_keyswitch_lwe_ciphertext_vector::<u32>(
+        stream.discard_keyswitch_lwe_ciphertext_array::<u32>(
             &mut output.0.d_vec,
             &input.0.d_vec,
             input.0.lwe_dimension,
@@ -123,7 +123,7 @@ impl
 }
 
 /// # Description
-/// A discard keyswitch on a vector of input ciphertext vectors with 64 bits of precision.
+/// A discard keyswitch on an array of input ciphertext arrays with 64 bits of precision.
 impl
     LweCiphertextDiscardingKeyswitchEngine<
         CudaLweKeyswitchKey64,
@@ -216,7 +216,7 @@ impl
     ) {
         let stream = &self.streams[0];
 
-        stream.discard_keyswitch_lwe_ciphertext_vector::<u64>(
+        stream.discard_keyswitch_lwe_ciphertext_array::<u64>(
             &mut output.0.d_vec,
             &input.0.d_vec,
             input.0.lwe_dimension,

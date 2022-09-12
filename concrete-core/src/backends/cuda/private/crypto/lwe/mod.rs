@@ -1,4 +1,4 @@
-//! LWE ciphertexts and ciphertext vectors with Cuda.
+//! LWE ciphertexts and ciphertext arrays with Cuda.
 
 pub(crate) mod ciphertext;
 pub(crate) mod list;

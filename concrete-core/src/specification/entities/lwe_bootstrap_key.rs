@@ -9,7 +9,7 @@ use crate::specification::entities::AbstractEntity;
 /// # Formal Definition
 ///
 /// ## Bootstrapping Key
-/// A bootstrapping key is a vector of
+/// A bootstrapping key is an array of
 /// [`GGSW ciphertexts`](`crate::specification::entities::GgswCiphertextEntity`). It encrypts the
 /// coefficients of the [`LWE secret key`](`crate::specification::entities::LweSecretKeyEntity`)
 /// $\vec{s}\_{\mathsf{in}}$ under the
@@ -27,7 +27,7 @@ use crate::specification::entities::AbstractEntity;
 ///
 /// **Remark:** Observe that the GGSW secret key, which is a GLWE secret key,  can be easily seen as
 /// a LWE secret key by simply taking all the coefficients of the polynomials composing the secret
-/// key and putting them into a vector in order. We will call this LWE secret key derived from the
+/// key and putting them into an array in order. We will call this LWE secret key derived from the
 /// GLWE secret key **_extracted LWE key_**.
 ///
 /// Let $\vec{S}\_{\mathsf{out}} = (S\_{\mathsf{out},0}, \ldots,

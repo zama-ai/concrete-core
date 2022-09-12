@@ -1,7 +1,7 @@
 use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, PolynomialSize, StandardDev};
 
 use crate::backends::default::entities::{
-    CleartextVector64, LwePrivateFunctionalPackingKeyswitchKey32,
+    CleartextArray64, LwePrivateFunctionalPackingKeyswitchKey32,
     LwePrivateFunctionalPackingKeyswitchKey64,
 };
 use crate::backends::default::implementation::engines::DefaultEngine;
@@ -9,7 +9,7 @@ use crate::backends::default::implementation::entities::{LweSecretKey32, LweSecr
 use crate::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKey as ImplLwePrivateFunctionalPackingKeyswitchKey;
 use crate::commons::math::polynomial::Polynomial;
 use crate::commons::math::tensor::{AsRefSlice, AsRefTensor};
-use crate::prelude::{CleartextVector32, GlweSecretKey32, GlweSecretKey64, GlweSecretKeyEntity};
+use crate::prelude::{CleartextArray32, GlweSecretKey32, GlweSecretKey64, GlweSecretKeyEntity};
 use crate::specification::engines::{
     LwePrivateFunctionalLwePackingKeyswitchKeyGenerationEngine,
     LwePrivateFunctionalLwePackingKeyswitchKeyGenerationError,
@@ -20,14 +20,14 @@ use crate::specification::entities::LweSecretKeyEntity;
 /// Implementation of [`LwePrivateFunctionalLwePackingKeyswitchKeyGenerationEngine`] for
 /// [`DefaultEngine`] that operates on 32 bits integers.
 /// Note that the function applied during keyswitching is of the form m -> m * pol for a polynomial
-/// `pol`. The input `polynomial` should be a cleartext vector containing the coefficients of pol
+/// `pol`. The input `polynomial` should be a cleartext array containing the coefficients of pol
 /// starting with the constant term.
 impl
     LwePrivateFunctionalLwePackingKeyswitchKeyGenerationEngine<
         LweSecretKey32,
         GlweSecretKey32,
         LwePrivateFunctionalPackingKeyswitchKey32,
-        CleartextVector32,
+        CleartextArray32,
         u32,
     > for DefaultEngine
 {
@@ -58,7 +58,7 @@ impl
     /// polynomial_size)?;
     ///
     /// let val = vec![1_u32; output_key.polynomial_size().0];
-    /// let polynomial: CleartextVector32 = engine.create_cleartext_vector_from(&val)?;
+    /// let polynomial: CleartextArray32 = engine.create_cleartext_array_from(&val)?;
     /// let private_functional_packing_keyswitch_key = engine
     /// .generate_new_lwe_private_functional_packing_keyswitch_key(
     ///     &input_key,
@@ -95,7 +95,7 @@ impl
         decomposition_base_log: DecompositionBaseLog,
         noise: StandardDev,
         f: &dyn Fn(u32) -> u32,
-        polynomial: &CleartextVector32,
+        polynomial: &CleartextArray32,
     ) -> Result<
         LwePrivateFunctionalPackingKeyswitchKey32,
         LwePrivateFunctionalLwePackingKeyswitchKeyGenerationError<Self::EngineError>,
@@ -128,7 +128,7 @@ impl
         decomposition_base_log: DecompositionBaseLog,
         noise: StandardDev,
         f: &dyn Fn(u32) -> u32,
-        polynomial: &CleartextVector32,
+        polynomial: &CleartextArray32,
     ) -> LwePrivateFunctionalPackingKeyswitchKey32 {
         let mut pfpksk = ImplLwePrivateFunctionalPackingKeyswitchKey::allocate(
             0,
@@ -156,14 +156,14 @@ impl
 /// Implementation of [`LwePrivateFunctionalLwePackingKeyswitchKeyGenerationEngine`] for
 /// [`DefaultEngine`] that operates on 64 bits integers.
 /// Note that the function applied during keyswitching is of the form m -> m * pol for a polynomial
-/// `pol`. The input `polynomial` should be a cleartext vector containing the coefficients of pol
+/// `pol`. The input `polynomial` should be a cleartext array containing the coefficients of pol
 /// starting with the constant term.
 impl
     LwePrivateFunctionalLwePackingKeyswitchKeyGenerationEngine<
         LweSecretKey64,
         GlweSecretKey64,
         LwePrivateFunctionalPackingKeyswitchKey64,
-        CleartextVector64,
+        CleartextArray64,
         u64,
     > for DefaultEngine
 {
@@ -194,7 +194,7 @@ impl
     /// polynomial_size)?;
     ///
     /// let val = vec![1_u64; output_key.polynomial_size().0];
-    /// let polynomial: CleartextVector64 = engine.create_cleartext_vector_from(&val)?;
+    /// let polynomial: CleartextArray64 = engine.create_cleartext_array_from(&val)?;
     /// let private_functional_packing_keyswitch_key = engine
     /// .generate_new_lwe_private_functional_packing_keyswitch_key(
     ///     &input_key,
@@ -231,7 +231,7 @@ impl
         decomposition_base_log: DecompositionBaseLog,
         noise: StandardDev,
         f: &dyn Fn(u64) -> u64,
-        polynomial: &CleartextVector64,
+        polynomial: &CleartextArray64,
     ) -> Result<
         LwePrivateFunctionalPackingKeyswitchKey64,
         LwePrivateFunctionalLwePackingKeyswitchKeyGenerationError<Self::EngineError>,
@@ -264,7 +264,7 @@ impl
         decomposition_base_log: DecompositionBaseLog,
         noise: StandardDev,
         f: &dyn Fn(u64) -> u64,
-        polynomial: &CleartextVector64,
+        polynomial: &CleartextArray64,
     ) -> LwePrivateFunctionalPackingKeyswitchKey64 {
         let mut pfpksk = ImplLwePrivateFunctionalPackingKeyswitchKey::allocate(
             0,

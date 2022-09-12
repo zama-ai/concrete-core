@@ -1,4 +1,4 @@
-use crate::backends::cuda::private::vec::CudaVec;
+use crate::backends::cuda::private::array::CudaArray;
 use crate::commons::numeric::UnsignedInteger;
 use crate::prelude::LweDimension;
 
@@ -11,7 +11,7 @@ use crate::prelude::LweDimension;
 #[derive(Debug)]
 pub(crate) struct CudaLweCiphertext<T: UnsignedInteger> {
     // Pointers to GPU data: one cuda vec on GPU 0
-    pub(crate) d_vec: CudaVec<T>,
+    pub(crate) d_vec: CudaArray<T>,
     // Lwe dimension
     pub(crate) lwe_dimension: LweDimension,
 }
