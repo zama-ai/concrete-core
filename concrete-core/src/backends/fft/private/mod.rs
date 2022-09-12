@@ -5,26 +5,34 @@ use std::slice::{ChunksExact, ChunksExactMut};
 pub mod crypto;
 pub mod math;
 
-pub trait Container {
-    fn container_len(&self) -> usize;
+pub trait Container: AsRef<[Self::Element]> {
+    type Element;
+
+    fn container_len(&self) -> usize {
+        self.as_ref().len()
+    }
+}
+
+pub trait ContainerOwned: Container + AsMut<[Self::Element]> {
+    fn collect<I: Iterator<Item = Self::Element>>(iter: I) -> Self;
 }
 
 impl<T> Container for aligned_vec::ABox<[T]> {
-    fn container_len(&self) -> usize {
-        (**self).len()
+    type Element = T;
+}
+
+impl ContainerOwned for aligned_vec::ABox<[c64]> {
+    fn collect<I: Iterator<Item = Self::Element>>(iter: I) -> Self {
+        aligned_vec::AVec::<c64, _>::from_iter(0, iter).into_boxed_slice()
     }
 }
 
 impl<'a, T> Container for &'a [T] {
-    fn container_len(&self) -> usize {
-        (**self).len()
-    }
+    type Element = T;
 }
 
 impl<'a, T> Container for &'a mut [T] {
-    fn container_len(&self) -> usize {
-        (**self).len()
-    }
+    type Element = T;
 }
 
 pub trait IntoChunks {

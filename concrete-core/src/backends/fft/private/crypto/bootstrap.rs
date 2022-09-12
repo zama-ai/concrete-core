@@ -1,7 +1,10 @@
 use super::super::math::fft::FftView;
+#[cfg(feature = "backend_fft_serialization")]
+use super::super::ContainerOwned;
 use super::super::{c64, izip, Container, IntoChunks};
 use super::ggsw::{cmux, *};
 use super::glwe::{GlweCiphertextMutView, GlweCiphertextView};
+use crate::backends::fft::private::math::fft::FourierPolynomialList;
 use crate::commons::math::torus::UnsignedTorus;
 use crate::commons::numeric::CastInto;
 use crate::prelude::{
@@ -16,7 +19,7 @@ use dyn_stack::{DynStack, ReborrowMut, SizeOverflow, StackReq};
     feature = "backend_fft_serialization",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct StandardLweBootstrapKey<C> {
+pub struct StandardLweBootstrapKey<C: Container> {
     data: C,
     key_size: LweDimension,
     polynomial_size: PolynomialSize,
@@ -26,10 +29,14 @@ pub struct StandardLweBootstrapKey<C> {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct FourierLweBootstrapKey<C> {
-    data: C,
+#[cfg_attr(
+    feature = "backend_fft_serialization",
+    derive(serde::Serialize, serde::Deserialize),
+    serde(bound(deserialize = "C: ContainerOwned"))
+)]
+pub struct FourierLweBootstrapKey<C: Container<Element = c64>> {
+    fourier: FourierPolynomialList<C>,
     key_size: LweDimension,
-    polynomial_size: PolynomialSize,
     glwe_size: GlweSize,
     decomposition_base_log: DecompositionBaseLog,
     decomposition_level_count: DecompositionLevelCount,
@@ -40,7 +47,7 @@ pub type StandardLweBootstrapKeyMutView<'a, Scalar> = StandardLweBootstrapKey<&'
 pub type FourierLweBootstrapKeyView<'a> = FourierLweBootstrapKey<&'a [c64]>;
 pub type FourierLweBootstrapKeyMutView<'a> = FourierLweBootstrapKey<&'a mut [c64]>;
 
-impl<C> StandardLweBootstrapKey<C> {
+impl<C: Container> StandardLweBootstrapKey<C> {
     pub fn new(
         data: C,
         key_size: LweDimension,
@@ -110,10 +117,7 @@ impl<C> StandardLweBootstrapKey<C> {
         self.data
     }
 
-    pub fn as_view<Scalar>(&self) -> StandardLweBootstrapKeyView<'_, Scalar>
-    where
-        C: AsRef<[Scalar]>,
-    {
+    pub fn as_view(&self) -> StandardLweBootstrapKeyView<'_, C::Element> {
         StandardLweBootstrapKeyView {
             data: self.data.as_ref(),
             key_size: self.key_size,
@@ -124,9 +128,9 @@ impl<C> StandardLweBootstrapKey<C> {
         }
     }
 
-    pub fn as_mut_view<Scalar>(&mut self) -> StandardLweBootstrapKeyMutView<'_, Scalar>
+    pub fn as_mut_view(&mut self) -> StandardLweBootstrapKeyMutView<'_, C::Element>
     where
-        C: AsMut<[Scalar]>,
+        C: AsMut<[C::Element]>,
     {
         StandardLweBootstrapKeyMutView {
             data: self.data.as_mut(),
@@ -139,7 +143,7 @@ impl<C> StandardLweBootstrapKey<C> {
     }
 }
 
-impl<C> FourierLweBootstrapKey<C> {
+impl<C: Container<Element = c64>> FourierLweBootstrapKey<C> {
     pub fn new(
         data: C,
         key_size: LweDimension,
@@ -160,9 +164,11 @@ impl<C> FourierLweBootstrapKey<C> {
                 * glwe_size.0
         );
         Self {
-            data,
+            fourier: FourierPolynomialList {
+                data,
+                polynomial_size,
+            },
             key_size,
-            polynomial_size,
             glwe_size,
             decomposition_base_log,
             decomposition_level_count,
@@ -174,15 +180,18 @@ impl<C> FourierLweBootstrapKey<C> {
     where
         C: IntoChunks + Container,
     {
-        self.data.split_into(self.key_size.0).map(move |slice| {
-            FourierGgswCiphertext::new(
-                slice,
-                self.polynomial_size,
-                self.glwe_size,
-                self.decomposition_base_log,
-                self.decomposition_level_count,
-            )
-        })
+        self.fourier
+            .data
+            .split_into(self.key_size.0)
+            .map(move |slice| {
+                FourierGgswCiphertext::new(
+                    slice,
+                    self.fourier.polynomial_size,
+                    self.glwe_size,
+                    self.decomposition_base_log,
+                    self.decomposition_level_count,
+                )
+            })
     }
 
     pub fn key_size(&self) -> LweDimension {
@@ -190,7 +199,7 @@ impl<C> FourierLweBootstrapKey<C> {
     }
 
     pub fn polynomial_size(&self) -> PolynomialSize {
-        self.polynomial_size
+        self.fourier.polynomial_size
     }
 
     pub fn glwe_size(&self) -> GlweSize {
@@ -206,17 +215,16 @@ impl<C> FourierLweBootstrapKey<C> {
     }
 
     pub fn data(self) -> C {
-        self.data
+        self.fourier.data
     }
 
-    pub fn as_view(&self) -> FourierLweBootstrapKeyView<'_>
-    where
-        C: AsRef<[c64]>,
-    {
+    pub fn as_view(&self) -> FourierLweBootstrapKeyView<'_> {
         FourierLweBootstrapKeyView {
-            data: self.data.as_ref(),
+            fourier: FourierPolynomialList {
+                data: self.fourier.data.as_ref(),
+                polynomial_size: self.fourier.polynomial_size,
+            },
             key_size: self.key_size,
-            polynomial_size: self.polynomial_size,
             glwe_size: self.glwe_size,
             decomposition_base_log: self.decomposition_base_log,
             decomposition_level_count: self.decomposition_level_count,
@@ -228,9 +236,11 @@ impl<C> FourierLweBootstrapKey<C> {
         C: AsMut<[c64]>,
     {
         FourierLweBootstrapKeyMutView {
-            data: self.data.as_mut(),
+            fourier: FourierPolynomialList {
+                data: self.fourier.data.as_mut(),
+                polynomial_size: self.fourier.polynomial_size,
+            },
             key_size: self.key_size,
-            polynomial_size: self.polynomial_size,
             glwe_size: self.glwe_size,
             decomposition_base_log: self.decomposition_base_log,
             decomposition_level_count: self.decomposition_level_count,

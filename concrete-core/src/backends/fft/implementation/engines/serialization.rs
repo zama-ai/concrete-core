@@ -1,5 +1,7 @@
-use super::super::super::private::crypto::bootstrap::FourierLweBootstrapKeyRef;
-use super::super::super::private::crypto::ggsw::FourierGgswCiphertextRef;
+#![allow(clippy::missing_safety_doc)]
+
+use super::super::super::private::crypto::bootstrap::FourierLweBootstrapKeyView;
+use super::super::super::private::crypto::ggsw::FourierGgswCiphertextView;
 use super::{FftSerializationEngine, FftSerializationError};
 use crate::prelude::{
     EntitySerializationEngine, EntitySerializationError, FftFourierGgswCiphertext32,
@@ -13,11 +15,10 @@ use serde::Serialize;
 impl EntitySerializationEngine<FftFourierGgswCiphertext32, Vec<u8>> for FftSerializationEngine {
     /// # Example
     /// ```
-    /// use concrete_core::prelude::Variance;
     /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -60,11 +61,11 @@ impl EntitySerializationEngine<FftFourierGgswCiphertext32, Vec<u8>> for FftSeria
         &mut self,
         entity: &FftFourierGgswCiphertext32,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
-        let entity = entity.0.as_ref();
+        let entity = entity.0.as_view();
         #[derive(Serialize)]
         struct SerializableFftFourierGgswCiphertext32<'a> {
             version: FftFourierGgswCiphertext32Version,
-            inner: FourierGgswCiphertextRef<'a>,
+            inner: FourierGgswCiphertextView<'a>,
         }
         let value = SerializableFftFourierGgswCiphertext32 {
             version: FftFourierGgswCiphertext32Version::V0,
@@ -83,11 +84,10 @@ impl EntitySerializationEngine<FftFourierGgswCiphertext32, Vec<u8>> for FftSeria
 impl EntitySerializationEngine<FftFourierGgswCiphertext64, Vec<u8>> for FftSerializationEngine {
     /// # Example
     /// ```
-    /// use concrete_core::prelude::Variance;
     /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -130,11 +130,11 @@ impl EntitySerializationEngine<FftFourierGgswCiphertext64, Vec<u8>> for FftSeria
         &mut self,
         entity: &FftFourierGgswCiphertext64,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
-        let entity = entity.0.as_ref();
+        let entity = entity.0.as_view();
         #[derive(Serialize)]
         struct SerializableFftFourierGgswCiphertext64<'a> {
             version: FftFourierGgswCiphertext64Version,
-            inner: FourierGgswCiphertextRef<'a>,
+            inner: FourierGgswCiphertextView<'a>,
         }
         let value = SerializableFftFourierGgswCiphertext64 {
             version: FftFourierGgswCiphertext64Version::V0,
@@ -153,11 +153,10 @@ impl EntitySerializationEngine<FftFourierGgswCiphertext64, Vec<u8>> for FftSeria
 impl EntitySerializationEngine<FftFourierLweBootstrapKey32, Vec<u8>> for FftSerializationEngine {
     /// # Example
     /// ```
-    /// use concrete_core::prelude::Variance;
     /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -172,7 +171,8 @@ impl EntitySerializationEngine<FftFourierLweBootstrapKey32, Vec<u8>> for FftSeri
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fft_engine = FftEngine::new(())?;
     /// let lwe_sk: LweSecretKey32 = default_engine.generate_new_lwe_secret_key(lwe_dim)?;
-    /// let glwe_sk: GlweSecretKey32 = default_engine.generate_new_glwe_secret_key(glwe_dim, poly_size)?;
+    /// let glwe_sk: GlweSecretKey32 =
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dim, poly_size)?;
     /// let bsk: LweBootstrapKey32 =
     ///     default_engine.generate_new_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
     ///
@@ -191,11 +191,11 @@ impl EntitySerializationEngine<FftFourierLweBootstrapKey32, Vec<u8>> for FftSeri
         &mut self,
         entity: &FftFourierLweBootstrapKey32,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
-        let entity = entity.0.as_ref();
+        let entity = entity.0.as_view();
         #[derive(Serialize)]
         struct SerializableFftFourierLweBootstrapKey32<'a> {
             version: FftFourierLweBootstrapKey32Version,
-            inner: FourierLweBootstrapKeyRef<'a>,
+            inner: FourierLweBootstrapKeyView<'a>,
         }
         let value = SerializableFftFourierLweBootstrapKey32 {
             version: FftFourierLweBootstrapKey32Version::V0,
@@ -214,11 +214,10 @@ impl EntitySerializationEngine<FftFourierLweBootstrapKey32, Vec<u8>> for FftSeri
 impl EntitySerializationEngine<FftFourierLweBootstrapKey64, Vec<u8>> for FftSerializationEngine {
     /// # Example
     /// ```
-    /// use concrete_core::prelude::Variance;
     /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -233,7 +232,8 @@ impl EntitySerializationEngine<FftFourierLweBootstrapKey64, Vec<u8>> for FftSeri
     /// let mut default_engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let mut fft_engine = FftEngine::new(())?;
     /// let lwe_sk: LweSecretKey64 = default_engine.generate_new_lwe_secret_key(lwe_dim)?;
-    /// let glwe_sk: GlweSecretKey64 = default_engine.generate_new_glwe_secret_key(glwe_dim, poly_size)?;
+    /// let glwe_sk: GlweSecretKey64 =
+    ///     default_engine.generate_new_glwe_secret_key(glwe_dim, poly_size)?;
     /// let bsk: LweBootstrapKey64 =
     ///     default_engine.generate_new_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise)?;
     ///
@@ -252,11 +252,11 @@ impl EntitySerializationEngine<FftFourierLweBootstrapKey64, Vec<u8>> for FftSeri
         &mut self,
         entity: &FftFourierLweBootstrapKey64,
     ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
-        let entity = entity.0.as_ref();
+        let entity = entity.0.as_view();
         #[derive(Serialize)]
         struct SerializableFftFourierLweBootstrapKey64<'a> {
             version: FftFourierLweBootstrapKey64Version,
-            inner: FourierLweBootstrapKeyRef<'a>,
+            inner: FourierLweBootstrapKeyView<'a>,
         }
         let value = SerializableFftFourierLweBootstrapKey64 {
             version: FftFourierLweBootstrapKey64Version::V0,
