@@ -8,7 +8,7 @@ use crate::prelude::{GlweSize, PolynomialSize};
     feature = "backend_fft_serialization",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct GlweCiphertext<C> {
+pub struct GlweCiphertext<C: Container> {
     data: C,
     polynomial_size: PolynomialSize,
     glwe_size: GlweSize,
@@ -17,7 +17,7 @@ pub struct GlweCiphertext<C> {
 pub type GlweCiphertextView<'a, Scalar> = GlweCiphertext<&'a [Scalar]>;
 pub type GlweCiphertextMutView<'a, Scalar> = GlweCiphertext<&'a mut [Scalar]>;
 
-impl<C> GlweCiphertext<C> {
+impl<C: Container> GlweCiphertext<C> {
     pub fn new(data: C, polynomial_size: PolynomialSize, glwe_size: GlweSize) -> Self
     where
         C: Container,
@@ -53,10 +53,7 @@ impl<C> GlweCiphertext<C> {
         self.glwe_size
     }
 
-    pub fn as_view<Scalar>(&self) -> GlweCiphertextView<'_, Scalar>
-    where
-        C: AsRef<[Scalar]>,
-    {
+    pub fn as_view(&self) -> GlweCiphertextView<'_, C::Element> {
         GlweCiphertext {
             data: self.data.as_ref(),
             polynomial_size: self.polynomial_size,
@@ -64,9 +61,9 @@ impl<C> GlweCiphertext<C> {
         }
     }
 
-    pub fn as_mut_view<Scalar>(&mut self) -> GlweCiphertextMutView<'_, Scalar>
+    pub fn as_mut_view(&mut self) -> GlweCiphertextMutView<'_, C::Element>
     where
-        C: AsMut<[Scalar]>,
+        C: AsMut<[C::Element]>,
     {
         GlweCiphertext {
             data: self.data.as_mut(),

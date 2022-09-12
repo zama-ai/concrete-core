@@ -1,10 +1,12 @@
 use core::mem::MaybeUninit;
 
 use super::super::math::decomposition::TensorSignedDecompositionLendingIter;
-use super::super::math::fft::FftView;
+use super::super::math::fft::{FftView, FourierPolynomialList};
 use super::super::math::polynomial::{
     FourierPolynomialUninitMutView, FourierPolynomialView, PolynomialView,
 };
+#[cfg(feature = "backend_fft_serialization")]
+use super::super::ContainerOwned;
 use super::super::{as_mut_uninit, assume_init_mut, c64, izip, Container, IntoChunks};
 use super::glwe::{GlweCiphertextMutView, GlweCiphertextView};
 use crate::commons::math::decomposition::{DecompositionLevel, SignedDecomposer};
@@ -23,7 +25,7 @@ use core::arch::x86_64::*;
     feature = "backend_fft_serialization",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct StandardGgswCiphertext<C> {
+pub struct StandardGgswCiphertext<C: Container> {
     data: C,
     polynomial_size: PolynomialSize,
     glwe_size: GlweSize,
@@ -33,9 +35,13 @@ pub struct StandardGgswCiphertext<C> {
 
 /// A GGSW ciphertext in the Fourier domain.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct FourierGgswCiphertext<C> {
-    data: C,
-    polynomial_size: PolynomialSize,
+#[cfg_attr(
+    feature = "backend_fft_serialization",
+    derive(serde::Serialize, serde::Deserialize),
+    serde(bound(deserialize = "C: ContainerOwned"))
+)]
+pub struct FourierGgswCiphertext<C: Container<Element = c64>> {
+    fourier: FourierPolynomialList<C>,
     glwe_size: GlweSize,
     decomposition_base_log: DecompositionBaseLog,
     decomposition_level_count: DecompositionLevelCount,
@@ -43,7 +49,7 @@ pub struct FourierGgswCiphertext<C> {
 
 /// A matrix containing a single level of gadget decomposition, in the Fourier domain.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct FourierGgswLevelMatrix<C> {
+pub struct FourierGgswLevelMatrix<C: Container<Element = c64>> {
     data: C,
     polynomial_size: PolynomialSize,
     glwe_size: GlweSize,
@@ -53,7 +59,7 @@ pub struct FourierGgswLevelMatrix<C> {
 
 /// A row of a GGSW level matrix, in the Fourier domain.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct FourierGgswLevelRow<C> {
+pub struct FourierGgswLevelRow<C: Container<Element = c64>> {
     data: C,
     polynomial_size: PolynomialSize,
     glwe_size: GlweSize,
@@ -69,7 +75,7 @@ pub type FourierGgswLevelMatrixMutView<'a> = FourierGgswLevelMatrix<&'a mut [c64
 pub type FourierGgswLevelRowView<'a> = FourierGgswLevelRow<&'a [c64]>;
 pub type FourierGgswLevelRowMutView<'a> = FourierGgswLevelRow<&'a mut [c64]>;
 
-impl<C> StandardGgswCiphertext<C> {
+impl<C: Container> StandardGgswCiphertext<C> {
     pub fn new(
         data: C,
         polynomial_size: PolynomialSize,
@@ -114,10 +120,7 @@ impl<C> StandardGgswCiphertext<C> {
         self.data
     }
 
-    pub fn as_view<Scalar>(&self) -> StandardGgswCiphertextView<'_, Scalar>
-    where
-        C: AsRef<[Scalar]>,
-    {
+    pub fn as_view(&self) -> StandardGgswCiphertextView<'_, C::Element> {
         StandardGgswCiphertextView {
             data: self.data.as_ref(),
             polynomial_size: self.polynomial_size,
@@ -127,9 +130,9 @@ impl<C> StandardGgswCiphertext<C> {
         }
     }
 
-    pub fn as_mut_view<Scalar>(&mut self) -> StandardGgswCiphertextMutView<'_, Scalar>
+    pub fn as_mut_view(&mut self) -> StandardGgswCiphertextMutView<'_, C::Element>
     where
-        C: AsMut<[Scalar]>,
+        C: AsMut<[C::Element]>,
     {
         StandardGgswCiphertextMutView {
             data: self.data.as_mut(),
@@ -141,7 +144,7 @@ impl<C> StandardGgswCiphertext<C> {
     }
 }
 
-impl<C> FourierGgswCiphertext<C> {
+impl<C: Container<Element = c64>> FourierGgswCiphertext<C> {
     pub fn new(
         data: C,
         polynomial_size: PolynomialSize,
@@ -159,8 +162,10 @@ impl<C> FourierGgswCiphertext<C> {
         );
 
         Self {
-            data,
-            polynomial_size,
+            fourier: FourierPolynomialList {
+                data,
+                polynomial_size,
+            },
             glwe_size,
             decomposition_base_log,
             decomposition_level_count,
@@ -168,7 +173,7 @@ impl<C> FourierGgswCiphertext<C> {
     }
 
     pub fn polynomial_size(&self) -> PolynomialSize {
-        self.polynomial_size
+        self.fourier.polynomial_size
     }
 
     pub fn glwe_size(&self) -> GlweSize {
@@ -184,7 +189,7 @@ impl<C> FourierGgswCiphertext<C> {
     }
 
     pub fn data(self) -> C {
-        self.data
+        self.fourier.data
     }
 
     pub fn as_view(&self) -> FourierGgswCiphertextView<'_>
@@ -192,8 +197,10 @@ impl<C> FourierGgswCiphertext<C> {
         C: AsRef<[c64]>,
     {
         FourierGgswCiphertextView {
-            data: self.data.as_ref(),
-            polynomial_size: self.polynomial_size,
+            fourier: FourierPolynomialList {
+                data: self.fourier.data.as_ref(),
+                polynomial_size: self.fourier.polynomial_size,
+            },
             glwe_size: self.glwe_size,
             decomposition_base_log: self.decomposition_base_log,
             decomposition_level_count: self.decomposition_level_count,
@@ -205,8 +212,10 @@ impl<C> FourierGgswCiphertext<C> {
         C: AsMut<[c64]>,
     {
         FourierGgswCiphertextMutView {
-            data: self.data.as_mut(),
-            polynomial_size: self.polynomial_size,
+            fourier: FourierPolynomialList {
+                data: self.fourier.data.as_mut(),
+                polynomial_size: self.fourier.polynomial_size,
+            },
             glwe_size: self.glwe_size,
             decomposition_base_log: self.decomposition_base_log,
             decomposition_level_count: self.decomposition_level_count,
@@ -214,7 +223,7 @@ impl<C> FourierGgswCiphertext<C> {
     }
 }
 
-impl<C> FourierGgswLevelMatrix<C> {
+impl<C: Container<Element = c64>> FourierGgswLevelMatrix<C> {
     pub fn new(
         data: C,
         polynomial_size: PolynomialSize,
@@ -275,7 +284,7 @@ impl<C> FourierGgswLevelMatrix<C> {
     }
 }
 
-impl<C> FourierGgswLevelRow<C> {
+impl<C: Container<Element = c64>> FourierGgswLevelRow<C> {
     pub fn new(
         data: C,
         polynomial_size: PolynomialSize,
@@ -315,13 +324,14 @@ impl<C> FourierGgswLevelRow<C> {
 impl<'a> FourierGgswCiphertextView<'a> {
     /// Returns an iterator over the level matrices.
     pub fn into_levels(self) -> impl DoubleEndedIterator<Item = FourierGgswLevelMatrixView<'a>> {
-        self.data
+        self.fourier
+            .data
             .split_into(self.decomposition_level_count.0)
             .enumerate()
             .map(move |(i, slice)| {
                 FourierGgswLevelMatrixView::new(
                     slice,
-                    self.polynomial_size,
+                    self.fourier.polynomial_size,
                     self.glwe_size,
                     self.glwe_size.0,
                     DecompositionLevel(i + 1),
@@ -348,7 +358,7 @@ impl<'a> FourierGgswCiphertextMutView<'a> {
         let poly_size = coef_ggsw.polynomial_size().0;
 
         for (fourier_poly, coef_poly) in izip!(
-            self.data.into_chunks(poly_size / 2),
+            self.data().into_chunks(poly_size / 2),
             coef_ggsw.data.into_chunks(poly_size)
         ) {
             // SAFETY: forward_as_torus doesn't write any uninitialized values into its output
@@ -402,7 +412,7 @@ pub fn external_product<Scalar: UnsignedTorus>(
     debug_assert_eq!(ggsw.glwe_size(), out.glwe_size());
 
     let align = CACHELINE_ALIGN;
-    let poly_size = ggsw.polynomial_size.0;
+    let poly_size = ggsw.polynomial_size().0;
 
     // we round the input mask and body
     let decomposer = SignedDecomposer::<Scalar>::new(
@@ -437,7 +447,7 @@ pub fn external_product<Scalar: UnsignedTorus>(
             let (glwe_level, glwe_decomp_term, mut substack2) =
                 collect_next_term(&mut decomposition, &mut substack1, align);
             let glwe_decomp_term =
-                GlweCiphertextView::new(&glwe_decomp_term, ggsw.polynomial_size, ggsw.glwe_size);
+                GlweCiphertextView::new(&glwe_decomp_term, ggsw.polynomial_size(), ggsw.glwe_size);
             debug_assert_eq!(ggsw_decomp_matrix.decomposition_level(), glwe_level);
 
             // For each level we have to add the result of the vector-matrix product between the

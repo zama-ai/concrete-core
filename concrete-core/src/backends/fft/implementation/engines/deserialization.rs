@@ -1,10 +1,8 @@
+#![allow(clippy::missing_safety_doc)]
+
 use super::super::super::private::crypto::bootstrap::FourierLweBootstrapKey;
 use super::super::super::private::crypto::ggsw::FourierGgswCiphertext;
-use super::super::super::private::math::fft::Fft;
 use super::{FftSerializationEngine, FftSerializationError};
-use crate::prelude::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweSize, LweDimension, PolynomialSize,
-};
 use crate::prelude::{
     EntityDeserializationEngine, EntityDeserializationError, FftFourierGgswCiphertext32,
     FftFourierGgswCiphertext32Version, FftFourierGgswCiphertext64,
@@ -12,18 +10,17 @@ use crate::prelude::{
     FftFourierLweBootstrapKey32Version, FftFourierLweBootstrapKey64,
     FftFourierLweBootstrapKey64Version,
 };
-use aligned_vec::avec;
+use aligned_vec::ABox;
 use concrete_fft::c64;
 use serde::Deserialize;
 
 impl EntityDeserializationEngine<&[u8], FftFourierGgswCiphertext32> for FftSerializationEngine {
     /// # Example
     /// ```
-    /// use concrete_core::prelude::Variance;
     /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -68,7 +65,7 @@ impl EntityDeserializationEngine<&[u8], FftFourierGgswCiphertext32> for FftSeria
         #[derive(Deserialize)]
         struct SerializableFftFourierGgswCiphertext32 {
             version: FftFourierGgswCiphertext32Version,
-            inner: FourierGgswCiphertext,
+            inner: FourierGgswCiphertext<ABox<[c64]>>,
         }
         let deserialized: SerializableFftFourierGgswCiphertext32 = bincode::deserialize(serialized)
             .map_err(FftSerializationError::Deserialization)
@@ -95,11 +92,10 @@ impl EntityDeserializationEngine<&[u8], FftFourierGgswCiphertext32> for FftSeria
 impl EntityDeserializationEngine<&[u8], FftFourierGgswCiphertext64> for FftSerializationEngine {
     /// # Example
     /// ```
-    /// use concrete_core::prelude::Variance;
     /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -145,7 +141,7 @@ impl EntityDeserializationEngine<&[u8], FftFourierGgswCiphertext64> for FftSeria
         #[derive(Deserialize)]
         struct SerializableFftFourierGgswCiphertext64 {
             version: FftFourierGgswCiphertext64Version,
-            inner: FourierGgswCiphertext,
+            inner: FourierGgswCiphertext<ABox<[c64]>>,
         }
         let deserialized: SerializableFftFourierGgswCiphertext64 = bincode::deserialize(serialized)
             .map_err(FftSerializationError::Deserialization)
@@ -172,11 +168,10 @@ impl EntityDeserializationEngine<&[u8], FftFourierGgswCiphertext64> for FftSeria
 impl EntityDeserializationEngine<&[u8], FftFourierLweBootstrapKey32> for FftSerializationEngine {
     /// # Example
     /// ```
-    /// use concrete_core::prelude::Variance;
     /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -214,7 +209,7 @@ impl EntityDeserializationEngine<&[u8], FftFourierLweBootstrapKey32> for FftSeri
         #[derive(Deserialize)]
         struct SerializableFftFourierLweBootstrapKey32 {
             version: FftFourierLweBootstrapKey32Version,
-            inner: FourierLweBootstrapKey,
+            inner: FourierLweBootstrapKey<ABox<[c64]>>,
         }
         let deserialized: SerializableFftFourierLweBootstrapKey32 =
             bincode::deserialize(serialized)
@@ -242,11 +237,10 @@ impl EntityDeserializationEngine<&[u8], FftFourierLweBootstrapKey32> for FftSeri
 impl EntityDeserializationEngine<&[u8], FftFourierLweBootstrapKey64> for FftSerializationEngine {
     /// # Example
     /// ```
-    /// use concrete_core::prelude::Variance;
     /// use concrete_core::prelude::{
     ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweDimension, PolynomialSize,
+    ///     Variance, *,
     /// };
-    /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn Error>> {
@@ -284,7 +278,7 @@ impl EntityDeserializationEngine<&[u8], FftFourierLweBootstrapKey64> for FftSeri
         #[derive(Deserialize)]
         struct SerializableFftFourierLweBootstrapKey64 {
             version: FftFourierLweBootstrapKey64Version,
-            inner: FourierLweBootstrapKey,
+            inner: FourierLweBootstrapKey<ABox<[c64]>>,
         }
         let deserialized: SerializableFftFourierLweBootstrapKey64 =
             bincode::deserialize(serialized)

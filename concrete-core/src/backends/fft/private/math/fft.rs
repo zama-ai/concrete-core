@@ -1,4 +1,6 @@
-use super::super::{assume_init_mut, c64, izip};
+#[cfg(feature = "backend_fft_serialization")]
+use super::super::ContainerOwned;
+use super::super::{assume_init_mut, c64, izip, Container};
 use super::polynomial::{
     FourierPolynomialMutView, FourierPolynomialUninitMutView, FourierPolynomialView,
     PolynomialMutView, PolynomialUninitMutView, PolynomialView,
@@ -723,6 +725,141 @@ impl<'a> FftView<'a> {
         conv_fn(standard_re, standard_im, &tmp, self.twisties);
         let standard = assume_init_mut(standard);
         PolynomialMutView { data: standard }
+    }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct FourierPolynomialList<C: Container<Element = c64>> {
+    pub data: C,
+    pub polynomial_size: PolynomialSize,
+}
+
+#[cfg(feature = "backend_fft_serialization")]
+impl<C: Container<Element = c64>> serde::Serialize for FourierPolynomialList<C> {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        fn serialize_impl<S: serde::Serializer>(
+            data: &[c64],
+            polynomial_size: PolynomialSize,
+            serializer: S,
+        ) -> Result<S::Ok, S::Error> {
+            use super::super::IntoChunks;
+
+            pub struct SingleFourierPolynomial<'a> {
+                fft: FftView<'a>,
+                buf: &'a [c64],
+            }
+
+            impl<'a> serde::Serialize for SingleFourierPolynomial<'a> {
+                fn serialize<S: serde::Serializer>(
+                    &self,
+                    serializer: S,
+                ) -> Result<S::Ok, S::Error> {
+                    self.fft.serialize_fourier_buffer(serializer, self.buf)
+                }
+            }
+
+            use serde::ser::SerializeSeq;
+            let chunk_count = if polynomial_size.0 == 0 {
+                0
+            } else {
+                data.len() / (polynomial_size.0 / 2)
+            };
+
+            let mut state = serializer.serialize_seq(Some(2 + chunk_count))?;
+            state.serialize_element(&polynomial_size)?;
+            state.serialize_element(&chunk_count)?;
+            if chunk_count != 0 {
+                let fft = Fft::new(polynomial_size);
+                for buf in data.split_into(chunk_count) {
+                    state.serialize_element(&SingleFourierPolynomial {
+                        fft: fft.as_view(),
+                        buf,
+                    })?;
+                }
+            }
+            state.end()
+        }
+
+        serialize_impl(self.data.as_ref(), self.polynomial_size, serializer)
+    }
+}
+
+#[cfg(feature = "backend_fft_serialization")]
+impl<'de, C: ContainerOwned<Element = c64>> serde::Deserialize<'de> for FourierPolynomialList<C> {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        use std::marker::PhantomData;
+        struct SeqVisitor<C: ContainerOwned<Element = c64>>(PhantomData<fn() -> C>);
+
+        impl<'de, C: ContainerOwned<Element = c64>> serde::de::Visitor<'de> for SeqVisitor<C> {
+            type Value = FourierPolynomialList<C>;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                formatter.write_str(
+                    "a sequence of two fields followed by polynomials in the Fourier domain",
+                )
+            }
+
+            fn visit_seq<A: serde::de::SeqAccess<'de>>(
+                self,
+                mut seq: A,
+            ) -> Result<Self::Value, A::Error> {
+                use super::super::IntoChunks;
+
+                let str = "sequence of two fields and Fourier polynomials";
+                let polynomial_size = match seq.next_element::<PolynomialSize>()? {
+                    Some(polynomial_size) => polynomial_size,
+                    None => return Err(serde::de::Error::invalid_length(0, &str)),
+                };
+                let chunk_count = match seq.next_element::<usize>()? {
+                    Some(chunk_count) => chunk_count,
+                    None => return Err(serde::de::Error::invalid_length(1, &str)),
+                };
+
+                struct FillFourier<'a> {
+                    fft: FftView<'a>,
+                    buf: &'a mut [c64],
+                }
+
+                impl<'de, 'a> serde::de::DeserializeSeed<'de> for FillFourier<'a> {
+                    type Value = ();
+
+                    fn deserialize<D: serde::Deserializer<'de>>(
+                        self,
+                        deserializer: D,
+                    ) -> Result<Self::Value, D::Error> {
+                        self.fft.deserialize_fourier_buffer(deserializer, self.buf)
+                    }
+                }
+
+                let mut data =
+                    C::collect((0..(polynomial_size.0 / 2 * chunk_count)).map(|_| c64::default()));
+
+                if chunk_count != 0 {
+                    let fft = Fft::new(polynomial_size);
+                    for (i, buf) in data.as_mut().split_into(chunk_count).enumerate() {
+                        match seq.next_element_seed(FillFourier {
+                            fft: fft.as_view(),
+                            buf,
+                        })? {
+                            Some(()) => (),
+                            None => {
+                                return Err(serde::de::Error::invalid_length(
+                                    i,
+                                    &&*format!("sequence of {chunk_count} Fourier polynomials"),
+                                ))
+                            }
+                        };
+                    }
+                }
+
+                Ok(FourierPolynomialList {
+                    data,
+                    polynomial_size,
+                })
+            }
+        }
+
+        deserializer.deserialize_seq(SeqVisitor::<C>(PhantomData))
     }
 }
 

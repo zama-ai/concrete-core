@@ -1,4 +1,4 @@
-use super::super::{as_mut_uninit, c64};
+use super::super::{as_mut_uninit, c64, Container};
 use crate::commons::numeric::UnsignedInteger;
 
 //--------------------------------------------------------------------------------
@@ -7,7 +7,7 @@ use crate::commons::numeric::UnsignedInteger;
 
 /// Polynomial in the standard domain.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct Polynomial<C> {
+pub struct Polynomial<C: Container> {
     pub data: C,
 }
 
@@ -18,7 +18,7 @@ pub struct Polynomial<C> {
 /// Polynomials in the Fourier domain have half the size of the corresponding polynomials in
 /// the standard domain.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct FourierPolynomial<C> {
+pub struct FourierPolynomial<C: Container> {
     pub data: C,
 }
 
@@ -45,19 +45,16 @@ pub type PolynomialUninitMutView<'a, Scalar> = Polynomial<&'a mut [core::mem::Ma
 pub type FourierPolynomialUninitMutView<'a> =
     FourierPolynomial<&'a mut [core::mem::MaybeUninit<c64>]>;
 
-impl<C> Polynomial<C> {
-    pub fn as_view<Scalar>(&self) -> PolynomialView<'_, Scalar>
-    where
-        C: AsRef<[Scalar]>,
-    {
+impl<C: Container> Polynomial<C> {
+    pub fn as_view(&self) -> PolynomialView<'_, C::Element> {
         Polynomial {
             data: self.data.as_ref(),
         }
     }
 
-    pub fn as_mut_view<Scalar>(&mut self) -> PolynomialMutView<'_, Scalar>
+    pub fn as_mut_view(&mut self) -> PolynomialMutView<'_, C::Element>
     where
-        C: AsMut<[Scalar]>,
+        C: AsMut<[C::Element]>,
     {
         Polynomial {
             data: self.data.as_mut(),
@@ -65,11 +62,8 @@ impl<C> Polynomial<C> {
     }
 }
 
-impl<C> FourierPolynomial<C> {
-    pub fn as_view(&self) -> FourierPolynomialView<'_>
-    where
-        C: AsRef<[c64]>,
-    {
+impl<C: Container<Element = c64>> FourierPolynomial<C> {
+    pub fn as_view(&self) -> FourierPolynomialView<'_> {
         FourierPolynomial {
             data: self.data.as_ref(),
         }
