@@ -95,7 +95,7 @@ impl LweCiphertextDiscardingKeyswitchEngine<LweKeyswitchKey64, LweCiphertext64, 
     /// let output_lwe_dimension = LweDimension(3);
     /// let decomposition_level_count = DecompositionLevelCount(2);
     /// let decomposition_base_log = DecompositionBaseLog(8);
-    /// let noise = Variance(2_f64.powf(-25.));
+    /// let noise = Variance(2_f64.powf(-50.));
     /// // Here a hard-set encoding is applied (shift by 50 bits)
     /// let input = 3_u64 << 50;
     ///
