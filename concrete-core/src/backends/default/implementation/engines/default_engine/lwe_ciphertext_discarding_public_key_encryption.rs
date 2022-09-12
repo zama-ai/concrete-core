@@ -16,8 +16,6 @@ impl LweCiphertextDiscardingPublicKeyEncryptionEngine<LwePublicKey32, Plaintext3
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweDimension, LwePublicKeyZeroEncryptionCount};
     /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
@@ -101,8 +99,6 @@ impl LweCiphertextDiscardingPublicKeyEncryptionEngine<LwePublicKey64, Plaintext6
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweDimension, LwePublicKeyZeroEncryptionCount};
     /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///

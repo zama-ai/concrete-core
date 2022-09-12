@@ -144,8 +144,6 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension, PlaintextCount};
     /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
@@ -231,8 +229,6 @@ impl
 {
     /// # Example:
     /// ```
-    /// use concrete_commons::dispersion::Variance;
-    /// use concrete_commons::parameters::{LweCiphertextCount, LweDimension, PlaintextCount};
     /// use concrete_core::prelude::*;
     /// # use std::error::Error;
     ///
