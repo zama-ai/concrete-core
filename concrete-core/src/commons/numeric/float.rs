@@ -65,27 +65,35 @@ macro_rules! implement {
             const MAX: Self = <$Type>::MAX;
         }
         impl FloatingPoint for $Type {
+            #[inline]
             fn powi(self, power: i32) -> Self {
                 self.powi(power)
             }
+            #[inline]
             fn round(self) -> Self {
                 self.round()
             }
+            #[inline]
             fn fract(self) -> Self {
                 self.fract()
             }
+            #[inline]
             fn rem_euclid(self, rhs: Self) -> Self {
                 self.rem_euclid(rhs)
             }
+            #[inline]
             fn sqrt(self) -> Self {
                 self.sqrt()
             }
+            #[inline]
             fn ln(self) -> Self {
                 self.ln()
             }
+            #[inline]
             fn abs(self) -> Self {
                 self.abs()
             }
+            #[inline]
             fn floor(self) -> Self {
                 self.floor()
             }

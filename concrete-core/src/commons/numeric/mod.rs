@@ -71,6 +71,7 @@ macro_rules! implement_cast {
     ($Input:ty, {$($Output:ty),*}) => {
         $(
         impl CastFrom<$Input> for $Output {
+            #[inline]
             fn cast_from(input: $Input) -> $Output {
                 input as $Output
             }
@@ -94,6 +95,7 @@ impl<Num> CastFrom<bool> for Num
 where
     Num: Numeric,
 {
+    #[inline]
     fn cast_from(input: bool) -> Num {
         if input {
             Num::ONE

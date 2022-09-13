@@ -397,6 +397,7 @@ pub fn external_product_scratch<Scalar>(
 }
 
 /// Performs the external product of `ggsw` and `glwe`, and stores the result in `out`.
+#[cfg_attr(__profiling, inline(never))]
 pub fn external_product<Scalar: UnsignedTorus>(
     mut out: GlweCiphertextMutView<'_, Scalar>,
     ggsw: FourierGgswCiphertextView<'_>,
@@ -518,6 +519,7 @@ pub fn external_product<Scalar: UnsignedTorus>(
     }
 }
 
+#[cfg_attr(__profiling, inline(never))]
 fn collect_next_term<'a, Scalar: UnsignedTorus>(
     decomposition: &mut TensorSignedDecompositionLendingIter<'_, Scalar>,
     substack1: &'a mut DynStack,
@@ -692,6 +694,7 @@ unsafe fn update_with_fmadd_scalar(
 /// # Safety
 ///
 ///  - if `is_output_uninit` is false, `output_fourier` must not hold any uninitialized values.
+#[cfg_attr(__profiling, inline(never))]
 unsafe fn update_with_fmadd(
     output_fft_buffer: &mut [MaybeUninit<c64>],
     ggsw_row: FourierGgswLevelRowView,

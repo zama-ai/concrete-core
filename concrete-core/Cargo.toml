@@ -14,6 +14,7 @@ keywords = ["fully", "homomorphic", "encryption", "fhe", "cryptography"]
 [dev-dependencies]
 rand = "0.7"
 kolmogorov_smirnov = "1.1.0"
+criterion = "0.3"
 
 [dependencies]
 concrete-fftw = { version = "=0.1.3", optional = true }
@@ -32,6 +33,10 @@ once_cell = "1.13"
 [lib]
 name = "concrete_core"
 bench = false
+
+[[bench]]
+name = "bench"
+harness = false
 
 [features]
 default = ["backend_default", "seeder_unix"]
@@ -76,6 +81,7 @@ backend_fftw_serialization = [
 backend_cuda = ["concrete-cuda"]
 
 # Private features
+__profiling = []
 __private_docs = []
 __commons_parallel = ["rayon", "concrete-csprng/parallel"]
 __commons_serialization = [

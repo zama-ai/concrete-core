@@ -23,16 +23,16 @@ pub struct TensorSignedDecompositionLendingIter<'buffers, Scalar: UnsignedIntege
 }
 
 impl<'buffers, Scalar: UnsignedInteger> TensorSignedDecompositionLendingIter<'buffers, Scalar> {
+    #[inline]
     pub(crate) fn new(
         input: impl Iterator<Item = Scalar>,
         base_log: DecompositionBaseLog,
         level: DecompositionLevelCount,
         stack: DynStack<'buffers>,
     ) -> (Self, DynStack<'buffers>) {
-        let (states, stack) = stack.collect_aligned(
-            aligned_vec::CACHELINE_ALIGN,
-            input.map(|i| i >> (Scalar::BITS - base_log.0 * level.0)),
-        );
+        let shift = Scalar::BITS - base_log.0 * level.0;
+        let (states, stack) =
+            stack.collect_aligned(aligned_vec::CACHELINE_ALIGN, input.map(|i| i >> shift));
         (
             TensorSignedDecompositionLendingIter {
                 base_log: base_log.0,

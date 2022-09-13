@@ -54,6 +54,7 @@ macro_rules! implement {
         }
         impl SignedInteger for $Type {
             type Unsigned = $UnsignedType;
+            #[inline]
             fn into_unsigned(self) -> Self::Unsigned {
                 Self::Unsigned::cast_from(self)
             }

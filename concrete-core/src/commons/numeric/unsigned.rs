@@ -77,6 +77,7 @@ macro_rules! implement {
         }
         impl UnsignedInteger for $Type {
             type Signed = $SignedType;
+            #[inline]
             fn into_signed(self) -> Self::Signed {
                 Self::Signed::cast_from(self)
             }
@@ -94,27 +95,35 @@ macro_rules! implement {
                 }
                 strn
             }
+            #[inline]
             fn wrapping_add(self, other: Self) -> Self {
                 self.wrapping_add(other)
             }
+            #[inline]
             fn wrapping_sub(self, other: Self) -> Self {
                 self.wrapping_sub(other)
             }
+            #[inline]
             fn wrapping_div(self, other: Self) -> Self {
                 self.wrapping_div(other)
             }
+            #[inline]
             fn wrapping_mul(self, other: Self) -> Self {
                 self.wrapping_mul(other)
             }
+            #[inline]
             fn wrapping_neg(self) -> Self {
                 self.wrapping_neg()
             }
+            #[inline]
             fn wrapping_shl(self, rhs: u32) -> Self {
                 self.wrapping_shl(rhs)
             }
+            #[inline]
             fn wrapping_shr(self, rhs: u32) -> Self {
                 self.wrapping_shr(rhs)
             }
+            #[inline]
             fn wrapping_pow(self, exp: u32) -> Self {
                 self.wrapping_pow(exp)
             }
