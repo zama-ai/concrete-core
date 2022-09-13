@@ -77,7 +77,7 @@ impl<'a, T> IntoChunks for &'a mut [T] {
 /// # Safety
 ///
 /// No uninitialized values must be written into the output slice by the time the borrow ends
-#[inline(always)]
+#[inline]
 pub unsafe fn as_mut_uninit<T>(slice: &mut [T]) -> &mut [MaybeUninit<T>] {
     let len = slice.len();
     let ptr = slice.as_mut_ptr();
@@ -90,7 +90,7 @@ pub unsafe fn as_mut_uninit<T>(slice: &mut [T]) -> &mut [MaybeUninit<T>] {
 /// # Safety
 ///
 /// All the elements of the input slice must be initialized and in a valid state.
-#[inline(always)]
+#[inline]
 pub unsafe fn assume_init_mut<T>(slice: &mut [MaybeUninit<T>]) -> &mut [T] {
     let len = slice.len();
     let ptr = slice.as_mut_ptr();
@@ -98,6 +98,7 @@ pub unsafe fn assume_init_mut<T>(slice: &mut [MaybeUninit<T>]) -> &mut [T] {
     core::slice::from_raw_parts_mut(ptr as *mut _, len)
 }
 
+#[inline]
 fn assert_same_len(a: (usize, Option<usize>), b: (usize, Option<usize>)) {
     debug_assert_eq!(a.1, Some(a.0));
     debug_assert_eq!(b.1, Some(b.0));
@@ -106,6 +107,7 @@ fn assert_same_len(a: (usize, Option<usize>), b: (usize, Option<usize>)) {
 
 /// Returns a Zip iterator, but checks that the two components have the same length.
 pub trait ZipChecked: IntoIterator + Sized {
+    #[inline]
     fn zip_checked<B: IntoIterator>(
         self,
         b: B,

@@ -80,7 +80,7 @@ fn test_product<Scalar: UnsignedTorus>() {
     }
 
     let mut generator = new_random_generator();
-    for i in 1..=10 {
+    for i in 5..=10 {
         for _ in 0..100 {
             let size = 1_usize << i;
 
@@ -178,4 +178,58 @@ fn test_roundtrip_u32() {
 #[test]
 fn test_roundtrip_u64() {
     test_roundtrip::<u64>();
+}
+
+#[test]
+fn f64_to_i64_bit_twiddles() {
+    for x in [
+        0.0,
+        -0.0,
+        37.1242161_f64,
+        -37.1242161_f64,
+        0.1,
+        -0.1,
+        1.0,
+        -1.0,
+        0.9,
+        -0.9,
+        2.0,
+        -2.0,
+        1e-310,
+        -1e-310,
+        2.0_f64.powi(62),
+        -(2.0_f64.powi(62)),
+        1.1 * 2.0_f64.powi(62),
+        1.1 * -(2.0_f64.powi(62)),
+    ] {
+        // this test checks the correctness of converting from f64 to i64 by manipulating the bits
+        // of the ieee754 representation of the floating point values.
+        //
+        // if the value is not representable as an i64, the result is unspecified.
+        //
+        // https://en.wikipedia.org/wiki/Double-precision_floating-point_format
+        let bits = x.to_bits();
+        let implicit_mantissa = bits & 0xFFFFFFFFFFFFF;
+        let explicit_mantissa = implicit_mantissa | 0x10000000000000;
+        let biased_exp = ((bits >> 52) & 0x7FF) as i64;
+        let sign = bits >> 63;
+
+        let explicit_mantissa_lshift = explicit_mantissa << 10;
+
+        // equivalent to:
+        //
+        // let exp = biased_exp - 1023;
+        // let explicit_mantissa_shift = explicit_mantissa_lshift >> (62 - exp.max(-1));
+
+        let explicit_mantissa_shift = explicit_mantissa_lshift >> (1085 - (biased_exp).max(1022));
+
+        let value = if sign == 0 {
+            explicit_mantissa_shift as i64
+        } else {
+            -(explicit_mantissa_shift as i64)
+        };
+
+        let value = if biased_exp == 0 { 0 } else { value };
+        assert_eq!(value as i64, x as i64);
+    }
 }
