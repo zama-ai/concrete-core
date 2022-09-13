@@ -6,6 +6,8 @@ use crate::commons::math::tensor::{
 use crate::commons::math::torus::UnsignedTorus;
 use crate::commons::utils::{zip, zip_args};
 use crate::prelude::{CiphertextCount, CleartextCount, LweDimension, LweSize};
+#[cfg(feature = "__commons_parallel")]
+use rayon::{iter::IndexedParallelIterator, prelude::*};
 #[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
 
@@ -247,6 +249,21 @@ impl<Cont> LweList<Cont> {
             .map(|sub| LweCiphertext::from_container(sub.into_container()))
     }
 
+    #[cfg(feature = "__commons_parallel")]
+    pub fn par_ciphertext_iter(
+        &mut self,
+    ) -> impl IndexedParallelIterator<Item = LweCiphertext<&[<Self as AsRefTensor>::Element]>>
+    where
+        Self: AsRefTensor,
+        <Self as AsRefTensor>::Element: Sync,
+    {
+        ck_dim_div!(self.as_tensor().len() => self.lwe_size.0);
+        let lwe_size = self.lwe_size.0;
+        self.as_tensor()
+            .par_subtensor_iter(lwe_size)
+            .map(|sub| LweCiphertext::from_container(sub.into_container()))
+    }
+
     /// Returns an iterator over ciphers mutably borrowed from the list.
     ///
     /// # Example
@@ -276,6 +293,21 @@ impl<Cont> LweList<Cont> {
         let lwe_size = self.lwe_size.0;
         self.as_mut_tensor()
             .subtensor_iter_mut(lwe_size)
+            .map(|sub| LweCiphertext::from_container(sub.into_container()))
+    }
+
+    #[cfg(feature = "__commons_parallel")]
+    pub fn par_ciphertext_iter_mut(
+        &mut self,
+    ) -> impl IndexedParallelIterator<Item = LweCiphertext<&mut [<Self as AsMutTensor>::Element]>>
+    where
+        Self: AsMutTensor,
+        <Self as AsMutTensor>::Element: Sync + Send,
+    {
+        ck_dim_div!(self.as_tensor().len() => self.lwe_size.0);
+        let lwe_size = self.lwe_size.0;
+        self.as_mut_tensor()
+            .par_subtensor_iter_mut(lwe_size)
             .map(|sub| LweCiphertext::from_container(sub.into_container()))
     }
 

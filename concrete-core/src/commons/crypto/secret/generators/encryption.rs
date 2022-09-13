@@ -7,8 +7,8 @@ use crate::commons::math::tensor::AsMutTensor;
 
 use crate::commons::numeric::UnsignedInteger;
 use crate::prelude::{
-    DecompositionLevelCount, DispersionParameter, GlweDimension, GlweSize, LweDimension, LweSize,
-    PolynomialSize,
+    DecompositionLevelCount, DispersionParameter, GlweDimension, GlweSize, LweCiphertextCount,
+    LweDimension, LweSize, PolynomialSize,
 };
 use concrete_csprng::generators::ForkError;
 #[cfg(feature = "__commons_parallel")]
@@ -102,6 +102,18 @@ impl<G: ByteRandomGenerator> EncryptionRandomGenerator<G> {
         self.try_fork(lwe_size.0, mask_bytes, noise_bytes)
     }
 
+    // Forks the generator, when splitting an lwe ciphertext list into ciphertexts.
+    pub(crate) fn fork_lwe_list_to_lwe<T: UnsignedInteger>(
+        &mut self,
+        lwe_count: LweCiphertextCount,
+        lwe_size: LweSize,
+    ) -> Result<impl Iterator<Item = EncryptionRandomGenerator<G>>, ForkError> {
+        let mask_bytes = mask_bytes_per_lwe::<T>(lwe_size.to_lwe_dimension());
+        let noise_bytes = noise_bytes_per_lwe();
+        self.try_fork(lwe_count.0, mask_bytes, noise_bytes)
+    }
+
+    // Forks both generators into a parallel iterator.
     // Forks both generators into an iterator
     fn try_fork(
         &mut self,
@@ -216,6 +228,17 @@ impl<G: ParallelByteRandomGenerator> EncryptionRandomGenerator<G> {
         let mask_bytes = mask_bytes_per_lwe::<T>(lwe_size.to_lwe_dimension());
         let noise_bytes = noise_bytes_per_lwe();
         self.par_try_fork(lwe_size.0, mask_bytes, noise_bytes)
+    }
+
+    // Forks the generator, when splitting an lwe ciphertext list into ciphertexts.
+    pub(crate) fn par_fork_lwe_list_to_lwe<T: UnsignedInteger>(
+        &mut self,
+        lwe_count: LweCiphertextCount,
+        lwe_size: LweSize,
+    ) -> Result<impl IndexedParallelIterator<Item = EncryptionRandomGenerator<G>>, ForkError> {
+        let mask_bytes = mask_bytes_per_lwe::<T>(lwe_size.to_lwe_dimension());
+        let noise_bytes = noise_bytes_per_lwe();
+        self.par_try_fork(lwe_count.0, mask_bytes, noise_bytes)
     }
 
     // Forks both generators into a parallel iterator.

@@ -4,6 +4,8 @@ use crate::commons::math::tensor::{
 };
 use crate::commons::numeric::Numeric;
 use crate::prelude::PlaintextCount;
+#[cfg(feature = "__commons_parallel")]
+use rayon::{iter::IndexedParallelIterator, prelude::*};
 #[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
 
@@ -102,6 +104,22 @@ impl<Cont> PlaintextList<Cont> {
         })
     }
 
+    #[cfg(feature = "__commons_parallel")]
+    pub fn par_plaintext_iter(
+        &self,
+    ) -> impl IndexedParallelIterator<Item = &Plaintext<<Self as AsRefTensor>::Element>>
+    where
+        Self: AsRefTensor,
+        <Self as AsRefTensor>::Element: Numeric + Sync,
+    {
+        self.as_tensor().par_iter().map(|refe| unsafe {
+            &*{
+                refe as *const <Self as AsRefTensor>::Element
+                    as *const Plaintext<<Self as AsRefTensor>::Element>
+            }
+        })
+    }
+
     /// Creates an iterator over mutably borrowed plaintexts.
     ///
     /// # Example
@@ -123,6 +141,22 @@ impl<Cont> PlaintextList<Cont> {
         <Self as AsMutTensor>::Element: Numeric,
     {
         self.as_mut_tensor().iter_mut().map(|refe| unsafe {
+            &mut *{
+                refe as *mut <Self as AsMutTensor>::Element
+                    as *mut Plaintext<<Self as AsMutTensor>::Element>
+            }
+        })
+    }
+
+    #[cfg(feature = "__commons_parallel")]
+    pub fn par_plaintext_iter_mut(
+        &mut self,
+    ) -> impl IndexedParallelIterator<Item = &mut Plaintext<<Self as AsMutTensor>::Element>>
+    where
+        Self: AsMutTensor,
+        <Self as AsMutTensor>::Element: Numeric + Send + Sync,
+    {
+        self.as_mut_tensor().par_iter_mut().map(|refe| unsafe {
             &mut *{
                 refe as *mut <Self as AsMutTensor>::Element
                     as *mut Plaintext<<Self as AsMutTensor>::Element>

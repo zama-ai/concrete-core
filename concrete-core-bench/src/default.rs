@@ -176,7 +176,8 @@ bench! {
     ((), PlaintextRetrievalFixture, (Plaintext)),
     ((), PlaintextVectorDiscardingRetrievalFixture, (PlaintextVector)),
     ((), PlaintextVectorCreationFixture, (PlaintextVector)),
-    ((), PlaintextVectorRetrievalFixture, (PlaintextVector))
+    ((), PlaintextVectorRetrievalFixture, (PlaintextVector)),
+    ((BinaryKeyDistribution), LwePublicKeyGenerationFixture, (LweSecretKey, LwePublicKey))
 }
 
 #[cfg(feature = "backend_default_parallel")]
@@ -210,5 +211,7 @@ macro_rules! bench_parallel {
 #[cfg(feature = "backend_default_parallel")]
 bench_parallel! {
     ((BinaryKeyDistribution, BinaryKeyDistribution), LweBootstrapKeyGenerationFixture, (LweSecretKey, GlweSecretKey, LweBootstrapKey)),
-    ((BinaryKeyDistribution, BinaryKeyDistribution), LweSeededBootstrapKeyGenerationFixture, (LweSecretKey, GlweSecretKey, LweSeededBootstrapKey))
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweSeededBootstrapKeyGenerationFixture, (LweSecretKey, GlweSecretKey, LweSeededBootstrapKey)),
+    ((BinaryKeyDistribution), LweCiphertextVectorZeroEncryptionFixture, (LweSecretKey, LweCiphertextVector)),
+    ((BinaryKeyDistribution), LwePublicKeyGenerationFixture, (LweSecretKey, LwePublicKey))
 }
