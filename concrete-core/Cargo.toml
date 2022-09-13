@@ -12,7 +12,6 @@ readme = "README.md"
 keywords = ["fully", "homomorphic", "encryption", "fhe", "cryptography"]
 
 [dev-dependencies]
-concrete-npe = { version = "0.3.0", path = "../concrete-npe" }
 rand = "0.7"
 kolmogorov_smirnov = "1.1.0"
 
