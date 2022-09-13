@@ -165,3 +165,37 @@ test! {
     ((), PlaintextVectorCreationFixture, (PlaintextVector)),
     ((), PlaintextVectorRetrievalFixture, (PlaintextVector))
 }
+
+#[cfg(feature = "backend_default_parallel")]
+macro_rules! test_parallel {
+    (($($key_dist:ident),*), $fixture: ident, $precision: ident, ($($types:ident),+)) => {
+        paste!{
+            #[test]
+            fn [< test_parallel_ $fixture:snake _ $precision:snake _ $($types:snake)_+ >]() {
+                let mut maker = Maker::default();
+                let mut engine = DefaultParallelEngine::new(Box::new(UnixSeeder::new(0))).unwrap();
+                let test_result =
+                    <$fixture as Fixture<
+                        $precision,
+                        ($($key_dist,)*),
+                        DefaultParallelEngine,
+                        ($($types,)+),
+                    >>::stress_all_parameters(&mut maker, &mut engine, REPETITIONS, SAMPLE_SIZE);
+                assert!(test_result);
+            }
+        }
+    };
+    ($((($($key_dist:ident),*), $fixture: ident, ($($types:ident),+))),+) => {
+        $(
+            paste!{
+                test_parallel!{($($key_dist),*), $fixture, Precision32, ($([< $types 32 >]),+)}
+                test_parallel!{($($key_dist),*), $fixture, Precision64, ($([< $types 64 >]),+)}
+            }
+        )+
+    };
+}
+
+#[cfg(feature = "backend_default_parallel")]
+test_parallel! {
+    ((BinaryKeyDistribution), LweCiphertextVectorZeroEncryptionFixture, (LweSecretKey, LweCiphertextVector))
+}

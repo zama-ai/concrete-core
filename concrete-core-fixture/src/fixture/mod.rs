@@ -536,3 +536,6 @@ pub use lwe_ciphertext_vector_glwe_ciphertext_discarding_private_functional_pack
 
 mod glwe_ciphertext_conversion;
 pub use glwe_ciphertext_conversion::*;
+
+mod lwe_public_key_generation;
+pub use lwe_public_key_generation::*;

@@ -15,8 +15,8 @@ use crate::commons::math::tensor::{
 use crate::commons::math::torus::UnsignedTorus;
 use crate::commons::numeric::Numeric;
 use crate::prelude::{
-    BinaryKeyKind, DispersionParameter, GaussianKeyKind, KeyKind, LweDimension, TernaryKeyKind,
-    UniformKeyKind,
+    BinaryKeyKind, DispersionParameter, GaussianKeyKind, KeyKind, LweCiphertextCount, LweDimension,
+    TernaryKeyKind, UniformKeyKind,
 };
 #[cfg(feature = "__commons_parallel")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
@@ -545,6 +545,40 @@ where
         for (mut cipher, message) in output.ciphertext_iter_mut().zip(encoded.plaintext_iter()) {
             self.encrypt_lwe(&mut cipher, message, noise_parameters, generator);
         }
+    }
+
+    #[cfg(feature = "__commons_parallel")]
+    pub fn par_encrypt_lwe_list<OutputCont, InputCont, Scalar, Gen>(
+        &self,
+        output: &mut LweList<OutputCont>,
+        encoded: &PlaintextList<InputCont>,
+        noise_parameters: impl DispersionParameter + Sync,
+        generator: &mut EncryptionRandomGenerator<Gen>,
+    ) where
+        Self: AsRefTensor<Element = Scalar>,
+        LweList<OutputCont>: AsMutTensor<Element = Scalar>,
+        PlaintextList<InputCont>: AsRefTensor<Element = Scalar>,
+        Scalar: UnsignedTorus + Send + Sync,
+        Gen: ByteRandomGenerator + ParallelByteRandomGenerator,
+        Cont: Sync,
+    {
+        debug_assert!(
+            output.count().0 == encoded.count().0,
+            "Lwe cipher list size and encoded list size are not compatible"
+        );
+        let ct_count = LweCiphertextCount(output.count().0);
+        let ct_size = output.lwe_size;
+        output
+            .par_ciphertext_iter_mut()
+            .zip(encoded.par_plaintext_iter())
+            .zip(
+                generator
+                    .par_fork_lwe_list_to_lwe::<Scalar>(ct_count, ct_size)
+                    .unwrap(),
+            )
+            .for_each(|((mut cipher, message), mut generator)| {
+                self.encrypt_lwe(&mut cipher, message, noise_parameters, &mut generator);
+            })
     }
 
     pub fn encrypt_seeded_lwe_list_with_existing_generator<
