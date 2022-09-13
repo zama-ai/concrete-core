@@ -359,7 +359,7 @@ impl<Cont> StandardGgswCiphertext<Cont> {
                     tensor.into_container(),
                     poly_size,
                     rlwe_size,
-                    DecompositionLevel(level_count - index + 1),
+                    DecompositionLevel(level_count - index),
                 )
             })
     }
@@ -413,7 +413,7 @@ impl<Cont> StandardGgswCiphertext<Cont> {
                     tensor.into_container(),
                     poly_size,
                     rlwe_size,
-                    DecompositionLevel(level_count - index + 1),
+                    DecompositionLevel(level_count - index),
                 )
             })
     }
@@ -469,7 +469,7 @@ impl<Cont> StandardGgswCiphertext<Cont> {
                     tensor.into_container(),
                     poly_size,
                     rlwe_size,
-                    DecompositionLevel(level_count - index + 1),
+                    DecompositionLevel(level_count - index),
                 )
             })
     }

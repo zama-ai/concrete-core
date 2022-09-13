@@ -260,7 +260,7 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
                 GswLevelMatrix::from_container(
                     tensor.into_container(),
                     lwe_size,
-                    DecompositionLevel(level_count - index + 1),
+                    DecompositionLevel(level_count - index),
                 )
             })
     }
@@ -308,7 +308,7 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
                 GswLevelMatrix::from_container(
                     tensor.into_container(),
                     lwe_size,
-                    DecompositionLevel(level_count - index + 1),
+                    DecompositionLevel(level_count - index),
                 )
             })
     }
@@ -358,7 +358,7 @@ impl<Cont, Scalar> GswCiphertext<Cont, Scalar> {
                 GswLevelMatrix::from_container(
                     tensor.into_container(),
                     lwe_size,
-                    DecompositionLevel(level_count - index + 1),
+                    DecompositionLevel(level_count - index),
                 )
             })
     }

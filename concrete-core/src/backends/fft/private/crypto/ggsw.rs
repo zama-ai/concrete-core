@@ -315,8 +315,9 @@ impl<C> FourierGgswLevelRow<C> {
 impl<'a> FourierGgswCiphertextView<'a> {
     /// Returns an iterator over the level matrices.
     pub fn into_levels(self) -> impl DoubleEndedIterator<Item = FourierGgswLevelMatrixView<'a>> {
+        let level_count = self.decomposition_level_count.0;
         self.data
-            .split_into(self.decomposition_level_count.0)
+            .split_into(level_count)
             .enumerate()
             .map(move |(i, slice)| {
                 FourierGgswLevelMatrixView::new(
@@ -324,7 +325,7 @@ impl<'a> FourierGgswCiphertextView<'a> {
                     self.polynomial_size,
                     self.glwe_size,
                     self.glwe_size.0,
-                    DecompositionLevel(i + 1),
+                    DecompositionLevel(level_count - i),
                 )
             })
     }
@@ -432,7 +433,7 @@ pub fn external_product<Scalar: UnsignedTorus>(
         );
 
         // We loop through the levels (we reverse to match the order of the decomposition iterator.)
-        ggsw.into_levels().rev().for_each(|ggsw_decomp_matrix| {
+        ggsw.into_levels().for_each(|ggsw_decomp_matrix| {
             // We retrieve the decomposition of this level.
             let (glwe_level, glwe_decomp_term, mut substack2) =
                 collect_next_term(&mut decomposition, &mut substack1, align);

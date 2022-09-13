@@ -349,7 +349,7 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
                     tensor.into_container(),
                     poly_size,
                     glwe_size,
-                    DecompositionLevel(level_count - index + 1),
+                    DecompositionLevel(level_count - index),
                 )
             })
     }
@@ -408,7 +408,7 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
                     tensor.into_container(),
                     poly_size,
                     glwe_size,
-                    DecompositionLevel(level_count - index + 1),
+                    DecompositionLevel(level_count - index),
                 )
             })
     }

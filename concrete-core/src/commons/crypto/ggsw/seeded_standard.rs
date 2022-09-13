@@ -357,7 +357,7 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
                     tensor.into_container(),
                     poly_size,
                     glwe_size,
-                    DecompositionLevel(level_count - index + 1),
+                    DecompositionLevel(level_count - index),
                     self.compression_seed,
                 )
             })
@@ -424,7 +424,7 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
                     tensor.into_container(),
                     poly_size,
                     glwe_size,
-                    DecompositionLevel(level_count - index + 1),
+                    DecompositionLevel(level_count - index),
                     compression_seed,
                 )
             })
@@ -492,7 +492,7 @@ impl<Cont> StandardGgswSeededCiphertext<Cont> {
                     tensor.into_container(),
                     poly_size,
                     glwe_size,
-                    DecompositionLevel(level_count - index + 1),
+                    DecompositionLevel(level_count - index),
                     compression_seed,
                 )
             })
