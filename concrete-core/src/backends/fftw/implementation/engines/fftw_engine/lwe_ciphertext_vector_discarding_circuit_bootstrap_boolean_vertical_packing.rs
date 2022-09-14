@@ -188,7 +188,7 @@ impl
     /// # Ok(())
     /// # }
     /// ```
-    fn discard_boolean_circuit_bootstrap_vertical_packing_lwe_ciphertext_vector(
+    fn discard_circuit_bootstrap_boolean_vertical_packing_lwe_ciphertext_vector(
         &mut self,
         output: &mut LweCiphertextVectorMutView32,
         input: &LweCiphertextVectorView32,
@@ -420,7 +420,7 @@ impl
     /// # Ok(())
     /// # }
     /// ```
-    fn discard_boolean_circuit_bootstrap_vertical_packing_lwe_ciphertext_vector(
+    fn discard_circuit_bootstrap_boolean_vertical_packing_lwe_ciphertext_vector(
         &mut self,
         output: &mut LweCiphertextVectorMutView64,
         input: &LweCiphertextVectorView64,

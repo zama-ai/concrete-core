@@ -153,7 +153,7 @@ pub trait LweCiphertextVectorDiscardingCircuitBootstrapBooleanVerticalPackingEng
     /// Performs the circuit bootstrapping on all boolean input LWE ciphertexts followed by vertical
     /// packing using the provided look-up table.
     #[allow(clippy::too_many_arguments)]
-    fn discard_boolean_circuit_bootstrap_vertical_packing_lwe_ciphertext_vector(
+    fn discard_circuit_bootstrap_boolean_vertical_packing_lwe_ciphertext_vector(
         &mut self,
         output: &mut Output,
         input: &Input,
