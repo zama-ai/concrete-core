@@ -168,7 +168,7 @@ impl
     /// let cbs_level_count = DecompositionLevelCount(4);
     /// let cbs_base_log = DecompositionBaseLog(6);
     ///
-    /// fftw_engine.discard_boolean_circuit_bootstrap_vertical_packing_lwe_ciphertext_vector(
+    /// fftw_engine.discard_circuit_bootstrap_boolean_vertical_packing_lwe_ciphertext_vector(
     ///     &mut output_cbs_vp_ct_mut_view,
     ///     &cbs_vp_input_vector_view,
     ///     &fourier_bsk,
@@ -400,7 +400,7 @@ impl
     /// let cbs_level_count = DecompositionLevelCount(4);
     /// let cbs_base_log = DecompositionBaseLog(6);
     ///
-    /// fftw_engine.discard_boolean_circuit_bootstrap_vertical_packing_lwe_ciphertext_vector(
+    /// fftw_engine.discard_circuit_bootstrap_boolean_vertical_packing_lwe_ciphertext_vector(
     ///     &mut output_cbs_vp_ct_mut_view,
     ///     &cbs_vp_input_vector_view,
     ///     &fourier_bsk,
