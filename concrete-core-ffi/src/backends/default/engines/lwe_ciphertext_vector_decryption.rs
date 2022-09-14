@@ -5,8 +5,8 @@ use crate::utils::*;
 use concrete_core::prelude::*;
 use std::os::raw::c_int;
 
-/// Decrypt an `LweCiphertextVectorView64`. The plaintext is also retrieved as a `u64` directly.
-/// View buffer variant.
+/// Decrypt an `LweCiphertextVectorView64`. The plaintext is also retrieved as a `u64` array
+/// directly. View buffer variant.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
@@ -31,11 +31,16 @@ pub unsafe extern "C" fn default_engine_decrypt_lwe_ciphertext_vector_u64_view_b
             .decrypt_lwe_ciphertext_vector(secret_key, input)
             .or_else(engine_error_as_readable_string)
             .unwrap();
-        *result = *engine
+
+        let decrypted_plaintext_vector_as_vec = engine
             .retrieve_plaintext_vector(&decrypted_plaintext_vector)
             .or_else(engine_error_as_readable_string)
-            .unwrap()
-            .as_mut_ptr();
+            .unwrap();
+
+        let result_as_mut_slice =
+            std::slice::from_raw_parts_mut(result, input.lwe_ciphertext_count().0);
+
+        result_as_mut_slice.copy_from_slice(&decrypted_plaintext_vector_as_vec);
     })
 }
 
@@ -57,9 +62,13 @@ pub unsafe extern "C" fn default_engine_decrypt_lwe_ciphertext_vector_unchecked_
 
         let decrypted_plaintext_vector =
             engine.decrypt_lwe_ciphertext_vector_unchecked(secret_key, input);
-        *result = *engine
-            .retrieve_plaintext_vector_unchecked(&decrypted_plaintext_vector)
-            .as_mut_ptr();
+
+        let decrypted_plaintext_vector_as_vec =
+            engine.retrieve_plaintext_vector_unchecked(&decrypted_plaintext_vector);
+
+        let result_as_mut_slice =
+            std::slice::from_raw_parts_mut(result, input.lwe_ciphertext_count().0);
+        result_as_mut_slice.copy_from_slice(&decrypted_plaintext_vector_as_vec);
     })
 }
 
@@ -93,11 +102,14 @@ pub unsafe extern "C" fn default_engine_decrypt_lwe_ciphertext_vector_u64_raw_pt
             .decrypt_lwe_ciphertext_vector(secret_key, &input)
             .or_else(engine_error_as_readable_string)
             .unwrap();
-        *result = *engine
+
+        let decrypted_plaintext_vector_as_vec = engine
             .retrieve_plaintext_vector(&decrypted_plaintext_vector)
             .or_else(engine_error_as_readable_string)
-            .unwrap()
-            .as_mut_ptr();
+            .unwrap();
+
+        let result_as_mut_slice = std::slice::from_raw_parts_mut(result, lwe_count);
+        result_as_mut_slice.copy_from_slice(&decrypted_plaintext_vector_as_vec);
     })
 }
 
@@ -124,8 +136,11 @@ pub unsafe extern "C" fn default_engine_decrypt_lwe_ciphertext_vector_unchecked_
 
         let decrypted_plaintext_vector =
             engine.decrypt_lwe_ciphertext_vector_unchecked(secret_key, &input);
-        *result = *engine
-            .retrieve_plaintext_vector_unchecked(&decrypted_plaintext_vector)
-            .as_mut_ptr();
+
+        let decrypted_plaintext_vector_as_vec =
+            engine.retrieve_plaintext_vector_unchecked(&decrypted_plaintext_vector);
+
+        let result_as_mut_slice = std::slice::from_raw_parts_mut(result, lwe_count);
+        result_as_mut_slice.copy_from_slice(&decrypted_plaintext_vector_as_vec);
     })
 }

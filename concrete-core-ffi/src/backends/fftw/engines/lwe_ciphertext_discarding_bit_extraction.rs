@@ -24,7 +24,6 @@ pub unsafe extern "C" fn fftw_engine_lwe_ciphertext_discarding_bit_extraction_u6
         let engine = get_mut_checked(engine).unwrap();
 
         let bootstrap_key = get_ref_checked(bootstrap_key).unwrap();
-
         let keyswitch_key = get_ref_checked(keyswitch_key).unwrap();
 
         let output = get_mut_checked(output).unwrap();
@@ -146,8 +145,8 @@ pub unsafe extern "C" fn fftw_engine_lwe_ciphertext_discarding_bit_extraction_un
         let fftw_engine = &mut (*fftw_engine);
         let default_engine = &mut (*default_engine);
 
-        let bootstrap_key = get_ref_checked(bootstrap_key).unwrap();
-        let keyswitch_key = get_ref_checked(keyswitch_key).unwrap();
+        let bootstrap_key = &(*bootstrap_key);
+        let keyswitch_key = &(*keyswitch_key);
 
         let input_lwe_size = bootstrap_key.output_lwe_dimension().to_lwe_size().0;
         let output_lwe_size = keyswitch_key.output_lwe_dimension().to_lwe_size().0;

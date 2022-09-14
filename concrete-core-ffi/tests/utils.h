@@ -19,8 +19,10 @@ int clone_transform_lwe_secret_key_to_glwe_secret_key_unchecked_u64(
 int clone_transform_glwe_secret_key_to_lwe_secret_key_u64(DefaultEngine *default_engine,
                                                           GlweSecretKey64 *input_glwe_sk,
                                                           LweSecretKey64 **output_lwe_sk);
-int clone_transform_glwe_secret_key_to_lwe_secret_key_unchecked_u64(
-        DefaultEngine *default_engine, GlweSecretKey64 *input_glwe_sk,
-        LweSecretKey64 **output_lwe_sk);
+int clone_transform_glwe_secret_key_to_lwe_secret_key_unchecked_u64(DefaultEngine *default_engine,
+                                                                    GlweSecretKey64 *input_glwe_sk,
+                                                                    LweSecretKey64 **output_lwe_sk);
+
+uint64_t closest_representable(uint64_t input, size_t level_count, size_t base_log);
 
 #endif // FFI_TEST_UTILS

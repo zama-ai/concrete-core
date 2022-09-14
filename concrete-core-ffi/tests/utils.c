@@ -138,11 +138,10 @@ int clone_transform_glwe_secret_key_to_lwe_secret_key_u64(DefaultEngine *default
 
 // This is not part of the C FFI but rather is a C util exposed for convenience in tests.
 int clone_transform_glwe_secret_key_to_lwe_secret_key_unchecked_u64(
-    DefaultEngine *default_engine, GlweSecretKey64 *input_glwe_sk,
-    LweSecretKey64 **output_lwe_sk) {
+    DefaultEngine *default_engine, GlweSecretKey64 *input_glwe_sk, LweSecretKey64 **output_lwe_sk) {
   GlweSecretKey64 *input_glwe_sk_clone = NULL;
-  int glwe_in_sk_clone_ok = clone_glwe_secret_key_unchecked_u64(input_glwe_sk, 
-                                                                &input_glwe_sk_clone);
+  int glwe_in_sk_clone_ok =
+      clone_glwe_secret_key_unchecked_u64(input_glwe_sk, &input_glwe_sk_clone);
   if (glwe_in_sk_clone_ok != 0) {
     return 1;
   }
@@ -158,4 +157,23 @@ int clone_transform_glwe_secret_key_to_lwe_secret_key_unchecked_u64(
   }
 
   return 0;
+}
+
+uint64_t closest_representable(uint64_t input, uint64_t level_count, uint64_t base_log) {
+  // The closest number representable by the decomposition can be computed by performing
+  // the rounding at the appropriate bit.
+
+  // We compute the number of least significant bits which can not be represented by the
+  // decomposition
+  uint64_t non_rep_bit_count = (uint64_t)64 - (level_count * base_log);
+  // We generate a mask which captures the non representable bits
+  uint64_t non_rep_mask = (uint64_t)1 << (non_rep_bit_count - 1);
+  // We retrieve the non representable bits
+  uint64_t non_rep_bits = input & non_rep_mask;
+  // We extract the msb of the  non representable bits to perform the rounding
+  uint64_t non_rep_msb = non_rep_bits >> (non_rep_bit_count - (uint64_t)1);
+  // We remove the non-representable bits and perform the rounding
+  uint64_t res = input >> non_rep_bit_count;
+  res = res + non_rep_msb;
+  return res << non_rep_bit_count;
 }
