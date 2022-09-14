@@ -166,6 +166,33 @@ pub unsafe extern "C" fn destroy_lwe_ciphertext_vector_mut_view_unchecked_u64(
     })
 }
 
+/// Destroy an `LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64`.
+///
+/// This function is [checked](crate#safety-checked-and-unchecked-functions).
+#[no_mangle]
+pub unsafe extern "C" fn destroy_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u64(
+    cbs_pfpksk: *mut LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+) -> c_int {
+    catch_panic(|| {
+        check_ptr_is_non_null_and_aligned(cbs_pfpksk).unwrap();
+
+        // Reconstruct the box, so that the memory is dropped at the end of the scope
+        Box::from_raw(cbs_pfpksk);
+    })
+}
+
+/// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
+/// [`destroy_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u64`]
+#[no_mangle]
+pub unsafe extern "C" fn destroy_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_unchecked_u64(
+    cbs_pfpksk: *mut LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+) -> c_int {
+    catch_panic(|| {
+        // Reconstruct the box, so that the memory is dropped at the end of the scope
+        Box::from_raw(cbs_pfpksk);
+    })
+}
+
 /// Destroy an `LweSecretKey64`.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
