@@ -387,6 +387,9 @@ pub use lwe_ciphertext_vector_encryption::*;
 mod lwe_ciphertext_vector_conversion;
 pub use lwe_ciphertext_vector_conversion::*;
 
+mod lwe_ciphertext_vector_discarding_conversion;
+pub use lwe_ciphertext_vector_discarding_conversion::*;
+
 mod lwe_ciphertext_vector_fusing_addition;
 pub use lwe_ciphertext_vector_fusing_addition::*;
 
