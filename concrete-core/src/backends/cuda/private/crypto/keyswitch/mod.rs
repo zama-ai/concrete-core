@@ -22,6 +22,9 @@ pub(crate) struct CudaLweKeyswitchKey<T: UnsignedInteger> {
     pub(crate) decomp_base_log: DecompositionBaseLog,
 }
 
+unsafe impl<T> Send for CudaLweKeyswitchKey<T> where T: Send + UnsignedInteger {}
+unsafe impl<T> Sync for CudaLweKeyswitchKey<T> where T: Sync + UnsignedInteger {}
+
 pub(crate) unsafe fn execute_lwe_ciphertext_vector_keyswitch_on_gpu<T: UnsignedInteger>(
     streams: &[CudaStream],
     output: &mut CudaLweList<T>,
