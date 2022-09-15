@@ -32,6 +32,9 @@ pub(crate) struct CudaBootstrapKey<T: UnsignedInteger> {
     pub(crate) _phantom: PhantomData<T>,
 }
 
+unsafe impl<T> Send for CudaBootstrapKey<T> where T: Send + UnsignedInteger {}
+unsafe impl<T> Sync for CudaBootstrapKey<T> where T: Sync + UnsignedInteger {}
+
 pub(crate) unsafe fn convert_lwe_bootstrap_key_from_cpu_to_gpu<T: UnsignedInteger, Cont>(
     streams: &[CudaStream],
     input: &StandardBootstrapKey<Cont>,
