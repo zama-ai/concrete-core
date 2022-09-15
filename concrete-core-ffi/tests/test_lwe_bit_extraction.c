@@ -109,7 +109,7 @@ void extract_bits_view_buffers_test(void) {
 
     uint64_t rounded = closest_representable(output, 1, 5);
     uint64_t decrypted = rounded >> delta_log;
-    printf("sanity check %ld\n", decrypted);
+    printf("sanity check %" PRIu64 "\n", decrypted);
   }
 
   uint64_t *lwe_list_out_buffer = aligned_alloc(
@@ -149,7 +149,7 @@ void extract_bits_view_buffers_test(void) {
     uint64_t expected = (val >> (number_of_bits_of_message - 1 - idx)) & 1;
     uint64_t rounded = closest_representable(output_plaintext_buffer[idx], 1, 1);
     uint64_t decrypted = rounded >> 63;
-    printf("decrypted %ld, expected %ld\n", decrypted, expected);
+    printf("decrypted %" PRIu64 ", expected %" PRIu64 "\n", decrypted, expected);
     assert(decrypted == expected);
   }
 
@@ -275,7 +275,7 @@ void extract_bits_unchecked_view_buffers_test(void) {
 
     uint64_t rounded = closest_representable(output, 1, 5);
     uint64_t decrypted = rounded >> delta_log;
-    printf("sanity check %ld\n", decrypted);
+    printf("sanity check %" PRIu64 "\n", decrypted);
   }
 
   uint64_t *lwe_list_out_buffer = aligned_alloc(
@@ -316,7 +316,7 @@ void extract_bits_unchecked_view_buffers_test(void) {
     uint64_t expected = (val >> (number_of_bits_of_message - 1 - idx)) & 1;
     uint64_t rounded = closest_representable(output_plaintext_buffer[idx], 1, 1);
     uint64_t decrypted = rounded >> 63;
-    printf("decrypted %ld, expected %ld\n", decrypted, expected);
+    printf("decrypted %" PRIu64 ", expected %" PRIu64 "\n", decrypted, expected);
     assert(decrypted == expected);
   }
 
@@ -430,7 +430,7 @@ void extract_bits_raw_ptr_buffers_test(void) {
 
     uint64_t rounded = closest_representable(output, 1, 5);
     uint64_t decrypted = rounded >> delta_log;
-    printf("sanity check %ld\n", decrypted);
+    printf("sanity check %" PRIu64 "\n", decrypted);
   }
 
   uint64_t *lwe_list_out_buffer = aligned_alloc(
@@ -459,7 +459,7 @@ void extract_bits_raw_ptr_buffers_test(void) {
     uint64_t expected = (val >> (number_of_bits_of_message - 1 - idx)) & 1;
     uint64_t rounded = closest_representable(output_plaintext_buffer[idx], 1, 1);
     uint64_t decrypted = rounded >> 63;
-    printf("decrypted %ld, expected %ld\n", decrypted, expected);
+    printf("decrypted %" PRIu64 ", expected %" PRIu64 "\n", decrypted, expected);
     assert(decrypted == expected);
   }
 
@@ -572,7 +572,7 @@ void extract_bits_unchecked_raw_ptr_buffers_test(void) {
 
     uint64_t rounded = closest_representable(output, 1, 5);
     uint64_t decrypted = rounded >> delta_log;
-    printf("sanity check %ld\n", decrypted);
+    printf("sanity check %" PRIu64 "\n", decrypted);
   }
 
   uint64_t *lwe_list_out_buffer = aligned_alloc(
@@ -602,7 +602,7 @@ void extract_bits_unchecked_raw_ptr_buffers_test(void) {
     uint64_t expected = (val >> (number_of_bits_of_message - 1 - idx)) & 1;
     uint64_t rounded = closest_representable(output_plaintext_buffer[idx], 1, 1);
     uint64_t decrypted = rounded >> 63;
-    printf("decrypted %ld, expected %ld\n", decrypted, expected);
+    printf("decrypted %" PRIu64 ", expected %" PRIu64 "\n", decrypted, expected);
     assert(decrypted == expected);
   }
 
