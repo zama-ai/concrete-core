@@ -34,6 +34,10 @@ macro_rules! bench {
 
 bench! {
     ((BinaryKeyDistribution), LweCiphertextVectorConversionFixture, (CudaLweCiphertextVector, LweCiphertextVector)),
+    ((BinaryKeyDistribution), LweCiphertextVectorConversionFixture, (LweCiphertextVectorView,
+        CudaLweCiphertextVector)),
+    ((BinaryKeyDistribution), LweCiphertextVectorDiscardingConversionFixture,
+        (CudaLweCiphertextVector, LweCiphertextVectorMutView)),
     ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingKeyswitchFixture, (CudaLweKeyswitchKey, CudaLweCiphertextVector,
         CudaLweCiphertextVector)),
     ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingBootstrapFixture1, (CudaFourierLweBootstrapKey,

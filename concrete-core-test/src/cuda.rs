@@ -34,6 +34,10 @@ macro_rules! test {
 
 test! {
     ((BinaryKeyDistribution), LweCiphertextVectorConversionFixture, (CudaLweCiphertextVector, LweCiphertextVector)),
+    ((BinaryKeyDistribution), LweCiphertextVectorConversionFixture, (LweCiphertextVectorView,
+        CudaLweCiphertextVector)),
+    ((BinaryKeyDistribution), LweCiphertextVectorDiscardingConversionFixture,
+        (CudaLweCiphertextVector, LweCiphertextVectorMutView)),
     ((BinaryKeyDistribution), LweCiphertextConversionFixture, (CudaLweCiphertext, LweCiphertext)),
     ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingKeyswitchFixture, (CudaLweKeyswitchKey, CudaLweCiphertextVector,
         CudaLweCiphertextVector)),
