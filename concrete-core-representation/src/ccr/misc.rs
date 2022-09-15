@@ -101,6 +101,21 @@ where
     tv.end()
 }
 
+pub(crate) fn serialize_punctuated<T, C, S>(
+    input: &syn::punctuated::Punctuated<T, C>,
+    serializer: S,
+) -> Result<S::Ok, S::Error>
+where
+    S: serde::Serializer,
+    T: Serialize,
+{
+    let mut tv = serializer.serialize_seq(Some(input.len()))?;
+    for elm in input.iter() {
+        tv.serialize_element(&elm)?;
+    }
+    tv.end()
+}
+
 pub(crate) fn serialize_with_token_string<T, S>(input: &T, serializer: S) -> Result<S::Ok, S::Error>
 where
     S: serde::Serializer,

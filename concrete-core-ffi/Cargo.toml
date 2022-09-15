@@ -10,7 +10,7 @@ documentation = "https://docs.zama.ai/concrete/core-lib/"
 repository = "https://github.com/zama-ai/concrete-core"
 readme = "README.md"
 keywords = ["fully", "homomorphic", "encryption", "fhe", "cryptography"]
-build = "build.rs"
+build = "compile/build.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
@@ -55,6 +55,10 @@ seeder_x86_64_rdseed = ["concrete-core/seeder_x86_64_rdseed"]
 
 [build-dependencies]
 cbindgen = "0.23"
+concrete-core-representation = {path = "../concrete-core-representation"}
+syn={version="1.0", features=["full", "extra-traits"]}
+quote = "1.0"
+lazy_static = "1.4.0"
 
 [lib]
 name = "concrete_core_ffi"

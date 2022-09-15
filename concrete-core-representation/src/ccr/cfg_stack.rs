@@ -1,12 +1,13 @@
 use super::*;
-use serde::Serialize;
+use crate::ccr::cfg_lang::{CfgAll, CfgParenPredicate, CfgPredicate};
+use serde::{Serialize, Serializer};
 
 /// A node representing a stack of `cfg` attributes.
 ///
 /// As we go deeper in the nesting of modules and items, we apply more and more cfg attributes. This
 /// structure represents that.
-#[derive(Serialize, Clone, Debug)]
-pub struct CfgStack(#[serde(serialize_with = "serialize_vec_with_token_string")] Vec<TokenStream2>);
+#[derive(Clone, Debug)]
+pub struct CfgStack(Vec<CfgPredicate>);
 
 impl CfgStack {
     /// Creates an empty stack.
@@ -30,10 +31,11 @@ impl CfgStack {
                     Some(att),
                     att >> att.path.get_ident(),
                     ident ?> *ident == "cfg",
-                    X> Some(att.tokens.clone())
+                    X> Some(att.tokens.clone()),
+                    tokens -> syn::parse2::<CfgParenPredicate>(tokens.to_owned()).unwrap().predicate
                 )
             })
-            .for_each(|ts| self.0.push(ts));
+            .for_each(|pd| self.0.push(pd));
     }
 
     /// Creates a new stack which is a copy of the current stack, to which the `attrs` attributes
@@ -42,5 +44,32 @@ impl CfgStack {
         let mut output = self.clone();
         output.push_attrs(attrs);
         output
+    }
+
+    /// Parses the cfg stack into one big cfg expression, which can then be evaluated.
+    pub fn cfg_expr(&self) -> CfgPredicate {
+        if self.0.is_empty() {
+            unreachable!()
+        } else if self.0.len() == 1 {
+            self.0.first().unwrap().to_owned()
+        } else {
+            let mut output = CfgAll {
+                all: syn::Ident::new("all", syn::__private::Span::call_site()),
+                content: syn::punctuated::Punctuated::new(),
+            };
+            for pred in self.0.iter() {
+                output.content.push(pred.to_owned())
+            }
+            CfgPredicate::All(Box::new(output))
+        }
+    }
+}
+
+impl Serialize for CfgStack {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        self.cfg_expr().serialize(serializer)
     }
 }
