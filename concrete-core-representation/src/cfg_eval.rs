@@ -1,6 +1,5 @@
 //! A module that evaluates cfg expressions.
 use crate::{CfgAll, CfgAny, CfgNot, CfgOption, CfgPredicate};
-use concrete_core_representation::{CfgAll, CfgAny, CfgNot, CfgOption, CfgPredicate};
 use quote::ToTokens;
 
 /// Evaluates a cfg predicate based on the current compilation context.

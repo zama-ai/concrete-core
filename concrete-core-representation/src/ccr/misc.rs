@@ -86,21 +86,6 @@ where
     output
 }
 
-pub(crate) fn serialize_vec_with_token_string<T, S>(
-    input: &Vec<T>,
-    serializer: S,
-) -> Result<S::Ok, S::Error>
-where
-    S: serde::Serializer,
-    T: ToTokens,
-{
-    let mut tv = serializer.serialize_seq(Some(input.len()))?;
-    for elm in input.iter() {
-        tv.serialize_element(&elm.to_token_stream().to_string())?;
-    }
-    tv.end()
-}
-
 pub(crate) fn serialize_punctuated<T, C, S>(
     input: &syn::punctuated::Punctuated<T, C>,
     serializer: S,
@@ -351,7 +336,7 @@ pub(crate) use pack_somes;
 #[macro_export]
 macro_rules! probe {
     ($($tail:tt)*) => {
-        __probe!($($tail)*)
+        $crate::__probe!($($tail)*)
     };
 }
 pub(crate) use probe;
@@ -363,7 +348,7 @@ macro_rules! __probe {
         {
             let local = || -> Option<_>{
                 let running = $init;
-                __probe!(running @ $($tail)*)
+                $crate::__probe!(running @ $($tail)*)
             };
             local()
         }
@@ -382,7 +367,7 @@ macro_rules! __probe {
             } else {
                 None
             };
-            __probe!(running @ $($tail)*)
+            $crate::__probe!(running @ $($tail)*)
         }
     };
     ($running:ident @ $ident:ident -> $exp:expr) => {
@@ -395,7 +380,7 @@ macro_rules! __probe {
             let running = $running.map(|$ident| {
                 $exp
             });
-            __probe!(running @ $($tail)*)
+            $crate::__probe!(running @ $($tail)*)
         }
     };
     ($running:ident @ $ident:ident >> $exp:expr) => {
@@ -408,7 +393,7 @@ macro_rules! __probe {
             let running = $running.and_then(|$ident| {
                 $exp
             });
-            __probe!(running @ $($tail)*)
+            $crate::__probe!(running @ $($tail)*)
         }
     };
     ($running:ident @ $ident:ident ?> $exp:expr) => {
@@ -421,7 +406,7 @@ macro_rules! __probe {
             let running = $running.filter(|$ident| {
                 $exp
             });
-            __probe!(running @ $($tail)*)
+            $crate::__probe!(running @ $($tail)*)
         }
     };
     ($running:ident @ X> $exp:expr) => {
@@ -430,9 +415,8 @@ macro_rules! __probe {
     ($running:ident @ X> $exp:expr, $($tail:tt)*) => {
         {
             let running = $running.and($exp);
-            __probe!(running @ $($tail)*)
+            $crate::__probe!(running @ $($tail)*)
         }
     };
 
 }
-pub(crate) use __probe;

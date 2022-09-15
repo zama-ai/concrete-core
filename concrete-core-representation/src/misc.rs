@@ -3,7 +3,44 @@ use quote::ToTokens;
 use std::borrow::Borrow;
 use std::fs::File;
 use std::io::Write;
-use std::path::Path;
+use std::path::{Path, PathBuf};
+use std::process::{Command, Stdio};
+
+/// Returns the root of `concrete-core` sources when called from the `build.rs` file of a neighbor
+/// crate.
+pub fn get_concrete_core_root() -> PathBuf {
+    PathBuf::from(std::env::var("CARGO_MANIFEST_DIR").unwrap())
+        .join("..")
+        .canonicalize()
+        .unwrap()
+        .join("concrete-core/src/lib.rs")
+}
+
+/// Returns a formatted string equivalent to the input rust string.
+pub fn format_rust_string(input: &str) -> Result<String, String> {
+    let mut rustfmt = Command::new("rustfmt")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("failed to execute child");
+    let mut stdin = rustfmt
+        .stdin
+        .take()
+        .ok_or_else(|| "Failed to take stdin".to_string())?;
+    let input = input.to_owned();
+    std::thread::spawn(move || {
+        stdin
+            .write_all(input.as_bytes())
+            .expect("failed to write to stdin");
+    });
+    let output = rustfmt
+        .wait_with_output()
+        .map_err(|e| format!("Failed to gather rustfmt output: {}", e))?;
+    if !output.status.success() {
+        return Err("Failed to format binding.".to_string());
+    }
+    String::from_utf8(output.stdout).map_err(|e| format!("Failed to read rustfmt output: {}", e))
+}
 
 /// Dumps the `ccr` to a json file. For debugging purpose.
 pub fn dump_ccr_to_file<P: AsRef<Path>, CC: Borrow<ConcreteCore>>(path: P, ccr: CC) {
