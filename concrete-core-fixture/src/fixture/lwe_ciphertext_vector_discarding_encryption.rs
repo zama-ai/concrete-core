@@ -61,37 +61,12 @@ where
             vec![
                 LweCiphertextVectorDiscardingEncryptionParameters {
                     noise: Variance(0.00000001),
-                    lwe_dimension: LweDimension(100),
+                    lwe_dimension: LweDimension(1),
                     lwe_ciphertext_count: LweCiphertextCount(1),
                 },
                 LweCiphertextVectorDiscardingEncryptionParameters {
                     noise: Variance(0.00000001),
-                    lwe_dimension: LweDimension(100),
-                    lwe_ciphertext_count: LweCiphertextCount(100),
-                },
-                LweCiphertextVectorDiscardingEncryptionParameters {
-                    noise: Variance(0.00000001),
-                    lwe_dimension: LweDimension(300),
-                    lwe_ciphertext_count: LweCiphertextCount(100),
-                },
-                LweCiphertextVectorDiscardingEncryptionParameters {
-                    noise: Variance(0.00000001),
-                    lwe_dimension: LweDimension(600),
-                    lwe_ciphertext_count: LweCiphertextCount(100),
-                },
-                LweCiphertextVectorDiscardingEncryptionParameters {
-                    noise: Variance(0.00000001),
                     lwe_dimension: LweDimension(1000),
-                    lwe_ciphertext_count: LweCiphertextCount(100),
-                },
-                LweCiphertextVectorDiscardingEncryptionParameters {
-                    noise: Variance(0.00000001),
-                    lwe_dimension: LweDimension(3000),
-                    lwe_ciphertext_count: LweCiphertextCount(100),
-                },
-                LweCiphertextVectorDiscardingEncryptionParameters {
-                    noise: Variance(0.00000001),
-                    lwe_dimension: LweDimension(6000),
                     lwe_ciphertext_count: LweCiphertextCount(100),
                 },
             ]

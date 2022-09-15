@@ -44,22 +44,10 @@ where
         Box::new(
             vec![
                 LweCiphertextTrivialDecryptionParameters {
-                    lwe_dimension: LweDimension(100),
-                },
-                LweCiphertextTrivialDecryptionParameters {
-                    lwe_dimension: LweDimension(300),
-                },
-                LweCiphertextTrivialDecryptionParameters {
-                    lwe_dimension: LweDimension(600),
+                    lwe_dimension: LweDimension(1),
                 },
                 LweCiphertextTrivialDecryptionParameters {
                     lwe_dimension: LweDimension(1000),
-                },
-                LweCiphertextTrivialDecryptionParameters {
-                    lwe_dimension: LweDimension(3000),
-                },
-                LweCiphertextTrivialDecryptionParameters {
-                    lwe_dimension: LweDimension(6000),
                 },
             ]
             .into_iter(),
