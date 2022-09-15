@@ -17,6 +17,7 @@ use crate::commons::crypto::glwe::{
     GlweCiphertext as ImplGlweCiphertext, GlweList as ImplGlweList,
     GlweSeededCiphertext as ImplGlweSeededCiphertext, GlweSeededList as ImplGlweSeededList,
     LwePackingKeyswitchKey as ImplLwePackingKeyswitchKey,
+    LwePrivateFunctionalPackingKeyswitchKeyList as ImplLweCircuitBoostrapPrivateFunctionalPackingKeyswitchKeys,
 };
 use crate::commons::crypto::lwe::{
     LweCiphertext as ImplLweCiphertext, LweKeyswitchKey as ImplLweKeyswitchKey,
@@ -48,7 +49,11 @@ use crate::prelude::{
     LweCiphertextVector32, LweCiphertextVector32Version, LweCiphertextVector64,
     LweCiphertextVector64Version, LweCiphertextVectorMutView32, LweCiphertextVectorMutView64,
     LweCiphertextVectorView32, LweCiphertextVectorView64, LweCiphertextView32, LweCiphertextView64,
-    LweKeyswitchKey32, LweKeyswitchKey32Version, LweKeyswitchKey64, LweKeyswitchKey64Version,
+    LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32,
+    LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32Version,
+    LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+    LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64Version, LweKeyswitchKey32,
+    LweKeyswitchKey32Version, LweKeyswitchKey64, LweKeyswitchKey64Version,
     LwePackingKeyswitchKey32, LwePackingKeyswitchKey32Version, LwePackingKeyswitchKey64,
     LwePackingKeyswitchKey64Version, LweSecretKey32, LweSecretKey32Version, LweSecretKey64,
     LweSecretKey64Version, LweSeededBootstrapKey32, LweSeededBootstrapKey32Version,
@@ -1874,6 +1879,164 @@ impl<'b> EntitySerializationEngine<LweCiphertextMutView64<'b>, Vec<u8>>
     }
 
     unsafe fn serialize_unchecked(&mut self, entity: &LweCiphertextMutView64<'b>) -> Vec<u8> {
+        self.serialize(entity).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
+/// on 32 bits integers. It serializes an LWE circuit bootstrap private functional packing keyswitch
+/// vector.
+impl EntitySerializationEngine<LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32, Vec<u8>>
+    for DefaultSerializationEngine
+{
+    /// # Example:
+    /// ```
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, FunctionalPackingKeyswitchKeyCount,
+    ///     GlweDimension, LweDimension, Variance, *,
+    /// };
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let input_lwe_dimension = LweDimension(10);
+    /// let output_glwe_dimension = GlweDimension(3);
+    /// let polynomial_size = PolynomialSize(256);
+    /// let decomposition_base_log = DecompositionBaseLog(3);
+    /// let decomposition_level_count = DecompositionLevelCount(5);
+    /// let noise = Variance(2_f64.powf(-25.));
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let input_key: LweSecretKey32 = engine.generate_new_lwe_secret_key(input_lwe_dimension)?;
+    /// let output_key: GlweSecretKey32 =
+    ///     engine.generate_new_glwe_secret_key(output_glwe_dimension, polynomial_size)?;
+    ///
+    /// let cbs_private_functional_packing_keyswitch_key:
+    ///     LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32 =
+    ///     engine
+    ///     .generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys(
+    ///         &input_key,
+    ///         &output_key,
+    ///         decomposition_base_log,
+    ///         decomposition_level_count,
+    ///         noise,
+    /// )?;
+    ///
+    /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
+    /// let serialized =
+    ///     serialization_engine.serialize(&cbs_private_functional_packing_keyswitch_key)?;
+    /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
+    /// assert_eq!(cbs_private_functional_packing_keyswitch_key, recovered);
+    ///
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn serialize(
+        &mut self,
+        entity: &LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32,
+    ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
+        #[derive(Serialize)]
+        struct SerializableLweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32<'a> {
+            version: LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32Version,
+            inner: &'a ImplLweCircuitBoostrapPrivateFunctionalPackingKeyswitchKeys<Vec<u32>>,
+        }
+        let serializable = SerializableLweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32 {
+            version: LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32Version::V0,
+            inner: &entity.0,
+        };
+        bincode::serialize(&serializable)
+            .map_err(DefaultSerializationError::Serialization)
+            .map_err(EntitySerializationError::Engine)
+    }
+
+    unsafe fn serialize_unchecked(
+        &mut self,
+        entity: &LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32,
+    ) -> Vec<u8> {
+        self.serialize(entity).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
+/// on 64 bits integers. It serializes an LWE circuit bootstrap private functional packing keyswitch
+/// vector.
+impl EntitySerializationEngine<LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64, Vec<u8>>
+    for DefaultSerializationEngine
+{
+    /// # Example:
+    /// ```
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, FunctionalPackingKeyswitchKeyCount,
+    ///     GlweDimension, LweDimension, Variance, *,
+    /// };
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let input_lwe_dimension = LweDimension(10);
+    /// let output_glwe_dimension = GlweDimension(3);
+    /// let polynomial_size = PolynomialSize(256);
+    /// let decomposition_base_log = DecompositionBaseLog(3);
+    /// let decomposition_level_count = DecompositionLevelCount(5);
+    /// let noise = Variance(2_f64.powf(-25.));
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let input_key: LweSecretKey64 = engine.generate_new_lwe_secret_key(input_lwe_dimension)?;
+    /// let output_key: GlweSecretKey64 =
+    ///     engine.generate_new_glwe_secret_key(output_glwe_dimension, polynomial_size)?;
+    ///
+    /// let cbs_private_functional_packing_keyswitch_key:
+    ///     LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64 =
+    ///     engine
+    ///     .generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys(
+    ///         &input_key,
+    ///         &output_key,
+    ///         decomposition_base_log,
+    ///         decomposition_level_count,
+    ///         noise,
+    /// )?;
+    ///
+    /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
+    /// let serialized =
+    ///     serialization_engine.serialize(&cbs_private_functional_packing_keyswitch_key)?;
+    /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
+    /// assert_eq!(cbs_private_functional_packing_keyswitch_key, recovered);
+    ///
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn serialize(
+        &mut self,
+        entity: &LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+    ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
+        #[derive(Serialize)]
+        struct SerializableLweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64<'a> {
+            version: LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64Version,
+            inner: &'a ImplLweCircuitBoostrapPrivateFunctionalPackingKeyswitchKeys<Vec<u64>>,
+        }
+        let serializable = SerializableLweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64 {
+            version: LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64Version::V0,
+            inner: &entity.0,
+        };
+        bincode::serialize(&serializable)
+            .map_err(DefaultSerializationError::Serialization)
+            .map_err(EntitySerializationError::Engine)
+    }
+
+    unsafe fn serialize_unchecked(
+        &mut self,
+        entity: &LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+    ) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
