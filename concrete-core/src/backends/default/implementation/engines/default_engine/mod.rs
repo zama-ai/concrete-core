@@ -179,6 +179,8 @@ mod lwe_ciphertext_vector_trivial_encryption;
 mod lwe_ciphertext_vector_zero_encryption;
 mod lwe_ciphertext_zero_encryption;
 mod lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_generation;
+mod lwe_keyswitch_key_consuming_retrieval;
+mod lwe_keyswitch_key_creation;
 mod lwe_keyswitch_key_generation;
 mod lwe_packing_keyswitch_key_generation;
 mod lwe_private_functional_packing_keyswitch_key_generation;
