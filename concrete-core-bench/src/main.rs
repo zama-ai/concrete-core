@@ -16,6 +16,9 @@ mod fft;
 #[cfg(feature = "backend_cuda")]
 mod cuda;
 
+#[cfg(feature = "backend_ntt")]
+mod ntt;
+
 // The main entry point. Uses criterion as benchmark harness.
 fn main() {
     // We instantiate the benchmarks for different backends depending on the feature flag activated.
@@ -29,6 +32,8 @@ fn main() {
     cuda::bench();
     #[cfg(feature = "backend_cuda")]
     cuda::bench_amortized();
+    #[cfg(feature = "backend_ntt")]
+    ntt::bench();
 
     // We launch the benchmarks.
     criterion::Criterion::default()

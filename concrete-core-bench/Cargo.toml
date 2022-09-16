@@ -26,6 +26,10 @@ backend_cuda = [
     "concrete-core/backend_cuda",
     "concrete-core-fixture/backend_cuda",
 ]
+backend_ntt = [
+    "concrete-core/backend_ntt",
+    "concrete-core-fixture/backend_ntt",
+]
 backend_default_generator_x86_64_aesni = [
     "concrete-core/backend_default_generator_x86_64_aesni",
     "concrete-core-fixture/backend_default_generator_x86_64_aesni",
@@ -47,6 +51,7 @@ x86_64 = [
     "backend_default",
     "backend_default_parallel",
     "backend_fft",
+    "backend_ntt",
     "backend_default_generator_x86_64_aesni",
     "optimized_benches_for_x86_64",
 ]
@@ -55,6 +60,7 @@ aarch64 = [
     "backend_default",
     "backend_default_parallel",
     "backend_fft",
+    "backend_ntt",
     "backend_default_generator_aarch64_aes",
     "optimized_benches_for_aarch64",
 ]
