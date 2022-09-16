@@ -8,3 +8,6 @@ pub mod fft;
 
 #[cfg(feature = "backend_cuda")]
 pub mod cuda;
+
+#[cfg(feature = "backend_ntt")]
+pub mod ntt;
