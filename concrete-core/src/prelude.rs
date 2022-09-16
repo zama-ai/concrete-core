@@ -1,5 +1,4 @@
 #![doc(hidden)]
-
 // ----------------------------------------------------------------------------------- SPECIFICATION
 pub use super::specification::engines::*;
 pub use super::specification::entities::*;
@@ -21,6 +20,12 @@ pub use super::backends::fft::entities::*;
 pub use super::backends::cuda::engines::*;
 #[cfg(feature = "backend_cuda")]
 pub use super::backends::cuda::entities::*;
+
+// ------------------------------------------------------------------------------------ NTT BACKEND
+#[cfg(feature = "backend_ntt")]
+pub use super::backends::ntt::engines::*;
+#[cfg(feature = "backend_ntt")]
+pub use super::backends::ntt::entities::*;
 
 // -------------------------------------------------------------------------------- COMMONS REEXPORT
 pub use super::specification::dispersion::*;

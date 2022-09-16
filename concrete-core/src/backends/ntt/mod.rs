@@ -5,4 +5,4 @@ pub mod private;
 
 mod implementation;
 
-pub use implementation::{entities};
+pub use implementation::{engines, entities};
