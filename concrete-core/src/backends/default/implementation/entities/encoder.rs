@@ -5,7 +5,7 @@ use crate::prelude::{AbstractEntity, EncoderEntity};
 use serde::{Deserialize, Serialize};
 
 /// An encoder for 64 bits floating point numbers.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct FloatEncoder(pub(crate) ImplFloatEncoder);
 
 impl AbstractEntity for FloatEncoder {

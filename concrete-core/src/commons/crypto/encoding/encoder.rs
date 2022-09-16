@@ -116,7 +116,7 @@ where
 
 /// The encoder originally used to encode f64 in the crypto api.
 #[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct FloatEncoder {
     pub(crate) o: f64,     // with margin between 1 and 0
     pub(crate) delta: f64, // with margin between 1 and 0
