@@ -116,3 +116,58 @@ mod backend_fft {
         fn destroy_ggsw_ciphertext(&mut self, _entity: FftFourierGgswCiphertext64) {}
     }
 }
+
+#[cfg(feature = "backend_ntt")]
+mod backend_ntt {
+    use crate::generation::synthesizing::SynthesizesGgswCiphertext;
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
+    use concrete_core::prelude::{
+        GgswCiphertextConversionEngine, NttFourierGgswCiphertext32, NttFourierGgswCiphertext64,
+    };
+
+    impl SynthesizesGgswCiphertext<Precision32, BinaryKeyDistribution, NttFourierGgswCiphertext32>
+        for Maker
+    {
+        fn synthesize_ggsw_ciphertext(
+            &mut self,
+            prototype: &Self::GgswCiphertextProto,
+        ) -> NttFourierGgswCiphertext32 {
+            self.ntt_engine
+                .convert_ggsw_ciphertext(&prototype.0)
+                .unwrap()
+        }
+
+        fn unsynthesize_ggsw_ciphertext(
+            &mut self,
+            _entity: NttFourierGgswCiphertext32,
+        ) -> Self::GgswCiphertextProto {
+            // FIXME:
+            unimplemented!("The backward fourier conversion was not yet implemented");
+        }
+
+        fn destroy_ggsw_ciphertext(&mut self, _entity: NttFourierGgswCiphertext32) {}
+    }
+
+    impl SynthesizesGgswCiphertext<Precision64, BinaryKeyDistribution, NttFourierGgswCiphertext64>
+        for Maker
+    {
+        fn synthesize_ggsw_ciphertext(
+            &mut self,
+            prototype: &Self::GgswCiphertextProto,
+        ) -> NttFourierGgswCiphertext64 {
+            self.ntt_engine
+                .convert_ggsw_ciphertext(&prototype.0)
+                .unwrap()
+        }
+
+        fn unsynthesize_ggsw_ciphertext(
+            &mut self,
+            _entity: NttFourierGgswCiphertext64,
+        ) -> Self::GgswCiphertextProto {
+            // FIXME:
+            unimplemented!("The backward fourier conversion was not yet implemented");
+        }
+
+        fn destroy_ggsw_ciphertext(&mut self, _entity: NttFourierGgswCiphertext64) {}
+    }
+}

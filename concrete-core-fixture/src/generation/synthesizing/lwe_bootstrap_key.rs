@@ -448,6 +448,69 @@ mod backend_fft {
     }
 }
 
+#[cfg(feature = "backend_ntt")]
+mod backend_ntt {
+    use crate::generation::synthesizing::SynthesizesLweBootstrapKey;
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
+    use concrete_core::prelude::{
+        LweBootstrapKeyConversionEngine, NttFourierLweBootstrapKey32, NttFourierLweBootstrapKey64,
+    };
+
+    impl
+        SynthesizesLweBootstrapKey<
+            Precision32,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            NttFourierLweBootstrapKey32,
+        > for Maker
+    {
+        fn synthesize_lwe_bootstrap_key(
+            &mut self,
+            prototype: &Self::LweBootstrapKeyProto,
+        ) -> NttFourierLweBootstrapKey32 {
+            self.ntt_engine
+                .convert_lwe_bootstrap_key(&prototype.0)
+                .unwrap()
+        }
+
+        fn unsynthesize_lwe_bootstrap_key(
+            &mut self,
+            _entity: NttFourierLweBootstrapKey32,
+        ) -> Self::LweBootstrapKeyProto {
+            todo!()
+        }
+
+        fn destroy_lwe_bootstrap_key(&mut self, _entity: NttFourierLweBootstrapKey32) {}
+    }
+
+    impl
+        SynthesizesLweBootstrapKey<
+            Precision64,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            NttFourierLweBootstrapKey64,
+        > for Maker
+    {
+        fn synthesize_lwe_bootstrap_key(
+            &mut self,
+            prototype: &Self::LweBootstrapKeyProto,
+        ) -> NttFourierLweBootstrapKey64 {
+            self.ntt_engine
+                .convert_lwe_bootstrap_key(&prototype.0)
+                .unwrap()
+        }
+
+        fn unsynthesize_lwe_bootstrap_key(
+            &mut self,
+            _entity: NttFourierLweBootstrapKey64,
+        ) -> Self::LweBootstrapKeyProto {
+            todo!()
+        }
+
+        fn destroy_lwe_bootstrap_key(&mut self, _entity: NttFourierLweBootstrapKey64) {}
+    }
+}
+
 #[cfg(feature = "backend_cuda")]
 mod backend_cuda {
     use crate::generation::synthesizing::SynthesizesLweBootstrapKey;

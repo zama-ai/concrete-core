@@ -81,6 +81,8 @@ pub struct Maker {
     fft_engine: concrete_core::backends::fft::engines::FftEngine,
     #[cfg(feature = "backend_cuda")]
     cuda_engine: concrete_core::backends::cuda::engines::CudaEngine,
+    #[cfg(feature = "backend_ntt")]
+    ntt_engine: concrete_core::backends::ntt::engines::NttEngine,
 }
 
 impl Default for Maker {
@@ -93,6 +95,8 @@ impl Default for Maker {
             fft_engine: concrete_core::backends::fft::engines::FftEngine::new(()).unwrap(),
             #[cfg(feature = "backend_cuda")]
             cuda_engine: concrete_core::backends::cuda::engines::CudaEngine::new(()).unwrap(),
+            #[cfg(feature = "backend_ntt")]
+            ntt_engine: concrete_core::backends::ntt::engines::NttEngine::new(()).unwrap(),
         }
     }
 }

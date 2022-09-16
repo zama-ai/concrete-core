@@ -314,3 +314,59 @@ mod backend_cuda {
         fn destroy_glwe_ciphertext(&mut self, _entity: CudaGlweCiphertext64) {}
     }
 }
+
+#[cfg(feature = "backend_ntt")]
+mod backend_ntt {
+    use crate::generation::prototypes::{ProtoBinaryGlweCiphertext32, ProtoBinaryGlweCiphertext64};
+    use crate::generation::synthesizing::SynthesizesGlweCiphertext;
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
+    use concrete_core::prelude::{
+        GlweCiphertextConversionEngine, NttFourierGlweCiphertext32, NttFourierGlweCiphertext64,
+    };
+
+    impl SynthesizesGlweCiphertext<Precision32, BinaryKeyDistribution, NttFourierGlweCiphertext32>
+        for Maker
+    {
+        fn synthesize_glwe_ciphertext(
+            &mut self,
+            prototype: &Self::GlweCiphertextProto,
+        ) -> NttFourierGlweCiphertext32 {
+            self.ntt_engine
+                .convert_glwe_ciphertext(&prototype.0)
+                .unwrap()
+        }
+
+        fn unsynthesize_glwe_ciphertext(
+            &mut self,
+            entity: NttFourierGlweCiphertext32,
+        ) -> Self::GlweCiphertextProto {
+            let proto = self.ntt_engine.convert_glwe_ciphertext(&entity).unwrap();
+            ProtoBinaryGlweCiphertext32(proto)
+        }
+
+        fn destroy_glwe_ciphertext(&mut self, _entity: NttFourierGlweCiphertext32) {}
+    }
+
+    impl SynthesizesGlweCiphertext<Precision64, BinaryKeyDistribution, NttFourierGlweCiphertext64>
+        for Maker
+    {
+        fn synthesize_glwe_ciphertext(
+            &mut self,
+            prototype: &Self::GlweCiphertextProto,
+        ) -> NttFourierGlweCiphertext64 {
+            self.ntt_engine
+                .convert_glwe_ciphertext(&prototype.0)
+                .unwrap()
+        }
+
+        fn unsynthesize_glwe_ciphertext(
+            &mut self,
+            entity: NttFourierGlweCiphertext64,
+        ) -> Self::GlweCiphertextProto {
+            let proto = self.ntt_engine.convert_glwe_ciphertext(&entity).unwrap();
+            ProtoBinaryGlweCiphertext64(proto)
+        }
+
+        fn destroy_glwe_ciphertext(&mut self, _entity: NttFourierGlweCiphertext64) {}
+    }
+}

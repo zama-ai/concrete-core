@@ -26,6 +26,7 @@ backend_default = ["concrete-core/backend_default"]
 backend_default_generator_x86_64_aesni = [
     "concrete-core/backend_default_generator_x86_64_aesni",
 ]
+backend_ntt = ["concrete-core/backend_ntt"]
 backend_default_parallel = ["concrete-core/backend_default_parallel"]
 backend_cuda = ["concrete-core/backend_cuda", "concrete-cuda"]
 backend_default_generator_aarch64_aes = [
