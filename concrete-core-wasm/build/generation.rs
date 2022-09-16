@@ -1,6 +1,6 @@
 //! This module contains a function that generates the binding token stream from the pruned ccr.
 use concrete_core_representation::{ConcreteCore, *};
-use quote::{format_ident, quote, ToTokens};
+use quote::{quote, ToTokens};
 use syn::__private::{Span, TokenStream2};
 use syn::{parse_quote, Ident, Type};
 
@@ -177,7 +177,7 @@ fn generate_engine_constructor(engine: &Engine) -> TokenStream2 {
 }
 
 fn generate_public_constructor_args(parameter_associated_type: &Type) -> TokenStream2 {
-    // INVARIANT: The parameter associated type is either a path or a tuple of paths.
+    // INVARIANT: The parameter associated type is either a Box<dyn Seeder> or the empty type.
 
     // If the parameter is a `Box<dyn Seeder>`
     let test_ast: syn::TypePath = parse_quote!(Box<dyn Seeder>);
@@ -190,39 +190,21 @@ fn generate_public_constructor_args(parameter_associated_type: &Type) -> TokenSt
         return quote!(seeder: crate::JsFunctionSeeder);
     }
 
-    // If the parameter is a path.
-    let maybe_path = probe!(
-        Some(parameter_associated_type),
-        syn::Type::Path(p) => p
-    );
-    if let Some(path) = maybe_path {
-        return quote!(arg: #path);
-    }
-
-    // If the parameter is a tuple of paths
-    let maybe_tuple_of_paths = probe!(
+    // If the parameter is the empty type
+    let maybe_empty = probe!(
         Some(parameter_associated_type),
         syn::Type::Tuple(t) => t,
-        t ?> t.elems.iter().all(|elm| matches!(elm, syn::Type::Path(_)))
+        t ?> t.elems.is_empty()
     );
-    if let Some(tuple) = maybe_tuple_of_paths {
-        let mut output = TokenStream2::new();
-        for (i, elm) in tuple.elems.iter().enumerate() {
-            if let syn::Type::Path(p) = elm {
-                let ident = format_ident!("input_{}", i);
-                output.extend(quote!(#ident: #p));
-            } else {
-                unreachable!()
-            }
-        }
-        return output;
+    if let Some(_path) = maybe_empty {
+        return quote!();
     }
 
     panic!("Failed to generate public constructor args.");
 }
 
 fn generate_private_constructor_exprs(parameter_associated_type: &Type) -> TokenStream2 {
-    // INVARIANT: The parameter associated type is either a path or a tuple of paths.
+    // INVARIANT: The parameter associated type is either a Box<dyn seeder> or the empty type.
 
     // If the parameter is a `Box<dyn Seeder>`
     let test_ast: syn::TypePath = parse_quote!(Box<dyn Seeder>);
@@ -235,34 +217,17 @@ fn generate_private_constructor_exprs(parameter_associated_type: &Type) -> Token
         return quote!(Box::new(seeder));
     }
 
-    // If the parameter is a path.
-    let maybe_path = probe!(
+    // If the parameter is the empty type
+    let maybe_empty = probe!(
         Some(parameter_associated_type),
-        syn::Type::Path(p) => p
+        syn::Type::Tuple(t) => t,
+        t ?> t.elems.is_empty()
     );
-    if let Some(_path) = maybe_path {
-        return quote!(arg);
+    if let Some(_path) = maybe_empty {
+        return quote!(());
     }
 
     // If the parameter is a tuple of paths
-    let maybe_tuple_of_paths = probe!(
-        Some(parameter_associated_type),
-        syn::Type::Tuple(t) => t,
-        t ?> t.elems.iter().all(|elm| matches!(elm, syn::Type::Path(_)))
-    );
-    if let Some(tuple) = maybe_tuple_of_paths {
-        let mut output = TokenStream2::new();
-        for (i, elm) in tuple.elems.iter().enumerate() {
-            if let syn::Type::Path(_p) = elm {
-                let ident = format_ident!("input_{}", i);
-                output.extend(quote!(#ident,));
-            } else {
-                unreachable!()
-            }
-        }
-        return quote!((#output));
-    }
-
     panic!("Failed to generate public constructor args.");
 }
 
