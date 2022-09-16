@@ -297,3 +297,4 @@ impl AbstractEngine for NttEngine {
 mod glwe_ciphertext_conversion;
 mod ggsw_ciphertext_conversion;
 mod ggsw_ciphertext_discarding_conversion;
+mod lwe_bootstrap_key_conversion;
