@@ -122,12 +122,25 @@
 //!
 //! Pointers passed to the FFI must not alias/overlap each other for a given call to the FFI.
 
-pub mod backends;
-#[cfg(any(
-    feature = "backend_default_serialization",
-    feature = "backend_fftw_serialization"
-))]
-pub mod buffer;
-pub mod mem;
-pub mod seeders;
-pub(crate) mod utils;
+// pub mod backends;
+// #[cfg(any(
+//     feature = "backend_default_serialization",
+//     feature = "backend_fftw_serialization"
+// ))]
+
+use concrete_core::prelude::*;
+use std::os::raw::c_int;
+
+mod buffer;
+pub use buffer::*;
+
+mod mem;
+pub use mem::*;
+
+mod seeders;
+pub use seeders::*;
+
+mod utils;
+pub use utils::*;
+
+include!(concat!(env!("OUT_DIR"), "/__gen.rs"));
