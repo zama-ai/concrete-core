@@ -750,7 +750,7 @@ where
     ///     PolynomialSize(2),
     ///     &mut secret_generator,
     /// );
-    /// let noise = LogStandardDev::from_log_standard_dev(-25.);
+    /// let noise = LogStandardDev::from_log_standard_dev(-60.);
     /// let plaintexts = PlaintextList::from_container(vec![1000 as u32, 2000, 3000, 4000]);
     /// let mut ciphertexts = GlweList::allocate(
     ///     0 as u32,
