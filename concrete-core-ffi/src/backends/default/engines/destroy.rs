@@ -271,6 +271,32 @@ pub unsafe extern "C" fn destroy_lwe_keyswitch_key_unchecked_u64(
     })
 }
 
+/// Destroy an `LweKeyswitchKeyMutView64`.
+///
+/// This function is [checked](crate#safety-checked-and-unchecked-functions).
+#[no_mangle]
+pub unsafe extern "C" fn destroy_lwe_keyswitch_key_mut_view_u64(
+    keyswitch_key_mut_view: *mut LweKeyswitchKeyMutView64,
+) -> c_int {
+    catch_panic(|| {
+        check_ptr_is_non_null_and_aligned(keyswitch_key_mut_view).unwrap();
+        // Reconstruct the box, so that the memory is dropped at the end of the scope
+        Box::from_raw(keyswitch_key_mut_view);
+    })
+}
+
+/// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
+/// [`destroy_lwe_keyswitch_key_mut_view_u64`]
+#[no_mangle]
+pub unsafe extern "C" fn destroy_lwe_keyswitch_key_mut_view_unchecked_u64(
+    keyswitch_key_mut_view: *mut LweKeyswitchKeyMutView64,
+) -> c_int {
+    catch_panic(|| {
+        // Reconstruct the box, so that the memory is dropped at the end of the scope
+        Box::from_raw(keyswitch_key_mut_view);
+    })
+}
+
 /// Destroy an `LweSeededKeyswitchKey64`.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
