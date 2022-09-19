@@ -329,8 +329,8 @@ fn generate_engine_method_body(engine_impl: &EngineTraitImpl) -> TokenStream2 {
         .iter()
         .for_each(|arg| match arg {
             EngineTraitImplArg::OwnedEntity(pat, _) => args.extend(quote!(#pat.0,)),
-            EngineTraitImplArg::OwnedEntityRef(pat, _) => args.extend(quote!(& #pat.0,)),
-            EngineTraitImplArg::OwnedEntityRefMut(pat, _) => args.extend(quote!(&mut #pat.0,)),
+            EngineTraitImplArg::OwnedEntityRef(pat, _, _) => args.extend(quote!(& #pat.0,)),
+            EngineTraitImplArg::OwnedEntityRefMut(pat, _, _) => args.extend(quote!(&mut #pat.0,)),
             EngineTraitImplArg::Config(pat, _) => {
                 args.extend(quote!(#pat.to_concrete_core_type(),))
             }

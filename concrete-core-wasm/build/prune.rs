@@ -42,12 +42,12 @@ fn prune_unavailable_engine_impls(ccr: &mut ConcreteCore) {
         engine.engine_impls.retain(|impl_| {
             let args_available = impl_.checked_method.args().iter().all(|arg| match arg {
                 EngineTraitImplArg::OwnedEntity(_, _) => true,
-                EngineTraitImplArg::OwnedEntityRef(_, _) => true,
-                EngineTraitImplArg::OwnedEntityRefMut(_, _) => true,
+                EngineTraitImplArg::OwnedEntityRef(_, _, _) => true,
+                EngineTraitImplArg::OwnedEntityRefMut(_, _, _) => true,
                 EngineTraitImplArg::ViewEntity(_, _) => false,
-                EngineTraitImplArg::ViewEntityRef(_, _) => false,
+                EngineTraitImplArg::ViewEntityRef(_, _, _) => false,
                 EngineTraitImplArg::MutViewEntity(_, _) => false,
-                EngineTraitImplArg::MutViewEntityRefMut(_, _) => false,
+                EngineTraitImplArg::MutViewEntityRefMut(_, _, _) => false,
                 EngineTraitImplArg::Config(_, _) => true,
                 EngineTraitImplArg::ConfigRef(_, _, _) => true,
                 EngineTraitImplArg::ConfigSlice(_, _, _) => true,

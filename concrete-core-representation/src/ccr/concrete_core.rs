@@ -8,14 +8,14 @@ pub struct ConcreteCore {
 
 /// A private enum used to classify the identifiers.
 enum IdentKind {
-    OwnedEntity,
-    ViewEntity,
-    MutViewEntity,
+    OwnedEntity(syn::Ident),
+    ViewEntity(syn::Ident),
+    MutViewEntity(syn::Ident),
     Config(syn::Ident),
-    Parameter,
-    Dispersion,
+    Parameter(syn::Ident),
+    Dispersion(syn::Ident),
     Numeric(syn::Ident),
-    Unknown,
+    Unknown(syn::Ident),
 }
 
 impl ConcreteCore {
@@ -61,32 +61,32 @@ impl ConcreteCore {
                 .filter(|ent| matches!(ent.definition.ownership, EntityOwnership::Owned))
                 .any(|ent| ident == ent.definition.get_ident())
             {
-                IdentKind::OwnedEntity
+                IdentKind::OwnedEntity(ident.to_owned())
             } else if all_entities
                 .iter()
                 .filter(|ent| matches!(ent.definition.ownership, EntityOwnership::View))
                 .any(|ent| ident == ent.definition.get_ident())
             {
-                IdentKind::ViewEntity
+                IdentKind::ViewEntity(ident.to_owned())
             } else if all_entities
                 .iter()
                 .filter(|ent| matches!(ent.definition.ownership, EntityOwnership::MutView))
                 .any(|ent| ident == ent.definition.get_ident())
             {
-                IdentKind::MutViewEntity
+                IdentKind::MutViewEntity(ident.to_owned())
             } else if all_config
                 .iter()
                 .any(|conf| ident == &conf.item_struct.ident)
             {
                 IdentKind::Config(ident.to_owned())
             } else if PARAMETERS_IDENTS.iter().any(|param| ident == param) {
-                IdentKind::Parameter
+                IdentKind::Parameter(ident.to_owned())
             } else if DISPERSION_IDENTS.iter().any(|disp| ident == disp) {
-                IdentKind::Dispersion
+                IdentKind::Dispersion(ident.to_owned())
             } else if NUMERIC_IDENTS.iter().any(|num| ident == num) {
                 IdentKind::Numeric(ident.to_owned())
             } else {
-                IdentKind::Unknown
+                IdentKind::Unknown(ident.to_owned())
             }
         };
 
@@ -121,7 +121,7 @@ fn classify_engine_trait_impl_generic_args(
                     path >> path.path.segments.last(),
                     segment -> &segment.ident,
                     ident -> classifier(ident),
-                    IdentKind::OwnedEntity => (),
+                    IdentKind::OwnedEntity(_) => (),
                     X> Some(arg),
                     syn::GenericArgument::Type(arg) => arg,
                     arg -> EngineTraitImplGenericArgument::OwnedEntity(arg.to_owned())
@@ -136,7 +136,7 @@ fn classify_engine_trait_impl_generic_args(
                     path >> path.path.segments.last(),
                     segment -> &segment.ident,
                     ident -> classifier(ident),
-                    IdentKind::ViewEntity => (),
+                    IdentKind::ViewEntity(_) => (),
                     X> Some(arg),
                     syn::GenericArgument::Type(arg) => arg,
                     arg -> EngineTraitImplGenericArgument::ViewEntity(arg.to_owned())
@@ -151,7 +151,7 @@ fn classify_engine_trait_impl_generic_args(
                     path >> path.path.segments.last(),
                     segment -> &segment.ident,
                     ident -> classifier(ident),
-                    IdentKind::MutViewEntity => (),
+                    IdentKind::MutViewEntity(_) => (),
                     X> Some(arg),
                     syn::GenericArgument::Type(arg) => arg,
                     arg -> EngineTraitImplGenericArgument::MutViewEntity(arg.to_owned())
@@ -295,7 +295,7 @@ fn classify_engine_trait_impl_args(
                         syn::Type::Path(path) => path,
                         path >> path.path.segments.last(),
                         segment -> classifier(&segment.ident),
-                        IdentKind::OwnedEntity =>
+                        IdentKind::OwnedEntity(_) =>
                             EngineTraitImplArg::OwnedEntity(
                                 pat_ident.to_owned(),
                                 *pat_type.ty.clone()
@@ -311,7 +311,7 @@ fn classify_engine_trait_impl_args(
                         syn::Type::Path(path) => path,
                         path >> path.path.segments.last(),
                         segment -> classifier(&segment.ident),
-                        IdentKind::ViewEntity =>
+                        IdentKind::ViewEntity(_) =>
                             EngineTraitImplArg::ViewEntity(
                                 pat_ident.to_owned(),
                                 *pat_type.ty.clone()
@@ -327,7 +327,7 @@ fn classify_engine_trait_impl_args(
                         syn::Type::Path(path) => path,
                         path >> path.path.segments.last(),
                         segment -> classifier(&segment.ident),
-                        IdentKind::MutViewEntity =>
+                        IdentKind::MutViewEntity(_) =>
                             EngineTraitImplArg::MutViewEntity(
                                 pat_ident.to_owned(),
                                 *pat_type.ty.clone()
@@ -343,7 +343,7 @@ fn classify_engine_trait_impl_args(
                         syn::Type::Path(path) => path,
                         path >> path.path.segments.last(),
                         segment -> classifier(&segment.ident),
-                        IdentKind::Parameter =>
+                        IdentKind::Parameter(_) =>
                             EngineTraitImplArg::Parameter(
                                 pat_ident.to_owned(),
                                 *pat_type.ty.clone()
@@ -359,7 +359,7 @@ fn classify_engine_trait_impl_args(
                         syn::Type::Path(path) => path,
                         path >> path.path.segments.last(),
                         segment -> classifier(&segment.ident),
-                        IdentKind::Dispersion =>
+                        IdentKind::Dispersion(_) =>
                             EngineTraitImplArg::Dispersion(
                                 pat_ident.to_owned(),
                                 *pat_type.ty.clone()
@@ -440,10 +440,11 @@ fn classify_engine_trait_impl_args(
                         ref_type >> ref_type.path.segments.last(),
                         ref_type -> &ref_type.ident,
                         ref_type_ident -> classifier(ref_type_ident),
-                        IdentKind::OwnedEntity =>
+                        IdentKind::OwnedEntity(ident) =>
                             EngineTraitImplArg::OwnedEntityRefMut(
                                         pat_ident.to_owned(),
                                         *pat_type.ty.clone(),
+                                        ident
                             )
                     );
                     if maybe_owned_entity_mut_ref.is_some() {
@@ -460,10 +461,11 @@ fn classify_engine_trait_impl_args(
                         ref_type >> ref_type.path.segments.last(),
                         ref_type -> &ref_type.ident,
                         ref_type_ident -> classifier(ref_type_ident),
-                        IdentKind::MutViewEntity =>
+                        IdentKind::MutViewEntity(ident) =>
                             EngineTraitImplArg::MutViewEntityRefMut(
                                         pat_ident.to_owned(),
                                         *pat_type.ty.clone(),
+                                         ident
                             )
                     );
                     if maybe_owned_entity_mut_ref.is_some() {
@@ -501,10 +503,11 @@ fn classify_engine_trait_impl_args(
                         ref_type >> ref_type.path.segments.last(),
                         ref_type -> &ref_type.ident,
                         ref_type_ident -> classifier(ref_type_ident),
-                        IdentKind::OwnedEntity =>
+                        IdentKind::OwnedEntity(ident) =>
                             EngineTraitImplArg::OwnedEntityRef(
                                         pat_ident.to_owned(),
                                         *pat_type.ty.clone(),
+                                        ident
                             )
                     );
                     if maybe_owned_entity_ref.is_some() {
@@ -521,10 +524,11 @@ fn classify_engine_trait_impl_args(
                         ref_type >> ref_type.path.segments.last(),
                         ref_type -> &ref_type.ident,
                         ref_type_ident -> classifier(ref_type_ident),
-                        IdentKind::ViewEntity =>
+                        IdentKind::ViewEntity(ident) =>
                             EngineTraitImplArg::ViewEntityRef(
                                         pat_ident.to_owned(),
                                         *pat_type.ty.clone(),
+                                        ident
                             )
                     );
                     if maybe_view_entity_ref.is_some() {
@@ -675,7 +679,7 @@ fn classify_engine_trait_impl_return(
                 path >> path.path.segments.last(),
                 segment -> &segment.ident,
                 ident -> classifier(ident),
-                IdentKind::OwnedEntity => EngineTraitImplReturn::OwnedEntity(ok_type.to_owned())
+                IdentKind::OwnedEntity(_) => EngineTraitImplReturn::OwnedEntity(ok_type.to_owned())
             );
             if let Some(v) = maybe_owned_entity {
                 return v;
@@ -688,7 +692,7 @@ fn classify_engine_trait_impl_return(
                 path >> path.path.segments.last(),
                 segment -> &segment.ident,
                 ident -> classifier(ident),
-                IdentKind::ViewEntity => EngineTraitImplReturn::ViewEntity(ok_type.to_owned())
+                IdentKind::ViewEntity(_) => EngineTraitImplReturn::ViewEntity(ok_type.to_owned())
             );
             if let Some(v) = maybe_view_entity {
                 return v;
@@ -701,7 +705,7 @@ fn classify_engine_trait_impl_return(
                 path >> path.path.segments.last(),
                 segment -> &segment.ident,
                 ident -> classifier(ident),
-                IdentKind::MutViewEntity => EngineTraitImplReturn::MutViewEntity(ok_type.to_owned())
+                IdentKind::MutViewEntity(_) => EngineTraitImplReturn::MutViewEntity(ok_type.to_owned())
             );
             if let Some(v) = maybe_mut_view_entity {
                 return v;
