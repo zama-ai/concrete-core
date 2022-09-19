@@ -1,13 +1,14 @@
 # Default backend
 
 The default backend contains the CPU implementation of the majority of the engines from the specification.
-It is totally LLVM compatible, which makes it lightweight and very portable.
+It is lightweight and very portable.
 
 # Features
 
 Some additional features can be activated on top of the default backend:
 - `seeder_unix` and `seeder_x86_64_rdseed` make it possible to use a seeder based on the Unix system or relying on `rdseed` acceleration, which is a feature of (some) x86_64 platforms.
 - `backend_default_generator_x86_64_aesni`: makes it possible to generate randoms relying on `aesni` acceleration (a feature present on most modern x86_64 platforms) instead of the much slower software generation (that's activated by default).
+- `backend_default_generator_aarch64_aes`: makes it possible to generate randoms relying on the Neon `aes` acceleration (a feature present on modern aarch64 platforms).
 - `backend_default_parallel`: activates the creation of bootstrap keys with multithreading (relying on the `rayon` dependency).
 - `backend_default_serialization`: activates the compilation of serialization features in the default backend.
 
@@ -20,7 +21,7 @@ throughout the tutorials are not secure, and may not produce decrypted results t
 Higher level crates, built on top of `concrete-core`, will be released and make it possible to use `concrete-core` more easily.
 
 In this first tutorial we'll just see how to create secret keys for LWE and GLWE ciphertexts, and a bootstrap key. 
-More advanced tutorials can be found in the [FFTW backend](backend_fftw.md) and [Cuda backend](backend_cuda.md) pages.
+More advanced tutorials can be found in the [FFT backend](backend_fft.md) and [Cuda backend](backend_cuda.md) pages.
 
 
 Here we'll just set up a new project containing a `Cargo.toml` file, and an `src` directory with a `main.rs` file.
@@ -32,20 +33,17 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-concrete-core = {version = "=1.0.0-delta", features=["backend_default", "backend_default_parallel"]}
-concrete-csprng = {version = "=0.2.0"}
+concrete-core = {version = "=1.0.0", features=["backend_default", "backend_default_parallel"]}
+concrete-csprng = {version = "=0.2.1"}
 ```
-So we can use `concrete-core` version 1.0.0-gamma as a dependency. Then, in the `main.rs` file we're going to:
+So we can use `concrete-core` version 1.0.0 as a dependency. Then, in the `main.rs` file we're going to:
 + import the necessary types and functions:
 ```rust
-use concrete_core::prelude::Variance;
-use concrete_core::prelude::{GlweDimension, PolynomialSize};
 use concrete_core::prelude::*;
 ```
 + set up some cryptographic parameters (recall that the parameters chosen here do not guarantee any security, neither to produce a result unaffected by the noise)
 + create the engines we need for the key creation
 + create the keys themselves
-+ destroy the content of the keys
 ```rust
 fn main() {
 
@@ -71,14 +69,6 @@ fn main() {
     // The bootstrap key is created with multithreading, relying on rayon
     let bsk: LweBootstrapKey64 =
         parallel_engine.generate_new_lwe_bootstrap_key(&lwe_sk, &glwe_sk, dec_bl, dec_lc, noise).unwrap();
-
-    // 4. Finally, destroy all data
-    // Destroying the secret keys is important since their content is reset to 0 before dropping 
-    // memory, to defend against potential attacks
-    engine.destroy(lwe_sk).unwrap();
-    engine.destroy(glwe_sk).unwrap();
-    // The bootstrap key is public, so it is not as critical to destroy it
-    engine.destroy(bsk).unwrap();
 }
 ```
 In this example, you can see that the bootstrap key was created with a `DefaultParallelEngine`, in order
@@ -89,4 +79,4 @@ To execute this code, simply run:
 cargo run --release
 ```
 
-The full list of engines and entities implemented in the default backend is available in the [Rust documentation](https://docs.rs/concrete-core/1.0.0-gamma/concrete_core/).
+The full list of engines and entities implemented in the default backend is available in the [Rust documentation](https://docs.rs/concrete-core/1.0.0/concrete_core/).

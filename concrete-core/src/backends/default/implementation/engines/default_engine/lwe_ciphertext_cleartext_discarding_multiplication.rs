@@ -39,7 +39,8 @@ impl
     /// let key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
     /// let plaintext = engine.create_plaintext_from(&input)?;
     /// let ciphertext_1 = engine.encrypt_lwe_ciphertext(&key, &plaintext, noise)?;
-    /// let mut ciphertext_2 = engine.encrypt_lwe_ciphertext(&key, &plaintext, noise)?;
+    /// let mut ciphertext_2 =
+    ///     engine.trivially_encrypt_lwe_ciphertext(lwe_dimension.to_lwe_size(), &plaintext)?;
     ///
     /// engine.discard_mul_lwe_ciphertext_cleartext(&mut ciphertext_2, &ciphertext_1, &cleartext)?;
     /// #
@@ -93,7 +94,7 @@ impl
     /// // Here a hard-set encoding is applied (shift by 50 bits)
     /// let input = 3_u64 << 50;
     /// let cleartext_input = 12_u64;
-    /// let noise = Variance(2_f64.powf(-25.));
+    /// let noise = Variance(2_f64.powf(-50.));
     ///
     /// // Unix seeder must be given a secret input.
     /// // Here we just give it 0, which is totally unsafe.
@@ -103,7 +104,8 @@ impl
     /// let key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
     /// let plaintext = engine.create_plaintext_from(&input)?;
     /// let ciphertext_1 = engine.encrypt_lwe_ciphertext(&key, &plaintext, noise)?;
-    /// let mut ciphertext_2 = engine.encrypt_lwe_ciphertext(&key, &plaintext, noise)?;
+    /// let mut ciphertext_2 =
+    ///     engine.trivially_encrypt_lwe_ciphertext(lwe_dimension.to_lwe_size(), &plaintext)?;
     ///
     /// engine.discard_mul_lwe_ciphertext_cleartext(&mut ciphertext_2, &ciphertext_1, &cleartext)?;
     /// #
@@ -233,7 +235,7 @@ impl
     /// // Here a hard-set encoding is applied (shift by 50 bits)
     /// let input = 3_u64 << 50;
     /// let cleartext_input = 12_u64;
-    /// let noise = Variance(2_f64.powf(-25.));
+    /// let noise = Variance(2_f64.powf(-50.));
     ///
     /// // Unix seeder must be given a secret input.
     /// // Here we just give it 0, which is totally unsafe.

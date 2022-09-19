@@ -47,8 +47,8 @@ impl<EngineError: std::error::Error> LweCiphertextDiscardingKeyswitchError<Engin
 /// This homomorphic procedure transforms an input
 /// [`LWE ciphertext`](`crate::specification::entities::LweCiphertextEntity`)
 /// $\mathsf{ct}\_{\mathsf{in}} =
-/// \left( \vec{a}\_{\mathsf{in}} , b\_{\mathsf{in}}\right) \in \mathsf{LWE}^{n\_{\mathsf{in}}}\_{\
-/// vec{s}\_{\mathsf{in}}}( \mathsf{pt} ) \subseteq \mathbb{Z}\_q^{(n\_{\mathsf{in}}+1)}$ into an
+/// \left( \vec{a}\_{\mathsf{in}} , b\_{\mathsf{in}}\right) \in \mathsf{LWE}^{n\_{\mathsf{in}}}\_
+/// {\vec{s}\_{\mathsf{in}}}( \mathsf{pt} ) \subseteq \mathbb{Z}\_q^{(n\_{\mathsf{in}}+1)}$ into an
 /// output [`LWE ciphertext`](`crate::specification::entities::LweCiphertextEntity`)
 /// $\mathsf{ct}\_{\mathsf{out}} =
 /// \left( \vec{a}\_{\mathsf{out}} , b\_{\mathsf{out}}\right) \in

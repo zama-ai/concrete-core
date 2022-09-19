@@ -1,22 +1,29 @@
-# Ciphertext Entities
+# Memory management
 
-`concrete-core` has several types of ciphertexts like LWE, GLWE, GGSW just to name a few. These ciphertexts are called entities in the `concrete-core` API (there are other types of entities, like keys for example, but here we focus on ciphertexts).
+In `concrete-core` the entities all have an underlying container type that holds the corresponding data.
+There are two types on entities with respect to memory management of this container:
+- Entities that own their memory
+- Entities that do not, which are called `Views` (that can then be mutable or constant)
 
-Entities all have an underlying container type that holds the data of the ciphertext. These containers may or may not own the data, we will explain why in the next sections and you can choose what suits your use case best, though 99%+ of the time you probably can just use [entities owning their memory](#entities-owning-their-memory) and will be fine with that choice.
+This page explains why such a choice is exposed to the user, so you can choose what suits your use case best. It is expected that 99%+ of the time you probably can just use [entities owning their memory](#entities-owning-their-memory) and will be fine with that choice.
 
 ## Entities owning their memory
 
-For LWE ciphertext entities, example of such owning entities are `LweCiphertext32` and `LweCiphertext64`. At the time of writing the underlying implementations use a `Vec` holding `u32`s and `u64`s respectively. You should not rely on the ciphertext using a `Vec` in your usage of concrete-core, this is just to illustrate the fact that `LweCiphertext32` and `LweCiphertext64` have containers that own their memory.
+Currently, all ciphertext and key traits provide implementations that own their memory. 
+`Concrete-core` relies on automatic memory management for all those implementations, including the ones that "live" on another hardware than CPU. 
+This is done via implementations of the `Drop` trait. You can check the [`CudaVec`](concrete-core/src/backends/cuda/private/vec.rs) structure in the Cuda backend private sources for an example.
 
-Some engines return freshly allocated ciphertexts like `LweCiphertextEncryptionEngine` whose entry point is `encrypt_lwe_ciphertext` (or `encrypt_lwe_ciphertext_unchecked` in its unchecked form).
+For ciphertext entities, examples of such owning entities are `LweCiphertext32` and `LweCiphertext64`. At the time of writing the underlying implementations use a `Vec` holding `u32`s and `u64`s respectively, but that `Vec` itself is not accessible from the public API. 
 
-On the other hand some engines require to have an already allocated ciphertext entity, like `LweCiphertextDiscardingEncryptionEngine` whose entry point is `discard_encrypt_lwe_ciphertext`. In that case you can use one of the `LweCiphertextCreationEngine` variants available in the default backend for example (entry point `create_lwe_ciphertext_from`) providing a properly sized `Vec` (which will be consumed) to create an owning `LweCiphertext32` or `LweCiphertext64`. This entity can then be used in the `discard_encrypt_lwe_ciphertext` call.
+`Concrete-core` exposes many engines to create entities owning their memory: for example key generation engines, or encryption engines that return freshly allocated ciphertexts, like `LweCiphertextEncryptionEngine` whose entry point is `encrypt_lwe_ciphertext` (or `encrypt_lwe_ciphertext_unchecked` in its unchecked form). 
 
 ## Entities borrowing their memory
 
 {% hint style="warning" %}
 We would advise against using the view API if you don't need it. The reason being that the original goal was to provide functionality required by the `concrete-compiler`. This means that the view API is currently not as extensively supported in existing engines as the historical owned memory API.
 {% endhint %}
+
+Some engines require to have an already allocated ciphertext entity, like `LweCiphertextDiscardingEncryptionEngine` whose entry point is `discard_encrypt_lwe_ciphertext`. In that case you can use one of the `LweCiphertextCreationEngine` variants available in the default backend for example (entry point `create_lwe_ciphertext_from`) providing a properly sized `Vec` (which will be consumed) to create an owning `LweCiphertext32` or `LweCiphertext64`. This entity can then be used in the `discard_encrypt_lwe_ciphertext` call.
 
 There are cases where you may want to allocate memory ahead of time or manage memory allocation in a manual way and give pieces of that memory to certain ciphertext entities.
 

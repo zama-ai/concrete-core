@@ -40,14 +40,14 @@ and by creating a `gpu.rs` module in `concrete-core-bench/src`, that should cont
 use crate::benchmark::BenchmarkFixture;
 use concrete_core::prelude::*;
 use concrete_core_fixture::fixture::*;
-use concrete_core_fixture::generation::{Maker, Precision32};
+use concrete_core_fixture::generation::{Maker, Precision64};
 use criterion::Criterion;
 
-pub fn bench_lwe_ciphertext_vector_conversion_32() {
+pub fn bench_lwe_ciphertext_vector_conversion_64() {
     let mut criterion = Criterion::default().configure_from_args();
     let mut maker = Maker::default();
     let mut engine = GpuEngine::new().unwrap();
-    <LweCiphertextVectorConversionFixture as BenchmarkFixture<Precision32, GpuEngine, (
+    <LweCiphertextVectorConversionFixture as BenchmarkFixture<Precision64, GpuEngine, (
         GpuLweCiphertextVector, LweCiphertextVector),
     >>::bench_all_parameters(
         &mut maker,
@@ -72,12 +72,12 @@ Should now yield:
 
 ```
 Running `target/release/concrete-core-bench --bench Conversion`
-impl LweCiphertextVectorConversionEngine<GpuLweCiphertextVector32,LweCiphertextVector32> for GpuEn...
+impl LweCiphertextVectorConversionEngine<GpuLweCiphertextVector64,LweCiphertextVector64> for GpuEn...
                         time:   [46.375 us 48.507 us 51.034 us]
 Found 9 outliers among 100 measurements (9.00%)
   7 (7.00%) high mild
   2 (2.00%) high severe
-impl LweCiphertextVectorConversionEngine<GpuLweCiphertextVector32,LweCiphertextVector32> for GpuEn... #2
+impl LweCiphertextVectorConversionEngine<GpuLweCiphertextVector64,LweCiphertextVector64> for GpuEn... #2
                         time:   [108.45 us 111.37 us 114.60 us]
 Found 13 outliers among 100 measurements (13.00%)
   4 (4.00%) high mild
