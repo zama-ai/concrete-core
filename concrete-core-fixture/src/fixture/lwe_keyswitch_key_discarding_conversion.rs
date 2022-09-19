@@ -1,23 +1,19 @@
 use crate::fixture::Fixture;
-use crate::generation::prototyping::{
-    PrototypesGlweSecretKey, PrototypesLweBootstrapKey, PrototypesLweSecretKey,
-};
-use crate::generation::synthesizing::SynthesizesLweBootstrapKey;
+use crate::generation::prototyping::{PrototypesLweKeyswitchKey, PrototypesLweSecretKey};
+use crate::generation::synthesizing::SynthesizesLweKeyswitchKey;
 use crate::generation::{IntegerPrecision, KeyDistributionMarker, Maker};
 use concrete_core::prelude::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweDimension,
-    LweBootstrapKeyDiscardingConversionEngine, LweBootstrapKeyEntity, LweDimension, PolynomialSize,
-    Variance,
+    DecompositionBaseLog, DecompositionLevelCount, LweDimension,
+    LweKeyswitchKeyDiscardingConversionEngine, LweKeyswitchKeyEntity, Variance,
 };
 
-/// A fixture for the types implementing the `LweBootstrapKeyDiscardingConversionEngine` trait.
-pub struct LweBootstrapKeyDiscardingConversionFixture;
+/// A fixture for the types implementing the `LweKeyswitchKeyDiscardingConversionEngine` trait.
+pub struct LweKeyswitchKeyDiscardingConversionFixture;
 
 #[derive(Debug)]
-pub struct LweBootstrapKeyDiscardingConversionParameters {
-    pub lwe_dimension: LweDimension,
-    pub glwe_dimension: GlweDimension,
-    pub polynomial_size: PolynomialSize,
+pub struct LweKeyswitchKeyDiscardingConversionParameters {
+    pub input_lwe_dimension: LweDimension,
+    pub output_lwe_dimension: LweDimension,
     pub level: DecompositionLevelCount,
     pub base_log: DecompositionBaseLog,
     pub noise: Variance,
@@ -25,34 +21,34 @@ pub struct LweBootstrapKeyDiscardingConversionParameters {
 
 impl<Precision, InputKeyDistribution, OutputKeyDistribution, Engine, InputKey, OutputKey>
     Fixture<Precision, (InputKeyDistribution, OutputKeyDistribution), Engine, (InputKey, OutputKey)>
-    for LweBootstrapKeyDiscardingConversionFixture
+    for LweKeyswitchKeyDiscardingConversionFixture
 where
     Precision: IntegerPrecision,
     InputKeyDistribution: KeyDistributionMarker,
     OutputKeyDistribution: KeyDistributionMarker,
-    Engine: LweBootstrapKeyDiscardingConversionEngine<InputKey, OutputKey>,
-    InputKey: LweBootstrapKeyEntity,
-    OutputKey: LweBootstrapKeyEntity,
-    Maker: SynthesizesLweBootstrapKey<Precision, InputKeyDistribution, OutputKeyDistribution, InputKey>
-        + SynthesizesLweBootstrapKey<
+    Engine: LweKeyswitchKeyDiscardingConversionEngine<InputKey, OutputKey>,
+    InputKey: LweKeyswitchKeyEntity,
+    OutputKey: LweKeyswitchKeyEntity,
+    Maker: SynthesizesLweKeyswitchKey<Precision, InputKeyDistribution, OutputKeyDistribution, InputKey>
+        + SynthesizesLweKeyswitchKey<
             Precision,
             InputKeyDistribution,
             OutputKeyDistribution,
             OutputKey,
         >,
 {
-    type Parameters = LweBootstrapKeyDiscardingConversionParameters;
+    type Parameters = LweKeyswitchKeyDiscardingConversionParameters;
     type RepetitionPrototypes = (
-        <Maker as PrototypesLweBootstrapKey<
+        <Maker as PrototypesLweKeyswitchKey<
             Precision,
             InputKeyDistribution,
             OutputKeyDistribution,
-        >>::LweBootstrapKeyProto,
-        <Maker as PrototypesLweBootstrapKey<
+        >>::LweKeyswitchKeyProto,
+        <Maker as PrototypesLweKeyswitchKey<
             Precision,
             InputKeyDistribution,
             OutputKeyDistribution,
-        >>::LweBootstrapKeyProto,
+        >>::LweKeyswitchKeyProto,
     );
     type SamplePrototypes = ();
     type PreExecutionContext = (InputKey, OutputKey);
@@ -62,24 +58,13 @@ where
 
     fn generate_parameters_iterator() -> Box<dyn Iterator<Item = Self::Parameters>> {
         Box::new(
-            vec![
-                LweBootstrapKeyDiscardingConversionParameters {
-                    lwe_dimension: LweDimension(630),
-                    glwe_dimension: GlweDimension(1),
-                    polynomial_size: PolynomialSize(1024),
-                    level: DecompositionLevelCount(3),
-                    base_log: DecompositionBaseLog(7),
-                    noise: Variance(0.00000001),
-                },
-                LweBootstrapKeyDiscardingConversionParameters {
-                    lwe_dimension: LweDimension(630),
-                    glwe_dimension: GlweDimension(2),
-                    polynomial_size: PolynomialSize(512),
-                    level: DecompositionLevelCount(3),
-                    base_log: DecompositionBaseLog(7),
-                    noise: Variance(0.00000001),
-                },
-            ]
+            vec![LweKeyswitchKeyDiscardingConversionParameters {
+                input_lwe_dimension: LweDimension(20),
+                output_lwe_dimension: LweDimension(10),
+                level: DecompositionLevelCount(3),
+                base_log: DecompositionBaseLog(7),
+                noise: Variance(0.00000001),
+            }]
             .into_iter(),
         )
     }
@@ -91,25 +76,28 @@ where
         let input_key =
             <Maker as PrototypesLweSecretKey<Precision, InputKeyDistribution>>::new_lwe_secret_key(
                 maker,
-                parameters.lwe_dimension,
+                parameters.input_lwe_dimension,
             );
         let output_key =
-            maker.new_glwe_secret_key(parameters.glwe_dimension, parameters.polynomial_size);
-        let proto_bsk_in = maker.new_lwe_bootstrap_key(
+            <Maker as PrototypesLweSecretKey<Precision, OutputKeyDistribution>>::new_lwe_secret_key(
+                maker,
+                parameters.output_lwe_dimension,
+            );
+        let proto_ksk_in = maker.new_lwe_keyswitch_key(
             &input_key,
             &output_key,
             parameters.level,
             parameters.base_log,
             parameters.noise,
         );
-        let proto_bsk_out = maker.new_lwe_bootstrap_key(
+        let proto_ksk_out = maker.new_lwe_keyswitch_key(
             &input_key,
             &output_key,
             parameters.level,
             parameters.base_log,
             parameters.noise,
         );
-        (proto_bsk_in, proto_bsk_out)
+        (proto_ksk_in, proto_ksk_out)
     }
 
     fn generate_random_sample_prototypes(
@@ -125,10 +113,10 @@ where
         repetition_proto: &Self::RepetitionPrototypes,
         _sample_proto: &Self::SamplePrototypes,
     ) -> Self::PreExecutionContext {
-        let (proto_bsk_in, proto_bsk_out) = repetition_proto;
-        let synth_bsk_in = maker.synthesize_lwe_bootstrap_key(proto_bsk_in);
-        let synth_bsk_out = maker.synthesize_lwe_bootstrap_key(proto_bsk_out);
-        (synth_bsk_in, synth_bsk_out)
+        let (proto_ksk_in, proto_ksk_out) = repetition_proto;
+        let synth_ksk_in = maker.synthesize_lwe_keyswitch_key(proto_ksk_in);
+        let synth_ksk_out = maker.synthesize_lwe_keyswitch_key(proto_ksk_out);
+        (synth_ksk_in, synth_ksk_out)
     }
 
     fn execute_engine(
@@ -136,9 +124,9 @@ where
         engine: &mut Engine,
         context: Self::PreExecutionContext,
     ) -> Self::PostExecutionContext {
-        let (bsk_in, mut bsk_out) = context;
-        unsafe { engine.discard_convert_lwe_bootstrap_key_unchecked(&mut bsk_out, &bsk_in) };
-        (bsk_out,)
+        let (ksk_in, mut ksk_out) = context;
+        unsafe { engine.discard_convert_lwe_keyswitch_key_unchecked(&mut ksk_out, &ksk_in) };
+        (ksk_out,)
     }
 
     fn process_context(
@@ -148,8 +136,8 @@ where
         _sample_proto: &Self::SamplePrototypes,
         context: Self::PostExecutionContext,
     ) -> Self::Outcome {
-        let (bsk,) = context;
-        maker.destroy_lwe_bootstrap_key(bsk);
+        let (ksk,) = context;
+        maker.destroy_lwe_keyswitch_key(ksk);
     }
 
     fn compute_criteria(
