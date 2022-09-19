@@ -131,6 +131,9 @@
 use concrete_core::prelude::*;
 use std::os::raw::c_int;
 
+mod compat;
+pub use compat::*;
+
 mod buffer;
 pub use buffer::*;
 

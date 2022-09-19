@@ -15,6 +15,7 @@ build = "compile/build.rs"
 
 [dependencies]
 concrete-core = { path = "../concrete-core" }
+paste = "1.0"
 
 [features]
 default = []

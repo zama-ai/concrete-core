@@ -2,7 +2,9 @@
 extern crate cbindgen;
 extern crate core;
 
-use concrete_core_representation::{format_rust_string, get_concrete_core_root, load_ccr};
+use concrete_core_representation::{
+    dump_ccr_to_file, format_rust_string, get_concrete_core_root, load_ccr,
+};
 use std::io::Write;
 use std::path::PathBuf;
 
@@ -15,6 +17,9 @@ fn main() -> Result<(), String> {
 
     // We prune the ccir from the unavailable nodes
     prune::prune(&mut ccr);
+
+    dump_ccr_to_file("test.json", ccr);
+    panic!();
 
     // We generate the binding
     let binding = generation::generate_binding(&ccr).to_string();
