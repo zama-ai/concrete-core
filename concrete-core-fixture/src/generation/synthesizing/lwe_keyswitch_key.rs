@@ -78,6 +78,294 @@ mod backend_default {
 
         fn destroy_lwe_keyswitch_key(&mut self, _entity: LweKeyswitchKey64) {}
     }
+
+    use concrete_core::prelude::{
+        LweKeyswitchKeyConsumingRetrievalEngine, LweKeyswitchKeyCreationEngine,
+        LweKeyswitchKeyEntity, LweKeyswitchKeyMutView32, LweKeyswitchKeyMutView64,
+        LweKeyswitchKeyView32, LweKeyswitchKeyView64,
+    };
+
+    impl<'a>
+        SynthesizesLweKeyswitchKey<
+            Precision32,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            LweKeyswitchKeyMutView32<'a>,
+        > for Maker
+    {
+        fn synthesize_lwe_keyswitch_key(
+            &mut self,
+            prototype: &Self::LweKeyswitchKeyProto,
+        ) -> LweKeyswitchKeyMutView32<'a> {
+            let keyswitch_key = prototype.0.to_owned();
+
+            let output_lwe_dimension = keyswitch_key.output_lwe_dimension();
+            let decomposition_base_log = keyswitch_key.decomposition_base_log();
+            let decomposition_level_count = keyswitch_key.decomposition_level_count();
+
+            let container = self
+                .default_engine
+                .consume_retrieve_lwe_keyswitch_key(keyswitch_key)
+                .unwrap();
+
+            self.default_engine
+                .create_lwe_keyswitch_key_from(
+                    container.leak() as &mut [u32],
+                    output_lwe_dimension,
+                    decomposition_base_log,
+                    decomposition_level_count,
+                )
+                .unwrap()
+        }
+
+        fn unsynthesize_lwe_keyswitch_key(
+            &mut self,
+            entity: LweKeyswitchKeyMutView32,
+        ) -> Self::LweKeyswitchKeyProto {
+            let output_lwe_dimension = entity.output_lwe_dimension();
+            let decomposition_base_log = entity.decomposition_base_log();
+            let decomposition_level_count = entity.decomposition_level_count();
+
+            let slice = self
+                .default_engine
+                .consume_retrieve_lwe_keyswitch_key(entity)
+                .unwrap();
+            let reconstructed_vec =
+                unsafe { Vec::from_raw_parts(slice.as_mut_ptr(), slice.len(), slice.len()) };
+
+            ProtoBinaryBinaryLweKeyswitchKey32(
+                self.default_engine
+                    .create_lwe_keyswitch_key_from(
+                        reconstructed_vec,
+                        output_lwe_dimension,
+                        decomposition_base_log,
+                        decomposition_level_count,
+                    )
+                    .unwrap(),
+            )
+        }
+
+        fn destroy_lwe_keyswitch_key(&mut self, entity: LweKeyswitchKeyMutView32) {
+            let slice = self
+                .default_engine
+                .consume_retrieve_lwe_keyswitch_key(entity)
+                .unwrap();
+
+            unsafe { Vec::from_raw_parts(slice.as_mut_ptr(), slice.len(), slice.len()) };
+        }
+    }
+
+    impl<'a>
+        SynthesizesLweKeyswitchKey<
+            Precision64,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            LweKeyswitchKeyMutView64<'a>,
+        > for Maker
+    {
+        fn synthesize_lwe_keyswitch_key(
+            &mut self,
+            prototype: &Self::LweKeyswitchKeyProto,
+        ) -> LweKeyswitchKeyMutView64<'a> {
+            let keyswitch_key = prototype.0.to_owned();
+
+            let output_lwe_dimension = keyswitch_key.output_lwe_dimension();
+            let decomposition_base_log = keyswitch_key.decomposition_base_log();
+            let decomposition_level_count = keyswitch_key.decomposition_level_count();
+
+            let container = self
+                .default_engine
+                .consume_retrieve_lwe_keyswitch_key(keyswitch_key)
+                .unwrap();
+
+            self.default_engine
+                .create_lwe_keyswitch_key_from(
+                    container.leak() as &mut [u64],
+                    output_lwe_dimension,
+                    decomposition_base_log,
+                    decomposition_level_count,
+                )
+                .unwrap()
+        }
+
+        fn unsynthesize_lwe_keyswitch_key(
+            &mut self,
+            entity: LweKeyswitchKeyMutView64,
+        ) -> Self::LweKeyswitchKeyProto {
+            let output_lwe_dimension = entity.output_lwe_dimension();
+            let decomposition_base_log = entity.decomposition_base_log();
+            let decomposition_level_count = entity.decomposition_level_count();
+
+            let slice = self
+                .default_engine
+                .consume_retrieve_lwe_keyswitch_key(entity)
+                .unwrap();
+            let reconstructed_vec =
+                unsafe { Vec::from_raw_parts(slice.as_mut_ptr(), slice.len(), slice.len()) };
+
+            ProtoBinaryBinaryLweKeyswitchKey64(
+                self.default_engine
+                    .create_lwe_keyswitch_key_from(
+                        reconstructed_vec,
+                        output_lwe_dimension,
+                        decomposition_base_log,
+                        decomposition_level_count,
+                    )
+                    .unwrap(),
+            )
+        }
+
+        fn destroy_lwe_keyswitch_key(&mut self, entity: LweKeyswitchKeyMutView64) {
+            let slice = self
+                .default_engine
+                .consume_retrieve_lwe_keyswitch_key(entity)
+                .unwrap();
+
+            unsafe { Vec::from_raw_parts(slice.as_mut_ptr(), slice.len(), slice.len()) };
+        }
+    }
+
+    impl<'a>
+        SynthesizesLweKeyswitchKey<
+            Precision32,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            LweKeyswitchKeyView32<'a>,
+        > for Maker
+    {
+        fn synthesize_lwe_keyswitch_key(
+            &mut self,
+            prototype: &Self::LweKeyswitchKeyProto,
+        ) -> LweKeyswitchKeyView32<'a> {
+            let keyswitch_key = prototype.0.to_owned();
+
+            let output_lwe_dimension = keyswitch_key.output_lwe_dimension();
+            let decomposition_base_log = keyswitch_key.decomposition_base_log();
+            let decomposition_level_count = keyswitch_key.decomposition_level_count();
+
+            let container = self
+                .default_engine
+                .consume_retrieve_lwe_keyswitch_key(keyswitch_key)
+                .unwrap();
+
+            self.default_engine
+                .create_lwe_keyswitch_key_from(
+                    container.leak() as &[u32],
+                    output_lwe_dimension,
+                    decomposition_base_log,
+                    decomposition_level_count,
+                )
+                .unwrap()
+        }
+
+        fn unsynthesize_lwe_keyswitch_key(
+            &mut self,
+            entity: LweKeyswitchKeyView32,
+        ) -> Self::LweKeyswitchKeyProto {
+            let output_lwe_dimension = entity.output_lwe_dimension();
+            let decomposition_base_log = entity.decomposition_base_log();
+            let decomposition_level_count = entity.decomposition_level_count();
+
+            let slice = self
+                .default_engine
+                .consume_retrieve_lwe_keyswitch_key(entity)
+                .unwrap();
+            let reconstructed_vec = unsafe {
+                Vec::from_raw_parts(slice.as_ptr() as *mut u32, slice.len(), slice.len())
+            };
+
+            ProtoBinaryBinaryLweKeyswitchKey32(
+                self.default_engine
+                    .create_lwe_keyswitch_key_from(
+                        reconstructed_vec,
+                        output_lwe_dimension,
+                        decomposition_base_log,
+                        decomposition_level_count,
+                    )
+                    .unwrap(),
+            )
+        }
+
+        fn destroy_lwe_keyswitch_key(&mut self, entity: LweKeyswitchKeyView32) {
+            let slice = self
+                .default_engine
+                .consume_retrieve_lwe_keyswitch_key(entity)
+                .unwrap();
+
+            unsafe { Vec::from_raw_parts(slice.as_ptr() as *mut u32, slice.len(), slice.len()) };
+        }
+    }
+
+    impl<'a>
+        SynthesizesLweKeyswitchKey<
+            Precision64,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            LweKeyswitchKeyView64<'a>,
+        > for Maker
+    {
+        fn synthesize_lwe_keyswitch_key(
+            &mut self,
+            prototype: &Self::LweKeyswitchKeyProto,
+        ) -> LweKeyswitchKeyView64<'a> {
+            let keyswitch_key = prototype.0.to_owned();
+
+            let output_lwe_dimension = keyswitch_key.output_lwe_dimension();
+            let decomposition_base_log = keyswitch_key.decomposition_base_log();
+            let decomposition_level_count = keyswitch_key.decomposition_level_count();
+
+            let container = self
+                .default_engine
+                .consume_retrieve_lwe_keyswitch_key(keyswitch_key)
+                .unwrap();
+
+            self.default_engine
+                .create_lwe_keyswitch_key_from(
+                    container.leak() as &[u64],
+                    output_lwe_dimension,
+                    decomposition_base_log,
+                    decomposition_level_count,
+                )
+                .unwrap()
+        }
+
+        fn unsynthesize_lwe_keyswitch_key(
+            &mut self,
+            entity: LweKeyswitchKeyView64,
+        ) -> Self::LweKeyswitchKeyProto {
+            let output_lwe_dimension = entity.output_lwe_dimension();
+            let decomposition_base_log = entity.decomposition_base_log();
+            let decomposition_level_count = entity.decomposition_level_count();
+
+            let slice = self
+                .default_engine
+                .consume_retrieve_lwe_keyswitch_key(entity)
+                .unwrap();
+            let reconstructed_vec = unsafe {
+                Vec::from_raw_parts(slice.as_ptr() as *mut u64, slice.len(), slice.len())
+            };
+
+            ProtoBinaryBinaryLweKeyswitchKey64(
+                self.default_engine
+                    .create_lwe_keyswitch_key_from(
+                        reconstructed_vec,
+                        output_lwe_dimension,
+                        decomposition_base_log,
+                        decomposition_level_count,
+                    )
+                    .unwrap(),
+            )
+        }
+
+        fn destroy_lwe_keyswitch_key(&mut self, entity: LweKeyswitchKeyView64) {
+            let slice = self
+                .default_engine
+                .consume_retrieve_lwe_keyswitch_key(entity)
+                .unwrap();
+
+            unsafe { Vec::from_raw_parts(slice.as_ptr() as *mut u64, slice.len(), slice.len()) };
+        }
+    }
 }
 
 #[cfg(all(feature = "backend_cuda", not(feature = "_ci_do_not_compile")))]

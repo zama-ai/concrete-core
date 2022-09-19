@@ -7,7 +7,9 @@ use crate::generation::{
     BinaryKeyDistribution, IntegerPrecision, KeyDistributionMarker, Maker, Precision32, Precision64,
 };
 use concrete_core::prelude::{
-    DecompositionBaseLog, DecompositionLevelCount, LweKeyswitchKeyGenerationEngine, Variance,
+    DecompositionBaseLog, DecompositionLevelCount, LweDimension,
+    LweKeyswitchKeyConsumingRetrievalEngine, LweKeyswitchKeyCreationEngine,
+    LweKeyswitchKeyGenerationEngine, Variance,
 };
 
 /// A trait allowing to manipulate lwe keyswitch key prototypes.
@@ -32,6 +34,17 @@ pub trait PrototypesLweKeyswitchKey<
         decomposition_base_log: DecompositionBaseLog,
         noise: Variance,
     ) -> Self::LweKeyswitchKeyProto;
+    fn transform_raw_vec_to_lwe_keyswitch_key(
+        &mut self,
+        raw: &[Precision::Raw],
+        output_lwe_dimension: LweDimension,
+        decomposition_level: DecompositionLevelCount,
+        decomposition_base_log: DecompositionBaseLog,
+    ) -> Self::LweKeyswitchKeyProto;
+    fn transform_lwe_keyswitch_key_to_raw_vec(
+        &mut self,
+        lwe_keyswitch_key: &Self::LweKeyswitchKeyProto,
+    ) -> Vec<Precision::Raw>;
 }
 
 impl PrototypesLweKeyswitchKey<Precision32, BinaryKeyDistribution, BinaryKeyDistribution>
@@ -59,6 +72,35 @@ impl PrototypesLweKeyswitchKey<Precision32, BinaryKeyDistribution, BinaryKeyDist
                 .unwrap(),
         )
     }
+
+    fn transform_raw_vec_to_lwe_keyswitch_key(
+        &mut self,
+        raw: &[u32],
+        output_lwe_dimension: LweDimension,
+        decomposition_level: DecompositionLevelCount,
+        decomposition_base_log: DecompositionBaseLog,
+    ) -> Self::LweKeyswitchKeyProto {
+        ProtoBinaryBinaryLweKeyswitchKey32(
+            self.default_engine
+                .create_lwe_keyswitch_key_from(
+                    raw.to_owned(),
+                    output_lwe_dimension,
+                    decomposition_base_log,
+                    decomposition_level,
+                )
+                .unwrap(),
+        )
+    }
+
+    fn transform_lwe_keyswitch_key_to_raw_vec(
+        &mut self,
+        lwe_keyswitch_key: &Self::LweKeyswitchKeyProto,
+    ) -> Vec<u32> {
+        let lwe_keyswitch_key = lwe_keyswitch_key.0.to_owned();
+        self.default_engine
+            .consume_retrieve_lwe_keyswitch_key(lwe_keyswitch_key)
+            .unwrap()
+    }
 }
 
 impl PrototypesLweKeyswitchKey<Precision64, BinaryKeyDistribution, BinaryKeyDistribution>
@@ -85,5 +127,34 @@ impl PrototypesLweKeyswitchKey<Precision64, BinaryKeyDistribution, BinaryKeyDist
                 )
                 .unwrap(),
         )
+    }
+
+    fn transform_raw_vec_to_lwe_keyswitch_key(
+        &mut self,
+        raw: &[u64],
+        output_lwe_dimension: LweDimension,
+        decomposition_level: DecompositionLevelCount,
+        decomposition_base_log: DecompositionBaseLog,
+    ) -> Self::LweKeyswitchKeyProto {
+        ProtoBinaryBinaryLweKeyswitchKey64(
+            self.default_engine
+                .create_lwe_keyswitch_key_from(
+                    raw.to_owned(),
+                    output_lwe_dimension,
+                    decomposition_base_log,
+                    decomposition_level,
+                )
+                .unwrap(),
+        )
+    }
+
+    fn transform_lwe_keyswitch_key_to_raw_vec(
+        &mut self,
+        lwe_keyswitch_key: &Self::LweKeyswitchKeyProto,
+    ) -> Vec<u64> {
+        let lwe_keyswitch_key = lwe_keyswitch_key.0.to_owned();
+        self.default_engine
+            .consume_retrieve_lwe_keyswitch_key(lwe_keyswitch_key)
+            .unwrap()
     }
 }
