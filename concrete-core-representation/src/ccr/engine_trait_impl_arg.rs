@@ -24,6 +24,9 @@ pub enum EngineTraitImplArg {
     MutViewEntity(syn::PatIdent, syn::Type),
     // The argument is a mutable view entity passed by mutable reference.
     #[serde(serialize_with = "serialize_with_token_string_3")]
+    MutViewEntityRef(syn::PatIdent, syn::Type, syn::Ident),
+    // The argument is a mutable view entity passed by mutable reference.
+    #[serde(serialize_with = "serialize_with_token_string_3")]
     MutViewEntityRefMut(syn::PatIdent, syn::Type, syn::Ident),
     // The argument is a config passed by value.
     #[serde(serialize_with = "serialize_with_token_string_2")]
@@ -82,6 +85,7 @@ impl EngineTraitImplArg {
             ViewEntity,
             ViewEntityRef,
             MutViewEntity,
+            MutViewEntityRef,
             MutViewEntityRefMut,
             Config,
             ConfigRef,
@@ -116,6 +120,7 @@ impl EngineTraitImplArg {
             ViewEntity,
             ViewEntityRef,
             MutViewEntity,
+            MutViewEntityRef,
             MutViewEntityRefMut,
             Config,
             ConfigRef,

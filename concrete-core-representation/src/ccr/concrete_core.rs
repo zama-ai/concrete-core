@@ -587,6 +587,27 @@ fn classify_engine_trait_impl_args(
                         return maybe_owned_entity_ref;
                     }
 
+                    // Detect if the argument is a mut view entity ref.
+                    let maybe_mut_view_entity_ref = probe!(
+                        Some(pat_type.ty.as_ref()),
+                        syn::Type::Reference(ref_) => ref_,
+                        ref_ ?> ref_.mutability.is_none(),
+                        ref_ -> ref_.elem.as_ref(),
+                        syn::Type::Path(ref_type) => ref_type,
+                        ref_type >> ref_type.path.segments.last(),
+                        ref_type -> &ref_type.ident,
+                        ref_type_ident -> classifier(ref_type_ident),
+                        IdentKind::MutViewEntity(ident) =>
+                            EngineTraitImplArg::MutViewEntityRef(
+                                        pat_ident.to_owned(),
+                                        *pat_type.ty.clone(),
+                                        ident
+                            )
+                    );
+                    if maybe_mut_view_entity_ref.is_some() {
+                        return maybe_mut_view_entity_ref;
+                    }
+
                     // Detect if the argument is a view entity ref.
                     let maybe_view_entity_ref = probe!(
                         Some(pat_type.ty.as_ref()),
