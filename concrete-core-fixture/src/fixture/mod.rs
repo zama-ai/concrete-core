@@ -303,6 +303,15 @@ pub use lwe_ciphertext_zero_encryption::*;
 mod lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_generation;
 pub use lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_generation::*;
 
+mod lwe_keyswitch_key_consuming_retrieval;
+pub use lwe_keyswitch_key_consuming_retrieval::*;
+
+mod lwe_keyswitch_key_creation;
+pub use lwe_keyswitch_key_creation::*;
+
+mod lwe_keyswitch_key_discarding_conversion;
+pub use lwe_keyswitch_key_discarding_conversion::*;
+
 mod lwe_ciphertext_decryption;
 pub use lwe_ciphertext_decryption::*;
 
