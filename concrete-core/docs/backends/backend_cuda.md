@@ -34,6 +34,11 @@ This engine only implements the bootstrap over input vectors of LWE ciphertexts.
 amounts of inputs (it starts being interesting from about 10 simultaneous inputs). Once again the Cuda kernel accelerates the full set of bootstraps, each bootstrap being computed in one Cuda block.
 The implementation is very similar to the one proposed by nuFHE, but we support more parameter sets. We refer to this implementation as the Amortized Bootstrap.
 
+## Supported parameter sets
+
+The Cuda engine supports polynomial sizes among 512, 1024, 2048. The base logarithm used in the decomposition cannot exceed 16, and the GLWE dimension is hard set to 1.
+On the other hand, the amortized Cuda engine has the same restrictions on the base log and GLWE dimension, but it supports polynomial sizes among 512, 1024, 2048, 4096 and 8192.
+
 ## Benchmark results
 
 Below comes a comparison between the nuFHE implementation, the Amortized Bootstrap and the Low Latency Bootstrap. 
@@ -52,11 +57,11 @@ The benchmarking results shown above only relate to one set of cryptographic par
 
 
 ## Tutorial
-In this tutorial we'll see how to execute the Cuda accelerated bootstrap over one LWE input.
+In this tutorial we'll see how to execute the Cuda accelerated bootstrap over one LWE input. Note that you'll achieve the best performance by batching as many inputs as possible into one bootstrap launch, and by using the amortized Cuda engine.
 
 In the `Cargo.toml` file, you just need to add `backend_cuda` to the features activated on `concrete-core`:
 ```shell
-concrete-core = {version = "=1.0.0-gamma", features=["backend_default", "backend_cuda", "backend_default_parallel"]}
+concrete-core = {version = "=1.0.0", features=["backend_default", "backend_cuda", "backend_default_parallel"]}
 ```
 Once again let's just start by defining some cryptographic parameters (with no safety guarantee in the example, just like in the other tutorials), and inputs:
 ```rust
@@ -80,7 +85,7 @@ Once again let's just start by defining some cryptographic parameters (with no s
          lut[i] = l;
      }
 ```
-Let's now create the engines we're going to use in the tutorial: they're the same as in the FFTW backend tutorial, with the addition of the Cuda engine:
+Let's now create the engines we're going to use in the tutorial: they're the same as in the FFT backend tutorial, with the addition of the Cuda engine:
 ```rust
      // Create the necessary engines
      // Here we need to create a secret to give to the unix seeder, but we skip the actual secret creation
@@ -90,7 +95,7 @@ Let's now create the engines we're going to use in the tutorial: they're the sam
      let mut cuda_engine = CudaEngine::new(()).unwrap();
 ```
 In this tutorial, we'll use the `h_` prefix to designate data on the CPU (host), and the `d_` prefix to 
-designate data on the GPU (device). Let's start by creating the necessary data on the CPU, just like in the FFTW backend tutorial:
+designate data on the GPU (device). Let's start by creating the necessary data on the CPU, just like in the FFT backend tutorial:
 ```rust
      // Encrypt the input message
      let h_input_key: LweSecretKey64 = default_engine.generate_new_lwe_secret_key(lwe_dim).unwrap();
@@ -137,21 +142,4 @@ We can then copy the result back to the CPU:
      h_output_ciphertext: LweCiphertext64 =
         cuda_engine.convert_lwe_ciphertext(&d_output_ciphertext).unwrap();
 ```
-Finally, and **very importantly**, we need to destroy the data! This is especially important since the Cuda engine allocates data on the GPU, and the destroy call makes sure to clean it:
-```rust
-     default_engine.destroy(h_input_key).unwrap();
-     default_engine.destroy(h_input_plaintext).unwrap();
-     default_engine.destroy(h_input_ciphertext).unwrap();
-     default_engine.destroy(h_lut_plaintext_vector).unwrap();
-     default_engine.destroy(h_lut_key).unwrap();
-     default_engine.destroy(h_lut).unwrap();
-     default_engine.destroy(h_bootstrap_key).unwrap();
-     default_engine.destroy(h_dummy_key).unwrap();
-     default_engine.destroy(h_output_ciphertext).unwrap();
-     cuda_engine.destroy(d_input_ciphertext).unwrap();
-     cuda_engine.destroy(d_input_lut).unwrap();
-     cuda_engine.destroy(d_fourier_bsk).unwrap();
-     cuda_engine.destroy(d_output_ciphertext).unwrap();
-     default_engine.destroy(output_ciphertext).unwrap();
-```
-And we're done, executing your code will run the bootstrap on GPU!
+And we're done, executing your code will run the bootstrap on GPU! 

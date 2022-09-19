@@ -16,14 +16,15 @@ homomorphically:
 
 ```rust
 // This examples shows how to multiply a secret value by a public one homomorphically.
-// First we import the proper symbols:
 
+// First we import the proper symbols
 use concrete_core::prelude::Variance;
 use concrete_core::prelude::LweDimension;
 use concrete_core::prelude::*;
 use std::error::Error;
 
 fn main() -> Result<(), Box<dyn Error>> {
+    // DISCLAIMER: the parameters used here are only for test purpose, and cannot be considered secure.
     let lwe_dimension = LweDimension(750);
     let noise = Variance(2_f64.powf(-104.));
 
@@ -48,20 +49,19 @@ fn main() -> Result<(), Box<dyn Error>> {
     let input_plaintext = engine.create_plaintext_from(&raw_input)?;
     let input_ciphertext = engine.encrypt_lwe_ciphertext(&key, &input_plaintext, noise)?;
 
-    // The content of the output ciphertext will be discarded, use a placeholder plaintext of 0
-    let placeholder_output_plaintext = engine.create_plaintext_from(&0u64)?;
-    let mut ouptut_ciphertext =
-        engine.encrypt_lwe_ciphertext(&key, &placeholder_output_plaintext, noise)?;
+    // Create a container for the output, whose content will be discarded during the operation
+    let mut output_ciphertext =
+        engine.trivially_encrypt_lwe_ciphertext(lwe_dimension.to_lwe_size(), &input_plaintext)?;
 
     // Perform the multiplication, overwriting (discarding) the output ciphertext content
     engine.discard_mul_lwe_ciphertext_cleartext(
-        &mut ouptut_ciphertext,
+        &mut output_ciphertext,
         &input_ciphertext,
         &cleartext
     )?;
 
     // Get the decrypted result as a plaintext and then a raw value
-    let decrypted_plaintext = engine.decrypt_lwe_ciphertext(&key, &ouptut_ciphertext)?;
+    let decrypted_plaintext = engine.decrypt_lwe_ciphertext(&key, &output_ciphertext)?;
     let raw_decrypted_plaintext = engine.retrieve_plaintext(&decrypted_plaintext)?;
 
     // Round the output for our 4 bits of precision
@@ -71,7 +71,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // Check the high bits have the result we expect
     assert_eq!(output, 12);
-    
+
     Ok(())
 }
 ```
