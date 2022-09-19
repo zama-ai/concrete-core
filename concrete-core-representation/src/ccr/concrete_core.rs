@@ -4,6 +4,8 @@ use super::*;
 #[derive(Serialize, Clone, Debug)]
 pub struct ConcreteCore {
     pub backends: Vec<Backend>,
+    pub dispersions: Vec<Dispersion>,
+    pub parameters: Vec<Parameter>,
 }
 
 /// A private enum used to classify the identifiers.
@@ -24,6 +26,8 @@ impl ConcreteCore {
     pub(crate) fn extract(cfg_stack_so_far: &CfgStack, root: &syn::File) -> ConcreteCore {
         // INVARIANT: The root module contains a `backend` module
         // INVARIANT: Two backends can not export items with the same name
+
+        // Gather the backends
         let backends_module = root
             .items
             .iter()
@@ -37,9 +41,67 @@ impl ConcreteCore {
                 None
             })
             .expect("Failed to retrieve the `backends` module.");
-
-        // Gather the backends
         let mut backends = Backend::extract_all(cfg_stack_so_far, &backends_module);
+
+        // Gather the dispersions
+        let dispersion_module = root
+            .items
+            .iter()
+            .cloned()
+            .find_map(|item| {
+                if let syn::Item::Mod(item_mod) = item {
+                    if item_mod.ident == "specification" {
+                        return Some(item_mod);
+                    }
+                }
+                None
+            })
+            .expect("Failed to retrieve the `specification` module.")
+            .content
+            .unwrap()
+            .1
+            .iter()
+            .find_map(|item| {
+                if let syn::Item::Mod(item_mod) = item {
+                    if item_mod.ident == "dispersion" {
+                        return Some(item_mod);
+                    }
+                }
+                None
+            })
+            .expect("Failed to retrieve the `dispersion` module.")
+            .to_owned();
+        let dispersions = Dispersion::extract_all(&dispersion_module);
+
+        // Gather the parameters
+        let parameters_module = root
+            .items
+            .iter()
+            .cloned()
+            .find_map(|item| {
+                if let syn::Item::Mod(item_mod) = item {
+                    if item_mod.ident == "specification" {
+                        return Some(item_mod);
+                    }
+                }
+                None
+            })
+            .expect("Failed to retrieve the `specification` module.")
+            .content
+            .unwrap()
+            .1
+            .iter()
+            .find_map(|item| {
+                if let syn::Item::Mod(item_mod) = item {
+                    if item_mod.ident == "parameters" {
+                        return Some(item_mod);
+                    }
+                }
+                None
+            })
+            .expect("Failed to retrieve the `parameters` module.")
+            .to_owned();
+        let parameters = Parameter::extract_all(&parameters_module);
 
         // Now that we have gathered all the items of the different backends, we can push the
         // analysis further
@@ -47,6 +109,7 @@ impl ConcreteCore {
             .iter()
             .flat_map(|backend| backend.entities.iter().cloned())
             .collect();
+
         let all_config: Vec<Config> = backends
             .iter()
             .flat_map(|backend| backend.configs.iter().cloned())
@@ -79,9 +142,15 @@ impl ConcreteCore {
                 .any(|conf| ident == &conf.item_struct.ident)
             {
                 IdentKind::Config(ident.to_owned())
-            } else if PARAMETERS_IDENTS.iter().any(|param| ident == param) {
+            } else if parameters
+                .iter()
+                .any(|param| *ident == param.item_struct.ident)
+            {
                 IdentKind::Parameter(ident.to_owned())
-            } else if DISPERSION_IDENTS.iter().any(|disp| ident == disp) {
+            } else if dispersions
+                .iter()
+                .any(|disp| *ident == disp.item_struct.ident)
+            {
                 IdentKind::Dispersion(ident.to_owned())
             } else if NUMERIC_IDENTS.iter().any(|num| ident == num) {
                 IdentKind::Numeric(ident.to_owned())
@@ -97,7 +166,11 @@ impl ConcreteCore {
         // Perform classification of checked method return
         classify_engine_trait_impl_return(&mut all_engines, ident_classifier);
 
-        ConcreteCore { backends }
+        ConcreteCore {
+            backends,
+            dispersions,
+            parameters,
+        }
     }
 }
 

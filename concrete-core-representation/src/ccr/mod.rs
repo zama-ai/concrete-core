@@ -10,6 +10,7 @@ mod cfg_lang;
 mod cfg_stack;
 mod concrete_core;
 mod config;
+mod dispersion;
 mod engine;
 mod engine_trait_impl;
 mod engine_trait_impl_arg;
@@ -24,6 +25,7 @@ mod entity_trait_impl;
 mod entity_type_definition;
 mod inline;
 mod misc;
+mod parameter;
 mod struct_definition;
 
 pub use abstract_engine_trait_impl::*;
@@ -33,6 +35,7 @@ pub use cfg_lang::*;
 pub use cfg_stack::*;
 pub use concrete_core::*;
 pub use config::*;
+pub use dispersion::*;
 pub use engine::*;
 pub use engine_trait_impl::*;
 pub use engine_trait_impl_arg::*;
@@ -46,6 +49,7 @@ pub use entity_ownership::*;
 pub use entity_trait_impl::*;
 pub use entity_type_definition::*;
 pub(crate) use misc::*;
+pub use parameter::*;
 pub(crate) use struct_definition::*;
 
 /// Builds a representation of concrete-core from the path of the root file.
@@ -54,38 +58,6 @@ pub fn load_ccr<P: AsRef<Path>>(path: P) -> ConcreteCore {
     let empty_cfg_stack = CfgStack::empty();
     ConcreteCore::extract(&empty_cfg_stack, &root)
 }
-
-// TODO: Once reintegrated into concrete-core, those parameters should be parsed from the sources as
-// well.
-const PARAMETERS_IDENTS: [&str; 25] = [
-    "PlaintextCount",
-    "EncoderCount",
-    "CleartextCount",
-    "CiphertextCount",
-    "LweCiphertextCount",
-    "LweCiphertextIndex",
-    "LweCiphertextRange",
-    "GlweCiphertextCount",
-    "GswCiphertextCount",
-    "GgswCiphertextCount",
-    "LweSize",
-    "LweDimension",
-    "GlweSize",
-    "GlweDimension",
-    "PolynomialSize",
-    "PolynomialSizeLog",
-    "PolynomialCount",
-    "MonomialDegree",
-    "MonomialIndex",
-    "DecompositionBaseLog",
-    "DecompositionLevelCount",
-    "LutCountLog",
-    "ModulusSwitchOffset",
-    "DeltaLog",
-    "ExtractedBitsCount",
-];
-
-const DISPERSION_IDENTS: [&str; 3] = ["LogStandardDev", "StandardDev", "Variance"];
 
 const NUMERIC_IDENTS: [&str; 12] = [
     "u8", "u16", "u32", "u64", "u128", "i8", "i16", "i32", "i64", "i128", "f32", "f64",

@@ -7,7 +7,7 @@ use syn::token::Brace;
 
 pub(crate) fn read_crate<P: AsRef<Path>>(path: P) -> syn::File {
     read_file_and_inline_modules(path, |path| {
-        let forbidden_files = ["commons", "private"];
+        let forbidden_files = ["/commons", "/private"];
         for f in forbidden_files.iter() {
             if path.as_os_str().to_str().unwrap().contains(f) {
                 return false;
