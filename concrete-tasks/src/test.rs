@@ -17,7 +17,7 @@ lazy_static! {
 
 pub fn core() -> Result<(), Error> {
     cmd!(<ENV_TARGET_NATIVE>
-        &format!("cargo {} test --release --no-fail-fast --features {} -p concrete-core",
+        &format!("cargo {} test --profile release-debug-asserts --no-fail-fast --features {} -p concrete-core",
         get_build_toolchain()?,
         get_target_arch_feature_for_core()?
     ))
@@ -25,7 +25,7 @@ pub fn core() -> Result<(), Error> {
 
 pub fn core_test() -> Result<(), Error> {
     cmd!(<ENV_TARGET_NATIVE>
-        &format!("cargo {} test --release --no-fail-fast --features {} -p concrete-core-test",
+        &format!("cargo {} test --profile release-debug-asserts --no-fail-fast --features {} -p concrete-core-test",
         get_build_toolchain()?,
         get_target_arch_feature_for_core()?,
     ))
@@ -33,7 +33,7 @@ pub fn core_test() -> Result<(), Error> {
 
 pub fn csprng() -> Result<(), Error> {
     cmd!(<ENV_TARGET_NATIVE>
-        &format!("cargo {} test --release --no-fail-fast --features {} -p concrete-csprng",
+        &format!("cargo {} test --profile release-debug-asserts --no-fail-fast --features {} -p concrete-csprng",
         get_build_toolchain()?,
         get_target_arch_feature_for_core()?
     ))
@@ -41,7 +41,7 @@ pub fn csprng() -> Result<(), Error> {
 
 pub fn npe() -> Result<(), Error> {
     cmd!(<ENV_TARGET_NATIVE>
-        &format!("cargo {} test --release --no-fail-fast -p concrete-npe",
+        &format!("cargo {} test --profile release-debug-asserts --no-fail-fast -p concrete-npe",
         get_build_toolchain()?,
     ))
 }
@@ -58,25 +58,26 @@ pub fn ffi() -> Result<(), Error> {
 
 pub fn cuda_test() -> Result<(), Error> {
     cmd!(<ENV_TARGET_NATIVE>
-        &format!("cargo test --release --no-fail-fast --features=backend_cuda --features {} \
-        -p concrete-core-test -- cuda:: --test-threads 1",
+        &format!("cargo test --profile release-debug-asserts --no-fail-fast \
+        --features=backend_cuda --features {} -p concrete-core-test -- cuda:: --test-threads 1",
         get_target_arch_feature_for_core()?
     ))
 }
 
 pub fn cuda_doc_test() -> Result<(), Error> {
     cmd!(<ENV_TARGET_NATIVE>
-        &format!("cargo test --doc -p concrete-core --features=backend_cuda --features {} \
-        -- backends::cuda",
+        &format!("cargo test --profile release-debug-asserts --doc -p concrete-core \
+        --features=backend_cuda --features {} -- backends::cuda",
         get_target_arch_feature_for_core()?
     ))
 }
 
 pub fn cuda_core_test() -> Result<(), Error> {
     cmd!(<ENV_TARGET_NATIVE>
-        &format!("cargo test -p concrete-core --features=backend_cuda --features {} \
-        -- backends::cuda",
-        get_target_arch_feature_for_core()?))
+        &format!("cargo test --profile release-debug-asserts -p concrete-core \
+        --features=backend_cuda --features {} -- backends::cuda",
+        get_target_arch_feature_for_core()?
+    ))
 }
 
 pub fn crates() -> Result<(), Error> {
