@@ -2,25 +2,34 @@ use log::{debug, info};
 use std::collections::HashMap;
 use std::io::{Error, ErrorKind};
 use std::path::{Path, PathBuf};
-use std::process::{Command, Stdio};
+use std::process::{Child, Command, Stdio};
 use std::sync::atomic::Ordering::Relaxed;
 
 pub type Environment = HashMap<&'static str, &'static str>;
 
-pub fn execute(cmd: &str, env: Option<&Environment>, cwd: Option<&PathBuf>) -> Result<(), Error> {
+pub fn execute(
+    cmd: &str,
+    env: Option<&Environment>,
+    cwd: Option<&PathBuf>,
+    stdin: Option<Stdio>,
+    stderr: Option<Stdio>,
+    stdout: Option<Stdio>,
+    return_handle: bool,
+) -> Result<Option<Child>, Error> {
     info!("Executing {}", cmd);
     debug!("Env {:?}", env);
     debug!("Cwd {:?}", cwd);
     if crate::DRY_RUN.load(Relaxed) {
         info!("Skipping execution because of --dry-run mode");
-        return Ok(());
+        return Ok(None);
     }
     let mut command = Command::new("sh");
     command
         .arg("-c")
         .arg(cmd)
-        .stderr(Stdio::inherit())
-        .stdout(Stdio::inherit());
+        .stdin(stdin.unwrap_or_else(Stdio::piped))
+        .stderr(stderr.unwrap_or_else(Stdio::inherit))
+        .stdout(stdout.unwrap_or_else(Stdio::inherit));
     if let Some(env) = env {
         for (key, val) in env.iter() {
             command.env(&key, &val);
@@ -29,6 +38,15 @@ pub fn execute(cmd: &str, env: Option<&Environment>, cwd: Option<&PathBuf>) -> R
     if let Some(cwd) = cwd {
         command.current_dir(cwd);
     }
+
+    // We cannot match on Stdio value for stdin since when output() is called on child process,
+    // it defaults to Stdio::piped(). Since one might want retrieve the child handle, to be able to
+    // write on stdin per say, we have to use a trick to know if user want to get the child or
+    // instead simply wait on process to finish before returning.
+    if return_handle {
+        let child = command.spawn()?;
+        return Ok(Some(child));
+    }
     let output = command.output()?;
     if !output.status.success() {
         Err(Error::new(
@@ -36,7 +54,7 @@ pub fn execute(cmd: &str, env: Option<&Environment>, cwd: Option<&PathBuf>) -> R
             "Command exited with nonzero status.",
         ))
     } else {
-        Ok(())
+        Ok(None)
     }
 }
 
@@ -54,6 +72,10 @@ pub fn get_nightly_toolchain() -> Result<String, Error> {
         "make check_tasks_rust_toolchain",
         None,
         Some(&project_root()),
+        None,
+        None,
+        None,
+        false,
     )
     .expect("Tasks toolchain is not installed. Please run: make install_tasks_rust_toolchain\n\n");
 
