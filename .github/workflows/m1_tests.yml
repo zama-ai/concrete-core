@@ -4,6 +4,13 @@ name: M1 tests
 on:
   workflow_dispatch:
   pull_request:
+    types: [ labeled ]
+  # Have a nightly build for M1 tests
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    # At 22:00 every day
+    # Timezone is UTC, so Paris time is +2 during the summer and +1 during winter
+    - cron: '0 22 * * *'
 
 env:
   CARGO_TERM_COLOR: always
@@ -11,13 +18,14 @@ env:
 
 jobs:
   run-tests-m1:
+    if: "contains(github.event.label.name, 'm1_test')"
     concurrency:
       group: ${{ github.ref }}_m1mac
       cancel-in-progress: true
     name: Test code in M1
     runs-on: ["self-hosted", "m1mac"]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Install Rust
       uses: actions-rs/toolchain@v1
       with:
@@ -35,14 +43,26 @@ jobs:
       run: |
         cargo xtask test
 
-    - name: Slack Notification
-      if: ${{ always() }}
-      continue-on-error: true
-      uses: rtCamp/action-slack-notify@12e36fc18b0689399306c2e0b3e0f2978b7f1ee7
-      env:
-        SLACK_COLOR: ${{ job.status }}
-        SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-        SLACK_ICON: https://pbs.twimg.com/profile_images/1274014582265298945/OjBKP9kn_400x400.png
-        SLACK_MESSAGE: "M1 tests finished with status ${{ job.status }}. (${{ env.ACTION_RUN_URL }})"
-        SLACK_USERNAME: ${{ secrets.BOT_USERNAME }}
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+  remove_label:
+    name: Remove m1_test label
+    runs-on: ubuntu-latest
+    needs:
+      - run-tests-m1
+    if: ${{ always() }}
+    steps:
+      - uses: actions-ecosystem/action-remove-labels@v1
+        with:
+          labels: m1_test
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Slack Notification
+        if: ${{ needs.run-tests-m1.result != 'skipped' }}
+        continue-on-error: true
+        uses: rtCamp/action-slack-notify@12e36fc18b0689399306c2e0b3e0f2978b7f1ee7
+        env:
+          SLACK_COLOR: ${{ needs.run-tests-m1.result }}
+          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+          SLACK_ICON: https://pbs.twimg.com/profile_images/1274014582265298945/OjBKP9kn_400x400.png
+          SLACK_MESSAGE: "M1 tests finished with status ${{ needs.run-tests-m1.result }}. (${{ env.ACTION_RUN_URL }})"
+          SLACK_USERNAME: ${{ secrets.BOT_USERNAME }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
