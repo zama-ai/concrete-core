@@ -150,4 +150,30 @@ extern "C" {
         l_gadget: u32,
         num_samples: u32,
     );
+
+    pub fn cuda_cmux_tree_32(
+        v_stream: *const c_void,
+        glwe_out: *mut c_void,
+        ggsw_in: *const c_void,
+        lut_vector: *const c_void,
+        glwe_dimension: u32,
+        polynomial_size: u32,
+        base_log: u32,
+        l_gadget: u32,
+        r: u32,
+        max_shared_memory: u32,
+    );
+
+    pub fn cuda_cmux_tree_64(
+        v_stream: *const c_void,
+        glwe_out: *mut c_void,
+        ggsw_in: *const c_void,
+        lut_vector: *const c_void,
+        glwe_dimension: u32,
+        polynomial_size: u32,
+        base_log: u32,
+        l_gadget: u32,
+        r: u32,
+        max_shared_memory: u32,
+    );
 }
