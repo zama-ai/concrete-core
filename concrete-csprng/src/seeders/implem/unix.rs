@@ -17,6 +17,15 @@ impl UnixSeeder {
     ///
     /// This secret is used to ensure the quality of the seed in scenarios where `/dev/random` may
     /// be compromised.
+    ///
+    /// The attack hypotheses are as follow:
+    /// - `/dev/random` output can be predicted by a process running on the machine by just
+    ///   observing various states of the machine
+    /// - The attacker cannot read data from the process where `concrete-core` is running
+    ///
+    /// Using a secret in `concrete-core` allows to generate values that the attacker cannot
+    /// predict, making this seeder secure on systems were `/dev/random` outputs can be
+    /// predicted.
     pub fn new(secret: u128) -> UnixSeeder {
         let file = std::fs::File::open("/dev/random").expect("Failed to open /dev/random .");
         let counter = std::time::UNIX_EPOCH
