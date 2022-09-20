@@ -17,5 +17,9 @@ members = [
 [profile.release]
 lto = "fat"
 
+[profile.release-debug-asserts]
+inherits = "release"
+debug-assertions = true
+
 [profile.bench]
 lto = "fat"
