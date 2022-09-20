@@ -1,7 +1,7 @@
 use std::iter::Iterator;
 
 use crate::commons::math::tensor::{
-    ck_dim_div, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
+    ck_dim_div, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, IntoChunks, Tensor,
 };
 
 use super::*;
@@ -164,6 +164,17 @@ impl<Cont> PolynomialList<Cont> {
         Polynomial {
             tensor: self.as_mut_tensor().get_sub_mut(index),
         }
+    }
+
+    pub fn into_polynomial_iter(self) -> impl DoubleEndedIterator<Item = Polynomial<Cont>>
+    where
+        Cont: IntoChunks,
+    {
+        let poly_size = self.polynomial_size();
+        self.tensor
+            .into_container()
+            .into_chunks(poly_size.0)
+            .map(Polynomial::from_container)
     }
 
     /// Returns an iterator over references to the polynomials contained in the list.

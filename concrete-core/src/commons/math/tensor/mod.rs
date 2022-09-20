@@ -180,3 +180,82 @@ pub use as_tensor::*;
 
 mod into_tensor;
 pub use into_tensor::*;
+
+pub trait Container: AsRef<[Self::Element]> {
+    type Element;
+
+    fn container_len(&self) -> usize {
+        self.as_ref().len()
+    }
+}
+
+pub trait ContainerOwned: Container + AsMut<[Self::Element]> {
+    fn collect<I: Iterator<Item = Self::Element>>(iter: I) -> Self;
+}
+
+impl<T> Container for aligned_vec::ABox<[T]> {
+    type Element = T;
+}
+
+impl<T> Container for Box<[T]> {
+    type Element = T;
+}
+
+impl<T> Container for aligned_vec::AVec<T> {
+    type Element = T;
+}
+
+impl<T> Container for Vec<T> {
+    type Element = T;
+}
+
+impl<T> ContainerOwned for aligned_vec::ABox<[T]> {
+    fn collect<I: Iterator<Item = Self::Element>>(iter: I) -> Self {
+        aligned_vec::AVec::<T, _>::from_iter(0, iter).into_boxed_slice()
+    }
+}
+
+impl<'a, T> Container for &'a [T] {
+    type Element = T;
+}
+
+impl<'a, T> Container for &'a mut [T] {
+    type Element = T;
+}
+
+pub trait IntoChunks {
+    type Chunks: DoubleEndedIterator<Item = Self> + ExactSizeIterator<Item = Self>;
+
+    fn into_chunks(self, chunk_size: usize) -> Self::Chunks;
+    fn split_into(self, chunk_count: usize) -> Self::Chunks;
+}
+
+impl<'a, T> IntoChunks for &'a [T] {
+    type Chunks = core::slice::ChunksExact<'a, T>;
+
+    #[inline]
+    fn into_chunks(self, chunk_size: usize) -> Self::Chunks {
+        debug_assert_eq!(self.len() % chunk_size, 0);
+        self.chunks_exact(chunk_size)
+    }
+    #[inline]
+    fn split_into(self, chunk_count: usize) -> Self::Chunks {
+        debug_assert_eq!(self.len() % chunk_count, 0);
+        self.chunks_exact(self.len() / chunk_count)
+    }
+}
+
+impl<'a, T> IntoChunks for &'a mut [T] {
+    type Chunks = core::slice::ChunksExactMut<'a, T>;
+
+    #[inline]
+    fn into_chunks(self, chunk_size: usize) -> Self::Chunks {
+        debug_assert_eq!(self.len() % chunk_size, 0);
+        self.chunks_exact_mut(chunk_size)
+    }
+    #[inline]
+    fn split_into(self, chunk_count: usize) -> Self::Chunks {
+        debug_assert_eq!(self.len() % chunk_count, 0);
+        self.chunks_exact_mut(self.len() / chunk_count)
+    }
+}

@@ -1,8 +1,6 @@
 use super::super::super::private::crypto::ggsw::{cmux, cmux_scratch};
-use super::super::super::private::crypto::glwe::GlweCiphertextMutView;
 use super::super::super::private::math::fft::Fft;
 use super::{FftEngine, FftError};
-use crate::commons::math::tensor::AsMutSlice;
 use crate::prelude::{
     FftFourierGgswCiphertext32, FftFourierGgswCiphertext64, GlweCiphertext32, GlweCiphertext64,
     GlweCiphertextsGgswCiphertextFusingCmuxEngine, GlweCiphertextsGgswCiphertextFusingCmuxError,
@@ -120,17 +118,13 @@ impl
                 .unaligned_bytes_required(),
         );
         let stack = self.stack();
-        let glwe_output = GlweCiphertextMutView::new(
-            glwe_output.0.tensor.as_mut_slice(),
-            polynomial_size,
-            glwe_size,
+        cmux(
+            glwe_output.0.as_mut_view(),
+            glwe_input.0.as_mut_view(),
+            ggsw_input.0.as_view(),
+            fft,
+            stack,
         );
-        let glwe_input = GlweCiphertextMutView::new(
-            glwe_input.0.tensor.as_mut_slice(),
-            polynomial_size,
-            glwe_size,
-        );
-        cmux(glwe_output, glwe_input, ggsw_input.0.as_view(), fft, stack);
     }
 }
 
@@ -240,16 +234,12 @@ impl
                 .unaligned_bytes_required(),
         );
         let stack = self.stack();
-        let glwe_output = GlweCiphertextMutView::new(
-            glwe_output.0.tensor.as_mut_slice(),
-            polynomial_size,
-            glwe_size,
+        cmux(
+            glwe_output.0.as_mut_view(),
+            glwe_input.0.as_mut_view(),
+            ggsw_input.0.as_view(),
+            fft,
+            stack,
         );
-        let glwe_input = GlweCiphertextMutView::new(
-            glwe_input.0.tensor.as_mut_slice(),
-            polynomial_size,
-            glwe_size,
-        );
-        cmux(glwe_output, glwe_input, ggsw_input.0.as_view(), fft, stack);
     }
 }

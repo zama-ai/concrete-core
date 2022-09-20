@@ -1,7 +1,7 @@
 use super::LweCiphertext;
 use crate::commons::crypto::encoding::{CleartextList, PlaintextList};
 use crate::commons::math::tensor::{
-    ck_dim_div, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
+    ck_dim_div, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Container, Tensor,
 };
 use crate::commons::math::torus::UnsignedTorus;
 use crate::commons::utils::{zip, zip_args};
@@ -134,6 +134,25 @@ impl<Cont> LweList<Cont> {
         ck_dim_div!(cont.as_slice().len() => lwe_size.0);
         let tensor = Tensor::from_container(cont);
         LweList { tensor, lwe_size }
+    }
+
+    pub fn into_container(self) -> Cont {
+        self.tensor.into_container()
+    }
+
+    pub fn as_view(&self) -> LweList<&'_ [Cont::Element]>
+    where
+        Cont: Container,
+    {
+        LweList::from_container(self.tensor.as_container().as_ref(), self.lwe_size)
+    }
+
+    pub fn as_mut_view(&mut self) -> LweList<&'_ mut [Cont::Element]>
+    where
+        Cont: Container,
+        Cont: AsMut<[Cont::Element]>,
+    {
+        LweList::from_container(self.tensor.as_mut_container().as_mut(), self.lwe_size)
     }
 
     /// Returns the number of ciphertexts in the list.

@@ -1,4 +1,5 @@
 use crate::commons::crypto::encoding::Plaintext;
+use crate::commons::math::tensor::Container;
 
 use crate::commons::crypto::glwe::GlweList;
 use crate::commons::math::decomposition::DecompositionLevel;
@@ -136,6 +137,35 @@ impl<Cont> StandardGgswCiphertext<Cont> {
             rlwe_size,
             decomp_base_log,
         }
+    }
+
+    pub fn into_container(self) -> Cont {
+        self.tensor.into_container()
+    }
+
+    pub fn as_view(&self) -> StandardGgswCiphertext<&'_ [Cont::Element]>
+    where
+        Cont: Container,
+    {
+        StandardGgswCiphertext::from_container(
+            self.tensor.as_container().as_ref(),
+            self.rlwe_size,
+            self.poly_size,
+            self.decomp_base_log,
+        )
+    }
+
+    pub fn as_mut_view(&mut self) -> StandardGgswCiphertext<&'_ mut [Cont::Element]>
+    where
+        Cont: Container,
+        Cont: AsMut<[Cont::Element]>,
+    {
+        StandardGgswCiphertext::from_container(
+            self.tensor.as_mut_container().as_mut(),
+            self.rlwe_size,
+            self.poly_size,
+            self.decomp_base_log,
+        )
     }
 
     /// Returns the size of the glwe ciphertexts composing the ggsw ciphertext.

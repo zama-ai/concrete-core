@@ -1,14 +1,18 @@
-#[cfg(feature = "backend_fft_serialization")]
-use super::super::ContainerOwned;
-use super::super::{assume_init_mut, c64, izip, Container};
+use super::super::assume_init_mut;
 use super::polynomial::{
     FourierPolynomialMutView, FourierPolynomialUninitMutView, FourierPolynomialView,
-    PolynomialMutView, PolynomialUninitMutView, PolynomialView,
+    PolynomialUninitMutView,
 };
+use crate::commons::math::polynomial::Polynomial;
+use crate::commons::math::tensor::Container;
+#[cfg(feature = "backend_fft_serialization")]
+use crate::commons::math::tensor::ContainerOwned;
 use crate::commons::math::torus::UnsignedTorus;
 use crate::commons::numeric::CastInto;
+use crate::commons::utils::izip;
 use crate::prelude::PolynomialSize;
 use aligned_vec::{avec, ABox};
+use concrete_fft::c64;
 use concrete_fft::unordered::{Method, Plan};
 use dyn_stack::{DynStack, SizeOverflow, StackReq};
 use once_cell::sync::OnceCell;
@@ -391,7 +395,7 @@ impl<'a> FftView<'a> {
     pub fn forward_as_torus<'out, Scalar: UnsignedTorus>(
         self,
         fourier: FourierPolynomialUninitMutView<'out>,
-        standard: PolynomialView<'_, Scalar>,
+        standard: Polynomial<&'_ [Scalar]>,
         stack: DynStack<'_>,
     ) -> FourierPolynomialMutView<'out> {
         // SAFETY: `convert_forward_torus` initializes the output slice that is passed to it
@@ -412,7 +416,7 @@ impl<'a> FftView<'a> {
     pub fn forward_as_integer<'out, Scalar: UnsignedTorus>(
         self,
         fourier: FourierPolynomialUninitMutView<'out>,
-        standard: PolynomialView<'_, Scalar>,
+        standard: Polynomial<&'_ [Scalar]>,
         stack: DynStack<'_>,
     ) -> FourierPolynomialMutView<'out> {
         // SAFETY: `convert_forward_integer` initializes the output slice that is passed to it
@@ -434,7 +438,7 @@ impl<'a> FftView<'a> {
         standard: PolynomialUninitMutView<'out, Scalar>,
         fourier: FourierPolynomialView<'_>,
         stack: DynStack<'_>,
-    ) -> PolynomialMutView<'out, Scalar> {
+    ) {
         // SAFETY: `convert_backward_torus` initializes the output slices that are passed to it
         unsafe { self.backward_with_conv(standard, fourier, convert_backward_torus, stack) }
     }
@@ -451,10 +455,10 @@ impl<'a> FftView<'a> {
     /// See [`Self::forward_as_torus`]
     pub fn add_backward_as_torus<'out, Scalar: UnsignedTorus>(
         self,
-        standard: PolynomialMutView<'out, Scalar>,
+        standard: Polynomial<&'out mut [Scalar]>,
         fourier: FourierPolynomialView<'_>,
         stack: DynStack<'_>,
-    ) -> PolynomialMutView<'out, Scalar> {
+    ) {
         // SAFETY: `convert_add_backward_torus` initializes the output slices that are passed to it
         unsafe {
             self.backward_with_conv(
@@ -476,12 +480,12 @@ impl<'a> FftView<'a> {
     >(
         self,
         fourier: FourierPolynomialUninitMutView<'out>,
-        standard: PolynomialView<'_, Scalar>,
+        standard: Polynomial<&'_ [Scalar]>,
         conv_fn: F,
         stack: DynStack<'_>,
     ) -> FourierPolynomialMutView<'out> {
         let fourier = fourier.data;
-        let standard = standard.data;
+        let standard = standard.tensor.into_container();
         let n = standard.len();
         debug_assert_eq!(n, 2 * fourier.len());
         let (standard_re, standard_im) = standard.split_at(n / 2);
@@ -504,9 +508,9 @@ impl<'a> FftView<'a> {
         fourier: FourierPolynomialView<'_>,
         conv_fn: F,
         stack: DynStack<'_>,
-    ) -> PolynomialMutView<'out, Scalar> {
+    ) {
         let fourier = fourier.data;
-        let standard = standard.data;
+        let standard = standard.tensor.into_container();
         let n = standard.len();
         debug_assert_eq!(n, 2 * fourier.len());
         let (mut tmp, stack) =
@@ -515,8 +519,6 @@ impl<'a> FftView<'a> {
 
         let (standard_re, standard_im) = standard.split_at_mut(n / 2);
         conv_fn(standard_re, standard_im, &tmp, self.twisties);
-        let standard = assume_init_mut(standard);
-        PolynomialMutView { data: standard }
     }
 }
 
@@ -534,7 +536,7 @@ impl<C: Container<Element = c64>> serde::Serialize for FourierPolynomialList<C> 
             polynomial_size: PolynomialSize,
             serializer: S,
         ) -> Result<S::Ok, S::Error> {
-            use super::super::IntoChunks;
+            use crate::commons::math::tensor::IntoChunks;
 
             pub struct SingleFourierPolynomial<'a> {
                 fft: FftView<'a>,
@@ -595,7 +597,7 @@ impl<'de, C: ContainerOwned<Element = c64>> serde::Deserialize<'de> for FourierP
                 self,
                 mut seq: A,
             ) -> Result<Self::Value, A::Error> {
-                use super::super::IntoChunks;
+                use crate::commons::math::tensor::IntoChunks;
 
                 let str = "sequence of two fields and Fourier polynomials";
                 let polynomial_size = match seq.next_element::<PolynomialSize>()? {

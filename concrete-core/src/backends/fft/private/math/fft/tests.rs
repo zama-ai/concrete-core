@@ -1,7 +1,8 @@
 use dyn_stack::{GlobalMemBuffer, ReborrowMut};
 
-use super::super::super::super::private::math::polynomial::{FourierPolynomial, Polynomial};
+use super::super::super::super::private::math::polynomial::FourierPolynomial;
 use super::*;
+use crate::commons::math::polynomial::Polynomial;
 use crate::commons::test_tools::new_random_generator;
 use aligned_vec::avec;
 
@@ -21,17 +22,14 @@ fn test_roundtrip<Scalar: UnsignedTorus>() {
         let fft = Fft::new(PolynomialSize(size));
         let fft = fft.as_view();
 
-        let mut poly = Polynomial {
-            data: avec![Scalar::ZERO; size].into_boxed_slice(),
-        };
-        let mut roundtrip = Polynomial {
-            data: avec![Scalar::ZERO; size].into_boxed_slice(),
-        };
+        let mut poly = Polynomial::from_container(avec![Scalar::ZERO; size].into_boxed_slice());
+        let mut roundtrip =
+            Polynomial::from_container(avec![Scalar::ZERO; size].into_boxed_slice());
         let mut fourier = FourierPolynomial {
             data: avec![c64::default(); size / 2].into_boxed_slice(),
         };
 
-        for x in poly.data.iter_mut() {
+        for x in poly.tensor.as_mut_container().iter_mut() {
             *x = generator.random_uniform();
         }
 
@@ -53,7 +51,10 @@ fn test_roundtrip<Scalar: UnsignedTorus>() {
             stack.rb_mut(),
         );
 
-        for (expected, actual) in izip!(&*poly.data, &*roundtrip.data) {
+        for (expected, actual) in izip!(
+            poly.tensor.as_container().iter(),
+            roundtrip.tensor.as_container().iter()
+        ) {
             assert!(abs_diff(*expected, *actual) < (Scalar::ONE << (Scalar::BITS - 10)));
         }
     }
@@ -87,19 +88,15 @@ fn test_product<Scalar: UnsignedTorus>() {
             let fft = Fft::new(PolynomialSize(size));
             let fft = fft.as_view();
 
-            let mut poly0 = Polynomial {
-                data: avec![Scalar::ZERO; size].into_boxed_slice(),
-            };
-            let mut poly1 = Polynomial {
-                data: avec![Scalar::ZERO; size].into_boxed_slice(),
-            };
+            let mut poly0 =
+                Polynomial::from_container(avec![Scalar::ZERO; size].into_boxed_slice());
+            let mut poly1 =
+                Polynomial::from_container(avec![Scalar::ZERO; size].into_boxed_slice());
 
-            let mut convolution_from_fft = Polynomial {
-                data: avec![Scalar::ZERO; size].into_boxed_slice(),
-            };
-            let mut convolution_from_naive = Polynomial {
-                data: avec![Scalar::ZERO; size].into_boxed_slice(),
-            };
+            let mut convolution_from_fft =
+                Polynomial::from_container(avec![Scalar::ZERO; size].into_boxed_slice());
+            let mut convolution_from_naive =
+                Polynomial::from_container(avec![Scalar::ZERO; size].into_boxed_slice());
 
             let mut fourier0 = FourierPolynomial {
                 data: avec![c64::default(); size / 2].into_boxed_slice(),
@@ -108,7 +105,10 @@ fn test_product<Scalar: UnsignedTorus>() {
                 data: avec![c64::default(); size / 2 ].into_boxed_slice(),
             };
 
-            for (x, y) in izip!(&mut *poly0.data, &mut *poly1.data) {
+            for (x, y) in izip!(
+                poly0.tensor.as_mut_container().iter_mut(),
+                poly1.tensor.as_mut_container().iter_mut()
+            ) {
                 *x = generator.random_uniform();
                 *y = generator.random_uniform();
                 if Scalar::BITS == 64 {
@@ -150,11 +150,16 @@ fn test_product<Scalar: UnsignedTorus>() {
                 fourier0.as_view(),
                 stack.rb_mut(),
             );
-            convolution_naive(&mut convolution_from_naive.data, &poly0.data, &poly1.data);
+            convolution_naive(
+                convolution_from_naive.tensor.as_mut_container(),
+                poly0.tensor.as_container(),
+                poly1.tensor.as_container(),
+            );
 
-            for (expected, actual) in
-                izip!(&*convolution_from_naive.data, &*convolution_from_fft.data)
-            {
+            for (expected, actual) in izip!(
+                convolution_from_naive.tensor.as_container().iter(),
+                convolution_from_fft.tensor.as_container().iter()
+            ) {
                 assert!(abs_diff(*expected, *actual) < (Scalar::ONE << (Scalar::BITS - 5)));
             }
         }
