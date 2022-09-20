@@ -1,15 +1,11 @@
-use super::super::{as_mut_uninit, c64, Container};
-use crate::commons::numeric::UnsignedInteger;
+use super::super::as_mut_uninit;
+use crate::commons::math::polynomial::Polynomial;
+use crate::commons::math::tensor::Container;
+use concrete_fft::c64;
 
 //--------------------------------------------------------------------------------
 // Structure definitions
 //--------------------------------------------------------------------------------
-
-/// Polynomial in the standard domain.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct Polynomial<C: Container> {
-    pub data: C,
-}
 
 /// Polynomial in the Fourier domain.
 ///
@@ -22,8 +18,6 @@ pub struct FourierPolynomial<C: Container> {
     pub data: C,
 }
 
-pub type PolynomialView<'a, Scalar> = Polynomial<&'a [Scalar]>;
-pub type PolynomialMutView<'a, Scalar> = Polynomial<&'a mut [Scalar]>;
 pub type FourierPolynomialView<'a> = FourierPolynomial<&'a [c64]>;
 pub type FourierPolynomialMutView<'a> = FourierPolynomial<&'a mut [c64]>;
 
@@ -45,23 +39,6 @@ pub type PolynomialUninitMutView<'a, Scalar> = Polynomial<&'a mut [core::mem::Ma
 pub type FourierPolynomialUninitMutView<'a> =
     FourierPolynomial<&'a mut [core::mem::MaybeUninit<c64>]>;
 
-impl<C: Container> Polynomial<C> {
-    pub fn as_view(&self) -> PolynomialView<'_, C::Element> {
-        Polynomial {
-            data: self.data.as_ref(),
-        }
-    }
-
-    pub fn as_mut_view(&mut self) -> PolynomialMutView<'_, C::Element>
-    where
-        C: AsMut<[C::Element]>,
-    {
-        Polynomial {
-            data: self.data.as_mut(),
-        }
-    }
-}
-
 impl<C: Container<Element = c64>> FourierPolynomial<C> {
     pub fn as_view(&self) -> FourierPolynomialView<'_> {
         FourierPolynomial {
@@ -79,14 +56,12 @@ impl<C: Container<Element = c64>> FourierPolynomial<C> {
     }
 }
 
-impl<'a, Scalar> PolynomialMutView<'a, Scalar> {
+impl<'a, Scalar> Polynomial<&'a mut [Scalar]> {
     /// # Safety
     ///
     /// No uninitialized values must be written into the output buffer when the borrow ends
     pub unsafe fn into_uninit(self) -> PolynomialUninitMutView<'a, Scalar> {
-        PolynomialUninitMutView {
-            data: as_mut_uninit(self.data),
-        }
+        PolynomialUninitMutView::from_container(as_mut_uninit(self.tensor.into_container()))
     }
 }
 
@@ -98,34 +73,5 @@ impl<'a> FourierPolynomialMutView<'a> {
         FourierPolynomialUninitMutView {
             data: as_mut_uninit(self.data),
         }
-    }
-}
-
-impl<'a, Scalar: UnsignedInteger> PolynomialMutView<'a, Scalar> {
-    pub fn update_with_wrapping_unit_monomial_mul(self, monomial_degree: usize) {
-        let full_cycles_count = monomial_degree / self.data.len();
-        let remaining_degree = monomial_degree % self.data.len();
-        if full_cycles_count % 2 == 1 {
-            self.data.iter_mut().for_each(|a| *a = a.wrapping_neg());
-        }
-        self.data.rotate_right(remaining_degree);
-        self.data
-            .iter_mut()
-            .take(remaining_degree)
-            .for_each(|a| *a = a.wrapping_neg());
-    }
-
-    pub fn update_with_wrapping_unit_monomial_div(self, monomial_degree: usize) {
-        let full_cycles_count = monomial_degree / self.data.len();
-        let remaining_degree = monomial_degree % self.data.len();
-        if full_cycles_count % 2 == 1 {
-            self.data.iter_mut().for_each(|a| *a = a.wrapping_neg());
-        }
-        self.data.rotate_left(remaining_degree);
-        self.data
-            .iter_mut()
-            .rev()
-            .take(remaining_degree)
-            .for_each(|a| *a = a.wrapping_neg());
     }
 }

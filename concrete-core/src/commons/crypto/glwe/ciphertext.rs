@@ -3,7 +3,7 @@ use crate::commons::crypto::encoding::{Plaintext, PlaintextList};
 use crate::commons::crypto::lwe::LweCiphertext;
 use crate::commons::math::polynomial::PolynomialList;
 use crate::commons::math::tensor::{
-    tensor_traits, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
+    tensor_traits, AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor, Container, Tensor,
 };
 use crate::commons::math::torus::UnsignedTorus;
 use crate::commons::numeric::Numeric;
@@ -88,6 +88,25 @@ impl<Cont> GlweCiphertext<Cont> {
             tensor: Tensor::from_container(cont),
             poly_size,
         }
+    }
+
+    pub fn as_view(&self) -> GlweCiphertext<&'_ [Cont::Element]>
+    where
+        Cont: Container,
+    {
+        GlweCiphertext::from_container(self.tensor.as_container().as_ref(), self.poly_size)
+    }
+
+    pub fn as_mut_view(&mut self) -> GlweCiphertext<&'_ mut [Cont::Element]>
+    where
+        Cont: Container,
+        Cont: AsMut<[Cont::Element]>,
+    {
+        GlweCiphertext::from_container(self.tensor.as_mut_container().as_mut(), self.poly_size)
+    }
+
+    pub fn into_container(self) -> Cont {
+        self.tensor.into_container()
     }
 
     /// Returns the size of the ciphertext, e.g. the number of masks + 1.

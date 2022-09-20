@@ -1,5 +1,4 @@
 use super::super::super::private::crypto::bootstrap::bootstrap_scratch;
-use super::super::super::private::crypto::glwe::GlweCiphertextView;
 use super::super::super::private::math::fft::Fft;
 use super::{FftEngine, FftError};
 use crate::commons::math::tensor::{AsMutSlice, AsRefSlice};
@@ -110,15 +109,10 @@ impl
                 .unwrap()
                 .unaligned_bytes_required(),
         );
-        let acc = GlweCiphertextView::new(
-            acc.0.tensor.as_slice(),
-            acc.0.polynomial_size(),
-            acc.0.size(),
-        );
         bsk.0.as_view().bootstrap(
             output.0.tensor.as_mut_slice(),
             input.0.tensor.as_slice(),
-            acc,
+            acc.0.as_view(),
             fft,
             self.stack(),
         );
@@ -219,15 +213,10 @@ impl
                 .unwrap()
                 .unaligned_bytes_required(),
         );
-        let acc = GlweCiphertextView::new(
-            acc.0.tensor.as_slice(),
-            acc.0.polynomial_size(),
-            acc.0.size(),
-        );
         bsk.0.as_view().bootstrap(
             output.0.tensor.as_mut_slice(),
             input.0.tensor.as_slice(),
-            acc,
+            acc.0.as_view(),
             fft,
             self.stack(),
         );
@@ -345,15 +334,10 @@ impl
                 .unwrap()
                 .unaligned_bytes_required(),
         );
-        let acc = GlweCiphertextView::new(
-            acc.0.tensor.as_slice(),
-            acc.0.polynomial_size(),
-            acc.0.size(),
-        );
         bsk.0.as_view().bootstrap(
             output.0.tensor.as_mut_slice(),
             input.0.tensor.as_slice(),
-            acc,
+            acc.0.as_view(),
             fft,
             self.stack(),
         );
@@ -471,15 +455,10 @@ impl
                 .unwrap()
                 .unaligned_bytes_required(),
         );
-        let acc = GlweCiphertextView::new(
-            acc.0.tensor.as_slice(),
-            acc.0.polynomial_size(),
-            acc.0.size(),
-        );
         bsk.0.as_view().bootstrap(
             output.0.tensor.as_mut_slice(),
             input.0.tensor.as_slice(),
-            acc,
+            acc.0.as_view(),
             fft,
             self.stack(),
         );

@@ -1,5 +1,5 @@
 use super::super::math::polynomial::*;
-use super::super::{Container, IntoChunks};
+use crate::commons::math::tensor::{Container, IntoChunks};
 use crate::commons::math::torus::UnsignedTorus;
 use crate::prelude::{GlweSize, PolynomialSize};
 
@@ -80,26 +80,14 @@ impl<'a, Scalar> GlweCiphertextView<'a, Scalar> {
     where
         Scalar: UnsignedTorus,
     {
-        let (lwe_body, lwe_mask) = lwe.split_last_mut().unwrap();
-        let (glwe_mask, glwe_body) = self
-            .data
-            .split_at(self.polynomial_size.0 * (self.glwe_size.0 - 1));
+        let this = crate::commons::crypto::glwe::GlweCiphertext::from_container(
+            self.data,
+            self.polynomial_size,
+        );
+        let mut lwe = crate::commons::crypto::lwe::LweCiphertext::from_container(lwe);
+        #[allow(deprecated)]
+        let n_th = crate::prelude::MonomialDegree(nth);
 
-        // We copy the body
-        *lwe_body = glwe_body[nth];
-
-        // We copy the mask (each polynomial is in the wrong order)
-        lwe_mask.copy_from_slice(glwe_mask);
-
-        // We compute the number of elements which must be
-        // turned into their opposite
-        let opposite_count = self.polynomial_size.0 - nth - 1;
-        for lwe_mask_poly in lwe_mask.into_chunks(self.polynomial_size.0) {
-            lwe_mask_poly.reverse();
-            for x in &mut lwe_mask_poly[0..opposite_count] {
-                *x = x.wrapping_neg();
-            }
-            lwe_mask_poly.rotate_left(opposite_count);
-        }
+        this.fill_lwe_with_sample_extraction(&mut lwe, n_th);
     }
 }

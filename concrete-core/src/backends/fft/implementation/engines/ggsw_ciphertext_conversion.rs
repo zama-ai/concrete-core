@@ -1,10 +1,9 @@
 use super::super::super::private::crypto::ggsw::{
-    fill_with_forward_fourier_scratch, FourierGgswCiphertext, StandardGgswCiphertextView,
+    fill_with_forward_fourier_scratch, FourierGgswCiphertext,
 };
 use super::super::super::private::math::fft::Fft;
 use super::super::entities::{FftFourierGgswCiphertext32, FftFourierGgswCiphertext64};
 use super::{FftEngine, FftError};
-use crate::commons::math::tensor::AsRefSlice;
 use crate::prelude::{
     GgswCiphertext32, GgswCiphertext64, GgswCiphertextConversionError,
     GgswCiphertextDiscardingConversionEngine, GgswCiphertextDiscardingConversionError,
@@ -112,17 +111,10 @@ impl GgswCiphertextDiscardingConversionEngine<GgswCiphertext32, FftFourierGgswCi
                 .unwrap()
                 .unaligned_bytes_required(),
         );
-        output.0.as_mut_view().fill_with_forward_fourier(
-            StandardGgswCiphertextView::new(
-                input.0.tensor.as_slice(),
-                input.polynomial_size(),
-                input.glwe_dimension().to_glwe_size(),
-                input.decomposition_base_log(),
-                input.decomposition_level_count(),
-            ),
-            fft,
-            self.stack(),
-        );
+        output
+            .0
+            .as_mut_view()
+            .fill_with_forward_fourier(input.0.as_view(), fft, self.stack());
     }
 }
 
@@ -214,17 +206,10 @@ impl GgswCiphertextDiscardingConversionEngine<GgswCiphertext64, FftFourierGgswCi
                 .unwrap()
                 .unaligned_bytes_required(),
         );
-        output.0.as_mut_view().fill_with_forward_fourier(
-            StandardGgswCiphertextView::new(
-                input.0.tensor.as_slice(),
-                input.polynomial_size(),
-                input.glwe_dimension().to_glwe_size(),
-                input.decomposition_base_log(),
-                input.decomposition_level_count(),
-            ),
-            fft,
-            self.stack(),
-        );
+        output
+            .0
+            .as_mut_view()
+            .fill_with_forward_fourier(input.0.as_view(), fft, self.stack());
     }
 }
 

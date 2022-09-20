@@ -2,7 +2,7 @@ use super::LweList;
 use crate::commons::crypto::encoding::{Cleartext, CleartextList, Plaintext};
 use crate::commons::crypto::glwe::GlweCiphertext;
 use crate::commons::crypto::secret::LweSecretKey;
-use crate::commons::math::tensor::{tensor_traits, AsMutTensor, AsRefTensor, Tensor};
+use crate::commons::math::tensor::{tensor_traits, AsMutTensor, AsRefTensor, Container, Tensor};
 use crate::commons::math::torus::UnsignedTorus;
 use crate::commons::numeric::{Numeric, UnsignedInteger};
 use crate::prelude::{KeyKind, LweDimension, LweSize, MonomialDegree};
@@ -104,6 +104,25 @@ impl<Cont> LweCiphertext<Cont> {
     pub fn from_container(cont: Cont) -> LweCiphertext<Cont> {
         let tensor = Tensor::from_container(cont);
         LweCiphertext { tensor }
+    }
+
+    pub fn into_container(self) -> Cont {
+        self.tensor.into_container()
+    }
+
+    pub fn as_view(&self) -> LweCiphertext<&'_ [Cont::Element]>
+    where
+        Cont: Container,
+    {
+        LweCiphertext::from_container(self.tensor.as_container().as_ref())
+    }
+
+    pub fn as_mut_view(&mut self) -> LweCiphertext<&'_ mut [Cont::Element]>
+    where
+        Cont: Container,
+        Cont: AsMut<[Cont::Element]>,
+    {
+        LweCiphertext::from_container(self.tensor.as_mut_container().as_mut())
     }
 
     /// Returns the size of the cipher, e.g. the size of the mask + 1 for the body.

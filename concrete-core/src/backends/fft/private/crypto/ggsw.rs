@@ -2,36 +2,26 @@ use core::mem::MaybeUninit;
 
 use super::super::math::decomposition::TensorSignedDecompositionLendingIter;
 use super::super::math::fft::{FftView, FourierPolynomialList};
-use super::super::math::polynomial::{
-    FourierPolynomialUninitMutView, FourierPolynomialView, PolynomialView,
-};
-#[cfg(feature = "backend_fft_serialization")]
-use super::super::ContainerOwned;
-use super::super::{as_mut_uninit, assume_init_mut, c64, izip, Container, IntoChunks};
-use super::glwe::{GlweCiphertextMutView, GlweCiphertextView};
+use super::super::math::polynomial::{FourierPolynomialUninitMutView, FourierPolynomialView};
+use super::super::{as_mut_uninit, assume_init_mut};
+use crate::commons::crypto::ggsw::StandardGgswCiphertext;
+use crate::commons::crypto::glwe::GlweCiphertext;
 use crate::commons::math::decomposition::{DecompositionLevel, SignedDecomposer};
+use crate::commons::math::polynomial::Polynomial;
+#[cfg(feature = "backend_fft_serialization")]
+use crate::commons::math::tensor::ContainerOwned;
+use crate::commons::math::tensor::{Container, IntoChunks, IntoTensor};
 use crate::commons::math::torus::UnsignedTorus;
+use crate::commons::utils::izip;
 use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize};
 use aligned_vec::CACHELINE_ALIGN;
+use concrete_fft::c64;
 use dyn_stack::{DynStack, ReborrowMut, SizeOverflow, StackReq};
 
 #[cfg(target_arch = "x86")]
 use core::arch::x86::*;
 #[cfg(target_arch = "x86_64")]
 use core::arch::x86_64::*;
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-#[cfg_attr(
-    feature = "backend_fft_serialization",
-    derive(serde::Serialize, serde::Deserialize)
-)]
-pub struct StandardGgswCiphertext<C: Container> {
-    data: C,
-    polynomial_size: PolynomialSize,
-    glwe_size: GlweSize,
-    decomposition_base_log: DecompositionBaseLog,
-    decomposition_level_count: DecompositionLevelCount,
-}
 
 /// A GGSW ciphertext in the Fourier domain.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -66,83 +56,12 @@ pub struct FourierGgswLevelRow<C: Container<Element = c64>> {
     decomposition_level: DecompositionLevel,
 }
 
-pub type StandardGgswCiphertextView<'a, Scalar> = StandardGgswCiphertext<&'a [Scalar]>;
-pub type StandardGgswCiphertextMutView<'a, Scalar> = StandardGgswCiphertext<&'a mut [Scalar]>;
 pub type FourierGgswCiphertextView<'a> = FourierGgswCiphertext<&'a [c64]>;
 pub type FourierGgswCiphertextMutView<'a> = FourierGgswCiphertext<&'a mut [c64]>;
 pub type FourierGgswLevelMatrixView<'a> = FourierGgswLevelMatrix<&'a [c64]>;
 pub type FourierGgswLevelMatrixMutView<'a> = FourierGgswLevelMatrix<&'a mut [c64]>;
 pub type FourierGgswLevelRowView<'a> = FourierGgswLevelRow<&'a [c64]>;
 pub type FourierGgswLevelRowMutView<'a> = FourierGgswLevelRow<&'a mut [c64]>;
-
-impl<C: Container> StandardGgswCiphertext<C> {
-    pub fn new(
-        data: C,
-        polynomial_size: PolynomialSize,
-        glwe_size: GlweSize,
-        decomposition_base_log: DecompositionBaseLog,
-        decomposition_level_count: DecompositionLevelCount,
-    ) -> Self
-    where
-        C: Container,
-    {
-        assert_eq!(
-            data.container_len(),
-            polynomial_size.0 * glwe_size.0 * glwe_size.0 * decomposition_level_count.0
-        );
-
-        Self {
-            data,
-            polynomial_size,
-            glwe_size,
-            decomposition_base_log,
-            decomposition_level_count,
-        }
-    }
-
-    pub fn polynomial_size(&self) -> PolynomialSize {
-        self.polynomial_size
-    }
-
-    pub fn glwe_size(&self) -> GlweSize {
-        self.glwe_size
-    }
-
-    pub fn decomposition_base_log(&self) -> DecompositionBaseLog {
-        self.decomposition_base_log
-    }
-
-    pub fn decomposition_level_count(&self) -> DecompositionLevelCount {
-        self.decomposition_level_count
-    }
-
-    pub fn data(self) -> C {
-        self.data
-    }
-
-    pub fn as_view(&self) -> StandardGgswCiphertextView<'_, C::Element> {
-        StandardGgswCiphertextView {
-            data: self.data.as_ref(),
-            polynomial_size: self.polynomial_size,
-            glwe_size: self.glwe_size,
-            decomposition_base_log: self.decomposition_base_log,
-            decomposition_level_count: self.decomposition_level_count,
-        }
-    }
-
-    pub fn as_mut_view(&mut self) -> StandardGgswCiphertextMutView<'_, C::Element>
-    where
-        C: AsMut<[C::Element]>,
-    {
-        StandardGgswCiphertextMutView {
-            data: self.data.as_mut(),
-            polynomial_size: self.polynomial_size,
-            glwe_size: self.glwe_size,
-            decomposition_base_log: self.decomposition_base_log,
-            decomposition_level_count: self.decomposition_level_count,
-        }
-    }
-}
 
 impl<C: Container<Element = c64>> FourierGgswCiphertext<C> {
     pub fn new(
@@ -350,7 +269,7 @@ impl<'a> FourierGgswCiphertextMutView<'a> {
     /// domain.
     pub fn fill_with_forward_fourier<Scalar: UnsignedTorus>(
         self,
-        coef_ggsw: StandardGgswCiphertextView<Scalar>,
+        coef_ggsw: StandardGgswCiphertext<&'_ [Scalar]>,
         fft: FftView<'_>,
         mut stack: DynStack<'_>,
     ) {
@@ -359,14 +278,14 @@ impl<'a> FourierGgswCiphertextMutView<'a> {
 
         for (fourier_poly, coef_poly) in izip!(
             self.data().into_chunks(poly_size / 2),
-            coef_ggsw.data.into_chunks(poly_size)
+            coef_ggsw.into_container().into_chunks(poly_size)
         ) {
             // SAFETY: forward_as_torus doesn't write any uninitialized values into its output
             fft.forward_as_torus(
                 FourierPolynomialUninitMutView {
                     data: unsafe { as_mut_uninit(fourier_poly) },
                 },
-                PolynomialView { data: coef_poly },
+                Polynomial::from_container(coef_poly),
                 stack.rb_mut(),
             );
         }
@@ -399,9 +318,9 @@ pub fn external_product_scratch<Scalar>(
 /// Performs the external product of `ggsw` and `glwe`, and stores the result in `out`.
 #[cfg_attr(__profiling, inline(never))]
 pub fn external_product<Scalar: UnsignedTorus>(
-    mut out: GlweCiphertextMutView<'_, Scalar>,
+    mut out: GlweCiphertext<&'_ mut [Scalar]>,
     ggsw: FourierGgswCiphertextView<'_>,
-    glwe: GlweCiphertextView<'_, Scalar>,
+    glwe: GlweCiphertext<&'_ [Scalar]>,
     fft: FftView<'_>,
     stack: DynStack<'_>,
 ) {
@@ -409,8 +328,8 @@ pub fn external_product<Scalar: UnsignedTorus>(
     debug_assert_eq!(ggsw.polynomial_size(), glwe.polynomial_size());
     debug_assert_eq!(ggsw.polynomial_size(), out.polynomial_size());
     // we check that the glwe sizes match
-    debug_assert_eq!(ggsw.glwe_size(), glwe.glwe_size());
-    debug_assert_eq!(ggsw.glwe_size(), out.glwe_size());
+    debug_assert_eq!(ggsw.glwe_size(), glwe.size());
+    debug_assert_eq!(ggsw.glwe_size(), out.size());
 
     let align = CACHELINE_ALIGN;
     let poly_size = ggsw.polynomial_size().0;
@@ -434,7 +353,7 @@ pub fn external_product<Scalar: UnsignedTorus>(
         // In this section, we perform the external product in the fourier domain, and accumulate
         // the result in the output_fft_buffer variable.
         let (mut decomposition, mut substack1) = TensorSignedDecompositionLendingIter::new(
-            glwe.data()
+            glwe.into_container()
                 .iter()
                 .map(|s| decomposer.closest_representable(*s)),
             DecompositionBaseLog(decomposer.base_log),
@@ -448,7 +367,7 @@ pub fn external_product<Scalar: UnsignedTorus>(
             let (glwe_level, glwe_decomp_term, mut substack2) =
                 collect_next_term(&mut decomposition, &mut substack1, align);
             let glwe_decomp_term =
-                GlweCiphertextView::new(&glwe_decomp_term, ggsw.polynomial_size(), ggsw.glwe_size);
+                GlweCiphertext::from_container(&*glwe_decomp_term, ggsw.polynomial_size());
             debug_assert_eq!(ggsw_decomp_matrix.decomposition_level(), glwe_level);
 
             // For each level we have to add the result of the vector-matrix product between the
@@ -465,7 +384,9 @@ pub fn external_product<Scalar: UnsignedTorus>(
 
             izip!(
                 ggsw_decomp_matrix.into_rows(),
-                glwe_decomp_term.into_polynomials()
+                glwe_decomp_term
+                    .into_polynomial_list()
+                    .into_polynomial_iter()
             )
             .for_each(|(ggsw_row, glwe_poly)| {
                 let (mut fourier, substack3) = substack2
@@ -508,7 +429,9 @@ pub fn external_product<Scalar: UnsignedTorus>(
         // SAFETY: output_fft_buffer is initialized, since `is_output_uninit` is false
         let output_fft_buffer = &*unsafe { assume_init_mut(output_fft_buffer) };
         izip!(
-            out.as_mut_view().into_polynomials(),
+            out.as_mut_view()
+                .into_polynomial_list()
+                .into_polynomial_iter(),
             output_fft_buffer
                 .into_chunks(poly_size / 2)
                 .map(|slice| FourierPolynomialView { data: slice }),
@@ -741,13 +664,17 @@ pub fn cmux_scratch<Scalar>(
 
 /// This cmux mutates both ct1 and ct0. The result is in ct0 after the method was called.
 pub fn cmux<Scalar: UnsignedTorus>(
-    ct0: GlweCiphertextMutView<'_, Scalar>,
-    mut ct1: GlweCiphertextMutView<'_, Scalar>,
+    ct0: GlweCiphertext<&'_ mut [Scalar]>,
+    mut ct1: GlweCiphertext<&'_ mut [Scalar]>,
     ggsw: FourierGgswCiphertextView<'_>,
     fft: FftView<'_>,
     stack: DynStack<'_>,
 ) {
-    izip!(ct1.as_mut_view().data(), ct0.as_view().data()).for_each(|(c1, c0)| {
+    izip!(
+        ct1.as_mut_view().into_tensor().into_container(),
+        ct0.as_view().into_tensor().into_container(),
+    )
+    .for_each(|(c1, c0)| {
         *c1 = c1.wrapping_sub(*c0);
     });
     external_product(ct0, ggsw, ct1.as_view(), fft, stack);

@@ -1,9 +1,8 @@
 use super::super::super::private::crypto::bootstrap::{
-    fill_with_forward_fourier_scratch, FourierLweBootstrapKey, StandardLweBootstrapKeyView,
+    fill_with_forward_fourier_scratch, FourierLweBootstrapKey,
 };
 use super::super::super::private::math::fft::Fft;
 use super::{FftEngine, FftError};
-use crate::commons::math::tensor::AsRefSlice;
 use crate::prelude::{
     FftFourierLweBootstrapKey32, FftFourierLweBootstrapKey64, LweBootstrapKey32, LweBootstrapKey64,
     LweBootstrapKeyConversionEngine, LweBootstrapKeyConversionError, LweBootstrapKeyEntity,
@@ -101,17 +100,9 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey32, FftFourierLweBootstrapKe
             input.0.base_log(),
             input.0.level_count(),
         );
-        let input = StandardLweBootstrapKeyView::new(
-            input.0.tensor.as_slice(),
-            input.0.key_size(),
-            input.0.polynomial_size(),
-            input.0.glwe_size(),
-            input.0.base_log(),
-            input.0.level_count(),
-        );
         output
             .as_mut_view()
-            .fill_with_forward_fourier(input, fft, stack);
+            .fill_with_forward_fourier(input.0.as_view(), fft, stack);
         FftFourierLweBootstrapKey32(output)
     }
 }
@@ -201,17 +192,9 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey64, FftFourierLweBootstrapKe
             input.0.base_log(),
             input.0.level_count(),
         );
-        let input = StandardLweBootstrapKeyView::new(
-            input.0.tensor.as_slice(),
-            input.0.key_size(),
-            input.0.polynomial_size(),
-            input.0.glwe_size(),
-            input.0.base_log(),
-            input.0.level_count(),
-        );
         output
             .as_mut_view()
-            .fill_with_forward_fourier(input, fft, stack);
+            .fill_with_forward_fourier(input.0.as_view(), fft, stack);
         FftFourierLweBootstrapKey64(output)
     }
 }

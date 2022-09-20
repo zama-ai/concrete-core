@@ -1,3 +1,4 @@
+use concrete_core::commons::crypto::glwe::GlweCiphertext;
 use criterion::{criterion_group, criterion_main, Criterion};
 
 pub fn criterion_benchmark(c: &mut Criterion) {
@@ -13,7 +14,6 @@ pub fn criterion_benchmark(c: &mut Criterion) {
         use fft::crypto::ggsw::{
             external_product, external_product_scratch, FourierGgswCiphertext,
         };
-        use fft::crypto::glwe::GlweCiphertext;
         use fft::math::fft::Fft;
 
         fn run_bench<Scalar: UnsignedTorus>(n: usize, b: &mut criterion::Bencher) {
@@ -22,10 +22,9 @@ pub fn criterion_benchmark(c: &mut Criterion) {
             let decomposition_level_count = DecompositionLevelCount(4);
             let decomposition_base_log = DecompositionBaseLog(2);
 
-            let mut out = GlweCiphertext::new(
+            let mut out = GlweCiphertext::from_container(
                 avec![Scalar::ZERO; polynomial_size.0 * glwe_size.0].into_boxed_slice(),
                 polynomial_size,
-                glwe_size,
             );
             let ggsw = FourierGgswCiphertext::new(
                 avec![
@@ -38,10 +37,9 @@ pub fn criterion_benchmark(c: &mut Criterion) {
                 decomposition_base_log,
                 decomposition_level_count,
             );
-            let glwe = GlweCiphertext::new(
+            let glwe = GlweCiphertext::from_container(
                 avec![Scalar::ZERO; polynomial_size.0 * glwe_size.0].into_boxed_slice(),
                 polynomial_size,
-                glwe_size,
             );
             let fft = Fft::new(polynomial_size);
             let fft = fft.as_view();

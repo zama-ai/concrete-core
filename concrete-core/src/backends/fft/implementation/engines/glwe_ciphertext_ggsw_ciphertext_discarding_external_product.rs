@@ -1,9 +1,7 @@
 use super::super::super::entities::{FftFourierGgswCiphertext32, FftFourierGgswCiphertext64};
 use super::super::super::private::crypto::ggsw::{external_product, external_product_scratch};
-use super::super::super::private::crypto::glwe::{GlweCiphertextMutView, GlweCiphertextView};
 use super::super::super::private::math::fft::Fft;
 use super::{FftEngine, FftError};
-use crate::commons::math::tensor::{AsMutSlice, AsRefSlice};
 use crate::prelude::{
     GlweCiphertext32, GlweCiphertext64,
     GlweCiphertextGgswCiphertextDiscardingExternalProductEngine,
@@ -118,12 +116,13 @@ impl
                 .unaligned_bytes_required(),
         );
         let stack = self.stack();
-        let out =
-            GlweCiphertextMutView::new(output.0.tensor.as_mut_slice(), polynomial_size, glwe_size);
-        let ggsw = ggsw_input.0.as_view();
-        let glwe =
-            GlweCiphertextView::new(glwe_input.0.tensor.as_slice(), polynomial_size, glwe_size);
-        external_product(out, ggsw, glwe, fft, stack)
+        external_product(
+            output.0.as_mut_view(),
+            ggsw_input.0.as_view(),
+            glwe_input.0.as_view(),
+            fft,
+            stack,
+        )
     }
 }
 
@@ -229,11 +228,12 @@ impl
                 .unaligned_bytes_required(),
         );
         let stack = self.stack();
-        let out =
-            GlweCiphertextMutView::new(output.0.tensor.as_mut_slice(), polynomial_size, glwe_size);
-        let ggsw = ggsw_input.0.as_view();
-        let glwe =
-            GlweCiphertextView::new(glwe_input.0.tensor.as_slice(), polynomial_size, glwe_size);
-        external_product(out, ggsw, glwe, fft, stack)
+        external_product(
+            output.0.as_mut_view(),
+            ggsw_input.0.as_view(),
+            glwe_input.0.as_view(),
+            fft,
+            stack,
+        )
     }
 }

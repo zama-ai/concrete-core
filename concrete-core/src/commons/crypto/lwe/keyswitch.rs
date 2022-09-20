@@ -7,7 +7,7 @@ use crate::commons::math::decomposition::{
 };
 use crate::commons::math::random::ByteRandomGenerator;
 use crate::commons::math::tensor::{
-    ck_dim_div, ck_dim_eq, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
+    ck_dim_div, ck_dim_eq, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Container, Tensor,
 };
 use crate::commons::math::torus::UnsignedTorus;
 use crate::prelude::{
@@ -146,6 +146,35 @@ impl<Cont> LweKeyswitchKey<Cont> {
             decomp_level_count: decomp_size,
             lwe_size: LweSize(output_size.0 + 1),
         }
+    }
+
+    pub fn into_container(self) -> Cont {
+        self.tensor.into_container()
+    }
+
+    pub fn as_view(&self) -> LweKeyswitchKey<&'_ [Cont::Element]>
+    where
+        Cont: Container,
+    {
+        LweKeyswitchKey::from_container(
+            self.tensor.as_container().as_ref(),
+            self.decomp_base_log,
+            self.decomp_level_count,
+            self.lwe_size.to_lwe_dimension(),
+        )
+    }
+
+    pub fn as_mut_view(&mut self) -> LweKeyswitchKey<&'_ mut [Cont::Element]>
+    where
+        Cont: Container,
+        Cont: AsMut<[Cont::Element]>,
+    {
+        LweKeyswitchKey::from_container(
+            self.tensor.as_mut_container().as_mut(),
+            self.decomp_base_log,
+            self.decomp_level_count,
+            self.lwe_size.to_lwe_dimension(),
+        )
     }
 
     /// Return the size of the output key.
