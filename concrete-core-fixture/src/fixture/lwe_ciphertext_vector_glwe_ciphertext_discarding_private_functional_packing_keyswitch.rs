@@ -290,7 +290,12 @@ where
         let raw_cleartext_vector =
             maker.transform_cleartext_vector_to_raw_vec(proto_cleartext_vector);
         let function_poly = Polynomial::from_container(raw_cleartext_vector);
-        let raw_input_vector = maker.transform_plaintext_vector_to_raw_vec(proto_plaintext_vector);
+        let mut raw_input_vector =
+            maker.transform_plaintext_vector_to_raw_vec(proto_plaintext_vector);
+        // raw_input_vector can be smaller than function_poly, currently fill_with_wrapping_mul
+        // requires the destination and source operands to have the same size, so we fill the first
+        // coefficiens with the raw_input_vector and the additional coefficients with 0
+        raw_input_vector.resize_with(function_poly.polynomial_size().0, Precision::Raw::zero);
         let input_poly = Polynomial::from_container(raw_input_vector);
         let mut raw_result =
             Polynomial::allocate(Precision::Raw::zero(), parameters.output_polynomial_size);
