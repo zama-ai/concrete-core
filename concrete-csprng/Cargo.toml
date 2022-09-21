@@ -15,6 +15,9 @@ keywords = ["fully", "homomorphic", "encryption", "fhe", "cryptography"]
 aes-soft = "0.6.4"
 rayon = { version = "1.5.0", optional = true }
 
+[target.'cfg(target_os = "macos")'.dependencies]
+libc = "0.2.133"
+
 [dev-dependencies]
 rand = "0.8.3"
 criterion = "0.3"
@@ -51,4 +54,3 @@ required-features = ["seeder_x86_64_rdseed", "generator_x86_64_aesni"]
 [[bin]]
 name = "generate"
 path = "src/main.rs"
-required-features = ["seeder_x86_64_rdseed", "generator_x86_64_aesni"]
