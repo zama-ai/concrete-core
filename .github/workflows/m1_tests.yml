@@ -18,30 +18,32 @@ env:
 
 jobs:
   run-tests-m1:
-    if: "contains(github.event.label.name, 'm1_test')"
+    # Execute if we are not in a PR, and if we are in a PR, only trigger if the label for m1_test is
+    # set
+    if: "github.event_name != 'pull_request' || contains(github.event.label.name, 'm1_test')"
     concurrency:
       group: ${{ github.ref }}_m1mac
       cancel-in-progress: true
     name: Test code in M1
     runs-on: ["self-hosted", "m1mac"]
     steps:
-    - uses: actions/checkout@v3
-    - name: Install Rust
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        override: true
-    - name: Install Rust for tasks
-      run: |
-        make install_tasks_rust_toolchain
-    - name: Run checks
-      run: |
-        cargo xtask check_fmt
-        cargo xtask check_clippy
-        cargo xtask check_doc
-    - name: Run concrete tests
-      run: |
-        cargo xtask test
+      - uses: actions/checkout@v3
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - name: Install Rust for tasks
+        run: |
+          make install_tasks_rust_toolchain
+      - name: Run checks
+        run: |
+          cargo xtask check_fmt
+          cargo xtask check_clippy
+          cargo xtask check_doc
+      - name: Run concrete tests
+        run: |
+          cargo xtask test
 
   remove_label:
     name: Remove m1_test label
