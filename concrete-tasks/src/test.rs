@@ -59,7 +59,7 @@ pub fn ffi() -> Result<(), Error> {
 pub fn cuda_test() -> Result<(), Error> {
     cmd!(<ENV_TARGET_NATIVE>
         &format!("cargo test --release --no-fail-fast --features=backend_cuda --features {} \
-        -p concrete-core-test -- --test-threads 1",
+        -p concrete-core-test -- cuda:: --test-threads 1",
         get_target_arch_feature_for_core()?
     ))
 }
@@ -73,7 +73,10 @@ pub fn cuda_doc_test() -> Result<(), Error> {
 }
 
 pub fn cuda_core_test() -> Result<(), Error> {
-    cmd!(<ENV_TARGET_NATIVE> "cargo test -p concrete-core --features=backend_cuda -- backends::cuda ")
+    cmd!(<ENV_TARGET_NATIVE>
+        &format!("cargo test -p concrete-core --features=backend_cuda --features {} \
+        -- backends::cuda",
+        get_target_arch_feature_for_core()?))
 }
 
 pub fn crates() -> Result<(), Error> {
