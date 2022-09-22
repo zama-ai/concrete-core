@@ -1,5 +1,5 @@
 use crate::backends::cuda::engines::CudaError;
-use crate::backends::cuda::implementation::engines::CudaEngine;
+use crate::backends::cuda::implementation::engines::{check_base_log, check_glwe_dim, CudaEngine};
 use crate::backends::cuda::implementation::entities::{
     CudaFourierLweBootstrapKey32, CudaFourierLweBootstrapKey64,
 };
@@ -72,6 +72,8 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey32, CudaFourierLweBootstrapK
         check_poly_size!(poly_size);
         let glwe_dim = input.0.glwe_size().to_glwe_dimension();
         check_glwe_dim!(glwe_dim);
+        let base_log = input.0.base_log();
+        check_base_log!(base_log);
         let data_per_gpu = input.glwe_dimension().to_glwe_size().0
             * input.glwe_dimension().to_glwe_size().0
             * input.input_lwe_dimension().0
