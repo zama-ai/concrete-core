@@ -423,6 +423,9 @@ pub use lwe_ciphertext_discarding_bootstrap_1::*;
 mod lwe_ciphertext_discarding_bootstrap_2;
 pub use lwe_ciphertext_discarding_bootstrap_2::*;
 
+mod lwe_ciphertext_discarding_bit_extraction;
+pub use lwe_ciphertext_discarding_bit_extraction::*;
+
 mod lwe_ciphertext_vector_discarding_bootstrap_1;
 pub use lwe_ciphertext_vector_discarding_bootstrap_1::*;
 

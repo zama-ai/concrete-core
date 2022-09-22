@@ -42,5 +42,7 @@ test! {
     ((BinaryKeyDistribution), GlweCiphertextConversionFixture, (GlweCiphertext, FftwFourierGlweCiphertext)),
     ((BinaryKeyDistribution), GlweCiphertextConversionFixture, (FftwFourierGlweCiphertext, GlweCiphertext)),
     ((BinaryKeyDistribution), GlweCiphertextsGgswCiphertextFusingCmuxFixture, (GlweCiphertext, GlweCiphertext,
-        FftwFourierGgswCiphertext))
+        FftwFourierGgswCiphertext)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextDiscardingBitExtractFixture,
+        (FftwFourierLweBootstrapKey, LweKeyswitchKey, LweCiphertext, LweCiphertextVector))
 }
