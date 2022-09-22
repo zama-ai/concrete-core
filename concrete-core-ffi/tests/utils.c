@@ -17,6 +17,20 @@ SeederBuilder *get_best_seeder() {
   }
 #endif
 
+#if defined(__APPLE__)
+  bool apple_secure_enclave_seeder_available = false;
+  int apple_secure_enclave_seeder_available_ok =
+      apple_secure_enclave_seeder_is_available(&apple_secure_enclave_seeder_available);
+  assert(apple_secure_enclave_seeder_available_ok == 0);
+
+  if (apple_secure_enclave_seeder_available) {
+    int get_builder_ok = get_apple_secure_enclave_seeder_builder(&builder);
+    assert(get_builder_ok == 0);
+    printf("Using Apple secure enclave seeder.\n");
+    return builder;
+  }
+#endif
+
   bool unix_seeder_available = false;
   int unix_seeder_available_ok = unix_seeder_is_available(&unix_seeder_available);
   assert(unix_seeder_available_ok == 0);
@@ -47,6 +61,20 @@ SeederBuilder *get_best_seeder_unchecked() {
     int get_builder_ok = get_rdseed_seeder_builder_unchecked(&builder);
     assert(get_builder_ok == 0);
     printf("Using rdseed seeder.\n");
+    return builder;
+  }
+#endif
+
+#if defined(__APPLE__)
+  bool apple_secure_enclave_seeder_available = false;
+  int apple_secure_enclave_seeder_available_ok =
+      apple_secure_enclave_seeder_is_available_unchecked(&apple_secure_enclave_seeder_available);
+  assert(apple_secure_enclave_seeder_available_ok == 0);
+
+  if (apple_secure_enclave_seeder_available) {
+    int get_builder_ok = get_apple_secure_enclave_seeder_builder_unchecked(&builder);
+    assert(get_builder_ok == 0);
+    printf("Using Apple secure enclave seeder.\n");
     return builder;
   }
 #endif

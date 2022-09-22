@@ -36,6 +36,8 @@ pub use super::specification::*;
 // --------------------------------------------------------------------------------- CSPRNG REEXPORT
 // Re-export the different seeders of the `concrete-csprng` crate, which are needed to construct
 // default engines.
+#[cfg(target_os = "macos")]
+pub use concrete_csprng::seeders::AppleSecureEnclaveSeeder;
 #[cfg(feature = "seeder_x86_64_rdseed")]
 pub use concrete_csprng::seeders::RdseedSeeder;
 pub use concrete_csprng::seeders::Seeder;

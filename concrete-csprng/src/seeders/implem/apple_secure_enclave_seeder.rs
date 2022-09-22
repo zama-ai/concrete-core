@@ -47,7 +47,7 @@ mod secure_enclave {
 
 /// A seeder which uses the `SecRandomCopyBytes` function from Apple's `Security` framework.
 ///
-/// https://developer.apple.com/documentation/security/1399291-secrandomcopybytes?language=objc
+/// <https://developer.apple.com/documentation/security/1399291-secrandomcopybytes?language=objc>
 pub struct AppleSecureEnclaveSeeder;
 
 impl Seeder for AppleSecureEnclaveSeeder {
