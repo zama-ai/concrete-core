@@ -32,19 +32,23 @@ impl
     /// # fn main() -> Result<(), Box<dyn Error>> {
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
     /// let input_lwe_dimension = LweDimension(6);
-    /// let output_lwe_dimension = LweDimension(3);
+    /// let output_glwe_dimension = GlweDimension(3);
+    /// let output_polynomial_size = PolynomialSize(512);
     /// let decomposition_level_count = DecompositionLevelCount(2);
     /// let decomposition_base_log = DecompositionBaseLog(8);
-    /// let noise = Variance(2_f64.powf(-25.));
+    /// let noise = Variance(2_f64.powf(-50.));
     ///
     /// // Unix seeder must be given a secret input.
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let input_key: LweSecretKey32 = engine.generate_new_lwe_secret_key(input_lwe_dimension)?;
-    /// let output_key: LweSecretKey32 = engine.generate_new_lwe_secret_key(output_lwe_dimension)?;
+    /// let output_key: GlweSecretKey32 = engine.generate_new_glwe_secret_key(
+    ///     output_glwe_dimension,
+    ///     output_polynomial_size
+    /// )?;
     ///
-    /// let packing_keyswitch_key = engine.generate_new_lwe_keyswitch_key(
+    /// let packing_keyswitch_key = engine.generate_new_lwe_packing_keyswitch_key(
     ///     &input_key,
     ///     &output_key,
     ///     decomposition_level_count,
@@ -61,7 +65,8 @@ impl
     /// #     decomposition_base_log
     /// # );
     /// assert_eq!(packing_keyswitch_key.input_lwe_dimension(), input_lwe_dimension);
-    /// assert_eq!(packing_keyswitch_key.output_lwe_dimension(), output_lwe_dimension);
+    /// assert_eq!(packing_keyswitch_key.output_glwe_dimension(), output_glwe_dimension);
+    /// assert_eq!(packing_keyswitch_key.output_polynomial_size(), output_polynomial_size);
     ///
     /// #
     /// # Ok(())
@@ -140,19 +145,23 @@ impl
     /// # fn main() -> Result<(), Box<dyn Error>> {
     /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
     /// let input_lwe_dimension = LweDimension(6);
-    /// let output_lwe_dimension = LweDimension(3);
+    /// let output_glwe_dimension = GlweDimension(3);
+    /// let output_polynomial_size = PolynomialSize(512);
     /// let decomposition_level_count = DecompositionLevelCount(2);
     /// let decomposition_base_log = DecompositionBaseLog(8);
-    /// let noise = Variance(2_f64.powf(-25.));
+    /// let noise = Variance(2_f64.powf(-50.));
     ///
     /// // Unix seeder must be given a secret input.
     /// // Here we just give it 0, which is totally unsafe.
     /// const UNSAFE_SECRET: u128 = 0;
     /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
     /// let input_key: LweSecretKey64 = engine.generate_new_lwe_secret_key(input_lwe_dimension)?;
-    /// let output_key: LweSecretKey64 = engine.generate_new_lwe_secret_key(output_lwe_dimension)?;
+    /// let output_key: GlweSecretKey64 = engine.generate_new_glwe_secret_key(
+    ///     output_glwe_dimension,
+    ///     output_polynomial_size
+    /// )?;
     ///
-    /// let packing_keyswitch_key = engine.generate_new_lwe_keyswitch_key(
+    /// let packing_keyswitch_key = engine.generate_new_lwe_packing_keyswitch_key(
     ///     &input_key,
     ///     &output_key,
     ///     decomposition_level_count,
@@ -169,7 +178,8 @@ impl
     /// #     decomposition_base_log
     /// # );
     /// assert_eq!(packing_keyswitch_key.input_lwe_dimension(), input_lwe_dimension);
-    /// assert_eq!(packing_keyswitch_key.output_lwe_dimension(), output_lwe_dimension);
+    /// assert_eq!(packing_keyswitch_key.output_glwe_dimension(), output_glwe_dimension);
+    /// assert_eq!(packing_keyswitch_key.output_polynomial_size(), output_polynomial_size);
     ///
     /// #
     /// # Ok(())
