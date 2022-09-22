@@ -42,5 +42,8 @@ bench! {
     ((BinaryKeyDistribution), GlweCiphertextGgswCiphertextDiscardingExternalProductFixture, (GlweCiphertext, FftwFourierGgswCiphertext, GlweCiphertext)),
     ((BinaryKeyDistribution), GlweCiphertextConversionFixture, (GlweCiphertext, FftwFourierGlweCiphertext)),
     ((BinaryKeyDistribution), GlweCiphertextConversionFixture, (FftwFourierGlweCiphertext, GlweCiphertext)),
-    ((BinaryKeyDistribution), GlweCiphertextsGgswCiphertextFusingCmuxFixture, (GlweCiphertext, GlweCiphertext, FftwFourierGgswCiphertext))
+    ((BinaryKeyDistribution), GlweCiphertextsGgswCiphertextFusingCmuxFixture, (GlweCiphertext,
+        GlweCiphertext, FftwFourierGgswCiphertext)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextDiscardingBitExtractFixture,
+        (FftwFourierLweBootstrapKey, LweKeyswitchKey, LweCiphertext, LweCiphertextVector))
 }
