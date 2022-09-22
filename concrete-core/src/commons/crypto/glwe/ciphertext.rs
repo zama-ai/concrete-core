@@ -414,7 +414,7 @@ impl<Cont> GlweCiphertext<Cont> {
     /// glwe_secret_key.encrypt_glwe(
     ///     &mut glwe_ct,
     ///     &plaintext_list,
-    ///     LogStandardDev(-25.),
+    ///     LogStandardDev(-60.),
     ///     &mut encryption_generator,
     /// );
     /// let lwe_secret_key = glwe_secret_key.into_lwe_secret_key();
