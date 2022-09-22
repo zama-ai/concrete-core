@@ -4,25 +4,25 @@ use crate::generators::{ByteCount, BytesPerChild, ChildrenCount, ForkError, Rand
 use crate::seeders::Seed;
 
 /// A random number generator using the `aesni` instructions.
-pub struct ArmAesRandomGenerator(pub(super) AesCtrGenerator<ArmAesBlockCipher>);
+pub struct NeonAesRandomGenerator(pub(super) AesCtrGenerator<ArmAesBlockCipher>);
 
-/// The children iterator used by [`ArmAesRandomGenerator`].
+/// The children iterator used by [`NeonAesRandomGenerator`].
 ///
 /// Outputs children generators one by one.
 pub struct ArmAesChildrenIterator(ChildrenIterator<ArmAesBlockCipher>);
 
 impl Iterator for ArmAesChildrenIterator {
-    type Item = ArmAesRandomGenerator;
+    type Item = NeonAesRandomGenerator;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.0.next().map(ArmAesRandomGenerator)
+        self.0.next().map(NeonAesRandomGenerator)
     }
 }
 
-impl RandomGenerator for ArmAesRandomGenerator {
+impl RandomGenerator for NeonAesRandomGenerator {
     type ChildrenIter = ArmAesChildrenIterator;
     fn new(seed: Seed) -> Self {
-        ArmAesRandomGenerator(AesCtrGenerator::new(AesKey(seed.0), None, None))
+        NeonAesRandomGenerator(AesCtrGenerator::new(AesKey(seed.0), None, None))
     }
     fn remaining_bytes(&self) -> ByteCount {
         self.0.remaining_bytes()
@@ -38,7 +38,7 @@ impl RandomGenerator for ArmAesRandomGenerator {
     }
 }
 
-impl Iterator for ArmAesRandomGenerator {
+impl Iterator for NeonAesRandomGenerator {
     type Item = u8;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -50,7 +50,7 @@ impl Iterator for ArmAesRandomGenerator {
 mod test {
     use crate::generators::aes_ctr::aes_ctr_generic_test;
     use crate::generators::implem::aarch64::block_cipher::ArmAesBlockCipher;
-    use crate::generators::{generator_generic_test, ArmAesRandomGenerator};
+    use crate::generators::{generator_generic_test, NeonAesRandomGenerator};
 
     #[test]
     fn prop_fork_first_state_table_index() {
@@ -89,22 +89,22 @@ mod test {
 
     #[test]
     fn test_roughly_uniform() {
-        generator_generic_test::test_roughly_uniform::<ArmAesRandomGenerator>();
+        generator_generic_test::test_roughly_uniform::<NeonAesRandomGenerator>();
     }
 
     #[test]
     fn test_generator_determinism() {
-        generator_generic_test::test_generator_determinism::<ArmAesRandomGenerator>();
+        generator_generic_test::test_generator_determinism::<NeonAesRandomGenerator>();
     }
 
     #[test]
     fn test_fork() {
-        generator_generic_test::test_fork_children::<ArmAesRandomGenerator>();
+        generator_generic_test::test_fork_children::<NeonAesRandomGenerator>();
     }
 
     #[test]
     #[should_panic(expected = "expected test panic")]
     fn test_bounded_panic() {
-        generator_generic_test::test_bounded_none_should_panic::<ArmAesRandomGenerator>();
+        generator_generic_test::test_bounded_none_should_panic::<NeonAesRandomGenerator>();
     }
 }

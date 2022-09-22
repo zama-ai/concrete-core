@@ -5,19 +5,19 @@ use crate::generators::{BytesPerChild, ChildrenCount, ForkError, ParallelRandomG
 use rayon::iter::plumbing::{Consumer, ProducerCallback, UnindexedConsumer};
 use rayon::prelude::*;
 
-/// The parallel children iterator used by [`ArmAesRandomGenerator`].
+/// The parallel children iterator used by [`NeonAesRandomGenerator`].
 ///
 /// Outputs the children generators one by one.
 #[allow(clippy::type_complexity)]
 pub struct ParallelArmAesChildrenIterator(
     rayon::iter::Map<
         ParallelChildrenIterator<ArmAesBlockCipher>,
-        fn(AesCtrGenerator<ArmAesBlockCipher>) -> ArmAesRandomGenerator,
+        fn(AesCtrGenerator<ArmAesBlockCipher>) -> NeonAesRandomGenerator,
     >,
 );
 
 impl ParallelIterator for ParallelArmAesChildrenIterator {
-    type Item = ArmAesRandomGenerator;
+    type Item = NeonAesRandomGenerator;
     fn drive_unindexed<C>(self, consumer: C) -> C::Result
     where
         C: UnindexedConsumer<Self::Item>,
@@ -38,7 +38,7 @@ impl IndexedParallelIterator for ParallelArmAesChildrenIterator {
     }
 }
 
-impl ParallelRandomGenerator for ArmAesRandomGenerator {
+impl ParallelRandomGenerator for NeonAesRandomGenerator {
     type ParChildrenIter = ParallelArmAesChildrenIterator;
 
     fn par_try_fork(
@@ -48,7 +48,7 @@ impl ParallelRandomGenerator for ArmAesRandomGenerator {
     ) -> Result<Self::ParChildrenIter, ForkError> {
         self.0
             .par_try_fork(n_children, n_bytes)
-            .map(|iterator| ParallelArmAesChildrenIterator(iterator.map(ArmAesRandomGenerator)))
+            .map(|iterator| ParallelArmAesChildrenIterator(iterator.map(NeonAesRandomGenerator)))
     }
 }
 
