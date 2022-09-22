@@ -1,5 +1,7 @@
 use crate::backends::cuda::engines::CudaError;
-use crate::backends::cuda::implementation::engines::AmortizedCudaEngine;
+use crate::backends::cuda::implementation::engines::{
+    check_base_log, check_glwe_dim, AmortizedCudaEngine,
+};
 use crate::backends::cuda::implementation::entities::{
     CudaFourierLweBootstrapKey32, CudaFourierLweBootstrapKey64, CudaGlweCiphertextVector32,
     CudaGlweCiphertextVector64, CudaLweCiphertextVector32, CudaLweCiphertextVector64,
@@ -123,6 +125,10 @@ impl
         )?;
         let poly_size = bsk.polynomial_size().0;
         check_poly_size!(poly_size);
+        let glwe_dim = bsk.glwe_dimension();
+        check_glwe_dim!(glwe_dim);
+        let base_log = bsk.decomposition_base_log();
+        check_base_log!(base_log);
         unsafe { self.discard_bootstrap_lwe_ciphertext_vector_unchecked(output, input, acc, bsk) };
         Ok(())
     }
@@ -259,6 +265,10 @@ impl
         )?;
         let poly_size = bsk.polynomial_size().0;
         check_poly_size!(poly_size);
+        let glwe_dim = bsk.glwe_dimension();
+        check_glwe_dim!(glwe_dim);
+        let base_log = bsk.decomposition_base_log();
+        check_base_log!(base_log);
         unsafe { self.discard_bootstrap_lwe_ciphertext_vector_unchecked(output, input, acc, bsk) };
         Ok(())
     }

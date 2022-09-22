@@ -24,6 +24,7 @@ pub enum CudaError {
     UnspecifiedDeviceError(GpuIndex),
     PolynomialSizeNotSupported,
     GlweDimensionNotSupported,
+    BaseLogNotSupported,
 }
 impl Display for CudaError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -58,12 +59,16 @@ impl Display for CudaError {
             CudaError::GlweDimensionNotSupported => {
                 write!(f, "The only supported GLWE dimension is 1.")
             }
+            CudaError::BaseLogNotSupported => {
+                write!(f, "The base log has to be lower or equal to 16.")
+            }
             CudaError::UnspecifiedDeviceError(gpu_index) => {
                 write!(f, "Unspecified device error on GPU #{}.", gpu_index.0)
             }
         }
     }
 }
+
 impl Error for CudaError {}
 
 impl From<CudaError> for LweCiphertextVectorDiscardingBootstrapError<CudaError> {
@@ -71,3 +76,21 @@ impl From<CudaError> for LweCiphertextVectorDiscardingBootstrapError<CudaError> 
         Self::Engine(err)
     }
 }
+
+macro_rules! check_glwe_dim {
+    ($glwe_dimension: ident) => {
+        if $glwe_dimension.0 != 1 {
+            return Err(CudaError::GlweDimensionNotSupported.into());
+        }
+    };
+}
+
+macro_rules! check_base_log {
+    ($base_log: ident) => {
+        if $base_log.0 > 16 {
+            return Err(CudaError::BaseLogNotSupported.into());
+        }
+    };
+}
+
+pub(crate) use {check_base_log, check_glwe_dim};
