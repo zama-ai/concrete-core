@@ -4,7 +4,7 @@ use concrete_core::commons::numeric::{CastInto, UnsignedInteger};
 #[cfg(feature = "fixture_generator_x86_64_aesni")]
 use concrete_csprng::generators::AesniRandomGenerator;
 #[cfg(feature = "fixture_generator_aarch64_aes")]
-use concrete_csprng::generators::ArmAesRandomGenerator;
+use concrete_csprng::generators::NeonAesRandomGenerator;
 #[cfg(all(
     not(feature = "fixture_generator_x86_64_aesni"),
     not(feature = "fixture_generator_aarch64_aes")
@@ -18,7 +18,7 @@ use std::ops::Range;
 #[cfg(feature = "fixture_generator_x86_64_aesni")]
 type ActivatedRandomGenerator = AesniRandomGenerator;
 #[cfg(feature = "fixture_generator_aarch64_aes")]
-type ActivatedRandomGenerator = ArmAesRandomGenerator;
+type ActivatedRandomGenerator = NeonAesRandomGenerator;
 #[cfg(all(
     not(feature = "fixture_generator_x86_64_aesni"),
     not(feature = "fixture_generator_aarch64_aes")

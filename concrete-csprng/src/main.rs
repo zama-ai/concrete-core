@@ -3,7 +3,7 @@
 #[cfg(target_arch = "x86_64")]
 use concrete_csprng::generators::AesniRandomGenerator as ActivatedRandomGenerator;
 #[cfg(target_arch = "aarch64")]
-use concrete_csprng::generators::ArmAesRandomGenerator as ActivatedRandomGenerator;
+use concrete_csprng::generators::NeonAesRandomGenerator as ActivatedRandomGenerator;
 #[cfg(all(not(target_arch = "x86_64"), not(target_arch = "aarch64")))]
 use concrete_csprng::generators::SoftwareRandomGenerator as ActivatedRandomGenerator;
 
