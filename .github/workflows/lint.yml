@@ -2,12 +2,12 @@
 # and lint with clippy
 name: Rustfmt and Clippy check
 on:
-  push:
+  pull_request:
 jobs:
   formatting:
     name: rustfmt
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v2
       - name: Install Rust for tasks
@@ -19,7 +19,7 @@ jobs:
   clippy-check:
     name: clippy
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v2
       - name: Install Rust for tasks
