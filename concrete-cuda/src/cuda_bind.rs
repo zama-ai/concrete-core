@@ -176,4 +176,48 @@ extern "C" {
         r: u32,
         max_shared_memory: u32,
     );
+
+    pub fn cuda_extract_bits_32(
+        v_stream: *const c_void,
+        list_lwe_out: *mut c_void,
+        lwe_in: *const c_void,
+        lwe_in_buffer: *mut c_void,
+        lwe_in_shifted_buffer: *mut c_void,
+        lwe_out_ks_buffer: *mut c_void,
+        lwe_out_pbs_buffer: *mut c_void,
+        lut_pbs: *mut c_void,
+        lut_vector_indexes: *const c_void,
+        ksk: *const c_void,
+        fourier_bsk: *const c_void,
+        number_of_bits: u32,
+        delta_log: u32,
+        lwe_dimension_before: u32,
+        lwe_dimension_after: u32,
+        base_log_bsk: u32,
+        l_gadget_bsk: u32,
+        base_log_ksk: u32,
+        l_gadget_ksk: u32,
+    );
+
+    pub fn cuda_extract_bits_64(
+        v_stream: *const c_void,
+        list_lwe_out: *mut c_void,
+        lwe_in: *const c_void,
+        lwe_in_buffer: *mut c_void,
+        lwe_in_shifted_buffer: *mut c_void,
+        lwe_out_ks_buffer: *mut c_void,
+        lwe_out_pbs_buffer: *mut c_void,
+        lut_pbs: *mut c_void,
+        lut_vector_indexes: *const c_void,
+        ksk: *const c_void,
+        fourier_bsk: *const c_void,
+        number_of_bits: u32,
+        delta_log: u32,
+        lwe_dimension_before: u32,
+        lwe_dimension_after: u32,
+        base_log_bsk: u32,
+        l_gadget_bsk: u32,
+        base_log_ksk: u32,
+        l_gadget_ksk: u32,
+    );
 }

@@ -102,7 +102,55 @@ void cuda_cmux_tree_64(
         uint32_t l_gadget,
         uint32_t r,
         uint32_t max_shared_memory);
+
+
+
+void cuda_extract_bits_32(
+    void *v_stream,
+    void *list_lwe_out,
+    void *lwe_in,
+    void *lwe_in_buffer,
+    void *lwe_in_shifted_buffer,
+    void *lwe_out_ks_buffer,
+    void *lwe_out_pbs_buffer,
+    void *lut_pbs,
+    void *lut_vector_indexes,
+    void *ksk,
+    void *fourier_bsk,
+    uint32_t number_of_bits,
+    uint32_t delta_log,
+    uint32_t lwe_dimension_before,
+    uint32_t lwe_dimension_after,
+    uint32_t base_log_bsk,
+    uint32_t l_gadget_bsk,
+    uint32_t base_log_ksk,
+    uint32_t l_gadget_ksk);
+
+
+void cuda_extract_bits_64(
+        void *v_stream,
+        void *list_lwe_out,
+        void *lwe_in,
+        void *lwe_in_buffer,
+        void *lwe_in_shifted_buffer,
+        void *lwe_out_ks_buffer,
+        void *lwe_out_pbs_buffer,
+        void *lut_pbs,
+        void *lut_vector_indexes,
+        void *ksk,
+        void *fourier_bsk,
+        uint32_t number_of_bits,
+        uint32_t delta_log,
+        uint32_t lwe_dimension_before,
+        uint32_t lwe_dimension_after,
+        uint32_t base_log_bsk,
+        uint32_t l_gadget_bsk,
+        uint32_t base_log_ksk,
+        uint32_t l_gadget_ksk);
+
+
 };
+
 
 
 __device__ inline int get_start_ith_ggsw(int i, uint32_t polynomial_size,
