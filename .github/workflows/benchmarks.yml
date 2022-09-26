@@ -17,7 +17,6 @@ env:
 
 jobs:
   start-runner:
-    if: "contains(github.event.label.name, 'aws_test')"
     name: Start EC2 runner
     runs-on: ubuntu-20.04
     outputs:
@@ -52,10 +51,6 @@ jobs:
             echo "AMI: ${{ github.event.inputs.instance_image_id }}"
             echo "Type: ${{ github.event.inputs.instance_type }}"
 
-      - name: Set up home
-        run: |
-          echo "HOME=/home/ubuntu" >> "${GITHUB_ENV}"
-
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
@@ -68,7 +63,8 @@ jobs:
 
       - name: Parse results
         run: |
-          python3 ./ci/benchmark_parser.py "./${RESULTS_FILENAME}" --series-tags "{\"commit_hash\": \"${{ github.sha }}\"}"
+          python3 ./ci/benchmark_parser.py "./${RESULTS_FILENAME}" \
+          --series-tags '{"commit_hash": "${{ github.sha }}", "backend": "cpu"}'
         shell: bash
 
       - name: Upload results artifacts
