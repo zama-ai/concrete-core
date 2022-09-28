@@ -1,12 +1,27 @@
 use crate::{
-    probe, EngineTraitImplCheckedMethod, EngineTraitImplGenericArgument, EngineTypeDefinition,
-    EntityTypeDefinition,
+    probe, EngineTraitImpl, EngineTraitImplCheckedMethod, EngineTraitImplGenericArgument,
+    EngineTypeDefinition, EntityTypeDefinition,
 };
 
 /// A helper trait for name mangling.
 pub trait ToNameFragment {
     /// Returns a name fragment from self
     fn to_fragment(&self) -> String;
+}
+
+impl ToNameFragment for EngineTraitImpl {
+    fn to_fragment(&self) -> String {
+        format!(
+            "{}_{}_{}",
+            camel_case_to_snake_case(self.engine_type_ident.to_string().as_str()),
+            self.checked_method.ident.to_string(),
+            self.engine_trait_parameters()
+                .iter()
+                .map(ToNameFragment::to_fragment)
+                .collect::<Vec<_>>()
+                .join("_")
+        )
+    }
 }
 
 impl ToNameFragment for EntityTypeDefinition {

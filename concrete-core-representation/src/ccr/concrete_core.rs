@@ -368,10 +368,11 @@ fn classify_engine_trait_impl_args(
                         syn::Type::Path(path) => path,
                         path >> path.path.segments.last(),
                         segment -> classifier(&segment.ident),
-                        IdentKind::OwnedEntity(_) =>
+                        IdentKind::OwnedEntity(ident) =>
                             EngineTraitImplArg::OwnedEntity(
                                 pat_ident.to_owned(),
-                                *pat_type.ty.clone()
+                                *pat_type.ty.clone(),
+                                ident
                             )
                     );
                     if maybe_owned_entity.is_some() {
@@ -384,10 +385,11 @@ fn classify_engine_trait_impl_args(
                         syn::Type::Path(path) => path,
                         path >> path.path.segments.last(),
                         segment -> classifier(&segment.ident),
-                        IdentKind::ViewEntity(_) =>
+                        IdentKind::ViewEntity(ident) =>
                             EngineTraitImplArg::ViewEntity(
                                 pat_ident.to_owned(),
-                                *pat_type.ty.clone()
+                                *pat_type.ty.clone(),
+                                ident
                             )
                     );
                     if maybe_view_entity.is_some() {
@@ -400,10 +402,11 @@ fn classify_engine_trait_impl_args(
                         syn::Type::Path(path) => path,
                         path >> path.path.segments.last(),
                         segment -> classifier(&segment.ident),
-                        IdentKind::MutViewEntity(_) =>
+                        IdentKind::MutViewEntity(ident) =>
                             EngineTraitImplArg::MutViewEntity(
                                 pat_ident.to_owned(),
-                                *pat_type.ty.clone()
+                                *pat_type.ty.clone(),
+                                ident
                             )
                     );
                     if maybe_mut_view_entity.is_some() {
@@ -416,10 +419,11 @@ fn classify_engine_trait_impl_args(
                         syn::Type::Path(path) => path,
                         path >> path.path.segments.last(),
                         segment -> classifier(&segment.ident),
-                        IdentKind::Parameter(_) =>
+                        IdentKind::Parameter(ident) =>
                             EngineTraitImplArg::Parameter(
                                 pat_ident.to_owned(),
-                                *pat_type.ty.clone()
+                                *pat_type.ty.clone(),
+                                ident
                             )
                     );
                     if maybe_parameter.is_some() {
@@ -432,10 +436,11 @@ fn classify_engine_trait_impl_args(
                         syn::Type::Path(path) => path,
                         path >> path.path.segments.last(),
                         segment -> classifier(&segment.ident),
-                        IdentKind::Dispersion(_) =>
+                        IdentKind::Dispersion(ident) =>
                             EngineTraitImplArg::Dispersion(
                                 pat_ident.to_owned(),
-                                *pat_type.ty.clone()
+                                *pat_type.ty.clone(),
+                                ident
                             )
                     );
                     if maybe_dispersion.is_some() {
@@ -448,10 +453,11 @@ fn classify_engine_trait_impl_args(
                         syn::Type::Path(path) => path,
                         path >> path.path.segments.last(),
                         segment -> classifier(&segment.ident),
-                        IdentKind::Numeric(_) =>
+                        IdentKind::Numeric(ident) =>
                             EngineTraitImplArg::Numeric(
                                 pat_ident.to_owned(),
-                                *pat_type.ty.clone()
+                                *pat_type.ty.clone(),
+                                ident
                             )
                     );
                     if maybe_numeric.is_some() {

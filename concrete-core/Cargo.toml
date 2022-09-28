@@ -38,6 +38,10 @@ bench = false
 name = "bench"
 harness = false
 
+[[bin]]
+name = "test"
+path = "src/test.rs"
+
 [features]
 default = ["backend_default", "seeder_unix"]
 doc = []

@@ -57,7 +57,7 @@ fn prune_unknown_args(ccr: &mut ConcreteCore) {
                     .checked_method
                     .args()
                     .iter()
-                    .any(|arg| matches!(arg, EngineTraitImplArg::Unknown(_)))
+                    .all(|arg| !matches!(arg, EngineTraitImplArg::Unknown(_, _)))
             })
         }
     }

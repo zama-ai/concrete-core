@@ -18,9 +18,6 @@ fn main() -> Result<(), String> {
     // We prune the ccir from the unavailable nodes
     prune::prune(&mut ccr);
 
-    dump_ccr_to_file("test.json", ccr);
-    panic!();
-
     // We generate the binding
     let binding = generation::generate_binding(&ccr).to_string();
 

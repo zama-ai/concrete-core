@@ -33,7 +33,7 @@ fn generate_all_engine_impls(ccr: &ConcreteCore) -> TokenStream2 {
 fn generate_checked_engine_impl(engine_impl: &EngineTraitImpl) -> TokenStream2 {
     let engine_type = &engine_impl.engine_type_ident;
     let engine_method_name = &engine_impl.checked_method.ident;
-    let name = generate_checked_engine_impl_name(engine_impl);
+    let name = format_ident!("{}", engine_impl.to_fragment());
     let public_args = generate_checked_engine_impl_args(engine_impl);
     let public_ret = quote!();
     let private_exprs = quote!();
@@ -61,43 +61,48 @@ fn generate_checked_engine_impl_args(engine_impl: &EngineTraitImpl) -> TokenStre
     let mut output = TokenStream2::new();
     for arg in engine_impl.checked_method.args().iter() {
         let arg = match arg {
-            EngineTraitImplArg::OwnedEntity(pat_ident, typ) => quote!(#pat_ident: #typ, ),
+            EngineTraitImplArg::OwnedEntity(pat_ident, typ, _) => quote!(#pat_ident: #typ, ),
             EngineTraitImplArg::OwnedEntityRef(pat_ident, _, inner_typ) => {
                 quote!(#pat_ident: *const #inner_typ,)
             }
             EngineTraitImplArg::OwnedEntityRefMut(pat_ident, _, inner_typ) => {
                 quote!(#pat_ident: &mut #inner_typ,)
             }
-            EngineTraitImplArg::ViewEntity(pat_ident, typ) => quote!(#pat_ident: #typ,),
+            EngineTraitImplArg::ViewEntity(pat_ident, _, inner_typ) => {
+                quote!(#pat_ident: #inner_typ,)
+            }
             EngineTraitImplArg::ViewEntityRef(pat_ident, _, inner_typ) => {
                 quote!(#pat_ident: *const #inner_typ,)
             }
-            EngineTraitImplArg::MutViewEntity(pat_ident, typ) => {
-                quote!(#pat_ident: #typ,)
+            EngineTraitImplArg::MutViewEntity(pat_ident, _, inner_typ) => {
+                quote!(#pat_ident: #inner_typ,)
+            }
+            EngineTraitImplArg::MutViewEntityRef(pat_ident, _, inner_typ) => {
+                quote!(#pat_ident: *const #inner_typ,)
             }
             EngineTraitImplArg::MutViewEntityRefMut(pat_ident, _, inner_typ) => {
                 quote!(#pat_ident: *mut #inner_typ,)
             }
-            EngineTraitImplArg::Config(pat_ident, typ) => {
-                quote!(#pat_ident: #typ,)
+            EngineTraitImplArg::Config(pat_ident, _, inner_typ) => {
+                quote!(#pat_ident: #inner_typ,)
             }
             EngineTraitImplArg::ConfigRef(pat_ident, _, inner_typ) => {
-                quote!(#pat_ident: *const *inner_typ,)
+                quote!(#pat_ident: *const #inner_typ,)
             }
             EngineTraitImplArg::ConfigSlice(pat_ident, _, inner_typ) => {
                 quote!(#pat_ident: *const RustSlice<#inner_typ>,)
             }
-            EngineTraitImplArg::Parameter(pat_ident, typ) => {
-                quote!(#pat_ident: #typ,)
+            EngineTraitImplArg::Parameter(pat_ident, _, inner_typ) => {
+                quote!(#pat_ident: #inner_typ,)
             }
-            EngineTraitImplArg::Dispersion(pat_ident, typ) => {
-                quote!(#pat_ident: #typ,)
+            EngineTraitImplArg::Dispersion(pat_ident, _, inner_typ) => {
+                quote!(#pat_ident: #inner_typ,)
             }
-            EngineTraitImplArg::Numeric(pat_ident, typ) => {
-                quote!(#pat_ident: #typ,)
+            EngineTraitImplArg::Numeric(pat_ident, _, inner_typ) => {
+                quote!(#pat_ident: #inner_typ,)
             }
             EngineTraitImplArg::NumericRef(pat_ident, _, inner_typ) => {
-                quote!(#pat_ident: *const inner_typ,)
+                quote!(#pat_ident: *const #inner_typ,)
             }
             EngineTraitImplArg::NumericRefMut(pat_ident, _, inner_typ) => {
                 quote!(#pat_ident: *mut #inner_typ,)
@@ -109,7 +114,7 @@ fn generate_checked_engine_impl_args(engine_impl: &EngineTraitImpl) -> TokenStre
                 quote!(#pat_ident: *mut RustMutSlice<#inner_typ>,)
             }
             EngineTraitImplArg::NumericVec(pat_ident, _, inner_typ) => {
-                quote!(#pat_ident: RustVec<#inner_typ>)
+                quote!(#pat_ident: RustVec<#inner_typ>,)
             }
             EngineTraitImplArg::Unknown(_, _) => {
                 panic!("Encountered an unknown argument in {:?}", engine_impl)
@@ -118,20 +123,6 @@ fn generate_checked_engine_impl_args(engine_impl: &EngineTraitImpl) -> TokenStre
         output.extend(arg);
     }
     output
-}
-
-fn generate_checked_engine_impl_name(engine_impl: &EngineTraitImpl) -> TokenStream2 {
-    format_ident!(
-        "{}_{}",
-        engine_impl.checked_method.ident,
-        engine_impl
-            .engine_trait_parameters()
-            .iter()
-            .map(ToNameFragment::to_fragment)
-            .collect::<Vec<_>>()
-            .join("_")
-    )
-    .into_token_stream()
 }
 
 fn generate_unchecked_engine_impl(engine_impl: &EngineTraitImpl) -> TokenStream2 {
