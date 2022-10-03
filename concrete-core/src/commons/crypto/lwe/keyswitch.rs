@@ -156,12 +156,12 @@ impl<Cont> LweKeyswitchKey<Cont> {
     where
         Cont: Container,
     {
-        LweKeyswitchKey::from_container(
-            self.tensor.as_container().as_ref(),
-            self.decomp_base_log,
-            self.decomp_level_count,
-            self.lwe_size.to_lwe_dimension(),
-        )
+        LweKeyswitchKey {
+            tensor: Tensor::from_container(self.tensor.as_container().as_ref()),
+            decomp_base_log: self.decomp_base_log,
+            decomp_level_count: self.decomp_level_count,
+            lwe_size: self.lwe_size,
+        }
     }
 
     pub fn as_mut_view(&mut self) -> LweKeyswitchKey<&'_ mut [Cont::Element]>
@@ -169,12 +169,12 @@ impl<Cont> LweKeyswitchKey<Cont> {
         Cont: Container,
         Cont: AsMut<[Cont::Element]>,
     {
-        LweKeyswitchKey::from_container(
-            self.tensor.as_mut_container().as_mut(),
-            self.decomp_base_log,
-            self.decomp_level_count,
-            self.lwe_size.to_lwe_dimension(),
-        )
+        LweKeyswitchKey {
+            tensor: Tensor::from_container(self.tensor.as_mut_container().as_mut()),
+            decomp_base_log: self.decomp_base_log,
+            decomp_level_count: self.decomp_level_count,
+            lwe_size: self.lwe_size,
+        }
     }
 
     /// Return the size of the output key.

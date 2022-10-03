@@ -10,7 +10,7 @@ use crate::commons::math::decomposition::{DecompositionLevel, SignedDecomposer};
 use crate::commons::math::polynomial::Polynomial;
 #[cfg(feature = "backend_fft_serialization")]
 use crate::commons::math::tensor::ContainerOwned;
-use crate::commons::math::tensor::{Container, IntoChunks, IntoTensor};
+use crate::commons::math::tensor::{Container, IntoTensor, Split};
 use crate::commons::math::torus::UnsignedTorus;
 use crate::commons::utils::izip;
 use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize};
@@ -70,10 +70,7 @@ impl<C: Container<Element = c64>> FourierGgswCiphertext<C> {
         glwe_size: GlweSize,
         decomposition_base_log: DecompositionBaseLog,
         decomposition_level_count: DecompositionLevelCount,
-    ) -> Self
-    where
-        C: Container,
-    {
+    ) -> Self {
         assert_eq!(polynomial_size.0 % 2, 0);
         assert_eq!(
             data.container_len(),
@@ -149,10 +146,7 @@ impl<C: Container<Element = c64>> FourierGgswLevelMatrix<C> {
         glwe_size: GlweSize,
         row_count: usize,
         decomposition_level: DecompositionLevel,
-    ) -> Self
-    where
-        C: Container,
-    {
+    ) -> Self {
         assert_eq!(polynomial_size.0 % 2, 0);
         assert_eq!(
             data.container_len(),
@@ -170,7 +164,7 @@ impl<C: Container<Element = c64>> FourierGgswLevelMatrix<C> {
     /// Returns an iterator over the rows of the level matrices.
     pub fn into_rows(self) -> impl DoubleEndedIterator<Item = FourierGgswLevelRow<C>>
     where
-        C: IntoChunks,
+        C: Split,
     {
         self.data
             .split_into(self.row_count)
@@ -209,10 +203,7 @@ impl<C: Container<Element = c64>> FourierGgswLevelRow<C> {
         polynomial_size: PolynomialSize,
         glwe_size: GlweSize,
         decomposition_level: DecompositionLevel,
-    ) -> Self
-    where
-        C: Container,
-    {
+    ) -> Self {
         assert_eq!(polynomial_size.0 % 2, 0);
         assert_eq!(data.container_len(), polynomial_size.0 / 2 * glwe_size.0);
         Self {

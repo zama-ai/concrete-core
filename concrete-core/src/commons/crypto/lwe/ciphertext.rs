@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 
 /// A ciphertext encrypted using the LWE scheme.
 #[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct LweCiphertext<Cont> {
     pub(crate) tensor: Tensor<Cont>,
 }

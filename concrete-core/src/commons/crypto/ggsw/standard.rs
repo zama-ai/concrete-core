@@ -19,7 +19,7 @@ use serde::{Deserialize, Serialize};
 
 /// A GGSW ciphertext.
 #[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct StandardGgswCiphertext<Cont> {
     pub(crate) tensor: Tensor<Cont>,
     poly_size: PolynomialSize,
@@ -147,12 +147,12 @@ impl<Cont> StandardGgswCiphertext<Cont> {
     where
         Cont: Container,
     {
-        StandardGgswCiphertext::from_container(
-            self.tensor.as_container().as_ref(),
-            self.rlwe_size,
-            self.poly_size,
-            self.decomp_base_log,
-        )
+        StandardGgswCiphertext {
+            tensor: Tensor::from_container(self.tensor.as_container().as_ref()),
+            poly_size: self.poly_size,
+            rlwe_size: self.rlwe_size,
+            decomp_base_log: self.decomp_base_log,
+        }
     }
 
     pub fn as_mut_view(&mut self) -> StandardGgswCiphertext<&'_ mut [Cont::Element]>
@@ -160,12 +160,12 @@ impl<Cont> StandardGgswCiphertext<Cont> {
         Cont: Container,
         Cont: AsMut<[Cont::Element]>,
     {
-        StandardGgswCiphertext::from_container(
-            self.tensor.as_mut_container().as_mut(),
-            self.rlwe_size,
-            self.poly_size,
-            self.decomp_base_log,
-        )
+        StandardGgswCiphertext {
+            tensor: Tensor::from_container(self.tensor.as_mut_container().as_mut()),
+            poly_size: self.poly_size,
+            rlwe_size: self.rlwe_size,
+            decomp_base_log: self.decomp_base_log,
+        }
     }
 
     /// Returns the size of the glwe ciphertexts composing the ggsw ciphertext.

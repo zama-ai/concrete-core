@@ -144,7 +144,10 @@ impl<Cont> LweList<Cont> {
     where
         Cont: Container,
     {
-        LweList::from_container(self.tensor.as_container().as_ref(), self.lwe_size)
+        LweList {
+            tensor: Tensor::from_container(self.tensor.as_container().as_ref()),
+            lwe_size: self.lwe_size,
+        }
     }
 
     pub fn as_mut_view(&mut self) -> LweList<&'_ mut [Cont::Element]>
@@ -152,7 +155,10 @@ impl<Cont> LweList<Cont> {
         Cont: Container,
         Cont: AsMut<[Cont::Element]>,
     {
-        LweList::from_container(self.tensor.as_mut_container().as_mut(), self.lwe_size)
+        LweList {
+            tensor: Tensor::from_container(self.tensor.as_mut_container().as_mut()),
+            lwe_size: self.lwe_size,
+        }
     }
 
     /// Returns the number of ciphertexts in the list.

@@ -9,7 +9,7 @@ use crate::commons::math::decomposition::{
 use crate::commons::math::polynomial::Polynomial;
 use crate::commons::math::random::ByteRandomGenerator;
 use crate::commons::math::tensor::{
-    ck_dim_div, ck_dim_eq, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Tensor,
+    ck_dim_div, ck_dim_eq, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Container, Tensor,
 };
 use crate::commons::math::torus::UnsignedTorus;
 use crate::prelude::{
@@ -1500,7 +1500,7 @@ impl<Cont> LweKeyBitDecomposition<Cont> {
 
 /// A private functional packing keyswitching key list.
 #[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct LwePrivateFunctionalPackingKeyswitchKeyList<Cont> {
     tensor: Tensor<Cont>,
     decomp_base_log: DecompositionBaseLog,
@@ -1655,6 +1655,40 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKeyList<Cont> {
             input_lwe_size: input_dimension.to_lwe_size(),
             output_glwe_size: output_glwe_dimension.to_glwe_size(),
             output_polynomial_size,
+        }
+    }
+
+    pub fn into_container(self) -> Cont {
+        self.tensor.into_container()
+    }
+
+    pub fn as_view(&self) -> LwePrivateFunctionalPackingKeyswitchKeyList<&'_ [Cont::Element]>
+    where
+        Cont: Container,
+    {
+        LwePrivateFunctionalPackingKeyswitchKeyList {
+            tensor: Tensor::from_container(self.tensor.as_container().as_ref()),
+            decomp_base_log: self.decomp_base_log,
+            decomp_level_count: self.decomp_level_count,
+            input_lwe_size: self.input_lwe_size,
+            output_glwe_size: self.output_glwe_size,
+            output_polynomial_size: self.output_polynomial_size,
+        }
+    }
+
+    pub fn as_mut_view(
+        &mut self,
+    ) -> LwePrivateFunctionalPackingKeyswitchKeyList<&'_ mut [Cont::Element]>
+    where
+        Cont: Container + AsMut<[Cont::Element]>,
+    {
+        LwePrivateFunctionalPackingKeyswitchKeyList {
+            tensor: Tensor::from_container(self.tensor.as_mut_container().as_mut()),
+            decomp_base_log: self.decomp_base_log,
+            decomp_level_count: self.decomp_level_count,
+            input_lwe_size: self.input_lwe_size,
+            output_glwe_size: self.output_glwe_size,
+            output_polynomial_size: self.output_polynomial_size,
         }
     }
 

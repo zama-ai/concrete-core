@@ -536,7 +536,7 @@ impl<C: Container<Element = c64>> serde::Serialize for FourierPolynomialList<C> 
             polynomial_size: PolynomialSize,
             serializer: S,
         ) -> Result<S::Ok, S::Error> {
-            use crate::commons::math::tensor::IntoChunks;
+            use crate::commons::math::tensor::Split;
 
             pub struct SingleFourierPolynomial<'a> {
                 fft: FftView<'a>,
@@ -597,7 +597,7 @@ impl<'de, C: ContainerOwned<Element = c64>> serde::Deserialize<'de> for FourierP
                 self,
                 mut seq: A,
             ) -> Result<Self::Value, A::Error> {
-                use crate::commons::math::tensor::IntoChunks;
+                use crate::commons::math::tensor::Split;
 
                 let str = "sequence of two fields and Fourier polynomials";
                 let polynomial_size = match seq.next_element::<PolynomialSize>()? {
