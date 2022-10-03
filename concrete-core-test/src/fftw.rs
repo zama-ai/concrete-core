@@ -44,5 +44,8 @@ test! {
     ((BinaryKeyDistribution), GlweCiphertextsGgswCiphertextFusingCmuxFixture, (GlweCiphertext, GlweCiphertext,
         FftwFourierGgswCiphertext)),
     ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextDiscardingBitExtractFixture,
-        (FftwFourierLweBootstrapKey, LweKeyswitchKey, LweCiphertext, LweCiphertextVector))
+        (FftwFourierLweBootstrapKey, LweKeyswitchKey, LweCiphertext, LweCiphertextVector)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingCircuitBootstrapBooleanVerticalPackingFixture,
+        (FftwFourierLweBootstrapKey, LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys,
+        PlaintextVector, Cleartext, LweCiphertextVectorView, LweCiphertextVectorMutView))
 }

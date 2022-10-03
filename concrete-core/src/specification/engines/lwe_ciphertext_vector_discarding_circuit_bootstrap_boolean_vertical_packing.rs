@@ -71,9 +71,8 @@ impl<EngineError: std::error::Error>
             return Err(Self::MalformedLookUpTables);
         }
 
-        let small_lut_polynomial_count =
-            luts.plaintext_count().0 / (lut_polynomial_size * output.lwe_ciphertext_count().0);
-        if small_lut_polynomial_count * lut_polynomial_size != 1 << input.lwe_ciphertext_count().0 {
+        let small_lut_size = luts.plaintext_count().0 / output.lwe_ciphertext_count().0;
+        if small_lut_size != 1 << input.lwe_ciphertext_count().0 {
             return Err(Self::InvalidSmallLookUpTableSize);
         }
 

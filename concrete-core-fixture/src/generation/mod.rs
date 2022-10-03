@@ -48,17 +48,19 @@ pub struct GaussianKeyDistribution;
 impl KeyDistributionMarker for GaussianKeyDistribution {}
 
 /// A trait for marker type representing integer precision managed in `concrete_core`.
-pub trait IntegerPrecision {
+pub trait IntegerPrecision: std::fmt::Debug {
     type Raw: RawUnsignedIntegers;
 }
 
 /// A type representing the 32 bits precision for integers.
+#[derive(Debug, Clone)]
 pub struct Precision32;
 impl IntegerPrecision for Precision32 {
     type Raw = u32;
 }
 
 /// A type representing the 64 bits precision for integers.
+#[derive(Debug, Clone)]
 pub struct Precision64;
 impl IntegerPrecision for Precision64 {
     type Raw = u64;
