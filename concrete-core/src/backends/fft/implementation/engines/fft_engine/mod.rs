@@ -25,6 +25,16 @@ impl core::fmt::Display for FftError {
 
 impl std::error::Error for FftError {}
 
+impl FftError {
+    pub fn perform_fft_checks(polynomial_size: PolynomialSize) -> Result<(), FftError> {
+        if polynomial_size.0.is_power_of_two() && polynomial_size.0 >= 32 {
+            Ok(())
+        } else {
+            Err(FftError::UnsupportedPolynomialSize)
+        }
+    }
+}
+
 /// The main engine exposed by the Concrete-FFT backend.
 pub struct FftEngine {
     memory: Vec<MaybeUninit<u8>>,
@@ -38,14 +48,6 @@ impl FftEngine {
     pub(crate) fn stack(&mut self) -> DynStack<'_> {
         DynStack::new(&mut self.memory)
     }
-
-    pub fn check_supported_size(polynomial_size: PolynomialSize) -> Result<(), FftError> {
-        if polynomial_size.0.is_power_of_two() && polynomial_size.0 >= 32 {
-            Ok(())
-        } else {
-            Err(FftError::UnsupportedPolynomialSize)
-        }
-    }
 }
 
 impl AbstractEngineSeal for FftEngine {}
@@ -57,3 +59,10 @@ impl AbstractEngine for FftEngine {
         Ok(FftEngine { memory: Vec::new() })
     }
 }
+
+mod ggsw_ciphertext_conversion;
+mod ggsw_ciphertext_discarding_conversion;
+mod glwe_ciphertext_ggsw_ciphertext_discarding_external_product;
+mod glwe_ciphertexts_ggsw_ciphertext_fusing_cmux;
+mod lwe_bootstrap_key_conversion;
+mod lwe_ciphertext_discarding_bootstrap;

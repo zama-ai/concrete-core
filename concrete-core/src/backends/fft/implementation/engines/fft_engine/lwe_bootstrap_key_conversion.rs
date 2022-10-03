@@ -1,8 +1,7 @@
-use super::super::super::private::crypto::bootstrap::{
-    fill_with_forward_fourier_scratch, FourierLweBootstrapKey,
-};
-use super::super::super::private::math::fft::Fft;
 use super::{FftEngine, FftError};
+use crate::backends::fft::private::crypto::bootstrap::FourierLweBootstrapKey;
+use crate::backends::fft::private::crypto::ggsw::fill_with_forward_fourier_scratch;
+use crate::backends::fft::private::math::fft::Fft;
 use crate::prelude::{
     FftFourierLweBootstrapKey32, FftFourierLweBootstrapKey64, LweBootstrapKey32, LweBootstrapKey64,
     LweBootstrapKeyConversionEngine, LweBootstrapKeyConversionError, LweBootstrapKeyEntity,
@@ -63,7 +62,7 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey32, FftFourierLweBootstrapKe
         input: &LweBootstrapKey32,
     ) -> Result<FftFourierLweBootstrapKey32, LweBootstrapKeyConversionError<Self::EngineError>>
     {
-        FftEngine::check_supported_size(input.0.polynomial_size())?;
+        FftError::perform_fft_checks(input.polynomial_size())?;
         Ok(unsafe { self.convert_lwe_bootstrap_key_unchecked(input) })
     }
 
@@ -154,7 +153,7 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey64, FftFourierLweBootstrapKe
         input: &LweBootstrapKey64,
     ) -> Result<FftFourierLweBootstrapKey64, LweBootstrapKeyConversionError<Self::EngineError>>
     {
-        FftEngine::check_supported_size(input.0.polynomial_size())?;
+        FftError::perform_fft_checks(input.polynomial_size())?;
         Ok(unsafe { self.convert_lwe_bootstrap_key_unchecked(input) })
     }
 
