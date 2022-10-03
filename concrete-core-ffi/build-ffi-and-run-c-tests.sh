@@ -3,12 +3,26 @@
 # Stop on error
 set -e
 
+function usage() {
+    echo "$0: compile concrete-core-ffi and run tests"
+    echo
+    echo "--help                    Print this message"
+    echo "--rust-toolchain          The toolchain to use for concrete-core-ffi compilation (with the leading +)"
+    echo "--cargo-feature-string    The list of features to compile with, e.g. '--features=x86_64,backend_fft,backend_fft_serialization'"
+    echo
+}
+
 RUST_TOOLCHAIN="+stable"
 CARGO_FEATURES_STRING=
 
 while [ -n "$1" ]
 do
    case "$1" in
+        "--help" | "-h" )
+            usage
+            exit 0
+            ;;
+
         "--rust-toolchain" )
             shift
             RUST_TOOLCHAIN="$1"
