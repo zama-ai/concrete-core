@@ -1,20 +1,21 @@
 #![allow(clippy::missing_safety_doc)]
 
-use super::super::super::private::crypto::bootstrap::FourierLweBootstrapKey;
-use super::super::super::private::crypto::ggsw::FourierGgswCiphertext;
 use super::{FftSerializationEngine, FftSerializationError};
+use crate::backends::fft::private::crypto::bootstrap::FourierLweBootstrapKeyView;
+use crate::backends::fft::private::crypto::ggsw::FourierGgswCiphertextView;
 use crate::prelude::{
-    EntityDeserializationEngine, EntityDeserializationError, FftFourierGgswCiphertext32,
+    EntitySerializationEngine, EntitySerializationError, FftFourierGgswCiphertext32,
     FftFourierGgswCiphertext32Version, FftFourierGgswCiphertext64,
     FftFourierGgswCiphertext64Version, FftFourierLweBootstrapKey32,
     FftFourierLweBootstrapKey32Version, FftFourierLweBootstrapKey64,
     FftFourierLweBootstrapKey64Version,
 };
-use aligned_vec::ABox;
-use concrete_fft::c64;
-use serde::Deserialize;
+use serde::Serialize;
 
-impl EntityDeserializationEngine<&[u8], FftFourierGgswCiphertext32> for FftSerializationEngine {
+/// # Description:
+/// Implementation of [`EntitySerializationEngine`] for [`FftSerializationEngine`] that operates on
+/// 32 bits integers. It serializes a GGSW ciphertext in the Fourier domain.
+impl EntitySerializationEngine<FftFourierGgswCiphertext32, Vec<u8>> for FftSerializationEngine {
     /// # Example
     /// ```
     /// use concrete_core::prelude::{
@@ -54,42 +55,39 @@ impl EntityDeserializationEngine<&[u8], FftFourierGgswCiphertext32> for FftSeria
     /// let serialized = serialization_engine.serialize(&fourier_ciphertext)?;
     /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
     /// assert_eq!(fourier_ciphertext, recovered);
+    ///
     /// #
     /// # Ok(())
     /// # }
     /// ```
-    fn deserialize(
+    fn serialize(
         &mut self,
-        serialized: &[u8],
-    ) -> Result<FftFourierGgswCiphertext32, EntityDeserializationError<Self::EngineError>> {
-        #[derive(Deserialize)]
-        struct SerializableFftFourierGgswCiphertext32 {
+        entity: &FftFourierGgswCiphertext32,
+    ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
+        let entity = entity.0.as_view();
+        #[derive(Serialize)]
+        struct SerializableFftFourierGgswCiphertext32<'a> {
             version: FftFourierGgswCiphertext32Version,
-            inner: FourierGgswCiphertext<ABox<[c64]>>,
+            inner: FourierGgswCiphertextView<'a>,
         }
-        let deserialized: SerializableFftFourierGgswCiphertext32 = bincode::deserialize(serialized)
-            .map_err(FftSerializationError::Deserialization)
-            .map_err(EntityDeserializationError::Engine)?;
-        match deserialized {
-            SerializableFftFourierGgswCiphertext32 {
-                version: FftFourierGgswCiphertext32Version::Unsupported,
-                ..
-            } => Err(EntityDeserializationError::Engine(
-                FftSerializationError::UnsupportedVersion,
-            )),
-            SerializableFftFourierGgswCiphertext32 {
-                version: FftFourierGgswCiphertext32Version::V0,
-                inner,
-            } => Ok(FftFourierGgswCiphertext32(inner)),
-        }
+        let value = SerializableFftFourierGgswCiphertext32 {
+            version: FftFourierGgswCiphertext32Version::V0,
+            inner: entity,
+        };
+        bincode::serialize(&value)
+            .map_err(FftSerializationError::Serialization)
+            .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> FftFourierGgswCiphertext32 {
-        self.deserialize(serialized).unwrap()
+    unsafe fn serialize_unchecked(&mut self, entity: &FftFourierGgswCiphertext32) -> Vec<u8> {
+        self.serialize(entity).unwrap()
     }
 }
 
-impl EntityDeserializationEngine<&[u8], FftFourierGgswCiphertext64> for FftSerializationEngine {
+/// # Description:
+/// Implementation of [`EntitySerializationEngine`] for [`FftSerializationEngine`] that operates on
+/// 64 bits integers. It serializes a GGSW ciphertext in the Fourier domain.
+impl EntitySerializationEngine<FftFourierGgswCiphertext64, Vec<u8>> for FftSerializationEngine {
     /// # Example
     /// ```
     /// use concrete_core::prelude::{
@@ -134,38 +132,34 @@ impl EntityDeserializationEngine<&[u8], FftFourierGgswCiphertext64> for FftSeria
     /// # Ok(())
     /// # }
     /// ```
-    fn deserialize(
+    fn serialize(
         &mut self,
-        serialized: &[u8],
-    ) -> Result<FftFourierGgswCiphertext64, EntityDeserializationError<Self::EngineError>> {
-        #[derive(Deserialize)]
-        struct SerializableFftFourierGgswCiphertext64 {
+        entity: &FftFourierGgswCiphertext64,
+    ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
+        let entity = entity.0.as_view();
+        #[derive(Serialize)]
+        struct SerializableFftFourierGgswCiphertext64<'a> {
             version: FftFourierGgswCiphertext64Version,
-            inner: FourierGgswCiphertext<ABox<[c64]>>,
+            inner: FourierGgswCiphertextView<'a>,
         }
-        let deserialized: SerializableFftFourierGgswCiphertext64 = bincode::deserialize(serialized)
-            .map_err(FftSerializationError::Deserialization)
-            .map_err(EntityDeserializationError::Engine)?;
-        match deserialized {
-            SerializableFftFourierGgswCiphertext64 {
-                version: FftFourierGgswCiphertext64Version::Unsupported,
-                ..
-            } => Err(EntityDeserializationError::Engine(
-                FftSerializationError::UnsupportedVersion,
-            )),
-            SerializableFftFourierGgswCiphertext64 {
-                version: FftFourierGgswCiphertext64Version::V0,
-                inner,
-            } => Ok(FftFourierGgswCiphertext64(inner)),
-        }
+        let value = SerializableFftFourierGgswCiphertext64 {
+            version: FftFourierGgswCiphertext64Version::V0,
+            inner: entity,
+        };
+        bincode::serialize(&value)
+            .map_err(FftSerializationError::Serialization)
+            .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> FftFourierGgswCiphertext64 {
-        self.deserialize(serialized).unwrap()
+    unsafe fn serialize_unchecked(&mut self, entity: &FftFourierGgswCiphertext64) -> Vec<u8> {
+        self.serialize(entity).unwrap()
     }
 }
 
-impl EntityDeserializationEngine<&[u8], FftFourierLweBootstrapKey32> for FftSerializationEngine {
+/// # Description:
+/// Implementation of [`EntitySerializationEngine`] for [`FftSerializationEngine`] that operates on
+/// 32 bits integers. It serializes an LWE bootstrap key in the Fourier domain.
+impl EntitySerializationEngine<FftFourierLweBootstrapKey32, Vec<u8>> for FftSerializationEngine {
     /// # Example
     /// ```
     /// use concrete_core::prelude::{
@@ -202,39 +196,34 @@ impl EntityDeserializationEngine<&[u8], FftFourierLweBootstrapKey32> for FftSeri
     /// # Ok(())
     /// # }
     /// ```
-    fn deserialize(
+    fn serialize(
         &mut self,
-        serialized: &[u8],
-    ) -> Result<FftFourierLweBootstrapKey32, EntityDeserializationError<Self::EngineError>> {
-        #[derive(Deserialize)]
-        struct SerializableFftFourierLweBootstrapKey32 {
+        entity: &FftFourierLweBootstrapKey32,
+    ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
+        let entity = entity.0.as_view();
+        #[derive(Serialize)]
+        struct SerializableFftFourierLweBootstrapKey32<'a> {
             version: FftFourierLweBootstrapKey32Version,
-            inner: FourierLweBootstrapKey<ABox<[c64]>>,
+            inner: FourierLweBootstrapKeyView<'a>,
         }
-        let deserialized: SerializableFftFourierLweBootstrapKey32 =
-            bincode::deserialize(serialized)
-                .map_err(FftSerializationError::Deserialization)
-                .map_err(EntityDeserializationError::Engine)?;
-        match deserialized {
-            SerializableFftFourierLweBootstrapKey32 {
-                version: FftFourierLweBootstrapKey32Version::Unsupported,
-                ..
-            } => Err(EntityDeserializationError::Engine(
-                FftSerializationError::UnsupportedVersion,
-            )),
-            SerializableFftFourierLweBootstrapKey32 {
-                version: FftFourierLweBootstrapKey32Version::V0,
-                inner,
-            } => Ok(FftFourierLweBootstrapKey32(inner)),
-        }
+        let value = SerializableFftFourierLweBootstrapKey32 {
+            version: FftFourierLweBootstrapKey32Version::V0,
+            inner: entity,
+        };
+        bincode::serialize(&value)
+            .map_err(FftSerializationError::Serialization)
+            .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> FftFourierLweBootstrapKey32 {
-        self.deserialize(serialized).unwrap()
+    unsafe fn serialize_unchecked(&mut self, entity: &FftFourierLweBootstrapKey32) -> Vec<u8> {
+        self.serialize(entity).unwrap()
     }
 }
 
-impl EntityDeserializationEngine<&[u8], FftFourierLweBootstrapKey64> for FftSerializationEngine {
+/// # Description:
+/// Implementation of [`EntitySerializationEngine`] for [`FftSerializationEngine`] that operates on
+/// 64 bits integers. It serializes an LWE bootstrap key in the Fourier domain.
+impl EntitySerializationEngine<FftFourierLweBootstrapKey64, Vec<u8>> for FftSerializationEngine {
     /// # Example
     /// ```
     /// use concrete_core::prelude::{
@@ -271,34 +260,26 @@ impl EntityDeserializationEngine<&[u8], FftFourierLweBootstrapKey64> for FftSeri
     /// # Ok(())
     /// # }
     /// ```
-    fn deserialize(
+    fn serialize(
         &mut self,
-        serialized: &[u8],
-    ) -> Result<FftFourierLweBootstrapKey64, EntityDeserializationError<Self::EngineError>> {
-        #[derive(Deserialize)]
-        struct SerializableFftFourierLweBootstrapKey64 {
+        entity: &FftFourierLweBootstrapKey64,
+    ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
+        let entity = entity.0.as_view();
+        #[derive(Serialize)]
+        struct SerializableFftFourierLweBootstrapKey64<'a> {
             version: FftFourierLweBootstrapKey64Version,
-            inner: FourierLweBootstrapKey<ABox<[c64]>>,
+            inner: FourierLweBootstrapKeyView<'a>,
         }
-        let deserialized: SerializableFftFourierLweBootstrapKey64 =
-            bincode::deserialize(serialized)
-                .map_err(FftSerializationError::Deserialization)
-                .map_err(EntityDeserializationError::Engine)?;
-        match deserialized {
-            SerializableFftFourierLweBootstrapKey64 {
-                version: FftFourierLweBootstrapKey64Version::Unsupported,
-                ..
-            } => Err(EntityDeserializationError::Engine(
-                FftSerializationError::UnsupportedVersion,
-            )),
-            SerializableFftFourierLweBootstrapKey64 {
-                version: FftFourierLweBootstrapKey64Version::V0,
-                inner,
-            } => Ok(FftFourierLweBootstrapKey64(inner)),
-        }
+        let value = SerializableFftFourierLweBootstrapKey64 {
+            version: FftFourierLweBootstrapKey64Version::V0,
+            inner: entity,
+        };
+        bincode::serialize(&value)
+            .map_err(FftSerializationError::Serialization)
+            .map_err(EntitySerializationError::Engine)
     }
 
-    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> FftFourierLweBootstrapKey64 {
-        self.deserialize(serialized).unwrap()
+    unsafe fn serialize_unchecked(&mut self, entity: &FftFourierLweBootstrapKey64) -> Vec<u8> {
+        self.serialize(entity).unwrap()
     }
 }

@@ -1,9 +1,10 @@
-use super::super::super::private::crypto::ggsw::{cmux, cmux_scratch};
-use super::super::super::private::math::fft::Fft;
 use super::{FftEngine, FftError};
+use crate::backends::fft::private::crypto::ggsw::{cmux, cmux_scratch};
+use crate::backends::fft::private::math::fft::Fft;
 use crate::prelude::{
     FftFourierGgswCiphertext32, FftFourierGgswCiphertext64, GlweCiphertext32, GlweCiphertext64,
-    GlweCiphertextsGgswCiphertextFusingCmuxEngine, GlweCiphertextsGgswCiphertextFusingCmuxError,
+    GlweCiphertextEntity, GlweCiphertextsGgswCiphertextFusingCmuxEngine,
+    GlweCiphertextsGgswCiphertextFusingCmuxError,
 };
 
 impl From<FftError> for GlweCiphertextsGgswCiphertextFusingCmuxError<FftError> {
@@ -86,7 +87,7 @@ impl
         glwe_input: &mut GlweCiphertext32,
         ggsw_input: &FftFourierGgswCiphertext32,
     ) -> Result<(), GlweCiphertextsGgswCiphertextFusingCmuxError<Self::EngineError>> {
-        FftEngine::check_supported_size(glwe_output.0.polynomial_size())?;
+        FftError::perform_fft_checks(glwe_output.polynomial_size())?;
         GlweCiphertextsGgswCiphertextFusingCmuxError::perform_generic_checks(
             glwe_output,
             glwe_input,
@@ -202,7 +203,7 @@ impl
         glwe_input: &mut GlweCiphertext64,
         ggsw_input: &FftFourierGgswCiphertext64,
     ) -> Result<(), GlweCiphertextsGgswCiphertextFusingCmuxError<Self::EngineError>> {
-        FftEngine::check_supported_size(glwe_output.0.polynomial_size())?;
+        FftError::perform_fft_checks(glwe_output.polynomial_size())?;
         GlweCiphertextsGgswCiphertextFusingCmuxError::perform_generic_checks(
             glwe_output,
             glwe_input,
