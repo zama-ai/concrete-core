@@ -3,6 +3,7 @@ use crate::specification::engines::AbstractEngine;
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 
+/// The error which can occur in the execution of FHE operations, due to the FFT implementation.
 #[derive(Debug)]
 pub enum FftSerializationError {
     Serialization(bincode::Error),
@@ -42,3 +43,6 @@ impl AbstractEngine for FftSerializationEngine {
         Ok(FftSerializationEngine)
     }
 }
+
+mod deserialization;
+mod serialization;

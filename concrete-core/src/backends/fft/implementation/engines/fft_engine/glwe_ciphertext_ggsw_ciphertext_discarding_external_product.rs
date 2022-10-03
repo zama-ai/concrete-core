@@ -1,10 +1,9 @@
-use super::super::super::entities::{FftFourierGgswCiphertext32, FftFourierGgswCiphertext64};
-use super::super::super::private::crypto::ggsw::{external_product, external_product_scratch};
-use super::super::super::private::math::fft::Fft;
 use super::{FftEngine, FftError};
+use crate::backends::fft::private::crypto::ggsw::{external_product, external_product_scratch};
+use crate::backends::fft::private::math::fft::Fft;
 use crate::prelude::{
-    GlweCiphertext32, GlweCiphertext64,
-    GlweCiphertextGgswCiphertextDiscardingExternalProductEngine,
+    FftFourierGgswCiphertext32, FftFourierGgswCiphertext64, GlweCiphertext32, GlweCiphertext64,
+    GlweCiphertextEntity, GlweCiphertextGgswCiphertextDiscardingExternalProductEngine,
     GlweCiphertextGgswCiphertextDiscardingExternalProductError,
 };
 
@@ -88,7 +87,7 @@ impl
         output: &mut GlweCiphertext32,
     ) -> Result<(), GlweCiphertextGgswCiphertextDiscardingExternalProductError<Self::EngineError>>
     {
-        FftEngine::check_supported_size(glwe_input.0.polynomial_size())?;
+        FftError::perform_fft_checks(glwe_input.polynomial_size())?;
         GlweCiphertextGgswCiphertextDiscardingExternalProductError::perform_generic_checks(
             glwe_input, ggsw_input, output,
         )?;
@@ -200,7 +199,7 @@ impl
         output: &mut GlweCiphertext64,
     ) -> Result<(), GlweCiphertextGgswCiphertextDiscardingExternalProductError<Self::EngineError>>
     {
-        FftEngine::check_supported_size(glwe_input.0.polynomial_size())?;
+        FftError::perform_fft_checks(glwe_input.polynomial_size())?;
         GlweCiphertextGgswCiphertextDiscardingExternalProductError::perform_generic_checks(
             glwe_input, ggsw_input, output,
         )?;

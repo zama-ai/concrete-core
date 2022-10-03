@@ -3,6 +3,8 @@
 use super::super::super::private::crypto::bootstrap::FourierLweBootstrapKeyView;
 use super::super::super::private::crypto::ggsw::FourierGgswCiphertextView;
 use super::{FftSerializationEngine, FftSerializationError};
+use crate::backends::fft::private::crypto::bootstrap::FourierLweBootstrapKeyView;
+use crate::backends::fft::private::crypto::ggsw::FourierGgswCiphertextView;
 use crate::prelude::{
     EntitySerializationEngine, EntitySerializationError, FftFourierGgswCiphertext32,
     FftFourierGgswCiphertext32Version, FftFourierGgswCiphertext64,
@@ -12,6 +14,9 @@ use crate::prelude::{
 };
 use serde::Serialize;
 
+/// # Description:
+/// Implementation of [`EntitySerializationEngine`] for [`FftSerializationEngine`] that operates on
+/// 32 bits integers. It serializes a GGSW ciphertext in the Fourier domain.
 impl EntitySerializationEngine<FftFourierGgswCiphertext32, Vec<u8>> for FftSerializationEngine {
     /// # Example
     /// ```
@@ -81,6 +86,9 @@ impl EntitySerializationEngine<FftFourierGgswCiphertext32, Vec<u8>> for FftSeria
     }
 }
 
+/// # Description:
+/// Implementation of [`EntitySerializationEngine`] for [`FftSerializationEngine`] that operates on
+/// 64 bits integers. It serializes a GGSW ciphertext in the Fourier domain.
 impl EntitySerializationEngine<FftFourierGgswCiphertext64, Vec<u8>> for FftSerializationEngine {
     /// # Example
     /// ```
@@ -150,6 +158,9 @@ impl EntitySerializationEngine<FftFourierGgswCiphertext64, Vec<u8>> for FftSeria
     }
 }
 
+/// # Description:
+/// Implementation of [`EntitySerializationEngine`] for [`FftSerializationEngine`] that operates on
+/// 32 bits integers. It serializes an LWE bootstrap key in the Fourier domain.
 impl EntitySerializationEngine<FftFourierLweBootstrapKey32, Vec<u8>> for FftSerializationEngine {
     /// # Example
     /// ```
@@ -211,6 +222,9 @@ impl EntitySerializationEngine<FftFourierLweBootstrapKey32, Vec<u8>> for FftSeri
     }
 }
 
+/// # Description:
+/// Implementation of [`EntitySerializationEngine`] for [`FftSerializationEngine`] that operates on
+/// 64 bits integers. It serializes an LWE bootstrap key in the Fourier domain.
 impl EntitySerializationEngine<FftFourierLweBootstrapKey64, Vec<u8>> for FftSerializationEngine {
     /// # Example
     /// ```
