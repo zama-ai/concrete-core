@@ -263,62 +263,6 @@ mod backend_default {
     }
 }
 
-#[cfg(feature = "backend_fftw")]
-mod backend_fftw {
-    use crate::generation::prototypes::{ProtoBinaryGlweCiphertext32, ProtoBinaryGlweCiphertext64};
-    use crate::generation::synthesizing::SynthesizesGlweCiphertext;
-    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
-    use concrete_core::prelude::{
-        FftwFourierGlweCiphertext32, FftwFourierGlweCiphertext64, GlweCiphertextConversionEngine,
-    };
-
-    impl SynthesizesGlweCiphertext<Precision32, BinaryKeyDistribution, FftwFourierGlweCiphertext32>
-        for Maker
-    {
-        fn synthesize_glwe_ciphertext(
-            &mut self,
-            prototype: &Self::GlweCiphertextProto,
-        ) -> FftwFourierGlweCiphertext32 {
-            self.fftw_engine
-                .convert_glwe_ciphertext(&prototype.0)
-                .unwrap()
-        }
-
-        fn unsynthesize_glwe_ciphertext(
-            &mut self,
-            entity: FftwFourierGlweCiphertext32,
-        ) -> Self::GlweCiphertextProto {
-            let proto = self.fftw_engine.convert_glwe_ciphertext(&entity).unwrap();
-            ProtoBinaryGlweCiphertext32(proto)
-        }
-
-        fn destroy_glwe_ciphertext(&mut self, _entity: FftwFourierGlweCiphertext32) {}
-    }
-
-    impl SynthesizesGlweCiphertext<Precision64, BinaryKeyDistribution, FftwFourierGlweCiphertext64>
-        for Maker
-    {
-        fn synthesize_glwe_ciphertext(
-            &mut self,
-            prototype: &Self::GlweCiphertextProto,
-        ) -> FftwFourierGlweCiphertext64 {
-            self.fftw_engine
-                .convert_glwe_ciphertext(&prototype.0)
-                .unwrap()
-        }
-
-        fn unsynthesize_glwe_ciphertext(
-            &mut self,
-            entity: FftwFourierGlweCiphertext64,
-        ) -> Self::GlweCiphertextProto {
-            let proto = self.fftw_engine.convert_glwe_ciphertext(&entity).unwrap();
-            ProtoBinaryGlweCiphertext64(proto)
-        }
-
-        fn destroy_glwe_ciphertext(&mut self, _entity: FftwFourierGlweCiphertext64) {}
-    }
-}
-
 #[cfg(feature = "backend_cuda")]
 mod backend_cuda {
     use crate::generation::prototypes::{ProtoBinaryGlweCiphertext32, ProtoBinaryGlweCiphertext64};

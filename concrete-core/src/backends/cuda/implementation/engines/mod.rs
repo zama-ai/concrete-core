@@ -1,4 +1,4 @@
-//! A module containing the [engines](crate::specification::engines) exposed by the fftw backend.
+//! A module containing the [engines](crate::specification::engines) exposed by the cuda backend.
 
 use crate::backends::cuda::private::device::GpuIndex;
 use crate::specification::engines::LweCiphertextVectorDiscardingBootstrapError;

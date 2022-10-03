@@ -77,8 +77,6 @@ impl IntegerPrecision for Precision64 {
 pub struct Maker {
     default_engine: DefaultEngine,
     default_parallel_engine: DefaultParallelEngine,
-    #[cfg(feature = "backend_fftw")]
-    fftw_engine: concrete_core::backends::fftw::engines::FftwEngine,
     #[cfg(feature = "backend_fft")]
     fft_engine: concrete_core::backends::fft::engines::FftEngine,
     #[cfg(feature = "backend_cuda")]
@@ -91,8 +89,6 @@ impl Default for Maker {
             default_engine: DefaultEngine::new(Box::new(UnixSeeder::new(0))).unwrap(),
             default_parallel_engine: DefaultParallelEngine::new(Box::new(UnixSeeder::new(0)))
                 .unwrap(),
-            #[cfg(feature = "backend_fftw")]
-            fftw_engine: concrete_core::backends::fftw::engines::FftwEngine::new(()).unwrap(),
             #[cfg(feature = "backend_fft")]
             fft_engine: concrete_core::backends::fft::engines::FftEngine::new(()).unwrap(),
             #[cfg(feature = "backend_cuda")]

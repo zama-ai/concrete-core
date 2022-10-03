@@ -385,69 +385,6 @@ mod backend_default {
     }
 }
 
-#[cfg(feature = "backend_fftw")]
-mod backend_fftw {
-    use crate::generation::synthesizing::SynthesizesLweBootstrapKey;
-    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
-    use concrete_core::prelude::{
-        FftwFourierLweBootstrapKey32, FftwFourierLweBootstrapKey64, LweBootstrapKeyConversionEngine,
-    };
-
-    impl
-        SynthesizesLweBootstrapKey<
-            Precision32,
-            BinaryKeyDistribution,
-            BinaryKeyDistribution,
-            FftwFourierLweBootstrapKey32,
-        > for Maker
-    {
-        fn synthesize_lwe_bootstrap_key(
-            &mut self,
-            prototype: &Self::LweBootstrapKeyProto,
-        ) -> FftwFourierLweBootstrapKey32 {
-            self.fftw_engine
-                .convert_lwe_bootstrap_key(&prototype.0)
-                .unwrap()
-        }
-
-        fn unsynthesize_lwe_bootstrap_key(
-            &mut self,
-            _entity: FftwFourierLweBootstrapKey32,
-        ) -> Self::LweBootstrapKeyProto {
-            todo!()
-        }
-
-        fn destroy_lwe_bootstrap_key(&mut self, _entity: FftwFourierLweBootstrapKey32) {}
-    }
-
-    impl
-        SynthesizesLweBootstrapKey<
-            Precision64,
-            BinaryKeyDistribution,
-            BinaryKeyDistribution,
-            FftwFourierLweBootstrapKey64,
-        > for Maker
-    {
-        fn synthesize_lwe_bootstrap_key(
-            &mut self,
-            prototype: &Self::LweBootstrapKeyProto,
-        ) -> FftwFourierLweBootstrapKey64 {
-            self.fftw_engine
-                .convert_lwe_bootstrap_key(&prototype.0)
-                .unwrap()
-        }
-
-        fn unsynthesize_lwe_bootstrap_key(
-            &mut self,
-            _entity: FftwFourierLweBootstrapKey64,
-        ) -> Self::LweBootstrapKeyProto {
-            todo!()
-        }
-
-        fn destroy_lwe_bootstrap_key(&mut self, _entity: FftwFourierLweBootstrapKey64) {}
-    }
-}
-
 #[cfg(feature = "backend_fft")]
 mod backend_fft {
     use crate::generation::synthesizing::SynthesizesLweBootstrapKey;

@@ -18,5 +18,3 @@ pub mod cuda;
 pub mod default;
 #[cfg(all(test, feature = "backend_fft"))]
 pub mod fft;
-#[cfg(all(test, feature = "backend_fftw"))]
-pub mod fftw;
