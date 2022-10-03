@@ -65,4 +65,5 @@ mod ggsw_ciphertext_discarding_conversion;
 mod glwe_ciphertext_ggsw_ciphertext_discarding_external_product;
 mod glwe_ciphertexts_ggsw_ciphertext_fusing_cmux;
 mod lwe_bootstrap_key_conversion;
+mod lwe_ciphertext_discarding_bit_extraction;
 mod lwe_ciphertext_discarding_bootstrap;
