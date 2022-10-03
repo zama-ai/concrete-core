@@ -14,7 +14,7 @@ Rust's `Box` has a method (akin to `C++`'s `std::unique_ptr::release`), called `
 
 Rust's `Box` also has a method, `from_raw`, to recreate a box from a raw pointer (that was previously leaked using `into_raw`) to finally free the memory. This allows to write functions to free a heap allocated object from the raw pointer passed by the caller.
 
-## Example of how `FftwEngine` was added to the FFI
+## Example of how `FftEngine` was added to the FFI
 
 ### Opaque struct instantiation
 
@@ -26,15 +26,15 @@ We also provide unchecked versions of each function, these unchecked functions h
 
 You can read more about `checked` vs `unchecked` APIs [here](../api/api.md#concrete-core-ffi).
 
-Here we will look at how `new_fftw_engine`, `new_fftw_engine_unchecked`, `destroy_fftw_engine` and `destroy_fftw_engine_unchecked` were constructed. If you want you can check out these functions in `src/backends/fftw/engines/mod.rs`.
+Here we will look at how `new_fft_engine`, `new_fft_engine_unchecked`, `destroy_fft_engine` and `destroy_fft_engine_unchecked` were constructed. If you want you can check out these functions in `src/backends/fft/engines/mod.rs`.
 
-The first important thing is that to expose the `new_fftw_engine` unchanged to the `C` caller, we need to use the `#[no_mangle]` attribute on it and declare it as `extern "C"` so that the [ABI](https://en.wikipedia.org/wiki/Application_binary_interface) allows it to be called by `C` code.
+The first important thing is that to expose the `new_fft_engine` unchanged to the `C` caller, we need to use the `#[no_mangle]` attribute on it and declare it as `extern "C"` so that the [ABI](https://en.wikipedia.org/wiki/Application_binary_interface) allows it to be called by `C` code.
 
 Here is what the empty function would looke like empty:
 
 ```rust
 #[no_mangle]
-pub unsafe extern "C" fn new_fftw_engine(result: *mut *mut FftwEngine) -> c_int {}
+pub unsafe extern "C" fn new_fft_engine(result: *mut *mut FftEngine) -> c_int {}
 //|      | |        |                            |__________________|_ out parameter to be filled
 //|      | |        |
 //|      | |________|_ https://doc.rust-lang.org/std/keyword.extern.html
@@ -44,7 +44,7 @@ pub unsafe extern "C" fn new_fftw_engine(result: *mut *mut FftwEngine) -> c_int 
 //|_ required to be exported
 ```
 
-Note that, `result`, the out parameter, is a pointer to pointer. We will return a pointer to a Boxed/heap allocated `FftwEngine`, in essence a `*mut FftwEngine`. To be able to return this value we need a pointer to a memory location pointing to such a pointer, i.e. a `*mut *mut FftwEngine`.
+Note that, `result`, the out parameter, is a pointer to pointer. We will return a pointer to a Boxed/heap allocated `FftEngine`, in essence a `*mut FftEngine`. To be able to return this value we need a pointer to a memory location pointing to such a pointer, i.e. a `*mut *mut FftEngine`.
 
 We adopted the convention of always returning a `c_int` as an error/status code.
 
@@ -54,7 +54,7 @@ Panicking across the FFI boundary is undefined behavior, we therefore make use o
 
 ```rust
 #[no_mangle]
-pub unsafe extern "C" fn new_fftw_engine(result: *mut *mut FftwEngine) -> c_int {
+pub unsafe extern "C" fn new_fft_engine(result: *mut *mut FftEngine) -> c_int {
     catch_panic(|| {})
 }
 ```
@@ -69,7 +69,7 @@ This is the checked version of the function, so we verify that the `result` poin
 
 ```rust
 #[no_mangle]
-pub unsafe extern "C" fn new_fftw_engine(result: *mut *mut FftwEngine) -> c_int {
+pub unsafe extern "C" fn new_fft_engine(result: *mut *mut FftEngine) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(result).unwrap();
     })
@@ -80,7 +80,7 @@ We call `unwrap` to be able to bubble the potential error up.
 
 ```rust
 #[no_mangle]
-pub unsafe extern "C" fn new_fftw_engine(result: *mut *mut FftwEngine) -> c_int {
+pub unsafe extern "C" fn new_fft_engine(result: *mut *mut FftEngine) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(result).unwrap();
 
@@ -95,7 +95,7 @@ We start by filling the output pointer with a `NULL` value to mimic `C` malloc b
 
 ```rust
 #[no_mangle]
-pub unsafe extern "C" fn new_fftw_engine(result: *mut *mut FftwEngine) -> c_int {
+pub unsafe extern "C" fn new_fft_engine(result: *mut *mut FftEngine) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(result).unwrap();
 
@@ -103,26 +103,26 @@ pub unsafe extern "C" fn new_fftw_engine(result: *mut *mut FftwEngine) -> c_int 
         // checked, then any access to the result pointer will segfault (mimics malloc on failure)
         *result = std::ptr::null_mut();
 
-        let heap_allocated_fftw_engine = Box::new(FftwEngine::new(()).unwrap());
-        *result = Box::into_raw(heap_allocated_fftw_engine);
+        let heap_allocated_fft_engine = Box::new(FftEngine::new(()).unwrap());
+        *result = Box::into_raw(heap_allocated_fft_engine);
     })
 }
 ```
 
-We allocate the new `FftwEngine` on the heap thanks to `Box`, we `unwrap` to bubble potential errors up. `C` does not know about `Box`, so we leak the underlying pointer using `Box::into_raw` and store it in the previously checked result pointer. The `C` caller can then use `*result` as an `FftwEngine *` through the FFI boundary.
+We allocate the new `FftEngine` on the heap thanks to `Box`, we `unwrap` to bubble potential errors up. `C` does not know about `Box`, so we leak the underlying pointer using `Box::into_raw` and store it in the previously checked result pointer. The `C` caller can then use `*result` as an `FftEngine *` through the FFI boundary.
 
 The unchecked version of the function is the same without the verification of the result pointer:
 
 ```rust
 #[no_mangle]
-pub unsafe extern "C" fn new_fftw_engine_unchecked(result: *mut *mut FftwEngine) -> c_int {
+pub unsafe extern "C" fn new_fft_engine_unchecked(result: *mut *mut FftEngine) -> c_int {
     catch_panic(|| {
         // First fill the result with a null ptr so that if we fail and the return code is not
         // checked, then any access to the result pointer will segfault (mimics malloc on failure)
         *result = std::ptr::null_mut();
 
-        let heap_allocated_fftw_engine = Box::new(FftwEngine::new(()).unwrap());
-        *result = Box::into_raw(heap_allocated_fftw_engine);
+        let heap_allocated_fft_engine = Box::new(FftEngine::new(()).unwrap());
+        *result = Box::into_raw(heap_allocated_fft_engine);
     })
 }
 ```
@@ -132,7 +132,7 @@ pub unsafe extern "C" fn new_fftw_engine_unchecked(result: *mut *mut FftwEngine)
 For the symmetric destruction function, the empty function looks like this:
 
 ```rust
-pub unsafe extern "C" fn destroy_fftw_engine(engine: *mut FftwEngine) -> c_int {}
+pub unsafe extern "C" fn destroy_fft_engine(engine: *mut FftEngine) -> c_int {}
 //                                                   |_____________|_ no pointer to pointer
 ```
 
@@ -142,7 +142,7 @@ Catch panic pattern is the same as in the previous section.
 
 ```rust
 #[no_mangle]
-pub unsafe extern "C" fn destroy_fftw_engine(engine: *mut FftwEngine) -> c_int {
+pub unsafe extern "C" fn destroy_fft_engine(engine: *mut FftEngine) -> c_int {
     catch_panic(|| {})
 }
 ```
@@ -151,7 +151,7 @@ We check the pointer we were given, calling `unwrap` to bubble errors up:
 
 ```rust
 #[no_mangle]
-pub unsafe extern "C" fn destroy_fftw_engine(engine: *mut FftwEngine) -> c_int {
+pub unsafe extern "C" fn destroy_fft_engine(engine: *mut FftEngine) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(engine).unwrap();
     })
@@ -162,7 +162,7 @@ And then we actually destroy the passed struct:
 
 ```rust
 #[no_mangle]
-pub unsafe extern "C" fn destroy_fftw_engine(engine: *mut FftwEngine) -> c_int {
+pub unsafe extern "C" fn destroy_fft_engine(engine: *mut FftEngine) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(engine).unwrap();
 
@@ -176,7 +176,7 @@ The unchecked version of the function is the same without the verification of th
 
 ```rust
 #[no_mangle]
-pub unsafe extern "C" fn destroy_fftw_engine_unchecked(engine: *mut FftwEngine) -> c_int {
+pub unsafe extern "C" fn destroy_fft_engine_unchecked(engine: *mut FftEngine) -> c_int {
     catch_panic(|| {
         // Reconstruct the box, so that the memory is dropped at the end of the scope
         Box::from_raw(engine);

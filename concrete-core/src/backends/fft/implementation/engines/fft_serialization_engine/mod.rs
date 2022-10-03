@@ -32,9 +32,11 @@ impl Display for FftSerializationError {
 
 impl Error for FftSerializationError {}
 
+/// The serialization engine exposed by the fft backend.
 pub struct FftSerializationEngine;
 
 impl AbstractEngineSeal for FftSerializationEngine {}
+
 impl AbstractEngine for FftSerializationEngine {
     type EngineError = FftSerializationError;
     type Parameters = ();

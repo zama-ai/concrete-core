@@ -20,10 +20,10 @@ void extract_bits_view_buffers_test(void) {
   int default_parallel_engine_ok = new_default_parallel_engine(builder, &default_parallel_engine);
   assert(default_parallel_engine_ok == 0);
 
-  FftEngine *fft_engine = NULL;
+  FftwEngine *fftw_engine = NULL;
 
-  int fft_engine_ok = new_fft_engine(&fft_engine);
-  assert(fft_engine_ok == 0);
+  int fftw_engine_ok = new_fftw_engine(&fftw_engine);
+  assert(fftw_engine_ok == 0);
 
   size_t polynomial_size = 1024;
   size_t glwe_dimension = 1;
@@ -55,9 +55,9 @@ void extract_bits_view_buffers_test(void) {
       default_parallel_engine, lwe_small_sk, glwe_sk, base_log_bsk, level_bsk, var, &bsk);
   assert(bsk_ok == 0);
 
-  FftFourierLweBootstrapKey64 *fbsk = NULL;
-  int fbsk_ok = fft_engine_convert_lwe_bootstrap_key_to_fft_fourier_lwe_bootstrap_key_u64(
-      fft_engine, bsk, &fbsk);
+  FftwFourierLweBootstrapKey64 *fbsk = NULL;
+  int fbsk_ok = fftw_engine_convert_lwe_bootstrap_key_to_fftw_fourier_lwe_bootstrap_key_u64(
+      fftw_engine, bsk, &fbsk);
   assert(fbsk_ok == 0);
 
   size_t lwe_big_dimension = polynomial_size * glwe_dimension;
@@ -121,8 +121,8 @@ void extract_bits_view_buffers_test(void) {
       &lwe_list_out_as_mut_view);
   assert(lwe_out_mut_view_ok == 0);
 
-  int extract_bits_ok = fft_engine_lwe_ciphertext_discarding_bit_extraction_u64_view_buffers(
-      fft_engine, fbsk, ksk_lwe_big_to_small, lwe_list_out_as_mut_view, lwe_in_as_view,
+  int extract_bits_ok = fftw_engine_lwe_ciphertext_discarding_bit_extraction_u64_view_buffers(
+      fftw_engine, fbsk, ksk_lwe_big_to_small, lwe_list_out_as_mut_view, lwe_in_as_view,
       number_of_bits_to_extract, delta_log);
 
   assert(extract_bits_ok == 0);
@@ -158,13 +158,13 @@ void extract_bits_view_buffers_test(void) {
   destroy_lwe_ciphertext_mut_view_u64(lwe_in_as_mut_view);
   destroy_lwe_keyswitch_key_u64(ksk_lwe_big_to_small);
   destroy_lwe_secret_key_u64(lwe_big_sk);
-  destroy_fft_fourier_lwe_bootstrap_key_u64(fbsk);
+  destroy_fftw_fourier_lwe_bootstrap_key_u64(fbsk);
   destroy_lwe_bootstrap_key_u64(bsk);
   destroy_glwe_secret_key_u64(glwe_sk);
   destroy_lwe_secret_key_u64(lwe_small_sk);
   destroy_default_parallel_engine(default_parallel_engine);
   destroy_default_engine(default_engine);
-  destroy_fft_engine(fft_engine);
+  destroy_fftw_engine(fftw_engine);
   destroy_seeder_builder(builder);
   free(lwe_in_buffer);
   free(lwe_list_out_buffer);
@@ -185,10 +185,10 @@ void extract_bits_unchecked_view_buffers_test(void) {
       new_default_parallel_engine_unchecked(builder, &default_parallel_engine);
   assert(default_parallel_engine_ok == 0);
 
-  FftEngine *fft_engine = NULL;
+  FftwEngine *fftw_engine = NULL;
 
-  int fft_engine_ok = new_fft_engine_unchecked(&fft_engine);
-  assert(fft_engine_ok == 0);
+  int fftw_engine_ok = new_fftw_engine_unchecked(&fftw_engine);
+  assert(fftw_engine_ok == 0);
 
   size_t polynomial_size = 1024;
   size_t glwe_dimension = 1;
@@ -220,10 +220,10 @@ void extract_bits_unchecked_view_buffers_test(void) {
       default_parallel_engine, lwe_small_sk, glwe_sk, base_log_bsk, level_bsk, var, &bsk);
   assert(bsk_ok == 0);
 
-  FftFourierLweBootstrapKey64 *fbsk = NULL;
+  FftwFourierLweBootstrapKey64 *fbsk = NULL;
   int fbsk_ok =
-      fft_engine_convert_lwe_bootstrap_key_to_fft_fourier_lwe_bootstrap_key_unchecked_u64(
-          fft_engine, bsk, &fbsk);
+      fftw_engine_convert_lwe_bootstrap_key_to_fftw_fourier_lwe_bootstrap_key_unchecked_u64(
+          fftw_engine, bsk, &fbsk);
   assert(fbsk_ok == 0);
 
   size_t lwe_big_dimension = polynomial_size * glwe_dimension;
@@ -288,8 +288,8 @@ void extract_bits_unchecked_view_buffers_test(void) {
   assert(lwe_out_mut_view_ok == 0);
 
   int extract_bits_ok =
-      fft_engine_lwe_ciphertext_discarding_bit_extraction_unchecked_u64_view_buffers(
-          fft_engine, fbsk, ksk_lwe_big_to_small, lwe_list_out_as_mut_view, lwe_in_as_view,
+      fftw_engine_lwe_ciphertext_discarding_bit_extraction_unchecked_u64_view_buffers(
+          fftw_engine, fbsk, ksk_lwe_big_to_small, lwe_list_out_as_mut_view, lwe_in_as_view,
           number_of_bits_to_extract, delta_log);
 
   assert(extract_bits_ok == 0);
@@ -325,13 +325,13 @@ void extract_bits_unchecked_view_buffers_test(void) {
   destroy_lwe_ciphertext_mut_view_unchecked_u64(lwe_in_as_mut_view);
   destroy_lwe_keyswitch_key_unchecked_u64(ksk_lwe_big_to_small);
   destroy_lwe_secret_key_unchecked_u64(lwe_big_sk);
-  destroy_fft_fourier_lwe_bootstrap_key_unchecked_u64(fbsk);
+  destroy_fftw_fourier_lwe_bootstrap_key_unchecked_u64(fbsk);
   destroy_lwe_bootstrap_key_unchecked_u64(bsk);
   destroy_glwe_secret_key_unchecked_u64(glwe_sk);
   destroy_lwe_secret_key_unchecked_u64(lwe_small_sk);
   destroy_default_parallel_engine_unchecked(default_parallel_engine);
   destroy_default_engine_unchecked(default_engine);
-  destroy_fft_engine_unchecked(fft_engine);
+  destroy_fftw_engine_unchecked(fftw_engine);
   destroy_seeder_builder_unchecked(builder);
   free(lwe_in_buffer);
   free(lwe_list_out_buffer);
@@ -351,10 +351,10 @@ void extract_bits_raw_ptr_buffers_test(void) {
   int default_parallel_engine_ok = new_default_parallel_engine(builder, &default_parallel_engine);
   assert(default_parallel_engine_ok == 0);
 
-  FftEngine *fft_engine = NULL;
+  FftwEngine *fftw_engine = NULL;
 
-  int fft_engine_ok = new_fft_engine(&fft_engine);
-  assert(fft_engine_ok == 0);
+  int fftw_engine_ok = new_fftw_engine(&fftw_engine);
+  assert(fftw_engine_ok == 0);
 
   size_t polynomial_size = 1024;
   size_t glwe_dimension = 1;
@@ -386,9 +386,9 @@ void extract_bits_raw_ptr_buffers_test(void) {
       default_parallel_engine, lwe_small_sk, glwe_sk, base_log_bsk, level_bsk, var, &bsk);
   assert(bsk_ok == 0);
 
-  FftFourierLweBootstrapKey64 *fbsk = NULL;
-  int fbsk_ok = fft_engine_convert_lwe_bootstrap_key_to_fft_fourier_lwe_bootstrap_key_u64(
-      fft_engine, bsk, &fbsk);
+  FftwFourierLweBootstrapKey64 *fbsk = NULL;
+  int fbsk_ok = fftw_engine_convert_lwe_bootstrap_key_to_fftw_fourier_lwe_bootstrap_key_u64(
+      fftw_engine, bsk, &fbsk);
   assert(fbsk_ok == 0);
 
   size_t lwe_big_dimension = polynomial_size * glwe_dimension;
@@ -436,8 +436,8 @@ void extract_bits_raw_ptr_buffers_test(void) {
   uint64_t *lwe_list_out_buffer = aligned_alloc(
       U64_ALIGNMENT, sizeof(uint64_t) * (lwe_small_dimension + 1) * number_of_bits_to_extract);
 
-  int extract_bits_ok = fft_engine_lwe_ciphertext_discarding_bit_extraction_u64_raw_ptr_buffers(
-      fft_engine, default_engine, fbsk, ksk_lwe_big_to_small, lwe_list_out_buffer, lwe_in_buffer,
+  int extract_bits_ok = fftw_engine_lwe_ciphertext_discarding_bit_extraction_u64_raw_ptr_buffers(
+      fftw_engine, default_engine, fbsk, ksk_lwe_big_to_small, lwe_list_out_buffer, lwe_in_buffer,
       number_of_bits_to_extract, delta_log);
 
   assert(extract_bits_ok == 0);
@@ -465,13 +465,13 @@ void extract_bits_raw_ptr_buffers_test(void) {
 
   destroy_lwe_keyswitch_key_u64(ksk_lwe_big_to_small);
   destroy_lwe_secret_key_u64(lwe_big_sk);
-  destroy_fft_fourier_lwe_bootstrap_key_u64(fbsk);
+  destroy_fftw_fourier_lwe_bootstrap_key_u64(fbsk);
   destroy_lwe_bootstrap_key_u64(bsk);
   destroy_glwe_secret_key_u64(glwe_sk);
   destroy_lwe_secret_key_u64(lwe_small_sk);
   destroy_default_parallel_engine(default_parallel_engine);
   destroy_default_engine(default_engine);
-  destroy_fft_engine(fft_engine);
+  destroy_fftw_engine(fftw_engine);
   destroy_seeder_builder(builder);
   free(lwe_in_buffer);
   free(lwe_list_out_buffer);
@@ -492,10 +492,10 @@ void extract_bits_unchecked_raw_ptr_buffers_test(void) {
       new_default_parallel_engine_unchecked(builder, &default_parallel_engine);
   assert(default_parallel_engine_ok == 0);
 
-  FftEngine *fft_engine = NULL;
+  FftwEngine *fftw_engine = NULL;
 
-  int fft_engine_ok = new_fft_engine_unchecked(&fft_engine);
-  assert(fft_engine_ok == 0);
+  int fftw_engine_ok = new_fftw_engine_unchecked(&fftw_engine);
+  assert(fftw_engine_ok == 0);
 
   size_t polynomial_size = 1024;
   size_t glwe_dimension = 1;
@@ -527,10 +527,10 @@ void extract_bits_unchecked_raw_ptr_buffers_test(void) {
       default_parallel_engine, lwe_small_sk, glwe_sk, base_log_bsk, level_bsk, var, &bsk);
   assert(bsk_ok == 0);
 
-  FftFourierLweBootstrapKey64 *fbsk = NULL;
+  FftwFourierLweBootstrapKey64 *fbsk = NULL;
   int fbsk_ok =
-      fft_engine_convert_lwe_bootstrap_key_to_fft_fourier_lwe_bootstrap_key_unchecked_u64(
-          fft_engine, bsk, &fbsk);
+      fftw_engine_convert_lwe_bootstrap_key_to_fftw_fourier_lwe_bootstrap_key_unchecked_u64(
+          fftw_engine, bsk, &fbsk);
   assert(fbsk_ok == 0);
 
   size_t lwe_big_dimension = polynomial_size * glwe_dimension;
@@ -579,8 +579,8 @@ void extract_bits_unchecked_raw_ptr_buffers_test(void) {
       U64_ALIGNMENT, sizeof(uint64_t) * (lwe_small_dimension + 1) * number_of_bits_to_extract);
 
   int extract_bits_ok =
-      fft_engine_lwe_ciphertext_discarding_bit_extraction_unchecked_u64_raw_ptr_buffers(
-          fft_engine, default_engine, fbsk, ksk_lwe_big_to_small, lwe_list_out_buffer,
+      fftw_engine_lwe_ciphertext_discarding_bit_extraction_unchecked_u64_raw_ptr_buffers(
+          fftw_engine, default_engine, fbsk, ksk_lwe_big_to_small, lwe_list_out_buffer,
           lwe_in_buffer, number_of_bits_to_extract, delta_log);
 
   assert(extract_bits_ok == 0);
@@ -608,13 +608,13 @@ void extract_bits_unchecked_raw_ptr_buffers_test(void) {
 
   destroy_lwe_keyswitch_key_unchecked_u64(ksk_lwe_big_to_small);
   destroy_lwe_secret_key_unchecked_u64(lwe_big_sk);
-  destroy_fft_fourier_lwe_bootstrap_key_unchecked_u64(fbsk);
+  destroy_fftw_fourier_lwe_bootstrap_key_unchecked_u64(fbsk);
   destroy_lwe_bootstrap_key_unchecked_u64(bsk);
   destroy_glwe_secret_key_unchecked_u64(glwe_sk);
   destroy_lwe_secret_key_unchecked_u64(lwe_small_sk);
   destroy_default_parallel_engine_unchecked(default_parallel_engine);
   destroy_default_engine_unchecked(default_engine);
-  destroy_fft_engine_unchecked(fft_engine);
+  destroy_fftw_engine_unchecked(fftw_engine);
   destroy_seeder_builder_unchecked(builder);
   free(lwe_in_buffer);
   free(lwe_list_out_buffer);
