@@ -35,11 +35,13 @@ jobs:
       matrix:
         include:
           - os: ubuntu-20.04
-            cuda: "11.3"
+            cuda: "11.7"
+            old_cuda: "11.1"
             cuda_arch: "70"
             gcc: 8
     env:
       CUDA_PATH: /usr/local/cuda-${{ matrix.cuda }}
+      OLD_CUDA_PATH: /usr/local/cuda-${{ matrix.old_cuda }}
 
     steps:
       - name: EC2 instance configuration used
@@ -77,9 +79,19 @@ jobs:
         run: |
           cargo xtask check_clippy_cuda
 
-      - name: Test concrete-core with cuda backend
+      - name: Test concrete-core with cuda backend with CUDA 11.7
         run: |
           cargo xtask test_cuda
+
+      - name: Export variables for the old toolkit
+        run: |
+          echo "CUDA_PATH=$OLD_CUDA_PATH" >> "${GITHUB_ENV}"
+          echo "LD_LIBRARY_PATH=$OLD_CUDA_PATH/lib:$LD_LIBRARY_PATH" >> "${GITHUB_ENV}"
+          echo "CUDACXX=/usr/local/cuda-${{ matrix.old_cuda }}/bin/nvcc" >> "${GITHUB_ENV}"
+
+      - name: Test concrete-core with cuda backend with CUDA 11.1
+        run: |
+          cargo test --release --doc -p concrete-core --features=backend_cuda -- --test-threads 1
 
       - name: Slack Notification
         if: ${{ always() }}
