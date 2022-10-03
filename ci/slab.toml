@@ -6,7 +6,7 @@ subnet_id = "subnet-0e042c7621461f754"
 
 [profile.gpu]
 region = "us-east-1"
-image_id = "ami-0df0337664ad627fe"
+image_id = "ami-0497b73ba36eab0a7"
 instance_type = "p3.2xlarge"
 subnet_id = "subnet-8123c9e7"
 security_group = "sg-0466d33ced960ba35"
