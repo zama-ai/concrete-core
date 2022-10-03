@@ -1,4 +1,4 @@
-//! Module providing entry points to the `FftwEngine` implementations of various
+//! Module providing entry points to the `FftEngine` implementations of various
 //! `LweCiphertextDiscardingBitExtractEngine` traits.
 
 use crate::utils::*;
@@ -11,9 +11,9 @@ use std::os::raw::c_int;
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn fftw_engine_lwe_ciphertext_discarding_bit_extraction_u64_view_buffers(
-    engine: *mut FftwEngine,
-    bootstrap_key: *const FftwFourierLweBootstrapKey64,
+pub unsafe extern "C" fn fft_engine_lwe_ciphertext_discarding_bit_extraction_u64_view_buffers(
+    engine: *mut FftEngine,
+    bootstrap_key: *const FftFourierLweBootstrapKey64,
     keyswitch_key: *const LweKeyswitchKey64,
     output: *mut LweCiphertextVectorMutView64,
     input: *const LweCiphertextView64,
@@ -44,11 +44,11 @@ pub unsafe extern "C" fn fftw_engine_lwe_ciphertext_discarding_bit_extraction_u6
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`fftw_engine_lwe_ciphertext_discarding_bit_extraction_u64_view_buffers`]
+/// [`fft_engine_lwe_ciphertext_discarding_bit_extraction_u64_view_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn fftw_engine_lwe_ciphertext_discarding_bit_extraction_unchecked_u64_view_buffers(
-    engine: *mut FftwEngine,
-    bootstrap_key: *const FftwFourierLweBootstrapKey64,
+pub unsafe extern "C" fn fft_engine_lwe_ciphertext_discarding_bit_extraction_unchecked_u64_view_buffers(
+    engine: *mut FftEngine,
+    bootstrap_key: *const FftFourierLweBootstrapKey64,
     keyswitch_key: *const LweKeyswitchKey64,
     output: *mut LweCiphertextVectorMutView64,
     input: *const LweCiphertextView64,
@@ -76,12 +76,12 @@ pub unsafe extern "C" fn fftw_engine_lwe_ciphertext_discarding_bit_extraction_un
 }
 
 /// Raw pointer buffer variant of
-/// [`fftw_engine_lwe_ciphertext_discarding_bit_extraction_u64_view_buffers`]
+/// [`fft_engine_lwe_ciphertext_discarding_bit_extraction_u64_view_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn fftw_engine_lwe_ciphertext_discarding_bit_extraction_u64_raw_ptr_buffers(
-    fftw_engine: *mut FftwEngine,
+pub unsafe extern "C" fn fft_engine_lwe_ciphertext_discarding_bit_extraction_u64_raw_ptr_buffers(
+    fft_engine: *mut FftEngine,
     default_engine: *mut DefaultEngine,
-    bootstrap_key: *const FftwFourierLweBootstrapKey64,
+    bootstrap_key: *const FftFourierLweBootstrapKey64,
     keyswitch_key: *const LweKeyswitchKey64,
     output: *mut u64,
     input: *const u64,
@@ -89,7 +89,7 @@ pub unsafe extern "C" fn fftw_engine_lwe_ciphertext_discarding_bit_extraction_u6
     delta_log: usize,
 ) -> c_int {
     catch_panic(|| {
-        let fftw_engine = get_mut_checked(fftw_engine).unwrap();
+        let fft_engine = get_mut_checked(fft_engine).unwrap();
         let default_engine = get_mut_checked(default_engine).unwrap();
 
         let bootstrap_key = get_ref_checked(bootstrap_key).unwrap();
@@ -114,7 +114,7 @@ pub unsafe extern "C" fn fftw_engine_lwe_ciphertext_discarding_bit_extraction_u6
             .or_else(engine_error_as_readable_string)
             .unwrap();
 
-        fftw_engine
+        fft_engine
             .discard_extract_bits_lwe_ciphertext(
                 &mut output,
                 &input,
@@ -129,12 +129,12 @@ pub unsafe extern "C" fn fftw_engine_lwe_ciphertext_discarding_bit_extraction_u6
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`fftw_engine_lwe_ciphertext_discarding_bit_extraction_u64_raw_ptr_buffers`]
+/// [`fft_engine_lwe_ciphertext_discarding_bit_extraction_u64_raw_ptr_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn fftw_engine_lwe_ciphertext_discarding_bit_extraction_unchecked_u64_raw_ptr_buffers(
-    fftw_engine: *mut FftwEngine,
+pub unsafe extern "C" fn fft_engine_lwe_ciphertext_discarding_bit_extraction_unchecked_u64_raw_ptr_buffers(
+    fft_engine: *mut FftEngine,
     default_engine: *mut DefaultEngine,
-    bootstrap_key: *const FftwFourierLweBootstrapKey64,
+    bootstrap_key: *const FftFourierLweBootstrapKey64,
     keyswitch_key: *const LweKeyswitchKey64,
     output: *mut u64,
     input: *const u64,
@@ -142,7 +142,7 @@ pub unsafe extern "C" fn fftw_engine_lwe_ciphertext_discarding_bit_extraction_un
     delta_log: usize,
 ) -> c_int {
     catch_panic(|| {
-        let fftw_engine = &mut (*fftw_engine);
+        let fft_engine = &mut (*fft_engine);
         let default_engine = &mut (*default_engine);
 
         let bootstrap_key = &(*bootstrap_key);
@@ -160,7 +160,7 @@ pub unsafe extern "C" fn fftw_engine_lwe_ciphertext_discarding_bit_extraction_un
         let input_as_slice = std::slice::from_raw_parts(input, input_lwe_size);
         let input = default_engine.create_lwe_ciphertext_from_unchecked(input_as_slice);
 
-        fftw_engine.discard_extract_bits_lwe_ciphertext_unchecked(
+        fft_engine.discard_extract_bits_lwe_ciphertext_unchecked(
             &mut output,
             &input,
             bootstrap_key,

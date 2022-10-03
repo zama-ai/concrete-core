@@ -30,8 +30,8 @@
 //!
 //! This crate follows the `concrete-core` project structure, the exception being there is no
 //! `implementation` or `private` modules in this crate's source tree. You can for example find the
-//! creation and destruction entry points for the [`FftwEngine`](backends::fftw::engines) in
-//! `backends::fftw::engines` instead of `backends::fftw::implementation::engines`.
+//! creation and destruction entry points for the [`FftEngine`](backends::fft::engines) in
+//! `backends::fft::engines` instead of `backends::fft::implementation::engines`.
 //!
 //! The [`backends`] module maps to the `concrete-core` backend module and provides wrappers to call
 //! a selection of engines from `C`.
@@ -57,11 +57,11 @@
 //!
 //! `<snake_cased_engine_name>_<engine_function_name>_<data_type>_<additional_information>`
 //!
-//! Example if you want to use the [`FftwEngine`](backends::fftw::engines) to do a discarding
+//! Example if you want to use the [`FftEngine`](backends::fft::engines) to do a discarding
 //! bootstrap on an LWE Ciphertext taking ciphertext views as buffers, you will call:
 //!
-//! `fftw_engine_lwe_ciphertext_discarding_bootstrap_u64_view_buffers` you also have the unchecked
-//! version available `fftw_engine_lwe_ciphertext_discarding_bootstrap_unchecked_u64_view_buffers`.
+//! `fft_engine_lwe_ciphertext_discarding_bootstrap_u64_view_buffers` you also have the unchecked
+//! version available `fft_engine_lwe_ciphertext_discarding_bootstrap_unchecked_u64_view_buffers`.
 //!
 //! Note: there are some exceptions for creation engine which can yield Ciphertexts/Views/MutViews
 //! or for conversion engines which have the names of the input and output types they convert
@@ -125,7 +125,8 @@
 pub mod backends;
 #[cfg(any(
     feature = "backend_default_serialization",
-    feature = "backend_fftw_serialization"
+    feature = "backend_fftw_serialization",
+    feature = "backend_fft_serialization"
 ))]
 pub mod buffer;
 pub mod mem;

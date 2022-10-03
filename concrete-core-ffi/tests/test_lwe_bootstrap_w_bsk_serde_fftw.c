@@ -55,15 +55,15 @@ void bootstrap_view_buffers_test(void) {
       new_default_serialization_engine(&default_serialization_engine);
   assert(default_serialization_engine_ok == 0);
 
-  FftEngine *fft_engine = NULL;
+  FftwEngine *fftw_engine = NULL;
 
-  int fft_engine_ok = new_fft_engine(&fft_engine);
-  assert(fft_engine_ok == 0);
+  int fftw_engine_ok = new_fftw_engine(&fftw_engine);
+  assert(fftw_engine_ok == 0);
 
-  FftSerializationEngine *fft_serialization_engine = NULL;
+  FftwSerializationEngine *fftw_serialization_engine = NULL;
 
-  int fft_serialization_engine_ok = new_fft_serialization_engine(&fft_serialization_engine);
-  assert(fft_serialization_engine_ok == 0);
+  int fftw_serialization_engine_ok = new_fftw_serialization_engine(&fftw_serialization_engine);
+  assert(fftw_serialization_engine_ok == 0);
 
   double pbs_variance = 0.00000000000001;
   double encryption_variance = 0.0000000001;
@@ -127,21 +127,21 @@ void bootstrap_view_buffers_test(void) {
       default_serialization_engine, bsk_deser_buffer_view, &deser_bsk);
   assert(bsk_deser_ok == 0);
 
-  FftFourierLweBootstrapKey64 *fbsk = NULL;
-  int fbsk_ok = fft_engine_convert_lwe_bootstrap_key_to_fft_fourier_lwe_bootstrap_key_u64(
-      fft_engine, deser_bsk, &fbsk);
+  FftwFourierLweBootstrapKey64 *fbsk = NULL;
+  int fbsk_ok = fftw_engine_convert_lwe_bootstrap_key_to_fftw_fourier_lwe_bootstrap_key_u64(
+      fftw_engine, deser_bsk, &fbsk);
   assert(fbsk_ok == 0);
 
   // Test BSK Serialization/Deserialization
   Buffer fbsk_buffer = {.pointer = NULL, .length = 0};
-  int fbsk_ser_ok = fft_serialization_engine_serialize_fft_fourier_lwe_bootstrap_key_u64(
-      fft_serialization_engine, fbsk, &fbsk_buffer);
+  int fbsk_ser_ok = fftw_serialization_engine_serialize_fftw_fourier_lwe_bootstrap_key_u64(
+      fftw_serialization_engine, fbsk, &fbsk_buffer);
   assert(fbsk_ser_ok == 0);
 
   BufferView fbsk_buffer_view = {.pointer = fbsk_buffer.pointer, .length = fbsk_buffer.length};
-  FftFourierLweBootstrapKey64 *deser_fbsk = NULL;
-  int fbsk_deser_ok = fft_serialization_engine_deserialize_fft_fourier_lwe_bootstrap_key_u64(
-      fft_serialization_engine, fbsk_buffer_view, &deser_fbsk);
+  FftwFourierLweBootstrapKey64 *deser_fbsk = NULL;
+  int fbsk_deser_ok = fftw_serialization_engine_deserialize_fftw_fourier_lwe_bootstrap_key_u64(
+      fftw_serialization_engine, fbsk_buffer_view, &deser_fbsk);
   assert(fbsk_deser_ok == 0);
 
   // We generate the ciphertexts
@@ -211,8 +211,8 @@ void bootstrap_view_buffers_test(void) {
   assert(trivial_encrypt_ok == 0);
 
   // We perform the bootstrap
-  int result_ok = fft_engine_lwe_ciphertext_discarding_bootstrap_u64_view_buffers(
-      fft_engine, deser_fbsk, output_ct_as_mut_view, input_ct_as_view, accumulator_as_view);
+  int result_ok = fftw_engine_lwe_ciphertext_discarding_bootstrap_u64_view_buffers(
+      fftw_engine, deser_fbsk, output_ct_as_mut_view, input_ct_as_view, accumulator_as_view);
   assert(result_ok == 0);
 
   uint64_t output = -1;
@@ -241,13 +241,13 @@ void bootstrap_view_buffers_test(void) {
   destroy_lwe_ciphertext_mut_view_u64(output_ct_as_mut_view);
   destroy_glwe_ciphertext_view_u64(accumulator_as_view);
   destroy_glwe_ciphertext_mut_view_u64(accumulator_as_mut_view);
-  destroy_fft_fourier_lwe_bootstrap_key_u64(fbsk);
-  destroy_fft_fourier_lwe_bootstrap_key_u64(deser_fbsk);
-  destroy_fft_serialization_engine(fft_serialization_engine);
+  destroy_fftw_fourier_lwe_bootstrap_key_u64(fbsk);
+  destroy_fftw_fourier_lwe_bootstrap_key_u64(deser_fbsk);
+  destroy_fftw_serialization_engine(fftw_serialization_engine);
   destroy_default_parallel_engine(default_parallel_engine);
   destroy_default_serialization_engine(default_serialization_engine);
   destroy_default_engine(default_engine);
-  destroy_fft_engine(fft_engine);
+  destroy_fftw_engine(fftw_engine);
   destroy_seeder_builder(builder);
   destroy_buffer(&bsk_buffer);
   destroy_buffer(&seeded_bsk_buffer);
@@ -279,15 +279,15 @@ void bootstrap_unchecked_view_buffers_test(void) {
       new_default_serialization_engine_unchecked(&default_serialization_engine);
   assert(default_serialization_engine_ok == 0);
 
-  FftEngine *fft_engine = NULL;
+  FftwEngine *fftw_engine = NULL;
 
-  int fft_engine_ok = new_fft_engine_unchecked(&fft_engine);
-  assert(fft_engine_ok == 0);
+  int fftw_engine_ok = new_fftw_engine_unchecked(&fftw_engine);
+  assert(fftw_engine_ok == 0);
 
-  FftSerializationEngine *fft_serialization_engine = NULL;
+  FftwSerializationEngine *fftw_serialization_engine = NULL;
 
-  int fft_serialization_engine_ok = new_fft_serialization_engine(&fft_serialization_engine);
-  assert(fft_serialization_engine_ok == 0);
+  int fftw_serialization_engine_ok = new_fftw_serialization_engine(&fftw_serialization_engine);
+  assert(fftw_serialization_engine_ok == 0);
 
   double pbs_variance = 0.00000000000001;
   double encryption_variance = 0.0000000001;
@@ -353,24 +353,24 @@ void bootstrap_unchecked_view_buffers_test(void) {
       default_serialization_engine, bsk_deser_buffer_view, &deser_bsk);
   assert(bsk_deser_ok == 0);
 
-  FftFourierLweBootstrapKey64 *fbsk = NULL;
+  FftwFourierLweBootstrapKey64 *fbsk = NULL;
   int fbsk_ok =
-      fft_engine_convert_lwe_bootstrap_key_to_fft_fourier_lwe_bootstrap_key_unchecked_u64(
-          fft_engine, deser_bsk, &fbsk);
+      fftw_engine_convert_lwe_bootstrap_key_to_fftw_fourier_lwe_bootstrap_key_unchecked_u64(
+          fftw_engine, deser_bsk, &fbsk);
   assert(fbsk_ok == 0);
 
   // Test BSK Serialization/Deserialization
   Buffer fbsk_buffer = {.pointer = NULL, .length = 0};
   int fbsk_ser_ok =
-      fft_serialization_engine_serialize_fft_fourier_lwe_bootstrap_key_unchecked_u64(
-          fft_serialization_engine, fbsk, &fbsk_buffer);
+      fftw_serialization_engine_serialize_fftw_fourier_lwe_bootstrap_key_unchecked_u64(
+          fftw_serialization_engine, fbsk, &fbsk_buffer);
   assert(fbsk_ser_ok == 0);
 
   BufferView fbsk_buffer_view = {.pointer = fbsk_buffer.pointer, .length = fbsk_buffer.length};
-  FftFourierLweBootstrapKey64 *deser_fbsk = NULL;
+  FftwFourierLweBootstrapKey64 *deser_fbsk = NULL;
   int fbsk_deser_ok =
-      fft_serialization_engine_deserialize_fft_fourier_lwe_bootstrap_key_unchecked_u64(
-          fft_serialization_engine, fbsk_buffer_view, &deser_fbsk);
+      fftw_serialization_engine_deserialize_fftw_fourier_lwe_bootstrap_key_unchecked_u64(
+          fftw_serialization_engine, fbsk_buffer_view, &deser_fbsk);
   assert(fbsk_deser_ok == 0);
 
   // We generate the ciphertexts
@@ -441,8 +441,8 @@ void bootstrap_unchecked_view_buffers_test(void) {
   assert(trivial_encrypt_ok == 0);
 
   // We perform the bootstrap
-  int result_ok = fft_engine_lwe_ciphertext_discarding_bootstrap_unchecked_u64_view_buffers(
-      fft_engine, deser_fbsk, output_ct_as_mut_view, input_ct_as_view, accumulator_as_view);
+  int result_ok = fftw_engine_lwe_ciphertext_discarding_bootstrap_unchecked_u64_view_buffers(
+      fftw_engine, deser_fbsk, output_ct_as_mut_view, input_ct_as_view, accumulator_as_view);
   assert(result_ok == 0);
 
   uint64_t output = -1;
@@ -471,13 +471,13 @@ void bootstrap_unchecked_view_buffers_test(void) {
   destroy_lwe_ciphertext_mut_view_unchecked_u64(output_ct_as_mut_view);
   destroy_glwe_ciphertext_view_unchecked_u64(accumulator_as_view);
   destroy_glwe_ciphertext_mut_view_unchecked_u64(accumulator_as_mut_view);
-  destroy_fft_fourier_lwe_bootstrap_key_unchecked_u64(fbsk);
-  destroy_fft_fourier_lwe_bootstrap_key_unchecked_u64(deser_fbsk);
-  destroy_fft_serialization_engine_unchecked(fft_serialization_engine);
+  destroy_fftw_fourier_lwe_bootstrap_key_unchecked_u64(fbsk);
+  destroy_fftw_fourier_lwe_bootstrap_key_unchecked_u64(deser_fbsk);
+  destroy_fftw_serialization_engine_unchecked(fftw_serialization_engine);
   destroy_default_parallel_engine_unchecked(default_parallel_engine);
   destroy_default_serialization_engine_unchecked(default_serialization_engine);
   destroy_default_engine_unchecked(default_engine);
-  destroy_fft_engine_unchecked(fft_engine);
+  destroy_fftw_engine_unchecked(fftw_engine);
   destroy_seeder_builder_unchecked(builder);
   destroy_buffer_unchecked(&bsk_buffer);
   destroy_buffer_unchecked(&seeded_bsk_buffer);
@@ -508,15 +508,15 @@ void bootstrap_raw_ptr_buffers_test(void) {
       new_default_serialization_engine(&default_serialization_engine);
   assert(default_serialization_engine_ok == 0);
 
-  FftEngine *fft_engine = NULL;
+  FftwEngine *fftw_engine = NULL;
 
-  int fft_engine_ok = new_fft_engine(&fft_engine);
-  assert(fft_engine_ok == 0);
+  int fftw_engine_ok = new_fftw_engine(&fftw_engine);
+  assert(fftw_engine_ok == 0);
 
-  FftSerializationEngine *fft_serialization_engine = NULL;
+  FftwSerializationEngine *fftw_serialization_engine = NULL;
 
-  int fft_serialization_engine_ok = new_fft_serialization_engine(&fft_serialization_engine);
-  assert(fft_serialization_engine_ok == 0);
+  int fftw_serialization_engine_ok = new_fftw_serialization_engine(&fftw_serialization_engine);
+  assert(fftw_serialization_engine_ok == 0);
 
   double pbs_variance = 0.00000000000001;
   double encryption_variance = 0.0000000001;
@@ -580,21 +580,21 @@ void bootstrap_raw_ptr_buffers_test(void) {
       default_serialization_engine, bsk_deser_buffer_view, &deser_bsk);
   assert(bsk_deser_ok == 0);
 
-  FftFourierLweBootstrapKey64 *fbsk = NULL;
-  int fbsk_ok = fft_engine_convert_lwe_bootstrap_key_to_fft_fourier_lwe_bootstrap_key_u64(
-      fft_engine, deser_bsk, &fbsk);
+  FftwFourierLweBootstrapKey64 *fbsk = NULL;
+  int fbsk_ok = fftw_engine_convert_lwe_bootstrap_key_to_fftw_fourier_lwe_bootstrap_key_u64(
+      fftw_engine, deser_bsk, &fbsk);
   assert(fbsk_ok == 0);
 
   // Test BSK Serialization/Deserialization
   Buffer fbsk_buffer = {.pointer = NULL, .length = 0};
-  int fbsk_ser_ok = fft_serialization_engine_serialize_fft_fourier_lwe_bootstrap_key_u64(
-      fft_serialization_engine, fbsk, &fbsk_buffer);
+  int fbsk_ser_ok = fftw_serialization_engine_serialize_fftw_fourier_lwe_bootstrap_key_u64(
+      fftw_serialization_engine, fbsk, &fbsk_buffer);
   assert(fbsk_ser_ok == 0);
 
   BufferView fbsk_buffer_view = {.pointer = fbsk_buffer.pointer, .length = fbsk_buffer.length};
-  FftFourierLweBootstrapKey64 *deser_fbsk = NULL;
-  int fbsk_deser_ok = fft_serialization_engine_deserialize_fft_fourier_lwe_bootstrap_key_u64(
-      fft_serialization_engine, fbsk_buffer_view, &deser_fbsk);
+  FftwFourierLweBootstrapKey64 *deser_fbsk = NULL;
+  int fbsk_deser_ok = fftw_serialization_engine_deserialize_fftw_fourier_lwe_bootstrap_key_u64(
+      fftw_serialization_engine, fbsk_buffer_view, &deser_fbsk);
   assert(fbsk_deser_ok == 0);
 
   // We generate the ciphertexts
@@ -633,8 +633,8 @@ void bootstrap_raw_ptr_buffers_test(void) {
   assert(trivial_encrypt_ok == 0);
 
   // We perform the bootstrap
-  int result_ok = fft_engine_lwe_ciphertext_discarding_bootstrap_u64_raw_ptr_buffers(
-      fft_engine, default_engine, deser_fbsk, output_ct_buffer, input_ct_buffer, accumulator);
+  int result_ok = fftw_engine_lwe_ciphertext_discarding_bootstrap_u64_raw_ptr_buffers(
+      fftw_engine, default_engine, deser_fbsk, output_ct_buffer, input_ct_buffer, accumulator);
   assert(result_ok == 0);
 
   uint64_t output = -1;
@@ -657,13 +657,13 @@ void bootstrap_raw_ptr_buffers_test(void) {
   destroy_lwe_bootstrap_key_u64(bsk);
   destroy_lwe_bootstrap_key_u64(deser_bsk);
   destroy_lwe_seeded_bootstrap_key_u64(seeded_bsk);
-  destroy_fft_fourier_lwe_bootstrap_key_u64(fbsk);
-  destroy_fft_fourier_lwe_bootstrap_key_u64(deser_fbsk);
-  destroy_fft_serialization_engine(fft_serialization_engine);
+  destroy_fftw_fourier_lwe_bootstrap_key_u64(fbsk);
+  destroy_fftw_fourier_lwe_bootstrap_key_u64(deser_fbsk);
+  destroy_fftw_serialization_engine(fftw_serialization_engine);
   destroy_default_parallel_engine(default_parallel_engine);
   destroy_default_serialization_engine(default_serialization_engine);
   destroy_default_engine(default_engine);
-  destroy_fft_engine(fft_engine);
+  destroy_fftw_engine(fftw_engine);
   destroy_seeder_builder(builder);
   destroy_buffer(&bsk_buffer);
   destroy_buffer(&seeded_bsk_buffer);
@@ -695,15 +695,15 @@ void bootstrap_unchecked_raw_ptr_buffers_test(void) {
       new_default_serialization_engine_unchecked(&default_serialization_engine);
   assert(default_serialization_engine_ok == 0);
 
-  FftEngine *fft_engine = NULL;
+  FftwEngine *fftw_engine = NULL;
 
-  int fft_engine_ok = new_fft_engine_unchecked(&fft_engine);
-  assert(fft_engine_ok == 0);
+  int fftw_engine_ok = new_fftw_engine_unchecked(&fftw_engine);
+  assert(fftw_engine_ok == 0);
 
-  FftSerializationEngine *fft_serialization_engine = NULL;
+  FftwSerializationEngine *fftw_serialization_engine = NULL;
 
-  int fft_serialization_engine_ok = new_fft_serialization_engine(&fft_serialization_engine);
-  assert(fft_serialization_engine_ok == 0);
+  int fftw_serialization_engine_ok = new_fftw_serialization_engine(&fftw_serialization_engine);
+  assert(fftw_serialization_engine_ok == 0);
 
   double pbs_variance = 0.00000000000001;
   double encryption_variance = 0.0000000001;
@@ -769,23 +769,23 @@ void bootstrap_unchecked_raw_ptr_buffers_test(void) {
       default_serialization_engine, bsk_deser_buffer_view, &deser_bsk);
   assert(bsk_deser_ok == 0);
 
-  FftFourierLweBootstrapKey64 *fbsk = NULL;
+  FftwFourierLweBootstrapKey64 *fbsk = NULL;
   int fbsk_ok =
-      fft_engine_convert_lwe_bootstrap_key_to_fft_fourier_lwe_bootstrap_key_unchecked_u64(
-          fft_engine, deser_bsk, &fbsk);
+      fftw_engine_convert_lwe_bootstrap_key_to_fftw_fourier_lwe_bootstrap_key_unchecked_u64(
+          fftw_engine, deser_bsk, &fbsk);
   assert(fbsk_ok == 0);
 
   // Test BSK Serialization/Deserialization
   Buffer fbsk_buffer = {.pointer = NULL, .length = 0};
-  int fbsk_ser_ok = fft_serialization_engine_serialize_fft_fourier_lwe_bootstrap_key_u64(
-      fft_serialization_engine, fbsk, &fbsk_buffer);
+  int fbsk_ser_ok = fftw_serialization_engine_serialize_fftw_fourier_lwe_bootstrap_key_u64(
+      fftw_serialization_engine, fbsk, &fbsk_buffer);
   assert(fbsk_ser_ok == 0);
 
   BufferView fbsk_buffer_view = {.pointer = fbsk_buffer.pointer, .length = fbsk_buffer.length};
-  FftFourierLweBootstrapKey64 *deser_fbsk = NULL;
+  FftwFourierLweBootstrapKey64 *deser_fbsk = NULL;
   int fbsk_deser_ok =
-      fft_serialization_engine_deserialize_fft_fourier_lwe_bootstrap_key_unchecked_u64(
-          fft_serialization_engine, fbsk_buffer_view, &deser_fbsk);
+      fftw_serialization_engine_deserialize_fftw_fourier_lwe_bootstrap_key_unchecked_u64(
+          fftw_serialization_engine, fbsk_buffer_view, &deser_fbsk);
   assert(fbsk_deser_ok == 0);
 
   // We generate the ciphertexts
@@ -824,8 +824,8 @@ void bootstrap_unchecked_raw_ptr_buffers_test(void) {
   assert(trivial_encrypt_ok == 0);
 
   // We perform the bootstrap
-  int result_ok = fft_engine_lwe_ciphertext_discarding_bootstrap_unchecked_u64_raw_ptr_buffers(
-      fft_engine, default_engine, deser_fbsk, output_ct_buffer, input_ct_buffer, accumulator);
+  int result_ok = fftw_engine_lwe_ciphertext_discarding_bootstrap_unchecked_u64_raw_ptr_buffers(
+      fftw_engine, default_engine, deser_fbsk, output_ct_buffer, input_ct_buffer, accumulator);
   assert(result_ok == 0);
 
   uint64_t output = -1;
@@ -848,13 +848,13 @@ void bootstrap_unchecked_raw_ptr_buffers_test(void) {
   destroy_lwe_bootstrap_key_unchecked_u64(bsk);
   destroy_lwe_bootstrap_key_unchecked_u64(deser_bsk);
   destroy_lwe_seeded_bootstrap_key_unchecked_u64(seeded_bsk);
-  destroy_fft_fourier_lwe_bootstrap_key_unchecked_u64(fbsk);
-  destroy_fft_fourier_lwe_bootstrap_key_unchecked_u64(deser_fbsk);
-  destroy_fft_serialization_engine_unchecked(fft_serialization_engine);
+  destroy_fftw_fourier_lwe_bootstrap_key_unchecked_u64(fbsk);
+  destroy_fftw_fourier_lwe_bootstrap_key_unchecked_u64(deser_fbsk);
+  destroy_fftw_serialization_engine_unchecked(fftw_serialization_engine);
   destroy_default_parallel_engine_unchecked(default_parallel_engine);
   destroy_default_serialization_engine_unchecked(default_serialization_engine);
   destroy_default_engine_unchecked(default_engine);
-  destroy_fft_engine_unchecked(fft_engine);
+  destroy_fftw_engine_unchecked(fftw_engine);
   destroy_seeder_builder_unchecked(builder);
   destroy_buffer_unchecked(&bsk_buffer);
   destroy_buffer_unchecked(&seeded_bsk_buffer);
