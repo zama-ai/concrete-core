@@ -223,14 +223,15 @@ impl<'a, T> Container for &'a mut [T] {
     type Element = T;
 }
 
-pub trait IntoChunks {
+pub trait Split: Sized {
     type Chunks: DoubleEndedIterator<Item = Self> + ExactSizeIterator<Item = Self>;
 
     fn into_chunks(self, chunk_size: usize) -> Self::Chunks;
     fn split_into(self, chunk_count: usize) -> Self::Chunks;
+    fn split_at(self, mid: usize) -> (Self, Self);
 }
 
-impl<'a, T> IntoChunks for &'a [T] {
+impl<'a, T> Split for &'a [T] {
     type Chunks = core::slice::ChunksExact<'a, T>;
 
     #[inline]
@@ -240,12 +241,21 @@ impl<'a, T> IntoChunks for &'a [T] {
     }
     #[inline]
     fn split_into(self, chunk_count: usize) -> Self::Chunks {
-        debug_assert_eq!(self.len() % chunk_count, 0);
-        self.chunks_exact(self.len() / chunk_count)
+        if chunk_count == 0 {
+            debug_assert_eq!(self.len(), 0);
+            self.chunks_exact(1)
+        } else {
+            debug_assert_eq!(self.len() % chunk_count, 0);
+            self.chunks_exact(self.len() / chunk_count)
+        }
+    }
+    #[inline]
+    fn split_at(self, mid: usize) -> (Self, Self) {
+        self.split_at(mid)
     }
 }
 
-impl<'a, T> IntoChunks for &'a mut [T] {
+impl<'a, T> Split for &'a mut [T] {
     type Chunks = core::slice::ChunksExactMut<'a, T>;
 
     #[inline]
@@ -255,7 +265,16 @@ impl<'a, T> IntoChunks for &'a mut [T] {
     }
     #[inline]
     fn split_into(self, chunk_count: usize) -> Self::Chunks {
-        debug_assert_eq!(self.len() % chunk_count, 0);
-        self.chunks_exact_mut(self.len() / chunk_count)
+        if chunk_count == 0 {
+            debug_assert_eq!(self.len(), 0);
+            self.chunks_exact_mut(1)
+        } else {
+            debug_assert_eq!(self.len() % chunk_count, 0);
+            self.chunks_exact_mut(self.len() / chunk_count)
+        }
+    }
+    #[inline]
+    fn split_at(self, mid: usize) -> (Self, Self) {
+        self.split_at_mut(mid)
     }
 }

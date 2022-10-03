@@ -144,13 +144,13 @@ impl<Cont> StandardBootstrapKey<Cont> {
     where
         Cont: Container,
     {
-        StandardBootstrapKey::from_container(
-            self.tensor.as_container().as_ref(),
-            self.rlwe_size,
-            self.poly_size,
-            self.decomp_level,
-            self.decomp_base_log,
-        )
+        StandardBootstrapKey {
+            tensor: Tensor::from_container(self.tensor.as_container().as_ref()),
+            rlwe_size: self.rlwe_size,
+            poly_size: self.poly_size,
+            decomp_level: self.decomp_level,
+            decomp_base_log: self.decomp_base_log,
+        }
     }
 
     pub fn as_mut_view(&mut self) -> StandardBootstrapKey<&'_ mut [Cont::Element]>
@@ -158,13 +158,13 @@ impl<Cont> StandardBootstrapKey<Cont> {
         Cont: Container,
         Cont: AsMut<[Cont::Element]>,
     {
-        StandardBootstrapKey::from_container(
-            self.tensor.as_mut_container().as_mut(),
-            self.rlwe_size,
-            self.poly_size,
-            self.decomp_level,
-            self.decomp_base_log,
-        )
+        StandardBootstrapKey {
+            tensor: Tensor::from_container(self.tensor.as_mut_container().as_mut()),
+            rlwe_size: self.rlwe_size,
+            poly_size: self.poly_size,
+            decomp_level: self.decomp_level,
+            decomp_base_log: self.decomp_base_log,
+        }
     }
 
     /// Generate a new bootstrap key from the input parameters, and fills the current container

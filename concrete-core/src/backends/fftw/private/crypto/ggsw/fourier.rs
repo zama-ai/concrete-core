@@ -665,16 +665,13 @@ impl<Cont, Scalar> FourierGgswCiphertext<Cont, Scalar> {
         ct_buffer
             .as_mut_tensor()
             .fill_with_wrapping_sub(ct_1.as_tensor(), ct_0.as_tensor());
-        ct_output.as_mut_tensor().fill_with_element(Scalar::ZERO);
+        ct_output.as_mut_tensor().fill_with_copy(ct_0.as_tensor());
         self.external_product(
             ct_output,
             ct_buffer,
             &mut buffers.fft_buffers,
             &mut buffers.rounded_buffer,
         );
-        ct_output
-            .as_mut_tensor()
-            .update_with_wrapping_add(ct_0.as_tensor())
     }
 }
 

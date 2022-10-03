@@ -46,6 +46,13 @@ impl<Element> AsRefSlice for Vec<Element> {
     }
 }
 
+impl<Element> AsRefSlice for aligned_vec::AVec<Element> {
+    type Element = Element;
+    fn as_slice(&self) -> &[Element] {
+        self.as_slice()
+    }
+}
+
 impl<Element> AsRefSlice for [Element; 1] {
     type Element = Element;
     fn as_slice(&self) -> &[Element] {
@@ -80,6 +87,13 @@ pub trait AsMutSlice: AsRefSlice<Element = <Self as AsMutSlice>::Element> {
 }
 
 impl<Element> AsMutSlice for Vec<Element> {
+    type Element = Element;
+    fn as_mut_slice(&mut self) -> &mut [Element] {
+        self.as_mut_slice()
+    }
+}
+
+impl<Element> AsMutSlice for aligned_vec::AVec<Element> {
     type Element = Element;
     fn as_mut_slice(&mut self) -> &mut [Element] {
         self.as_mut_slice()

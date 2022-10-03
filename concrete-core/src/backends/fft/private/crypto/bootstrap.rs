@@ -6,7 +6,7 @@ use crate::commons::crypto::glwe::GlweCiphertext;
 use crate::commons::crypto::lwe::LweCiphertext;
 #[cfg(feature = "backend_fft_serialization")]
 use crate::commons::math::tensor::ContainerOwned;
-use crate::commons::math::tensor::{Container, IntoChunks};
+use crate::commons::math::tensor::{Container, Split};
 use crate::commons::math::torus::UnsignedTorus;
 use crate::commons::numeric::CastInto;
 use crate::commons::utils::izip;
@@ -43,10 +43,7 @@ impl<C: Container<Element = c64>> FourierLweBootstrapKey<C> {
         glwe_size: GlweSize,
         decomposition_base_log: DecompositionBaseLog,
         decomposition_level_count: DecompositionLevelCount,
-    ) -> Self
-    where
-        C: Container,
-    {
+    ) -> Self {
         assert_eq!(polynomial_size.0 % 2, 0);
         assert_eq!(
             data.container_len(),
@@ -70,7 +67,7 @@ impl<C: Container<Element = c64>> FourierLweBootstrapKey<C> {
     /// Returns an iterator over the GGSW ciphertexts composing the key.
     pub fn into_ggsw_iter(self) -> impl DoubleEndedIterator<Item = FourierGgswCiphertext<C>>
     where
-        C: IntoChunks + Container,
+        C: Split,
     {
         self.fourier
             .data
@@ -241,7 +238,13 @@ impl<'a> FourierLweBootstrapKeyView<'a> {
                     ));
                 }
 
-                cmux(ct0.as_mut_view(), ct1, bootstrap_key_ggsw, fft, stack);
+                cmux(
+                    ct0.as_mut_view(),
+                    ct1.as_mut_view(),
+                    bootstrap_key_ggsw,
+                    fft,
+                    stack,
+                );
             }
         }
     }
@@ -264,7 +267,7 @@ impl<'a> FourierLweBootstrapKeyView<'a> {
         );
         self.blind_rotate(local_accumulator.as_mut_view(), lwe_in, fft, stack);
         local_accumulator.as_view().fill_lwe_with_sample_extraction(
-            &mut LweCiphertext::from_container(lwe_out),
+            &mut LweCiphertext::from_container(&mut *lwe_out),
             MonomialDegree(0),
         );
     }

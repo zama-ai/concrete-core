@@ -1,7 +1,8 @@
+use crate::commons::math::tensor::Container;
 use std::iter::Iterator;
 
 use crate::commons::math::tensor::{
-    ck_dim_div, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, IntoChunks, Tensor,
+    ck_dim_div, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Split, Tensor,
 };
 
 use super::*;
@@ -21,7 +22,7 @@ use crate::prelude::{MonomialDegree, PolynomialCount, PolynomialSize};
 /// assert_eq!(list.polynomial_count(), PolynomialCount(4));
 /// assert_eq!(list.polynomial_size(), PolynomialSize(2));
 /// ```
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Copy, Clone, Debug)]
 pub struct PolynomialList<Cont> {
     pub(crate) tensor: Tensor<Cont>,
     pub(crate) poly_size: PolynomialSize,
@@ -72,6 +73,30 @@ impl<Cont> PolynomialList<Cont> {
         PolynomialList {
             tensor: Tensor::from_container(cont),
             poly_size,
+        }
+    }
+
+    pub fn into_container(self) -> Cont {
+        self.tensor.into_container()
+    }
+
+    pub fn as_view(&self) -> PolynomialList<&'_ [Cont::Element]>
+    where
+        Cont: Container,
+    {
+        PolynomialList {
+            tensor: Tensor::from_container(self.tensor.as_container().as_ref()),
+            poly_size: self.poly_size,
+        }
+    }
+
+    pub fn as_mut_view(&mut self) -> PolynomialList<&'_ mut [Cont::Element]>
+    where
+        Cont: Container + AsMut<[Cont::Element]>,
+    {
+        PolynomialList {
+            tensor: Tensor::from_container(self.tensor.as_mut_container().as_mut()),
+            poly_size: self.poly_size,
         }
     }
 
@@ -168,7 +193,7 @@ impl<Cont> PolynomialList<Cont> {
 
     pub fn into_polynomial_iter(self) -> impl DoubleEndedIterator<Item = Polynomial<Cont>>
     where
-        Cont: IntoChunks,
+        Cont: Split,
     {
         let poly_size = self.polynomial_size();
         self.tensor

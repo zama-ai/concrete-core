@@ -29,7 +29,7 @@ use super::{AsMutSlice, AsMutTensor, AsRefSlice, AsRefTensor};
 /// + Methods prefixed with `fill_with` discard the current vales of `self`, and overwrite it with
 /// the result of an operation on other values.
 #[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
-#[derive(PartialEq, Eq, Debug, Clone)]
+#[derive(PartialEq, Eq, Debug, Clone, Copy)]
 #[repr(transparent)]
 pub struct Tensor<Container: ?Sized>(Container);
 

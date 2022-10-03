@@ -15,7 +15,7 @@
 use crate::commons::math::random::{
     Gaussian, RandomGenerable, Uniform, UniformBinary, UniformTernary,
 };
-use crate::commons::numeric::{CastInto, FloatingPoint, Numeric, UnsignedInteger};
+pub use crate::commons::numeric::{CastInto, FloatingPoint, Numeric, UnsignedInteger};
 use crate::prelude::LogStandardDev;
 use std::fmt::{Debug, Display};
 

@@ -94,7 +94,10 @@ impl<Cont> GlweCiphertext<Cont> {
     where
         Cont: Container,
     {
-        GlweCiphertext::from_container(self.tensor.as_container().as_ref(), self.poly_size)
+        GlweCiphertext {
+            tensor: Tensor::from_container(self.tensor.as_container().as_ref()),
+            poly_size: self.poly_size,
+        }
     }
 
     pub fn as_mut_view(&mut self) -> GlweCiphertext<&'_ mut [Cont::Element]>
@@ -102,7 +105,10 @@ impl<Cont> GlweCiphertext<Cont> {
         Cont: Container,
         Cont: AsMut<[Cont::Element]>,
     {
-        GlweCiphertext::from_container(self.tensor.as_mut_container().as_mut(), self.poly_size)
+        GlweCiphertext {
+            tensor: Tensor::from_container(self.tensor.as_mut_container().as_mut()),
+            poly_size: self.poly_size,
+        }
     }
 
     pub fn into_container(self) -> Cont {

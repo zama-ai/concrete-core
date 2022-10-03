@@ -78,7 +78,9 @@ impl<Cont> Polynomial<Cont> {
     where
         Cont: Container,
     {
-        Polynomial::from_container(self.tensor.as_container().as_ref())
+        Polynomial {
+            tensor: Tensor::from_container(self.tensor.as_container().as_ref()),
+        }
     }
 
     pub fn as_mut_view(&mut self) -> Polynomial<&'_ mut [Cont::Element]>
@@ -86,7 +88,9 @@ impl<Cont> Polynomial<Cont> {
         Cont: Container,
         Cont: AsMut<[Cont::Element]>,
     {
-        Polynomial::from_container(self.tensor.as_mut_container().as_mut())
+        Polynomial {
+            tensor: Tensor::from_container(self.tensor.as_mut_container().as_mut()),
+        }
     }
 
     /// Returns the number of coefficients in the polynomial.
