@@ -10,11 +10,6 @@ pub use super::backends::default::engines::*;
 #[cfg(feature = "backend_default")]
 pub use super::backends::default::entities::*;
 
-// ------------------------------------------------------------------------------------ FFTW BACKEND
-#[cfg(feature = "backend_fftw")]
-pub use super::backends::fftw::engines::*;
-#[cfg(feature = "backend_fftw")]
-pub use super::backends::fftw::entities::*;
 // --------------------------------------------------------------------------------- FFT BACKEND
 #[cfg(feature = "backend_fft")]
 pub use super::backends::fft::engines::*;

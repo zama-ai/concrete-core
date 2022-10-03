@@ -125,7 +125,6 @@
 pub mod backends;
 #[cfg(any(
     feature = "backend_default_serialization",
-    feature = "backend_fftw_serialization",
     feature = "backend_fft_serialization"
 ))]
 pub mod buffer;

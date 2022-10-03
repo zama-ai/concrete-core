@@ -17,7 +17,6 @@ kolmogorov_smirnov = "1.1.0"
 criterion = "0.3"
 
 [dependencies]
-concrete-fftw = { version = "=0.1.4", optional = true }
 concrete-csprng = { version = "0.2", path = "../concrete-csprng" }
 concrete-cuda = { version = "0.1.0", path = "../concrete-cuda", optional = true }
 serde = { version = "1.0", optional = true }
@@ -69,16 +68,6 @@ backend_default_generator_aarch64_aes = [
 # Enable the serialization engine in the default backend.
 backend_default_serialization = ["bincode", "__commons_serialization"]
 
-# An accelerated backend, using the `fftw` library.
-backend_fftw = ["concrete-fftw"]
-
-# Enable the serialization engine in the fftw backend.
-backend_fftw_serialization = [
-    "bincode",
-    "concrete-fftw/serialize",
-    "__commons_serialization",
-]
-
 # A GPU backend, relying on Cuda acceleration
 backend_cuda = ["concrete-cuda"]
 
@@ -100,8 +89,6 @@ x86_64 = [
     "backend_default_parallel",
     "backend_default_generator_x86_64_aesni",
     "backend_default_serialization",
-    "backend_fftw",
-    "backend_fftw_serialization",
     "backend_fft",
     "backend_fft_serialization",
     "seeder_unix",
@@ -113,8 +100,6 @@ aarch64 = [
     "backend_default_parallel",
     "backend_default_generator_aarch64_aes",
     "backend_default_serialization",
-    "backend_fftw",
-    "backend_fftw_serialization",
     "backend_fft",
     "backend_fft_serialization",
     "seeder_unix",

@@ -4,7 +4,7 @@ use concrete_core_representation::{
     ConcreteCore, EngineTraitImplArg, EngineTraitImplReturn, EntityOwnership,
 };
 
-const BLACKLISTED_BACKENDS: [&str; 2] = ["cuda", "fftw"];
+const BLACKLISTED_BACKENDS: [&str; 1] = ["cuda"];
 
 /// A function that prunes a concrete-core representation from the nodes we do not want in the wasm
 /// api

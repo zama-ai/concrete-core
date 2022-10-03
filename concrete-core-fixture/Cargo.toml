@@ -19,7 +19,6 @@ kolmogorov_smirnov = "1.1.0"
 paste = "1.0"
 
 [features]
-backend_fftw = ["concrete-core/backend_fftw"]
 backend_fft = ["concrete-core/backend_fft"]
 backend_fft_nightly_avx512 = ["concrete-core/backend_fft_nightly_avx512"]
 # We keep a backend_default fixture because not having one proved error prone and inconsistent
