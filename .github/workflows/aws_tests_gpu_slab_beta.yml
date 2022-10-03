@@ -35,11 +35,13 @@ jobs:
       matrix:
         include:
           - os: ubuntu-20.04
-            cuda: "11.3"
+            cuda: "11.7"
+            old_cuda: "11.1"
             cuda_arch: "70"
             gcc: 8
     env:
       CUDA_PATH: /usr/local/cuda-${{ matrix.cuda }}
+      OLD_CUDA_PATH: /usr/local/cuda-${{ matrix.old_cuda }}
 
     steps:
       - name: EC2 instance configuration used
@@ -53,17 +55,25 @@ jobs:
           echo "HOME=/home/ubuntu" >> "${GITHUB_ENV}"
       - name: Export CUDA variables
         run: |
+          echo "$GITHUB_ENV" >> ${OLD_GITHUB_ENV}
           echo "CUDA_PATH=$CUDA_PATH" >> "${GITHUB_ENV}"
+          echo "CUDA_PATH=$OLD_CUDA_PATH" >> "${OLD_GITHUB_ENV}"
           echo "$CUDA_PATH/bin" >> "${GITHUB_PATH}"
           echo "LD_LIBRARY_PATH=$CUDA_PATH/lib:$LD_LIBRARY_PATH" >> "${GITHUB_ENV}"
+          echo "LD_LIBRARY_PATH=$CUDA_PATH/lib:$LD_LIBRARY_PATH" >> "${OLD_GITHUB_ENV}"
       # Specify the correct host compilers
       - name: Export gcc and g++ variables
         run: |
           echo "CC=/usr/bin/gcc-${{ matrix.gcc }}" >> "${GITHUB_ENV}"
+          echo "CC=/usr/bin/gcc-${{ matrix.gcc }}" >> "${OLD_GITHUB_ENV}"
           echo "CXX=/usr/bin/g++-${{ matrix.gcc }}" >> "${GITHUB_ENV}"
+          echo "CXX=/usr/bin/g++-${{ matrix.gcc }}" >> "${OLD_GITHUB_ENV}"
           echo "CUDAHOSTCXX=/usr/bin/g++-${{ matrix.gcc }}" >> "${GITHUB_ENV}"
+          echo "CUDAHOSTCXX=/usr/bin/g++-${{ matrix.gcc }}" >> "${OLD_GITHUB_ENV}"
           echo "CUDACXX=/usr/local/cuda-${{ matrix.cuda }}/bin/nvcc" >> "${GITHUB_ENV}"
+          echo "CUDACXX=/usr/local/cuda-${{ matrix.old_cuda }}/bin/nvcc" >> "${OLD_GITHUB_ENV}"
           echo "HOME=/home/ubuntu" >> "${GITHUB_ENV}"
+          echo "HOME=/home/ubuntu" >> "${OLD_GITHUB_ENV}"
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
@@ -77,9 +87,14 @@ jobs:
         run: |
           cargo xtask check_clippy_cuda
 
-      - name: Test concrete-core with cuda backend
+      - name: Test concrete-core with cuda backend with CUDA 11.7
         run: |
           cargo xtask test_cuda
+
+      - name: Test concrete-core with cuda backend with CUDA 11.1
+        run: |
+          export GITHUB_ENV=$OLD_GITHUB_ENV
+          cargo test --release --doc -p concrete-core --features=backend_cuda -- --test-threads 1
 
       - name: Slack Notification
         if: ${{ always() }}
