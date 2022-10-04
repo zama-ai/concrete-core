@@ -140,7 +140,11 @@ where
     ) -> Self::Criteria {
     }
 
-    fn verify(_criteria: &Self::Criteria, outputs: &[Self::Outcome]) -> bool {
+    fn verify(
+        _parameters: &Self::Parameters,
+        _criteria: &Self::Criteria,
+        outputs: &[Self::Outcome],
+    ) -> bool {
         // The test to verify the generated key is not yet implemented.
         let (sample, actual): (Vec<_>, Vec<_>) = outputs.iter().cloned().unzip();
         sample == actual

@@ -231,7 +231,11 @@ where
         (predicted_variance,)
     }
 
-    fn verify(criteria: &Self::Criteria, outputs: &[Self::Outcome]) -> bool {
+    fn verify(
+        _parameters: &Self::Parameters,
+        criteria: &Self::Criteria,
+        outputs: &[Self::Outcome],
+    ) -> bool {
         let (means, actual): (Vec<_>, Vec<_>) = outputs.iter().cloned().unzip();
         let means: Vec<Precision::Raw> = means.into_iter().flatten().collect();
         let actual: Vec<Precision::Raw> = actual.into_iter().flatten().collect();

@@ -161,7 +161,11 @@ where
         (parameters.noise,)
     }
 
-    fn verify(criteria: &Self::Criteria, outputs: &[Self::Outcome]) -> bool {
+    fn verify(
+        _parameters: &Self::Parameters,
+        criteria: &Self::Criteria,
+        outputs: &[Self::Outcome],
+    ) -> bool {
         let (means, actual): (Vec<_>, Vec<_>) = outputs.iter().cloned().unzip();
         assert_noise_distribution(&actual, means.as_slice(), criteria.0)
     }

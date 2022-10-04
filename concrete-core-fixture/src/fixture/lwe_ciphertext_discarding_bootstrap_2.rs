@@ -263,7 +263,11 @@ where
         (delta_max,)
     }
 
-    fn verify(criteria: &Self::Criteria, outputs: &[Self::Outcome]) -> bool {
+    fn verify(
+        _parameters: &Self::Parameters,
+        criteria: &Self::Criteria,
+        outputs: &[Self::Outcome],
+    ) -> bool {
         let (delta_max,) = criteria;
         for (expected, obtained) in outputs.iter() {
             if (<Precision::Raw as CastInto<i64>>::cast_into(*expected)

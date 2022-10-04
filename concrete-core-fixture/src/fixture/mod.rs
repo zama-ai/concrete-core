@@ -136,7 +136,11 @@ pub trait Fixture<
     ) -> Self::Criteria;
 
     /// A method which verify that the outcomes verify some criteria.
-    fn verify(criteria: &Self::Criteria, outputs: &[Self::Outcome]) -> bool;
+    fn verify(
+        parameters: &Self::Parameters,
+        criteria: &Self::Criteria,
+        outputs: &[Self::Outcome],
+    ) -> bool;
 
     /// A method which verifies the statistical properties of a sample of engine executions, over
     /// multiple randomly generated raw inputs, over multiple sets of parameters.
@@ -189,7 +193,7 @@ pub trait Fixture<
     ) -> bool {
         let outputs = Self::sample(maker, engine, parameters, repetition_proto, sample_size);
         let criteria = Self::compute_criteria(parameters, maker, repetition_proto);
-        Self::verify(&criteria, outputs.as_slice())
+        Self::verify(parameters, &criteria, outputs.as_slice())
     }
 
     /// A method which generates a sample of engine execution, for a fixed set of raw inputs and a
