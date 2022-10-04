@@ -154,7 +154,11 @@ where
     ) -> Self::Criteria {
     }
 
-    fn verify(_criteria: &Self::Criteria, outputs: &[Self::Outcome]) -> bool {
+    fn verify(
+        _parameters: &Self::Parameters,
+        _criteria: &Self::Criteria,
+        outputs: &[Self::Outcome],
+    ) -> bool {
         let (means, actual): (Vec<_>, Vec<_>) = outputs.iter().cloned().unzip();
         means == actual
     }

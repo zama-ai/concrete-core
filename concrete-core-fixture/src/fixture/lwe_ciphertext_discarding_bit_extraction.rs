@@ -165,7 +165,7 @@ where
         InputCiphertext,
     );
     type Criteria = (Vec<Variance>,);
-    type Outcome = (ExtractedBitsCount, Vec<Precision::Raw>, Vec<Precision::Raw>);
+    type Outcome = (Vec<Precision::Raw>, Vec<Precision::Raw>);
 
     fn generate_parameters_iterator() -> Box<dyn Iterator<Item = Self::Parameters>> {
         Box::new(get_parameters_for_raw_precision::<Precision>().into_iter())
@@ -339,7 +339,6 @@ where
         raw_plaintext_bits.reverse();
 
         (
-            extracted_bits_count,
             raw_plaintext_bits,
             maker.transform_plaintext_vector_to_raw_vec(&proto_output_plaintext_vector),
         )
@@ -377,19 +376,12 @@ where
         (predicted_variance,)
     }
 
-    fn verify(criteria: &Self::Criteria, outputs: &[Self::Outcome]) -> bool {
-        assert!(!outputs.is_empty());
-        let number_of_extracted_bits = outputs[0].0;
-
-        assert!(outputs
-            .iter()
-            .all(|(extracted_bits, _, _)| *extracted_bits == number_of_extracted_bits));
-
-        let (means, actual): (Vec<_>, Vec<_>) = outputs
-            .iter()
-            .cloned()
-            .map(|(_, mean, actual)| (mean, actual))
-            .unzip();
+    fn verify(
+        parameters: &Self::Parameters,
+        criteria: &Self::Criteria,
+        outputs: &[Self::Outcome],
+    ) -> bool {
+        let (means, actual): (Vec<_>, Vec<_>) = outputs.iter().cloned().unzip();
 
         let means: Vec<Precision::Raw> = means.into_iter().flatten().collect();
         let actual: Vec<Precision::Raw> = actual.into_iter().flatten().collect();
@@ -409,7 +401,9 @@ where
 
         let extracted_bits_are_the_same = original_raw_bits == recovered_extracted_bits;
 
-        let mut result_per_bit = vec![false; number_of_extracted_bits.0];
+        let number_of_extracted_bits = parameters.extracted_bits_count.0;
+
+        let mut result_per_bit = vec![false; number_of_extracted_bits];
 
         for ((bit_idx, &var_for_bit), result_for_bit) in
             criteria.0.iter().enumerate().zip(result_per_bit.iter_mut())
@@ -418,13 +412,13 @@ where
                 .clone()
                 .into_iter()
                 .skip(bit_idx)
-                .step_by(number_of_extracted_bits.0)
+                .step_by(number_of_extracted_bits)
                 .collect();
             let actual_per_bit: Vec<Precision::Raw> = actual
                 .clone()
                 .into_iter()
                 .skip(bit_idx)
-                .step_by(number_of_extracted_bits.0)
+                .step_by(number_of_extracted_bits)
                 .collect();
 
             assert!(means_per_bit.len() == actual_per_bit.len());

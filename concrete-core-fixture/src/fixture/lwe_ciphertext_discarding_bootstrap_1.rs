@@ -284,7 +284,11 @@ where
         (predicted_variance,)
     }
 
-    fn verify(criteria: &Self::Criteria, outputs: &[Self::Outcome]) -> bool {
+    fn verify(
+        _parameters: &Self::Parameters,
+        criteria: &Self::Criteria,
+        outputs: &[Self::Outcome],
+    ) -> bool {
         let (means, actual): (Vec<_>, Vec<_>) = outputs.iter().cloned().unzip();
         assert_delta_std_dev(&actual, means.as_slice(), criteria.0)
     }

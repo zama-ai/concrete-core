@@ -159,7 +159,11 @@ where
     ) -> Self::Criteria {
     }
 
-    fn verify(_criteria: &Self::Criteria, _outputs: &[Self::Outcome]) -> bool {
+    fn verify(
+        _parameters: &Self::Parameters,
+        _criteria: &Self::Criteria,
+        _outputs: &[Self::Outcome],
+    ) -> bool {
         // The test to verify the generated key is not yet implemented.
         false
     }
