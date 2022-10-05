@@ -86,9 +86,9 @@ const fn get_parameters_for_raw_precision<Precision: IntegerPrecision>(
     if Precision::Raw::BITS == 32 {
         [
             LweCiphertextVectorDiscardingCircuitBootstrapBooleanVerticalPackingParameters {
-                // Offline evaluation 2.0f64.powf(-90.) is
-                // 0.0000000000000000000000000008077935669463161f64
-                noise: Variance(0.0000000000000000000000000008077935669463161f64),
+                // Offline evaluation 2.0f64.powf(-120.) is
+                // 0.000000000000000000000000000000000000752316384526264
+                noise: Variance(0.000000000000000000000000000000000000752316384526264f64),
                 lwe_dimension: LweDimension(10),
                 glwe_dimension: GlweDimension(1),
                 polynomial_size: PolynomialSize(512),
@@ -106,9 +106,9 @@ const fn get_parameters_for_raw_precision<Precision: IntegerPrecision>(
     } else if Precision::Raw::BITS == 64 {
         [
             LweCiphertextVectorDiscardingCircuitBootstrapBooleanVerticalPackingParameters {
-                // Offline evaluation 2.0f64.powf(-80.) is
-                // 0.0000000000000000000000008271806125530277f64
-                noise: Variance(0.0000000000000000000000008271806125530277f64),
+                // Offline evaluation 2.0f64.powf(-120.) is
+                // 0.000000000000000000000000000000000000752316384526264
+                noise: Variance(0.000000000000000000000000000000000000752316384526264f64),
                 lwe_dimension: LweDimension(10),
                 glwe_dimension: GlweDimension(1),
                 polynomial_size: PolynomialSize(512),
