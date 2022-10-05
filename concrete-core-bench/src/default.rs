@@ -213,5 +213,8 @@ bench_parallel! {
     ((BinaryKeyDistribution, BinaryKeyDistribution), LweBootstrapKeyGenerationFixture, (LweSecretKey, GlweSecretKey, LweBootstrapKey)),
     ((BinaryKeyDistribution, BinaryKeyDistribution), LweSeededBootstrapKeyGenerationFixture, (LweSecretKey, GlweSecretKey, LweSeededBootstrapKey)),
     ((BinaryKeyDistribution), LweCiphertextVectorZeroEncryptionFixture, (LweSecretKey, LweCiphertextVector)),
-    ((BinaryKeyDistribution), LwePublicKeyGenerationFixture, (LweSecretKey, LwePublicKey))
+    ((BinaryKeyDistribution), LwePublicKeyGenerationFixture, (LweSecretKey, LwePublicKey)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution),
+    LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysGenerationFixture,
+    (LweSecretKey, GlweSecretKey, LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys))
 }

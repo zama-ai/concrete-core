@@ -9,6 +9,9 @@ use super::*;
 use crate::commons::numeric::UnsignedInteger;
 use crate::prelude::{MonomialDegree, PolynomialCount, PolynomialSize};
 
+#[cfg(feature = "__commons_parallel")]
+use rayon::{iter::IndexedParallelIterator, prelude::*};
+
 /// A generic polynomial list type.
 ///
 /// This type represents a set of polynomial of homogeneous degree.
@@ -224,6 +227,19 @@ impl<Cont> PolynomialList<Cont> {
     {
         self.as_tensor()
             .subtensor_iter(self.poly_size.0)
+            .map(|sub| Polynomial::from_container(sub.into_container()))
+    }
+
+    #[cfg(feature = "__commons_parallel")]
+    pub fn par_polynomial_iter(
+        &self,
+    ) -> impl IndexedParallelIterator<Item = Polynomial<&[<Self as AsRefTensor>::Element]>>
+    where
+        Self: AsRefTensor,
+        <Self as AsRefTensor>::Element: Sync + Send,
+    {
+        self.as_tensor()
+            .par_subtensor_iter(self.poly_size.0)
             .map(|sub| Polynomial::from_container(sub.into_container()))
     }
 
