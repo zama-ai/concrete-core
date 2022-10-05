@@ -354,16 +354,14 @@ void bootstrap_unchecked_view_buffers_test(void) {
   assert(bsk_deser_ok == 0);
 
   FftFourierLweBootstrapKey64 *fbsk = NULL;
-  int fbsk_ok =
-      fft_engine_convert_lwe_bootstrap_key_to_fft_fourier_lwe_bootstrap_key_unchecked_u64(
-          fft_engine, deser_bsk, &fbsk);
+  int fbsk_ok = fft_engine_convert_lwe_bootstrap_key_to_fft_fourier_lwe_bootstrap_key_unchecked_u64(
+      fft_engine, deser_bsk, &fbsk);
   assert(fbsk_ok == 0);
 
   // Test BSK Serialization/Deserialization
   Buffer fbsk_buffer = {.pointer = NULL, .length = 0};
-  int fbsk_ser_ok =
-      fft_serialization_engine_serialize_fft_fourier_lwe_bootstrap_key_unchecked_u64(
-          fft_serialization_engine, fbsk, &fbsk_buffer);
+  int fbsk_ser_ok = fft_serialization_engine_serialize_fft_fourier_lwe_bootstrap_key_unchecked_u64(
+      fft_serialization_engine, fbsk, &fbsk_buffer);
   assert(fbsk_ser_ok == 0);
 
   BufferView fbsk_buffer_view = {.pointer = fbsk_buffer.pointer, .length = fbsk_buffer.length};
@@ -770,9 +768,8 @@ void bootstrap_unchecked_raw_ptr_buffers_test(void) {
   assert(bsk_deser_ok == 0);
 
   FftFourierLweBootstrapKey64 *fbsk = NULL;
-  int fbsk_ok =
-      fft_engine_convert_lwe_bootstrap_key_to_fft_fourier_lwe_bootstrap_key_unchecked_u64(
-          fft_engine, deser_bsk, &fbsk);
+  int fbsk_ok = fft_engine_convert_lwe_bootstrap_key_to_fft_fourier_lwe_bootstrap_key_unchecked_u64(
+      fft_engine, deser_bsk, &fbsk);
   assert(fbsk_ok == 0);
 
   // Test BSK Serialization/Deserialization
