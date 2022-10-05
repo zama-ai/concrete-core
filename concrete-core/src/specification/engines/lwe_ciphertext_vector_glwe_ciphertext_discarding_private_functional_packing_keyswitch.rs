@@ -64,6 +64,22 @@ impl<EngineError: std::error::Error>
 /// `pfpksk` private functional packing keyswitch key.
 ///
 /// # Formal Definition
+///
+/// The private functional packing keyswitch takes as input an [`LWE ciphertext vector`]
+/// (crate::specification::entities::LweCiphertextVectorEntity)
+/// $$\mathsf{CT} = (\mathsf{ct\_1}, \mathsf{ct\_2}, \cdots, \mathsf{ct\_t}$$ where
+/// $$\mathsf{ct\_i} = \left( \vec{a}\_i , b\right) \in \mathsf{LWE}^n\_{\vec{s}}( \mathsf{pt}\_i)$$
+/// (encrypted under some key `s`) along with an [`LWE private functional Packing keyswitch Key`]
+/// (crate::specification::entities::LwePrivateFunctionalPackingKeyswitchKeyEntity)
+/// (which privately encodes some function `f`) under the key `K`. The output is a
+/// [`GLWE ciphertext`](`crate::specification::entities::GlweCiphertextVectorEntity`)
+/// which encrypts the function `f` evaluated on the input
+/// [`LWE ciphertext vector`](crate::specification::entities::LweCiphertextVectorEntity).
+/// under the key `K`. In particular, `f` encodes multiplication by some polynomial `p` and so the
+/// output GLWE ciphertext encrypts: $(m_1 + m_2 X + ... + m_t X^(t-1)) * p(X)$
+///
+/// A full description of the algorithm can be found in <https://eprint.iacr.org/2017/430.pdf>
+/// (pg.10)
 pub trait LweCiphertextVectorGlweCiphertextDiscardingPrivateFunctionalPackingKeyswitchEngine<
     LwePrivateFunctionalPackingKeyswitchKey,
     InputCiphertextVector,

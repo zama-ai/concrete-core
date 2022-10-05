@@ -79,6 +79,14 @@ impl<EngineError: std::error::Error> LweCiphertextDiscardingBitExtractError<Engi
 /// in the plaintext representation).
 ///
 /// # Formal Definition
+///
+/// This function takes as input an [`LWE ciphertext`]
+/// (crate::specification::entities::LweCiphertextEntity)
+/// $$\mathsf{ct\} = \mathsf{LWE}^n\_{\vec{s}}( \mathsf{m}) \subseteq \mathbb{Z}\_q^{(n+1)}$$
+/// which encrypts some message `m`. We extract bits $m\_i$ of this message into individual LWE
+/// ciphertexts. Each of these ciphertexts contains an encryption of $m\_i \cdot q/2$, i.e.
+/// $$\mathsf{ct\_i} = \mathsf{LWE}^n\_{\vec{s}}( \mathsf{m\_i} \cdot q/2 )$$. The number of
+/// output LWE ciphertexts is determined by the `number_of_bits_to_extract` input parameter.
 pub trait LweCiphertextDiscardingBitExtractEngine<
     BootstrapKey,
     KeyswitchKey,
