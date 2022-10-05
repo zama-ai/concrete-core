@@ -166,8 +166,8 @@ pub unsafe extern "C" fn destroy_fft_engine(engine: *mut FftEngine) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(engine).unwrap();
 
-        // Reconstruct the box, so that the memory is dropped at the end of the scope
-        Box::from_raw(engine);
+        // Reconstruct the box and drop it
+        drop(Box::from_raw(engine));
     })
 }
 ```
@@ -178,8 +178,8 @@ The unchecked version of the function is the same without the verification of th
 #[no_mangle]
 pub unsafe extern "C" fn destroy_fft_engine_unchecked(engine: *mut FftEngine) -> c_int {
     catch_panic(|| {
-        // Reconstruct the box, so that the memory is dropped at the end of the scope
-        Box::from_raw(engine);
+        // Reconstruct the box and drop it
+        drop(Box::from_raw(engine);
     })
 }
 ```

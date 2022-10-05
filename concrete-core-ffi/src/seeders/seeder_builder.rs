@@ -33,8 +33,8 @@ pub unsafe extern "C" fn destroy_seeder_builder(seeder_builder: *mut SeederBuild
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(seeder_builder).unwrap();
 
-        // Reconstruct the box, so that the memory is dropped at the end of the scope
-        Box::from_raw(seeder_builder);
+        // Reconstruct the box and drop it
+        drop(Box::from_raw(seeder_builder));
     })
 }
 
@@ -45,7 +45,7 @@ pub unsafe extern "C" fn destroy_seeder_builder_unchecked(
     seeder_builder: *mut SeederBuilder,
 ) -> c_int {
     catch_panic(|| {
-        // Reconstruct the box, so that the memory is dropped at the end of the scope
-        Box::from_raw(seeder_builder);
+        // Reconstruct the box and drop it
+        drop(Box::from_raw(seeder_builder));
     })
 }

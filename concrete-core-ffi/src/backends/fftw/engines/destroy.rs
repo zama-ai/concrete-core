@@ -14,8 +14,8 @@ pub unsafe extern "C" fn destroy_fftw_fourier_lwe_bootstrap_key_u64(
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(bootstrap_key).unwrap();
 
-        // Reconstruct the box, so that the memory is dropped at the end of the scope
-        Box::from_raw(bootstrap_key);
+        // Reconstruct the box and drop it
+        drop(Box::from_raw(bootstrap_key));
     })
 }
 
@@ -26,7 +26,7 @@ pub unsafe extern "C" fn destroy_fftw_fourier_lwe_bootstrap_key_unchecked_u64(
     bootstrap_key: *mut FftwFourierLweBootstrapKey64,
 ) -> c_int {
     catch_panic(|| {
-        // Reconstruct the box, so that the memory is dropped at the end of the scope
-        Box::from_raw(bootstrap_key);
+        // Reconstruct the box and drop it
+        drop(Box::from_raw(bootstrap_key));
     })
 }
