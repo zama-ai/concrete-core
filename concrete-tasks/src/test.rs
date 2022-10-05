@@ -64,14 +64,6 @@ pub fn cuda_test() -> Result<(), Error> {
     ))
 }
 
-pub fn cuda_doc_test() -> Result<(), Error> {
-    cmd!(<ENV_TARGET_NATIVE>
-        &format!("cargo test --profile release-debug-asserts --doc -p concrete-core \
-        --features=backend_cuda --features {} -- backends::cuda",
-        get_target_arch_feature_for_core()?
-    ))
-}
-
 pub fn cuda_core_test() -> Result<(), Error> {
     cmd!(<ENV_TARGET_NATIVE>
         &format!("cargo test --profile release-debug-asserts -p concrete-core \
@@ -90,7 +82,6 @@ pub fn crates() -> Result<(), Error> {
 
 pub fn cuda() -> Result<(), Error> {
     cuda_test()?;
-    cuda_doc_test()?;
     cuda_core_test()
 }
 
