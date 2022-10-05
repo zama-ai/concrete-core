@@ -71,7 +71,7 @@ impl
         noise: Variance,
     ) -> Self::LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysProto {
         ProtoBinaryBinaryLweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32(
-            self.default_engine
+            self.default_parallel_engine
                 .generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys(
                     &input_lwe_key.0,
                     &output_glwe_key.0,
@@ -109,7 +109,7 @@ impl
         noise: Variance,
     ) -> Self::LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysProto {
         ProtoBinaryBinaryLweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64(
-            self.default_engine
+            self.default_parallel_engine
                 .generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys(
                     &input_lwe_key.0,
                     &output_glwe_key.0,

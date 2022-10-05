@@ -49,6 +49,7 @@ optimized_benches_for_aarch64 = [
 
 x86_64 = [
     "backend_default",
+    "backend_default_parallel",
     "backend_fftw",
     "backend_fft",
     "backend_default_generator_x86_64_aesni",
@@ -57,6 +58,7 @@ x86_64 = [
 x86_64-cuda = ["x86_64", "backend_cuda", "optimized_benches_for_x86_64-cuda"]
 aarch64 = [
     "backend_default",
+    "backend_default_parallel",
     "backend_fftw",
     "backend_fft",
     "backend_default_generator_aarch64_aes",

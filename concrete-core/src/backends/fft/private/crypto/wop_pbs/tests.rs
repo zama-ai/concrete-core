@@ -256,7 +256,7 @@ fn test_circuit_bootstrapping_binary() {
         FunctionalPackingKeyswitchKeyCount(glwe_dimension.to_glwe_size().0),
     );
 
-    vec_pfksk.fill_with_fpksk_for_circuit_bootstrap(
+    vec_pfksk.par_fill_with_fpksk_for_circuit_bootstrap(
         &lwe_sk_bs_output,
         &glwe_sk,
         std,
@@ -618,7 +618,7 @@ pub fn test_extract_bit_circuit_bootstrapping_vertical_packing() {
         FunctionalPackingKeyswitchKeyCount(glwe_dimension.to_glwe_size().0),
     );
 
-    vec_fpksk.fill_with_fpksk_for_circuit_bootstrap(
+    vec_fpksk.par_fill_with_fpksk_for_circuit_bootstrap(
         &lwe_big_sk,
         &glwe_sk,
         std_small,

@@ -6,8 +6,10 @@ use crate::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
 use crate::commons::math::decomposition::{
     DecompositionLevel, DecompositionTerm, SignedDecomposer,
 };
-use crate::commons::math::polynomial::Polynomial;
+use crate::commons::math::polynomial::{Polynomial, PolynomialList};
 use crate::commons::math::random::ByteRandomGenerator;
+#[cfg(feature = "__commons_parallel")]
+use crate::commons::math::random::ParallelByteRandomGenerator;
 use crate::commons::math::tensor::{
     ck_dim_div, ck_dim_eq, tensor_traits, AsMutTensor, AsRefSlice, AsRefTensor, Container, Tensor,
 };
@@ -15,8 +17,10 @@ use crate::commons::math::torus::UnsignedTorus;
 use crate::prelude::{
     BinaryKeyKind, CiphertextCount, DecompositionBaseLog, DecompositionLevelCount,
     DispersionParameter, FunctionalPackingKeyswitchKeyCount, GlweDimension, GlweSize, LweDimension,
-    LweSize, MonomialDegree, PlaintextCount, PolynomialSize,
+    LweSize, MonomialDegree, PlaintextCount, PolynomialCount, PolynomialSize,
 };
+#[cfg(feature = "__commons_parallel")]
+use rayon::{iter::IndexedParallelIterator, prelude::*};
 #[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
 
@@ -973,13 +977,14 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
         PolyCont,
         Scalar,
         Gen,
+        ScalarFunc,
     >(
         &mut self,
         input_lwe_key: &LweSecretKey<BinaryKeyKind, InKeyCont>,
         output_glwe_key: &GlweSecretKey<BinaryKeyKind, OutKeyCont>,
         noise_parameters: impl DispersionParameter,
         generator: &mut EncryptionRandomGenerator<Gen>,
-        f: &dyn Fn(Scalar) -> Scalar,
+        f: &ScalarFunc,
         polynomial: &Polynomial<PolyCont>,
     ) where
         Self: AsMutTensor<Element = Scalar>,
@@ -988,6 +993,7 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
         Polynomial<PolyCont>: AsRefTensor<Element = Scalar>,
         Scalar: UnsignedTorus,
         Gen: ByteRandomGenerator,
+        ScalarFunc: Fn(Scalar) -> Scalar + ?Sized,
     {
         // We instantiate a buffer
         let mut messages = PlaintextList::from_container(vec![
@@ -1000,15 +1006,28 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
         let decomp_base_log = self.decomp_base_log;
         let polynomial_size = self.output_polynomial_size;
 
-        let mut input_key_bit = input_lwe_key.as_tensor().as_slice().to_vec();
-
+        let last_key_iter_bit = [Scalar::MAX];
         // add minus one for the function which will be applied to the decomposed body
         // ( Scalar::MAX = -Scalar::ONE )
-        input_key_bit.push(Scalar::MAX);
+        let input_key_bit_iter = input_lwe_key
+            .as_tensor()
+            .as_slice()
+            .iter()
+            .chain(last_key_iter_bit.iter());
+
+        let gen_iter = generator
+            .fork_pfpksk_to_pfpksk_chunks::<Scalar>(
+                decomp_level_count,
+                output_glwe_key.key_size().to_glwe_size(),
+                output_glwe_key.polynomial_size(),
+                input_lwe_key.key_size().to_lwe_size(),
+            )
+            .unwrap();
 
         // loop over the before key blocks
-        for (&input_key_bit, keyswitch_key_block) in
-            input_key_bit.iter().zip(self.bit_decomp_iter_mut())
+        for ((&input_key_bit, keyswitch_key_block), mut loop_generator) in input_key_bit_iter
+            .zip(self.bit_decomp_iter_mut())
+            .zip(gen_iter)
         {
             // We reset the buffer
             messages
@@ -1036,9 +1055,159 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
                 &mut keyswitch_key_block.into_glwe_list(),
                 &messages,
                 noise_parameters,
-                generator,
+                &mut loop_generator,
             );
         }
+    }
+
+    /// Fills the current private functional keyswitch key container with an actual private
+    /// functional keyswitching key constructed from an input and an output key using multiple
+    /// threads .
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use concrete_core::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKey;
+    /// use concrete_core::commons::crypto::secret::generators::{
+    ///     EncryptionRandomGenerator, SecretRandomGenerator,
+    /// };
+    /// use concrete_core::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
+    /// use concrete_core::commons::crypto::*;
+    /// use concrete_core::commons::math::polynomial::Polynomial;
+    /// use concrete_core::commons::math::tensor::AsRefTensor;
+    /// use concrete_core::prelude::{
+    ///     DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LogStandardDev, LweDimension,
+    ///     LweSize, PolynomialSize,
+    /// };
+    /// use concrete_csprng::generators::SoftwareRandomGenerator;
+    /// use concrete_csprng::seeders::{Seed, UnixSeeder};
+    ///
+    /// let input_size = LweDimension(10);
+    /// let output_size = GlweDimension(3);
+    /// let polynomial_size = PolynomialSize(256);
+    /// let decomp_base_log = DecompositionBaseLog(3);
+    /// let decomp_level_count = DecompositionLevelCount(5);
+    /// let cipher_size = LweSize(55);
+    /// let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
+    /// let mut encryption_generator =
+    ///     EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0), &mut UnixSeeder::new(0));
+    /// let noise = LogStandardDev::from_log_standard_dev(-15.);
+    ///
+    /// let input_key = LweSecretKey::generate_binary(input_size, &mut secret_generator);
+    /// let output_key =
+    ///     GlweSecretKey::generate_binary(output_size, polynomial_size, &mut secret_generator);
+    ///
+    /// let mut pfpksk = LwePrivateFunctionalPackingKeyswitchKey::allocate(
+    ///     0 as u32,
+    ///     decomp_level_count,
+    ///     decomp_base_log,
+    ///     input_size,
+    ///     output_size,
+    ///     polynomial_size,
+    /// );
+    /// pfpksk.par_fill_with_private_functional_packing_keyswitch_key(
+    ///     &input_key,
+    ///     &output_key,
+    ///     noise,
+    ///     &mut encryption_generator,
+    ///     &|x| x,
+    ///     &Polynomial::allocate(1 as u32, output_key.polynomial_size()),
+    /// );
+    ///
+    /// assert!(!pfpksk.as_tensor().iter().all(|a| *a == 0));
+    /// ```
+    #[cfg(feature = "__commons_parallel")]
+    pub fn par_fill_with_private_functional_packing_keyswitch_key<
+        InKeyCont,
+        OutKeyCont,
+        PolyCont,
+        Scalar,
+        Gen,
+        Noise,
+        ScalarFunc,
+    >(
+        &mut self,
+        input_lwe_key: &LweSecretKey<BinaryKeyKind, InKeyCont>,
+        output_glwe_key: &GlweSecretKey<BinaryKeyKind, OutKeyCont>,
+        noise_parameters: Noise,
+        generator: &mut EncryptionRandomGenerator<Gen>,
+        f: &ScalarFunc,
+        polynomial: &Polynomial<PolyCont>,
+    ) where
+        Self: AsMutTensor<Element = Scalar>,
+        <Self as AsMutTensor>::Element: Sync + Send,
+        LweSecretKey<BinaryKeyKind, InKeyCont>: AsRefTensor<Element = Scalar>,
+        GlweSecretKey<BinaryKeyKind, OutKeyCont>: AsRefTensor<Element = Scalar>,
+        OutKeyCont: AsRefSlice<Element = Scalar> + Sync + Send,
+        Polynomial<PolyCont>: AsRefTensor<Element = Scalar>,
+        PolyCont: AsRefSlice<Element = Scalar> + Sync + Send,
+        Scalar: UnsignedTorus + Sync + Send,
+        Gen: ParallelByteRandomGenerator,
+        Noise: DispersionParameter + Sync + Send,
+        ScalarFunc: Fn(Scalar) -> Scalar + Sync + Send + ?Sized,
+        Cont: Sync + Send,
+    {
+        // We retrieve decomposition arguments
+        let decomp_level_count = self.decomp_level_count;
+        let decomp_base_log = self.decomp_base_log;
+        let polynomial_size = self.output_polynomial_size;
+
+        let last_key_iter_bit = [Scalar::MAX];
+        // add minus one for the function which will be applied to the decomposed body
+        // ( Scalar::MAX = -Scalar::ONE )
+        let input_key_bit_iter = input_lwe_key
+            .as_tensor()
+            .as_slice()
+            .par_iter()
+            .chain(last_key_iter_bit.par_iter());
+
+        let gen_iter = generator
+            .par_fork_pfpksk_to_pfpksk_chunks::<Scalar>(
+                decomp_level_count,
+                output_glwe_key.key_size().to_glwe_size(),
+                output_glwe_key.polynomial_size(),
+                input_lwe_key.key_size().to_lwe_size(),
+            )
+            .unwrap();
+
+        // loop over the before key blocks
+        input_key_bit_iter
+            .zip(self.par_bit_decomp_iter_mut())
+            .zip(gen_iter)
+            .for_each(
+                move |((&input_key_bit, keyswitch_key_block), mut loop_generator)| {
+                    // We instantiate a buffer
+                    let mut messages = PlaintextList::from_container(vec![
+                        <Self as AsMutTensor>::Element::ZERO;
+                        decomp_level_count.0
+                            * polynomial_size.0
+                    ]);
+
+                    // We fill the buffer with the powers of the key bits
+                    for (level, mut message) in (1..=decomp_level_count.0)
+                        .map(DecompositionLevel)
+                        .zip(messages.sublist_iter_mut(PlaintextCount(polynomial_size.0)))
+                    {
+                        message.as_mut_tensor().update_with_add_element_mul(
+                            polynomial.as_tensor(),
+                            DecompositionTerm::new(
+                                level,
+                                decomp_base_log,
+                                f(Scalar::ONE).wrapping_mul(input_key_bit),
+                            )
+                            .to_recomposition_summand(),
+                        );
+                    }
+
+                    // We encrypt the buffer
+                    output_glwe_key.encrypt_glwe_list(
+                        &mut keyswitch_key_block.into_glwe_list(),
+                        &messages,
+                        noise_parameters,
+                        &mut loop_generator,
+                    );
+                },
+            )
     }
 
     /// Iterates over borrowed `LweKeyBitDecomposition` elements.
@@ -1123,6 +1292,26 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKey<Cont> {
         let poly_size = self.output_polynomial_size;
         self.as_mut_tensor()
             .subtensor_iter_mut(chunks_size)
+            .map(move |sub| {
+                LweKeyBitDecomposition::from_container(sub.into_container(), glwe_size, poly_size)
+            })
+    }
+
+    #[cfg(feature = "__commons_parallel")]
+    pub(crate) fn par_bit_decomp_iter_mut(
+        &mut self,
+    ) -> impl IndexedParallelIterator<Item = LweKeyBitDecomposition<&mut [<Self as AsMutTensor>::Element]>>
+    where
+        Self: AsMutTensor,
+        <Self as AsMutTensor>::Element: Sync + Send,
+    {
+        ck_dim_div!(self.as_tensor().len() => self.output_glwe_size.0 * self.output_polynomial_size.0, self.decomp_level_count.0);
+        let chunks_size =
+            self.decomp_level_count.0 * self.output_glwe_size.0 * self.output_polynomial_size.0;
+        let glwe_size = self.output_glwe_size;
+        let poly_size = self.output_polynomial_size;
+        self.as_mut_tensor()
+            .par_subtensor_iter_mut(chunks_size)
             .map(move |sub| {
                 LweKeyBitDecomposition::from_container(sub.into_container(), glwe_size, poly_size)
             })
@@ -1792,6 +1981,41 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKeyList<Cont> {
             })
     }
 
+    /// Returns an iterator over keys borrowed from the list.
+    #[cfg(feature = "__commons_parallel")]
+    pub fn par_fpksk_iter_mut(
+        &mut self,
+    ) -> impl IndexedParallelIterator<
+        Item = LwePrivateFunctionalPackingKeyswitchKey<&mut [<Self as AsMutTensor>::Element]>,
+    >
+    where
+        Self: AsMutTensor,
+        <Self as AsMutTensor>::Element: Sync + Send,
+    {
+        let single_ksk_size = self.output_glwe_size.0
+            * self.output_polynomial_size.0
+            * self.decomp_level_count.0
+            * self.input_lwe_size.0;
+        ck_dim_div!(self.as_mut_tensor().len() => single_ksk_size);
+
+        let decomposition_base_log = self.decomposition_base_log();
+        let decomposition_level_count = self.decomposition_level_count();
+        let output_glwe_key_dimension = self.output_glwe_key_dimension();
+        let output_polynomial_size = self.output_polynomial_size();
+
+        self.as_mut_tensor()
+            .par_subtensor_iter_mut(single_ksk_size)
+            .map(move |sub| {
+                LwePrivateFunctionalPackingKeyswitchKey::from_container(
+                    sub.into_container(),
+                    decomposition_base_log,
+                    decomposition_level_count,
+                    output_glwe_key_dimension,
+                    output_polynomial_size,
+                )
+            })
+    }
+
     pub fn fill_with_fpksk_for_circuit_bootstrap<Scalar, C1, C2, Gen>(
         &mut self,
         input_lwe_key: &LweSecretKey<BinaryKeyKind, C1>,
@@ -1813,35 +2037,210 @@ impl<Cont> LwePrivateFunctionalPackingKeyswitchKeyList<Cont> {
             output_glwe_key.key_size().to_glwe_size().0
         );
 
-        for (mut fpksk, output_glwe_key_polynomial) in self
+        let decomp_level_count = self.decomp_level_count;
+
+        let gen_iter = generator
+            .fork_cbs_pfpksk_to_pfpksk::<Scalar>(
+                decomp_level_count,
+                output_glwe_key.key_size().to_glwe_size(),
+                output_glwe_key.polynomial_size(),
+                input_lwe_key.key_size().to_lwe_size(),
+                self.fpksk_count(),
+            )
+            .unwrap();
+
+        let mut last_polynomial_as_list = PolynomialList::allocate(
+            Scalar::ZERO,
+            PolynomialCount(1),
+            output_glwe_key.polynomial_size(),
+        );
+        // We apply the x -> -x function so instead of putting one in the first coeff of the
+        // polynomial, we put Scalar::MAX == - Sclar::One so that we can use a single function in
+        // the loop avoiding branching
+        *last_polynomial_as_list
+            .get_mut_polynomial(0)
+            .get_mut_monomial(MonomialDegree(0))
+            .get_mut_coefficient() = Scalar::MAX;
+
+        for ((mut fpksk, polynomial_to_encrypt), mut loop_generator) in self
             .fpksk_iter_mut()
-            .take(output_glwe_key.key_size().0)
-            .zip(output_glwe_key.as_polynomial_list().polynomial_iter())
+            .zip(
+                output_glwe_key
+                    .as_polynomial_list()
+                    .polynomial_iter()
+                    .chain(last_polynomial_as_list.polynomial_iter()),
+            )
+            .zip(gen_iter)
         {
             fpksk.fill_with_private_functional_packing_keyswitch_key(
                 input_lwe_key,
                 output_glwe_key,
                 noise_parameters,
-                generator,
+                &mut loop_generator,
                 &|x| Scalar::ZERO.wrapping_sub(x),
-                &output_glwe_key_polynomial,
+                &polynomial_to_encrypt,
             );
         }
+    }
 
-        let mut polynomial = Polynomial::allocate(Scalar::ZERO, output_glwe_key.polynomial_size());
-        *polynomial
-            .get_mut_monomial(MonomialDegree(0))
-            .get_mut_coefficient() = Scalar::ONE;
-
-        let mut last_fpksk = self.fpksk_iter_mut().rev().next().unwrap();
-
-        last_fpksk.fill_with_private_functional_packing_keyswitch_key(
-            input_lwe_key,
-            output_glwe_key,
-            noise_parameters,
-            generator,
-            &|x| x,
-            &polynomial,
+    #[cfg(feature = "__commons_parallel")]
+    pub fn par_fill_with_fpksk_for_circuit_bootstrap<Scalar, C1, C2, Gen, Noise>(
+        &mut self,
+        input_lwe_key: &LweSecretKey<BinaryKeyKind, C1>,
+        output_glwe_key: &GlweSecretKey<BinaryKeyKind, C2>,
+        noise_parameters: Noise,
+        generator: &mut EncryptionRandomGenerator<Gen>,
+    ) where
+        Scalar: UnsignedTorus + Sync + Send,
+        Self: AsMutTensor<Element = Scalar>,
+        <Self as AsMutTensor>::Element: Sync + Send,
+        LweSecretKey<BinaryKeyKind, C1>: AsRefTensor<Element = Scalar>,
+        GlweSecretKey<BinaryKeyKind, C2>: AsRefTensor<Element = Scalar>,
+        C1: AsRefSlice<Element = Scalar> + Sync + Send,
+        C2: AsRefSlice<Element = Scalar> + Sync + Send,
+        Gen: ParallelByteRandomGenerator,
+        Noise: DispersionParameter + Sync + Send,
+    {
+        debug_assert!(
+            self.fpksk_count().0 == output_glwe_key.key_size().to_glwe_size().0,
+            "Current list has {} fpksk, need to have {} \
+            (encrypted_glwe_key.key_size().to_glwe_size())",
+            self.fpksk_count().0,
+            output_glwe_key.key_size().to_glwe_size().0
         );
+
+        let decomp_level_count = self.decomp_level_count;
+
+        let gen_iter = generator
+            .par_fork_cbs_pfpksk_to_pfpksk::<Scalar>(
+                decomp_level_count,
+                output_glwe_key.key_size().to_glwe_size(),
+                output_glwe_key.polynomial_size(),
+                input_lwe_key.key_size().to_lwe_size(),
+                self.fpksk_count(),
+            )
+            .unwrap();
+
+        let mut last_polynomial_as_list = PolynomialList::allocate(
+            Scalar::ZERO,
+            PolynomialCount(1),
+            output_glwe_key.polynomial_size(),
+        );
+        // We apply the x -> -x function so instead of putting one in the first coeff of the
+        // polynomial, we put Scalar::MAX == - Sclar::One so that we can use a single function
+        // in the loop avoiding branching
+        *last_polynomial_as_list
+            .get_mut_polynomial(0)
+            .get_mut_monomial(MonomialDegree(0))
+            .get_mut_coefficient() = Scalar::MAX;
+
+        self.par_fpksk_iter_mut()
+            .zip(
+                output_glwe_key
+                    .as_polynomial_list()
+                    .par_polynomial_iter()
+                    .chain(last_polynomial_as_list.par_polynomial_iter()),
+            )
+            .zip(gen_iter)
+            .for_each(|((mut fpksk, polynomial_to_encrypt), mut loop_generator)| {
+                fpksk.par_fill_with_private_functional_packing_keyswitch_key(
+                    input_lwe_key,
+                    output_glwe_key,
+                    noise_parameters,
+                    &mut loop_generator,
+                    &|x| Scalar::ZERO.wrapping_sub(x),
+                    &polynomial_to_encrypt,
+                );
+            })
+    }
+}
+
+#[cfg(feature = "__commons_parallel")]
+#[cfg(test)]
+mod test {
+    use crate::commons::crypto::glwe::LwePrivateFunctionalPackingKeyswitchKeyList;
+    use crate::commons::crypto::secret::generators::{
+        DeterministicSeeder, EncryptionRandomGenerator, SecretRandomGenerator,
+    };
+    use crate::commons::crypto::secret::{GlweSecretKey, LweSecretKey};
+    use crate::prelude::{
+        DecompositionBaseLog, DecompositionLevelCount, FunctionalPackingKeyswitchKeyCount,
+        GlweDimension, LogStandardDev, LweDimension, PolynomialSize,
+    };
+    use concrete_csprng::generators::SoftwareRandomGenerator;
+    use concrete_csprng::seeders::Seed;
+
+    #[test]
+    fn check_equivalence_serial_parallel_pfpksk_gen() {
+        let input_lwe_dimension = LweDimension(10);
+        let output_glwe_dimension = GlweDimension(3);
+        let polynomial_size = PolynomialSize(256);
+        let decomp_base_log = DecompositionBaseLog(3);
+        let decomp_level_count = DecompositionLevelCount(5);
+        let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0));
+        let noise = LogStandardDev::from_log_standard_dev(-15.);
+
+        let mask_seed = Seed(crate::commons::test_tools::any_usize() as u128);
+        let deterministic_seeder_seed = Seed(crate::commons::test_tools::any_usize() as u128);
+        let number_of_runs = 10_usize;
+
+        for _ in 0..number_of_runs {
+            let input_key =
+                LweSecretKey::generate_binary(input_lwe_dimension, &mut secret_generator);
+            let output_key = GlweSecretKey::generate_binary(
+                output_glwe_dimension,
+                polynomial_size,
+                &mut secret_generator,
+            );
+
+            let mut encryption_generator =
+                EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(
+                    mask_seed,
+                    &mut DeterministicSeeder::<SoftwareRandomGenerator>::new(
+                        deterministic_seeder_seed,
+                    ),
+                );
+
+            let mut pfpksk_serial = LwePrivateFunctionalPackingKeyswitchKeyList::allocate(
+                0u32,
+                decomp_level_count,
+                decomp_base_log,
+                input_lwe_dimension,
+                output_glwe_dimension,
+                polynomial_size,
+                FunctionalPackingKeyswitchKeyCount(output_glwe_dimension.to_glwe_size().0),
+            );
+            pfpksk_serial.fill_with_fpksk_for_circuit_bootstrap(
+                &input_key,
+                &output_key,
+                noise,
+                &mut encryption_generator,
+            );
+
+            let mut encryption_generator =
+                EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(
+                    mask_seed,
+                    &mut DeterministicSeeder::<SoftwareRandomGenerator>::new(
+                        deterministic_seeder_seed,
+                    ),
+                );
+            let mut pfpksk_par = LwePrivateFunctionalPackingKeyswitchKeyList::allocate(
+                0u32,
+                decomp_level_count,
+                decomp_base_log,
+                input_lwe_dimension,
+                output_glwe_dimension,
+                polynomial_size,
+                FunctionalPackingKeyswitchKeyCount(output_glwe_dimension.to_glwe_size().0),
+            );
+            pfpksk_par.par_fill_with_fpksk_for_circuit_bootstrap(
+                &input_key,
+                &output_key,
+                noise,
+                &mut encryption_generator,
+            );
+
+            assert_eq!(pfpksk_par, pfpksk_serial);
+        }
     }
 }
