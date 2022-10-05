@@ -57,8 +57,8 @@ pub unsafe extern "C" fn destroy_default_engine(engine: *mut DefaultEngine) -> c
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(engine).unwrap();
 
-        // Reconstruct the box, so that the memory is dropped at the end of the scope
-        Box::from_raw(engine);
+        // Reconstruct the box and drop it
+        drop(Box::from_raw(engine));
     })
 }
 
@@ -66,8 +66,8 @@ pub unsafe extern "C" fn destroy_default_engine(engine: *mut DefaultEngine) -> c
 #[no_mangle]
 pub unsafe extern "C" fn destroy_default_engine_unchecked(engine: *mut DefaultEngine) -> c_int {
     catch_panic(|| {
-        // Reconstruct the box, so that the memory is dropped at the end of the scope
-        Box::from_raw(engine);
+        // Reconstruct the box and drop it
+        drop(Box::from_raw(engine));
     })
 }
 
@@ -130,8 +130,8 @@ pub unsafe extern "C" fn destroy_default_parallel_engine(
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(engine).unwrap();
 
-        // Reconstruct the box, so that the memory is dropped at the end of the scope
-        Box::from_raw(engine);
+        // Reconstruct the box and drop it
+        drop(Box::from_raw(engine));
     })
 }
 
@@ -143,8 +143,8 @@ pub unsafe extern "C" fn destroy_default_parallel_engine_unchecked(
     engine: *mut DefaultParallelEngine,
 ) -> c_int {
     catch_panic(|| {
-        // Reconstruct the box, so that the memory is dropped at the end of the scope
-        Box::from_raw(engine);
+        // Reconstruct the box and drop it
+        drop(Box::from_raw(engine));
     })
 }
 
@@ -198,8 +198,8 @@ pub unsafe extern "C" fn destroy_default_serialization_engine(
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(engine).unwrap();
 
-        // Reconstruct the box, so that the memory is dropped at the end of the scope
-        Box::from_raw(engine);
+        // Reconstruct the box and drop it
+        drop(Box::from_raw(engine));
     })
 }
 
@@ -211,8 +211,8 @@ pub unsafe extern "C" fn destroy_default_serialization_engine_unchecked(
     engine: *mut DefaultSerializationEngine,
 ) -> c_int {
     catch_panic(|| {
-        // Reconstruct the box, so that the memory is dropped at the end of the scope
-        Box::from_raw(engine);
+        // Reconstruct the box and drop it
+        drop(Box::from_raw(engine));
     })
 }
 
