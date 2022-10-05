@@ -82,6 +82,27 @@ impl<EngineError: std::error::Error>
 /// `bsk` and vector of private functional packing keyswitch keys `cbs_pfpksk`.
 ///
 /// # Formal Definition
+/// Circuit bootstrapping takes as input an [`LWE ciphertext`]
+/// (crate::specification::entities::LweCiphertextEntity)
+/// `ct` encrypting a boolean value $m \in \{0,1}$, i.e.
+/// $$\mathsf{ct\} = \left( \vec{a} , b\right) \in \mathsf{LWE}^n\_{\vec{s}}( \mathsf{m} )$$
+/// and an [`LWE Bootstrapping key`](crate::specification::entities::LweBootstrapKeyEntity)
+/// `BSK`. The goal of circuit bootstrapping is to convert an LWE ciphertext
+/// into a GGSW ciphertext. Therefore, the output is a [`GGSW ciphertext`]
+/// (crate::specification::entities::GgswCiphertextEntity)
+/// which encrypts the boolean value $m \in \{0,1}$. We also require usage of an
+/// [`LWE private functional Packing keyswitch Key`]
+/// (crate::specification::entities::LwePrivateFunctionalPackingKeyswitchKeyEntity)
+/// which enables a [`Private functional packing keyswitch`]
+/// (crate::specification::engines::LweCiphertextVectorGlweCiphertextDiscardingPrivateFunctionalPackingKeyswitchEngine)
+/// to be evaluated. The algorithm operates as follows:
+/// 1. Perform several PBS' to transform the input LWE ciphertext into LWE encryptions of
+/// $ m \cdot q / b^j$.
+/// 2. Perform a [`Private functional packing keyswitch`]
+/// (crate::specification::engines::LweCiphertextVectorGlweCiphertextDiscardingPrivateFunctionalPackingKeyswitchEngine)
+/// in order to multiply the messages $ m \cdot q / b^j$ by the element of the secret key. This
+/// allows us to obtain the output [`GGSW ciphertext`]
+/// (crate::specification::entities::GgswCiphertextEntity).
 pub trait LweCiphertextDiscardingCircuitBootstrapBooleanEngine<
     Input,
     Output,
