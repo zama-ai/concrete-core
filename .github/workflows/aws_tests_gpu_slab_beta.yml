@@ -79,7 +79,7 @@ jobs:
         run: |
           cargo xtask check_clippy_cuda
 
-      - name: Test concrete-core with cuda backend with CUDA 11.7
+      - name: Test concrete-core with cuda backend with CUDA 11.8
         run: |
           cargo xtask test_cuda
 
@@ -91,7 +91,7 @@ jobs:
 
       - name: Test concrete-core with cuda backend with CUDA 11.1
         run: |
-          cargo test --release --doc -p concrete-core --features=backend_cuda -- --test-threads 1
+          cargo test --release -p concrete-core --features=backend_cuda -- backends::cuda --test-threads 1
 
       - name: Slack Notification
         if: ${{ always() }}
