@@ -88,8 +88,9 @@ void lwe_cbs_vp_view_buffers_test(void) {
 
   LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64 *cbs_pfpksk = NULL;
   int cbs_pfpksk_ok =
-      default_engine_generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u64(
-          default_engine, lwe_big_sk, glwe_sk, base_log_pksk, level_pksk, var_small, &cbs_pfpksk);
+      default_parallel_engine_generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u64(
+          default_parallel_engine, lwe_big_sk, glwe_sk, base_log_pksk, level_pksk, var_small,
+          &cbs_pfpksk);
   assert(cbs_pfpksk_ok == 0);
 
   // Test CBS PFPKSK Serialization/Deserialization
@@ -381,8 +382,9 @@ void lwe_cbs_vp_unchecked_view_buffers_test(void) {
 
   LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64 *cbs_pfpksk = NULL;
   int cbs_pfpksk_ok =
-      default_engine_generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_unchecked_u64(
-          default_engine, lwe_big_sk, glwe_sk, base_log_pksk, level_pksk, var_small, &cbs_pfpksk);
+      default_parallel_engine_generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u64(
+          default_parallel_engine, lwe_big_sk, glwe_sk, base_log_pksk, level_pksk, var_small,
+          &cbs_pfpksk);
   assert(cbs_pfpksk_ok == 0);
 
   // Test CBS PFPKSK Serialization/Deserialization
@@ -679,8 +681,9 @@ void lwe_cbs_vp_raw_ptr_buffers_test(void) {
 
   LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64 *cbs_pfpksk = NULL;
   int cbs_pfpksk_ok =
-      default_engine_generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u64(
-          default_engine, lwe_big_sk, glwe_sk, base_log_pksk, level_pksk, var_small, &cbs_pfpksk);
+      default_parallel_engine_generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u64(
+          default_parallel_engine, lwe_big_sk, glwe_sk, base_log_pksk, level_pksk, var_small,
+          &cbs_pfpksk);
   assert(cbs_pfpksk_ok == 0);
 
   // Test CBS PFPKSK Serialization/Deserialization
@@ -918,8 +921,9 @@ void lwe_cbs_vp_unchecked_raw_ptr_buffers_test(void) {
 
   LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64 *cbs_pfpksk = NULL;
   int cbs_pfpksk_ok =
-      default_engine_generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_unchecked_u64(
-          default_engine, lwe_big_sk, glwe_sk, base_log_pksk, level_pksk, var_small, &cbs_pfpksk);
+      default_parallel_engine_generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u64(
+          default_parallel_engine, lwe_big_sk, glwe_sk, base_log_pksk, level_pksk, var_small,
+          &cbs_pfpksk);
   assert(cbs_pfpksk_ok == 0);
 
   // Test CBS PFPKSK Serialization/Deserialization
