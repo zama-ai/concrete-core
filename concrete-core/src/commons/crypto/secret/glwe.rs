@@ -512,7 +512,7 @@ where
     ///     PolynomialSize(5),
     ///     &mut secret_generator,
     /// );
-    /// let noise = LogStandardDev::from_log_standard_dev(-25.);
+    /// let noise = LogStandardDev::from_log_standard_dev(-50.);
     /// let plaintexts =
     ///     PlaintextList::from_container(vec![100000 as u32, 200000, 300000, 400000, 500000]);
     /// let mut ciphertext = GlweCiphertext::allocate(0 as u32, PolynomialSize(5), GlweSize(257));
@@ -610,7 +610,7 @@ where
     ///     PolynomialSize(5),
     ///     &mut secret_generator,
     /// );
-    /// let noise = LogStandardDev::from_log_standard_dev(-25.);
+    /// let noise = LogStandardDev::from_log_standard_dev(-50.);
     /// let plaintexts =
     ///     PlaintextList::from_container(vec![100000 as u32, 200000, 300000, 400000, 500000]);
     /// let mut seeded_ciphertext = GlweSeededCiphertext::allocate(
@@ -693,7 +693,7 @@ where
     ///     PolynomialSize(5),
     ///     &mut secret_generator,
     /// );
-    /// let noise = LogStandardDev::from_log_standard_dev(-25.);
+    /// let noise = LogStandardDev::from_log_standard_dev(-50.);
     /// let mut ciphertext = GlweCiphertext::allocate(0 as u32, PolynomialSize(5), GlweSize(257));
     /// let mut encryption_generator =
     ///     EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(Seed(0), &mut UnixSeeder::new(0));
