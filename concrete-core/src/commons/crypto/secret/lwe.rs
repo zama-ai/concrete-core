@@ -14,9 +14,11 @@ use crate::commons::math::tensor::{
 };
 use crate::commons::math::torus::UnsignedTorus;
 use crate::commons::numeric::Numeric;
+#[cfg(feature = "__commons_parallel")]
+use crate::prelude::LweCiphertextCount;
 use crate::prelude::{
-    BinaryKeyKind, DispersionParameter, GaussianKeyKind, KeyKind, LweCiphertextCount, LweDimension,
-    TernaryKeyKind, UniformKeyKind,
+    BinaryKeyKind, DispersionParameter, GaussianKeyKind, KeyKind, LweDimension, TernaryKeyKind,
+    UniformKeyKind,
 };
 #[cfg(feature = "__commons_parallel")]
 use rayon::{iter::IndexedParallelIterator, prelude::*};
