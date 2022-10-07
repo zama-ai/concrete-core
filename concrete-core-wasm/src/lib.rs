@@ -86,7 +86,8 @@ mod commons {
         (GlweCiphertextCount, GlweCiphertextCount, usize),
         (PolynomialSize, PolynomialSize, usize),
         (DeltaLog, DeltaLog, usize),
-        (ExtractedBitsCount, ExtractedBitsCount, usize)
+        (ExtractedBitsCount, ExtractedBitsCount, usize),
+        (LwePublicKeyZeroEncryptionCount, LwePublicKeyZeroEncryptionCount, usize)
     }
 }
 pub use commons::*;

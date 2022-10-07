@@ -56,7 +56,7 @@ pub fn load_ccr<P: AsRef<Path>>(path: P) -> ConcreteCore {
 
 // TODO: Once reintegrated into concrete-core, those parameters should be parsed from the sources as
 // well.
-const PARAMETERS_IDENTS: [&str; 25] = [
+const PARAMETERS_IDENTS: [&str; 26] = [
     "PlaintextCount",
     "EncoderCount",
     "CleartextCount",
@@ -82,6 +82,7 @@ const PARAMETERS_IDENTS: [&str; 25] = [
     "ModulusSwitchOffset",
     "DeltaLog",
     "ExtractedBitsCount",
+    "LwePublicKeyZeroEncryptionCount",
 ];
 
 const DISPERSION_IDENTS: [&str; 3] = ["LogStandardDev", "StandardDev", "Variance"];
