@@ -68,6 +68,11 @@ mod commons {
                 pub fn new(val: $typ) -> $public {
                     $public(concrete_core::prelude::$private(val))
                 }
+
+                #[wasm_bindgen]
+                pub fn unwrap(&self) -> $typ {
+                    self.0.0
+                }
             }
         )*
     };
@@ -88,6 +93,38 @@ mod commons {
         (DeltaLog, DeltaLog, usize),
         (ExtractedBitsCount, ExtractedBitsCount, usize),
         (LwePublicKeyZeroEncryptionCount, LwePublicKeyZeroEncryptionCount, usize)
+    }
+
+    #[wasm_bindgen]
+    impl LweDimension {
+        #[wasm_bindgen]
+        pub fn to_lwe_size(&self) -> LweSize {
+            LweSize(self.0.to_lwe_size())
+        }
+    }
+
+    #[wasm_bindgen]
+    impl LweSize {
+        #[wasm_bindgen]
+        pub fn to_lwe_dimension(&self) -> LweDimension {
+            LweDimension(self.0.to_lwe_dimension())
+        }
+    }
+
+    #[wasm_bindgen]
+    impl GlweDimension {
+        #[wasm_bindgen]
+        pub fn to_glwe_size(&self) -> GlweSize {
+            GlweSize(self.0.to_glwe_size())
+        }
+    }
+
+    #[wasm_bindgen]
+    impl GlweSize {
+        #[wasm_bindgen]
+        pub fn to_glwe_dimension(&self) -> GlweDimension {
+            GlweDimension(self.0.to_glwe_dimension())
+        }
     }
 }
 pub use commons::*;
