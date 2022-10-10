@@ -67,10 +67,6 @@ following command:
 xcode-select --install
 ```
 
-#### Apple Silicon
-
-Apple Silicon support is still experimental in the library, as we need to strengthen continuous integration for this platform. 
-
 ### Linux
 
 On linux, installing the required components depends on your distribution.
@@ -84,6 +80,26 @@ sudo apt install build-essential
 
 Concrete-core comes with an experimental Windows support for a subset of implementations.
 It is experimental since Windows platforms are not integrated in the continuous integration as of now.
+Command to build for Windows:
+```
+RUSTFLAGS="-Ctarget-cpu=native" cargo build --no-default-features --features="backend_default,backend_default_parallel,backend_default_generator_x86_64_aesni,backend_default_serialization,backend_fft,backend_fft_serialization,seeder_x86_64_rdseed" --release -p concrete-core
+```
+
+### x86_64 platforms
+
+Command to build on x86_64 platforms:
+```
+RUSTFLAGS="-Ctarget-cpu=native" cargo build --features="x86_64" --release -p concrete-core
+```
+
+### Apple Silicon platforms
+
+Apple Silicon support is still experimental in the library, as we need to strengthen continuous integration for this platform. 
+Command to build on Apple Silicon platforms:
+```
+RUSTFLAGS="-Ctarget-cpu=native" cargo +nightly build --features="aarch64" --release -p concrete-core
+```
+Beware that you have to use the nightly toolchain for Apple Silicon support.
 
 ## Contributing
 
