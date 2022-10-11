@@ -16,7 +16,7 @@ fn abs_diff<Scalar: UnsignedTorus>(a: Scalar, b: Scalar) -> Scalar {
 
 fn test_roundtrip<Scalar: UnsignedTorus>() {
     let mut generator = new_random_generator();
-    for i in 2..=10 {
+    for i in 2..=14 {
         let size = 1_usize << i;
 
         let fft = Fft::new(PolynomialSize(size));
@@ -81,7 +81,7 @@ fn test_product<Scalar: UnsignedTorus>() {
     }
 
     let mut generator = new_random_generator();
-    for i in 5..=10 {
+    for i in 5..=14 {
         for _ in 0..100 {
             let size = 1_usize << i;
 

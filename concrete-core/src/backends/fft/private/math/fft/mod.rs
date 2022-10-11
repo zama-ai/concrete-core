@@ -320,22 +320,20 @@ fn convert_add_backward_torus<Scalar: UnsignedTorus>(
     inp: &[c64],
     twisties: TwistiesView<'_>,
 ) {
-    #[cfg(any(target_arch = "x86_64", target_arch = "x86"))]
-    {
-        if Scalar::BITS == 32 {
-            x86::convert_add_backward_torus_u32(id_mut(out_re), id_mut(out_im), inp, twisties);
-        } else if Scalar::BITS == 64 {
-            x86::convert_add_backward_torus_u64(id_mut(out_re), id_mut(out_im), inp, twisties);
-        } else {
-            unreachable!();
-        }
-    }
+    // #[cfg(any(target_arch = "x86_64", target_arch = "x86"))]
+    // {
+    //     if Scalar::BITS == 32 {
+    //         x86::convert_add_backward_torus_u32(id_mut(out_re), id_mut(out_im), inp, twisties);
+    //     } else if Scalar::BITS == 64 {
+    //         x86::convert_add_backward_torus_u64(id_mut(out_re), id_mut(out_im), inp, twisties);
+    //     } else {
+    //         unreachable!();
+    //     }
+    // }
 
-    // SAFETY: same as above
-    #[cfg(not(any(target_arch = "x86_64", target_arch = "x86")))]
-    unsafe {
-        convert_add_backward_torus_scalar::<Scalar>(out_re, out_im, inp, twisties)
-    };
+    // // SAFETY: same as above
+    // #[cfg(not(any(target_arch = "x86_64", target_arch = "x86")))]
+    unsafe { convert_add_backward_torus_scalar::<Scalar>(out_re, out_im, inp, twisties) };
 }
 
 impl<'a> FftView<'a> {
