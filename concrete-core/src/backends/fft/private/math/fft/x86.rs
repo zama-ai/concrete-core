@@ -825,6 +825,8 @@ pub fn convert_forward_integer_u64(
 /// # Safety
 ///
 /// - `out_re` and `out_im` must not hold any uninitialized values.
+// TODO: revert when backwards as torus intrisics are fixed
+#[allow(dead_code)]
 pub fn convert_add_backward_torus_u32(
     out_re: &mut [MaybeUninit<u32>],
     out_im: &mut [MaybeUninit<u32>],
@@ -867,6 +869,8 @@ pub fn convert_add_backward_torus_u32(
 /// # Safety
 ///
 /// - `out_re` and `out_im` must not hold any uninitialized values.
+// TODO: revert when backwards as torus intrisics are fixed
+#[allow(dead_code)]
 pub fn convert_add_backward_torus_u64(
     out_re: &mut [MaybeUninit<u64>],
     out_im: &mut [MaybeUninit<u64>],
