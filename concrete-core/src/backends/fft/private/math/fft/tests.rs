@@ -55,7 +55,11 @@ fn test_roundtrip<Scalar: UnsignedTorus>() {
             poly.tensor.as_container().iter(),
             roundtrip.tensor.as_container().iter()
         ) {
-            assert!(abs_diff(*expected, *actual) < (Scalar::ONE << (Scalar::BITS - 10)));
+            if Scalar::BITS == 32 {
+                assert!(abs_diff(*expected, *actual) == Scalar::ZERO);
+            } else {
+                assert!(abs_diff(*expected, *actual) < (Scalar::ONE << (64 - 50)));
+            }
         }
     }
 }
@@ -206,6 +210,7 @@ fn f64_to_i64_bit_twiddles() {
         -(2.0_f64.powi(62)),
         1.1 * 2.0_f64.powi(62),
         1.1 * -(2.0_f64.powi(62)),
+        -(2.0_f64.powi(63)),
     ] {
         // this test checks the correctness of converting from f64 to i64 by manipulating the bits
         // of the ieee754 representation of the floating point values.
@@ -219,14 +224,19 @@ fn f64_to_i64_bit_twiddles() {
         let biased_exp = ((bits >> 52) & 0x7FF) as i64;
         let sign = bits >> 63;
 
-        let explicit_mantissa_lshift = explicit_mantissa << 10;
+        let explicit_mantissa_lshift = explicit_mantissa << 11;
 
         // equivalent to:
         //
         // let exp = biased_exp - 1023;
-        // let explicit_mantissa_shift = explicit_mantissa_lshift >> (62 - exp.max(-1));
+        // let explicit_mantissa_shift = explicit_mantissa_lshift >> (63 - exp.max(0));
+        let right_shift_amount = (1086 - biased_exp) as u64;
 
-        let explicit_mantissa_shift = explicit_mantissa_lshift >> (1085 - (biased_exp).max(1022));
+        let explicit_mantissa_shift = if right_shift_amount < 64 {
+            explicit_mantissa_lshift >> right_shift_amount
+        } else {
+            0
+        };
 
         let value = if sign == 0 {
             explicit_mantissa_shift as i64
