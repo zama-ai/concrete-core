@@ -18,7 +18,7 @@ use super::super::super::c64;
 use super::TwistiesView;
 use std::mem::MaybeUninit;
 
-/// Converts a vector of f64 values to a vector of i64 values.  
+/// Converts a vector of f64 values to a vector of i64 values.
 /// See `f64_to_i64_bit_twiddles` in `fft/tests.rs` for the scalar version.
 ///
 /// # Safety
@@ -30,7 +30,7 @@ pub unsafe fn mm256_cvtpd_epi64(x: __m256d) -> __m256i {
     let bits = _mm256_castpd_si256(x);
     // mask that covers the first 52 bits
     let mantissa_mask = _mm256_set1_epi64x(0xFFFFFFFFFFFFF_u64 as i64);
-    // mask that covers the 53rd bit
+    // mask that covers the 52nd bit
     let explicit_mantissa_bit = _mm256_set1_epi64x(0x10000000000000_u64 as i64);
     // mask that covers the first 11 bits
     let exp_mask = _mm256_set1_epi64x(0x7FF_u64 as i64);
@@ -49,13 +49,13 @@ pub unsafe fn mm256_cvtpd_epi64(x: __m256d) -> __m256i {
     // the left by the maximum amount, then shift it to the right by our value plus the offset we
     // just shifted by
     //
-    // the 53rd bit is set to 1, so we shift to the left by 10 so the 63rd (last) bit is set.
-    let mantissa_lshift = _mm256_slli_epi64::<10>(mantissa);
+    // the 52nd bit is set to 1, so we shift to the left by 11 so the 63rd (last) bit is set.
+    let mantissa_lshift = _mm256_slli_epi64::<11>(mantissa);
 
     // shift to the right and apply the exponent bias
     let mantissa_shift = _mm256_srlv_epi64(
         mantissa_lshift,
-        _mm256_sub_epi64(_mm256_set1_epi64x(1085), biased_exp),
+        _mm256_sub_epi64(_mm256_set1_epi64x(1086), biased_exp),
     );
 
     // if the sign bit is unset, we keep our result
@@ -79,7 +79,69 @@ pub unsafe fn mm256_cvtpd_epi64(x: __m256d) -> __m256i {
     _mm256_blendv_epi8(value_if_non_subnormal, value_if_subnormal, is_subnormal)
 }
 
-/// Converts a vector of i64 values to a vector of f64 values. Not sure how it works.  
+/// Converts a vector of f64 values to a vector of i64 values.
+/// See `f64_to_i64_bit_twiddles` in `fft/tests.rs` for the scalar version.
+///
+/// # Safety
+///
+///  - `is_x86_feature_detected!("avx2")` must be true.
+#[cfg(feature = "backend_fft_nightly_avx512")]
+#[inline(always)]
+pub unsafe fn mm512_cvtpd_epi64(x: __m512d) -> __m512i {
+    // reinterpret the bits as u64 values
+    let bits = _mm512_castpd_si512(x);
+    // mask that covers the first 52 bits
+    let mantissa_mask = _mm512_set1_epi64(0xFFFFFFFFFFFFF_u64 as i64);
+    // mask that covers the 53rd bit
+    let explicit_mantissa_bit = _mm512_set1_epi64(0x10000000000000_u64 as i64);
+    // mask that covers the first 11 bits
+    let exp_mask = _mm512_set1_epi64(0x7FF_u64 as i64);
+
+    // extract the first 52 bits and add the implicit bit
+    let mantissa = _mm512_or_si512(_mm512_and_si512(bits, mantissa_mask), explicit_mantissa_bit);
+
+    // extract the 52nd to 63rd (excluded) bits for the biased exponent
+    let biased_exp = _mm512_and_si512(_mm512_srli_epi64::<52>(bits), exp_mask);
+
+    // extract the 63rd sign bit
+    let sign_is_negative_mask =
+        _mm512_cmpneq_epi64_mask(_mm512_srli_epi64::<63>(bits), _mm512_set1_epi64(1));
+
+    // we need to shift the mantissa by some value that may be negative, so we first shift it to
+    // the left by the maximum amount, then shift it to the right by our value plus the offset we
+    // just shifted by
+    //
+    // the 53rd bit is set to 1, so we shift to the left by 10 so the 63rd (last) bit is set.
+    let mantissa_lshift = _mm512_slli_epi64::<11>(mantissa);
+
+    // shift to the right and apply the exponent bias
+    let mantissa_shift = _mm512_srlv_epi64(
+        mantissa_lshift,
+        _mm512_sub_epi64(_mm512_set1_epi64(1086), biased_exp),
+    );
+
+    // if the sign bit is unset, we keep our result
+    let value_if_positive = mantissa_shift;
+    // otherwise, we negate it
+    let value_if_negative = _mm512_sub_epi64(_mm512_setzero_si512(), value_if_positive);
+
+    // if the biased exponent is all zeros, we have a subnormal value (or zero)
+
+    // if it is not subnormal, we keep our results
+    let value_if_non_subnormal =
+        _mm512_mask_blend_epi64(sign_is_negative_mask, value_if_positive, value_if_negative);
+
+    // if it is subnormal, the conversion to i64 (rounding towards zero) returns zero
+    let value_if_subnormal = _mm512_setzero_si512();
+
+    // compare the biased exponent to a zero value
+    let is_subnormal = _mm512_cmpeq_epi64_mask(biased_exp, _mm512_setzero_si512());
+
+    // choose the result depending on subnormalness
+    _mm512_mask_blend_epi64(is_subnormal, value_if_non_subnormal, value_if_subnormal)
+}
+
+/// Converts a vector of i64 values to a vector of f64 values. Not sure how it works.
 /// Ported from <https://stackoverflow.com/a/41148578>.
 ///
 /// # Safety
@@ -126,30 +188,6 @@ pub unsafe fn mm512_cvtepi64_pd(x: __m512i) -> __m512d {
         i64x8[7] as f64,
     ];
     core::mem::transmute(as_f64x8)
-}
-
-/// Converts a vector of i64 values to a vector of f64 values.
-///
-/// # Safety
-///
-///  - `is_x86_feature_detected!("avx512dq")` must be true.
-#[cfg(feature = "backend_fft_nightly_avx512")]
-#[target_feature(enable = "avx512dq")]
-#[inline]
-pub unsafe fn mm512_cvtpd_epi64(x: __m512d) -> __m512i {
-    // hopefully this compiles to vcvttpd2qq
-    let f64x8: [f64; 8] = core::mem::transmute(x);
-    let as_i64x8: [i64; 8] = [
-        f64x8[0].to_int_unchecked(),
-        f64x8[1].to_int_unchecked(),
-        f64x8[2].to_int_unchecked(),
-        f64x8[3].to_int_unchecked(),
-        f64x8[4].to_int_unchecked(),
-        f64x8[5].to_int_unchecked(),
-        f64x8[6].to_int_unchecked(),
-        f64x8[7].to_int_unchecked(),
-    ];
-    core::mem::transmute(as_i64x8)
 }
 
 /// # Safety
@@ -541,10 +579,9 @@ pub unsafe fn convert_add_backward_torus_u32_avx512f(
 ///
 ///  - Same preconditions as [`convert_add_backward_torus`].
 ///  - `is_x86_feature_detected!("avx512f")` must be true.
-///  - `is_x86_feature_detected!("avx512dq")` must be true.
 #[cfg(feature = "backend_fft_nightly_avx512")]
-#[target_feature(enable = "avx512f,avx512dq")]
-pub unsafe fn convert_add_backward_torus_u64_avx512f_avx512dq(
+#[target_feature(enable = "avx512f")]
+pub unsafe fn convert_add_backward_torus_u64_avx512f(
     out_re: &mut [MaybeUninit<u64>],
     out_im: &mut [MaybeUninit<u64>],
     inp: &[c64],
@@ -886,8 +923,8 @@ pub fn convert_add_backward_torus_u64(
         TwistiesView<'_>,
     ) {
         #[cfg(feature = "backend_fft_nightly_avx512")]
-        if is_x86_feature_detected!("avx512f") & is_x86_feature_detected!("avx512dq") {
-            return convert_add_backward_torus_u64_avx512f_avx512dq;
+        if is_x86_feature_detected!("avx512f") {
+            return convert_add_backward_torus_u64_avx512f;
         }
 
         if is_x86_feature_detected!("avx2") & is_x86_feature_detected!("fma") {
@@ -903,4 +940,122 @@ pub fn convert_add_backward_torus_u64(
     // do not hold any uninitialized values since that is a precondition of calling this
     // function
     unsafe { ptr(out_re, out_im, inp, twisties) }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::mem::transmute;
+
+    use crate::backends::fft::private::as_mut_uninit;
+    use crate::backends::fft::private::math::fft::{convert_add_backward_torus_scalar, Twisties};
+
+    use super::*;
+
+    #[test]
+    fn convert_f64_i64() {
+        if is_x86_feature_detected!("avx2") {
+            for v in [
+                [
+                    -(2.0_f64.powi(63)),
+                    -(2.0_f64.powi(63)),
+                    -(2.0_f64.powi(63)),
+                    -(2.0_f64.powi(63)),
+                ],
+                [0.0, -0.0, 37.1242161_f64, -37.1242161_f64],
+                [0.1, -0.1, 1.0, -1.0],
+                [0.9, -0.9, 2.0, -2.0],
+                [2.0, -2.0, 1e-310, -1e-310],
+                [
+                    2.0_f64.powi(62),
+                    -(2.0_f64.powi(62)),
+                    1.1 * 2.0_f64.powi(62),
+                    1.1 * -(2.0_f64.powi(62)),
+                ],
+                [
+                    0.9 * 2.0_f64.powi(63),
+                    -(0.9 * 2.0_f64.powi(63)),
+                    0.1 * 2.0_f64.powi(63),
+                    0.1 * -(2.0_f64.powi(63)),
+                ],
+            ] {
+                let target = v.map(|x| x as i64);
+
+                let computed: [i64; 4] = unsafe { transmute(mm256_cvtpd_epi64(transmute(v))) };
+                assert_eq!(target, computed);
+            }
+        }
+    }
+
+    #[test]
+    fn add_backward_torus_fma() {
+        let n = 1024;
+        let z = c64 {
+            re: -34384521907.303154,
+            im: 19013399110.689323,
+        };
+        let input = vec![z; n];
+        let mut out_fma_re = vec![0_u64; n];
+        let mut out_fma_im = vec![0_u64; n];
+        let mut out_scalar_re = vec![0_u64; n];
+        let mut out_scalar_im = vec![0_u64; n];
+        let twisties = Twisties::new(n);
+
+        unsafe {
+            convert_add_backward_torus_u64_fma(
+                as_mut_uninit(&mut out_fma_re),
+                as_mut_uninit(&mut out_fma_im),
+                &input,
+                twisties.as_view(),
+            );
+
+            convert_add_backward_torus_scalar(
+                as_mut_uninit(&mut out_scalar_re),
+                as_mut_uninit(&mut out_scalar_im),
+                &input,
+                twisties.as_view(),
+            );
+        }
+
+        for i in 0..n {
+            assert!(out_fma_re[i].abs_diff(out_scalar_re[i]) < (1 << 38));
+            assert!(out_fma_im[i].abs_diff(out_scalar_im[i]) < (1 << 38));
+        }
+    }
+
+    #[cfg(feature = "backend_fft_nightly_avx512")]
+    #[test]
+    fn add_backward_torus_avx512() {
+        let n = 1024;
+        let z = c64 {
+            re: -34384521907.303154,
+            im: 19013399110.689323,
+        };
+        let input = vec![z; n];
+        let mut out_avx_re = vec![0_u64; n];
+        let mut out_avx_im = vec![0_u64; n];
+        let mut out_scalar_re = vec![0_u64; n];
+        let mut out_scalar_im = vec![0_u64; n];
+        let twisties = Twisties::new(n);
+
+        unsafe {
+            convert_add_backward_torus_u64_avx512f(
+                as_mut_uninit(&mut out_avx_re),
+                as_mut_uninit(&mut out_avx_im),
+                &input,
+                twisties.as_view(),
+            );
+
+            convert_add_backward_torus_scalar(
+                as_mut_uninit(&mut out_scalar_re),
+                as_mut_uninit(&mut out_scalar_im),
+                &input,
+                twisties.as_view(),
+            );
+        }
+
+        for i in 0..n {
+            assert!(out_avx_re[i].abs_diff(out_scalar_re[i]) < (1 << 38));
+            assert!(out_avx_im[i].abs_diff(out_scalar_im[i]) < (1 << 38));
+        }
+    }
 }
