@@ -72,7 +72,7 @@ impl<EngineError: std::error::Error>
         }
 
         let small_lut_size = luts.plaintext_count().0 / output.lwe_ciphertext_count().0;
-        if small_lut_size != 1 << input.lwe_ciphertext_count().0 {
+        if small_lut_size < lut_polynomial_size {
             return Err(Self::InvalidSmallLookUpTableSize);
         }
 
