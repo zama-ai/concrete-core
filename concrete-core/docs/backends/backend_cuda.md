@@ -24,7 +24,7 @@ And to copy from the GPU to the CPU:
 
 It also implements a Cuda accelerated version of the keyswitch over single LWE inputs, or vectors of inputs.
 Finally, it implements the bootstrap over single LWE inputs or vectors of inputs, relying on a Cuda kernel that accelerates the whole bootstrap (or a whole set of bootstraps).
-This kernel relies on an in-house negacyclic FFT and iFFT implementations for the Fourier transformations.
+This kernel relies on an in-house negacyclic FFT and inverse FFT implementations for the Fourier transformations.
 This bootstrap implementation performs best for small amounts of bootstraps at once, and is actually limited in the number of bootstraps it can handle at once.
 Each bootstrap is executed using several Cuda blocks, and synchronization between blocks is performed using the cooperative groups feature of Cuda. 
 It is best suited to the computation of the bootstrap over 1 to about 10 input ciphertexts (we refer to it as the Low Latency Bootstrap).
@@ -32,7 +32,7 @@ It is best suited to the computation of the bootstrap over 1 to about 10 input c
 ### Amortized Cuda engine
 This engine only implements the bootstrap over input vectors of LWE ciphertexts. It performs best when computing the bootstrap over quite large
 amounts of inputs (it starts being interesting from about 10 simultaneous inputs). Once again the Cuda kernel accelerates the full set of bootstraps, each bootstrap being computed in one Cuda block.
-The implementation is very similar to the one proposed by nuFHE, but we support more parameter sets. We refer to this implementation as the Amortized Bootstrap.
+We refer to this implementation as the Amortized Bootstrap.
 
 ## Supported parameter sets
 
@@ -41,20 +41,17 @@ On the other hand, the amortized Cuda engine has the same restrictions on the ba
 
 ## Benchmark results
 
-Below comes a comparison between the nuFHE implementation, the Amortized Bootstrap and the Low Latency Bootstrap. 
-The parameter set is fixed so as to be supported by nuFHE. 
-nuFHE exposes two PBS implementations: one relying on an NTT (in yellow below) and another relying on an FFT (in green below). 
+Below comes a comparison between the Amortized Bootstrap and the Low Latency Bootstrap. 
 We compare the time it takes to execute one bootstrap when launching various amounts of bootstraps at once. 
 We consider from 1 up to 10,000 bootstraps launched at once. The Amortized Bootstrap of Concrete-core is plotted in blue 
 and the Low Latency one in red (the later can only launch a restricted amount of PBS at once, which is why there are only two points on the curve).
-This Figure shows that for small amounts of bootstraps launched at once, the Low Latency implementation of Concrete performs best. 
-On the other hand, when launching large amounts of bootstraps at once the nuFHE implementations and the Amortized bootstrap implementation perform similarly. 
-For intermediate amounts of bootstraps, the nuFHE implementation relying on the FFT performs best (but keep in mind it only supports a very limited set of cryptographic parameters).
+This Figure shows that for small amounts of bootstraps launched at once, the Low Latency implementation of Concrete performs better. 
 
 ![pbs cuda benchmark](../_static/pbs_cuda_benchmark.png)
 
-The benchmarking results shown above only relate to one set of cryptographic parameters, but bear in mind that performance varies depending on the parameters' choice. In order to ease the user's life, we have introduced cost and noise models for the Cuda accelerated operations. Those will be integrated into Zama's Optimizer and Compiler, which take care of choosing the best parameters and hardware for the user.
+The same operation on CPU takes 27ms: the Low Latency bootstrap brings 3.7 times acceleration on a single input. GPU computing becomes really interesting when it comes to accelerating large numbers of bootstraps at once, and offloading as many operations on the GPU as possible (including linear algebra) on the GPU as possible, to avoid back and forth copies with the CPU.
 
+The benchmarking results shown above only relate to one set of cryptographic parameters, but bear in mind that performance varies depending on the parameters' choice. In order to ease the user's life, cost and noise models for the Cuda accelerated operations are being integrated in Zama's Optimizer and Compiler: they take care of choosing the best parameters and hardware for the user.
 
 ## Tutorial
 In this tutorial we'll see how to execute the Cuda accelerated bootstrap over one LWE input. Note that you'll achieve the best performance by batching as many inputs as possible into one bootstrap launch, and by using the amortized Cuda engine.
