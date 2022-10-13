@@ -51,7 +51,8 @@ use crate::prelude::{
     LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64Version, LweKeyswitchKey32,
     LweKeyswitchKey32Version, LweKeyswitchKey64, LweKeyswitchKey64Version,
     LwePackingKeyswitchKey32, LwePackingKeyswitchKey32Version, LwePackingKeyswitchKey64,
-    LwePackingKeyswitchKey64Version, LweSecretKey32, LweSecretKey32Version, LweSecretKey64,
+    LwePackingKeyswitchKey64Version, LwePublicKey32, LwePublicKey32Version, LwePublicKey64,
+    LwePublicKey64Version, LweSecretKey32, LweSecretKey32Version, LweSecretKey64,
     LweSecretKey64Version, LweSeededBootstrapKey32, LweSeededBootstrapKey32Version,
     LweSeededBootstrapKey64, LweSeededBootstrapKey64Version, LweSeededCiphertext32,
     LweSeededCiphertext32Version, LweSeededCiphertext64, LweSeededCiphertext64Version,
@@ -2842,6 +2843,140 @@ impl EntityDeserializationEngine<&[u8], LwePackingKeyswitchKey64> for DefaultSer
     }
 
     unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> LwePackingKeyswitchKey64 {
+        self.deserialize(serialized).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
+/// operates on 32 bits integers. It deserializes an LWE public key.
+impl EntityDeserializationEngine<&[u8], LwePublicKey32> for DefaultSerializationEngine {
+    /// # Example:
+    /// ```
+    /// use concrete_core::prelude::{LweDimension, LwePublicKeyZeroEncryptionCount, *};
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let lwe_dimension = LweDimension(6);
+    /// let noise = Variance(2_f64.powf(-50.));
+    /// let lwe_public_key_zero_encryption_count = LwePublicKeyZeroEncryptionCount(42);
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let lwe_secret_key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    ///
+    /// let public_key: LwePublicKey32 = engine.generate_new_lwe_public_key(
+    ///     &lwe_secret_key,
+    ///     noise,
+    ///     lwe_public_key_zero_encryption_count,
+    /// )?;
+    ///
+    /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
+    /// let serialized = serialization_engine.serialize(&public_key)?;
+    /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
+    /// assert_eq!(public_key, recovered);
+    ///
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn deserialize(
+        &mut self,
+        serialized: &[u8],
+    ) -> Result<LwePublicKey32, EntityDeserializationError<Self::EngineError>> {
+        #[derive(Deserialize)]
+        struct DeserializableLwePublicKey32 {
+            version: LwePublicKey32Version,
+            inner: ImplLweList<Vec<u32>>,
+        }
+        let deserialized: DeserializableLwePublicKey32 = bincode::deserialize(serialized)
+            .map_err(DefaultSerializationError::Deserialization)
+            .map_err(EntityDeserializationError::Engine)?;
+        match deserialized {
+            DeserializableLwePublicKey32 {
+                version: LwePublicKey32Version::Unsupported,
+                ..
+            } => Err(EntityDeserializationError::Engine(
+                DefaultSerializationError::UnsupportedVersion,
+            )),
+            DeserializableLwePublicKey32 {
+                version: LwePublicKey32Version::V0,
+                inner,
+            } => Ok(LwePublicKey32(inner)),
+        }
+    }
+
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> LwePublicKey32 {
+        self.deserialize(serialized).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntityDeserializationEngine`] for [`DefaultSerializationEngine`] that
+/// operates on 64 bits integers. It deserializes an LWE public key.
+impl EntityDeserializationEngine<&[u8], LwePublicKey64> for DefaultSerializationEngine {
+    /// # Example:
+    /// ```
+    /// use concrete_core::prelude::{LweDimension, LwePublicKeyZeroEncryptionCount, *};
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let lwe_dimension = LweDimension(6);
+    /// let noise = Variance(2_f64.powf(-50.));
+    /// let lwe_public_key_zero_encryption_count = LwePublicKeyZeroEncryptionCount(42);
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let lwe_secret_key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    ///
+    /// let public_key: LwePublicKey64 = engine.generate_new_lwe_public_key(
+    ///     &lwe_secret_key,
+    ///     noise,
+    ///     lwe_public_key_zero_encryption_count,
+    /// )?;
+    ///
+    /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
+    /// let serialized = serialization_engine.serialize(&public_key)?;
+    /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
+    /// assert_eq!(public_key, recovered);
+    ///
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn deserialize(
+        &mut self,
+        serialized: &[u8],
+    ) -> Result<LwePublicKey64, EntityDeserializationError<Self::EngineError>> {
+        #[derive(Deserialize)]
+        struct DeserializableLwePublicKey64 {
+            version: LwePublicKey64Version,
+            inner: ImplLweList<Vec<u64>>,
+        }
+        let deserialized: DeserializableLwePublicKey64 = bincode::deserialize(serialized)
+            .map_err(DefaultSerializationError::Deserialization)
+            .map_err(EntityDeserializationError::Engine)?;
+        match deserialized {
+            DeserializableLwePublicKey64 {
+                version: LwePublicKey64Version::Unsupported,
+                ..
+            } => Err(EntityDeserializationError::Engine(
+                DefaultSerializationError::UnsupportedVersion,
+            )),
+            DeserializableLwePublicKey64 {
+                version: LwePublicKey64Version::V0,
+                inner,
+            } => Ok(LwePublicKey64(inner)),
+        }
+    }
+
+    unsafe fn deserialize_unchecked(&mut self, serialized: &[u8]) -> LwePublicKey64 {
         self.deserialize(serialized).unwrap()
     }
 }

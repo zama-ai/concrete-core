@@ -56,7 +56,8 @@ use crate::prelude::{
     LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64Version, LweKeyswitchKey32,
     LweKeyswitchKey32Version, LweKeyswitchKey64, LweKeyswitchKey64Version,
     LwePackingKeyswitchKey32, LwePackingKeyswitchKey32Version, LwePackingKeyswitchKey64,
-    LwePackingKeyswitchKey64Version, LweSecretKey32, LweSecretKey32Version, LweSecretKey64,
+    LwePackingKeyswitchKey64Version, LwePublicKey32, LwePublicKey32Version, LwePublicKey64,
+    LwePublicKey64Version, LweSecretKey32, LweSecretKey32Version, LweSecretKey64,
     LweSecretKey64Version, LweSeededBootstrapKey32, LweSeededBootstrapKey32Version,
     LweSeededBootstrapKey64, LweSeededBootstrapKey64Version, LweSeededCiphertext32,
     LweSeededCiphertext32Version, LweSeededCiphertext64, LweSeededCiphertext64Version,
@@ -3583,6 +3584,124 @@ impl EntitySerializationEngine<LwePackingKeyswitchKey64, Vec<u8>> for DefaultSer
     }
 
     unsafe fn serialize_unchecked(&mut self, entity: &LwePackingKeyswitchKey64) -> Vec<u8> {
+        self.serialize(entity).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
+/// on 32 bits integers. It serializes an LWE public key.
+impl EntitySerializationEngine<LwePublicKey32, Vec<u8>> for DefaultSerializationEngine {
+    /// # Example:
+    /// ```
+    /// use concrete_core::prelude::{LweDimension, LwePublicKeyZeroEncryptionCount, *};
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let lwe_dimension = LweDimension(6);
+    /// let noise = Variance(2_f64.powf(-50.));
+    /// let lwe_public_key_zero_encryption_count = LwePublicKeyZeroEncryptionCount(42);
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let lwe_secret_key: LweSecretKey32 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    ///
+    /// let public_key: LwePublicKey32 = engine.generate_new_lwe_public_key(
+    ///     &lwe_secret_key,
+    ///     noise,
+    ///     lwe_public_key_zero_encryption_count,
+    /// )?;
+    ///
+    /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
+    /// let serialized = serialization_engine.serialize(&public_key)?;
+    /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
+    /// assert_eq!(public_key, recovered);
+    ///
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn serialize(
+        &mut self,
+        entity: &LwePublicKey32,
+    ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
+        #[derive(Serialize)]
+        struct SerializableLwePublicKey32<'a> {
+            version: LwePublicKey32Version,
+            inner: &'a ImplLweList<Vec<u32>>,
+        }
+        let serializable = SerializableLwePublicKey32 {
+            version: LwePublicKey32Version::V0,
+            inner: &entity.0,
+        };
+        bincode::serialize(&serializable)
+            .map_err(DefaultSerializationError::Serialization)
+            .map_err(EntitySerializationError::Engine)
+    }
+
+    unsafe fn serialize_unchecked(&mut self, entity: &LwePublicKey32) -> Vec<u8> {
+        self.serialize(entity).unwrap()
+    }
+}
+
+/// # Description:
+/// Implementation of [`EntitySerializationEngine`] for [`DefaultSerializationEngine`] that operates
+/// on 64 bits integers. It serializes an LWE public key.
+impl EntitySerializationEngine<LwePublicKey64, Vec<u8>> for DefaultSerializationEngine {
+    /// # Example:
+    /// ```
+    /// use concrete_core::prelude::{LweDimension, LwePublicKeyZeroEncryptionCount, *};
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn Error>> {
+    /// // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
+    /// let lwe_dimension = LweDimension(6);
+    /// let noise = Variance(2_f64.powf(-50.));
+    /// let lwe_public_key_zero_encryption_count = LwePublicKeyZeroEncryptionCount(42);
+    ///
+    /// // Unix seeder must be given a secret input.
+    /// // Here we just give it 0, which is totally unsafe.
+    /// const UNSAFE_SECRET: u128 = 0;
+    /// let mut engine = DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET)))?;
+    /// let lwe_secret_key: LweSecretKey64 = engine.generate_new_lwe_secret_key(lwe_dimension)?;
+    ///
+    /// let public_key: LwePublicKey64 = engine.generate_new_lwe_public_key(
+    ///     &lwe_secret_key,
+    ///     noise,
+    ///     lwe_public_key_zero_encryption_count,
+    /// )?;
+    ///
+    /// let mut serialization_engine = DefaultSerializationEngine::new(())?;
+    /// let serialized = serialization_engine.serialize(&public_key)?;
+    /// let recovered = serialization_engine.deserialize(serialized.as_slice())?;
+    /// assert_eq!(public_key, recovered);
+    ///
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    fn serialize(
+        &mut self,
+        entity: &LwePublicKey64,
+    ) -> Result<Vec<u8>, EntitySerializationError<Self::EngineError>> {
+        #[derive(Serialize)]
+        struct SerializableLwePublicKey64<'a> {
+            version: LwePublicKey64Version,
+            inner: &'a ImplLweList<Vec<u64>>,
+        }
+        let serializable = SerializableLwePublicKey64 {
+            version: LwePublicKey64Version::V0,
+            inner: &entity.0,
+        };
+        bincode::serialize(&serializable)
+            .map_err(DefaultSerializationError::Serialization)
+            .map_err(EntitySerializationError::Engine)
+    }
+
+    unsafe fn serialize_unchecked(&mut self, entity: &LwePublicKey64) -> Vec<u8> {
         self.serialize(entity).unwrap()
     }
 }
