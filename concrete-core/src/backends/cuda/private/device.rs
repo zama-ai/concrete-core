@@ -206,10 +206,10 @@ impl CudaStream {
     #[allow(dead_code, clippy::too_many_arguments)]
     pub unsafe fn discard_bootstrap_amortized_lwe_ciphertext_vector<T: UnsignedInteger>(
         &self,
-        lwe_out: &mut CudaVec<T>,
+        lwe_array_out: &mut CudaVec<T>,
         test_vector: &CudaVec<T>,
         test_vector_indexes: &CudaVec<u32>,
-        lwe_in: &CudaVec<T>,
+        lwe_array_in: &CudaVec<T>,
         bootstrapping_key: &CudaVec<f64>,
         lwe_dimension: LweDimension,
         glwe_dimension: GlweDimension,
@@ -223,10 +223,10 @@ impl CudaStream {
         if T::BITS == 32 {
             cuda_bootstrap_amortized_lwe_ciphertext_vector_32(
                 self.stream.0,
-                lwe_out.as_mut_c_ptr(),
+                lwe_array_out.as_mut_c_ptr(),
                 test_vector.as_c_ptr(),
                 test_vector_indexes.as_c_ptr(),
-                lwe_in.as_c_ptr(),
+                lwe_array_in.as_c_ptr(),
                 bootstrapping_key.as_c_ptr(),
                 lwe_dimension.0 as u32,
                 glwe_dimension.0 as u32,
@@ -241,10 +241,10 @@ impl CudaStream {
         } else if T::BITS == 64 {
             cuda_bootstrap_amortized_lwe_ciphertext_vector_64(
                 self.stream.0,
-                lwe_out.as_mut_c_ptr(),
+                lwe_array_out.as_mut_c_ptr(),
                 test_vector.as_c_ptr(),
                 test_vector_indexes.as_c_ptr(),
-                lwe_in.as_c_ptr(),
+                lwe_array_in.as_c_ptr(),
                 bootstrapping_key.as_c_ptr(),
                 lwe_dimension.0 as u32,
                 glwe_dimension.0 as u32,
@@ -263,10 +263,10 @@ impl CudaStream {
     #[allow(dead_code, clippy::too_many_arguments)]
     pub unsafe fn discard_bootstrap_low_latency_lwe_ciphertext_vector<T: UnsignedInteger>(
         &self,
-        lwe_out: &mut CudaVec<T>,
+        lwe_array_out: &mut CudaVec<T>,
         test_vector: &CudaVec<T>,
         test_vector_indexes: &CudaVec<u32>,
-        lwe_in: &CudaVec<T>,
+        lwe_array_in: &CudaVec<T>,
         bootstrapping_key: &CudaVec<f64>,
         lwe_dimension: LweDimension,
         glwe_dimension: GlweDimension,
@@ -280,10 +280,10 @@ impl CudaStream {
         if T::BITS == 32 {
             cuda_bootstrap_low_latency_lwe_ciphertext_vector_32(
                 self.stream.0,
-                lwe_out.as_mut_c_ptr(),
+                lwe_array_out.as_mut_c_ptr(),
                 test_vector.as_c_ptr(),
                 test_vector_indexes.as_c_ptr(),
-                lwe_in.as_c_ptr(),
+                lwe_array_in.as_c_ptr(),
                 bootstrapping_key.as_c_ptr(),
                 lwe_dimension.0 as u32,
                 glwe_dimension.0 as u32,
@@ -298,10 +298,10 @@ impl CudaStream {
         } else if T::BITS == 64 {
             cuda_bootstrap_low_latency_lwe_ciphertext_vector_64(
                 self.stream.0,
-                lwe_out.as_mut_c_ptr(),
+                lwe_array_out.as_mut_c_ptr(),
                 test_vector.as_c_ptr(),
                 test_vector_indexes.as_c_ptr(),
-                lwe_in.as_c_ptr(),
+                lwe_array_in.as_c_ptr(),
                 bootstrapping_key.as_c_ptr(),
                 lwe_dimension.0 as u32,
                 glwe_dimension.0 as u32,
@@ -320,8 +320,8 @@ impl CudaStream {
     #[allow(dead_code, clippy::too_many_arguments)]
     pub unsafe fn discard_keyswitch_lwe_ciphertext_vector<T: UnsignedInteger>(
         &self,
-        lwe_out: &mut CudaVec<T>,
-        lwe_in: &CudaVec<T>,
+        lwe_array_out: &mut CudaVec<T>,
+        lwe_array_in: &CudaVec<T>,
         input_lwe_dimension: LweDimension,
         output_lwe_dimension: LweDimension,
         keyswitch_key: &CudaVec<T>,
@@ -332,8 +332,8 @@ impl CudaStream {
         if T::BITS == 32 {
             cuda_keyswitch_lwe_ciphertext_vector_32(
                 self.stream.0,
-                lwe_out.as_mut_c_ptr(),
-                lwe_in.as_c_ptr(),
+                lwe_array_out.as_mut_c_ptr(),
+                lwe_array_in.as_c_ptr(),
                 keyswitch_key.as_c_ptr(),
                 input_lwe_dimension.0 as u32,
                 output_lwe_dimension.0 as u32,
@@ -344,8 +344,8 @@ impl CudaStream {
         } else if T::BITS == 64 {
             cuda_keyswitch_lwe_ciphertext_vector_64(
                 self.stream.0,
-                lwe_out.as_mut_c_ptr(),
-                lwe_in.as_c_ptr(),
+                lwe_array_out.as_mut_c_ptr(),
+                lwe_array_in.as_c_ptr(),
                 keyswitch_key.as_c_ptr(),
                 input_lwe_dimension.0 as u32,
                 output_lwe_dimension.0 as u32,

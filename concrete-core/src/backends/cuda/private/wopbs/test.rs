@@ -237,7 +237,7 @@ pub fn test_cuda_extract_bits() {
     let gpu_index = GpuIndex(0);
     let stream = CudaStream::new(gpu_index).unwrap();
 
-    let bsksize = (glwe_dimension.0 + 1)
+    let bsk_size = (glwe_dimension.0 + 1)
         * (glwe_dimension.0 + 1)
         * polynomial_size.0
         * level_bsk.0
@@ -246,18 +246,19 @@ pub fn test_cuda_extract_bits() {
 
     let mut h_lut_vector_indexes = vec![0 as u32; 1];
 
-    let mut d_lwe_out = stream.malloc::<u64>(
+    let mut d_lwe_array_out = stream.malloc::<u64>(
         nos * (lwe_dimension.0 as u32 + 1) * (number_of_bits_of_message_including_padding) as u32,
     );
-    let mut d_lwe_in = stream.malloc::<u64>(nos * (polynomial_size.0 + 1) as u32);
-    let mut d_lwe_in_buffer = stream.malloc::<u64>(nos * (polynomial_size.0 + 1) as u32);
-    let mut d_lwe_in_shifted_buffer = stream.malloc::<u64>(nos * (polynomial_size.0 + 1) as u32);
-    let mut d_lwe_out_ks_buffer = stream.malloc::<u64>(nos * (lwe_dimension.0 + 1) as u32);
-    let mut d_lwe_out_pbs_buffer = stream.malloc::<u64>(nos * (polynomial_size.0 + 1) as u32);
+    let mut d_lwe_array_in = stream.malloc::<u64>(nos * (polynomial_size.0 + 1) as u32);
+    let mut d_lwe_array_in_buffer = stream.malloc::<u64>(nos * (polynomial_size.0 + 1) as u32);
+    let mut d_lwe_array_in_shifted_buffer =
+        stream.malloc::<u64>(nos * (polynomial_size.0 + 1) as u32);
+    let mut d_lwe_array_out_ks_buffer = stream.malloc::<u64>(nos * (lwe_dimension.0 + 1) as u32);
+    let mut d_lwe_array_out_pbs_buffer = stream.malloc::<u64>(nos * (polynomial_size.0 + 1) as u32);
     let mut d_lut_pbs = stream.malloc::<u64>((2 * polynomial_size.0) as u32);
     let mut d_lut_vector_indexes = stream.malloc::<u32>(1);
     let mut d_ksk = stream.malloc::<u64>(ksksize as u32);
-    let mut d_bsk_fourier = stream.malloc::<f64>(bsksize as u32);
+    let mut d_bsk_fourier = stream.malloc::<f64>(bsk_size as u32);
     //decomp_size.0 * (output_size.0 + 1) * input_size.0
     unsafe {
         cuda_initialize_twiddles(polynomial_size.0 as u32, gpu_index.0 as u32);
@@ -313,14 +314,14 @@ pub fn test_cuda_extract_bits() {
         // Encryption
         let message = Plaintext(val << delta_log.0);
         println!("{:?}", message);
-        let mut lwe_in = LweCiphertext::allocate(0u64, LweSize(polynomial_size.0 + 1));
-        lwe_big_sk.encrypt_lwe(&mut lwe_in, &message, std, &mut encryption_generator);
+        let mut lwe_array_in = LweCiphertext::allocate(0u64, LweSize(polynomial_size.0 + 1));
+        lwe_big_sk.encrypt_lwe(&mut lwe_array_in, &message, std, &mut encryption_generator);
 
         // Bit extraction
         // Extract all the bits
         let number_values_to_extract = ExtractedBitsCount(64 - delta_log.0);
 
-        let mut _lwe_out_list = LweList::allocate(
+        let mut _lwe_array_out_list = LweList::allocate(
             0u64,
             lwe_dimension.to_lwe_size(),
             CiphertextCount(number_values_to_extract.0),
@@ -328,8 +329,8 @@ pub fn test_cuda_extract_bits() {
         /*
         extract_bits(
             delta_log,
-            &mut lwe_out_list,
-            &lwe_in,
+            &mut lwe_array_out_list,
+            &lwe_array_in,
             &ksk_lwe_big_to_small,
             &fourier_bsk,
             &mut buffers,
@@ -339,18 +340,18 @@ pub fn test_cuda_extract_bits() {
 
         unsafe {
             stream.copy_to_gpu::<u64>(&mut d_ksk, &mut h_ksk);
-            //println!("rust_lwe_in: {:?}", lwe_in);
-            stream.copy_to_gpu::<u64>(&mut d_lwe_in, &mut lwe_in.tensor.as_slice());
+            //println!("rust_lwe_array_in: {:?}", lwe_array_in);
+            stream.copy_to_gpu::<u64>(&mut d_lwe_array_in, &mut lwe_array_in.tensor.as_slice());
 
             now = Instant::now();
             cuda_extract_bits_64(
                 stream.stream_handle().0,
-                d_lwe_out.as_mut_c_ptr(),
-                d_lwe_in.as_c_ptr(),
-                d_lwe_in_buffer.as_mut_c_ptr(),
-                d_lwe_in_shifted_buffer.as_mut_c_ptr(),
-                d_lwe_out_ks_buffer.as_mut_c_ptr(),
-                d_lwe_out_pbs_buffer.as_mut_c_ptr(),
+                d_lwe_array_out.as_mut_c_ptr(),
+                d_lwe_array_in.as_c_ptr(),
+                d_lwe_array_in_buffer.as_mut_c_ptr(),
+                d_lwe_array_in_shifted_buffer.as_mut_c_ptr(),
+                d_lwe_array_out_ks_buffer.as_mut_c_ptr(),
+                d_lwe_array_out_pbs_buffer.as_mut_c_ptr(),
                 d_lut_pbs.as_mut_c_ptr(),
                 d_lut_vector_indexes.as_mut_c_ptr(),
                 d_ksk.as_c_ptr(),
@@ -370,7 +371,7 @@ pub fn test_cuda_extract_bits() {
             println!("elapsed: {:?}", elapsed);
 
             let mut h_result = vec![0u64; (lwe_dimension.0 + 1) * number_values_to_extract.0];
-            stream.copy_to_cpu::<u64>(&mut h_result, &d_lwe_out);
+            stream.copy_to_cpu::<u64>(&mut h_result, &d_lwe_array_out);
 
             cuda_synchronize_device(gpu_index.0 as u32);
 
