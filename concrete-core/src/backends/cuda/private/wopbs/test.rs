@@ -180,7 +180,7 @@ pub fn test_cuda_cmux_tree() {
 pub fn test_cuda_extract_bits() {
     // Define settings for an insecure toy example
     let polynomial_size = PolynomialSize(1024);
-    let rlwe_dimension = GlweDimension(1);
+    let glwe_dimension = GlweDimension(1);
     let lwe_dimension = LweDimension(585);
 
     let level_bsk = DecompositionLevelCount(2);
@@ -205,13 +205,13 @@ pub fn test_cuda_extract_bits() {
 
     // allocation and generation of the key in coef domain:
     let rlwe_sk: GlweSecretKey<_, Vec<u64>> =
-        GlweSecretKey::generate_binary(rlwe_dimension, polynomial_size, &mut secret_generator);
+        GlweSecretKey::generate_binary(glwe_dimension, polynomial_size, &mut secret_generator);
     let lwe_small_sk: LweSecretKey<_, Vec<u64>> =
         LweSecretKey::generate_binary(lwe_dimension, &mut secret_generator);
 
     let mut coef_bsk = StandardBootstrapKey::allocate(
         0_u64,
-        rlwe_dimension.to_glwe_size(),
+        glwe_dimension.to_glwe_size(),
         polynomial_size,
         level_bsk,
         base_log_bsk,
@@ -237,8 +237,8 @@ pub fn test_cuda_extract_bits() {
     let gpu_index = GpuIndex(0);
     let stream = CudaStream::new(gpu_index).unwrap();
 
-    let bsksize = (rlwe_dimension.0 + 1)
-        * (rlwe_dimension.0 + 1)
+    let bsksize = (glwe_dimension.0 + 1)
+        * (glwe_dimension.0 + 1)
         * polynomial_size.0
         * level_bsk.0
         * lwe_dimension.0;
@@ -267,7 +267,7 @@ pub fn test_cuda_extract_bits() {
             stream.stream_handle().0,
             gpu_index.0 as u32,
             lwe_dimension.0 as u32,
-            rlwe_dimension.0 as u32,
+            glwe_dimension.0 as u32,
             level_bsk.0 as u32,
             polynomial_size.0 as u32,
         );
@@ -359,6 +359,7 @@ pub fn test_cuda_extract_bits() {
                 delta_log.0 as u32,
                 polynomial_size.0 as u32,
                 lwe_dimension.0 as u32,
+                glwe_dimension.0 as u32,
                 base_log_bsk.0 as u32,
                 level_bsk.0 as u32,
                 base_log_ksk.0 as u32,
