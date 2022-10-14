@@ -1,10 +1,8 @@
-# How to benchmark your backend
+# Benchmarking a Backend
 
-Once you've implemented and tested your backend, you're ready to start benchmarking it.
-The `concrete-core-bench` crate has been developed for this purpose.
+Once you've implemented and tested your backend, you're ready to start benchmarking it. The `concrete-core-bench` crate has been developed for this purpose.
 
-Let's first add the GPU backend as a feature for the benchmark crate. Edit the `Cargo.toml` file
-of `concrete-core-bench` to add the following lines in the dependencies and features sections:
+Let's first add the GPU backend as a feature for the benchmark crate. Edit the `Cargo.toml` file of `concrete-core-bench` to add the following lines in the dependencies and features sections:
 
 ```
 [features]
@@ -34,7 +32,7 @@ fn main() {
 }
 ```
 
-and by creating a `gpu.rs` module in `concrete-core-bench/src`, that should contain:
+and by creating a `gpu.rs` module in `concrete-core-bench/src` that should contain:
 
 ```rust
 use crate::benchmark::BenchmarkFixture;
@@ -68,7 +66,7 @@ Launching the command:
 cargo run -p concrete-core-bench --features=backend_gpu,backend_default --release -- --bench Conversion
 ```
 
-Should now yield:
+...should now yield:
 
 ```
 Running `target/release/concrete-core-bench --bench Conversion`

@@ -1,21 +1,19 @@
-# Memory management
+# Memory Management
 
-In `concrete-core` the entities all have an underlying container type that holds the corresponding data.
-There are two types on entities with respect to memory management of this container:
-- Entities that own their memory
-- Entities that do not, which are called `Views` (that can then be mutable or constant)
+In `concrete-core`, the entities all have an underlying container type that holds the corresponding data. There are two types on entities with respect to memory management of this container:
 
-This page explains why such a choice is exposed to the user, so you can choose what suits your use case best. It is expected that 99%+ of the time you probably can just use [entities owning their memory](#entities-owning-their-memory) and will be fine with that choice.
+* Entities that own their memory
+* Entities that do not, which are called `Views` (that can then be mutable or constant)
+
+This page explains why such a choice is exposed to the user, so you can choose what suits your use case best. It is expected that 99% of the time, you can use [entities owning their memory](memory\_management.md#entities-owning-their-memory) and all will be fine.
 
 ## Entities owning their memory
 
-Currently, all ciphertext and key traits provide implementations that own their memory. 
-`Concrete-core` relies on automatic memory management for all those implementations, including the ones that "live" on another hardware than CPU. 
-This is done via implementations of the `Drop` trait. You can check the [`CudaVec`](concrete-core/src/backends/cuda/private/vec.rs) structure in the Cuda backend private sources for an example.
+Currently, all ciphertext and key traits provide implementations that own their memory. `Concrete-core` relies on automatic memory management for all those implementations, including the ones that "live" on another hardware than CPU. This is done via implementations of the `Drop` trait. You can check the [`CudaVec`](concrete-core/src/backends/cuda/private/vec.rs) structure in the Cuda backend private sources for an example.
 
-For ciphertext entities, examples of such owning entities are `LweCiphertext32` and `LweCiphertext64`. At the time of writing the underlying implementations use a `Vec` holding `u32`s and `u64`s respectively, but that `Vec` itself is not accessible from the public API. 
+For ciphertext entities, examples of such owning entities are `LweCiphertext32` and `LweCiphertext64`. At the time of this writing, the underlying implementations use a `Vec`, holding `u32`s and `u64`s, respectively. However, that `Vec` itself is not accessible from the public API.
 
-`Concrete-core` exposes many engines to create entities owning their memory: for example key generation engines, or encryption engines that return freshly allocated ciphertexts, like `LweCiphertextEncryptionEngine` whose entry point is `encrypt_lwe_ciphertext` (or `encrypt_lwe_ciphertext_unchecked` in its unchecked form). 
+`Concrete-core` exposes many engines to create entities owning their memory: for example, key generation engines or encryption engines that return freshly allocated ciphertexts, like `LweCiphertextEncryptionEngine` whose entry point is `encrypt_lwe_ciphertext` (or `encrypt_lwe_ciphertext_unchecked` in its unchecked form).
 
 ## Entities borrowing their memory
 
@@ -23,23 +21,23 @@ For ciphertext entities, examples of such owning entities are `LweCiphertext32` 
 We would advise against using the view API if you don't need it. The reason being that the original goal was to provide functionality required by the `concrete-compiler`. This means that the view API is currently not as extensively supported in existing engines as the historical owned memory API.
 {% endhint %}
 
-Some engines require to have an already allocated ciphertext entity, like `LweCiphertextDiscardingEncryptionEngine` whose entry point is `discard_encrypt_lwe_ciphertext`. In that case you can use one of the `LweCiphertextCreationEngine` variants available in the default backend for example (entry point `create_lwe_ciphertext_from`) providing a properly sized `Vec` (which will be consumed) to create an owning `LweCiphertext32` or `LweCiphertext64`. This entity can then be used in the `discard_encrypt_lwe_ciphertext` call.
+Some engines require users to have an already allocated ciphertext entity, like `LweCiphertextDiscardingEncryptionEngine` whose entry point is `discard_encrypt_lwe_ciphertext`. In that case, you can use one of the `LweCiphertextCreationEngine` variants available in the default backend. For example, (entry point `create_lwe_ciphertext_from`) providing a properly sized `Vec` (which will be consumed) to create an owning `LweCiphertext32` or `LweCiphertext64`. This entity can then be used in the `discard_encrypt_lwe_ciphertext` call.
 
 There are cases where you may want to allocate memory ahead of time or manage memory allocation in a manual way and give pieces of that memory to certain ciphertext entities.
 
-This is for example a requirement for the `concrete-compiler` to use an MLIR bufferization pass.
+This is a requirement for the `concrete-compiler` to use an MLIR bufferization pass.
 
-To that end, a restricted set of ciphertext entities (at the time of writing `LweCiphertextEntity` and `GlweCiphertextEntity`) can be instantiated in `MutView` and `View` variants, which borrow their memory.
+To that end, a restricted set of ciphertext entities (at the time of writing, `LweCiphertextEntity` and `GlweCiphertextEntity`) can be instantiated in `MutView` and `View` variants, which borrow their memory.
 
 The following paragraphs also apply to GLWE ciphertexts, so you can replace "LWE" by "GLWE" and the following text should remain correct.
 
-To instantiate an `LweCiphertextMutView32` or `LweCiphertextMutView64` you can call the proper variant of `LweCiphertextCreationEngine` (entry point `create_lwe_ciphertext_from`), providing a mutable slice of the proper scalar type (`u32` or `u64`). You can refer to the `concrete-core` documentation on [docs.rs](https://docs.rs) where example usage are provided for `LweCiphertextCreationEngine`.
+To instantiate an `LweCiphertextMutView32` or `LweCiphertextMutView64`, you can call the proper variant of `LweCiphertextCreationEngine` (entry point `create_lwe_ciphertext_from`), providing a mutable slice of the proper scalar type (`u32` or `u64`). You can refer to the `concrete-core` documentation on [docs.rs](https://docs.rs) where example usage is provided for `LweCiphertextCreationEngine`.
 
 `LweCiphertextView32` and `LweCiphertextView64` can be instantiated in the same way, the requirement being that the slices passed to the `create_lwe_ciphertext_from` function have to be immutable.
 
 One current pain point of the view API is that you cannot create a mutable view and an immutable view from the same piece of memory, which is normal given Rust borrowing rules.
 
-Converting from a `LweCiphertextMutView` to a `LweCiphertextView` is possible, it requires using the `LweCiphertextConsumingRetrievalEngine` (entry point `consume_retrieve_lwe_ciphertext`) to get the underlying slice from the `LweCiphertextMutView`, and then creating a new `LweCiphertextView` using the righ variant of `LweCiphertextCreationEngine`. You can learn more about `RetrievalEngines` in the [next section](#retrieving-the-container-of-a-ciphertext).
+Converting from a `LweCiphertextMutView` to a `LweCiphertextView` is possible. It requires using the `LweCiphertextConsumingRetrievalEngine` (entry point `consume_retrieve_lwe_ciphertext`) to get the underlying slice from the `LweCiphertextMutView`, and then creating a new `LweCiphertextView` using the proper variant of `LweCiphertextCreationEngine`. You can learn more about `RetrievalEngines` in the [next section](memory\_management.md#retrieving-the-container-of-a-ciphertext).
 
 Converting from `MutView` to `View` is an operation you are very likely to perform if you first write output data in a mutable memory zone and then want to use that same memory zone as an immutable input to another computation.
 
@@ -47,11 +45,11 @@ The conversion from `View` to `MutView` is not possible without unsafe code (usi
 
 ## Retrieving the container of a ciphertext
 
-As quickly touched upon in the previous section, it is possible for some ciphertexts (currently the ones with views variants) to retrieve the underlying container of an entity. The retrieval engines consume the input entity and return the container it used for storing data.
+As quickly touched upon in the previous section, it is possible for some ciphertexts (currently the ones with views variants) to retrieve the underlying container of an entity. Retrieval engines consume the input entity and return the container it used for storing data.
 
-The view API was not primarily created for Rust developers and one of its current shortcomings is the fact it's not easy to re-use an output `MutView` to be used as an immutable input `View` to a subsequent operation.
+The view API was not primarily created for Rust developers, so one of its current shortcomings is the fact that it is not easy to re-use an output `MutView` to be used as an immutable input `View` to a subsequent operation. However, It is possible to do that by using the retrieval engines.
 
-It is possible to do that by using the retrieval engines. The following example is taken from a docstring of `concrete-core` to see how to perform the `MutView` -> `View` transformation using the retrieval engine:
+The following example is taken from a docstring of `concrete-core` to see how to perform the `MutView` -> `View` transformation using the retrieval engine:
 
 ```rust
 use concrete_core::prelude::Variance;

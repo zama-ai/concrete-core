@@ -1,24 +1,26 @@
+# Using Concrete-core from C
+
 This library exposes a C binding to the low-level `concrete-core` primitives to implement FHE programs.
 
-Please note that the FFI is very much a prototype at this stage, not all engines and entities from `concrete-core` are available. The available entry points were written to be used by the `concrete-compiler` and should be enough for most use cases.
+Please note that the FFI is very much a prototype at this stage, so not all engines and entities from `concrete-core` are available. The available entry points were written to be used by the `concrete-compiler` and should be enough for most use cases.
 
-# First steps using `concrete-core-ffi`
+## First steps using `concrete-core-ffi`
 
-## Setting-up `concrete-core-ffi` for use in a C program.
+### Setting-up `concrete-core-ffi` for use in a C program.
 
-You can build `concrete-core-ffi` yourself on a Unix x86_64 machine using the following command:
+You can build `concrete-core-ffi` yourself on a Unix x86\_64 machine using the following command:
 
 ```shell
 RUSTFLAGS="-Ctarget-cpu=native" cargo build --all-features --release -p concrete-core-ffi
 ```
 
-All features in the FFI crate are opt-in, but for simplicity here, we enable all of them.
+All features in the FFI crate are opt-in, but for simplicity, we will enable all of them here.
 
-You can then find the `concrete-core-ffi.h` header as well as the static (.a) and dynamic (.so) `libconcrete_core_ffi` binaries in "${REPO_ROOT}/target/release/"
+You can then find the `concrete-core-ffi.h` header as well as the static (.a) and dynamic (.so) `libconcrete_core_ffi` binaries in "${REPO\_ROOT}/target/release/"
 
-Whether you build `concrete-core-ffi` yourself or download a pre-built version you will need to set-up your build system so that your C or C++ program links against `concrete-core-ffi`.
+Whether you build `concrete-core-ffi` yourself or download a pre-built version, you will need to set up your build system so that your C or C++ program links against `concrete-core-ffi`.
 
-Here is a minimal CMakeLists.txt allowing to do just that:
+Here is a minimal CMakeLists.txt to do just that:
 
 ```cmake
 project(my-project)
@@ -38,7 +40,7 @@ target_link_libraries(${EXECUTABLE_NAME} LINK_PUBLIC Concrete m pthread dl)
 target_compile_options(${EXECUTABLE_NAME} PRIVATE -Werror)
 ```
 
-## Commented code of an homomorphic addition done with `concrete-core-ffi`
+### Commented code of an homomorphic addition done with `concrete-core-ffi`.
 
 Here we will detail the steps required to perform the homomorphic addition of 1 and 2.
 
@@ -200,11 +202,10 @@ int main(void) {
 }
 ```
 
-# Audience
+## Audience
 
 This C FFI was primarily written for use by the `concrete-compiler`.
 
-Programmers wishing to use `concrete-core` but unable to use Rust (for various reasons) can use these bindings in their language of choice as long as it can interface with C code to bring `concrete-core` functionalities to said language.
+Programmers wishing to use `concrete-core` but unable to use Rust can use these bindings in their language of choice, as long as it can interface with C code to bring `concrete-core` functionalities to said language.
 
-The API is certainly rough around the edges and may not have all the engines that your use case requires. As this is still experimental/early work any feedback on missing utilities and usability are welcome.
-
+The API is certainly rough around the edges and may not have all the engines that your use case requires. As this is still experimental, any feedback on missing utilities and usability are welcome.

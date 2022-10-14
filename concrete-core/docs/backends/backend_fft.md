@@ -1,38 +1,40 @@
-# FFT backend
+# FFT Backend
 
-The FFT backend implements engines that require the transformation of polynomials from/to the Fourier domain.
-The Fourier conversions rely on a custom Rust FFT implementation, via a dependency to `concrete-fft`.
+The FFT backend implements engines that require the transformation of polynomials from/to the Fourier domain. The Fourier conversions rely on a custom Rust FFT implementation, via a dependency to `concrete-fft`.
 
 ## Features
-A serialization feature can be activated on top of the FFT backend, just like for the default backend via the `backend_fft_serialization` feature.
-You can also leverage improved performance with the feature `backend_fft_nightly_avx512`. You then have to execute your code using `cargo +nightly`.
+
+A serialization feature can be activated on top of the FFT backend, just like for the default backend via the `backend_fft_serialization` feature. You can also leverage improved performance with the feature `backend_fft_nightly_avx512`. You then have to execute your code using `cargo +nightly`.
 
 ## Supported parameter sets
 
-This backend supports any value for the polynomial size that is a power of 2. Increasing the polynomial size makes it possible to operate on messages with more precision, but you cannot expect arbitrary precision via the FFT due to the underlying floating point arithmetics that introduces noise. Otherwise, any value of base log, number of levels for the decomposition, LWE dimension and GLWE dimension can take arbitrary values.
+This backend supports any value for the polynomial size that is a power of 2. Increasing the polynomial size makes it possible to operate on messages with more precision, but you cannot expect arbitrary precision via the FFT due to the underlying floating point arithmetic that introduces noise. Otherwise, any value of base log, number of levels for the decomposition, LWE dimension and GLWE dimension can be arbitrary.
 
 ## Tutorial
 
 In this tutorial, we'll see how to use the FFT backend to run a bootstrap and a keyswitch operation. In the `Cargo.toml` file, you just need to add `backend_fft` to the features activated on `concrete-core`:
+
 ```shell
 concrete-core = {version = "=1.0.0", features=["backend_default", "backend_fft", "backend_default_parallel"]}
 ```
-Just like in the default backend tutorial, we first define some cryptographic parameters (that are unsecure and do not guarantee that the output is unaffected by the noise):
+
+Just like in the default backend tutorial, we must first define some cryptographic parameters (that are unsecure and do not guarantee that the output is unaffected by the noise):
+
 ```rust
 fn main() {
     // We generate the various keys.
     // DISCLAIMER: the parameters used here are only for test purpose, and are not secure.
-    
+
     // We generate the secret keys ...
     let lwe_sk: LweSecretKey64 = default_engine.generate_new_lwe_secret_key(lwe_dim)?;
     let glwe_sk: GlweSecretKey64 =
         default_engine.generate_new_glwe_secret_key(glwe_dim, poly_size)?;
-    
+
     // We generate the bootstrap keys in parallel and transfer to the fourier domain ...
     let bsk: LweBootstrapKey64 = parallel_engine
         .generate_new_lwe_bootstrap_key(&lwe_sk, &glwe_sk, pbs_dec_bl, pbs_dec_lc, glwe_noise)?;
     let bsk: FftFourierLweBootstrapKey64 = fft_engine.convert_lwe_bootstrap_key(&bsk)?;
-    
+
     // We generate the keyswitch key to move the ciphertext back to the initial key ...
     let lwe_interm_sk: LweSecretKey64 =
         default_engine.transform_glwe_secret_key_to_lwe_secret_key(glwe_sk)?;
@@ -46,7 +48,8 @@ fn main() {
 }
 ```
 
-Now, we can create the engines we'll need, as well as the secret keys and the bootstrap key, just like in the previous tutorial:
+Now we can create the engines we'll need, as well as the secret keys and the bootstrap key, just like in the previous tutorial:
+
 ```rust
 fn main(){
     // We instantiate the engines needed for the computations.
@@ -58,7 +61,8 @@ fn main(){
 }
 ```
 
-Then, let's define an input to be encrypted, and encrypt it to an lwe ciphertext:
+Next, let's define an input to be encrypted and encrypt it to an LWE ciphertext:
+
 ```rust
 fn main(){
     // We encode and encrypt the message.
@@ -67,12 +71,11 @@ fn main(){
     let input_lwe = default_engine.encrypt_lwe_ciphertext(&lwe_sk, &input_plaintext, lwe_noise)?;
 }
 ```
-We will thus be encrypting the value 3 into a ciphertext represented with u64 integers. The message
-is encoded into the most significant bits of the u64 integer with a shift of 59 bits, to avoid 
-having the message erased by the noise.
 
-We also generate the lookup table applied during the bootstrap. Here, the function encoded by the 
-lookup table is a simple constant function that returns the value 8:
+We will thus be encrypting the value 3 into a ciphertext represented with u64 integers. The message is encoded into the most significant bits of the u64 integer with a shift of 59 bits to avoid having the message erased by the noise.
+
+We also generate the lookup table applied during the bootstrap. Here, the function encoded by the lookup table is a simple constant function that returns the value 8:
+
 ```rust
 fn main(){
     // We encode and (trivially) encrypt the lut.
@@ -83,8 +86,8 @@ fn main(){
 }
 ```
 
-We're now ready to execute the bootstrap over the input. We need to first allocate a container for 
-the output. For that we can use the zero encryption :
+We're now ready to execute the bootstrap over the input. We need to first allocate a container for the output. For that we can use the zero encryption :
+
 ```rust
 fn main(){
     // We perform the bootstrap.
@@ -94,8 +97,8 @@ fn main(){
 }
 ```
 
-The bootstrap returns a ciphertext under a different secret key then the one used initially. We 
-have to keyswitch to come back to the original secret key:
+The bootstrap returns a ciphertext under a different secret key then the one used initially. We have to keyswitch to come back to the original secret key:
+
 ```rust
 fn main(){
     // We perform the keyswitch to move back to the initial secret key.
@@ -105,6 +108,7 @@ fn main(){
 ```
 
 We can now decrypt and decode the output value with the initial key:
+
 ```rust
 fn main () {
     // We decrypt the output.
@@ -118,13 +122,11 @@ fn main () {
 }
 ```
 
-
-And that's it! You'll notice that the bootstrap is a slow operation: it is actually the bottleneck for performance in TFHE.
-The next tutorial about the [Cuda backend](backend_cuda.md) will show you how to speed up this operation using GPU acceleration.
+And that's it! You'll notice that the bootstrap is a slow operation: it is actually the bottleneck for performance in TFHE. The next tutorial about the [Cuda backend](backend\_cuda.md) will show you how to speed up this operation using GPU acceleration.
 
 ## Large precision programmable bootstrap tutorial
 
-In this tutorial we will see how to use the FFT backend to run the so-called without padding bit PBS (wop PBS), which makes it possible to apply a programmable bootstrap on ciphertexts encrypting messages with up to 16 bits, without relying on large polynomial sizes.
+In this tutorial, we will see how to use the FFT backend to run the so-called without padding bit PBS (wop PBS), which makes it possible to apply a programmable bootstrap on ciphertexts, encrypting messages with up to 16 bits without relying on large polynomial sizes.
 
 In the `Cargo.toml` file, you need to add `backend_fft` to the features activated on `concrete-core`:
 
@@ -132,21 +134,25 @@ In the `Cargo.toml` file, you need to add `backend_fft` to the features activate
 concrete-core = {version = "=1.0.0", features=["backend_default", "backend_fft", "backend_default_parallel"]}
 ```
 
-The main difference between the PBS and wop PBS is that the latter operates over individual ciphertexts containing encrypted bits to evaluate a look-up table, while the former works on a single ciphertext encrypting a value over several bits.
+The main difference between the PBS and wop PBS is that the latter operates over individual ciphertexts containing encrypted bits to evaluate a lookup table, while the former works on a single ciphertext encrypting a value over several bits.
 
 The basic idea is the following:
 
-An LWE ciphertext (or a collection of LWE ciphertexts) containing several encrypted bits of information, is (or each item of the collection is) first processed to extract all encrypted information in several so-called "boolean" LWE ciphertexts, encrypting a single bit of information each. This step is called the "bit extraction".
+An LWE ciphertext (or a collection of LWE ciphertexts) containing several encrypted bits of information is (or each item of the collection is) first processed to extract all encrypted information in several so-called "boolean" LWE ciphertexts, encrypting a single bit of information each. This step is called the "bit extraction".
 
-These ciphertexts are then turned into GGSW ciphertexts thanks to an operation called the "circuit bootstrapping". Having GGSW ciphertexts is interesting as they can be used to perform Cmux operations (basically an if/else operation), then serving as control bits during the evaluation of the look-up table.
+These ciphertexts are then turned into GGSW ciphertexts thanks to an operation called "circuit bootstrapping". Having GGSW ciphertexts is interesting as they can be used to perform Cmux operations (basically an if/else operation), then serving as control bits during the evaluation of the lookup table.
 
-The final step consists in evaluating one or several look-up tables using the GGSW ciphertexts in an operation called "vertical packing". Each look-up table evaluation will yield an LWE ciphertext, this means that you can output the result over several ciphertexts if you need to store a lot of information (for example splitting a 16 bits value over two 8 bits LWE ciphertexts).
+The final step consists in evaluating one or several lookup tables using the GGSW ciphertexts in an operation called "vertical packing". Each lookup table evaluation will yield an LWE ciphertext, meaning that you can output the result over several ciphertexts if you need to store a lot of information (for example, splitting a 16-bit value over two 8-bit LWE ciphertexts).
 
-One note about the look-up table format:
+One note about the lookup table format:
 
-Let's take an example where we have 11 encrypted bits after the bit extraction and we want to use a polynomial size of 512 during the wop PBS evaluation. The look-up tables will contain polynomials of size 512 but 512 is smaller than the 2048 values representable by the 11 bits we have as inputs. To manage that we need to create so-called "big look-up tables". A big look-up table needs to contain as much information as the number of input bits we have, so here a big look-up table needs to have a size of 2048 in total, so we would fit four small look-up tables of size 512 in the big look-up table. The ordering here is important, the index of a small look-up table indicates in which condition it will be used for computation. Basically the small look-up table at index 0 will be used if the two most significant bit is are 0, as 0 in binary is 0b00, the small look-up table at index 1 will be used if the two most significant bits are 0b01 as 1 == 0b01, etc. The number of most significant bits used for this first look-up table selection is the log2 of the number of small look-up tables in a big look-up table. Then the remaining bits are used in a blind rotation to select the value from the previously selected look-up table with the most significant bits we just mentioned.
+Let's take an example where we have 11 encrypted bits after the bit extraction and we want to use a polynomial size of 512 during the wop PBS evaluation. The lookup tables will contain polynomials of size 512, but 512 is smaller than the 2048 values representable by the 11 bits we have as inputs. To manage that we need to create so-called "big look-up tables".
 
-In practice, for small amounts of bits you may want to use "trivial" look-up tables which already have the right number of values inside them, given the number of bits that were extracted. But in cases where you have more than 14 bits you will need this trick as the wop PBS uses operations that don't support look-up table sizes greater than 16 384 (== 2 ^ 14).
+A big look-up table needs to contain as much information as the number of input bits we have. Here, a big lookup table needs to have a size of 2048 in total, so we would fit four small lookup tables of size 512 in the big lookup table. The ordering here is important, the index of a small lookup table indicates in which condition it will be used for computation.
+
+Basically, the small lookup table at index 0 will be used if the two most significant bits are 0, as 0 in binary is 0b00. The small lookup table at index 1 will be used if the two most significant bits are 0b01 as 1 == 0b01, etc. The number of most significant bits used for this first lookup table selection is the log2 of the number of small lookup tables in a big lookup table. Then, the remaining bits are used in a blind rotation to select the value from the previously selected lookup table with the most significant bits we just mentioned.
+
+In practice, for small amounts of bits you may want to use "trivial" lookup tables which already have the right number of values inside them, given the number of bits that were extracted. But in cases where you have more than 14 bits, you will need this trick as the wop PBS uses operations that don't support lookup table sizes greater than 16 384 (== 2 ^ 14).
 
 ```rust
 use concrete_core::commons::math::decomposition::SignedDecomposer;
