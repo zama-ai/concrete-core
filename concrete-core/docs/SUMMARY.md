@@ -4,21 +4,21 @@
 
 ## Getting Started
 
-* [Quick start](getting\_started/quick\_start.md)
-* [Supported data types](getting\_started/supported\_data\_types.md)
-* [Supported operations](getting\_started/supported\_operations.md)
+* [Quick Start](getting\_started/quick\_start.md)
+* [Supported Data Types](getting\_started/supported\_data\_types.md)
+* [Supported Operations](getting\_started/supported\_operations.md)
 
 ## General concepts
 
-* [API structure](general\_concepts/api\_structure.md)
-* [Memory management](general\_concepts/memory\_management.md)
+* [API Structure](general\_concepts/api\_structure.md)
+* [Memory Management](general\_concepts/memory\_management.md)
 
 ## Backends
 
-* [Activating backends](backends/activating\_backends.md)
-* [Default backend](backends/backend\_default.md)
-* [FFT backend](backends/backend\_fft.md)
-* [Cuda backend](backends/backend\_cuda.md)
+* [Activating Backends](backends/activating\_backends.md)
+* [Default Backend](backends/backend\_default.md)
+* [FFT Backend](backends/backend\_fft.md)
+* [Cuda Backend](backends/backend\_cuda.md)
 
 ## API reference
 
@@ -28,6 +28,6 @@
 
 ## Adding a new Backend
 
-* [Creating a backend](how\_to/creating\_backends.md)
-* [Testing a backend](how\_to/testing\_backends.md)
-* [Benchmarking a backend](how\_to/benchmarking\_backends.md)
+* [Creating a Backend](how\_to/creating\_backends.md)
+* [Testing a Backend](how\_to/testing\_backends.md)
+* [Benchmarking a Backend](how\_to/benchmarking\_backends.md)

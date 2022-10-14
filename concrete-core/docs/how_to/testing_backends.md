@@ -1,35 +1,23 @@
-# How to test your backend
+# Testing a Backend
 
-Once you've implemented your backend, you're ready to test it.
-The `concrete-core-test` crate has been developed for this purpose. It relies on
-the `concrete-core-fixture` crate, that implements generic functions to sample and test engines.
+Once you've implemented your backend, you're ready to test it. The `concrete-core-test` crate has been developed for this purpose. It relies on the `concrete-core-fixture` crate that implements generic functions to sample and test engines.
 
-Let's continue with our GPU backend example. We now have a `GpuEngine` that implements a conversion
-engine for LWE ciphertext vectors from the CPU to the GPU, and back. For this engine, we can easily
-check that the ciphertext copied back from the GPU is identical to the original one on the CPU.
-However, for more complex engines like the keyswitch, bootstrap, etc., we need to make sure that
-the amount of noise introduced by the operation corresponds to what's expected, i.e. that it matches
-the noise formula implemented in the `concrete-npe` crate. For the sake of this tutorial, let us
-continue with the simple conversion engines that copy data back and forth between the CPU and the
-GPU, and then implement this verification.
+Let's continue with our GPU backend example. We now have a `GpuEngine` that implements a conversion engine for LWE ciphertext vectors from the CPU to the GPU, and back again. For this engine, we can easily check that the ciphertext copied back from the GPU is identical to the original one on the CPU. However, for more complex engines like the keyswitch, bootstrap, etc., we need to make sure that the amount of noise introduced by the operation corresponds to what's expected, i.e. that it matches the noise formula implemented in the `concrete-npe` crate.
 
-For this, we're going to use the available fixture for LWE ciphertext vector conversion. The only
-thing we need to implement in `concrete-core-fixture` is the synthesis stage, where data will be
-copied to the GPU, and back again. Then we'll use the existing fixture for LWE ciphertext vector
-conversion to execute the test.
+For the sake of this tutorial, let us continue with the simple conversion engines that copy data back and forth between the CPU and the GPU, and then implement this verification.
+
+For this, we're going to use the available fixture for LWE ciphertext vector conversion. The only thing we need to implement in `concrete-core-fixture` is the synthesis stage, where data will be copied to the GPU and back again. Then we'll use the existing fixture for LWE ciphertext vector conversion to execute the test.
 
 ## Add the GPU backend in the fixtures
 
-Let's first add the GPU backend as a feature for the fixtures: edit the `Cargo.toml` file
-of `concrete-core-fixture` to add the following lines in the dependencies and features sections:
+Let's first add the GPU backend as a feature for the fixtures: edit the `Cargo.toml` file of `concrete-core-fixture` to add the following lines in the dependencies and features sections:
 
 ```
 [features]
 backend_gpu = ["concrete-core/backend_gpu"]
 ```
 
-Then, we need to add the `GpuEngine` to the `Maker` structure that's defined
-in `concrete-core-fixture/src/generation/mod.rs`:
+Then, we need to add the `GpuEngine` to the `Maker` structure that's defined in `concrete-core-fixture/src/generation/mod.rs`:
 
 ```rust
 pub struct Maker {
@@ -49,8 +37,7 @@ impl Default for Maker {
 }
 ```
 
-Now, in `concrete-core-fixture/src/generation/synthesizing/lwe_ciphertext_vector.rs`, let us
-introduce the necessary implementations to copy data to the GPU, retrieve and destroy it:
+Now, in `concrete-core-fixture/src/generation/synthesizing/lwe_ciphertext_vector.rs`, let us introduce the necessary implementations to copy data to the GPU, retrieve it, and destroy it:
 
 ```rust
 #[cfg(feature = "backend_gpu")]
@@ -93,8 +80,7 @@ That's all we need to do on the fixtures side.
 
 ## Add the test in `concrete-core-test`
 
-Now, let's add our test in `concrete-core-test`. Let's first edit the `Cargo.toml` to add a
-dependency to our `fhe_gpu` crate, and a GPU feature:
+Now, let's add our test in `concrete-core-test`. Let's first edit the `Cargo.toml` to add a dependency to our `fhe_gpu` crate and a GPU feature:
 
 ```
 [dependencies]
@@ -108,9 +94,7 @@ backend_default = ["concrete-core/backend_default", "concrete-core-fixture/backe
 backend_gpu = ["concrete-core/backend_gpu", "concrete-core-fixture/backend_gpu"]
 ```
 
-Let's add a `gpu.rs` module to `concrete-core-test`. Create the file `gpu.rs`
-in `concrete-core-test/src`
-and edit `cocnrete-core-test/src/lib.rs` to add the following lines:
+Let's add a `gpu.rs` module to `concrete-core-test`. Create the file `gpu.rs` in `concrete-core-test/src` and edit `cocnrete-core-test/src/lib.rs` to add the following lines:
 
 ```rust
 #[cfg(all(test, feature = "backend_gpu"))]
@@ -174,5 +158,4 @@ running 0 tests
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 ```
 
-The next step is to benchmark your backend. For this, head to
-the [benchmarks tutorial](benchmarking_backends.md)!
+The next step is to benchmark your backend. For this, head to the [benchmarks tutorial](benchmarking\_backends.md).

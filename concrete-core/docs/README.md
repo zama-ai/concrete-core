@@ -6,26 +6,26 @@
 
 This library contains a set of low-level primitives which can be used to implement _Fully Homomorphically Encrypted_ (FHE) programs. In a nutshell, FHE makes it possible to perform arbitrary computations over encrypted data. With FHE, you can perform computations without putting your trust in third-party computation providers.
 
-At first, `Concrete-core` was only a CPU implementation of those cryptographic primitives. But soon it became vital to integrate hardware accelerations of those, for performance reasons. At the same time, projects built from `Concrete-core` turned out to be not only Rust projects, but also Javascript or C++ ones. In the view of this, `Concrete-core` was turned into a platform geared towards the integration of hardware acceleration of cryptographic primitives, that also has the ability to generate APIs to other languages very easily.
+At first, `Concrete-core` was only a CPU implementation of those cryptographic primitives. But soon it became vital to integrate hardware accelerations of those, for performance reasons. At the same time, projects built from `Concrete-core` turned out to be not only Rust projects, but also Javascript or C++ ones. In view of this, `Concrete-core` was turned into a platform geared toward the integration of hardware acceleration of cryptographic primitives that also has the ability to easily generate APIs to other languages.
 
 ## Audience
 
-This library is geared towards people who already know their way around FHE. It gives the user freedom of choice over a breadth of parameters, which can lead to less than 128 bits of security if chosen incorrectly.
+This library is geared toward people who already know their way around FHE. It gives the user freedom of choice over a breadth of parameters, which can lead to less than 128 bits of security if chosen incorrectly.
 
 Fortunately, multiple libraries are built on top of `Concrete-core` that propose a safer API. To see which one best suits your needs, see the [concrete homepage](https://zama.ai/concrete).
 
 ## Cross-language support
 
-The main package in the repository is `concrete-core`, the Rust implementation. Then, a C API is exposed in `concrete-core-ffi`, and a Javascript API is exposed in `concrete-core-wasm`.
+The main package in the repository is `concrete-core`, the Rust implementation. Then, a C API is exposed in `concrete-core-ffi` and a Javascript API is exposed in `concrete-core-wasm`.
 
 ## Architecture
 
-`Concrete-core` is a modular library which makes it possible to use different backends to perform FHE operations. The term backends here refers to an implementation of some, or all, cryptographic features supported in `Concrete-core`, on a given hardware. The same operation can be implemented in any number of backends. If your platform supports it, you can activate as many backends at once as you want.
+`Concrete-core` is a modular library which makes it possible to use different backends to perform FHE operations. The term 'backends' here refers to an implementation of some, or all, cryptographic features supported in `Concrete-core` on a given hardware. The same operation can be implemented in any number of backends. If your platform supports it, you can activate as many backends at once as desired.
 
 The library's design revolves around two modules:
 
-* The \[`specification`] module contains a specification (in the form of Rust traits) of the FHE objects and operators that are exposed by the library: it states what are the operations that are supported, and what are the types of their inputs and outputs.
-* The \[`backends`] module contains various backends implementing all or a part of this scheme. These different backends can be activated by feature flags, each making use of different hardware or system libraries to make the operations faster.
+* The \[`specification`] module contains a specification (in the form of Rust traits) of the FHE objects and operators that are exposed by the library: it states the operations that are supported and the types of their inputs and outputs.
+* The \[`backends`] module contains various backends, implementing all or a part of this scheme. These different backends can be activated by feature flags, each making use of different hardware or system libraries to make the operations faster.
 
 ## Rust documentation
 
@@ -33,15 +33,15 @@ The [Rust documentation](https://docs.rs/concrete-core/1.0.0/concrete\_core) pro
 
 ## Activating backends
 
-The different backends can be activated using the feature flags `backend_*`. The `backend_default` contains an engine executing operations on CPUs. It is activated by default.
+The different backends can be activated using the feature flag `backend_*`. The `backend_default` contains an engine executing operation on CPUs. It is activated by default.
 
 ## Warning
 
-This crate assumes that the user is comfortable with the theory behind FHE. If you prefer to use a simpler API, that will perform sanity checks on your behalf, the higher-level [`Concrete`](https://docs.zama.ai/concrete) crate should have your back.
+This crate assumes that the user is comfortable with the theory behind FHE. If you prefer to use a simpler API that will perform sanity checks on your behalf, the higher-level [`Concrete`](https://docs.zama.ai/concrete) crate should have your back.
 
 ## Quick start
 
-Head to the [quick start page](getting\_started/quick\_start.md) for an example of how to use `Concrete-core`. It explains the example below step by step:
+Head to the [quick start page](getting\_started/quick\_start.md) for an example of how to use `Concrete-core`. It explains the example below, step by step:
 
 ```rust
 // This examples shows how to multiply a secret value by a public one homomorphically.
@@ -111,7 +111,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 ## License
 
-This software is distributed under the BSD-3-Clause-Clear license.&#x20;
+This software is distributed under the BSD-3-Clause-Clear license.
 
 If you have any questions, please contact us at `hello@zama.ai`.
 
@@ -123,6 +123,6 @@ If you have any questions, please contact us at `hello@zama.ai`.
 
 ## Looking for support? Ask our team!
 
-* Support forum: [https://community.zama.ai](https://community.zama.ai) (we answer in less than 24 hours).
-* Live discussion on the FHE.org discord server: [https://discord.fhe.org](https://discord.fhe.org) (inside the #**concrete** channel).
+* Support forum: [https://community.zama.ai](https://community.zama.ai) (we answer in less than 24 hours)
+* Live discussion on the FHE.org discord server: [https://discord.fhe.org](https://discord.fhe.org) (inside the #**concrete** channel)
 * A question about Zama? You can write us on [Twitter](https://twitter.com/zama\_fhe) or send us an email at: **hello@zama.ai**
