@@ -39,3 +39,18 @@ jobs:
           make install_tasks_rust_toolchain
       - name: Builds doc
         run: cargo xtask check_doc
+
+  cuda-lint-check:
+    name: clang-format
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Format concrete-cuda
+        run: |
+          clang-format concrete-cuda/cuda/src/*.*
+          clang-format concrete-cuda/cuda/include/*
+          clang-format concrete-cuda/cuda/src/*/*.*
+      - name: Check diff
+        run: git diff --exit-code
+
