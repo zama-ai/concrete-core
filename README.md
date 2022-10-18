@@ -1,6 +1,32 @@
 <p align="center">
-  <img width=170 height=170 src="logo.png">
-  <h1 align="center">Concrete-core</h1>
+<!-- product name logo -->
+  <img width=600 src="https://user-images.githubusercontent.com/5758427/196391638-ebade124-1123-4d8a-b46d-bfbe1c943f9c.png">
+</p>
+<p align="center">
+<!-- Version badge using shields.io -->
+  <a href="https://github.com/zama-ai/concrete-core/releases">
+    <img src="https://img.shields.io/github/v/release/zama-ai/concrete-core?style=flat-square">
+  </a>
+<!-- Link to docs badge using shields.io -->
+  <a href="https://docs.zama.ai/concrete-core">
+    <img src="https://img.shields.io/badge/read-documentation-yellow?style=flat-square">
+  </a>
+<!-- Link to tutorials badge using shields.io -->
+  <a href="https://docs.zama.ai/concrete-core/adding-a-new-backend/creating_backends">
+    <img src="https://img.shields.io/badge/tutorials-and%20demos-orange?style=flat-square">
+  </a>
+<!-- Community forum badge using shields.io -->
+  <a href="https://community.zama.ai">
+    <img src="https://img.shields.io/badge/community%20forum-online-brightgreen?style=flat-square">
+  </a>
+<!-- Open source badge using shields.io -->
+  <a href="https://github.com/zama-ai/concrete-core/edit/main/README.md#contributing">
+    <img src="https://img.shields.io/badge/we're%20open%20source-contributing.md-blue?style=flat-square">
+  </a>
+<!-- Follow on twitter badge using shields.io -->
+  <a href="https://twitter.com/zama_fhe">
+    <img src="https://img.shields.io/twitter/follow/zama_fhe?color=blue&style=flat-square">
+  </a>
 </p>
 
 The `Concrete-core` library is a crate that implements Zama's variant of
@@ -110,6 +136,12 @@ There are two ways to contribute to Concrete-core:
 (becoming an approved contributor involves signing our Contributor License Agreement (CLA))
 
 Only approved contributors can send pull requests, so please make sure to get in touch before you do!
+
+## Need support?
+
+<a target="_blank" href="https://community.zama.ai">
+  <img src="https://user-images.githubusercontent.com/5758427/191792238-b132e413-05f9-4fee-bee3-1371f3d81c28.png">
+</a>
 
 ## Citing Concrete-core
 
