@@ -31,7 +31,7 @@ All the traits appearing in the [`specification::engines`](https://docs.rs/concr
 
 * [`LweSecretKeyGenerationEngine`](https://docs.rs/concrete-core/1.0.0/concrete\_core/specification/engines/trait.LweSecretKeyGenerationEngine.html)
 * [`LweCiphertextEncryptionEngine`](https://docs.rs/concrete-core/1.0.0/concrete\_core/specification/engines/trait.LweCiphertextEncryptionEngine.html)
-* [`LweCiphertextDecryptionEngine`](https://docs.rs/concrete-core/1.0.0/concrete\_core/specification/engines/trait.LweCiphertextDescryptionEngine.html)
+* [`LweCiphertextDecryptionEngine`](https://docs.rs/concrete-core/1.0.0/concrete\_core/specification/engines/trait.LweCiphertextDecryptionEngine.html)
 
 If you read between the lines, the fact that we use traits to represent operators means that we will have to use special objects (which we call _engines_ in this document) to perform the operations. This is slightly different from an object model in which operators are usually tied to the data themselves. In practice, this makes sense because we tend to use _side-resources_ to perform operations, and those are easier to handle when stored in a separate structure.
 
@@ -59,8 +59,8 @@ In the `entities` module, among other types, we find the [`LweCiphertext64`](htt
 In the `engines` module, we find three types:
 
 * [`DefaultEngine`](https://docs.rs/concrete-core/1.0.0/concrete\_core/backends/default/engines/struct.DefaultEngine.html)
-* [`DefaultParallelEngine`](https://docs.rs/concrete-core/1.0.0/concrete\_core/backends/default/engines/default\_parallel\_engine/struct.DefaultParallelEngine.html)
-* [`DefaultSerializationEngine`](https://docs.rs/concrete-core/1.0.0/concrete\_core/backends/default/engines/default\_serialization\_engine/struct.DefaultSerializationEngine.html)
+* [`DefaultParallelEngine`](https://docs.rs/concrete-core/1.0.0/concrete\_core/backends/default/engines/struct.DefaultParallelEngine.html)
+* [`DefaultSerializationEngine`](https://docs.rs/concrete-core/1.0.0/concrete\_core/backends/default/engines/struct.DefaultSerializationEngine.html)
 
 `DefaultEngine` is an _engine_ which implements many `*Engine` traits, among which the [`LweCiphertextEncryptionEngine`](https://docs.rs/concrete-core/1.0.0/concrete\_core/specification/engines/trait.LweCiphertextEncryptionEngine.html) trait, or the [`LweSecretKeyGenerationEngine`](https://docs.rs/concrete-core/1.0.0/concrete\_core/specification/engines/trait.LweSecretKeyGenerationEngine.html) trait, both of which are implemented for 32 and 64 bits precision.
 
@@ -68,7 +68,7 @@ In the `engines` module, we find three types:
 
 Finally, `DefaultSerializationEngine` implements engines dedicated to the serialization of ciphertexts and keys.
 
-For a more detailed description of how to use the default backend, head to the [next page](backend\_default.md). The FFT and Cuda backends are also described in dedicated pages ([FFT backend](backend\_fft.md), [Cuda backend](backend\_cuda.md)).
+For a more detailed description of how to use the default backend, head to the [default backend page](../backends/backend\_default.md). The FFT and Cuda backends are also described in dedicated pages ([FFT backend](../backends/backend\_fft.md), [Cuda backend](../backends/backend\_cuda.md)).
 
 ## Operator semantics
 

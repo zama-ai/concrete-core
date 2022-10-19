@@ -36,6 +36,6 @@ Two types of non-encrypted data are exposed in the form of types in the API (asi
 
 ## Full list of supported types
 
-The full list of supported data types in `Concrete-core` is available in the [specification page](https://docs.rs/concrete-core/1.0.0/concrete\_core/specification/entities/index.html#traits) of the Rust documentation. The cryptographic content of each type is described in the Rust documentation itself. For example, the description of the keyswitch key can be found [here](https://docs.rs/concrete-core/1.0.0/concrete\_core/specification/entities/trait.LweCiphertextKeyswitchKeyEntity.html).
+The full list of supported data types in `Concrete-core` is available in the [specification page](https://docs.rs/concrete-core/1.0.0/concrete\_core/specification/entities/index.html#traits) of the Rust documentation. The cryptographic content of each type is described in the Rust documentation itself. For example, the description of the keyswitch key can be found [here](https://docs.rs/concrete-core/1.0.0/concrete\_core/specification/entities/trait.LweKeyswitchKeyEntity.html).
 
 Head out to the page about [supported operations](supported\_operations.md) to get to know them.

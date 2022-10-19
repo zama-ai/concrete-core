@@ -73,7 +73,7 @@ let mut engine = DefaultEngine::new(Box::new(RdseedSeeder))?;
 
 In order to use the `rdseed`-based seeder, you have to activate the feature flag `seeder_x86_64_rdseed` in your `Cargo.toml`.
 
-The `engine` vocabulary is specific to `Concrete-core`. To make it short, the `DefaultEngine` is a type that can implement any number of `engine` traits that are supported in the library. Those traits correspond to cryptographic operations. More details about the architecture and vocabulary of `Concrete-core`'s API can be found [here](../general\_concepts/).
+The `engine` vocabulary is specific to `Concrete-core`. To make it short, the `DefaultEngine` is a type that can implement any number of `engine` traits that are supported in the library. Those traits correspond to cryptographic operations. More details about the architecture and vocabulary of `Concrete-core`'s API can be found [here](../general\_concepts/api\_structure.md).
 
 In what follows, the `engine` that was just created is going to be used to execute a number of cryptographic operations. The full list of operations implemented by the `DefaultEngine` is available [here](https://docs.rs/concrete-core/1.0.0/concrete\_core/backends/default/engines/struct.DefaultEngine.html), with code examples for each of them.
 
@@ -165,4 +165,4 @@ And the expected result, 12, is recovered!
 }
 ```
 
-That's it for this quick start tutorial. Head over to the [supported operations page](supported\_operations.md) for more details about what you can do with `Concrete-core`. Then, the [general concepts](../general\_concepts/) section provides more information about the various topics covered in this quick start example, while the [backends](../backends/) section provides more advanced tutorials.
+That's it for this **quick start** tutorial. Head over to the [supported operations page](supported\_operations.md) for more details about what you can do with `Concrete-core`. Then, the **general concepts** section provides more information about the various topics covered in this quick start example, while the **backends** section provides more advanced tutorials.
