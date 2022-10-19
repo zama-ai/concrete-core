@@ -23,7 +23,7 @@ All the traits appearing in the [`specification::entities`](https://docs.rs/conc
 
 Only _one_ of the `*Entity` traits can be implemented at once, using a type exported by a backend. If a structure implements `PlaintextEntity`, it can not be `LweCiphertextEntity` at the same time, for instance. More details about the entities can be found [here](memory\_management.md).
 
-* <mark style="background-color:yellow;">add section about "Vector" entities</mark>
+Ciphertext entities have a `Vector` counterpart, that corresponds to an array of ciphertexts stored contiguously in memory. The term `Vector` refers to the mathematical object: `Vector` entities are simply arrays and do not offer an API similar to the `Vec` one from Rust.
 
 ### Engines.
 
