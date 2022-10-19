@@ -54,3 +54,4 @@ required-features = ["seeder_x86_64_rdseed", "generator_x86_64_aesni"]
 [[bin]]
 name = "generate"
 path = "src/main.rs"
+required-features = ["seeder_unix", "generator_soft"]
