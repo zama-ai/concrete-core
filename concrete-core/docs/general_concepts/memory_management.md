@@ -9,7 +9,7 @@ This page explains why such a choice is exposed to the user, so you can choose w
 
 ## Entities owning their memory
 
-Currently, all ciphertext and key traits provide implementations that own their memory. `Concrete-core` relies on automatic memory management for all those implementations, including the ones that "live" on another hardware than CPU. This is done via implementations of the `Drop` trait. You can check the [`CudaVec`](concrete-core/src/backends/cuda/private/vec.rs) structure in the Cuda backend private sources for an example.
+Currently, all ciphertext and key traits provide implementations that own their memory. `Concrete-core` relies on automatic memory management for all those implementations, including the ones that "live" on another hardware than CPU. This is done via implementations of the `Drop` trait. You can check the [`CudaVec`](https://github.com/zama-ai/concrete-core/blob/concrete-core-V1/concrete-core/src/backends/cuda/private/vec.rs) structure in the Cuda backend private sources for an example.
 
 For ciphertext entities, examples of such owning entities are `LweCiphertext32` and `LweCiphertext64`. At the time of this writing, the underlying implementations use a `Vec`, holding `u32`s and `u64`s, respectively. However, that `Vec` itself is not accessible from the public API.
 
