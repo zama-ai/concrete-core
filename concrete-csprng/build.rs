@@ -50,7 +50,7 @@ impl FeatureRequirement {
 
 // const vecs are not yet a thing so use a fixed size array (update the array size when adding
 // requirements)
-static FEATURE_REQUIREMENTS: [FeatureRequirement; 3] = [
+static FEATURE_REQUIREMENTS: [FeatureRequirement; 4] = [
     FeatureRequirement {
         feature_name: "seeder_x86_64_rdseed",
         feature_req_target_arch: Some("x86_64"),
@@ -65,6 +65,11 @@ static FEATURE_REQUIREMENTS: [FeatureRequirement; 3] = [
         feature_name: "seeder_unix",
         feature_req_target_arch: None,
         feature_req_target_family: Some("unix"),
+    },
+    FeatureRequirement {
+        feature_name: "generator_aarch64_aes",
+        feature_req_target_arch: Some("aarch64"),
+        feature_req_target_family: None,
     },
 ];
 
@@ -83,6 +88,7 @@ fn get_feature_enabled_status() -> HashMap<&'static str, bool> {
         feature_cfg!("seeder_x86_64_rdseed"),
         feature_cfg!("generator_x86_64_aesni"),
         feature_cfg!("seeder_unix"),
+        feature_cfg!("generator_aarch64_aes"),
     ])
 }
 
