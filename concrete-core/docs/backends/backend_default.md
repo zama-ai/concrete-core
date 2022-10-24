@@ -29,11 +29,11 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-concrete-core = {version = "=1.0.0", features=["backend_default", "backend_default_parallel"]}
+concrete-core = {version = "=1.0.1", features=["backend_default", "backend_default_parallel"]}
 concrete-csprng = {version = "=0.2.1"}
 ```
 
-So we can use `concrete-core` version 1.0.0 as a dependency. Then, in the `main.rs` file ,we're going to:
+So we can use `concrete-core` version 1.0.1 as a dependency. Then, in the `main.rs` file ,we're going to:
 
 * import the necessary types and functions:
 
@@ -81,4 +81,4 @@ To execute this code, simply run:
 cargo run --release
 ```
 
-The full list of engines and entities implemented in the default backend is available in the [Rust documentation](https://docs.rs/concrete-core/1.0.0/concrete\_core/).
+The full list of engines and entities implemented in the default backend is available in the [Rust documentation](https://docs.rs/concrete-core/1.0.1/concrete\_core/).

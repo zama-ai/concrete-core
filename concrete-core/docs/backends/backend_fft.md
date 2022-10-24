@@ -15,7 +15,7 @@ This backend supports any value for the polynomial size that is a power of 2. In
 In this tutorial, we'll see how to use the FFT backend to run a bootstrap and a keyswitch operation. In the `Cargo.toml` file, you just need to add `backend_fft` to the features activated on `concrete-core`:
 
 ```shell
-concrete-core = {version = "=1.0.0", features=["backend_default", "backend_fft", "backend_default_parallel"]}
+concrete-core = {version = "=1.0.1", features=["backend_default", "backend_fft", "backend_default_parallel"]}
 ```
 
 Just like in the default backend tutorial, we must first define some cryptographic parameters (that are unsecure and do not guarantee that the output is unaffected by the noise):
@@ -131,7 +131,7 @@ In this tutorial, we will see how to use the FFT backend to run the so-called wi
 In the `Cargo.toml` file, you need to add `backend_fft` to the features activated on `concrete-core`:
 
 ```toml
-concrete-core = {version = "=1.0.0", features=["backend_default", "backend_fft", "backend_default_parallel"]}
+concrete-core = {version = "=1.0.1", features=["backend_default", "backend_fft", "backend_default_parallel"]}
 ```
 
 The main difference between the PBS and wop PBS is that the latter operates over individual ciphertexts containing encrypted bits to evaluate a lookup table, while the former works on a single ciphertext encrypting a value over several bits.

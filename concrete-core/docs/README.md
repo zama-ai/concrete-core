@@ -29,7 +29,7 @@ The library's design revolves around two modules:
 
 ## Rust documentation
 
-The [Rust documentation](https://docs.rs/concrete-core/1.0.0/concrete\_core) provides the full description of supported backends, data types and operations. For each implementation of an operation in a backend, an example of use is provided via a code snippet.
+The [Rust documentation](https://docs.rs/concrete-core/1.0.1/concrete\_core) provides the full description of supported backends, data types and operations. For each implementation of an operation in a backend, an example of use is provided via a code snippet.
 
 ## Activating backends
 

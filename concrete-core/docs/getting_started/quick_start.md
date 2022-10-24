@@ -25,9 +25,9 @@ Let's look at the `discard_mul_lwe_ciphertext_cleartext` operation: the dimensio
 "The input and output ciphertext LWE dimension must be the same."
 ```
 
-The list of supported errors for this operation is available [here](https://docs.rs/concrete-core/1.0.0/concrete\_core/specification/engines/enum.LweCiphertextCleartextDiscardingMultiplicationError.html#variants), in the `Variants` section.
+The list of supported errors for this operation is available [here](https://docs.rs/concrete-core/1.0.1/concrete\_core/specification/engines/enum.LweCiphertextCleartextDiscardingMultiplicationError.html#variants), in the `Variants` section.
 
-The full list of supported error types is available [here](https://docs.rs/concrete-core/1.0.0/concrete\_core/specification/engines/#enums), in the `Enums` section.
+The full list of supported error types is available [here](https://docs.rs/concrete-core/1.0.1/concrete\_core/specification/engines/#enums), in the `Enums` section.
 
 The errors managed by `Concrete-core` are checks regarding the compatibility of **cryptographic parameters**. <mark style="background-color:yellow;">There are no checks that when decrypting a ciphertext, the same secret key than the one used for encryption is used.</mark> This is left to the user to handle.
 
@@ -75,7 +75,7 @@ In order to use the `rdseed`-based seeder, you have to activate the feature flag
 
 The `engine` vocabulary is specific to `Concrete-core`. To make it short, the `DefaultEngine` is a type that can implement any number of `engine` traits that are supported in the library. Those traits correspond to cryptographic operations. More details about the architecture and vocabulary of `Concrete-core`'s API can be found [here](../general\_concepts/api\_structure.md).
 
-In what follows, the `engine` that was just created is going to be used to execute a number of cryptographic operations. The full list of operations implemented by the `DefaultEngine` is available [here](https://docs.rs/concrete-core/1.0.0/concrete\_core/backends/default/engines/struct.DefaultEngine.html), with code examples for each of them.
+In what follows, the `engine` that was just created is going to be used to execute a number of cryptographic operations. The full list of operations implemented by the `DefaultEngine` is available [here](https://docs.rs/concrete-core/1.0.1/concrete\_core/backends/default/engines/struct.DefaultEngine.html), with code examples for each of them.
 
 ### Input generation
 
@@ -87,7 +87,7 @@ Now that the `engine` has been created, let's head to the actual encryption stag
 
 Cleartexts are values of arbitrary type (unsigned integer, signed integer, float, structure, etc.) that are not meant to be encrypted but are used during the homomorphic computation. This wrapping was introduced in order to be able to bind the type of cleartext to the integer representation used for the ciphertext. In this case, the cleartext has to be represented with an unsigned integer with the same number of bits as what is used in the ciphertext, via the `Cleartext64` type.
 
-The full list of types implemented in the default backend is available [here](https://docs.rs/concrete-core/1.0.0/concrete\_core/backends/default/entities/index.html).
+The full list of types implemented in the default backend is available [here](https://docs.rs/concrete-core/1.0.1/concrete\_core/backends/default/entities/index.html).
 
 The encoded message itself is wrapped into a `Plaintext64` type. Plaintexts are unsigned integers that correspond **only** to an encoded message meant to be encrypted.
 
@@ -134,7 +134,7 @@ We can finally perform the multiplication, overwriting (discarding) the output c
     )?;
 ```
 
-The Rust documentation concerning this operation can be found [here](https://docs.rs/concrete-core/1.0.0/concrete\_core/backends/default/engines/struct.DefaultEngine.html#impl-LweCiphertextCleartextDiscardingMultiplicationEngine%3CLweCiphertext64%2C%20Cleartext64%2C%20LweCiphertext64%3E-for-DefaultEngine).
+The Rust documentation concerning this operation can be found [here](https://docs.rs/concrete-core/1.0.1/concrete\_core/backends/default/engines/struct.DefaultEngine.html#impl-LweCiphertextCleartextDiscardingMultiplicationEngine%3CLweCiphertext64%2C%20Cleartext64%2C%20LweCiphertext64%3E-for-DefaultEngine).
 
 ### Decryption
 
