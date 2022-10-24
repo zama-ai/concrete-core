@@ -120,7 +120,7 @@ mul_ggsw_glwe(Torus *accumulator, double2 *fft, int16_t *glwe_decomposed,
   correction_inverse_fft_inplace<params>(fft);
   synchronize_threads_in_block();
 
-  // Perform the inverse FFT on the result of the GGSW x GWE and add to the
+  // Perform the inverse FFT on the result of the GGSW x GLWE and add to the
   // accumulator
   NSMFFT_inverse<HalfDegree<params>>(fft);
   synchronize_threads_in_block();
@@ -130,7 +130,7 @@ mul_ggsw_glwe(Torus *accumulator, double2 *fft, int16_t *glwe_decomposed,
   __syncthreads();
 }
 
-template <typename Torus, class params>
+template <typename Torus, class params, sharedMemDegree SMD>
 /*
  * Kernel launched by the low latency version of the
  * bootstrapping, that uses cooperative groups
@@ -145,7 +145,8 @@ __global__ void device_bootstrap_low_latency(
     Torus *lwe_array_out, Torus *lut_vector, Torus *lwe_array_in,
     double2 *bootstrapping_key, double2 *mask_join_buffer,
     double2 *body_join_buffer, uint32_t lwe_dimension, uint32_t polynomial_size,
-    uint32_t base_log, uint32_t level_count) {
+    uint32_t base_log, uint32_t level_count, char *device_mem,
+    size_t device_memory_size_per_sample) {
 
   grid_group grid = this_grid();
 
@@ -154,14 +155,20 @@ __global__ void device_bootstrap_low_latency(
   // much faster than global memory
   extern __shared__ char sharedmem[];
 
-  char *selected_memory = sharedmem;
+  char *selected_memory;
+
+  if constexpr (SMD == FULLSM)
+    selected_memory = sharedmem;
+  else
+    selected_memory = &device_mem[blockIdx.z * device_memory_size_per_sample];
 
   int16_t *accumulator_decomposed = (int16_t *)selected_memory;
   Torus *accumulator = (Torus *)accumulator_decomposed +
                        polynomial_size / (sizeof(Torus) / sizeof(int16_t));
-  double2 *accumulator_fft =
-      (double2 *)accumulator +
-      polynomial_size / (sizeof(double2) / sizeof(Torus));
+  double2 *accumulator_fft = (double2 *)sharedmem;
+  if constexpr (SMD != PARTIALSM)
+    accumulator_fft = (double2 *)accumulator +
+        (ptrdiff_t ) (polynomial_size / 2);
 
   // Reuse memory from accumulator_fft for accumulator_rotated
   Torus *accumulator_rotated = (Torus *)accumulator_fft;
@@ -249,31 +256,39 @@ __global__ void device_bootstrap_low_latency(
  * of bootstrapping
  */
 template <typename Torus, class params>
-__host__ void
-host_bootstrap_low_latency(void *v_stream, Torus *lwe_array_out,
-                           Torus *lut_vector, uint32_t *lut_vector_indexes,
-                           Torus *lwe_array_in, double2 *bootstrapping_key,
-                           uint32_t lwe_dimension, uint32_t polynomial_size,
-                           uint32_t base_log, uint32_t level_count,
-                           uint32_t num_samples, uint32_t num_lut_vectors) {
+__host__ void host_bootstrap_low_latency(
+    void *v_stream, Torus *lwe_array_out, Torus *lut_vector,
+    uint32_t *lut_vector_indexes, Torus *lwe_array_in,
+    double2 *bootstrapping_key, uint32_t lwe_dimension,
+    uint32_t polynomial_size, uint32_t base_log, uint32_t level_count,
+    uint32_t input_lwe_ciphertext_count, uint32_t num_lut_vectors,
+    uint32_t max_shared_memory) {
 
   auto stream = static_cast<cudaStream_t *>(v_stream);
 
-  int buffer_size_per_gpu =
-      level_count * num_samples * polynomial_size / 2 * sizeof(double2);
+  int buffer_size_per_gpu = level_count * input_lwe_ciphertext_count *
+                            polynomial_size / 2 * sizeof(double2);
   double2 *mask_buffer_fft;
   double2 *body_buffer_fft;
   checkCudaErrors(cudaMalloc((void **)&mask_buffer_fft, buffer_size_per_gpu));
   checkCudaErrors(cudaMalloc((void **)&body_buffer_fft, buffer_size_per_gpu));
 
-  int bytes_needed = sizeof(int16_t) * polynomial_size + // accumulator_decomp
-                     sizeof(Torus) * polynomial_size +   // accumulator
-                     sizeof(double2) * polynomial_size / 2; // accumulator fft
+  int SM_FULL = sizeof(int16_t) * polynomial_size +    // accumulator_decomp
+                sizeof(Torus) * polynomial_size +      // accumulator
+                sizeof(double2) * polynomial_size / 2; // accumulator fft
+
+  int SM_PART = sizeof(double2) * polynomial_size / 2; // accumulator fft
+
+  int DM_PART = SM_FULL - SM_PART;
+
+  int DM_FULL = SM_FULL;
+
+  char *d_mem;
 
   int thds = polynomial_size / params::opt;
-  dim3 grid(level_count, 2, num_samples);
+  dim3 grid(level_count, 2, input_lwe_ciphertext_count);
 
-  void *kernel_args[10];
+  void *kernel_args[12];
   kernel_args[0] = &lwe_array_out;
   kernel_args[1] = &lut_vector;
   kernel_args[2] = &lwe_array_in;
@@ -284,22 +299,49 @@ host_bootstrap_low_latency(void *v_stream, Torus *lwe_array_out,
   kernel_args[7] = &polynomial_size;
   kernel_args[8] = &base_log;
   kernel_args[9] = &level_count;
+  kernel_args[10] = &d_mem;
 
-  checkCudaErrors(cudaFuncSetAttribute(
-      device_bootstrap_low_latency<Torus, params>,
-      cudaFuncAttributeMaxDynamicSharedMemorySize, bytes_needed));
-  cudaFuncSetCacheConfig(device_bootstrap_low_latency<Torus, params>,
-                         cudaFuncCachePreferShared);
+  if (max_shared_memory < SM_PART) {
+    kernel_args[11] = &DM_FULL;
+    checkCudaErrors(
+        cudaMalloc((void **)&d_mem, DM_FULL * input_lwe_ciphertext_count));
+    checkCudaErrors(cudaLaunchCooperativeKernel(
+        (void *)device_bootstrap_low_latency<Torus, params, NOSM>, grid, thds,
+        (void **)kernel_args, 0, *stream));
+  } else if (max_shared_memory < SM_FULL) {
+    kernel_args[11] = &DM_PART;
+    checkCudaErrors(
+        cudaMalloc((void **)&d_mem, DM_PART * input_lwe_ciphertext_count));
+    checkCudaErrors(cudaFuncSetAttribute(
+        device_bootstrap_low_latency<Torus, params, PARTIALSM>,
+        cudaFuncAttributeMaxDynamicSharedMemorySize, SM_PART));
+    cudaFuncSetCacheConfig(
+        device_bootstrap_low_latency<Torus, params, PARTIALSM>,
+        cudaFuncCachePreferShared);
+    checkCudaErrors(cudaLaunchCooperativeKernel(
+        (void *)device_bootstrap_low_latency<Torus, params, PARTIALSM>, grid,
+        thds, (void **)kernel_args, SM_PART, *stream));
 
-  checkCudaErrors(cudaLaunchCooperativeKernel(
-      (void *)device_bootstrap_low_latency<Torus, params>, grid, thds,
-      (void **)kernel_args, bytes_needed, *stream));
+  } else {
+    int DM_NONE = 0;
+    kernel_args[11] = &DM_NONE;
+    checkCudaErrors(cudaMalloc((void **)&d_mem, 0));
+    checkCudaErrors(cudaFuncSetAttribute(
+        device_bootstrap_low_latency<Torus, params, FULLSM>,
+        cudaFuncAttributeMaxDynamicSharedMemorySize, SM_FULL));
+    cudaFuncSetCacheConfig(device_bootstrap_low_latency<Torus, params, FULLSM>,
+                           cudaFuncCachePreferShared);
+    checkCudaErrors(cudaLaunchCooperativeKernel(
+        (void *)device_bootstrap_low_latency<Torus, params, FULLSM>, grid, thds,
+        (void **)kernel_args, SM_FULL, *stream));
+  }
 
   // Synchronize the streams before copying the result to lwe_array_out at the
   // right place
   cudaStreamSynchronize(*stream);
   cudaFree(mask_buffer_fft);
   cudaFree(body_buffer_fft);
+  cudaFree(d_mem);
 }
 
 #endif // LOWLAT_PBS_H
