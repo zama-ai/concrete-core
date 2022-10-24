@@ -14,7 +14,7 @@ Other basic operations are the transformation of an LWE secret key into a GLWE s
 
 ## Bootstrapping
 
-`Concrete-core` supports a number of operations related to TFHE's programmable bootstrap: the programmable bootstrap itself, the Cmux, the external product, the circuit bootstrap (that transforms an LWE ciphertext into a GGSW ciphertext), the vertical packing, and the bit extraction. The cryptographic description of each of these can be found in the Rust documentation itself (see the [bootstrap](https://docs.rs/concrete-core/1.0.0/concrete\_core/specification/engines/trait.LweCiphertextDiscardingBootstrapEngine.html#formal-definition)).
+`Concrete-core` supports a number of operations related to TFHE's programmable bootstrap: the programmable bootstrap itself, the Cmux, the external product, the circuit bootstrap (that transforms an LWE ciphertext into a GGSW ciphertext), the vertical packing, and the bit extraction. The cryptographic description of each of these can be found in the Rust documentation itself (see the [bootstrap](https://docs.rs/concrete-core/1.0.1/concrete\_core/specification/engines/trait.LweCiphertextDiscardingBootstrapEngine.html#formal-definition)).
 
 ## Data management
 
@@ -22,4 +22,4 @@ Finally, a number of operations in `Concrete-core` help with data management. Fo
 
 ## Full list of operations
 
-The full list of supported operations in `Concrete-core` is available in the [specification page](https://docs.rs/concrete-core/1.0.0/concrete\_core/specification/engines/index.html#traits) of the Rust documentation. The cryptographic content of each operation is described in a `Formal definition` in the Rust documentation itself. For example, the description of the keyswitch can be found [here](https://docs.rs/concrete-core/1.0.0/concrete\_core/specification/engines/trait.LweCiphertextDiscardingKeyswitchEngine.html#formal-definition). A code snippet for each implementation of these operations in the various supported backends is available in the Rust documentation.
+The full list of supported operations in `Concrete-core` is available in the [specification page](https://docs.rs/concrete-core/1.0.1/concrete\_core/specification/engines/index.html#traits) of the Rust documentation. The cryptographic content of each operation is described in a `Formal definition` in the Rust documentation itself. For example, the description of the keyswitch can be found [here](https://docs.rs/concrete-core/1.0.1/concrete\_core/specification/engines/trait.LweCiphertextDiscardingKeyswitchEngine.html#formal-definition). A code snippet for each implementation of these operations in the various supported backends is available in the Rust documentation.

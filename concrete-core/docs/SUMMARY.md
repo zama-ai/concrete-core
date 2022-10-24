@@ -22,7 +22,7 @@
 
 ## API reference
 
-* [docs.rs](https://docs.rs/concrete-core/1.0.0/concrete\_core/index.html)
+* [docs.rs](https://docs.rs/concrete-core/1.0.1/concrete\_core/index.html)
 * [Using Concrete-core from C](api\_reference/concrete-core-ffi.md)
 * [Using Concrete-core from Javascript](api\_reference/concrete-core-wasm.md)
 

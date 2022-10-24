@@ -52,7 +52,7 @@ In this tutorial we'll see how to execute the Cuda-accelerated bootstrap over on
 In the `Cargo.toml` file, you just need to add `backend_cuda` to the features activated on `concrete-core`:
 
 ```shell
-concrete-core = {version = "=1.0.0", features=["backend_default", "backend_cuda", "backend_default_parallel"]}
+concrete-core = {version = "=1.0.1", features=["backend_default", "backend_cuda", "backend_default_parallel"]}
 ```
 
 Once again, let's begin by defining some cryptographic parameters (with no safety guarantee in the example, just like in the other tutorials) and inputs:
