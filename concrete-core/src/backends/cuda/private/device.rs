@@ -355,6 +355,34 @@ impl CudaStream {
             )
         }
     }
+    /// Discarding opposite on a vector of LWE ciphertexts
+    pub unsafe fn discard_opp_lwe_ciphertext_vector<T: UnsignedInteger>(
+        &self,
+        lwe_array_out: &mut CudaVec<T>,
+        lwe_array_in: &CudaVec<T>,
+        lwe_dimension: LweDimension,
+        num_samples: NumberOfSamples,
+    ) {
+        if T::BITS == 32 {
+            cuda_negate_lwe_ciphertext_vector_32(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                lwe_array_out.as_mut_c_ptr(),
+                lwe_array_in.as_c_ptr(),
+                lwe_dimension.0 as u32,
+                num_samples.0 as u32,
+            )
+        } else if T::BITS == 64 {
+            cuda_negate_lwe_ciphertext_vector_64(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                lwe_array_out.as_mut_c_ptr(),
+                lwe_array_in.as_c_ptr(),
+                lwe_dimension.0 as u32,
+                num_samples.0 as u32,
+            )
+        }
+    }
 }
 
 impl Drop for CudaStream {
