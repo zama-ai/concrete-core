@@ -8,3 +8,8 @@ pub use fft_engine::*;
 mod fft_serialization_engine;
 #[cfg(feature = "backend_fft_serialization")]
 pub use fft_serialization_engine::*;
+
+#[cfg(feature = "backend_fft_parallel")]
+mod fft_parallel_engine;
+#[cfg(feature = "backend_fft_parallel")]
+pub use fft_parallel_engine::*;

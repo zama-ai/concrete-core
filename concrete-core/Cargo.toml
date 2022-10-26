@@ -44,6 +44,8 @@ backend_default = ["concrete-csprng/generator_soft"]
 
 # An accelerated backend, using the `concrete-fft` library.
 backend_fft = ["concrete-fft"]
+# Enables the parallel engine in fft backend.
+backend_fft_parallel = ["__commons_parallel", "backend_fft"]
 backend_fft_serialization = [
     "bincode",
     "concrete-fft/serde",

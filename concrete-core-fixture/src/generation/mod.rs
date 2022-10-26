@@ -25,7 +25,7 @@
 //! [`Maker`] instance and the `Synthesizes*` traits, which contains functions to destroy data
 //! (which are empty for all entities that are not actually views).
 use crate::raw::generation::RawUnsignedIntegers;
-use concrete_core::prelude::{AbstractEngine, DefaultEngine, DefaultParallelEngine};
+use concrete_core::prelude::{AbstractEngine, DefaultEngine, DefaultParallelEngine, FftEngine};
 use concrete_csprng::seeders::UnixSeeder;
 
 pub mod prototypes;
@@ -77,8 +77,8 @@ impl IntegerPrecision for Precision64 {
 pub struct Maker {
     default_engine: DefaultEngine,
     default_parallel_engine: DefaultParallelEngine,
-    #[cfg(feature = "backend_fft")]
-    fft_engine: concrete_core::backends::fft::engines::FftEngine,
+    #[cfg(any(feature = "backend_fft", feature = "backend_fft_parallel"))]
+    fft_engine: FftEngine,
     #[cfg(feature = "backend_cuda")]
     cuda_engine: concrete_core::backends::cuda::engines::CudaEngine,
 }
@@ -89,8 +89,8 @@ impl Default for Maker {
             default_engine: DefaultEngine::new(Box::new(UnixSeeder::new(0))).unwrap(),
             default_parallel_engine: DefaultParallelEngine::new(Box::new(UnixSeeder::new(0)))
                 .unwrap(),
-            #[cfg(feature = "backend_fft")]
-            fft_engine: concrete_core::backends::fft::engines::FftEngine::new(()).unwrap(),
+            #[cfg(any(feature = "backend_fft", feature = "backend_fft_parallel"))]
+            fft_engine: FftEngine::new(()).unwrap(),
             #[cfg(feature = "backend_cuda")]
             cuda_engine: concrete_core::backends::cuda::engines::CudaEngine::new(()).unwrap(),
         }

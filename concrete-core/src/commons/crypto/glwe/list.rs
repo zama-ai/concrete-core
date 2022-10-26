@@ -5,6 +5,8 @@ use crate::commons::math::tensor::{
 };
 use crate::commons::numeric::Numeric;
 use crate::prelude::{CiphertextCount, GlweDimension, GlweSize, PlaintextCount, PolynomialSize};
+#[cfg(feature = "__commons_parallel")]
+use rayon::{iter::IndexedParallelIterator, prelude::*};
 #[cfg(feature = "__commons_serialization")]
 use serde::{Deserialize, Serialize};
 
@@ -210,6 +212,22 @@ impl<Cont> GlweList<Cont> {
         let size = self.rlwe_size.0 * self.polynomial_size().0;
         self.as_tensor()
             .subtensor_iter(size)
+            .map(move |sub| GlweCiphertext::from_container(sub.into_container(), poly_size))
+    }
+
+    #[cfg(feature = "__commons_parallel")]
+    pub fn par_ciphertext_iter(
+        &self,
+    ) -> impl IndexedParallelIterator<Item = GlweCiphertext<&[<Self as AsRefTensor>::Element]>>
+    where
+        Self: AsRefTensor,
+        <Self as AsRefTensor>::Element: Sync,
+    {
+        ck_dim_div!(self.as_tensor().len() => self.rlwe_size.0, self.poly_size.0);
+        let poly_size = self.poly_size;
+        let size = self.rlwe_size.0 * self.polynomial_size().0;
+        self.as_tensor()
+            .par_subtensor_iter(size)
             .map(move |sub| GlweCiphertext::from_container(sub.into_container(), poly_size))
     }
 
