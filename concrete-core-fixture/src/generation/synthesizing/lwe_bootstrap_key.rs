@@ -385,7 +385,7 @@ mod backend_default {
     }
 }
 
-#[cfg(feature = "backend_fft")]
+#[cfg(any(feature = "backend_fft", feature = "backend_fft_parallel"))]
 mod backend_fft {
     use crate::generation::synthesizing::SynthesizesLweBootstrapKey;
     use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};

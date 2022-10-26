@@ -10,7 +10,7 @@ pub mod benchmark;
 #[cfg(feature = "backend_default")]
 mod default;
 
-#[cfg(feature = "backend_fft")]
+#[cfg(any(feature = "backend_fft", feature = "backend_fft_parallel"))]
 mod fft;
 
 #[cfg(feature = "backend_cuda")]
@@ -25,6 +25,8 @@ fn main() {
     default::bench_parallel();
     #[cfg(feature = "backend_fft")]
     fft::bench();
+    #[cfg(feature = "backend_fft_parallel")]
+    fft::bench_parallel();
     #[cfg(feature = "backend_cuda")]
     cuda::bench();
     #[cfg(feature = "backend_cuda")]

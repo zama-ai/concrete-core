@@ -22,6 +22,10 @@ backend_default_parallel = [
     "concrete-core/backend_default_parallel",
     "concrete-core-fixture/backend_default_parallel",
 ]
+backend_fft_parallel = [
+    "concrete-core/backend_fft_parallel",
+    "concrete-core-fixture/backend_fft_parallel",
+]
 backend_cuda = [
     "concrete-core/backend_cuda",
     "concrete-core-fixture/backend_cuda",

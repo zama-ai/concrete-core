@@ -251,7 +251,7 @@ impl<Cont> LweList<Cont> {
 
     #[cfg(feature = "__commons_parallel")]
     pub fn par_ciphertext_iter(
-        &mut self,
+        &self,
     ) -> impl IndexedParallelIterator<Item = LweCiphertext<&[<Self as AsRefTensor>::Element]>>
     where
         Self: AsRefTensor,
