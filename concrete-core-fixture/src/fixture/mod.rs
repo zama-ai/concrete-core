@@ -361,6 +361,9 @@ pub use lwe_ciphertext_discarding_addition::*;
 mod lwe_ciphertext_discarding_opposite;
 pub use lwe_ciphertext_discarding_opposite::*;
 
+mod lwe_ciphertext_vector_discarding_opposite;
+pub use lwe_ciphertext_vector_discarding_opposite::*;
+
 mod lwe_ciphertext_fusing_addition;
 pub use lwe_ciphertext_fusing_addition::*;
 

@@ -54,7 +54,10 @@ test! {
         CudaLweCiphertextVector, CudaLweCiphertextVector)),
     ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingBootstrapFixture2, (CudaFourierLweBootstrapKey,
         CudaGlweCiphertextVector,
-        CudaLweCiphertextVector, CudaLweCiphertextVector))
+        CudaLweCiphertextVector, CudaLweCiphertextVector)),
+    ((BinaryKeyDistribution),
+        LweCiphertextVectorDiscardingOppositeFixture, (CudaLweCiphertextVector,
+        CudaLweCiphertextVector))
 }
 
 macro_rules! test_amortized {
