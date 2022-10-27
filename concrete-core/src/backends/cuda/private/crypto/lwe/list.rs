@@ -153,3 +153,32 @@ pub(crate) unsafe fn execute_lwe_ciphertext_vector_opposite_on_gpu<T: UnsignedIn
         );
     }
 }
+pub(crate) unsafe fn execute_lwe_ciphertext_vector_addition_on_gpu<T: UnsignedInteger>(
+    streams: &[CudaStream],
+    output: &mut CudaLweList<T>,
+    input_1: &CudaLweList<T>,
+    input_2: &CudaLweList<T>,
+    number_of_available_gpus: NumberOfGpus,
+) {
+    let number_of_gpus = number_of_active_gpus(
+        number_of_available_gpus,
+        CiphertextCount(input_1.lwe_ciphertext_count.0),
+    );
+
+    for gpu_index in 0..number_of_gpus.0 {
+        let samples_per_gpu = compute_number_of_samples_on_gpu(
+            number_of_available_gpus,
+            CiphertextCount(input_1.lwe_ciphertext_count.0),
+            GpuIndex(gpu_index),
+        );
+        let stream = &streams.get(gpu_index).unwrap();
+
+        stream.discard_add_lwe_ciphertext_vector::<T>(
+            output.d_vecs.get_mut(gpu_index).unwrap(),
+            input_1.d_vecs.get(gpu_index).unwrap(),
+            input_2.d_vecs.get(gpu_index).unwrap(),
+            input_1.lwe_dimension,
+            samples_per_gpu,
+        );
+    }
+}
