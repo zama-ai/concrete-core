@@ -45,7 +45,12 @@ bench! {
         CudaLweCiphertextVector, CudaLweCiphertextVector)),
     ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingBootstrapFixture2, (CudaFourierLweBootstrapKey,
         CudaGlweCiphertextVector,
-        CudaLweCiphertextVector, CudaLweCiphertextVector))
+        CudaLweCiphertextVector, CudaLweCiphertextVector)),
+    ((BinaryKeyDistribution),
+        LweCiphertextVectorDiscardingOppositeFixture, (CudaLweCiphertextVector,
+        CudaLweCiphertextVector)),
+    ((BinaryKeyDistribution),
+        LweCiphertextVectorDiscardingAdditionFixture, (CudaLweCiphertextVector, CudaLweCiphertextVector))
 }
 
 macro_rules! bench_amortized {
