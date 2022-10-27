@@ -98,9 +98,9 @@ cmux(Torus *glwe_array_out, Torus *glwe_array_in, double2 *ggsw_in,
   Torus *glwe_sub_mask = (Torus *)selected_memory;
   Torus *glwe_sub_body = (Torus *)glwe_sub_mask + (ptrdiff_t)polynomial_size;
 
-  int16_t *glwe_mask_decomposed = (int16_t *)(glwe_sub_body + polynomial_size);
-  int16_t *glwe_body_decomposed =
-      (int16_t *)glwe_mask_decomposed + (ptrdiff_t)polynomial_size;
+  int8_t *glwe_mask_decomposed = (int8_t *)(glwe_sub_body + polynomial_size);
+  int8_t *glwe_body_decomposed =
+      (int8_t *)glwe_mask_decomposed + (ptrdiff_t)polynomial_size;
 
   double2 *mask_res_fft = (double2 *)(glwe_body_decomposed + polynomial_size);
   double2 *body_res_fft =
@@ -153,7 +153,7 @@ cmux(Torus *glwe_array_out, Torus *glwe_array_in, double2 *ggsw_in,
 
     // First, perform the polynomial multiplication for the mask
     synchronize_threads_in_block();
-    fft<int16_t, params>(glwe_fft, glwe_mask_decomposed);
+    fft<int8_t, params>(glwe_fft, glwe_mask_decomposed);
 
     // External product and accumulate
     // Get the piece necessary for the multiplication
@@ -174,7 +174,7 @@ cmux(Torus *glwe_array_out, Torus *glwe_array_in, double2 *ggsw_in,
     // Now handle the polynomial multiplication for the body
     // in the same way
     synchronize_threads_in_block();
-    fft<int16_t, params>(glwe_fft, glwe_body_decomposed);
+    fft<int8_t, params>(glwe_fft, glwe_body_decomposed);
 
     // External product and accumulate
     // Get the piece necessary for the multiplication
@@ -287,8 +287,8 @@ void host_cmux_tree(void *v_stream, Torus *glwe_array_out, Torus *ggsw_in,
   int memory_needed_per_block =
       sizeof(Torus) * polynomial_size +       // glwe_sub_mask
       sizeof(Torus) * polynomial_size +       // glwe_sub_body
-      sizeof(int16_t) * polynomial_size +     // glwe_mask_decomposed
-      sizeof(int16_t) * polynomial_size +     // glwe_body_decomposed
+      sizeof(int8_t) * polynomial_size +     // glwe_mask_decomposed
+      sizeof(int8_t) * polynomial_size +     // glwe_body_decomposed
       sizeof(double2) * polynomial_size / 2 + // mask_res_fft
       sizeof(double2) * polynomial_size / 2 + // body_res_fft
       sizeof(double2) * polynomial_size / 2;  // glwe_fft

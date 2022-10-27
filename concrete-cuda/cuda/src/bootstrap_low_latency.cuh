@@ -29,13 +29,13 @@ namespace cg = cooperative_groups;
 
 template <typename Torus, class params>
 __device__ void
-mul_ggsw_glwe(Torus *accumulator, double2 *fft, int16_t *glwe_decomposed,
+mul_ggsw_glwe(Torus *accumulator, double2 *fft, int8_t *glwe_decomposed,
               double2 *mask_join_buffer, double2 *body_join_buffer,
               double2 *bootstrapping_key, int polynomial_size, int level_count,
               int iteration, grid_group &grid) {
 
   // Put the decomposed GLWE sample in the Fourier domain
-  real_to_complex_compressed<int16_t, params>(glwe_decomposed, fft);
+  real_to_complex_compressed<int8_t, params>(glwe_decomposed, fft);
   synchronize_threads_in_block();
 
   // Switch to the FFT space
@@ -156,9 +156,9 @@ __global__ void device_bootstrap_low_latency(
 
   char *selected_memory = sharedmem;
 
-  int16_t *accumulator_decomposed = (int16_t *)selected_memory;
+  int8_t *accumulator_decomposed = (int8_t *)selected_memory;
   Torus *accumulator = (Torus *)accumulator_decomposed +
-                       polynomial_size / (sizeof(Torus) / sizeof(int16_t));
+                       polynomial_size / (sizeof(Torus) / sizeof(int8_t));
   double2 *accumulator_fft =
       (double2 *)accumulator +
       polynomial_size / (sizeof(double2) / sizeof(Torus));
@@ -266,7 +266,7 @@ host_bootstrap_low_latency(void *v_stream, Torus *lwe_array_out,
   checkCudaErrors(cudaMalloc((void **)&mask_buffer_fft, buffer_size_per_gpu));
   checkCudaErrors(cudaMalloc((void **)&body_buffer_fft, buffer_size_per_gpu));
 
-  int bytes_needed = sizeof(int16_t) * polynomial_size + // accumulator_decomp
+  int bytes_needed = sizeof(int8_t) * polynomial_size + // accumulator_decomp
                      sizeof(Torus) * polynomial_size +   // accumulator
                      sizeof(double2) * polynomial_size / 2; // accumulator fft
 
