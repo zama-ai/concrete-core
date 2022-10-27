@@ -60,7 +60,7 @@ impl Display for CudaError {
                 write!(f, "The only supported GLWE dimension is 1.")
             }
             CudaError::BaseLogNotSupported => {
-                write!(f, "The base log has to be lower or equal to 16.")
+                write!(f, "The base log has to be lower or equal to 32.")
             }
             CudaError::UnspecifiedDeviceError(gpu_index) => {
                 write!(f, "Unspecified device error on GPU #{}.", gpu_index.0)
@@ -87,7 +87,7 @@ macro_rules! check_glwe_dim {
 
 macro_rules! check_base_log {
     ($base_log: ident) => {
-        if $base_log.0 > 16 {
+        if $base_log.0 > 32 {
             return Err(CudaError::BaseLogNotSupported.into());
         }
     };

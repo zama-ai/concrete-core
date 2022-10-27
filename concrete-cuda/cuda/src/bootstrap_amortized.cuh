@@ -74,11 +74,11 @@ __global__ void device_bootstrap_amortized(
   // one mask polynomial and 1 body to handle Also, since the decomposed
   // polynomials take coefficients between -B/2 and B/2 they can be represented
   // with only 16 bits, assuming the base log does not exceed 2^16
-  int16_t *accumulator_mask_decomposed = (int16_t *)selected_memory;
-  int16_t *accumulator_body_decomposed =
-      (int16_t *)accumulator_mask_decomposed + polynomial_size;
+  int32_t *accumulator_mask_decomposed = (int32_t *)selected_memory;
+  int32_t *accumulator_body_decomposed =
+      (int32_t *)accumulator_mask_decomposed + polynomial_size;
   Torus *accumulator_mask = (Torus *)accumulator_body_decomposed +
-                            polynomial_size / (sizeof(Torus) / sizeof(int16_t));
+                            polynomial_size / (sizeof(Torus) / sizeof(int32_t));
   Torus *accumulator_body =
       (Torus *)accumulator_mask + (ptrdiff_t)polynomial_size;
   Torus *accumulator_mask_rotated =
@@ -175,7 +175,7 @@ __global__ void device_bootstrap_amortized(
 
       // Reduce the size of the FFT to be performed by storing
       // the real-valued polynomial into a complex polynomial
-      real_to_complex_compressed<int16_t, params>(accumulator_mask_decomposed,
+      real_to_complex_compressed<int32_t, params>(accumulator_mask_decomposed,
                                                   accumulator_fft);
 
       synchronize_threads_in_block();
@@ -207,7 +207,7 @@ __global__ void device_bootstrap_amortized(
 
       // Now handle the polynomial multiplication for the body
       // in the same way
-      real_to_complex_compressed<int16_t, params>(accumulator_body_decomposed,
+      real_to_complex_compressed<int32_t, params>(accumulator_body_decomposed,
                                                   accumulator_fft);
       synchronize_threads_in_block();
 
@@ -307,8 +307,8 @@ __host__ void host_bootstrap_amortized(
                 sizeof(Torus) * polynomial_size +   // accumulator body
                 sizeof(Torus) * polynomial_size +   // accumulator mask rotated
                 sizeof(Torus) * polynomial_size +   // accumulator body rotated
-                sizeof(int16_t) * polynomial_size + // accumulator_dec mask
-                sizeof(int16_t) * polynomial_size + // accumulator_dec_body
+                sizeof(int32_t) * polynomial_size + // accumulator_dec mask
+                sizeof(int32_t) * polynomial_size + // accumulator_dec_body
                 sizeof(double2) * polynomial_size / 2 + // accumulator fft mask
                 sizeof(double2) * polynomial_size / 2 + // accumulator fft body
                 sizeof(double2) * polynomial_size / 2;  // calculate buffer fft
