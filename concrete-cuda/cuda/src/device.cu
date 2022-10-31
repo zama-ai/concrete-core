@@ -80,6 +80,11 @@ int cuda_memcpy_async_to_gpu(void *dest, void *src, uint64_t size,
   return 0;
 }
 
+int cuda_synchronize_stream(uint32_t gpu_index) {
+  cudaStreamSynchronize(*stream);
+  return 0;
+}
+
 /// Synchronizes device
 /// 0: success
 /// -2: error, gpu index doesn't exist
