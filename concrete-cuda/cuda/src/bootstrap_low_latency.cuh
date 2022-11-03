@@ -156,7 +156,7 @@ __global__ void device_bootstrap_low_latency(
   extern __shared__ char sharedmem[];
 
   char *selected_memory;
-  int block_index = blockIdx.x + blockIdx.y * gridDim.x + gridDim.x * gridDim.y * blockIdx.z;
+  int block_index = blockIdx.y + blockIdx.x * gridDim.y + gridDim.x * gridDim.y * blockIdx.z;
 
   if constexpr (SMD == FULLSM)
     selected_memory = sharedmem;
@@ -164,13 +164,15 @@ __global__ void device_bootstrap_low_latency(
     selected_memory = &device_mem[block_index * device_memory_size_per_block];
 
   int16_t *accumulator_decomposed = (int16_t *)selected_memory;
+
   Torus *accumulator = (Torus *)accumulator_decomposed +
                        polynomial_size / (sizeof(Torus) / sizeof(int16_t));
-  double2 *accumulator_fft = (double2 *)sharedmem;
-  if constexpr (SMD != PARTIALSM)
-    accumulator_fft = (double2 *)accumulator +
-        polynomial_size / (sizeof(double2) / sizeof(Torus));
 
+  double2 *accumulator_fft = (double2 *)accumulator +
+        polynomial_size / (sizeof(double2) / sizeof(Torus));
+  if constexpr (SMD == PARTIALSM)
+    accumulator_fft = (double2 *)sharedmem;
+  
   // Reuse memory from accumulator_fft for accumulator_rotated
   Torus *accumulator_rotated = (Torus *)accumulator_fft;
 
@@ -191,66 +193,69 @@ __global__ void device_bootstrap_low_latency(
   GadgetMatrix<Torus, params> gadget(base_log, level_count);
 
   // Put "b" in [0, 2N[
-  Torus b_hat = rescale_torus_element(block_lwe_array_in[lwe_dimension],
+  uint32_t b_hat = rescale_torus_element(block_lwe_array_in[lwe_dimension],
                                       2 * params::degree);
+
+  if (threadIdx.x == 0)
+	  printf("dmem per block: %d\n", device_memory_size_per_block);
 
   if (blockIdx.y == 0) {
     divide_by_monomial_negacyclic_inplace<Torus, params::opt,
                                           params::degree / params::opt>(
-        accumulator, block_lut_vector, b_hat, false);
+        accumulator, block_lut_vector, b_hat, true);
   } else {
     divide_by_monomial_negacyclic_inplace<Torus, params::opt,
                                           params::degree / params::opt>(
-        accumulator, &block_lut_vector[params::degree], b_hat, false);
+        accumulator, &block_lut_vector[params::degree], b_hat, true);
   }
 
-  for (int i = 0; i < lwe_dimension; i++) {
-    synchronize_threads_in_block();
+  //for (int i = 0; i < lwe_dimension; i++) {
+  //  synchronize_threads_in_block();
 
-    // Put "a" in [0, 2N[
-    Torus a_hat = rescale_torus_element(
-        block_lwe_array_in[i],
-        2 * params::degree); // 2 * params::log2_degree + 1);
+  //  // Put "a" in [0, 2N[
+  //  Torus a_hat = rescale_torus_element(
+  //      block_lwe_array_in[i],
+  //      2 * params::degree); // 2 * params::log2_degree + 1);
 
-    // Perform ACC * (X^ä - 1)
-    multiply_by_monomial_negacyclic_and_sub_polynomial<
-        Torus, params::opt, params::degree / params::opt>(
-        accumulator, accumulator_rotated, a_hat);
+  //  // Perform ACC * (X^ä - 1)
+  //  multiply_by_monomial_negacyclic_and_sub_polynomial<
+  //      Torus, params::opt, params::degree / params::opt>(
+  //      accumulator, accumulator_rotated, a_hat);
 
-    synchronize_threads_in_block();
-    // Perform a rounding to increase the accuracy of the
-    // bootstrapped ciphertext
-    round_to_closest_multiple_inplace<Torus, params::opt,
-                                      params::degree / params::opt>(
-        accumulator_rotated, base_log, level_count);
+  //  synchronize_threads_in_block();
+  //  // Perform a rounding to increase the accuracy of the
+  //  // bootstrapped ciphertext
+  //  round_to_closest_multiple_inplace<Torus, params::opt,
+  //                                    params::degree / params::opt>(
+  //      accumulator_rotated, base_log, level_count);
 
-    // Decompose the accumulator. Each block gets one level of the
-    // decomposition, for the mask and the body (so block 0 will have the
-    // accumulator decomposed at level 0, 1 at 1, etc.)
-    gadget.decompose_one_level(accumulator_decomposed, accumulator_rotated,
-                               blockIdx.x);
+  //  // Decompose the accumulator. Each block gets one level of the
+  //  // decomposition, for the mask and the body (so block 0 will have the
+  //  // accumulator decomposed at level 0, 1 at 1, etc.)
+  //  gadget.decompose_one_level(accumulator_decomposed, accumulator_rotated,
+  //                             blockIdx.x);
 
-    // We are using the same memory space for accumulator_fft and
-    // accumulator_rotated, so we need to synchronize here to make sure they
-    // don't modify the same memory space at the same time
-    synchronize_threads_in_block();
-    // Perform G^-1(ACC) * GGSW -> GLWE
-    mul_ggsw_glwe<Torus, params>(accumulator, accumulator_fft,
-                                 accumulator_decomposed, block_mask_join_buffer,
-                                 block_body_join_buffer, bootstrapping_key,
-                                 polynomial_size, level_count, i, grid);
-  }
+  //  // We are using the same memory space for accumulator_fft and
+  //  // accumulator_rotated, so we need to synchronize here to make sure they
+  //  // don't modify the same memory space at the same time
+  //  synchronize_threads_in_block();
+  //  // Perform G^-1(ACC) * GGSW -> GLWE
+  //  mul_ggsw_glwe<Torus, params>(accumulator, accumulator_fft,
+  //                               accumulator_decomposed, block_mask_join_buffer,
+  //                               block_body_join_buffer, bootstrapping_key,
+  //                               polynomial_size, level_count, i, grid);
+  //}
 
-  auto block_lwe_array_out = &lwe_array_out[blockIdx.z * (polynomial_size + 1)];
+  //auto block_lwe_array_out = &lwe_array_out[blockIdx.z * (polynomial_size + 1)];
 
-  if (blockIdx.x == 0 && blockIdx.y == 0) {
-    // Perform a sample extract. At this point, all blocks have the result, but
-    // we do the computation at block 0 to avoid waiting for extra blocks, in
-    // case they're not synchronized
-    sample_extract_mask<Torus, params>(block_lwe_array_out, accumulator);
-  } else if (blockIdx.x == 0 && blockIdx.y == 1) {
-    sample_extract_body<Torus, params>(block_lwe_array_out, accumulator);
-  }
+  //if (blockIdx.x == 0 && blockIdx.y == 0) {
+  //  // Perform a sample extract. At this point, all blocks have the result, but
+  //  // we do the computation at block 0 to avoid waiting for extra blocks, in
+  //  // case they're not synchronized
+  //  sample_extract_mask<Torus, params>(block_lwe_array_out, accumulator);
+  //} else if (blockIdx.x == 0 && blockIdx.y == 1) {
+  //  sample_extract_body<Torus, params>(block_lwe_array_out, accumulator);
+  //}
 }
 
 /*
@@ -275,15 +280,16 @@ __host__ void host_bootstrap_low_latency(
   checkCudaErrors(cudaMalloc((void **)&mask_buffer_fft, buffer_size_per_gpu));
   checkCudaErrors(cudaMalloc((void **)&body_buffer_fft, buffer_size_per_gpu));
 
-  int SM_FULL = sizeof(int16_t) * polynomial_size +    // accumulator_decomp
-                sizeof(Torus) * polynomial_size +      // accumulator
-                sizeof(double2) * polynomial_size / 2; // accumulator fft
+  // With SM each block corresponds to either the mask or body, no need to duplicate data for each
+  int SM_FULL = sizeof(int16_t) * polynomial_size +    // accumulator_decomp mask & body
+                sizeof(Torus) * polynomial_size +      // accumulator mask & body
+                sizeof(double2) * polynomial_size / 2; // accumulator fft mask & body
 
-  int SM_PART = sizeof(double2) * polynomial_size / 2; // accumulator fft
-
-  int DM_PART = SM_FULL - SM_PART;
+  int SM_PART = sizeof(double2) * polynomial_size / 2; // accumulator fft mask & body
 
   int DM_FULL = SM_FULL;
+
+  int DM_PART = DM_FULL - SM_PART;
 
   char *d_mem;
 
@@ -325,7 +331,7 @@ __host__ void host_bootstrap_low_latency(
     cudaFuncSetCacheConfig(
         device_bootstrap_low_latency<Torus, params, PARTIALSM>,
         cudaFuncCachePreferShared);
-    printf("Device mem total: %d\n", DM_PART * input_lwe_ciphertext_count);
+    printf("Device mem total: %d\n", DM_PART * input_lwe_ciphertext_count * level_count * 2);
     checkCudaErrors(cudaLaunchCooperativeKernel(
         (void *)device_bootstrap_low_latency<Torus, params, PARTIALSM>, grid,
         thds, (void **)kernel_args, SM_PART, *stream));
