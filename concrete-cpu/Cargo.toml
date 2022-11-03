@@ -1,0 +1,32 @@
+[package]
+name = "concrete-cpu"
+version = "0.1.0"
+edition = "2021"
+license = "BSD-3-Clause-Clear"
+
+[lib]
+name = "concrete_cpu"
+crate-type = ["lib", "staticlib"]
+
+[dependencies]
+concrete-core = { path = "../concrete-core", version = "1.0", features = [
+  "backend_default",
+  "backend_default_parallel",
+  "backend_fft",
+] }
+libc = "0.2"
+pulp = "0.5"
+dyn-stack = "0.8"
+
+[features]
+backend_fft_nightly_avx512 = ["concrete-core/backend_fft_nightly_avx512"]
+
+[build-dependencies]
+cbindgen = "0.24"
+
+[dev-dependencies]
+criterion = "0.4"
+
+[[bench]]
+name = "bench"
+harness = false
