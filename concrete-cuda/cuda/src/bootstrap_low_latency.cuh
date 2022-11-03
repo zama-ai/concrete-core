@@ -146,7 +146,7 @@ __global__ void device_bootstrap_low_latency(
     double2 *bootstrapping_key, double2 *mask_join_buffer,
     double2 *body_join_buffer, uint32_t lwe_dimension, uint32_t polynomial_size,
     uint32_t base_log, uint32_t level_count, char *device_mem,
-    size_t device_memory_size_per_sample) {
+    size_t device_memory_size_per_block) {
 
   grid_group grid = this_grid();
 
@@ -156,11 +156,12 @@ __global__ void device_bootstrap_low_latency(
   extern __shared__ char sharedmem[];
 
   char *selected_memory;
+  int block_index = blockIdx.x + blockIdx.y * gridDim.x + gridDim.x * gridDim.y * blockIdx.z;
 
   if constexpr (SMD == FULLSM)
     selected_memory = sharedmem;
   else
-    selected_memory = &device_mem[blockIdx.z * device_memory_size_per_sample];
+    selected_memory = &device_mem[block_index * device_memory_size_per_block];
 
   int16_t *accumulator_decomposed = (int16_t *)selected_memory;
   Torus *accumulator = (Torus *)accumulator_decomposed +
@@ -168,7 +169,7 @@ __global__ void device_bootstrap_low_latency(
   double2 *accumulator_fft = (double2 *)sharedmem;
   if constexpr (SMD != PARTIALSM)
     accumulator_fft = (double2 *)accumulator +
-        (ptrdiff_t ) (polynomial_size / 2);
+        polynomial_size / (sizeof(double2) / sizeof(Torus));
 
   // Reuse memory from accumulator_fft for accumulator_rotated
   Torus *accumulator_rotated = (Torus *)accumulator_fft;
@@ -216,6 +217,7 @@ __global__ void device_bootstrap_low_latency(
         Torus, params::opt, params::degree / params::opt>(
         accumulator, accumulator_rotated, a_hat);
 
+    synchronize_threads_in_block();
     // Perform a rounding to increase the accuracy of the
     // bootstrapped ciphertext
     round_to_closest_multiple_inplace<Torus, params::opt,
@@ -301,28 +303,35 @@ __host__ void host_bootstrap_low_latency(
   kernel_args[9] = &level_count;
   kernel_args[10] = &d_mem;
 
+  printf("\nmax shared mem: %d, poly size: %d\n", max_shared_memory, polynomial_size);
+
   if (max_shared_memory < SM_PART) {
+    printf("No SM \n");
     kernel_args[11] = &DM_FULL;
     checkCudaErrors(
-        cudaMalloc((void **)&d_mem, DM_FULL * input_lwe_ciphertext_count));
+        cudaMalloc((void **)&d_mem, DM_FULL * input_lwe_ciphertext_count * level_count * 2));
     checkCudaErrors(cudaLaunchCooperativeKernel(
         (void *)device_bootstrap_low_latency<Torus, params, NOSM>, grid, thds,
         (void **)kernel_args, 0, *stream));
   } else if (max_shared_memory < SM_FULL) {
+    printf("Partial SM \n");
     kernel_args[11] = &DM_PART;
+    printf("Device mem: %d, Shared mem: %d\n", DM_PART, SM_PART);
     checkCudaErrors(
-        cudaMalloc((void **)&d_mem, DM_PART * input_lwe_ciphertext_count));
+        cudaMalloc((void **)&d_mem, DM_PART * input_lwe_ciphertext_count * level_count * 2));
     checkCudaErrors(cudaFuncSetAttribute(
         device_bootstrap_low_latency<Torus, params, PARTIALSM>,
         cudaFuncAttributeMaxDynamicSharedMemorySize, SM_PART));
     cudaFuncSetCacheConfig(
         device_bootstrap_low_latency<Torus, params, PARTIALSM>,
         cudaFuncCachePreferShared);
+    printf("Device mem total: %d\n", DM_PART * input_lwe_ciphertext_count);
     checkCudaErrors(cudaLaunchCooperativeKernel(
         (void *)device_bootstrap_low_latency<Torus, params, PARTIALSM>, grid,
         thds, (void **)kernel_args, SM_PART, *stream));
 
   } else {
+    printf("Full SM \n");
     int DM_NONE = 0;
     kernel_args[11] = &DM_NONE;
     checkCudaErrors(cudaMalloc((void **)&d_mem, 0));
