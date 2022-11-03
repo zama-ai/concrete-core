@@ -12,6 +12,7 @@ members = [
     "concrete-core-wasm",
     "concrete-core-representation",
     "concrete-cuda",
+    "concrete-cpu",
 ]
 
 [profile.release]
