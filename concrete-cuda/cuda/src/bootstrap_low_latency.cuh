@@ -10,6 +10,7 @@
 #include "cooperative_groups.h"
 
 #include "../include/helper_cuda.h"
+#include "../include/device.h"
 #include "bootstrap.h"
 #include "complex/operations.cuh"
 #include "crypto/gadget.cuh"
@@ -145,7 +146,7 @@ __global__ void device_bootstrap_low_latency(
     Torus *lwe_array_out, Torus *lut_vector, Torus *lwe_array_in,
     double2 *bootstrapping_key, double2 *mask_join_buffer,
     double2 *body_join_buffer, uint32_t lwe_dimension, uint32_t polynomial_size,
-    uint32_t base_log, uint32_t level_count) {
+    uint32_t base_log, uint32_t level_count, uint32_t sample_offset) {
 
   grid_group grid = this_grid();
 
@@ -168,9 +169,9 @@ __global__ void device_bootstrap_low_latency(
 
   // The third dimension of the block is used to determine on which ciphertext
   // this block is operating, in the case of batch bootstraps
-  auto block_lwe_array_in = &lwe_array_in[blockIdx.z * (lwe_dimension + 1)];
+  auto block_lwe_array_in = &lwe_array_in[(blockIdx.z + sample_offset) * (lwe_dimension + 1)];
 
-  auto block_lut_vector = &lut_vector[blockIdx.z * params::degree * 2];
+  auto block_lut_vector = &lut_vector[(blockIdx.z + sample_offset) * params::degree * 2];
 
   auto block_mask_join_buffer =
       &mask_join_buffer[blockIdx.z * level_count * params::degree / 2];
@@ -232,7 +233,7 @@ __global__ void device_bootstrap_low_latency(
                                  polynomial_size, level_count, i, grid);
   }
 
-  auto block_lwe_array_out = &lwe_array_out[blockIdx.z * (polynomial_size + 1)];
+  auto block_lwe_array_out = &lwe_array_out[(blockIdx.z + sample_offset) * (polynomial_size + 1)];
 
   if (blockIdx.x == 0 && blockIdx.y == 0) {
     // Perform a sample extract. At this point, all blocks have the result, but
@@ -259,19 +260,24 @@ host_bootstrap_low_latency(void *v_stream, Torus *lwe_array_out,
 
   auto stream = static_cast<cudaStream_t *>(v_stream);
 
+  int bytes_needed = sizeof(int16_t) * polynomial_size + // accumulator_decomp
+                     sizeof(Torus) * polynomial_size +   // accumulator
+                     sizeof(double2) * polynomial_size / 2; // accumulator fft
+  int thds = polynomial_size / params::opt;
+
+  uint32_t gpu_index = 0; // This must be refactored to support multi-gpu
+  int num_sm = cuda_get_number_of_sm(gpu_index);
+  int active_blocks_per_sm = cuda_get_max_active_blocks_per_sm_lowlat(polynomial_size);
+  int max_active_blocks = num_sm * active_blocks_per_sm;
+
+
   int buffer_size_per_gpu =
-      level_count * num_samples * polynomial_size / 2 * sizeof(double2);
+      level_count * min(num_samples, max_active_blocks / (2 * level_count)) *
+      polynomial_size / 2 * sizeof(double2);
   double2 *mask_buffer_fft;
   double2 *body_buffer_fft;
   checkCudaErrors(cudaMalloc((void **)&mask_buffer_fft, buffer_size_per_gpu));
   checkCudaErrors(cudaMalloc((void **)&body_buffer_fft, buffer_size_per_gpu));
-
-  int bytes_needed = sizeof(int16_t) * polynomial_size + // accumulator_decomp
-                     sizeof(Torus) * polynomial_size +   // accumulator
-                     sizeof(double2) * polynomial_size / 2; // accumulator fft
-
-  int thds = polynomial_size / params::opt;
-  dim3 grid(level_count, 2, num_samples);
 
   void *kernel_args[10];
   kernel_args[0] = &lwe_array_out;
@@ -291,9 +297,23 @@ host_bootstrap_low_latency(void *v_stream, Torus *lwe_array_out,
   cudaFuncSetCacheConfig(device_bootstrap_low_latency<Torus, params>,
                          cudaFuncCachePreferShared);
 
-  checkCudaErrors(cudaLaunchCooperativeKernel(
-      (void *)device_bootstrap_low_latency<Torus, params>, grid, thds,
-      (void **)kernel_args, bytes_needed, *stream));
+  int remaining_samples = num_samples;
+  int sample_offset = 0;
+  while(remaining_samples > 0){
+      int num_samples_per_kernel = (
+              2 * remaining_samples * level_count <= max_active_blocks?
+              remaining_samples : max_active_blocks / (2 * level_count));
+      dim3 grid(level_count, 2, num_samples_per_kernel);
+
+      kernel_args[10] = &sample_offset;
+
+      checkCudaErrors(cudaLaunchCooperativeKernel(
+          (void *)device_bootstrap_low_latency<Torus, params>, grid, thds,
+          (void **)kernel_args, bytes_needed, *stream));
+
+      sample_offset += num_samples_per_kernel;
+      remaining_samples -= num_samples_per_kernel;
+  }
 
   // Synchronize the streams before copying the result to lwe_array_out at the
   // right place

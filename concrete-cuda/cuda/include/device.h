@@ -22,9 +22,14 @@ int cuda_memcpy_async_to_cpu(void *dest, const void *src, uint64_t size,
                              void *v_stream, uint32_t gpu_index);
 int cuda_get_number_of_gpus();
 
+int cuda_get_number_of_sm(uint32_t gpu_index);
+
+int cuda_get_max_active_blocks_per_sm_lowlat(int polynomial_size);
+
 int cuda_synchronize_device(uint32_t gpu_index);
 
 int cuda_drop(void *ptr, uint32_t gpu_index);
 
 int cuda_get_max_shared_memory(uint32_t gpu_index);
+
 }

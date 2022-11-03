@@ -129,6 +129,25 @@ int cuda_get_number_of_gpus() {
   return num_gpus;
 }
 
+/// Return the number of SM for a particular GPU
+int cuda_get_number_of_sm(uint32_t gpu_index) {
+    cudaGetDevice((int*)&gpu_index);
+    cudaDeviceProp props;
+    cudaGetDeviceProperties(&props, gpu_index);
+    return props.multiProcessorCount;
+}
+
+/// Return the number of active blocks per SM on the low latency PBS implementation
+int cuda_get_max_active_blocks_per_sm_lowlat(int polynomial_size){
+    // Hardcoded for a Tesla V100
+    switch(polynomial_size){
+        case 512:
+            return 2;
+        default:
+            return 1;
+    }
+}
+
 /// Drop a cuda array
 int cuda_drop(void *ptr, uint32_t gpu_index) {
   if (gpu_index >= cuda_get_number_of_gpus()) {
