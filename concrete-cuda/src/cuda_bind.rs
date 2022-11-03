@@ -161,6 +161,34 @@ extern "C" {
         num_samples: u32,
     );
 
+    pub fn cuda_fp_keyswitch_lwe_to_glwe_32(
+        v_stream: *const c_void,
+        glwe_array_out: *mut c_void,
+        lwe_array_in: *const c_void,
+        fp_ksk_array: *const c_void,
+        input_lwe_dimension: u32,
+        output_glwe_dimension: u32,
+        output_polynomial_size: u32,
+        base_log: u32,
+        level_count: u32,
+        number_of_input_lwe: u32,
+        number_of_keys: u32,
+    );
+
+    pub fn cuda_fp_keyswitch_lwe_to_glwe_64(
+        v_stream: *const c_void,
+        glwe_array_out: *mut c_void,
+        lwe_array_in: *const c_void,
+        fp_ksk_array: *const c_void,
+        input_lwe_dimension: u32,
+        output_glwe_dimension: u32,
+        output_polynomial_size: u32,
+        base_log: u32,
+        level_count: u32,
+        number_of_input_lwe: u32,
+        number_of_keys: u32,
+    );
+
     pub fn cuda_cmux_tree_32(
         v_stream: *const c_void,
         gpu_index: u32,
@@ -252,6 +280,58 @@ extern "C" {
         level_count_bsk: u32,
         base_log_ksk: u32,
         level_count_ksk: u32,
+        number_of_samples: u32,
+        max_shared_memory: u32,
+    );
+
+    pub fn cuda_circuit_bootstrap_32(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        ggsw_out: *mut c_void,
+        lwe_array_in: *const c_void,
+        fourier_bsk: *const c_void,
+        fp_ksk_array: *const c_void,
+        lwe_array_in_shifted_buffer: *mut c_void,
+        lut_vector: *mut c_void,
+        lut_vector_indexes: *const c_void,
+        lwe_array_out_pbs_buffer: *mut c_void,
+        lwe_array_in_fp_ks_buffer: *mut c_void,
+        delta_log: u32,
+        polynomial_size: u32,
+        glwe_dimension: u32,
+        lwe_dimension: u32,
+        level_bsk: u32,
+        base_log_bsk: u32,
+        level_pksk: u32,
+        base_log_pksk: u32,
+        level_cbs: u32,
+        base_log_cbs: u32,
+        number_of_samples: u32,
+        max_shared_memory: u32,
+    );
+
+    pub fn cuda_circuit_bootstrap_64(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        ggsw_out: *mut c_void,
+        lwe_array_in: *const c_void,
+        fourier_bsk: *const c_void,
+        fp_ksk_array: *const c_void,
+        lwe_array_in_shifted_buffer: *mut c_void,
+        lut_vector: *mut c_void,
+        lut_vector_indexes: *const c_void,
+        lwe_array_out_pbs_buffer: *mut c_void,
+        lwe_array_in_fp_ks_buffer: *mut c_void,
+        delta_log: u32,
+        polynomial_size: u32,
+        glwe_dimension: u32,
+        lwe_dimension: u32,
+        level_bsk: u32,
+        base_log_bsk: u32,
+        level_pksk: u32,
+        base_log_pksk: u32,
+        level_cbs: u32,
+        base_log_cbs: u32,
         number_of_samples: u32,
         max_shared_memory: u32,
     );

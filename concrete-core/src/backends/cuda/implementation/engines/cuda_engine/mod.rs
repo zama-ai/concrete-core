@@ -94,3 +94,7 @@ mod lwe_ciphertext_vector_discarding_opposite;
 mod lwe_ciphertext_vector_plaintext_vector_discarding_addition;
 mod lwe_keyswitch_key_conversion;
 mod plaintext_vector_conversion;
+
+mod lwe_ciphertext_discarding_bit_extraction;
+mod lwe_ciphertext_vector_glwe_ciphertext_discarding_private_functional_packing_keyswitch;
+mod lwe_private_functional_packing_keyswitch_key_conversion;

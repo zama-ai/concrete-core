@@ -371,6 +371,7 @@ pub fn homomorphic_shift_boolean<Scalar: UnsignedTorus + CastInto<usize>>(
         CACHELINE_ALIGN,
         |_| Scalar::ZERO,
     );
+
     let mut pbs_accumulator =
         GlweCiphertext::from_container(&mut *pbs_accumulator_data, polynomial_size);
 

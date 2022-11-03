@@ -1,9 +1,11 @@
+use crate::backends::cuda::private::crypto::ggsw::ciphertext::CudaGgswCiphertext;
 use crate::backends::cuda::private::device::{CudaStream, GpuIndex};
 use crate::backends::cuda::private::wopbs::circuit_bootstrap_boolean_cuda_vertical_packing;
 use crate::backends::fft::private::crypto::bootstrap::{
     fill_with_forward_fourier_scratch, FourierLweBootstrapKey,
 };
 use crate::backends::fft::private::crypto::wop_pbs::{
+    circuit_bootstrap_boolean, circuit_bootstrap_boolean_scratch,
     circuit_bootstrap_boolean_vertical_packing_scratch, extract_bits, extract_bits_scratch,
 };
 use crate::backends::fft::private::math::fft::Fft;
@@ -24,8 +26,8 @@ use crate::prelude::*;
 use concrete_csprng::generators::SoftwareRandomGenerator;
 use concrete_csprng::seeders::UnixSeeder;
 use concrete_cuda::cuda_bind::{
-    cuda_cmux_tree_64, cuda_convert_lwe_bootstrap_key_64, cuda_extract_bits_64,
-    cuda_initialize_twiddles, cuda_synchronize_device,
+    cuda_circuit_bootstrap_64, cuda_cmux_tree_64, cuda_convert_lwe_bootstrap_key_64,
+    cuda_extract_bits_64, cuda_initialize_twiddles, cuda_synchronize_device,
 };
 use concrete_fft::c64;
 use dyn_stack::{DynStack, GlobalMemBuffer};
@@ -699,5 +701,352 @@ pub fn test_extract_bit_circuit_bootstrapping_cuda_vertical_packing() {
             );
         }
         println!("{:?}", decoded_message);
+    }
+}
+
+// Test the circuit bootstrapping with private functional ks
+// Verify the decryption has the expected content
+#[test]
+fn test_cuda_circuit_bootstrapping_binary() {
+    // Define settings for an insecure toy example
+    let polynomial_size = PolynomialSize(512);
+    let glwe_dimension = GlweDimension(1);
+    let lwe_dimension = LweDimension(10);
+
+    let level_bsk = DecompositionLevelCount(2);
+    let base_log_bsk = DecompositionBaseLog(11);
+
+    let level_pksk = DecompositionLevelCount(2);
+    let base_log_pksk = DecompositionBaseLog(15);
+
+    let level_count_cbs = DecompositionLevelCount(1);
+    let base_log_cbs = DecompositionBaseLog(10);
+
+    let std = LogStandardDev::from_log_standard_dev(-60.);
+
+    const UNSAFE_SECRET: u128 = 0;
+    let mut seeder = UnixSeeder::new(UNSAFE_SECRET);
+
+    let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(seeder.seed());
+    let mut encryption_generator =
+        EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(seeder.seed(), &mut seeder);
+
+    // Create GLWE and LWE secret key
+    let glwe_sk: GlweSecretKey<_, Vec<u64>> =
+        GlweSecretKey::generate_binary(glwe_dimension, polynomial_size, &mut secret_generator);
+    let lwe_sk: LweSecretKey<_, Vec<u64>> =
+        LweSecretKey::generate_binary(lwe_dimension, &mut secret_generator);
+
+    // Allocation and generation of the bootstrap key in standard domain:
+    let mut std_bsk = StandardBootstrapKey::allocate(
+        0u64,
+        glwe_dimension.to_glwe_size(),
+        polynomial_size,
+        level_bsk,
+        base_log_bsk,
+        lwe_dimension,
+    );
+    std_bsk.fill_with_new_key(&lwe_sk, &glwe_sk, std, &mut encryption_generator);
+
+    let mut fourier_bsk = FourierLweBootstrapKey::new(
+        vec![
+            c64::default();
+            lwe_dimension.0 * polynomial_size.0 / 2
+                * level_bsk.0
+                * glwe_dimension.to_glwe_size().0
+                * glwe_dimension.to_glwe_size().0
+        ],
+        lwe_dimension,
+        polynomial_size,
+        glwe_dimension.to_glwe_size(),
+        base_log_bsk,
+        level_bsk,
+    );
+
+    // get gpu index and initialize stream
+    let gpu_index = GpuIndex(0);
+    let stream = CudaStream::new(gpu_index).unwrap();
+
+    // number of samples
+    let nos: u32 = 1;
+
+    let bsk_size = (glwe_dimension.0 + 1)
+        * (glwe_dimension.0 + 1)
+        * polynomial_size.0
+        * level_bsk.0
+        * lwe_dimension.0;
+
+    // host pointer for bsk coef
+    let mut h_coef_bsk: Vec<u64> = vec![];
+    // device pointer for fourier bsk
+    let mut d_bsk_fourier = stream.malloc::<f64>(bsk_size as u32);
+    // use same bsk coefficients for gpu bsk
+    h_coef_bsk.append(&mut std_bsk.tensor.as_slice().to_vec());
+    // convert bsk coefficients to fourier on device
+    unsafe {
+        cuda_initialize_twiddles(polynomial_size.0 as u32, gpu_index.0 as u32);
+        cuda_convert_lwe_bootstrap_key_64(
+            d_bsk_fourier.as_mut_c_ptr(),
+            h_coef_bsk.as_ptr() as *mut c_void,
+            stream.stream_handle().0,
+            gpu_index.0 as u32,
+            lwe_dimension.0 as u32,
+            glwe_dimension.0 as u32,
+            level_bsk.0 as u32,
+            polynomial_size.0 as u32,
+        );
+    }
+
+    let fft = Fft::new(polynomial_size);
+    let fft = fft.as_view();
+
+    let mut mem = GlobalMemBuffer::new(fill_with_forward_fourier_scratch(fft).unwrap());
+    let stack = DynStack::new(&mut mem);
+    fourier_bsk
+        .as_mut_view()
+        .fill_with_forward_fourier(std_bsk.as_view(), fft, stack);
+
+    let lwe_sk_bs_output = LweSecretKey::binary_from_container(glwe_sk.as_tensor().as_slice());
+
+    // Creation of all the pfksk for the circuit bootstrapping
+    let mut vec_pfksk = LwePrivateFunctionalPackingKeyswitchKeyList::allocate(
+        0u64,
+        level_pksk,
+        base_log_pksk,
+        lwe_sk_bs_output.key_size(),
+        glwe_sk.key_size(),
+        glwe_sk.polynomial_size(),
+        FunctionalPackingKeyswitchKeyCount(glwe_dimension.to_glwe_size().0),
+    );
+
+    vec_pfksk.par_fill_with_fpksk_for_circuit_bootstrap(
+        &lwe_sk_bs_output,
+        &glwe_sk,
+        std,
+        &mut encryption_generator,
+    );
+
+    let delta_log = DeltaLog(60);
+
+    // value is 0 or 1 as CBS works on messages expected to contain 1 bit of information
+    let value: u64 = test_tools::random_uint_between(0..2u64);
+    // Encryption of an LWE with the value 'message'
+    let message = Plaintext((value) << delta_log.0);
+    let mut lwe_in = LweCiphertext::allocate(0u64, lwe_dimension.to_lwe_size());
+    lwe_sk.encrypt_lwe(&mut lwe_in, &message, std, &mut encryption_generator);
+
+    let mut cbs_res = StandardGgswCiphertext::allocate(
+        0u64,
+        polynomial_size,
+        glwe_dimension.to_glwe_size(),
+        level_count_cbs,
+        base_log_cbs,
+    );
+
+    let mut mem = GlobalMemBuffer::new(
+        circuit_bootstrap_boolean_scratch::<u64>(
+            lwe_in.lwe_size(),
+            fourier_bsk.output_lwe_dimension().to_lwe_size(),
+            polynomial_size,
+            glwe_dimension.to_glwe_size(),
+            fft,
+        )
+        .unwrap(),
+    );
+    let stack = DynStack::new(&mut mem);
+    // Execute the CBS
+    //println!("vec_pfksk: {:?}", vec_pfksk);
+    circuit_bootstrap_boolean(
+        fourier_bsk.as_view(),
+        lwe_in.as_view(),
+        cbs_res.as_mut_view(),
+        delta_log,
+        vec_pfksk.as_view(),
+        fft,
+        stack,
+    );
+
+    let mut h_lut_vector_indexes: Vec<u32> = vec![0 as u32; nos as usize * level_count_cbs.0];
+
+    for index in 0..nos as usize * level_count_cbs.0 {
+        h_lut_vector_indexes[index] = index as u32 % level_count_cbs.0 as u32;
+    }
+
+    // allocate and initialize device pointers for circuit bootstrap
+    // output glwe array for fp-ks
+    let mut d_ggsw_out = stream.malloc::<u64>(
+        nos * level_count_cbs.0 as u32
+            * (glwe_dimension.0 as u32 + 1)
+            * (glwe_dimension.0 as u32 + 1)
+            * polynomial_size.0 as u32,
+    );
+    // input lwe array for fp-ks
+    let mut d_lwe_array_in_fp_ks_buffer = stream.malloc::<u64>(
+        nos * level_count_cbs.0 as u32
+            * (glwe_dimension.0 as u32 + 1)
+            * (polynomial_size.0 + 1) as u32,
+    );
+    // buffer for pbs output
+    let mut d_lwe_array_out_pbs_buffer =
+        stream.malloc::<u64>(nos * level_count_cbs.0 as u32 * (polynomial_size.0 + 1) as u32);
+    // vector for input of lwe ciphertexts
+    let mut d_lwe_array_in = stream.malloc::<u64>(nos * (lwe_dimension.0 + 1) as u32);
+    // vector for shifted lwe input
+    let mut d_lwe_array_in_shifted_buffer =
+        stream.malloc::<u64>(nos * level_count_cbs.0 as u32 * (lwe_dimension.0 + 1) as u32);
+    // lut vector for pbs
+    let mut d_lut_vector = stream.malloc::<u64>(
+        level_count_cbs.0 as u32 * (glwe_dimension.0 as u32 + 1) * polynomial_size.0 as u32,
+    );
+    // indexes of lut vectors
+    let mut d_lut_vector_indexes = stream.malloc::<u32>(nos * level_count_cbs.0 as u32);
+
+    let mut d_fp_ksk_array = stream.malloc::<u64>(
+        (polynomial_size.0 as u32 + 1)
+            * (glwe_dimension.0 as u32 + 1)
+            * (glwe_dimension.0 as u32 + 1)
+            * level_pksk.0 as u32
+            * polynomial_size.0 as u32,
+    );
+
+    let mut h_fp_ksk_array: Vec<u64> = vec![];
+
+    let mut cnt = 0;
+    let mut vec_cnt = 0;
+    for iter in vec_pfksk.fpksk_iter_mut() {
+        vec_cnt += 1;
+        for iter2 in iter.bit_decomp_iter() {
+            for iter3 in iter2.tensor.iter() {
+                h_fp_ksk_array.push(*iter3 as u64);
+                cnt += 1;
+            }
+        }
+    }
+    unsafe {
+        // fill device lwe input with same ciphertext
+        stream.copy_to_gpu::<u64>(&mut d_lwe_array_in, &mut lwe_in.tensor.as_slice());
+        stream.copy_to_gpu::<u32>(&mut d_lut_vector_indexes, &mut h_lut_vector_indexes);
+        stream.copy_to_gpu::<u64>(&mut d_fp_ksk_array, &mut h_fp_ksk_array);
+    }
+
+    unsafe {
+        cuda_circuit_bootstrap_64(
+            stream.stream_handle().0,
+            0 as u32,
+            d_ggsw_out.as_mut_c_ptr(),
+            d_lwe_array_in.as_c_ptr(),
+            d_bsk_fourier.as_c_ptr(),
+            d_fp_ksk_array.as_mut_c_ptr(),
+            d_lwe_array_in_shifted_buffer.as_mut_c_ptr(),
+            d_lut_vector.as_mut_c_ptr(),
+            d_lut_vector_indexes.as_c_ptr(),
+            d_lwe_array_out_pbs_buffer.as_mut_c_ptr(),
+            d_lwe_array_in_fp_ks_buffer.as_mut_c_ptr(),
+            delta_log.0 as u32,
+            polynomial_size.0 as u32,
+            glwe_dimension.0 as u32,
+            lwe_dimension.0 as u32,
+            level_bsk.0 as u32,
+            base_log_bsk.0 as u32,
+            level_pksk.0 as u32,
+            base_log_pksk.0 as u32,
+            level_count_cbs.0 as u32,
+            base_log_cbs.0 as u32,
+            nos,
+            stream.get_max_shared_memory().unwrap() as u32,
+        );
+    }
+    let mut cuda_engine = CudaEngine::new(()).unwrap();
+    let d_ciphertext: CudaGgswCiphertext64 = CudaGgswCiphertext64(CudaGgswCiphertext {
+        d_vec: d_ggsw_out,
+        glwe_dimension,
+        polynomial_size,
+        decomposition_level_count: level_count_cbs,
+        decomposition_base_log: base_log_cbs,
+    });
+    let cbs_res_cuda: GgswCiphertext64 =
+        cuda_engine.convert_ggsw_ciphertext(&d_ciphertext).unwrap();
+
+    let glwe_size = glwe_dimension.to_glwe_size();
+
+    //print the key to check if the RLWE in the GGSW seem to be well created
+    println!("RLWE secret key:\n{:?}", glwe_sk);
+    let mut decrypted = PlaintextList::allocate(
+        0_u64,
+        PlaintextCount(polynomial_size.0 * level_count_cbs.0 * glwe_size.0),
+    );
+    glwe_sk.decrypt_glwe_list(&mut decrypted, &cbs_res_cuda.0.as_glwe_list());
+
+    let level_size = polynomial_size.0 * glwe_size.0;
+
+    println!("\nGGSW decryption:");
+    for (level_idx, level_decrypted_glwe) in decrypted
+        .sublist_iter(PlaintextCount(level_size))
+        .enumerate()
+    {
+        for (decrypted_glwe, original_polynomial_from_glwe_sk) in level_decrypted_glwe
+            .sublist_iter(PlaintextCount(polynomial_size.0))
+            .take(glwe_dimension.0)
+            .zip(glwe_sk.as_polynomial_list().polynomial_iter())
+        {
+            let current_level = level_idx + 1;
+            let mut expected_decryption = PlaintextList::allocate(
+                0u64,
+                PlaintextCount(original_polynomial_from_glwe_sk.polynomial_size().0),
+            );
+            expected_decryption
+                .as_mut_tensor()
+                .fill_with_copy(original_polynomial_from_glwe_sk.as_tensor());
+
+            let multiplying_factor = 0u64.wrapping_sub(value);
+
+            expected_decryption
+                .as_mut_tensor()
+                .update_with_wrapping_scalar_mul(&multiplying_factor);
+
+            let decomposer =
+                SignedDecomposer::new(base_log_cbs, DecompositionLevelCount(current_level));
+
+            expected_decryption
+                .as_mut_tensor()
+                .update_with(|coeff| *coeff >>= 64 - base_log_cbs.0 * current_level);
+
+            let mut decoded_glwe =
+                PlaintextList::from_container(decrypted_glwe.as_tensor().as_container().to_vec());
+
+            decoded_glwe.as_mut_tensor().update_with(|coeff| {
+                *coeff = decomposer.closest_representable(*coeff)
+                    >> (64 - base_log_cbs.0 * current_level)
+            });
+
+            assert_eq!(
+                expected_decryption.as_tensor().as_slice(),
+                decoded_glwe.as_tensor().as_slice()
+            );
+        }
+        let last_decrypted_glwe = level_decrypted_glwe
+            .sublist_iter(PlaintextCount(polynomial_size.0))
+            .rev()
+            .next()
+            .unwrap();
+
+        let mut last_decoded_glwe =
+            PlaintextList::from_container(last_decrypted_glwe.as_tensor().as_container().to_vec());
+
+        let decomposer = SignedDecomposer::new(base_log_cbs, level_count_cbs);
+
+        last_decoded_glwe.as_mut_tensor().update_with(|coeff| {
+            *coeff = decomposer.closest_representable(*coeff)
+                >> (64 - base_log_cbs.0 * level_count_cbs.0)
+        });
+
+        let mut expected_decryption = PlaintextList::allocate(0u64, last_decoded_glwe.count());
+
+        *expected_decryption.as_mut_tensor().first_mut() = value;
+
+        assert_eq!(
+            expected_decryption.as_tensor().as_slice(),
+            last_decoded_glwe.as_tensor().as_slice()
+        );
     }
 }
