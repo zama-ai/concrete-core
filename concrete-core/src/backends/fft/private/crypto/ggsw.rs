@@ -10,7 +10,7 @@ use crate::commons::math::decomposition::{DecompositionLevel, SignedDecomposer};
 use crate::commons::math::polynomial::Polynomial;
 #[cfg(feature = "backend_fft_serialization")]
 use crate::commons::math::tensor::ContainerOwned;
-use crate::commons::math::tensor::{Container, IntoTensor, Split};
+use crate::commons::math::tensor::{AsMutSlice, Container, IntoTensor, Split};
 use crate::commons::math::torus::UnsignedTorus;
 use crate::commons::utils::izip;
 use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, GlweSize, PolynomialSize};
@@ -18,6 +18,7 @@ use aligned_vec::CACHELINE_ALIGN;
 use concrete_fft::c64;
 use dyn_stack::{DynStack, ReborrowMut, SizeOverflow, StackReq};
 
+use crate::backends::fft::private::math::polynomial::{FourierPolynomial, PolynomialUninitMutView};
 #[cfg(target_arch = "x86")]
 use core::arch::x86::*;
 #[cfg(target_arch = "x86_64")]
@@ -283,6 +284,41 @@ impl<'a> FourierGgswCiphertextMutView<'a> {
     }
 }
 
+/// Returns the required memory for [`FourierGgswCiphertextMutView::fill_with_backward_fourier`].
+pub fn fill_with_backward_fourier_scratch(fft: FftView<'_>) -> Result<StackReq, SizeOverflow> {
+    fft.backward_scratch()
+}
+
+impl<'a> FourierGgswCiphertextView<'a> {
+    /// Fills a standard GGSW ciphertext with the inverse Fourier transform of a GGSW ciphertext
+    /// in the Fourier domain.
+    pub fn fill_with_backward_fourier<Scalar: UnsignedTorus>(
+        self,
+        mut coef_ggsw: StandardGgswCiphertext<&mut [Scalar]>,
+        fft: FftView<'_>,
+        mut stack: DynStack<'_>,
+    ) {
+        debug_assert_eq!(coef_ggsw.polynomial_size(), self.polynomial_size());
+        let poly_size = coef_ggsw.polynomial_size().0;
+
+        for (fourier_poly, mut coef_poly) in izip!(
+            self.data().into_chunks(poly_size / 2),
+            coef_ggsw
+                .as_mut_glwe_list()
+                .tensor
+                .subtensor_iter_mut(poly_size)
+        ) {
+            // SAFETY: backward_as_torus doesn't write any uninitialized values into its output
+            fft.backward_as_torus(
+                PolynomialUninitMutView::from_container(unsafe {
+                    as_mut_uninit(coef_poly.as_mut_slice())
+                }),
+                FourierPolynomial { data: fourier_poly },
+                stack.rb_mut(),
+            );
+        }
+    }
+}
 /// Returns the required memory for [`external_product`].
 pub fn external_product_scratch<Scalar>(
     glwe_size: GlweSize,
