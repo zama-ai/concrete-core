@@ -9,8 +9,8 @@ use crate::commons::crypto::bootstrap::StandardBootstrapKey;
 use crate::commons::math::tensor::{AsRefSlice, AsRefTensor};
 use crate::commons::numeric::UnsignedInteger;
 use crate::prelude::{
-    CiphertextCount, DecompositionBaseLog, DecompositionLevelCount, GlweDimension,
-    LweCiphertextIndex, LweDimension, PolynomialSize,
+    CiphertextCount, DecompositionBaseLog, DecompositionLevelCount, DeltaLog, ExtractedBitsCount,
+    GlweDimension, LweCiphertextCount, LweCiphertextIndex, LweDimension, PolynomialSize,
 };
 use std::marker::PhantomData;
 
@@ -176,4 +176,65 @@ pub(crate) unsafe fn execute_lwe_ciphertext_vector_amortized_bootstrap_on_gpu<
             cuda_shared_memory,
         );
     }
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) unsafe fn execute_lwe_ciphertext_vector_extract_bits_on_gpu<T: UnsignedInteger>(
+    streams: &[CudaStream],
+    lwe_array_out: &mut CudaVec<T>,
+    lwe_array_in: &CudaVec<T>,
+    keyswitch_key: &CudaVec<T>,
+    fourier_bsk: &CudaVec<f64>,
+    number_of_bits: ExtractedBitsCount,
+    delta_log: DeltaLog,
+    input_lwe_dimension: LweDimension,
+    output_lwe_dimension: LweDimension,
+    glwe_dimension: GlweDimension,
+    polynomial_size: PolynomialSize,
+    base_log_bsk: DecompositionBaseLog,
+    level_count_bsk: DecompositionLevelCount,
+    base_log_ksk: DecompositionBaseLog,
+    level_count_ksk: DecompositionLevelCount,
+    num_samples: LweCiphertextCount,
+    cuda_shared_memory: SharedMemoryAmount,
+) {
+    let stream = &streams[0];
+    let mut lut_pbs = stream.malloc::<T>((2 * polynomial_size.0) as u32);
+    let h_lut_vector_indexes = vec![T::ZERO; 1];
+    let mut lut_vector_indexes = stream.malloc::<T>(1_u32);
+    stream.copy_to_gpu(&mut lut_vector_indexes, h_lut_vector_indexes.as_slice());
+
+    let mut lwe_array_in_buffer =
+        stream.malloc::<T>((num_samples.0 * (polynomial_size.0 + 1)) as u32);
+    let mut lwe_array_in_shifted_buffer =
+        stream.malloc::<T>((num_samples.0 * (polynomial_size.0 + 1)) as u32);
+    let mut lwe_array_out_ks_buffer =
+        stream.malloc::<T>((num_samples.0 * (output_lwe_dimension.0 + 1)) as u32);
+    let mut lwe_array_out_pbs_buffer =
+        stream.malloc::<T>((num_samples.0 * (polynomial_size.0 + 1)) as u32);
+
+    stream.initialize_twiddles(polynomial_size);
+    stream.discard_extract_bits_lwe_ciphertext_vector::<T>(
+        lwe_array_out,
+        lwe_array_in,
+        &mut lwe_array_in_buffer,
+        &mut lwe_array_in_shifted_buffer,
+        &mut lwe_array_out_ks_buffer,
+        &mut lwe_array_out_pbs_buffer,
+        &mut lut_pbs,
+        &lut_vector_indexes,
+        keyswitch_key,
+        fourier_bsk,
+        number_of_bits,
+        delta_log,
+        input_lwe_dimension,
+        output_lwe_dimension,
+        glwe_dimension,
+        base_log_bsk,
+        level_count_bsk,
+        base_log_ksk,
+        level_count_ksk,
+        num_samples,
+        cuda_shared_memory,
+    )
 }

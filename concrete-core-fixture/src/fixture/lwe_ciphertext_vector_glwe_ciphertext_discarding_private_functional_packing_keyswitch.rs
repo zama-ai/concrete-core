@@ -5,7 +5,7 @@ use crate::generation::prototyping::{
     PrototypesLweSecretKey, PrototypesPlaintextVector,
 };
 use crate::generation::synthesizing::{
-    SynthesizesCleartextVector, SynthesizesGlweCiphertext, SynthesizesLweCiphertextVector,
+    SynthesizesGlweCiphertext, SynthesizesLweCiphertextVector,
     SynthesizesPrivateFunctionalPackingKeyswitchKey,
 };
 use crate::generation::{
@@ -17,9 +17,9 @@ use crate::raw::statistical_test::assert_noise_distribution;
 use concrete_core::commons::math::polynomial::Polynomial;
 use concrete_core::commons::numeric::UnsignedInteger;
 use concrete_core::prelude::{
-    BinaryKeyKind, CleartextVectorEntity, DecompositionBaseLog, DecompositionLevelCount,
-    DispersionParameter, GaussianKeyKind, GlweCiphertextEntity, GlweDimension, LogStandardDev,
-    LweCiphertextCount, LweCiphertextVectorEntity,
+    BinaryKeyKind, DecompositionBaseLog, DecompositionLevelCount, DispersionParameter,
+    GaussianKeyKind, GlweCiphertextEntity, GlweDimension, LogStandardDev, LweCiphertextCount,
+    LweCiphertextVectorEntity,
     LweCiphertextVectorGlweCiphertextDiscardingPrivateFunctionalPackingKeyswitchEngine,
     LweDimension, LwePrivateFunctionalPackingKeyswitchKeyEntity, PolynomialSize, StandardDev,
     TernaryKeyKind, Variance,
@@ -51,7 +51,6 @@ impl<
         InputCiphertextVector,
         LwePrivateFunctionalPackingKeyswitchKey,
         OutputCiphertext,
-        CleartextVector,
     >
     Fixture<
         Precision,
@@ -61,7 +60,6 @@ impl<
             InputCiphertextVector,
             LwePrivateFunctionalPackingKeyswitchKey,
             OutputCiphertext,
-            CleartextVector,
         ),
     > for LweCiphertextVectorGlweCiphertextDiscardingPrivateFunctionalPackingKeyswitchFixture
 where
@@ -76,10 +74,8 @@ where
     InputCiphertextVector: LweCiphertextVectorEntity,
     LwePrivateFunctionalPackingKeyswitchKey: LwePrivateFunctionalPackingKeyswitchKeyEntity,
     OutputCiphertext: GlweCiphertextEntity,
-    CleartextVector: CleartextVectorEntity,
     Maker: SynthesizesLweCiphertextVector<Precision, InputKeyDistribution, InputCiphertextVector>
         + SynthesizesGlweCiphertext<Precision, OutputKeyDistribution, OutputCiphertext>
-        + SynthesizesCleartextVector<Precision, CleartextVector>
         + SynthesizesPrivateFunctionalPackingKeyswitchKey<
             Precision,
             InputKeyDistribution,

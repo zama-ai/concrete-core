@@ -98,3 +98,81 @@ mod backend_default {
         }
     }
 }
+#[cfg(feature = "backend_cuda")]
+mod backend_cuda {
+    use crate::generation::synthesizing::SynthesizesPrivateFunctionalPackingKeyswitchKey;
+    use crate::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
+    use concrete_core::prelude::{
+        CudaLwePrivateFunctionalPackingKeyswitchKey32,
+        CudaLwePrivateFunctionalPackingKeyswitchKey64,
+        LwePrivateFunctionalPackingKeyswitchKeyConversionEngine,
+    };
+
+    impl
+        SynthesizesPrivateFunctionalPackingKeyswitchKey<
+            Precision32,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            CudaLwePrivateFunctionalPackingKeyswitchKey32,
+        > for Maker
+    {
+        fn synthesize_private_functional_packing_keyswitch_key(
+            &mut self,
+            prototype: &Self::LwePrivateFunctionalPackingKeyswitchKeyProto,
+        ) -> CudaLwePrivateFunctionalPackingKeyswitchKey32 {
+            self.cuda_engine
+                .convert_lwe_private_functional_packing_keyswitch_key(&prototype.0)
+                .unwrap()
+        }
+
+        fn unsynthesize_private_functional_packing_keyswitch_key(
+            &mut self,
+            _entity: CudaLwePrivateFunctionalPackingKeyswitchKey32,
+        ) -> Self::LwePrivateFunctionalPackingKeyswitchKeyProto {
+            unimplemented!(
+                "The conversion of the FPKSK from GPU to CPU is not \
+            implemented"
+            );
+        }
+
+        fn destroy_private_functional_packing_keyswitch_key(
+            &mut self,
+            _entity: CudaLwePrivateFunctionalPackingKeyswitchKey32,
+        ) {
+        }
+    }
+
+    impl
+        SynthesizesPrivateFunctionalPackingKeyswitchKey<
+            Precision64,
+            BinaryKeyDistribution,
+            BinaryKeyDistribution,
+            CudaLwePrivateFunctionalPackingKeyswitchKey64,
+        > for Maker
+    {
+        fn synthesize_private_functional_packing_keyswitch_key(
+            &mut self,
+            prototype: &Self::LwePrivateFunctionalPackingKeyswitchKeyProto,
+        ) -> CudaLwePrivateFunctionalPackingKeyswitchKey64 {
+            self.cuda_engine
+                .convert_lwe_private_functional_packing_keyswitch_key(&prototype.0)
+                .unwrap()
+        }
+
+        fn unsynthesize_private_functional_packing_keyswitch_key(
+            &mut self,
+            _entity: CudaLwePrivateFunctionalPackingKeyswitchKey64,
+        ) -> Self::LwePrivateFunctionalPackingKeyswitchKeyProto {
+            unimplemented!(
+                "The conversion of the FPKSK from GPU to CPU is not \
+            implemented"
+            );
+        }
+
+        fn destroy_private_functional_packing_keyswitch_key(
+            &mut self,
+            _entity: CudaLwePrivateFunctionalPackingKeyswitchKey64,
+        ) {
+        }
+    }
+}

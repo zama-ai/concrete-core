@@ -3,8 +3,9 @@ use crate::backends::cuda::private::pointers::StreamPointer;
 use crate::backends::cuda::private::vec::CudaVec;
 use crate::commons::numeric::{Numeric, UnsignedInteger};
 use crate::prelude::{
-    DecompositionBaseLog, DecompositionLevelCount, GlweDimension, LweCiphertextIndex, LweDimension,
-    PolynomialSize, SharedMemoryAmount,
+    DecompositionBaseLog, DecompositionLevelCount, DeltaLog, ExtractedBitsCount,
+    FunctionalPackingKeyswitchKeyCount, GlweDimension, LweCiphertextCount, LweCiphertextIndex,
+    LweDimension, PolynomialSize, SharedMemoryAmount,
 };
 use concrete_cuda::cuda_bind::*;
 use std::ffi::c_void;
@@ -321,7 +322,7 @@ impl CudaStream {
     }
 
     /// Discarding keyswitch on a vector of LWE ciphertexts
-    #[allow(dead_code, clippy::too_many_arguments)]
+    #[allow(clippy::too_many_arguments)]
     pub unsafe fn discard_keyswitch_lwe_ciphertext_vector<T: UnsignedInteger>(
         &self,
         lwe_array_out: &mut CudaVec<T>,
@@ -361,6 +362,53 @@ impl CudaStream {
             )
         }
     }
+
+    /// Discarding private functional packing keyswitch on a vector of LWE ciphertexts
+    #[allow(clippy::too_many_arguments)]
+    pub unsafe fn discard_fp_keyswitch_lwe_to_glwe<T: UnsignedInteger>(
+        &self,
+        glwe_array_out: &mut CudaVec<T>,
+        lwe_array_in: &CudaVec<T>,
+        fp_keyswitch_keys: &CudaVec<T>,
+        input_lwe_dimension: LweDimension,
+        output_glwe_dimension: GlweDimension,
+        output_polynomial_size: PolynomialSize,
+        base_log: DecompositionBaseLog,
+        level_count: DecompositionLevelCount,
+        number_of_input_lwe: NumberOfSamples,
+        number_of_keys: FunctionalPackingKeyswitchKeyCount,
+    ) {
+        if T::BITS == 32 {
+            cuda_fp_keyswitch_lwe_to_glwe_32(
+                self.stream.0,
+                glwe_array_out.as_mut_c_ptr(),
+                lwe_array_in.as_c_ptr(),
+                fp_keyswitch_keys.as_c_ptr(),
+                input_lwe_dimension.0 as u32,
+                output_glwe_dimension.0 as u32,
+                output_polynomial_size.0 as u32,
+                base_log.0 as u32,
+                level_count.0 as u32,
+                number_of_input_lwe.0 as u32,
+                number_of_keys.0 as u32,
+            )
+        } else if T::BITS == 64 {
+            cuda_fp_keyswitch_lwe_to_glwe_64(
+                self.stream.0,
+                glwe_array_out.as_mut_c_ptr(),
+                lwe_array_in.as_c_ptr(),
+                fp_keyswitch_keys.as_c_ptr(),
+                input_lwe_dimension.0 as u32,
+                output_glwe_dimension.0 as u32,
+                output_polynomial_size.0 as u32,
+                base_log.0 as u32,
+                level_count.0 as u32,
+                number_of_input_lwe.0 as u32,
+                number_of_keys.0 as u32,
+            )
+        }
+    }
+
     /// Discarding opposite on a vector of LWE ciphertexts
     pub unsafe fn discard_opp_lwe_ciphertext_vector<T: UnsignedInteger>(
         &self,
@@ -482,6 +530,168 @@ impl CudaStream {
                 lwe_dimension.0 as u32,
                 num_samples.0 as u32,
             )
+        }
+    }
+
+    /// Discarding keyswitch on a vector of LWE ciphertexts
+    #[allow(clippy::too_many_arguments)]
+    pub unsafe fn discard_extract_bits_lwe_ciphertext_vector<T: UnsignedInteger>(
+        &self,
+        lwe_array_out: &mut CudaVec<T>,
+        lwe_array_in: &CudaVec<T>,
+        lwe_array_in_buffer: &mut CudaVec<T>,
+        lwe_array_in_shifted_buffer: &mut CudaVec<T>,
+        lwe_array_out_ks_buffer: &mut CudaVec<T>,
+        lwe_array_out_pbs_buffer: &mut CudaVec<T>,
+        lut_pbs: &mut CudaVec<T>,
+        lut_vector_indexes: &CudaVec<T>,
+        keyswitch_key: &CudaVec<T>,
+        fourier_bsk: &CudaVec<f64>,
+        number_of_bits: ExtractedBitsCount,
+        delta_log: DeltaLog,
+        input_lwe_dimension: LweDimension,
+        output_lwe_dimension: LweDimension,
+        glwe_dimension: GlweDimension,
+        base_log_bsk: DecompositionBaseLog,
+        level_count_bsk: DecompositionLevelCount,
+        base_log_ksk: DecompositionBaseLog,
+        level_count_ksk: DecompositionLevelCount,
+        num_samples: LweCiphertextCount,
+        max_shared_memory: SharedMemoryAmount,
+    ) {
+        if T::BITS == 32 {
+            cuda_extract_bits_32(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                lwe_array_out.as_mut_c_ptr(),
+                lwe_array_in.as_c_ptr(),
+                lwe_array_in_buffer.as_mut_c_ptr(),
+                lwe_array_in_shifted_buffer.as_mut_c_ptr(),
+                lwe_array_out_ks_buffer.as_mut_c_ptr(),
+                lwe_array_out_pbs_buffer.as_mut_c_ptr(),
+                lut_pbs.as_mut_c_ptr(),
+                lut_vector_indexes.as_c_ptr(),
+                keyswitch_key.as_c_ptr(),
+                fourier_bsk.as_c_ptr(),
+                number_of_bits.0 as u32,
+                delta_log.0 as u32,
+                input_lwe_dimension.0 as u32,
+                output_lwe_dimension.0 as u32,
+                glwe_dimension.0 as u32,
+                base_log_bsk.0 as u32,
+                level_count_bsk.0 as u32,
+                base_log_ksk.0 as u32,
+                level_count_ksk.0 as u32,
+                num_samples.0 as u32,
+                max_shared_memory.0 as u32,
+            );
+        } else if T::BITS == 64 {
+            cuda_extract_bits_64(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                lwe_array_out.as_mut_c_ptr(),
+                lwe_array_in.as_c_ptr(),
+                lwe_array_in_buffer.as_mut_c_ptr(),
+                lwe_array_in_shifted_buffer.as_mut_c_ptr(),
+                lwe_array_out_ks_buffer.as_mut_c_ptr(),
+                lwe_array_out_pbs_buffer.as_mut_c_ptr(),
+                lut_pbs.as_mut_c_ptr(),
+                lut_vector_indexes.as_c_ptr(),
+                keyswitch_key.as_c_ptr(),
+                fourier_bsk.as_c_ptr(),
+                number_of_bits.0 as u32,
+                delta_log.0 as u32,
+                input_lwe_dimension.0 as u32,
+                output_lwe_dimension.0 as u32,
+                glwe_dimension.0 as u32,
+                base_log_bsk.0 as u32,
+                level_count_bsk.0 as u32,
+                base_log_ksk.0 as u32,
+                level_count_ksk.0 as u32,
+                num_samples.0 as u32,
+                max_shared_memory.0 as u32,
+            )
+        }
+    }
+
+    /// Discarding keyswitch on a vector of LWE ciphertexts
+    #[allow(clippy::too_many_arguments)]
+    pub unsafe fn discard_circuit_bootstrap_boolean_lwe_ciphertext_vector<T: UnsignedInteger>(
+        &self,
+        ggsw_out: &mut CudaVec<T>,
+        lwe_array_in: &CudaVec<T>,
+        fourier_bsk: &CudaVec<f64>,
+        fp_ksk_array: &CudaVec<T>,
+        lwe_array_in_shifted_buffer: &mut CudaVec<T>,
+        lut_vector: &mut CudaVec<T>,
+        lut_vector_indexes: &CudaVec<T>,
+        lwe_array_out_pbs_buffer: &mut CudaVec<T>,
+        lwe_array_in_fp_ks_buffer: &mut CudaVec<T>,
+        delta_log: DeltaLog,
+        polynomial_size: PolynomialSize,
+        glwe_dimension: GlweDimension,
+        lwe_dimension: LweDimension,
+        level_count_bsk: DecompositionLevelCount,
+        base_log_bsk: DecompositionBaseLog,
+        level_count_pksk: DecompositionLevelCount,
+        base_log_pksk: DecompositionBaseLog,
+        level_count_cbs: DecompositionLevelCount,
+        base_log_cbs: DecompositionBaseLog,
+        number_of_samples: LweCiphertextCount,
+        max_shared_memory: SharedMemoryAmount,
+    ) {
+        if T::BITS == 32 {
+            cuda_circuit_bootstrap_32(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                ggsw_out.as_mut_c_ptr(),
+                lwe_array_in.as_c_ptr(),
+                fourier_bsk.as_c_ptr(),
+                fp_ksk_array.as_c_ptr(),
+                lwe_array_in_shifted_buffer.as_mut_c_ptr(),
+                lut_vector.as_mut_c_ptr(),
+                lut_vector_indexes.as_c_ptr(),
+                lwe_array_out_pbs_buffer.as_mut_c_ptr(),
+                lwe_array_in_fp_ks_buffer.as_mut_c_ptr(),
+                delta_log.0 as u32,
+                polynomial_size.0 as u32,
+                glwe_dimension.0 as u32,
+                lwe_dimension.0 as u32,
+                level_count_bsk.0 as u32,
+                base_log_bsk.0 as u32,
+                level_count_pksk.0 as u32,
+                base_log_pksk.0 as u32,
+                level_count_cbs.0 as u32,
+                base_log_cbs.0 as u32,
+                number_of_samples.0 as u32,
+                max_shared_memory.0 as u32,
+            );
+        } else if T::BITS == 64 {
+            cuda_circuit_bootstrap_64(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                ggsw_out.as_mut_c_ptr(),
+                lwe_array_in.as_c_ptr(),
+                fourier_bsk.as_c_ptr(),
+                fp_ksk_array.as_c_ptr(),
+                lwe_array_in_shifted_buffer.as_mut_c_ptr(),
+                lut_vector.as_mut_c_ptr(),
+                lut_vector_indexes.as_c_ptr(),
+                lwe_array_out_pbs_buffer.as_mut_c_ptr(),
+                lwe_array_in_fp_ks_buffer.as_mut_c_ptr(),
+                delta_log.0 as u32,
+                polynomial_size.0 as u32,
+                glwe_dimension.0 as u32,
+                lwe_dimension.0 as u32,
+                level_count_bsk.0 as u32,
+                base_log_bsk.0 as u32,
+                level_count_pksk.0 as u32,
+                base_log_pksk.0 as u32,
+                level_count_cbs.0 as u32,
+                base_log_cbs.0 as u32,
+                number_of_samples.0 as u32,
+                max_shared_memory.0 as u32,
+            );
         }
     }
 }

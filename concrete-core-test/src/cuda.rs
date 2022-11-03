@@ -1,3 +1,4 @@
+use crate::{REPETITIONS, SAMPLE_SIZE};
 use concrete_core::prelude::*;
 use concrete_core_fixture::fixture::*;
 use concrete_core_fixture::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
@@ -65,7 +66,12 @@ test! {
         LweCiphertextVectorDiscardingAdditionFixture, (CudaLweCiphertextVector,
         CudaLweCiphertextVector)),
     ((BinaryKeyDistribution), LweCiphertextVectorPlaintextVectorDiscardingAdditionFixture,
-        (CudaLweCiphertextVector, CudaPlaintextVector, CudaLweCiphertextVector))
+        (CudaLweCiphertextVector, CudaPlaintextVector, CudaLweCiphertextVector)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextDiscardingBitExtractFixture,
+        (CudaFourierLweBootstrapKey, CudaLweKeyswitchKey, CudaLweCiphertext,
+            CudaLweCiphertextVector)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorGlweCiphertextDiscardingPrivateFunctionalPackingKeyswitchFixture,
+        (CudaLweCiphertextVector, CudaLwePrivateFunctionalPackingKeyswitchKey, CudaGlweCiphertext))
 }
 
 macro_rules! test_amortized {
