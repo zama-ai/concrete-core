@@ -181,6 +181,20 @@ extern "C" {
         max_shared_memory: u32,
     );
 
+    pub fn cuda_blind_rotate_and_sample_extraction_64(
+        v_stream: *const c_void,
+        lwe_out: *mut c_void,
+        ggsw_in: *const c_void,
+        lut_vector: *const c_void,
+        mbr_size: u32,
+        tau: u32,
+        glwe_dimension: u32,
+        polynomial_size: u32,
+        base_log: u32,
+        l_gadget: u32,
+        max_shared_memory: u32,
+    );
+
     pub fn cuda_extract_bits_32(
         v_stream: *const c_void,
         list_lwe_array_out: *mut c_void,

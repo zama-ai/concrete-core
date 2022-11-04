@@ -72,7 +72,7 @@ backend_default_generator_aarch64_aes = [
 backend_default_serialization = ["bincode", "__commons_serialization"]
 
 # A GPU backend, relying on Cuda acceleration
-backend_cuda = ["concrete-cuda"]
+backend_cuda = ["concrete-cuda", "backend_fft"]
 
 # Private features
 __profiling = []
