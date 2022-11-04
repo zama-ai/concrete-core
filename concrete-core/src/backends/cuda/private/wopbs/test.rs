@@ -1,8 +1,18 @@
 use crate::backends::cuda::private::device::{CudaStream, GpuIndex};
+use crate::backends::cuda::private::wopbs::{
+    circuit_bootstrap_boolean_cuda_vertical_packing, cuda_vertical_packing,
+};
+use crate::backends::fft::private::crypto::bootstrap::{
+    fill_with_forward_fourier_scratch, FourierLweBootstrapKey,
+};
+use crate::backends::fft::private::crypto::wop_pbs::{
+    circuit_bootstrap_boolean_vertical_packing_scratch, extract_bits, extract_bits_scratch,
+};
+use crate::backends::fft::private::math::fft::Fft;
 use crate::commons::crypto::bootstrap::StandardBootstrapKey;
 use crate::commons::crypto::encoding::{Plaintext, PlaintextList};
 use crate::commons::crypto::ggsw::StandardGgswCiphertext;
-use crate::commons::crypto::glwe::GlweCiphertext;
+use crate::commons::crypto::glwe::{GlweCiphertext, LwePrivateFunctionalPackingKeyswitchKeyList};
 use crate::commons::crypto::lwe::{LweCiphertext, LweKeyswitchKey, LweList};
 use crate::commons::crypto::secret::generators::{
     EncryptionRandomGenerator, SecretRandomGenerator,
@@ -19,6 +29,8 @@ use concrete_cuda::cuda_bind::{
     cuda_cmux_tree_64, cuda_convert_lwe_bootstrap_key_64, cuda_extract_bits_64,
     cuda_initialize_twiddles, cuda_synchronize_device,
 };
+use concrete_fft::c64;
+use dyn_stack::{DynStack, GlobalMemBuffer};
 use std::os::raw::c_void;
 
 #[test]
@@ -404,4 +416,279 @@ pub fn test_cuda_extract_bits() {
     println!("number of tests: {}", number_of_test_runs);
     println!("total_time: {:?}", elapsed);
     println!("average  time {:?}", elapsed / number_of_test_runs);
+}
+
+// Circuit bootstrap + vecrtical packing applying an identity lut
+#[test]
+pub fn test_extract_bit_circuit_bootstrapping_cuda_vertical_packing() {
+    // define settings
+    let polynomial_size = PolynomialSize(1024);
+    let glwe_dimension = GlweDimension(1);
+    let lwe_dimension = LweDimension(481);
+
+    let level_bsk = DecompositionLevelCount(9);
+    let base_log_bsk = DecompositionBaseLog(4);
+
+    let level_pksk = DecompositionLevelCount(9);
+    let base_log_pksk = DecompositionBaseLog(4);
+
+    let level_ksk = DecompositionLevelCount(9);
+    let base_log_ksk = DecompositionBaseLog(1);
+
+    let level_cbs = DecompositionLevelCount(4);
+    let base_log_cbs = DecompositionBaseLog(6);
+    //decomp_size.0 * (output_size.0 + 1) * input_size.0
+    unsafe {
+        cuda_initialize_twiddles(polynomial_size.0 as u32, 0u32);
+    }
+
+    // Value was 0.000_000_000_000_000_221_486_881_160_055_68_513645324585951
+    // But rust indicates it gets truncated anyways to
+    // 0.000_000_000_000_000_221_486_881_160_055_68
+    let std_small = StandardDev::from_standard_dev(0.000_000_000_000_000_221_486_881_160_055_68);
+    // Value was 0.000_061_200_133_780_220_371_345
+    // But rust indicates it gets truncated anyways to
+    // 0.000_061_200_133_780_220_36
+    let std_big = StandardDev::from_standard_dev(0.000_061_200_133_780_220_36);
+
+    const UNSAFE_SECRET: u128 = 0;
+    let mut seeder = UnixSeeder::new(UNSAFE_SECRET);
+
+    let mut secret_generator = SecretRandomGenerator::<SoftwareRandomGenerator>::new(seeder.seed());
+    let mut encryption_generator =
+        EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(seeder.seed(), &mut seeder);
+
+    //create GLWE and LWE secret key
+    let glwe_sk: GlweSecretKey<_, Vec<u64>> =
+        GlweSecretKey::generate_binary(glwe_dimension, polynomial_size, &mut secret_generator);
+    let lwe_small_sk: LweSecretKey<_, Vec<u64>> =
+        LweSecretKey::generate_binary(lwe_dimension, &mut secret_generator);
+
+    let lwe_big_sk = LweSecretKey::binary_from_container(glwe_sk.as_tensor().as_slice());
+
+    // allocation and generation of the key in coef domain:
+    let mut coef_bsk = StandardBootstrapKey::allocate(
+        0u64,
+        glwe_dimension.to_glwe_size(),
+        polynomial_size,
+        level_bsk,
+        base_log_bsk,
+        lwe_dimension,
+    );
+    coef_bsk.fill_with_new_key(
+        &lwe_small_sk,
+        &glwe_sk,
+        Variance(std_small.get_variance()),
+        &mut encryption_generator,
+    );
+    // allocation for the bootstrapping key
+    let mut fourier_bsk = FourierLweBootstrapKey::new(
+        vec![
+            c64::default();
+            lwe_dimension.0 * polynomial_size.0 / 2
+                * level_bsk.0
+                * glwe_dimension.to_glwe_size().0
+                * glwe_dimension.to_glwe_size().0
+        ],
+        lwe_dimension,
+        polynomial_size,
+        glwe_dimension.to_glwe_size(),
+        base_log_bsk,
+        level_bsk,
+    );
+
+    let fft = Fft::new(polynomial_size);
+    let fft = fft.as_view();
+
+    let mut mem = GlobalMemBuffer::new(fill_with_forward_fourier_scratch(fft).unwrap());
+    fourier_bsk.as_mut_view().fill_with_forward_fourier(
+        coef_bsk.as_view(),
+        fft,
+        DynStack::new(&mut mem),
+    );
+
+    let mut ksk_lwe_big_to_small = LweKeyswitchKey::allocate(
+        0u64,
+        level_ksk,
+        base_log_ksk,
+        lwe_big_sk.key_size(),
+        lwe_small_sk.key_size(),
+    );
+    ksk_lwe_big_to_small.fill_with_keyswitch_key(
+        &lwe_big_sk,
+        &lwe_small_sk,
+        Variance(std_big.get_variance()),
+        &mut encryption_generator,
+    );
+
+    // Creation of all the pfksk for the circuit bootstrapping
+    let mut vec_fpksk = LwePrivateFunctionalPackingKeyswitchKeyList::allocate(
+        0u64,
+        level_pksk,
+        base_log_pksk,
+        lwe_big_sk.key_size(),
+        glwe_sk.key_size(),
+        glwe_sk.polynomial_size(),
+        FunctionalPackingKeyswitchKeyCount(glwe_dimension.to_glwe_size().0),
+    );
+
+    vec_fpksk.par_fill_with_fpksk_for_circuit_bootstrap(
+        &lwe_big_sk,
+        &glwe_sk,
+        std_small,
+        &mut encryption_generator,
+    );
+
+    let number_of_bits_in_input_lwe = 10;
+    let number_of_values_to_extract = ExtractedBitsCount(number_of_bits_in_input_lwe);
+
+    let decomposer = SignedDecomposer::new(DecompositionBaseLog(10), DecompositionLevelCount(1));
+
+    // Here even thought the deltas have the same value, they can differ between ciphertexts and lut
+    // so keeping both separate
+    let delta_log = DeltaLog(64 - number_of_values_to_extract.0);
+    let delta_lut = DeltaLog(64 - number_of_values_to_extract.0);
+
+    let number_of_test_runs = 1;
+
+    for run_number in 0..number_of_test_runs {
+        let cleartext =
+            test_tools::random_uint_between(0..2u64.pow(number_of_bits_in_input_lwe as u32));
+
+        println!("{}", cleartext);
+
+        let message = Plaintext(cleartext << delta_log.0);
+        let mut lwe_in =
+            LweCiphertext::allocate(0u64, LweSize(glwe_dimension.0 * polynomial_size.0 + 1));
+        lwe_big_sk.encrypt_lwe(
+            &mut lwe_in,
+            &message,
+            Variance(std_big.get_variance()),
+            &mut encryption_generator,
+        );
+        let mut extracted_bits_lwe_list = LweList::allocate(
+            0u64,
+            ksk_lwe_big_to_small.lwe_size(),
+            CiphertextCount(number_of_values_to_extract.0),
+        );
+
+        let mut mem = GlobalMemBuffer::new(
+            extract_bits_scratch::<u64>(
+                lwe_dimension,
+                ksk_lwe_big_to_small.after_key_size(),
+                fourier_bsk.glwe_size(),
+                polynomial_size,
+                fft,
+            )
+            .unwrap(),
+        );
+        extract_bits(
+            extracted_bits_lwe_list.as_mut_view(),
+            lwe_in.as_view(),
+            ksk_lwe_big_to_small.as_view(),
+            fourier_bsk.as_view(),
+            delta_log,
+            number_of_values_to_extract,
+            fft,
+            DynStack::new(&mut mem),
+        );
+
+        // Decrypt all extracted bit for checking purposes in case of problems
+        for ct in extracted_bits_lwe_list.ciphertext_iter() {
+            let mut decrypted_message = Plaintext(0u64);
+            lwe_small_sk.decrypt_lwe(&mut decrypted_message, &ct);
+            let extract_bit_result =
+                (((decrypted_message.0 as f64) / (1u64 << (63)) as f64).round()) as u64;
+            println!("{:?}", extract_bit_result);
+            println!("{:?}", decrypted_message);
+        }
+
+        // LUT creation
+        let number_of_luts_and_output_vp_ciphertexts = 1;
+        let mut lut_size = polynomial_size.0;
+
+        let lut_poly_list = if run_number % 2 == 0 {
+            // Test with a small lut, only triggering a blind rotate
+            if lut_size < (1 << extracted_bits_lwe_list.count().0) {
+                lut_size = 1 << extracted_bits_lwe_list.count().0;
+            }
+            let mut lut = Vec::with_capacity(lut_size);
+
+            for i in 0..lut_size {
+                lut.push((i as u64 % (1 << (64 - delta_log.0))) << delta_lut.0);
+            }
+
+            // Here we have a single lut, so store it directly in the polynomial list
+            PolynomialList::from_container(lut, PolynomialSize(lut_size))
+        } else {
+            // Test with a big lut, triggering an actual cmux tree
+            let mut lut_poly_list = PolynomialList::allocate(
+                0u64,
+                PolynomialCount(1 << number_of_bits_in_input_lwe),
+                polynomial_size,
+            );
+            for (i, mut polynomial) in lut_poly_list.polynomial_iter_mut().enumerate() {
+                polynomial
+                    .as_mut_tensor()
+                    .fill_with_element((i as u64 % (1 << (64 - delta_log.0))) << delta_lut.0);
+            }
+            lut_poly_list
+        };
+
+        // We need as many output ciphertexts as we have input luts
+        let mut vertical_packing_lwe_list_out = LweList::allocate(
+            0u64,
+            LweDimension(polynomial_size.0 * glwe_dimension.0).to_lwe_size(),
+            CiphertextCount(number_of_luts_and_output_vp_ciphertexts),
+        );
+
+        // Perform circuit bootstrap + vertical packing
+        let mut mem = GlobalMemBuffer::new(
+            circuit_bootstrap_boolean_vertical_packing_scratch::<u64>(
+                extracted_bits_lwe_list.count(),
+                vertical_packing_lwe_list_out.count(),
+                extracted_bits_lwe_list.lwe_size(),
+                lut_poly_list.polynomial_count(),
+                fourier_bsk.output_lwe_dimension().to_lwe_size(),
+                vec_fpksk.output_polynomial_size(),
+                fourier_bsk.glwe_size(),
+                level_cbs,
+                fft,
+            )
+            .unwrap(),
+        );
+        circuit_bootstrap_boolean_cuda_vertical_packing(
+            lut_poly_list.as_view(),
+            fourier_bsk.as_view(),
+            vertical_packing_lwe_list_out.as_mut_view(),
+            extracted_bits_lwe_list.as_view(),
+            vec_fpksk.as_view(),
+            level_cbs,
+            base_log_cbs,
+            fft,
+            DynStack::new(&mut mem),
+        );
+
+        // We have a single output ct
+        let result_ct = vertical_packing_lwe_list_out
+            .ciphertext_iter()
+            .next()
+            .unwrap();
+
+        // decrypt result
+        let mut decrypted_message = Plaintext(0u64);
+        let lwe_sk = LweSecretKey::binary_from_container(glwe_sk.as_tensor().as_slice());
+        lwe_sk.decrypt_lwe(&mut decrypted_message, &result_ct);
+        let decoded_message = decomposer.closest_representable(decrypted_message.0) >> delta_log.0;
+
+        // print information if the result is wrong
+        if decoded_message != cleartext {
+            panic!(
+                "decoded_message ({:?}) != cleartext ({:?})\n\
+                decrypted_message: {:?}, decoded_message: {:?}",
+                decoded_message, cleartext, decrypted_message, decoded_message
+            );
+        }
+        println!("{:?}", decoded_message);
+    }
 }
