@@ -7,3 +7,4 @@ pub mod ggsw;
 pub mod glwe;
 pub mod keyswitch;
 pub mod lwe;
+pub mod plaintext;

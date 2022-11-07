@@ -549,3 +549,6 @@ pub use glwe_ciphertext_conversion::*;
 
 mod lwe_public_key_generation;
 pub use lwe_public_key_generation::*;
+
+mod lwe_ciphertext_vector_plaintext_vector_discarding_addition;
+pub use lwe_ciphertext_vector_plaintext_vector_discarding_addition::*;
