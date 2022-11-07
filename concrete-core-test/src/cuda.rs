@@ -59,7 +59,10 @@ test! {
         LweCiphertextVectorDiscardingOppositeFixture, (CudaLweCiphertextVector,
         CudaLweCiphertextVector)),
     ((BinaryKeyDistribution),
-        LweCiphertextVectorDiscardingAdditionFixture, (CudaLweCiphertextVector, CudaLweCiphertextVector))
+        LweCiphertextVectorDiscardingAdditionFixture, (CudaLweCiphertextVector,
+        CudaLweCiphertextVector)),
+    ((BinaryKeyDistribution), LweCiphertextVectorPlaintextVectorDiscardingAdditionFixture,
+        (CudaLweCiphertextVector, CudaPlaintextVector, CudaLweCiphertextVector))
 }
 
 macro_rules! test_amortized {

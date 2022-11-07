@@ -84,4 +84,6 @@ mod lwe_ciphertext_vector_discarding_bootstrap;
 mod lwe_ciphertext_vector_discarding_conversion;
 mod lwe_ciphertext_vector_discarding_keyswitch;
 mod lwe_ciphertext_vector_discarding_opposite;
+mod lwe_ciphertext_vector_plaintext_vector_discarding_addition;
 mod lwe_keyswitch_key_conversion;
+mod plaintext_vector_conversion;

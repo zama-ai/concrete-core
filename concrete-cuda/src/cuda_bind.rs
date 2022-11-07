@@ -266,4 +266,23 @@ extern "C" {
         input_lwe_dimension: u32,
         input_lwe_ciphertext_count: u32,
     );
+    pub fn cuda_add_lwe_ciphertext_vector_plaintext_vector_32(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        lwe_array_out: *mut c_void,
+        lwe_array_in: *const c_void,
+        plaintext_array_in: *const c_void,
+        input_lwe_dimension: u32,
+        input_lwe_ciphertext_count: u32,
+    );
+
+    pub fn cuda_add_lwe_ciphertext_vector_plaintext_vector_64(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        lwe_array_out: *mut c_void,
+        lwe_array_in: *const c_void,
+        plaintext_array_in: *const c_void,
+        input_lwe_dimension: u32,
+        input_lwe_ciphertext_count: u32,
+    );
 }

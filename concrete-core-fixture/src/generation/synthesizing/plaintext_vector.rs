@@ -61,3 +61,50 @@ mod backend_default {
         fn destroy_plaintext_vector(&mut self, _entity: PlaintextVector64) {}
     }
 }
+#[cfg(feature = "backend_cuda")]
+mod backend_cuda {
+    use crate::generation::prototypes::{ProtoPlaintextVector32, ProtoPlaintextVector64};
+    use crate::generation::synthesizing::SynthesizesPlaintextVector;
+    use crate::generation::{Maker, Precision32, Precision64};
+    use concrete_core::prelude::{
+        CudaPlaintextVector32, CudaPlaintextVector64, PlaintextVectorConversionEngine,
+    };
+
+    impl SynthesizesPlaintextVector<Precision32, CudaPlaintextVector32> for Maker {
+        fn synthesize_plaintext_vector(
+            &mut self,
+            prototype: &Self::PlaintextVectorProto,
+        ) -> CudaPlaintextVector32 {
+            self.cuda_engine
+                .convert_plaintext_vector(&prototype.0)
+                .unwrap()
+        }
+        fn unsynthesize_plaintext_vector(
+            &mut self,
+            entity: CudaPlaintextVector32,
+        ) -> Self::PlaintextVectorProto {
+            let proto = self.cuda_engine.convert_plaintext_vector(&entity).unwrap();
+            ProtoPlaintextVector32(proto)
+        }
+        fn destroy_plaintext_vector(&mut self, _entity: CudaPlaintextVector32) {}
+    }
+
+    impl SynthesizesPlaintextVector<Precision64, CudaPlaintextVector64> for Maker {
+        fn synthesize_plaintext_vector(
+            &mut self,
+            prototype: &Self::PlaintextVectorProto,
+        ) -> CudaPlaintextVector64 {
+            self.cuda_engine
+                .convert_plaintext_vector(&prototype.0)
+                .unwrap()
+        }
+        fn unsynthesize_plaintext_vector(
+            &mut self,
+            entity: CudaPlaintextVector64,
+        ) -> Self::PlaintextVectorProto {
+            let proto = self.cuda_engine.convert_plaintext_vector(&entity).unwrap();
+            ProtoPlaintextVector64(proto)
+        }
+        fn destroy_plaintext_vector(&mut self, _entity: CudaPlaintextVector64) {}
+    }
+}

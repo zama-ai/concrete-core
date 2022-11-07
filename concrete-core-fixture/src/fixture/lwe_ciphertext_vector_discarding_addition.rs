@@ -79,7 +79,7 @@ where
                     lwe_dimension: LweDimension(600),
                 },
                 LweCiphertextVectorDiscardingAdditionParameters {
-                    lwe_ciphertext_count: LweCiphertextCount(100),
+                    lwe_ciphertext_count: LweCiphertextCount(1000),
                     noise: Variance(LogStandardDev::from_log_standard_dev(-15.).get_variance()),
                     lwe_dimension: LweDimension(600),
                 },

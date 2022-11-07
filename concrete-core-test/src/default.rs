@@ -126,6 +126,8 @@ test! {
     ((BinaryKeyDistribution), LweCiphertextDiscardingSubtractionFixture, (LweCiphertext, LweCiphertext)),
     ((BinaryKeyDistribution), LweCiphertextDiscardingDecryptionFixture, (LweCiphertext, LweSecretKey, Plaintext)),
     ((BinaryKeyDistribution), LweCiphertextPlaintextDiscardingAdditionFixture, (LweCiphertext, Plaintext, LweCiphertext)),
+    ((BinaryKeyDistribution), LweCiphertextVectorPlaintextVectorDiscardingAdditionFixture,
+        (LweCiphertextVector, PlaintextVector, LweCiphertextVector)),
     ((BinaryKeyDistribution), LweCiphertextPlaintextDiscardingAdditionFixture, (LweCiphertextView, Plaintext, LweCiphertextMutView)),
     ((BinaryKeyDistribution), LweCiphertextPlaintextFusingAdditionFixture, (Plaintext, LweCiphertext)),
     ((BinaryKeyDistribution), LweCiphertextPlaintextDiscardingSubtractionFixture, (LweCiphertext, Plaintext, LweCiphertext)),
