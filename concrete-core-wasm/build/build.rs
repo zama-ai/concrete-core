@@ -29,7 +29,7 @@ fn main() -> Result<(), String> {
 
 fn write_gen_rs(binding: &str) {
     let path = out_dir().join("__gen.rs");
-    let mut file = File::create(&path).unwrap();
+    let mut file = File::create(path).unwrap();
     file.write_all(binding.as_bytes()).unwrap();
 }
 
