@@ -25,7 +25,9 @@
 //! [`Maker`] instance and the `Synthesizes*` traits, which contains functions to destroy data
 //! (which are empty for all entities that are not actually views).
 use crate::raw::generation::RawUnsignedIntegers;
-use concrete_core::prelude::{AbstractEngine, DefaultEngine, DefaultParallelEngine, FftEngine};
+#[cfg(any(feature = "backend_fft", feature = "backend_fft_parallel"))]
+use concrete_core::prelude::FftEngine;
+use concrete_core::prelude::{AbstractEngine, DefaultEngine, DefaultParallelEngine};
 use concrete_csprng::seeders::UnixSeeder;
 
 pub mod prototypes;

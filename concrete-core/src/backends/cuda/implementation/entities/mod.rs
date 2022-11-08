@@ -1,6 +1,7 @@
 //! A module containing all the [entities](crate::specification::entities) exposed by the cuda
 //! backend.
 
+mod cleartext_vector;
 mod ggsw_ciphertext;
 mod glwe_ciphertext;
 mod glwe_ciphertext_vector;
@@ -10,6 +11,7 @@ mod lwe_ciphertext_vector;
 mod lwe_keyswitch_key;
 mod plaintext_vector;
 
+pub use cleartext_vector::*;
 pub use ggsw_ciphertext::*;
 pub use glwe_ciphertext::*;
 pub use glwe_ciphertext_vector::*;

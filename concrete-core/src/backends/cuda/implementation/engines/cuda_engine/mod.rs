@@ -68,6 +68,7 @@ macro_rules! check_poly_size {
     };
 }
 
+mod cleartext_vector_conversion;
 mod ggsw_ciphertext_conversion;
 mod glwe_ciphertext_conversion;
 mod glwe_ciphertext_discarding_conversion;
@@ -78,6 +79,7 @@ mod lwe_ciphertext_conversion;
 mod lwe_ciphertext_discarding_bootstrap;
 mod lwe_ciphertext_discarding_conversion;
 mod lwe_ciphertext_discarding_keyswitch;
+mod lwe_ciphertext_vector_cleartext_vector_discarding_multiplication;
 mod lwe_ciphertext_vector_conversion;
 mod lwe_ciphertext_vector_discarding_addition;
 mod lwe_ciphertext_vector_discarding_bootstrap;

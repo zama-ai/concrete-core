@@ -58,6 +58,8 @@ test! {
     ((BinaryKeyDistribution),
         LweCiphertextVectorDiscardingOppositeFixture, (CudaLweCiphertextVector,
         CudaLweCiphertextVector)),
+    ((BinaryKeyDistribution), LweCiphertextVectorCleartextVectorDiscardingMultiplicationFixture,
+        (CudaLweCiphertextVector, CudaCleartextVector, CudaLweCiphertextVector)),
     ((BinaryKeyDistribution),
         LweCiphertextVectorDiscardingAdditionFixture, (CudaLweCiphertextVector,
         CudaLweCiphertextVector)),
