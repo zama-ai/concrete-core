@@ -174,7 +174,7 @@ pub mod aes_ctr_parallel_generic_tests {
             let original_generator =
                 AesCtrGenerator::<G>::new(k, Some(t), Some(t.increased(nc.0 * nb.0 + i)));
             let mut forked_generator = original_generator.clone();
-            let initial_output: Vec<u8> = original_generator.take(bytes_to_go as usize).collect();
+            let initial_output: Vec<u8> = original_generator.take(bytes_to_go).collect();
             let forked_output: Vec<u8> = forked_generator
                 .par_try_fork(nc, nb)
                 .unwrap()

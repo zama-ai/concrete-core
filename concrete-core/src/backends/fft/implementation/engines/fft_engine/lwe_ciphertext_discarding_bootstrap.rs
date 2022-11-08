@@ -479,7 +479,7 @@ mod unit_test_pbs {
 
         // This accumulator extracts the carry bits
         for i in 0..modulus_sup {
-            let index = i as usize * box_size;
+            let index = i * box_size;
             accumulator_u64[index..index + box_size]
                 .iter_mut()
                 .for_each(|a| *a = f(i as u64) * delta);
@@ -652,7 +652,7 @@ mod unit_test_pbs {
 
         let mean_bit_errors: u32 = bit_errors.iter().sum::<u32>() / bit_errors.len() as u32;
         let mean_bit_errors_f64: f64 =
-            bit_errors.iter().map(|&x| x as f64).sum::<f64>() as f64 / bit_errors.len() as f64;
+            bit_errors.iter().map(|&x| x as f64).sum::<f64>() / bit_errors.len() as f64;
 
         for (idx, (&val, &bit_error)) in error_sample_vec.iter().zip(bit_errors.iter()).enumerate()
         {
