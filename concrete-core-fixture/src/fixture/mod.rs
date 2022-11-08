@@ -552,3 +552,6 @@ pub use lwe_public_key_generation::*;
 
 mod lwe_ciphertext_vector_plaintext_vector_discarding_addition;
 pub use lwe_ciphertext_vector_plaintext_vector_discarding_addition::*;
+
+mod lwe_ciphertext_vector_cleartext_vector_discarding_multiplication;
+pub use lwe_ciphertext_vector_cleartext_vector_discarding_multiplication::*;

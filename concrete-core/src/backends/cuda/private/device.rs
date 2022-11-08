@@ -414,6 +414,7 @@ impl CudaStream {
             )
         }
     }
+
     /// Discarding addition of a vector of LWE ciphertexts with a vector of plaintexts
     pub unsafe fn discard_add_lwe_ciphertext_vector_plaintext_vector<T: UnsignedInteger>(
         &self,
@@ -440,6 +441,38 @@ impl CudaStream {
                 lwe_array_out.as_mut_c_ptr(),
                 lwe_array_in.as_c_ptr(),
                 plaintext_array_in.as_c_ptr(),
+                lwe_dimension.0 as u32,
+                num_samples.0 as u32,
+            )
+        }
+    }
+
+    /// Discarding multiplication of a vector of LWE ciphertexts with a vector of cleartexts
+    pub unsafe fn discard_mult_lwe_ciphertext_vector_cleartext_vector<T: UnsignedInteger>(
+        &self,
+        lwe_array_out: &mut CudaVec<T>,
+        lwe_array_in: &CudaVec<T>,
+        cleartext_array_in: &CudaVec<T>,
+        lwe_dimension: LweDimension,
+        num_samples: NumberOfSamples,
+    ) {
+        if T::BITS == 32 {
+            cuda_mult_lwe_ciphertext_vector_cleartext_vector_32(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                lwe_array_out.as_mut_c_ptr(),
+                lwe_array_in.as_c_ptr(),
+                cleartext_array_in.as_c_ptr(),
+                lwe_dimension.0 as u32,
+                num_samples.0 as u32,
+            )
+        } else if T::BITS == 64 {
+            cuda_mult_lwe_ciphertext_vector_cleartext_vector_64(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                lwe_array_out.as_mut_c_ptr(),
+                lwe_array_in.as_c_ptr(),
+                cleartext_array_in.as_c_ptr(),
                 lwe_dimension.0 as u32,
                 num_samples.0 as u32,
             )

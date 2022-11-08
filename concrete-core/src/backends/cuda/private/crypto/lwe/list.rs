@@ -1,3 +1,4 @@
+use crate::backends::cuda::private::crypto::cleartext::list::CudaCleartextList;
 use crate::backends::cuda::private::crypto::plaintext::list::CudaPlaintextList;
 use crate::backends::cuda::private::device::{CudaStream, GpuIndex, NumberOfGpus};
 use crate::backends::cuda::private::vec::CudaVec;
@@ -50,16 +51,15 @@ where
     let data_per_gpu = samples_on_gpu_0.0 * input.lwe_size().0;
     for (gpu_index, chunk) in input_slice.chunks_exact(data_per_gpu).enumerate() {
         let stream = &streams[gpu_index];
-        let samples =
-            compute_number_of_samples_on_gpu(number_of_gpus, input.count(), GpuIndex(gpu_index));
-        let alloc_size = samples.0 * input.lwe_size().0;
         if gpu_index == number_of_gpus.0 - 1 {
-            let mut d_vec = stream.malloc::<T>(alloc_size as u32);
             let chunk_and_remainder =
                 [chunk, input_slice.chunks_exact(data_per_gpu).remainder()].concat();
+            let alloc_size = chunk_and_remainder.len();
+            let mut d_vec = stream.malloc::<T>(alloc_size as u32);
             stream.copy_to_gpu::<T>(&mut d_vec, chunk_and_remainder.as_slice());
             vecs.push(d_vec);
         } else {
+            let alloc_size = chunk.len();
             let mut d_vec = stream.malloc::<T>(alloc_size as u32);
             stream.copy_to_gpu::<T>(&mut d_vec, chunk);
             vecs.push(d_vec);
@@ -183,6 +183,7 @@ pub(crate) unsafe fn execute_lwe_ciphertext_vector_addition_on_gpu<T: UnsignedIn
         );
     }
 }
+
 pub(crate) unsafe fn execute_lwe_ciphertext_vector_plaintext_vector_addition_on_gpu<
     T: UnsignedInteger,
 >(
@@ -209,6 +210,38 @@ pub(crate) unsafe fn execute_lwe_ciphertext_vector_plaintext_vector_addition_on_
             output.d_vecs.get_mut(gpu_index).unwrap(),
             input.d_vecs.get(gpu_index).unwrap(),
             plaintext_input.d_vecs.get(gpu_index).unwrap(),
+            input.lwe_dimension,
+            samples_per_gpu,
+        );
+    }
+}
+
+pub(crate) unsafe fn execute_lwe_ciphertext_vector_cleartext_vector_multiplication_on_gpu<
+    T: UnsignedInteger,
+>(
+    streams: &[CudaStream],
+    output: &mut CudaLweList<T>,
+    input: &CudaLweList<T>,
+    cleartext_input: &CudaCleartextList<T>,
+    number_of_available_gpus: NumberOfGpus,
+) {
+    let number_of_gpus = number_of_active_gpus(
+        number_of_available_gpus,
+        CiphertextCount(input.lwe_ciphertext_count.0),
+    );
+
+    for gpu_index in 0..number_of_gpus.0 {
+        let samples_per_gpu = compute_number_of_samples_on_gpu(
+            number_of_available_gpus,
+            CiphertextCount(input.lwe_ciphertext_count.0),
+            GpuIndex(gpu_index),
+        );
+        let stream = &streams.get(gpu_index).unwrap();
+
+        stream.discard_mult_lwe_ciphertext_vector_cleartext_vector::<T>(
+            output.d_vecs.get_mut(gpu_index).unwrap(),
+            input.d_vecs.get(gpu_index).unwrap(),
+            cleartext_input.d_vecs.get(gpu_index).unwrap(),
             input.lwe_dimension,
             samples_per_gpu,
         );

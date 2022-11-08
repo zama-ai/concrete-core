@@ -113,6 +113,8 @@ test! {
     ((BinaryKeyDistribution), LweCiphertextVectorFusingSubtractionFixture, (LweCiphertextVector, LweCiphertextVector)),
     ((BinaryKeyDistribution), LweCiphertextVectorDiscardingSubtractionFixture, (LweCiphertextVector, LweCiphertextVector)),
     ((BinaryKeyDistribution), LweCiphertextVectorDiscardingAdditionFixture, (LweCiphertextVector, LweCiphertextVector)),
+    ((BinaryKeyDistribution), LweCiphertextVectorCleartextVectorDiscardingMultiplicationFixture,
+        (LweCiphertextVector, CleartextVector, LweCiphertextVector)),
     ((BinaryKeyDistribution), LweCiphertextVectorDiscardingAffineTransformationFixture, (LweCiphertextVector, CleartextVector, Plaintext, LweCiphertext)),
     ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextDiscardingKeyswitchFixture, (LweKeyswitchKey, LweCiphertext, LweCiphertext)),
     ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextDiscardingKeyswitchFixture, (LweKeyswitchKey, LweCiphertextView, LweCiphertextMutView)),
