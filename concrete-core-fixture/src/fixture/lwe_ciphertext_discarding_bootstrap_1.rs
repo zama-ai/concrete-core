@@ -112,8 +112,8 @@ where
                     lwe_dimension: LweDimension(630),
                     glwe_dimension: GlweDimension(1),
                     poly_size: PolynomialSize(1024),
-                    decomp_level_count: DecompositionLevelCount(3),
-                    decomp_base_log: DecompositionBaseLog(7),
+                    decomp_level_count: DecompositionLevelCount(2),
+                    decomp_base_log: DecompositionBaseLog(10),
                 },
                 LweCiphertextDiscardingBootstrapParameters1 {
                     noise: Variance(LogStandardDev::from_log_standard_dev(-29.).get_variance()),

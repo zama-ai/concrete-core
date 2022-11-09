@@ -97,8 +97,8 @@ where
                     lwe_dimension: LweDimension(630),
                     glwe_dimension: GlweDimension(1),
                     poly_size: PolynomialSize(1024),
-                    decomp_level_count: DecompositionLevelCount(3),
-                    decomp_base_log: DecompositionBaseLog(7),
+                    decomp_level_count: DecompositionLevelCount(4),
+                    decomp_base_log: DecompositionBaseLog(6),
                 },
                 #[cfg(not(feature = "backend_cuda"))]
                 LweCiphertextDiscardingBootstrapParameters2 {
