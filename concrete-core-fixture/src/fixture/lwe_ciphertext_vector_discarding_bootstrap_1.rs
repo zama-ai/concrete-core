@@ -136,7 +136,7 @@ where
                     lwe_dimension: LweDimension(630),
                     glwe_dimension: GlweDimension(1),
                     poly_size: PolynomialSize(2048),
-                    decomp_level_count: DecompositionLevelCount(3),
+                    decomp_level_count: DecompositionLevelCount(2),
                     decomp_base_log: DecompositionBaseLog(7),
                     lwe_ciphertext_count: LweCiphertextCount(1),
                 },
