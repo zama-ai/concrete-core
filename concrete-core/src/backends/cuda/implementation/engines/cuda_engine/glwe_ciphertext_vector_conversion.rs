@@ -604,7 +604,7 @@ impl
         input: &GlweCiphertextVectorMutView32,
     ) -> CudaGlweCiphertextVector32 {
         // Copy the entire input vector over all GPUs
-        let mut vecs = Vec::with_capacity(self.get_number_of_gpus().0 as usize);
+        let mut vecs = Vec::with_capacity(self.get_number_of_gpus().0);
         let data_per_gpu = input.glwe_ciphertext_count().0
             * input.glwe_dimension().to_glwe_size().0
             * input.polynomial_size().0;
@@ -712,7 +712,7 @@ impl
         input: &GlweCiphertextVectorMutView64,
     ) -> CudaGlweCiphertextVector64 {
         // Copy the entire input vector over all GPUs
-        let mut vecs = Vec::with_capacity(self.get_number_of_gpus().0 as usize);
+        let mut vecs = Vec::with_capacity(self.get_number_of_gpus().0);
         let data_per_gpu = input.glwe_ciphertext_count().0
             * input.glwe_dimension().to_glwe_size().0
             * input.polynomial_size().0;
