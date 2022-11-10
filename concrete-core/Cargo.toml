@@ -10,6 +10,7 @@ documentation = "https://docs.zama.ai/concrete-core"
 repository = "https://github.com/zama-ai/concrete-core"
 readme = "README.md"
 keywords = ["fully", "homomorphic", "encryption", "fhe", "cryptography"]
+exclude = ["/docs/", "/katex-header.html"]
 
 [dev-dependencies]
 rand = "0.7"
