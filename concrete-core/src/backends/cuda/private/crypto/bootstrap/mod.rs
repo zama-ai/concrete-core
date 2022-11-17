@@ -14,6 +14,9 @@ use crate::prelude::{
 };
 use std::marker::PhantomData;
 
+#[cfg(test)]
+mod test;
+
 #[derive(Debug)]
 pub(crate) struct CudaBootstrapKey<T: UnsignedInteger> {
     // Pointers to GPU data: one cuda vec per GPU
