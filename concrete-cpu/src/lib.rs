@@ -1,4 +1,8 @@
 #![allow(clippy::missing_safety_doc)]
+// TODO: remove once all the implementation functions have been plugged into the user-facing API.
+#![allow(dead_code)]
+#![deny(unsafe_op_in_unsafe_fn)]
+#![cfg_attr(feature = "nightly", feature(avx512_target_feature, stdsimd))]
 
 const __ASSERT_USIZE_SAME_AS_SIZE_T: () = {
     let _: libc::size_t = 0_usize;
@@ -18,6 +22,10 @@ mod keyswitch;
 mod linear_op;
 mod types;
 mod wop_pbs;
+
+extern crate alloc;
+
+mod implementation;
 
 pub use bootstrap::*;
 pub use keyswitch::*;

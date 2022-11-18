@@ -10,8 +10,8 @@ use dyn_stack::DynStack;
 
 use crate::types::{Fft, Parallelism, ScratchStatus};
 
-#[no_mangle]
 #[must_use]
+#[no_mangle]
 pub unsafe extern "C" fn concrete_cpu_bootstrap_key_convert_u64_to_fourier_scratch(
     stack_size: *mut usize,
     stack_align: *mut usize,
@@ -33,9 +33,11 @@ pub unsafe extern "C" fn concrete_cpu_bootstrap_key_convert_u64_to_fourier_scrat
         parallelism,
     );
 
-    if let Ok(scratch) = fill_with_forward_fourier_scratch((*fft).inner.as_view()) {
-        *stack_size = scratch.size_bytes();
-        *stack_align = scratch.align_bytes();
+    if let Ok(scratch) = fill_with_forward_fourier_scratch(unsafe { (*fft).inner.as_view() }) {
+        unsafe {
+            *stack_size = scratch.size_bytes();
+            *stack_align = scratch.align_bytes();
+        }
         ScratchStatus::Valid
     } else {
         ScratchStatus::SizeOverflow
@@ -71,7 +73,7 @@ pub unsafe extern "C" fn concrete_cpu_bootstrap_key_convert_u64_to_fourier(
     let fourier_len = standard_len / 2;
 
     let standard = StandardBootstrapKey::from_container(
-        slice::from_raw_parts(standard_bsk, standard_len),
+        unsafe { slice::from_raw_parts(standard_bsk, standard_len) },
         glwe_size,
         PolynomialSize(polynomial_size),
         DecompositionLevelCount(decomposition_level_count),
@@ -79,7 +81,7 @@ pub unsafe extern "C" fn concrete_cpu_bootstrap_key_convert_u64_to_fourier(
     );
 
     let fourier = FourierLweBootstrapKey::new(
-        slice::from_raw_parts_mut(fourier_bsk as *mut c64, fourier_len),
+        unsafe { slice::from_raw_parts_mut(fourier_bsk as *mut c64, fourier_len) },
         LweDimension(input_lwe_dimension),
         PolynomialSize(polynomial_size),
         glwe_size,
@@ -89,13 +91,13 @@ pub unsafe extern "C" fn concrete_cpu_bootstrap_key_convert_u64_to_fourier(
 
     fourier.fill_with_forward_fourier(
         standard,
-        (*fft).inner.as_view(),
-        DynStack::new(slice::from_raw_parts_mut(stack as _, stack_size)),
+        unsafe { (*fft).inner.as_view() },
+        DynStack::new(unsafe { slice::from_raw_parts_mut(stack as _, stack_size) }),
     );
 }
 
-#[no_mangle]
 #[must_use]
+#[no_mangle]
 pub unsafe extern "C" fn concrete_cpu_bootstrap_lwe_ciphertext_u64_scratch(
     stack_size: *mut usize,
     stack_align: *mut usize,
@@ -110,14 +112,16 @@ pub unsafe extern "C" fn concrete_cpu_bootstrap_lwe_ciphertext_u64_scratch(
     fft: *const Fft,
 ) -> ScratchStatus {
     unused!(decomposition_level_count, input_lwe_dimension, parallelism,);
-    let fft = (*fft).inner.as_view();
+    let fft = unsafe { (*fft).inner.as_view() };
     if let Ok(scratch) = bootstrap_scratch::<u64>(
         GlweDimension(glwe_dimension).to_glwe_size(),
         PolynomialSize(polynomial_size),
         fft,
     ) {
-        *stack_size = scratch.size_bytes();
-        *stack_align = scratch.align_bytes();
+        unsafe {
+            *stack_size = scratch.size_bytes();
+            *stack_align = scratch.align_bytes();
+        }
         ScratchStatus::Valid
     } else {
         ScratchStatus::SizeOverflow
@@ -159,7 +163,7 @@ pub unsafe extern "C" fn concrete_cpu_bootstrap_lwe_ciphertext_u64(
     let fourier_len = standard_len / 2;
 
     let fourier = FourierLweBootstrapKey::new(
-        slice::from_raw_parts(fourier_bsk as *const c64, fourier_len),
+        unsafe { slice::from_raw_parts(fourier_bsk as *const c64, fourier_len) },
         LweDimension(input_lwe_dimension),
         PolynomialSize(polynomial_size),
         glwe_size,
@@ -167,19 +171,21 @@ pub unsafe extern "C" fn concrete_cpu_bootstrap_lwe_ciphertext_u64(
         DecompositionLevelCount(decomposition_level_count),
     );
 
-    let lwe_in = slice::from_raw_parts(ct_in, LweDimension(input_lwe_dimension).to_lwe_size().0);
-    let lwe_out =
-        slice::from_raw_parts_mut(ct_out, LweDimension(output_lwe_dimension).to_lwe_size().0);
+    let lwe_in =
+        unsafe { slice::from_raw_parts(ct_in, LweDimension(input_lwe_dimension).to_lwe_size().0) };
+    let lwe_out = unsafe {
+        slice::from_raw_parts_mut(ct_out, LweDimension(output_lwe_dimension).to_lwe_size().0)
+    };
 
     let accumulator = GlweCiphertext::from_container(
-        slice::from_raw_parts(accumulator, polynomial_size * glwe_size.0),
+        unsafe { slice::from_raw_parts(accumulator, polynomial_size * glwe_size.0) },
         PolynomialSize(polynomial_size),
     );
     fourier.bootstrap(
         lwe_out,
         lwe_in,
         accumulator,
-        (*fft).inner.as_view(),
-        DynStack::new(slice::from_raw_parts_mut(stack as _, stack_size)),
+        unsafe { (*fft).inner.as_view() },
+        unsafe { DynStack::new(slice::from_raw_parts_mut(stack as _, stack_size)) },
     );
 }

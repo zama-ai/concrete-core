@@ -14,12 +14,23 @@ concrete-core = { path = "../concrete-core", version = "1.0", features = [
   "backend_default_parallel",
   "backend_fft",
 ] }
-libc = "0.2"
-pulp = "0.5"
-dyn-stack = "0.8"
+libc = { version = "0.2", default-features = false }
+pulp = { version = "0.10.2", default-features = false }
+dyn-stack = { version = "0.8", default-features = false }
+readonly = "0.2"
+aligned-vec = { version = "0.5", default-features = false }
+concrete-fft = { version = "0.1", default-features = false }
+once_cell = "1.16"
+bytemuck = "1.12"
+num-complex = { version = "0.4", features = ["bytemuck"] }
+
+rayon = { version = "1.6", optional = true }
 
 [features]
-backend_fft_nightly_avx512 = ["concrete-core/backend_fft_nightly_avx512"]
+default = ["parallel", "std"]
+std = ["concrete-fft/std", "aligned-vec/std", "dyn-stack/std", "pulp/std"]
+parallel = ["rayon"]
+nightly = ["concrete-core/backend_fft_nightly_avx512", "pulp/nightly"]
 
 [build-dependencies]
 cbindgen = "0.24"
