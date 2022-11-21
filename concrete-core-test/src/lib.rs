@@ -7,7 +7,7 @@
 use concrete_core_fixture::{Repetitions, SampleSize};
 
 /// The number of time a test is repeated for a single set of parameter.
-pub const REPETITIONS: Repetitions = Repetitions(10);
+pub const REPETITIONS: Repetitions = Repetitions(6);
 
 /// The size of the sample used to perform statistical tests.
 pub const SAMPLE_SIZE: SampleSize = SampleSize(100);
