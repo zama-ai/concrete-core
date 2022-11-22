@@ -67,13 +67,13 @@ where
         Box::new(
             vec![
                 LweCiphertextVectorCleartextVectorDiscardingMultiplicationParameters {
-                    noise: Variance(LogStandardDev::from_log_standard_dev(-15.).get_variance()),
-                    lwe_dimension: LweDimension(600),
+                    noise: Variance(LogStandardDev::from_log_standard_dev(-50.).get_variance()),
+                    lwe_dimension: LweDimension(200),
                     lwe_count: LweCiphertextCount(1),
                 },
                 LweCiphertextVectorCleartextVectorDiscardingMultiplicationParameters {
-                    noise: Variance(LogStandardDev::from_log_standard_dev(-15.).get_variance()),
-                    lwe_dimension: LweDimension(600),
+                    noise: Variance(LogStandardDev::from_log_standard_dev(-50.).get_variance()),
+                    lwe_dimension: LweDimension(200),
                     lwe_count: LweCiphertextCount(1000),
                 },
             ]
