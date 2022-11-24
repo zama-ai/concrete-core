@@ -46,11 +46,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: Install Rust for tasks
+        run: |
+          make install_tasks_rust_toolchain
       - name: Format concrete-cuda
         run: |
-          clang-format concrete-cuda/cuda/src/*.*
-          clang-format concrete-cuda/cuda/include/*
-          clang-format concrete-cuda/cuda/src/*/*.*
+          cargo xtask chore_format
       - name: Check diff
         run: git diff --exit-code
 
