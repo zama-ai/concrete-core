@@ -20,3 +20,8 @@ check_run_name = "AWS tests (Slab)"
 workflow = "aws_tests_gpu_slab_beta.yml"
 profile = "gpu"
 check_run_name = "AWS tests GPU (Slab)"
+
+[command.gpu_bench]
+workflow = "gpu_benchmark.yml"
+profile = "gpu"
+check_run_name = "AWS benchmark GPU (Slab)"
