@@ -85,7 +85,7 @@ jobs:
         with:
           toolchain: stable
           override: true
-
+  
       - name: Run benchmarks
         run: |
           RUSTFLAGS="-Ctarget-cpu=native" cargo run -p concrete-core-bench --release --features=backend_cuda -- --bench
