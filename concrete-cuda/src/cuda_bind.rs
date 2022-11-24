@@ -61,6 +61,7 @@ extern "C" {
 
     pub fn cuda_bootstrap_amortized_lwe_ciphertext_vector_32(
         v_stream: *mut c_void,
+        gpu_index: u32,
         lwe_array_out: *mut c_void,
         test_vector: *const c_void,
         test_vector_indexes: *const c_void,
@@ -79,6 +80,7 @@ extern "C" {
 
     pub fn cuda_bootstrap_amortized_lwe_ciphertext_vector_64(
         v_stream: *mut c_void,
+        gpu_index: u32,
         lwe_array_out: *mut c_void,
         test_vector: *const c_void,
         test_vector_indexes: *const c_void,
@@ -97,6 +99,7 @@ extern "C" {
 
     pub fn cuda_bootstrap_low_latency_lwe_ciphertext_vector_32(
         v_stream: *mut c_void,
+        gpu_index: u32,
         lwe_array_out: *mut c_void,
         lut_vector: *const c_void,
         lut_vector_indexes: *const c_void,
@@ -115,6 +118,7 @@ extern "C" {
 
     pub fn cuda_bootstrap_low_latency_lwe_ciphertext_vector_64(
         v_stream: *mut c_void,
+        gpu_index: u32,
         lwe_array_out: *mut c_void,
         lut_vector: *const c_void,
         lut_vector_indexes: *const c_void,
@@ -133,6 +137,7 @@ extern "C" {
 
     pub fn cuda_keyswitch_lwe_ciphertext_vector_32(
         v_stream: *const c_void,
+        gpu_index: u32,
         lwe_array_out: *mut c_void,
         lwe_array_in: *const c_void,
         keyswitch_key: *const c_void,
@@ -145,6 +150,7 @@ extern "C" {
 
     pub fn cuda_keyswitch_lwe_ciphertext_vector_64(
         v_stream: *const c_void,
+        gpu_index: u32,
         lwe_array_out: *mut c_void,
         lwe_array_in: *const c_void,
         keyswitch_key: *const c_void,
@@ -157,6 +163,7 @@ extern "C" {
 
     pub fn cuda_cmux_tree_32(
         v_stream: *const c_void,
+        gpu_index: u32,
         glwe_array_out: *mut c_void,
         ggsw_in: *const c_void,
         lut_vector: *const c_void,
@@ -170,6 +177,7 @@ extern "C" {
 
     pub fn cuda_cmux_tree_64(
         v_stream: *const c_void,
+        gpu_index: u32,
         glwe_array_out: *mut c_void,
         ggsw_in: *const c_void,
         lut_vector: *const c_void,
@@ -183,6 +191,7 @@ extern "C" {
 
     pub fn cuda_blind_rotate_and_sample_extraction_64(
         v_stream: *const c_void,
+        gpu_index: u32,
         lwe_out: *mut c_void,
         ggsw_in: *const c_void,
         lut_vector: *const c_void,
@@ -197,6 +206,7 @@ extern "C" {
 
     pub fn cuda_extract_bits_32(
         v_stream: *const c_void,
+        gpu_index: u32,
         list_lwe_array_out: *mut c_void,
         lwe_array_in: *const c_void,
         lwe_array_in_buffer: *mut c_void,
@@ -221,6 +231,7 @@ extern "C" {
 
     pub fn cuda_extract_bits_64(
         v_stream: *const c_void,
+        gpu_index: u32,
         list_lwe_array_out: *mut c_void,
         lwe_array_in: *const c_void,
         lwe_array_in_buffer: *mut c_void,
