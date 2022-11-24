@@ -1,7 +1,7 @@
-use crate::{REPETITIONS, SAMPLE_SIZE};
 use concrete_core::prelude::*;
 use concrete_core_fixture::fixture::*;
 use concrete_core_fixture::generation::{BinaryKeyDistribution, Maker, Precision32, Precision64};
+use concrete_core_fixture::{Repetitions, SampleSize};
 use paste::paste;
 
 macro_rules! test {
@@ -17,7 +17,8 @@ macro_rules! test {
                         ($($key_dist,)*),
                         CudaEngine,
                         ($($types,)+),
-                    >>::stress_all_parameters(&mut maker, &mut engine, REPETITIONS, SAMPLE_SIZE);
+                    >>::stress_all_parameters(&mut maker, &mut engine, Repetitions(1),
+                SampleSize(10));
                 assert!(test_result);
             }
         }
@@ -80,7 +81,8 @@ macro_rules! test_amortized {
                         ($($key_dist,)*),
                         AmortizedCudaEngine,
                         ($($types,)+),
-                    >>::stress_all_parameters(&mut maker, &mut engine, REPETITIONS, SAMPLE_SIZE);
+                    >>::stress_all_parameters(&mut maker, &mut engine, Repetitions(1),
+                SampleSize(10));
                 assert!(test_result);
             }
         }
