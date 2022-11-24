@@ -48,7 +48,7 @@ def recursive_parse(directory, name_suffix=""):
         if dire.name in excluded_directories or not dire.is_dir():
             continue
         for subdir in dire.iterdir():
-            if subdir.name != "new":
+            if subdir.name == "report":
                 continue
 
             test_name = parse_benchmark_file(subdir)
@@ -67,7 +67,7 @@ def parse_benchmark_file(directory):
 
     :return: name of the test as :class:`str`
     """
-    raw_results = _parse_file_to_json(directory, "benchmark.json")
+    raw_results = _parse_file_to_json(directory, "new/benchmark.json")
     return raw_results["full_id"].replace(" ", "_")
 
 
@@ -79,7 +79,7 @@ def parse_estimate_file(directory):
 
     :return: :class:`dict` of data points
     """
-    raw_results = _parse_file_to_json(directory, "estimates.json")
+    raw_results = _parse_file_to_json(directory, "new/estimates.json")
     return {
         stat_name: raw_results[stat_name]["point_estimate"]
         for stat_name in ("mean", "std_dev")
