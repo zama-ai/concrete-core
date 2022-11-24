@@ -223,6 +223,7 @@ impl CudaStream {
         if T::BITS == 32 {
             cuda_bootstrap_amortized_lwe_ciphertext_vector_32(
                 self.stream.0,
+                self.gpu_index.0 as u32,
                 lwe_array_out.as_mut_c_ptr(),
                 test_vector.as_c_ptr(),
                 test_vector_indexes.as_c_ptr(),
@@ -241,6 +242,7 @@ impl CudaStream {
         } else if T::BITS == 64 {
             cuda_bootstrap_amortized_lwe_ciphertext_vector_64(
                 self.stream.0,
+                self.gpu_index.0 as u32,
                 lwe_array_out.as_mut_c_ptr(),
                 test_vector.as_c_ptr(),
                 test_vector_indexes.as_c_ptr(),
@@ -280,6 +282,7 @@ impl CudaStream {
         if T::BITS == 32 {
             cuda_bootstrap_low_latency_lwe_ciphertext_vector_32(
                 self.stream.0,
+                self.gpu_index.0 as u32,
                 lwe_array_out.as_mut_c_ptr(),
                 test_vector.as_c_ptr(),
                 test_vector_indexes.as_c_ptr(),
@@ -298,6 +301,7 @@ impl CudaStream {
         } else if T::BITS == 64 {
             cuda_bootstrap_low_latency_lwe_ciphertext_vector_64(
                 self.stream.0,
+                self.gpu_index.0 as u32,
                 lwe_array_out.as_mut_c_ptr(),
                 test_vector.as_c_ptr(),
                 test_vector_indexes.as_c_ptr(),
@@ -332,6 +336,7 @@ impl CudaStream {
         if T::BITS == 32 {
             cuda_keyswitch_lwe_ciphertext_vector_32(
                 self.stream.0,
+                self.gpu_index.0 as u32,
                 lwe_array_out.as_mut_c_ptr(),
                 lwe_array_in.as_c_ptr(),
                 keyswitch_key.as_c_ptr(),
@@ -344,6 +349,7 @@ impl CudaStream {
         } else if T::BITS == 64 {
             cuda_keyswitch_lwe_ciphertext_vector_64(
                 self.stream.0,
+                self.gpu_index.0 as u32,
                 lwe_array_out.as_mut_c_ptr(),
                 lwe_array_in.as_c_ptr(),
                 keyswitch_key.as_c_ptr(),

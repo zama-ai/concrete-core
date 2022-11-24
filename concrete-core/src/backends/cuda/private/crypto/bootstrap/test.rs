@@ -204,6 +204,7 @@ mod cuda_unit_test_pbs {
                 unsafe {
                     concrete_cuda::cuda_bind::cuda_bootstrap_amortized_lwe_ciphertext_vector_64(
                         stream.stream_handle().0,
+                        gpu_index.0 as u32,
                         d_lwe_out.as_mut_c_ptr(),
                         d_lut_pbs.as_c_ptr(),
                         d_lut_vector_indexes.as_c_ptr(),

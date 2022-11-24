@@ -157,6 +157,7 @@ pub fn test_cuda_cmux_tree() {
         unsafe {
             cuda_cmux_tree_64(
                 stream.stream_handle().0,
+                gpu_index.0 as u32,
                 d_result.as_mut_c_ptr(),
                 d_concatenated_mtree.as_c_ptr(),
                 d_concatenated_luts.as_c_ptr(),
@@ -366,6 +367,7 @@ pub fn test_cuda_extract_bits() {
             now = Instant::now();
             cuda_extract_bits_64(
                 stream.stream_handle().0,
+                gpu_index.0 as u32,
                 d_lwe_array_out.as_mut_c_ptr(),
                 d_lwe_array_in.as_c_ptr(),
                 d_lwe_array_in_buffer.as_mut_c_ptr(),

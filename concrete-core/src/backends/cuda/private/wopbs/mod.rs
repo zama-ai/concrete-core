@@ -96,6 +96,7 @@ pub fn cuda_vertical_packing(
         unsafe {
             cuda_cmux_tree_64(
                 stream.stream_handle().0,
+                gpu_index.0 as u32,
                 d_result_cmux.as_mut_c_ptr(),
                 d_concatenated_cmux_ggsw.as_c_ptr(),
                 d_concatenated_luts_glwe.as_c_ptr(),
@@ -111,6 +112,7 @@ pub fn cuda_vertical_packing(
         unsafe {
             cuda_blind_rotate_and_sample_extraction_64(
                 stream.stream_handle().0,
+                gpu_index.0 as u32,
                 d_result_br.as_mut_c_ptr(),
                 d_concatenated_br_ggsw.as_c_ptr(),
                 d_result_cmux.as_c_ptr(),
@@ -144,6 +146,7 @@ pub fn cuda_vertical_packing(
         unsafe {
             cuda_blind_rotate_and_sample_extraction_64(
                 stream.stream_handle().0,
+                gpu_index.0 as u32,
                 d_result_br.as_mut_c_ptr(),
                 d_concatenated_br_ggsw.as_c_ptr(),
                 d_concatenated_luts_glwe.as_c_ptr(),
