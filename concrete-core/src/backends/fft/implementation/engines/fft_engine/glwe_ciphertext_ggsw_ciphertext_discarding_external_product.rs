@@ -38,7 +38,7 @@ impl
     /// let level = DecompositionLevelCount(1);
     /// let base_log = DecompositionBaseLog(4);
     /// // Here a hard-set encoding is applied (shift by 20 bits)
-    /// let input_ggsw = 3_u32 << 20;
+    /// let input_ggsw = 3_u32;
     /// let input_glwe = vec![3_u32 << 20; polynomial_size.0];
     /// let noise = Variance(2_f64.powf(-25.));
     ///
@@ -115,6 +115,12 @@ impl
                 .unaligned_bytes_required(),
         );
         let stack = self.stack();
+        output
+            .0
+            .as_mut_view()
+            .into_container()
+            .iter_mut()
+            .for_each(|e| *e = 0);
         external_product(
             output.0.as_mut_view(),
             ggsw_input.0.as_view(),
@@ -150,7 +156,7 @@ impl
     /// let level = DecompositionLevelCount(1);
     /// let base_log = DecompositionBaseLog(4);
     /// // Here a hard-set encoding is applied (shift by 50 bits)
-    /// let input_ggsw = 3_u64 << 50;
+    /// let input_ggsw = 3_u64;
     /// let input_glwe = vec![3_u64 << 50; polynomial_size.0];
     /// let noise = Variance(2_f64.powf(-25.));
     ///
@@ -227,6 +233,12 @@ impl
                 .unaligned_bytes_required(),
         );
         let stack = self.stack();
+        output
+            .0
+            .as_mut_view()
+            .into_container()
+            .iter_mut()
+            .for_each(|e| *e = 0);
         external_product(
             output.0.as_mut_view(),
             ggsw_input.0.as_view(),

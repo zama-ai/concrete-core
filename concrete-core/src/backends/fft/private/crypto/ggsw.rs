@@ -306,7 +306,7 @@ pub fn external_product_scratch<Scalar>(
     substack0.try_and(fourier_scratch)
 }
 
-/// Performs the external product of `ggsw` and `glwe`, and stores the result in `out`.
+/// Performs the external product of `ggsw` and `glwe`, and adds the result to `out`.
 #[cfg_attr(__profiling, inline(never))]
 pub fn external_product<Scalar: UnsignedTorus>(
     mut out: GlweCiphertext<&'_ mut [Scalar]>,
