@@ -293,7 +293,7 @@ __host__ void host_bootstrap_low_latency(
 
   // Synchronize the streams before copying the result to lwe_array_out at the
   // right place
-  cudaStreamSynchronize(*stream)
+  cudaStreamSynchronize(*stream);
   cuda_drop_async(mask_buffer_fft, v_stream, gpu_index);
   cuda_drop_async(body_buffer_fft, v_stream, gpu_index);
 }
