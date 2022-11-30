@@ -117,65 +117,65 @@ void cuda_convert_lwe_bootstrap_key(double2 *dest, ST *src, void *v_stream,
   switch (polynomial_size) {
   case 512:
     if (shared_memory_size <= cuda_get_max_shared_memory(gpu_index)) {
-      buffer = (double2 *)cuda_malloc_async(0, *stream, gpu_index);
+      buffer = (double2 *)cuda_malloc_async(0, v_stream, gpu_index);
       batch_NSMFFT<FFTDegree<Degree<512>, ForwardFFT>, FULLSM>
           <<<gridSize, blockSize, shared_memory_size, *stream>>>(d_bsk, dest,
                                                                  buffer);
     } else {
       buffer = (double2 *)cuda_malloc_async(
-          shared_memory_size * total_polynomials, *stream, gpu_index);
+          shared_memory_size * total_polynomials, v_stream, gpu_index);
       batch_NSMFFT<FFTDegree<Degree<512>, ForwardFFT>, NOSM>
           <<<gridSize, blockSize, 0, *stream>>>(d_bsk, dest, buffer);
     }
     break;
   case 1024:
     if (shared_memory_size <= cuda_get_max_shared_memory(gpu_index)) {
-      buffer = (double2 *)cuda_malloc_async(0, *stream, gpu_index);
+      buffer = (double2 *)cuda_malloc_async(0, v_stream, gpu_index);
       batch_NSMFFT<FFTDegree<Degree<1024>, ForwardFFT>, FULLSM>
           <<<gridSize, blockSize, shared_memory_size, *stream>>>(d_bsk, dest,
                                                                  buffer);
     } else {
       buffer = (double2 *)cuda_malloc_async(
-          shared_memory_size * total_polynomials, *stream, gpu_index);
+          shared_memory_size * total_polynomials, v_stream, gpu_index);
       batch_NSMFFT<FFTDegree<Degree<1024>, ForwardFFT>, NOSM>
           <<<gridSize, blockSize, 0, *stream>>>(d_bsk, dest, buffer);
     }
     break;
   case 2048:
     if (shared_memory_size <= cuda_get_max_shared_memory(gpu_index)) {
-      buffer = (double2 *)cuda_malloc_async(0, *stream, gpu_index);
+      buffer = (double2 *)cuda_malloc_async(0, v_stream, gpu_index);
       batch_NSMFFT<FFTDegree<Degree<2048>, ForwardFFT>, FULLSM>
           <<<gridSize, blockSize, shared_memory_size, *stream>>>(d_bsk, dest,
                                                                  buffer);
     } else {
       buffer = (double2 *)cuda_malloc_async(
-          shared_memory_size * total_polynomials, *stream, gpu_index);
+          shared_memory_size * total_polynomials, v_stream, gpu_index);
       batch_NSMFFT<FFTDegree<Degree<2048>, ForwardFFT>, NOSM>
           <<<gridSize, blockSize, 0, *stream>>>(d_bsk, dest, buffer);
     }
     break;
   case 4096:
     if (shared_memory_size <= cuda_get_max_shared_memory(gpu_index)) {
-      buffer = (double2 *)cuda_malloc_async(0, *stream, gpu_index);
+      buffer = (double2 *)cuda_malloc_async(0, v_stream, gpu_index);
       batch_NSMFFT<FFTDegree<Degree<4096>, ForwardFFT>, FULLSM>
           <<<gridSize, blockSize, shared_memory_size, *stream>>>(d_bsk, dest,
                                                                  buffer);
     } else {
       buffer = (double2 *)cuda_malloc_async(
-          shared_memory_size * total_polynomials, *stream, gpu_index);
+          shared_memory_size * total_polynomials, v_stream, gpu_index);
       batch_NSMFFT<FFTDegree<Degree<4096>, ForwardFFT>, NOSM>
           <<<gridSize, blockSize, 0, *stream>>>(d_bsk, dest, buffer);
     }
     break;
   case 8192:
     if (shared_memory_size <= cuda_get_max_shared_memory(gpu_index)) {
-      buffer = (double2 *)cuda_malloc_async(0, *stream, gpu_index);
+      buffer = (double2 *)cuda_malloc_async(0, v_stream, gpu_index);
       batch_NSMFFT<FFTDegree<Degree<8192>, ForwardFFT>, FULLSM>
           <<<gridSize, blockSize, shared_memory_size, *stream>>>(d_bsk, dest,
                                                                  buffer);
     } else {
       buffer = (double2 *)cuda_malloc_async(
-          shared_memory_size * total_polynomials, *stream, gpu_index);
+          shared_memory_size * total_polynomials, v_stream, gpu_index);
       batch_NSMFFT<FFTDegree<Degree<8192>, ForwardFFT>, NOSM>
           <<<gridSize, blockSize, 0, *stream>>>(d_bsk, dest, buffer);
     }
@@ -184,8 +184,8 @@ void cuda_convert_lwe_bootstrap_key(double2 *dest, ST *src, void *v_stream,
     break;
   }
 
-  cuda_drop_async(d_bsk, *stream, gpu_index);
-  cuda_drop_async(buffer, *stream, gpu_index);
+  cuda_drop_async(d_bsk, v_stream, gpu_index);
+  cuda_drop_async(buffer, v_stream, gpu_index);
   free(h_bsk);
 }
 
