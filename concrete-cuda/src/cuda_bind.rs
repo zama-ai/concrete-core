@@ -227,6 +227,7 @@ extern "C" {
         base_log_ksk: u32,
         level_count_ksk: u32,
         number_of_samples: u32,
+        max_shared_memory: u32,
     );
 
     pub fn cuda_extract_bits_64(
@@ -252,6 +253,7 @@ extern "C" {
         base_log_ksk: u32,
         level_count_ksk: u32,
         number_of_samples: u32,
+        max_shared_memory: u32,
     );
 
     pub fn cuda_negate_lwe_ciphertext_vector_32(

@@ -310,7 +310,12 @@ mod cuda_unit_test_pbs {
         // Shortint 2_2 params
         let lwe_dimension = LweDimension(742);
         let glwe_dimension = GlweDimension(1);
-        let polynomial_sizes = vec![PolynomialSize(1024), PolynomialSize(2048)];
+        let polynomial_sizes = vec![
+            PolynomialSize(1024),
+            PolynomialSize(2048),
+            PolynomialSize(4096),
+            PolynomialSize(8192),
+        ];
         let lwe_modular_std_dev = StandardDev(0.000007069849454709433);
         let glwe_modular_std_dev = StandardDev(0.00000000000000029403601535432533);
         let pbs_base_log = DecompositionBaseLog(23);
