@@ -1,7 +1,5 @@
 use crate::backends::cuda::private::device::{CudaStream, GpuIndex};
-use crate::backends::cuda::private::wopbs::{
-    circuit_bootstrap_boolean_cuda_vertical_packing, cuda_vertical_packing,
-};
+use crate::backends::cuda::private::wopbs::circuit_bootstrap_boolean_cuda_vertical_packing;
 use crate::backends::fft::private::crypto::bootstrap::{
     fill_with_forward_fourier_scratch, FourierLweBootstrapKey,
 };

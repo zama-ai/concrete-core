@@ -2,8 +2,6 @@ use crate::backends::cuda::private::crypto::plaintext::list::CudaPlaintextList;
 use crate::prelude::PlaintextCount;
 use crate::specification::entities::markers::PlaintextVectorKind;
 use crate::specification::entities::{AbstractEntity, PlaintextVectorEntity};
-#[cfg(feature = "backend_default_serialization")]
-use serde::{Deserialize, Serialize};
 
 /// A structure representing a vector of plaintexts with 32 bits of precision.
 #[derive(Debug)]
