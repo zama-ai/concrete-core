@@ -4,7 +4,6 @@ mod cuda_unit_test_pbs {
     use crate::commons::test_tools::new_random_generator;
     use crate::prelude::*;
     use std::error::Error;
-    use std::ffi::c_void;
 
     fn generate_accumulator_with_engine<F>(
         engine: &mut DefaultEngine,

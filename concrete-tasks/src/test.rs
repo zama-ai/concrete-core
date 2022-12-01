@@ -67,7 +67,7 @@ pub fn cuda_test() -> Result<(), Error> {
 pub fn cuda_core_test() -> Result<(), Error> {
     cmd!(<ENV_TARGET_NATIVE>
         &format!("cargo test --profile release-debug-asserts -p concrete-core \
-        --features=backend_cuda --features {} -- backends::cuda",
+        --features=backend_cuda --features {} -- backends::cuda --test-threads 1",
         get_target_arch_feature_for_core()?
     ))
 }
