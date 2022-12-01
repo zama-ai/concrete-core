@@ -386,6 +386,7 @@ pub fn test_cuda_extract_bits() {
                 base_log_ksk.0 as u32,
                 level_ksk.0 as u32,
                 nos,
+                stream.get_max_shared_memory().unwrap() as u32,
             );
             elapsed += now.elapsed();
             println!("elapsed: {:?}", elapsed);
