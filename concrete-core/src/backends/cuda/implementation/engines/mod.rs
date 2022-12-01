@@ -85,12 +85,4 @@ macro_rules! check_glwe_dim {
     };
 }
 
-macro_rules! check_base_log {
-    ($base_log: ident) => {
-        if $base_log.0 > 16 {
-            return Err(CudaError::BaseLogNotSupported.into());
-        }
-    };
-}
-
-pub(crate) use {check_base_log, check_glwe_dim};
+pub(crate) use check_glwe_dim;
