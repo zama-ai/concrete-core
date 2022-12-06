@@ -1,11 +1,9 @@
 use concrete_core::backends::fft::private::math::fft::Fft as FftImpl;
 
-#[repr(transparent)]
 pub struct Csprng {
     __private: (),
 }
 
-#[repr(transparent)]
 pub struct Fft {
     pub(crate) inner: FftImpl,
 }
