@@ -14,8 +14,7 @@ use crate::commons::math::polynomial::PolynomialList;
 use crate::commons::math::tensor::{AsRefSlice, AsRefTensor};
 use crate::prelude::{
     CiphertextCount, LweCiphertextVectorEntity,
-    LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysEntity, PlaintextVectorEntity,
-    PolynomialCount,
+    LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysEntity,
 };
 use crate::specification::engines::{
     LweCiphertextVectorDiscardingCircuitBootstrapBooleanVerticalPackingEngine,
@@ -255,7 +254,7 @@ impl
                 CiphertextCount(input.lwe_ciphertext_count().0),
                 CiphertextCount(output.lwe_ciphertext_count().0),
                 input.lwe_dimension().to_lwe_size(),
-                PolynomialCount(luts.plaintext_count().0),
+                lut_as_polynomial_list.polynomial_count(),
                 bsk.output_lwe_dimension().to_lwe_size(),
                 cbs_pfpksk.output_polynomial_size(),
                 bsk.glwe_dimension().to_glwe_size(),
@@ -502,7 +501,7 @@ impl
                 CiphertextCount(input.lwe_ciphertext_count().0),
                 CiphertextCount(output.lwe_ciphertext_count().0),
                 input.lwe_dimension().to_lwe_size(),
-                PolynomialCount(luts.plaintext_count().0),
+                lut_as_polynomial_list.polynomial_count(),
                 bsk.output_lwe_dimension().to_lwe_size(),
                 cbs_pfpksk.output_polynomial_size(),
                 bsk.glwe_dimension().to_glwe_size(),
