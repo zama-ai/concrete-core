@@ -1,0 +1,21 @@
+# Check that the generated header file
+# is the same as the one in the repository
+name: Build concrete-cpu and diff
+on:
+  pull_request:
+jobs:
+  concrete-cpu-header-check:
+    name: cbindgen
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Rust for tasks
+        run: |
+          make install_tasks_rust_toolchain
+      - name: Run cbindgen
+        run: |
+          cargo build --package concrete-cpu
+      - name: Check diff
+        run: git diff --exit-code
+
