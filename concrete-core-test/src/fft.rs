@@ -42,5 +42,5 @@ test! {
         (FftFourierLweBootstrapKey, LweKeyswitchKey, LweCiphertext, LweCiphertextVector)),
     ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingCircuitBootstrapBooleanVerticalPackingFixture,
         (FftFourierLweBootstrapKey, LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys,
-        PlaintextVector, Cleartext, LweCiphertextVectorView, LweCiphertextVectorMutView))
+        PlaintextVector, LweCiphertextVectorView, LweCiphertextVectorMutView))
 }

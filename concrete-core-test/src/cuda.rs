@@ -71,7 +71,10 @@ test! {
         (CudaFourierLweBootstrapKey, CudaLweKeyswitchKey, CudaLweCiphertext,
             CudaLweCiphertextVector)),
     ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorGlweCiphertextDiscardingPrivateFunctionalPackingKeyswitchFixture,
-        (CudaLweCiphertextVector, CudaLwePrivateFunctionalPackingKeyswitchKey, CudaGlweCiphertext))
+        (CudaLweCiphertextVector, CudaLwePrivateFunctionalPackingKeyswitchKey, CudaGlweCiphertext)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingCircuitBootstrapBooleanVerticalPackingFixture,
+        (CudaFourierLweBootstrapKey, CudaLweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys,
+        CudaPlaintextVector, CudaLweCiphertextVector, CudaLweCiphertextVector))
 }
 
 macro_rules! test_amortized {

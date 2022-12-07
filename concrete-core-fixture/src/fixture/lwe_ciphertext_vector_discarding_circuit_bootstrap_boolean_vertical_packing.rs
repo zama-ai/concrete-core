@@ -5,7 +5,7 @@ use crate::generation::prototyping::{
     PrototypesPlaintextVector,
 };
 use crate::generation::synthesizing::{
-    SynthesizesCleartext, SynthesizesLweBootstrapKey, SynthesizesLweCiphertextVector,
+    SynthesizesLweBootstrapKey, SynthesizesLweCiphertextVector,
     SynthesizesLweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys,
     SynthesizesPlaintextVector,
 };
@@ -18,9 +18,9 @@ use crate::raw::statistical_test::assert_delta_std_dev;
 use concrete_core::commons::math::decomposition::SignedDecomposer;
 use concrete_core::commons::numeric::{Numeric, UnsignedInteger};
 use concrete_core::prelude::{
-    BinaryKeyKind, CleartextEntity, DecompositionBaseLog, DecompositionLevelCount, DeltaLog,
-    DispersionParameter, ExtractedBitsCount, GaussianKeyKind, GlweDimension, LweBootstrapKeyEntity,
-    LweCiphertextCount, LweCiphertextVectorDiscardingCircuitBootstrapBooleanVerticalPackingEngine,
+    BinaryKeyKind, DecompositionBaseLog, DecompositionLevelCount, DeltaLog, DispersionParameter,
+    ExtractedBitsCount, GaussianKeyKind, GlweDimension, LweBootstrapKeyEntity, LweCiphertextCount,
+    LweCiphertextVectorDiscardingCircuitBootstrapBooleanVerticalPackingEngine,
     LweCiphertextVectorEntity, LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeysEntity,
     LweDimension, PlaintextVectorEntity, PolynomialSize, TernaryKeyKind, Variance,
 };
@@ -137,7 +137,6 @@ impl<
         BootstrapKey,
         CBSPFPKSK,
         LUTs,
-        InputCleartext,
         InputCiphertextVector,
         OutputCiphertextVector,
     >
@@ -149,7 +148,6 @@ impl<
             BootstrapKey,
             CBSPFPKSK,
             LUTs,
-            InputCleartext,
             InputCiphertextVector,
             OutputCiphertextVector,
         ),
@@ -158,7 +156,6 @@ where
     Precision: IntegerPrecision + 'static + Clone,
     BigLweAndGlweKeyDistribution: KeyDistributionMarker,
     SmallLweKeyDistribution: KeyDistributionMarker,
-    InputCleartext: CleartextEntity,
     InputCiphertextVector: LweCiphertextVectorEntity,
     OutputCiphertextVector: LweCiphertextVectorEntity,
     BootstrapKey: LweBootstrapKeyEntity,
@@ -187,8 +184,7 @@ where
             BigLweAndGlweKeyDistribution,
             BigLweAndGlweKeyDistribution,
             CBSPFPKSK,
-        > + SynthesizesCleartext<Precision, InputCleartext>
-        + SynthesizesPlaintextVector<Precision, LUTs>,
+        > + SynthesizesPlaintextVector<Precision, LUTs>,
 {
     type Parameters =
         LweCiphertextVectorDiscardingCircuitBootstrapBooleanVerticalPackingParameters<Precision>;
