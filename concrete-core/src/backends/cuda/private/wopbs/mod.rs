@@ -131,7 +131,10 @@ pub fn cuda_vertical_packing(
             );
         }
     } else {
-        assert_eq!(glwe_size, h_concatenated_luts_glwe.as_slice().len());
+        assert_eq!(
+            glwe_size * tree_lut.len(),
+            h_concatenated_luts_glwe.as_slice().len()
+        );
 
         // mbr GGSWs
         let mut h_concatenated_br_ggsw = vec![];
@@ -156,7 +159,7 @@ pub fn cuda_vertical_packing(
                 d_concatenated_br_ggsw.as_c_ptr(),
                 d_concatenated_luts_glwe.as_c_ptr(),
                 vec_ggsw.len() as u32,
-                1u32, // tau
+                tree_lut.len() as u32, // tau
                 glwe_dimension.0 as u32,
                 polynomial_size.0 as u32,
                 base_log.0 as u32,
