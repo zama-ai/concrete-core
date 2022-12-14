@@ -574,12 +574,12 @@ __host__ void host_extract_bits(
   checkCudaErrors(cudaGetLastError());
 
   for (int bit_idx = 0; bit_idx < number_of_bits; bit_idx++) {
-    cuda_keyswitch_lwe_ciphertext_vector(
+    cuda_keyswitch_lwe_ciphertext_vector<Torus>(
         v_stream, gpu_index, lwe_array_out_ks_buffer,
         lwe_array_in_shifted_buffer, ksk, lwe_dimension_in, lwe_dimension_out,
         base_log_ksk, level_count_ksk, 1);
 
-    copy_small_lwe<<<1, 256, 0, *stream>>>(
+    copy_small_lwe<Torus><<<1, 256, 0, *stream>>>(
         list_lwe_array_out, lwe_array_out_ks_buffer, lwe_dimension_out + 1,
         number_of_bits, number_of_bits - bit_idx - 1);
     checkCudaErrors(cudaGetLastError());
@@ -826,7 +826,7 @@ __host__ void host_circuit_bootstrap(
       lwe_array_in_fp_ks_buffer, lwe_array_out_pbs_buffer, ciphertext_n_bits,
       base_log_cbs, level_cbs);
 
-  cuda_fp_keyswitch_lwe_to_glwe(
+  cuda_fp_keyswitch_lwe_to_glwe<Torus>(
       v_stream, ggsw_out, lwe_array_in_fp_ks_buffer, fp_ksk_array,
       polynomial_size, glwe_dimension, polynomial_size, base_log_pksk,
       level_pksk, pbs_count * (glwe_dimension + 1), glwe_dimension + 1);

@@ -146,7 +146,7 @@ __global__ void keyswitch(Torus *lwe_array_out, Torus *lwe_array_in, Torus *ksk,
     Torus mask_mod_b = (1ll << base_log) - 1ll;
 
     for (int j = 0; j < level_count; j++) {
-      auto ksk_block = get_ith_block(ksk, i, level_count - j - 1,
+      auto ksk_block = get_ith_block<Torus>(ksk, i, level_count - j - 1,
                                      lwe_dimension_out, level_count);
       Torus decomposed = decompose_one<Torus>(state, mask_mod_b, base_log);
       for (int k = 0; k < lwe_part_per_thd; k++) {
@@ -199,7 +199,7 @@ __host__ void cuda_keyswitch_lwe_ciphertext_vector(
                        cudaFuncAttributeMaxDynamicSharedMemorySize, shared_mem);
 
   auto stream = static_cast<cudaStream_t *>(v_stream);
-  keyswitch<<<grid, threads, shared_mem, *stream>>>(
+  keyswitch<Torus><<<grid, threads, shared_mem, *stream>>>(
       lwe_array_out, lwe_array_in, ksk, lwe_dimension_in, lwe_dimension_out,
       base_log, level_count, lwe_lower, lwe_upper, cutoff);
   checkCudaErrors(cudaGetLastError());
@@ -219,7 +219,7 @@ __host__ void cuda_fp_keyswitch_lwe_to_glwe(
 
   int shared_mem = sizeof(Torus) * threads;
   auto stream = static_cast<cudaStream_t *>(v_stream);
-  fp_keyswitch<<<blocks, threads, shared_mem, *stream>>>(
+  fp_keyswitch<Torus><<<blocks, threads, shared_mem, *stream>>>(
       glwe_array_out, lwe_array_in, fp_ksk_array, lwe_dimension_in,
       glwe_dimension, polynomial_size, base_log, level_count,
       number_of_input_lwe, number_of_keys);
