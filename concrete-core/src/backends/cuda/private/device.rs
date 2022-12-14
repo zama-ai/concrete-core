@@ -720,27 +720,7 @@ impl CudaStream {
         max_shared_memory: SharedMemoryAmount,
     ) {
         if T::BITS == 32 {
-            cuda_circuit_bootstrap_vertical_packing_32(
-                self.stream.0,
-                self.gpu_index.0 as u32,
-                lwe_array_out.as_mut_c_ptr(),
-                lwe_array_in.as_c_ptr(),
-                fourier_bsk.as_c_ptr(),
-                cbs_fpksk.as_c_ptr(),
-                lut_vector.as_c_ptr(),
-                polynomial_size.0 as u32,
-                glwe_dimension.0 as u32,
-                lwe_dimension.0 as u32,
-                level_count_bsk.0 as u32,
-                base_log_bsk.0 as u32,
-                level_count_pksk.0 as u32,
-                base_log_pksk.0 as u32,
-                level_count_cbs.0 as u32,
-                base_log_cbs.0 as u32,
-                number_of_inputs.0 as u32,
-                lut_number as u32,
-                max_shared_memory.0 as u32,
-            );
+            unimplemented!()
         } else if T::BITS == 64 {
             cuda_circuit_bootstrap_vertical_packing_64(
                 self.stream.0,

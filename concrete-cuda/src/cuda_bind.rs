@@ -336,28 +336,6 @@ extern "C" {
         max_shared_memory: u32,
     );
 
-    pub fn cuda_circuit_bootstrap_vertical_packing_32(
-        v_stream: *const c_void,
-        gpu_index: u32,
-        lwe_array_out: *mut c_void,
-        lwe_array_in: *const c_void,
-        fourier_bsk: *const c_void,
-        cbs_fpksk: *const c_void,
-        lut_vector: *const c_void,
-        polynomial_size: u32,
-        glwe_dimension: u32,
-        lwe_dimension: u32,
-        level_count_bsk: u32,
-        base_log_bsk: u32,
-        level_count_pksk: u32,
-        base_log_pksk: u32,
-        level_count_cbs: u32,
-        base_log_cbs: u32,
-        number_of_inputs: u32,
-        lut_number: u32,
-        max_shared_memory: u32,
-    );
-
     pub fn cuda_circuit_bootstrap_vertical_packing_64(
         v_stream: *const c_void,
         gpu_index: u32,
