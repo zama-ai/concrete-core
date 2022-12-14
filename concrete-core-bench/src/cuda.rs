@@ -53,10 +53,31 @@ bench! {
         (CudaFourierLweBootstrapKey, CudaLweKeyswitchKey, CudaLweCiphertext,
             CudaLweCiphertextVector)),
     ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorGlweCiphertextDiscardingPrivateFunctionalPackingKeyswitchFixture,
-        (CudaLweCiphertextVector, CudaLwePrivateFunctionalPackingKeyswitchKey, CudaGlweCiphertext)),
-    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingCircuitBootstrapBooleanVerticalPackingFixture,
-        (CudaFourierLweBootstrapKey, CudaLweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys,
-        CudaPlaintextVector, CudaLweCiphertextVector, CudaLweCiphertextVector))
+        (CudaLweCiphertextVector, CudaLwePrivateFunctionalPackingKeyswitchKey, CudaGlweCiphertext))
+}
+
+pub fn bench_cuda_lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_vertical_packing_64() {
+    //((BinaryKeyDistribution, BinaryKeyDistribution),
+    //  ,
+    // (CudaFourierLweBootstrapKey, CudaLweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys,
+    //  CudaPlaintextVector, CudaLweCiphertextVector, CudaLweCiphertextVector))
+    let mut criterion = Criterion::default().configure_from_args();
+    let mut maker = Maker::default();
+    let mut engine = CudaEngine::new(()).unwrap();
+    LweCiphertextVectorDiscardingCircuitBootstrapBooleanVerticalPackingFixture
+        as BenchmarkFixture<
+            Precision64,
+            (BinaryKeyDistribution, BinaryKeyDistribution),
+            CudaEngine,
+            (
+                CudaFourierLweBootstrapKey64,
+                CudaLweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+                CudaPlaintextVector64,
+                CudaLweCiphertextVector64,
+                CudaLweCiphertextVector64,
+            ),
+        >
+        > ::bench_all_parameters(&mut maker, &mut engine, &mut criterion, None);
 }
 
 macro_rules! bench_amortized {
