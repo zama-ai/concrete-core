@@ -58,6 +58,7 @@ pub fn test_cuda_cmux_tree() {
         );
 
         let r = 10; // Depth of the tree
+        let tau = 10; // Quantity of trees
         let num_lut = 1 << r;
 
         // Size of a GGSW ciphertext
@@ -71,6 +72,7 @@ pub fn test_cuda_cmux_tree() {
         let glwe_size = glwe_dimension.to_glwe_size().0 * polynomial_size.0;
 
         println!("r: {}", r);
+        println!("tau: {}", tau);
         println!("glwe_size: {}, ggsw_size: {}", glwe_size, ggsw_size);
 
         // Engines
@@ -88,24 +90,26 @@ pub fn test_cuda_cmux_tree() {
         // Instantiate the LUTs
         // We need 2^r GLWEs
         let mut h_concatenated_luts = vec![];
-        let mut h_luts = PolynomialList::allocate(0u64, PolynomialCount(num_lut), polynomial_size);
+        let mut h_luts =
+            PolynomialList::allocate(0u64, PolynomialCount(num_lut * tau), polynomial_size);
         for (i, mut polynomial) in h_luts.polynomial_iter_mut().enumerate() {
-            polynomial
-                .as_mut_tensor()
-                .fill_with_element((i as u64 % (1 << (64 - delta_log))) << delta_log);
+            let tree_offset = i / num_lut;
+            polynomial.as_mut_tensor().fill_with_element(
+                ((i + tree_offset) as u64 % (1 << (64 - delta_log))) << delta_log,
+            );
 
             let mut h_lut = polynomial.as_tensor().as_slice().to_vec();
-            let mut h_zeroes = vec![0_u64; polynomial_size.0];
+            // let mut h_zeroes = vec![0_u64; polynomial_size.0];
             // println!("lut {}) {}", i, h_lut[0]);
 
             // Mask is zero
-            h_concatenated_luts.append(&mut h_zeroes);
+            // h_concatenated_luts.append(&mut h_zeroes);
             // Body is something else
             h_concatenated_luts.append(&mut h_lut);
         }
 
         // Now we have (2**r GLWE ciphertexts)
-        assert_eq!(h_concatenated_luts.len(), num_lut * glwe_size);
+        assert_eq!(h_concatenated_luts.len(), num_lut * tau * polynomial_size.0);
         println!("\nWe have {} LUTs", num_lut);
 
         // Copy to Device
@@ -121,7 +125,8 @@ pub fn test_cuda_cmux_tree() {
         // We need r GGSW ciphertexts
         // Bit decomposition of the value from MSB to LSB
         let mut value = 0b111101;
-        let witness = value;
+        let base_witness = value;
+        println!("base witness: {}", value);
         //bit decomposition of the value
         let mut vec_message = vec![Plaintext(0); r as usize];
         for i in 0..r {
@@ -156,12 +161,12 @@ pub fn test_cuda_cmux_tree() {
             stream.copy_to_gpu::<u64>(&mut d_concatenated_mtree, h_concatenated_ggsw.as_slice());
         }
 
-        let mut d_result = stream.malloc::<u64>(glwe_size as u32);
+        let mut d_results = stream.malloc::<u64>((tau * glwe_size) as u32);
         unsafe {
             cuda_cmux_tree_64(
                 stream.stream_handle().0,
                 gpu_index.0 as u32,
-                d_result.as_mut_c_ptr(),
+                d_results.as_mut_c_ptr(),
                 d_concatenated_mtree.as_c_ptr(),
                 d_concatenated_luts.as_c_ptr(),
                 glwe_dimension.0 as u32,
@@ -169,34 +174,38 @@ pub fn test_cuda_cmux_tree() {
                 base_log.0 as u32,
                 level.0 as u32,
                 r as u32,
+                tau as u32,
                 stream.get_max_shared_memory().unwrap() as u32,
             );
         }
 
-        let mut h_result = vec![49u64; glwe_size];
+        let mut h_results = vec![49u64; tau * glwe_size];
         unsafe {
-            stream.copy_to_cpu::<u64>(&mut h_result, &d_result);
+            stream.copy_to_cpu::<u64>(&mut h_results, &d_results);
         }
-        assert_eq!(h_result.len(), glwe_size);
+        assert_eq!(h_results.len(), tau * glwe_size);
 
-        let glwe_result = GlweCiphertext::from_container(h_result, polynomial_size);
+        for (i, h_result) in h_results.chunks(glwe_size).enumerate() {
+            let glwe_result = GlweCiphertext::from_container(h_result, polynomial_size);
 
-        let mut decrypted_result =
-            PlaintextList::from_container(vec![0_u64; rlwe_sk.polynomial_size().0]);
-        rlwe_sk.decrypt_glwe(&mut decrypted_result, &glwe_result);
-        let lut_number =
-            ((*decrypted_result.tensor.first() as f64) / (1u64 << delta_log) as f64).round();
+            let mut decrypted_result =
+                PlaintextList::from_container(vec![0_u64; rlwe_sk.polynomial_size().0]);
+            rlwe_sk.decrypt_glwe(&mut decrypted_result, &glwe_result);
+            let lut_number = (((*decrypted_result.tensor.first() as f64)
+                / (1u64 << delta_log) as f64)
+                .round() as u64)
+                % (1 << (64 - delta_log));
 
-        println!("\nresult: {:?}", decrypted_result.tensor.first());
-        // println!("\nresult: {:?}", decrypted_result.tensor.as_container());
-        println!("witness : {:?}", witness % (1 << (64 - delta_log)));
-        println!("lut_number: {}", lut_number);
-        // println!(
-        //     "lut value  : {:?}",
-        //     h_luts[witness as usize]
-        // );
+            println!("\nTree {})", i);
+            println!("result: {:?}", decrypted_result.tensor.first());
+            // println!("\nresult: {:?}", decrypted_result.tensor.as_container());
+            let tree_offset = i as u64;
+            let witness = ((base_witness + tree_offset) % (1 << (64 - delta_log)));
+            println!("witness : {:?}", witness);
+            println!("lut_number: {}", lut_number);
+            assert_eq!(lut_number, witness);
+        }
         println!("Done!");
-        assert_eq!(lut_number as u64, witness % (1 << (64 - delta_log)));
     }
 }
 

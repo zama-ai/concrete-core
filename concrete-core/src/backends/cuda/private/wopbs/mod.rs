@@ -61,7 +61,7 @@ pub fn cuda_vertical_packing(
     let mut d_result_br = stream.malloc::<u64>(glwe_size as u32);
 
     if tree_lut.len() == (1 << r) {
-        assert_eq!(h_concatenated_luts_glwe.len(), (1 << r) * glwe_size);
+        assert_eq!(h_concatenated_luts_glwe.len(), (1 << r) * polynomial_size.0);
         let mut d_result_cmux = stream.malloc::<u64>(glwe_size as u32);
 
         // split the vec of GGSW in two, the msb GGSW is for the CMux tree and the lsb GGSW is for
@@ -110,6 +110,7 @@ pub fn cuda_vertical_packing(
                 base_log.0 as u32,
                 level.0 as u32,
                 cmux_ggsw.len() as u32,
+                1,
                 stream.get_max_shared_memory().unwrap() as u32,
             );
         }
@@ -131,11 +132,6 @@ pub fn cuda_vertical_packing(
             );
         }
     } else {
-        assert_eq!(
-            glwe_size * tree_lut.len(),
-            h_concatenated_luts_glwe.as_slice().len()
-        );
-
         // mbr GGSWs
         let mut h_concatenated_br_ggsw = vec![];
         for ggsw in vec_ggsw.iter() {

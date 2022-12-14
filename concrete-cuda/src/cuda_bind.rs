@@ -200,6 +200,7 @@ extern "C" {
         base_log: u32,
         level_count: u32,
         r: u32,
+        tau: u32,
         max_shared_memory: u32,
     );
 
@@ -214,6 +215,7 @@ extern "C" {
         base_log: u32,
         level_count: u32,
         r: u32,
+        tau: u32,
         max_shared_memory: u32,
     );
 
