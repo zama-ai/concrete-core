@@ -1,12 +1,12 @@
+use std::cmp::min;
+
 use crate::backends::cuda::private::device::{GpuIndex, NumberOfGpus, NumberOfSamples};
 use crate::prelude::CiphertextCount;
-use std::cmp::min;
 
 pub mod crypto;
 pub mod device;
 pub mod pointers;
 pub mod vec;
-pub mod wopbs;
 
 pub(crate) fn number_of_active_gpus(
     total_number_of_gpus: NumberOfGpus,

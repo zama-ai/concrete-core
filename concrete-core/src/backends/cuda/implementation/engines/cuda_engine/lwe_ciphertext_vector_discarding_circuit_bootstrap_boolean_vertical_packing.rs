@@ -1,5 +1,5 @@
 use crate::backends::cuda::implementation::engines::{check_glwe_dim, CudaEngine};
-use crate::backends::cuda::private::wopbs::execute_circuit_bootstrap_vertical_packing_on_gpu;
+use crate::backends::cuda::private::crypto::wopbs::execute_circuit_bootstrap_vertical_packing_on_gpu;
 use crate::prelude::{
     CudaError, CudaFourierLweBootstrapKey64, CudaLweCiphertextVector64,
     CudaLweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64, CudaPlaintextVector64,

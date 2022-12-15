@@ -9,3 +9,4 @@ pub mod glwe;
 pub mod keyswitch;
 pub mod lwe;
 pub mod plaintext;
+pub mod wopbs;
