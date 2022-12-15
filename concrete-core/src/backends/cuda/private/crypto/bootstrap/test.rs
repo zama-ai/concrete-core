@@ -188,7 +188,7 @@ mod cuda_unit_test_pbs {
 
                 for _ in 0..samples {
                     let input_plaintext: u64 =
-                        (generator.random_uniform::<u64>() % payload_modulus) << delta;
+                        (generator.random_uniform::<u64>() % payload_modulus) * delta;
 
                     let plaintext = default_engine.create_plaintext_from(&input_plaintext)?;
                     let input = default_engine.encrypt_lwe_ciphertext(
