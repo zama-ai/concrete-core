@@ -5,8 +5,6 @@ use crate::prelude::{
     LwePrivateFunctionalPackingKeyswitchKeyEntity,
 };
 use crate::specification::entities::AbstractEntity;
-#[cfg(feature = "backend_default_serialization")]
-use serde::{Deserialize, Serialize};
 
 /// A structure representing a private functional packing keyswitch key with 32 bits of precision.
 #[derive(Debug)]

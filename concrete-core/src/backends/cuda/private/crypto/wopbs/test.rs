@@ -1,9 +1,9 @@
 use crate::backends::cuda::private::crypto::ggsw::ciphertext::CudaGgswCiphertext;
-use crate::backends::cuda::private::device::{CudaStream, GpuIndex};
-use crate::backends::cuda::private::wopbs::{
+use crate::backends::cuda::private::crypto::wopbs::{
     circuit_bootstrap_boolean_cuda_vertical_packing,
     execute_circuit_bootstrap_vertical_packing_on_gpu,
 };
+use crate::backends::cuda::private::device::{CudaStream, GpuIndex};
 use crate::backends::fft::private::crypto::bootstrap::{
     fill_with_forward_fourier_scratch, FourierLweBootstrapKey,
 };
