@@ -64,19 +64,19 @@ pub fn bench_cuda_lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_ver
     let mut criterion = Criterion::default().configure_from_args();
     let mut maker = Maker::default();
     let mut engine = CudaEngine::new(()).unwrap();
-    LweCiphertextVectorDiscardingCircuitBootstrapBooleanVerticalPackingFixture
+    <LweCiphertextVectorDiscardingCircuitBootstrapBooleanVerticalPackingFixture
         as BenchmarkFixture<
-            Precision64,
-            (BinaryKeyDistribution, BinaryKeyDistribution),
-            CudaEngine,
-            (
-                CudaFourierLweBootstrapKey64,
-                CudaLweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
-                CudaPlaintextVector64,
-                CudaLweCiphertextVector64,
-                CudaLweCiphertextVector64,
-            ),
-        >
+        Precision64,
+        (BinaryKeyDistribution, BinaryKeyDistribution),
+        CudaEngine,
+        (
+            CudaFourierLweBootstrapKey64,
+            CudaLweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+            CudaPlaintextVector64,
+            CudaLweCiphertextVector64,
+            CudaLweCiphertextVector64,
+        ),
+    >
         > ::bench_all_parameters(&mut maker, &mut engine, &mut criterion, None);
 }
 

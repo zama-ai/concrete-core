@@ -31,6 +31,9 @@ fn main() {
     cuda::bench();
     #[cfg(feature = "backend_cuda")]
     cuda::bench_amortized();
+    #[cfg(feature = "backend_cuda")]
+    cuda::bench_cuda_lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_vertical_packing_64(
+    );
 
     // We launch the benchmarks.
     criterion::Criterion::default()
