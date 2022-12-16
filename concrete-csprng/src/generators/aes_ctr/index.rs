@@ -48,12 +48,18 @@ impl TableIndex {
 
     /// Shifts the table index forward of `shift` bytes.
     pub fn increase(&mut self, shift: usize) {
-        let total = self.byte_index.0 + shift;
-        self.byte_index.0 = total % BYTES_PER_AES_CALL;
-        self.aes_index.0 = self
-            .aes_index
-            .0
-            .wrapping_add(total as u128 / BYTES_PER_AES_CALL as u128);
+        // Compute full shifts to avoid overflows
+        let full_aes_shifts = shift / BYTES_PER_AES_CALL;
+        let shift_remainder = shift % BYTES_PER_AES_CALL;
+
+        // Get the additional shift if any
+        let new_byte_index = self.byte_index.0 + shift_remainder;
+        let full_aes_shifts = full_aes_shifts + new_byte_index / BYTES_PER_AES_CALL;
+
+        // Store the reaminder in the byte index
+        self.byte_index.0 = new_byte_index % BYTES_PER_AES_CALL;
+
+        self.aes_index.0 = self.aes_index.0.wrapping_add(full_aes_shifts as u128);
     }
 
     /// Shifts the table index backward of `shift` bytes.
@@ -361,5 +367,23 @@ mod test {
             let (t, i) = any_table_index().zip(any_usize()).next().unwrap();
             assert_eq!(t.decreased(i).increased(i), t);
         }
+    }
+
+    #[test]
+    /// Check that a big increase does not overflow
+    fn prop_table_increase_max_no_overflow() {
+        let first = TableIndex::FIRST;
+        // Increase so that ByteIndex is at 1usize
+        let second = first.increased(1);
+
+        // Now increase by usize::MAX, as the underlying byte index stores a usize this may overflow
+        // depending on implementation, ensure it does not overflow
+        let big_increase = second.increased(usize::MAX);
+        let total_full_aes_shifts = (1u128 + usize::MAX as u128) / BYTES_PER_AES_CALL as u128;
+
+        assert_eq!(
+            big_increase,
+            TableIndex::new(AesIndex(total_full_aes_shifts), ByteIndex(0))
+        );
     }
 }
