@@ -199,6 +199,11 @@ pub struct DeltaLog(pub usize);
 #[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
 pub struct ExtractedBitsCount(pub usize);
 
+/// The number of bits of message in a ciphertext
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]
+pub struct MessageBitsCount(pub usize);
+
 /// The number of functional packing keyswitch key in a functional packing keyswitch key list.
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 #[cfg_attr(feature = "__commons_serialization", derive(Serialize, Deserialize))]

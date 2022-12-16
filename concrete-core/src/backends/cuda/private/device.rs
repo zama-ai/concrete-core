@@ -5,7 +5,7 @@ use crate::commons::numeric::{Numeric, UnsignedInteger};
 use crate::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, DeltaLog, ExtractedBitsCount,
     FunctionalPackingKeyswitchKeyCount, GlweDimension, LweCiphertextCount, LweCiphertextIndex,
-    LweDimension, PolynomialSize, SharedMemoryAmount,
+    LweDimension, MessageBitsCount, PolynomialSize, SharedMemoryAmount,
 };
 use concrete_cuda::cuda_bind::*;
 use std::ffi::c_void;
@@ -533,7 +533,7 @@ impl CudaStream {
         }
     }
 
-    /// Discarding keyswitch on a vector of LWE ciphertexts
+    /// Discarding bit extraction on a vector of LWE ciphertexts
     #[allow(clippy::too_many_arguments)]
     pub unsafe fn discard_extract_bits_lwe_ciphertext_vector<T: UnsignedInteger>(
         &self,
@@ -614,7 +614,7 @@ impl CudaStream {
         }
     }
 
-    /// Discarding keyswitch on a vector of LWE ciphertexts
+    /// Discarding circuit bootstrap on a vector of LWE ciphertexts encrypting bits
     #[allow(clippy::too_many_arguments)]
     pub unsafe fn discard_circuit_bootstrap_boolean_lwe_ciphertext_vector<T: UnsignedInteger>(
         &self,
@@ -695,7 +695,7 @@ impl CudaStream {
         }
     }
 
-    /// Discarding keyswitch on a vector of LWE ciphertexts
+    /// Discarding cbs + vertical packing on a vector of LWE ciphertexts
     #[allow(clippy::too_many_arguments)]
     pub unsafe fn discard_circuit_bootstrap_boolean_vertical_packing_lwe_ciphertext_vector<
         T: UnsignedInteger,
@@ -741,6 +741,63 @@ impl CudaStream {
                 base_log_cbs.0 as u32,
                 number_of_inputs.0 as u32,
                 lut_number as u32,
+                max_shared_memory.0 as u32,
+            );
+        }
+    }
+
+    /// Discarding wop PBS on a vector of LWE ciphertexts
+    #[allow(clippy::too_many_arguments)]
+    pub unsafe fn discard_wop_pbs_lwe_ciphertext_vector<T: UnsignedInteger>(
+        &self,
+        lwe_array_out: &mut CudaVec<T>,
+        lwe_array_in: &CudaVec<T>,
+        lut_vector: &CudaVec<T>,
+        fourier_bsk: &CudaVec<f64>,
+        ksk: &CudaVec<T>,
+        cbs_fpksk: &CudaVec<T>,
+        glwe_dimension: GlweDimension,
+        lwe_dimension: LweDimension,
+        polynomial_size: PolynomialSize,
+        base_log_bsk: DecompositionBaseLog,
+        level_count_bsk: DecompositionLevelCount,
+        base_log_ksk: DecompositionBaseLog,
+        level_count_ksk: DecompositionLevelCount,
+        base_log_pksk: DecompositionBaseLog,
+        level_count_pksk: DecompositionLevelCount,
+        base_log_cbs: DecompositionBaseLog,
+        level_count_cbs: DecompositionLevelCount,
+        number_of_bits_of_message_including_padding: MessageBitsCount,
+        number_of_bits_to_extract: ExtractedBitsCount,
+        number_of_inputs: LweCiphertextCount,
+        max_shared_memory: SharedMemoryAmount,
+    ) {
+        if T::BITS == 32 {
+            unimplemented!()
+        } else if T::BITS == 64 {
+            cuda_wop_pbs_64(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                lwe_array_out.as_mut_c_ptr(),
+                lwe_array_in.as_c_ptr(),
+                lut_vector.as_c_ptr(),
+                fourier_bsk.as_c_ptr(),
+                ksk.as_c_ptr(),
+                cbs_fpksk.as_c_ptr(),
+                glwe_dimension.0 as u32,
+                lwe_dimension.0 as u32,
+                polynomial_size.0 as u32,
+                base_log_bsk.0 as u32,
+                level_count_bsk.0 as u32,
+                base_log_ksk.0 as u32,
+                level_count_ksk.0 as u32,
+                base_log_pksk.0 as u32,
+                level_count_pksk.0 as u32,
+                base_log_cbs.0 as u32,
+                level_count_cbs.0 as u32,
+                number_of_bits_of_message_including_padding.0 as u32,
+                number_of_bits_to_extract.0 as u32,
+                number_of_inputs.0 as u32,
                 max_shared_memory.0 as u32,
             );
         }
