@@ -3,14 +3,20 @@ use std::ffi::c_void;
 #[link(name = "concrete_cuda", kind = "static")]
 extern "C" {
 
+    /// Create a new Cuda stream on GPU `gpu_index`
     pub fn cuda_create_stream(gpu_index: u32) -> *mut c_void;
 
+    /// Destroy the Cuda stream `v_stream` on GPU `gpu_index`
     pub fn cuda_destroy_stream(v_stream: *mut c_void, gpu_index: u32) -> i32;
 
+    /// Allocate `size` memory on GPU `gpu_index`
     pub fn cuda_malloc(size: u64, gpu_index: u32) -> *mut c_void;
 
+    /// Check whether `size` memory is available on GPU `gpu_index`
     pub fn cuda_check_valid_malloc(size: u64, gpu_index: u32) -> i32;
 
+    /// Copy `size` memory asynchronously from `src` on GPU `gpu_index` to `dest` on CPU using
+    /// the Cuda stream `v_stream`.
     pub fn cuda_memcpy_async_to_cpu(
         dest: *mut c_void,
         src: *const c_void,
@@ -19,6 +25,8 @@ extern "C" {
         gpu_index: u32,
     ) -> i32;
 
+    /// Copy `size` memory asynchronously from `src` on CPU to `dest` on GPU `gpu_index` using
+    /// the Cuda stream `v_stream`.
     pub fn cuda_memcpy_async_to_gpu(
         dest: *mut c_void,
         src: *const c_void,
@@ -27,16 +35,26 @@ extern "C" {
         gpu_index: u32,
     ) -> i32;
 
+    /// Get the total number of Nvidia GPUs detected on the platform
     pub fn cuda_get_number_of_gpus() -> i32;
 
+    /// Synchronize all streams on GPU `gpu_index`
     pub fn cuda_synchronize_device(gpu_index: u32) -> i32;
 
+    /// Free memory for pointer `ptr` on GPU `gpu_index`
     pub fn cuda_drop(ptr: *mut c_void, gpu_index: u32) -> i32;
 
+    /// Get the maximum amount of shared memory on GPU `gpu_index`
     pub fn cuda_get_max_shared_memory(gpu_index: u32) -> i32;
 
+    /// Initialize the twiddles values for `polynomial_size` on GPU `gpu_index`.
+    /// This is necessary before calling any function that relies on the FFT (bootstrap, circuit
+    /// bootstrap, bit extraction, vertical packing, wop PBS).
     pub fn cuda_initialize_twiddles(polynomial_size: u32, gpu_index: u32);
 
+    /// Copy a bootstrap key `src` represented with 32 bits in the standard domain from the CPU to
+    /// the GPU `gpu_index` using the stream `v_stream`, and convert it to the Fourier domain on the
+    /// GPU. The resulting bootstrap key `dest` on the GPU is an array of f64 values.
     pub fn cuda_convert_lwe_bootstrap_key_32(
         dest: *mut c_void,
         src: *mut c_void,
@@ -48,6 +66,9 @@ extern "C" {
         polynomial_size: u32,
     );
 
+    /// Copy a bootstrap key `src` represented with 64 bits in the standard domain from the CPU to
+    /// the GPU `gpu_index` using the stream `v_stream`, and convert it to the Fourier domain on the
+    /// GPU. The resulting bootstrap key `dest` on the GPU is an array of f64 values.
     pub fn cuda_convert_lwe_bootstrap_key_64(
         dest: *mut c_void,
         src: *mut c_void,
@@ -59,6 +80,8 @@ extern "C" {
         polynomial_size: u32,
     );
 
+    /// Perform the programmable bootstrapping on a batch of input u32 LWE ciphertexts.
+    /// See the corresponding operation on 64 bits for more details.
     pub fn cuda_bootstrap_amortized_lwe_ciphertext_vector_32(
         v_stream: *mut c_void,
         gpu_index: u32,
@@ -78,6 +101,66 @@ extern "C" {
         max_shared_memory: u32,
     );
 
+    /// Perform the programmable bootstrapping on a batch of input u64 LWE ciphertexts.
+    /// This functions performs best for large numbers of inputs (> 10).
+    /// - `v_stream` is a void pointer to the Cuda stream to be used in the kernel launch
+    /// - `gpu_index` is the index of the GPU to be used in the kernel launch
+    /// - `lwe_array_out`: output batch of num_samples bootstrapped ciphertexts c =
+    ///(a0,..an-1,b) where n is the LWE dimension
+    /// - `lut_vector`: should hold as many test vectors of size polynomial_size
+    ///  as there are input ciphertexts, but actually holds
+    /// `num_lut_vectors` vectors to reduce memory usage
+    /// - `lut_vector_indexes`: stores the index corresponding to
+    ///  which test vector of `lut_vector` to use for each LWE input in
+    ///  `lwe_array_in`
+    /// - `lwe_array_in`: input batch of num_samples LWE ciphertexts, containing n
+    ///  * mask values + 1 body value
+    /// - `bootstrapping_key`: GGSW encryption of the LWE secret key sk1
+    ///  under secret key sk2. bsk = Z + sk1 H
+    ///  where H is the gadget matrix and Z is a matrix (k+1)*l
+    ///  containing GLWE encryptions of 0 under sk2.
+    ///  bsk is thus a tensor of size (k+1)^2.l.N.n
+    ///  where l is the number of decomposition levels and
+    ///  k is the GLWE dimension, N is the polynomial size for
+    ///  GLWE. The polynomial size for GLWE and the test vector
+    ///  are the same because they have to be in the same ring
+    ///  to be multiplied.
+    /// - `input_lwe_dimension`: size of the Torus vector used to encrypt the input
+    ///  LWE ciphertexts - referred to as n above (~ 600)
+    /// - `polynomial_size`: size of the test polynomial (test vector) and size of the
+    ///  GLWE polynomials (~1024) (where `size` refers to the polynomial degree + 1).
+    /// - `base_log`: log of the base used for the gadget matrix - B = 2^base_log (~8)
+    /// - `level_count`: number of decomposition levels in the gadget matrix (~4)
+    /// - `num_samples`: number of encrypted input messages
+    /// - `num_lut_vectors`: parameter to set the actual number of test vectors to be
+    ///  used
+    /// - `lwe_idx`: the index of the LWE input to consider for the GPU of index gpu_index. In case
+    ///  of multi-GPU computing, it is assumed that only a part of the input LWE array is copied
+    /// to each GPU, but the whole LUT array is copied (because the case when the number of LUTs is
+    ///  smaller than the number of input LWEs is not trivial to take into account in the data
+    ///  repartition on the GPUs). `lwe_idx` is used to determine which LUT to consider for a given
+    /// LWE input in the LUT array `lut_vector`.
+    ///  - `max_shared_memory` maximum amount of shared memory to be used inside device functions
+    ///
+    /// This function calls a wrapper to a device kernel that performs the
+    /// bootstrapping:
+    /// 	- the kernel is templatized based on integer discretization and
+    /// polynomial degree
+    /// 	- num_samples blocks of threads are launched, where each thread is going
+    /// to handle one or more polynomial coefficients at each stage:
+    /// 		- perform the blind rotation
+    /// 		- round the result
+    /// 		- decompose into level_count levels, then for each level:
+    /// 		  - switch to the FFT domain
+    /// 		  - multiply with the bootstrapping key
+    /// 		  - come back to the coefficients representation
+    /// 	- between each stage a synchronization of the threads is necessary
+    /// 	- in case the device has enough shared memory, temporary arrays used for
+    ///  the different stages (accumulators) are stored into the shared memory
+    /// 	- the accumulators serve to combine the results for all decomposition
+    ///  levels
+    /// 	- the constant memory (64K) is used for storing the roots of identity
+    ///  values for the FFT.
     pub fn cuda_bootstrap_amortized_lwe_ciphertext_vector_64(
         v_stream: *mut c_void,
         gpu_index: u32,
@@ -97,6 +180,11 @@ extern "C" {
         max_shared_memory: u32,
     );
 
+    /// Perform bootstrapping on a batch of input u32 LWE ciphertexts.
+    /// This function performs best for small numbers of inputs. Beyond a certain number of inputs
+    /// (the exact number depends on the cryptographic parameters), the kernel cannot be launched
+    /// and it is necessary to split the kernel call into several calls on smaller batches of
+    /// inputs. For more details on this operation, head on to the equivalent u64 operation.
     pub fn cuda_bootstrap_low_latency_lwe_ciphertext_vector_32(
         v_stream: *mut c_void,
         gpu_index: u32,
@@ -116,6 +204,77 @@ extern "C" {
         max_shared_memory: u32,
     );
 
+    /// Perform bootstrapping on a batch of input u64 LWE ciphertexts.
+    /// This function performs best for small numbers of inputs. Beyond a certain number of inputs
+    /// (the exact number depends on the cryptographic parameters), the kernel cannot be launched
+    /// and it is necessary to split the kernel call into several calls on smaller batches of
+    /// inputs.
+    ///
+    /// - `v_stream` is a void pointer to the Cuda stream to be used in the kernel launch
+    /// - `gpu_index` is the index of the GPU to be used in the kernel launch
+    /// - `lwe_array_out`: output batch of num_samples bootstrapped ciphertexts c =
+    /// (a0,..an-1,b) where n is the LWE dimension
+    /// - `lut_vector`: should hold as many test vectors of size polynomial_size
+    /// as there are input ciphertexts, but actually holds
+    /// `num_lut_vectors` vectors to reduce memory usage
+    /// - `lut_vector_indexes`: stores the index corresponding to
+    /// which test vector to use for each sample in
+    /// `lut_vector`
+    /// - `lwe_array_in`: input batch of num_samples LWE ciphertexts, containing n
+    /// mask values + 1 body value
+    /// - `bootstrapping_key`: GGSW encryption of the LWE secret key sk1
+    /// under secret key sk2.
+    /// bsk = Z + sk1 H
+    /// where H is the gadget matrix and Z is a matrix (k+1).l
+    /// containing GLWE encryptions of 0 under sk2.
+    /// bsk is thus a tensor of size (k+1)^2.l.N.n
+    /// where l is the number of decomposition levels and
+    /// k is the GLWE dimension, N is the polynomial size for
+    /// GLWE. The polynomial size for GLWE and the test vector
+    /// are the same because they have to be in the same ring
+    /// to be multiplied.
+    /// - `lwe_dimension`: size of the Torus vector used to encrypt the input
+    /// LWE ciphertexts - referred to as n above (~ 600)
+    /// - `glwe_dimension`: size of the polynomial vector used to encrypt the LUT
+    /// GLWE ciphertexts - referred to as k above. Only the value 1 is supported for this parameter.
+    /// - `polynomial_size`: size of the test polynomial (test vector) and size of the
+    /// GLWE polynomial (~1024)
+    /// - `base_log`: log base used for the gadget matrix - B = 2^base_log (~8)
+    /// - `level_count`: number of decomposition levels in the gadget matrix (~4)
+    /// - `num_samples`: number of encrypted input messages
+    /// - `num_lut_vectors`: parameter to set the actual number of test vectors to be
+    /// used
+    /// - `lwe_idx`: the index of the LWE input to consider for the GPU of index gpu_index. In
+    /// case of multi-GPU computing, it is assumed that only a part of the input LWE array is
+    /// copied to each GPU, but the whole LUT array is copied (because the case when the number
+    /// of LUTs is smaller than the number of input LWEs is not trivial to take into account in
+    /// the data repartition on the GPUs). `lwe_idx` is used to determine which LUT to consider
+    /// for a given LWE input in the LUT array `lut_vector`.
+    ///  - `max_shared_memory` maximum amount of shared memory to be used inside
+    /// device functions
+    ///
+    /// This function calls a wrapper to a device kernel that performs the
+    /// bootstrapping:
+    ///   - the kernel is templatized based on integer discretization and
+    /// polynomial degree
+    ///   - num_samples * level_count * (glwe_dimension + 1) blocks of threads are launched, where
+    /// each thread	is going to handle one or more polynomial coefficients at each stage,
+    /// for a given level of decomposition, either for the LUT mask or its body:
+    ///     - perform the blind rotation
+    ///     - round the result
+    ///     - get the decomposition for the current level
+    ///     - switch to the FFT domain
+    ///     - multiply with the bootstrapping key
+    ///     - come back to the coefficients representation
+    ///   - between each stage a synchronization of the threads is necessary (some
+    /// synchronizations
+    /// happen at the block level, some happen between blocks, using cooperative groups).
+    ///   - in case the device has enough shared memory, temporary arrays used for
+    /// the different stages (accumulators) are stored into the shared memory
+    ///   - the accumulators serve to combine the results for all decomposition
+    /// levels
+    ///   - the constant memory (64K) is used for storing the roots of identity
+    /// values for the FFT
     pub fn cuda_bootstrap_low_latency_lwe_ciphertext_vector_64(
         v_stream: *mut c_void,
         gpu_index: u32,
@@ -135,6 +294,8 @@ extern "C" {
         max_shared_memory: u32,
     );
 
+    /// Perform keyswitch on a batch of 32 bits input LWE ciphertexts.
+    /// Head out to the equivalent operation on 64 bits for more details.
     pub fn cuda_keyswitch_lwe_ciphertext_vector_32(
         v_stream: *const c_void,
         gpu_index: u32,
@@ -148,6 +309,23 @@ extern "C" {
         num_samples: u32,
     );
 
+    /// Perform keyswitch on a batch of 64 bits input LWE ciphertexts.
+    ///
+    /// - `v_stream` is a void pointer to the Cuda stream to be used in the kernel launch
+    /// - `gpu_index` is the index of the GPU to be used in the kernel launch
+    /// - `lwe_array_out`: output batch of num_samples keyswitched ciphertexts c =
+    /// (a0,..an-1,b) where n is the output LWE dimension (lwe_dimension_out)
+    /// - `lwe_array_in`: input batch of num_samples LWE ciphertexts, containing lwe_dimension_in
+    /// mask values + 1 body value
+    /// - `ksk`: the keyswitch key to be used in the operation
+    /// - `base_log`: the log of the base used in the decomposition (should be the one used to
+    /// create the ksk).
+    /// - `level_count`: the number of levels used in the decomposition (should be the one used to
+    /// create the ksk).
+    /// - `num_samples`: the number of input and output LWE ciphertexts.
+    ///
+    /// This function calls a wrapper to a device kernel that performs the keyswitch.
+    /// `num_samples` blocks of threads are launched
     pub fn cuda_keyswitch_lwe_ciphertext_vector_64(
         v_stream: *const c_void,
         gpu_index: u32,
@@ -161,6 +339,8 @@ extern "C" {
         num_samples: u32,
     );
 
+    /// Perform functional packing keyswitch on a batch of 32 bits input LWE ciphertexts.
+    /// See the equivalent function on 64 bit inputs for more details.
     pub fn cuda_fp_keyswitch_lwe_to_glwe_32(
         v_stream: *const c_void,
         glwe_array_out: *mut c_void,
@@ -175,6 +355,23 @@ extern "C" {
         number_of_keys: u32,
     );
 
+    /// Perform functional packing keyswitch on a batch of 64 bits input LWE ciphertexts.
+    ///
+    /// - `v_stream` is a void pointer to the Cuda stream to be used in the kernel launch
+    /// - `glwe_array_out`: output batch of keyswitched ciphertexts
+    /// - `lwe_array_in`: input batch of num_samples LWE ciphertexts, containing lwe_dimension_in
+    ///   mask values + 1 body value
+    ///  - `fp_ksk_array`: the functional packing keyswitch keys to be used in the operation
+    ///  - `base log`: the log of the base used in the decomposition (should be the one used to
+    ///    create
+    ///  the ksk)
+    ///  - `level_count`: the number of levels used in the decomposition (should be the
+    ///  one used to  create the fp_ksks).
+    ///  - `number_of_input_lwe`: the number of inputs
+    ///  - `number_of_keys`: the number of fp_ksks
+    ///
+    /// This function calls a wrapper to a device kernel that performs the functional packing
+    /// keyswitch.
     pub fn cuda_fp_keyswitch_lwe_to_glwe_64(
         v_stream: *const c_void,
         glwe_array_out: *mut c_void,
@@ -189,6 +386,8 @@ extern "C" {
         number_of_keys: u32,
     );
 
+    /// Perform cmux tree on a batch of 32-bit input GGSW ciphertexts.
+    /// Check the equivalent function for 64-bit inputs for more details.
     pub fn cuda_cmux_tree_32(
         v_stream: *const c_void,
         gpu_index: u32,
@@ -204,6 +403,30 @@ extern "C" {
         max_shared_memory: u32,
     );
 
+    /// Perform Cmux tree on a batch of 64-bit input GGSW ciphertexts
+    /// - `v_stream` is a void pointer to the Cuda stream to be used in the kernel launch
+    /// - `gpu_index` is the index of the GPU to be used in the kernel launch
+    ///  - `glwe_array_out` output batch of GLWE buffer for Cmux tree, `tau` GLWE`s
+    /// will be the output of the function
+    ///  - `ggsw_in` batch of input GGSW ciphertexts, function expects `r` GGSW
+    /// ciphertexts as input.
+    ///  - `lut_vector` batch of test vectors (LUTs) there should be 2^r LUTs
+    /// inside `lut_vector` parameter
+    ///  - `glwe_dimension` GLWE dimension, supported values: {1}
+    ///  - `polynomial_size` size of the test polynomial, supported values: {512,
+    /// 1024, 2048, 4096, 8192}
+    ///  - `base_log` base log parameter for cmux block
+    ///  - `level_count` decomposition level for cmux block
+    ///  - `r` number of input GGSW ciphertexts
+    ///  - `tau` number of input LWE ciphertext which were used to generate GGSW
+    /// ciphertexts stored in `ggsw_in`, it is also an amount of output GLWE
+    /// ciphertexts
+    ///  - `max_shared_memory` maximum shared memory amount to be used for cmux
+    ///  kernel
+    ///
+    /// This function calls a wrapper to a device kernel that performs the
+    /// Cmux tree. The kernel is templatized based on integer discretization and
+    /// polynomial degree.
     pub fn cuda_cmux_tree_64(
         v_stream: *const c_void,
         gpu_index: u32,
@@ -219,6 +442,26 @@ extern "C" {
         max_shared_memory: u32,
     );
 
+    /// Performs blind rotation on batch of 64-bit input GGSW ciphertexts.
+    /// - `v_stream` is a void pointer to the Cuda stream to be used in the kernel launch
+    /// - `gpu_index` is the index of the GPU to be used in the kernel launch
+    ///  - `lwe_out`  batch of output lwe ciphertexts, there should be `tau`
+    /// ciphertexts inside `lwe_out`
+    ///  - `ggsw_in` batch of input ggsw ciphertexts, function expects `mbr_size`
+    /// ggsw ciphertexts inside `ggsw_in`
+    ///  - `lut_vector` list of test vectors, function expects `tau` test vectors
+    /// inside `lut_vector` parameter
+    ///  - `glwe_dimension` glwe dimension, supported values : {1}
+    ///  - `polynomial_size` size of test polynomial supported sizes: {512, 1024,
+    ///  2048, 4096, 8192}
+    ///  - `base_log` base log parameter
+    ///  - `l_gadget` decomposition level
+    ///  - `max_shared_memory` maximum number of shared memory to be used in
+    /// device functions (kernels).
+    ///
+    /// This function calls a wrapper to a device kernel that performs the
+    /// blind rotation and sample extraction. The kernel is templatized based on integer
+    /// discretization and polynomial degree.
     pub fn cuda_blind_rotate_and_sample_extraction_64(
         v_stream: *const c_void,
         gpu_index: u32,
@@ -234,6 +477,8 @@ extern "C" {
         max_shared_memory: u32,
     );
 
+    /// Perform bit extract on a batch of 32 bit LWE ciphertexts.
+    /// See the corresponding function on 64 bit LWE ciphertexts for more details.
     pub fn cuda_extract_bits_32(
         v_stream: *const c_void,
         gpu_index: u32,
@@ -260,6 +505,49 @@ extern "C" {
         max_shared_memory: u32,
     );
 
+    /// Perform bit extract on a batch of 64 bit LWE ciphertexts.
+    /// - `v_stream` is a void pointer to the Cuda stream to be used in the kernel launch
+    /// - `gpu_index` is the index of the GPU to be used in the kernel launch
+    /// - `number_of_bits` will be extracted from each ciphertext
+    /// starting at the bit number `delta_log` (0-indexed) included.
+    /// Output bits are ordered from the MSB to LSB. Every extracted bit is
+    /// represented as an LWE ciphertext, containing the encryption of the bit scaled
+    /// by q/2.
+    /// - `list_lwe_array_out` output batch LWE ciphertexts for each bit of every
+    /// input ciphertext
+    /// - `lwe_array_in` batch of input LWE ciphertexts, with size -
+    /// (`lwe_dimension_in` + 1) * number_of_samples * sizeof(u64)
+    /// The following 5 parameters are used during calculations, they are not actual
+    /// inputs of the function they are just allocated memory for calculation
+    /// process, like this, memory can be allocated once and can be used as much
+    /// as needed for different calls of extract_bit function.
+    /// - `lwe_array_in_buffer` same size as `lwe_array_in`
+    /// - `lwe_array_in_shifted_buffer` same size as `lwe_array_in`
+    /// - `lwe_array_out_ks_buffer`  with size:
+    /// (`lwe_dimension_out` + 1) * number_of_samples * sizeof(u64)
+    /// - `lwe_array_out_pbs_buffer` same size as `lwe_array_in`
+    /// - `lut_pbs` with size:
+    /// (glwe_dimension + 1) * (lwe_dimension_in + 1) * sizeof(u64)
+    /// The other inputs are:
+    /// - `lut_vector_indexes` stores the index corresponding to which test
+    /// vector to use
+    /// - `ksk` keyswitch key
+    /// - `fourier_bsk`  complex compressed bsk in fourier domain
+    /// - `lwe_dimension_in` input LWE ciphertext dimension, supported input
+    /// dimensions are: {512, 1024,2048, 4096, 8192}
+    /// - `lwe_dimension_out` output LWE ciphertext dimension
+    /// - `glwe_dimension` GLWE dimension,  only glwe_dimension = 1 is supported
+    /// for now
+    /// - `base_log_bsk` base_log for bootstrapping
+    /// - `level_count_bsk` decomposition level count for bootstrapping
+    /// - `base_log_ksk` base_log for keyswitch
+    /// - `level_count_ksk` decomposition level for keyswitch
+    /// - `number_of_samples` number of input LWE ciphertexts
+    /// - `max_shared_memory` maximum amount of shared memory to be used inside
+    /// device functions
+    ///
+    /// This function will call corresponding template of wrapper host function which
+    /// will manage the calls of device functions.
     pub fn cuda_extract_bits_64(
         v_stream: *const c_void,
         gpu_index: u32,
@@ -286,6 +574,8 @@ extern "C" {
         max_shared_memory: u32,
     );
 
+    /// Perform circuit bootstrapping for the batch of 32 bit LWE ciphertexts.
+    /// Head out to the equivalent operation on 64 bits for more details.
     pub fn cuda_circuit_bootstrap_32(
         v_stream: *const c_void,
         gpu_index: u32,
@@ -312,6 +602,39 @@ extern "C" {
         max_shared_memory: u32,
     );
 
+    /// Perform circuit bootstrapping on a batch of 64 bit input LWE ciphertexts.
+    /// - `v_stream` is a void pointer to the Cuda stream to be used in the kernel launch
+    /// - `gpu_index` is the index of the GPU to be used in the kernel launch
+    ///  - `ggsw_out` output batch of ggsw with size:
+    /// `number_of_samples` * `level_cbs` * (`glwe_dimension` + 1)^2 *
+    /// polynomial_size * sizeof(u64)
+    ///  - `lwe_array_in` input batch of lwe ciphertexts, with size:
+    /// `number_of_samples` * `(lwe_dimension` + 1) * sizeof(u64)
+    ///  - `fourier_bsk` bootstrapping key in fourier domain with size:
+    /// `lwe_dimension` * `level_bsk` * (`glwe_dimension` + 1)^2 *
+    /// `polynomial_size` / 2 * sizeof(double2)
+    ///  - `fp_ksk_array` batch of fp-keyswitch keys with size:
+    /// (`polynomial_size` + 1) * `level_pksk` * (`glwe_dimension` + 1)^2 *
+    /// `polynomial_size` * sizeof(u64)
+    ///  The following 5 parameters are used during calculations, they are not actual
+    ///  inputs of the function, they are just allocated memory for calculation
+    ///  process, like this, memory can be allocated once and can be used as much
+    ///  as needed for different calls of circuit_bootstrap function
+    ///  - `lwe_array_in_shifted_buffer` with size:
+    /// `number_of_samples` * `level_cbs` * (`lwe_dimension` + 1) * sizeof(u64)
+    ///  - `lut_vector` with size:
+    /// `level_cbs` * (`glwe_dimension` + 1) * `polynomial_size` * sizeof(u64)
+    ///  - `lut_vector_indexes` stores the index corresponding to which test
+    ///  vector to use
+    ///  - `lwe_array_out_pbs_buffer` with size
+    /// `number_of_samples` * `level_cbs` * (`polynomial_size` + 1) * sizeof(u64)
+    ///  - `lwe_array_in_fp_ks_buffer` with size
+    /// `number_of_samples` * `level_cbs` * (`glwe_dimension` + 1) *
+    /// (`polynomial_size` + 1) * sizeof(u64)
+    ///
+    /// This function calls a wrapper to a device kernel that performs the
+    /// circuit bootstrap. The kernel is templatized based on integer discretization and
+    /// polynomial degree.
     pub fn cuda_circuit_bootstrap_64(
         v_stream: *const c_void,
         gpu_index: u32,
@@ -338,6 +661,29 @@ extern "C" {
         max_shared_memory: u32,
     );
 
+    /// Entry point for cuda circuit bootstrap + vertical packing for batches of
+    /// input 64 bit LWE ciphertexts.
+    ///  - `v_stream` is a void pointer to the Cuda stream to be used in the kernel launch
+    ///  - `gpu_index` is the index of the GPU to be used in the kernel launch
+    ///  - `lwe_array_out` list of output lwe ciphertexts
+    ///  - `lwe_array_in` list of input lwe_ciphertexts
+    ///  - `fourier_bsk` bootstrapping key in fourier domain, expected half size
+    /// compressed complex key.
+    ///  - `cbs_fpksk` list of private functional packing keyswitch keys
+    ///  - `lut_vector` list of test vectors
+    ///  - `polynomial_size` size of the test polynomial, supported sizes:
+    /// {512, 1024, 2048, 4096, 8192}
+    ///  - `glwe_dimension` supported dimensions: {1}
+    ///  - `lwe_dimension` dimension of input LWE ciphertexts
+    ///  - `level_count_bsk` decomposition level for bootstrapping
+    ///  - `base_log_bsk`  base log parameter for bootstrapping
+    ///  - `level_count_pksk` decomposition level for fp-keyswitch
+    ///  - `base_log_pksk` base log parameter for fp-keyswitch
+    ///  - `level_count_cbs` level of circuit bootstrap
+    ///  - `base_log_cbs` base log parameter for circuit bootstrap
+    ///  - `number_of_inputs` number of input LWE ciphertexts
+    ///  - `max_shared_memory` maximum shared memory amount to be used in
+    ///  the kernels.
     pub fn cuda_circuit_bootstrap_vertical_packing_64(
         v_stream: *const c_void,
         gpu_index: u32,
@@ -360,6 +706,36 @@ extern "C" {
         max_shared_memory: u32,
     );
 
+    /// Entry point for entire without padding programmable bootstrap on 64 bit input LWE
+    /// ciphertexts.
+    ///  - `v_stream` is a void pointer to the Cuda stream to be used in the kernel launch
+    ///  - `gpu_index` is the index of the GPU to be used in the kernel launch
+    ///  - `lwe_array_out` list of output lwe ciphertexts
+    ///  - `lwe_array_in` list of input lwe_ciphertexts
+    ///  - `lut_vector` list of test vectors
+    ///  - `fourier_bsk` bootstrapping key in fourier domain, expected half size
+    /// compressed complex key.
+    ///  - `ksk` keyswitch key to use inside extract bits block
+    ///  - `cbs_fpksk` list of fp-keyswitch keys
+    ///  - `glwe_dimension` supported dimensions: {1}
+    ///  - `lwe_dimension` dimension of input lwe ciphertexts
+    ///  - `polynomial_size` size of the test polynomial, supported sizes:
+    /// {512, 1024, 2048, 4096, 8192}
+    ///  - `base_log_bsk`  base log parameter for bootstrapping
+    ///  - `level_count_bsk` decomposition level for bootstrapping
+    ///  - `base_log_ksk` base log parameter for keyswitch
+    ///  - `level_count_ksk` decomposition level for keyswitch
+    ///  - `base_log_pksk` base log parameter for fp-keyswitch
+    ///  - `level_count_pksk` decomposition level for fp-keyswitch
+    ///  - `base_log_cbs` base log parameter for circuit bootstrap
+    ///  - `level_count_cbs` level of circuit bootstrap
+    ///  - `number_of_bits_of_message_including_padding` number of bits to extract
+    /// from each input lwe ciphertext including padding bit
+    ///  - `number_of_bits_to_extract` number of bits to extract
+    /// from each input lwe ciphertext without padding bit
+    ///  - `number_of_inputs` number of input lwe ciphertexts
+    ///  - `max_shared_memory` maximum shared memory amount to be used in
+    ///  the kernels.
     pub fn cuda_wop_pbs_64(
         v_stream: *const c_void,
         gpu_index: u32,
@@ -386,6 +762,8 @@ extern "C" {
         max_shared_memory: u32,
     );
 
+    /// Perform the negation of a u32 input LWE ciphertext vector.
+    /// See the equivalent operation on u64 ciphertexts for more details.
     pub fn cuda_negate_lwe_ciphertext_vector_32(
         v_stream: *const c_void,
         gpu_index: u32,
@@ -395,6 +773,24 @@ extern "C" {
         input_lwe_ciphertext_count: u32,
     );
 
+    /// Perform the negation of a u64 input LWE ciphertext vector.
+    /// - `v_stream` is a void pointer to the Cuda stream to be used in the kernel launch
+    /// - `gpu_index` is the index of the GPU to be used in the kernel launch
+    /// - `lwe_array_out` is an array of size
+    /// `(input_lwe_dimension + 1) * input_lwe_ciphertext_count` that should have been allocated on
+    /// the GPU before calling this function, and that will hold the result of the computation.
+    /// - `lwe_array_in` is the LWE ciphertext vector used as input, it should have been
+    /// allocated and initialized before calling this function. It has the same size as the output
+    /// array.
+    /// - `input_lwe_dimension` is the number of mask elements in the two input and in the output
+    /// ciphertext vectors
+    /// - `input_lwe_ciphertext_count` is the number of ciphertexts contained in each input LWE
+    /// ciphertext vector, as well as in the output.
+    ///
+    /// Each element (mask element or body) of the input LWE ciphertext vector is negated.
+    /// The result is stored in the output LWE ciphertext vector. The input LWE ciphertext vector
+    /// is left unchanged. This function is a wrapper to a device function that performs the
+    /// operation on the GPU.
     pub fn cuda_negate_lwe_ciphertext_vector_64(
         v_stream: *const c_void,
         gpu_index: u32,
@@ -404,6 +800,8 @@ extern "C" {
         input_lwe_ciphertext_count: u32,
     );
 
+    /// Perform the addition of two u32 input LWE ciphertext vectors.
+    /// See the equivalent operation on u64 ciphertexts for more details.
     pub fn cuda_add_lwe_ciphertext_vector_32(
         v_stream: *const c_void,
         gpu_index: u32,
@@ -414,6 +812,27 @@ extern "C" {
         input_lwe_ciphertext_count: u32,
     );
 
+    /// Perform the addition of two u64 input LWE ciphertext vectors.
+    /// - `v_stream` is a void pointer to the Cuda stream to be used in the kernel launch
+    /// - `gpu_index` is the index of the GPU to be used in the kernel launch
+    /// - `lwe_array_out` is an array of size
+    /// `(input_lwe_dimension + 1) * input_lwe_ciphertext_count` that should have been allocated on
+    /// the GPU before calling this function, and that will hold the result of the computation.
+    /// - `lwe_array_in_1` is the first LWE ciphertext vector used as input, it should have been
+    /// allocated and initialized before calling this function. It has the same size as the output
+    /// array.
+    /// - `lwe_array_in_2` is the second LWE ciphertext vector used as input, it should have been
+    /// allocated and initialized before calling this function. It has the same size as the output
+    /// array.
+    /// - `input_lwe_dimension` is the number of mask elements in the two input and in the output
+    /// ciphertext vectors
+    /// - `input_lwe_ciphertext_count` is the number of ciphertexts contained in each input LWE
+    /// ciphertext vector, as well as in the output.
+    ///
+    /// Each element (mask element or body) of the input LWE ciphertext vector 1 is added to the
+    /// corresponding element in the input LWE ciphertext 2. The result is stored in the output LWE
+    /// ciphertext vector. The two input LWE ciphertext vectors are left unchanged. This function is
+    /// a wrapper to a device function that performs the operation on the GPU.
     pub fn cuda_add_lwe_ciphertext_vector_64(
         v_stream: *const c_void,
         gpu_index: u32,
@@ -424,6 +843,8 @@ extern "C" {
         input_lwe_ciphertext_count: u32,
     );
 
+    /// Perform the addition of a u32 input LWE ciphertext vector with a u32 plaintext vector.
+    /// See the equivalent operation on u64 data for more details.
     pub fn cuda_add_lwe_ciphertext_vector_plaintext_vector_32(
         v_stream: *const c_void,
         gpu_index: u32,
@@ -434,6 +855,28 @@ extern "C" {
         input_lwe_ciphertext_count: u32,
     );
 
+    /// Perform the addition of a u64 input LWE ciphertext vector with a u64 input plaintext vector.
+    /// - `v_stream` is a void pointer to the Cuda stream to be used in the kernel launch
+    /// - `gpu_index` is the index of the GPU to be used in the kernel launch
+    /// - `lwe_array_out` is an array of size
+    /// `(input_lwe_dimension + 1) * input_lwe_ciphertext_count` that should have been allocated
+    /// on the GPU before calling this function, and that will hold the result of the computation.
+    /// - `lwe_array_in` is the LWE ciphertext vector used as input, it should have been
+    /// allocated and initialized before calling this function. It has the same size as the output
+    /// array.
+    /// - `plaintext_array_in` is the plaintext vector used as input, it should have been
+    /// allocated and initialized before calling this function. It should be of size
+    /// `input_lwe_ciphertext_count`.
+    /// - `input_lwe_dimension` is the number of mask elements in the input and output LWE
+    /// ciphertext vectors
+    /// - `input_lwe_ciphertext_count` is the number of ciphertexts contained in the input LWE
+    /// ciphertext vector, as well as in the output. It is also the number of plaintexts in the
+    /// input plaintext vector.
+    ///
+    /// Each plaintext of the input plaintext vector is added to the body of the corresponding LWE
+    /// ciphertext in the LWE ciphertext vector. The result of the operation is stored in the output
+    /// LWE ciphertext vector. The two input vectors are unchanged. This function is a
+    /// wrapper to a device function that performs the operation on the GPU.
     pub fn cuda_add_lwe_ciphertext_vector_plaintext_vector_64(
         v_stream: *const c_void,
         gpu_index: u32,
@@ -444,6 +887,8 @@ extern "C" {
         input_lwe_ciphertext_count: u32,
     );
 
+    /// Perform the multiplication of a u32 input LWE ciphertext vector with a u32 cleartext vector.
+    /// See the equivalent operation on u64 data for more details.
     pub fn cuda_mult_lwe_ciphertext_vector_cleartext_vector_32(
         v_stream: *const c_void,
         gpu_index: u32,
@@ -454,6 +899,30 @@ extern "C" {
         input_lwe_ciphertext_count: u32,
     );
 
+    /// Perform the multiplication of a u64 input LWE ciphertext vector with a u64 input cleartext
+    /// vector.
+    /// - `v_stream` is a void pointer to the Cuda stream to be used in the kernel launch
+    /// - `gpu_index` is the index of the GPU to be used in the kernel launch
+    /// - `lwe_array_out` is an array of size
+    /// `(input_lwe_dimension + 1) * input_lwe_ciphertext_count` that should have been allocated
+    /// on the GPU before calling this function, and that will hold the result of the computation.
+    /// - `lwe_array_in` is the LWE ciphertext vector used as input, it should have been
+    /// allocated and initialized before calling this function. It has the same size as the output
+    /// array.
+    /// - `cleartext_array_in` is the cleartext vector used as input, it should have been
+    /// allocated and initialized before calling this function. It should be of size
+    /// `input_lwe_ciphertext_count`.
+    /// - `input_lwe_dimension` is the number of mask elements in the input and output LWE
+    /// ciphertext vectors
+    /// - `input_lwe_ciphertext_count` is the number of ciphertexts contained in the input LWE
+    /// ciphertext vector, as well as in the output. It is also the number of cleartexts in the
+    /// input cleartext vector.
+    ///
+    /// Each cleartext of the input cleartext vector is multiplied to the mask and body of the
+    /// corresponding LWE ciphertext in the LWE ciphertext vector.
+    /// The result of the operation is stored in the output
+    /// LWE ciphertext vector. The two input vectors are unchanged. This function is a
+    /// wrapper to a device function that performs the operation on the GPU.
     pub fn cuda_mult_lwe_ciphertext_vector_cleartext_vector_64(
         v_stream: *const c_void,
         gpu_index: u32,
