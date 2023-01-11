@@ -88,7 +88,7 @@ impl GgswCiphertextDiscardingConversionEngine<GgswCiphertext32, NttFourierGgswCi
         );
         output
             .0
-            .fill_with_forward_fourier(&input.0, &mut buffers.ntt);
+            .fill_with_forward_ntt(&input.0, &mut buffers.ntt);
     }
 }
 
@@ -173,7 +173,7 @@ impl GgswCiphertextDiscardingConversionEngine<GgswCiphertext64, NttFourierGgswCi
         );
         output
             .0
-            .fill_with_forward_fourier(&input.0, &mut buffers.ntt);
+            .fill_with_forward_ntt(&input.0, &mut buffers.ntt);
     }
 }
 

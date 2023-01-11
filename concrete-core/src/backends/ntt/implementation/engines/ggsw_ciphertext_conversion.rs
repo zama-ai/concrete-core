@@ -73,7 +73,7 @@ impl GgswCiphertextConversionEngine<GgswCiphertext32, NttFourierGgswCiphertext32
             input.polynomial_size(),
             input.glwe_dimension().to_glwe_size(),
         );
-        output.fill_with_forward_fourier(&input.0, &mut buffers.ntt);
+        output.fill_with_forward_ntt(&input.0, &mut buffers.ntt);
         NttFourierGgswCiphertext32(output)
     }
 }
@@ -144,7 +144,7 @@ impl GgswCiphertextConversionEngine<GgswCiphertext64, NttFourierGgswCiphertext64
             input.polynomial_size(),
             input.glwe_dimension().to_glwe_size(),
         );
-        output.fill_with_forward_fourier(&input.0, &mut buffers.ntt);
+        output.fill_with_forward_ntt(&input.0, &mut buffers.ntt);
         NttFourierGgswCiphertext64(output)
     }
 }

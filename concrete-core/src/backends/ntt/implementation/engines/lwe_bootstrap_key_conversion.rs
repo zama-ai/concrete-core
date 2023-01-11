@@ -73,7 +73,7 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey32, NttFourierLweBootstrapKe
         );
         output_bsk
             .0
-            .fill_with_forward_fourier(&input.0, &mut buffers.ntt);
+            .fill_with_forward_ntt(&input.0, &mut buffers.ntt);
         output_bsk
     }
 }
@@ -143,7 +143,7 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey64, NttFourierLweBootstrapKe
         );
         output_bsk
             .0
-            .fill_with_forward_fourier(&input.0, &mut buffers.ntt);
+            .fill_with_forward_ntt(&input.0, &mut buffers.ntt);
         output_bsk
     }
 }

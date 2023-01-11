@@ -1,5 +1,4 @@
 //! A module containing the [engines](crate::specification::engines) exposed by the ntt backend.
-use crate::backends::ntt::private::crypto::bootstrap::FourierBuffers;
 use crate::backends::ntt::private::math::transform::Ntt;
 use crate::prelude::{GlweSize, PolynomialSize, PolynomialSizeLog};
 use crate::specification::engines::sealed::AbstractEngineSeal;
@@ -7,6 +6,7 @@ use crate::specification::engines::AbstractEngine;
 use std::collections::BTreeMap;
 use std::error::Error;
 use std::fmt::{Display, Formatter};
+use crate::backends::ntt::private::crypto::bootstrap::BootstrapBuffers;
 
 use crate::backends::ntt::private::math::mod_q::ModQ;
 use crate::backends::ntt::private::math::params::params_32_1024::{
@@ -83,8 +83,8 @@ pub struct NttEngine {
     // We need additional buffers for the bootstrapping/external product. Similar to the
     // FFTW engine, these are created on demand and reused as needed. These buffers also
     // each contain a clone of the correct `Ntt` from the maps above for convenience.
-    buffers_u32: BTreeMap<FourierBufferKey, FourierBuffers<u32, u64>>,
-    buffers_u64: BTreeMap<FourierBufferKey, FourierBuffers<u64, u128>>,
+    buffers_u32: BTreeMap<FourierBufferKey, BootstrapBuffers<u32, u64>>,
+    buffers_u64: BTreeMap<FourierBufferKey, BootstrapBuffers<u64, u128>>,
 }
 
 impl NttEngine {
@@ -92,28 +92,28 @@ impl NttEngine {
         &mut self,
         poly_size: PolynomialSize,
         glwe_size: GlweSize,
-    ) -> &mut FourierBuffers<u32, u64> {
+    ) -> &mut BootstrapBuffers<u32, u64> {
         let buffer_key = FourierBufferKey(poly_size, glwe_size);
         let ntt = self.ntts32.get_mut(&poly_size).unwrap();
         // We clone the `Ntt` object, because every buffer object needs their own instantiation,
         // since it contains a mutable buffer.
         self.buffers_u32
             .entry(buffer_key)
-            .or_insert_with(|| FourierBuffers::new(poly_size, glwe_size, ntt.clone()))
+            .or_insert_with(|| BootstrapBuffers::new(poly_size, glwe_size, ntt.clone()))
     }
 
     pub(crate) fn get_u64_buffer(
         &mut self,
         poly_size: PolynomialSize,
         glwe_size: GlweSize,
-    ) -> &mut FourierBuffers<u64, u128> {
+    ) -> &mut BootstrapBuffers<u64, u128> {
         let buffer_key = FourierBufferKey(poly_size, glwe_size);
         let ntt = self.ntts64.get_mut(&poly_size).unwrap();
         // We clone the `Ntt` object, because every buffer object needs their own instantiation,
         // since it contains a mutable buffer.
         self.buffers_u64
             .entry(buffer_key)
-            .or_insert_with(|| FourierBuffers::new(poly_size, glwe_size, ntt.clone()))
+            .or_insert_with(|| BootstrapBuffers::new(poly_size, glwe_size, ntt.clone()))
     }
 }
 

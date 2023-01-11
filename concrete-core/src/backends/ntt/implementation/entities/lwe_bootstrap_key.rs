@@ -22,7 +22,7 @@ impl LweBootstrapKeyEntity for NttFourierLweBootstrapKey32 {
     }
 
     fn input_lwe_dimension(&self) -> LweDimension {
-        self.0.key_size()
+        self.0.input_lwe_dimension()
     }
 
     fn decomposition_base_log(&self) -> DecompositionBaseLog {
@@ -50,7 +50,7 @@ impl LweBootstrapKeyEntity for NttFourierLweBootstrapKey64 {
     }
 
     fn input_lwe_dimension(&self) -> LweDimension {
-        self.0.key_size()
+        self.0.input_lwe_dimension()
     }
 
     fn decomposition_base_log(&self) -> DecompositionBaseLog {

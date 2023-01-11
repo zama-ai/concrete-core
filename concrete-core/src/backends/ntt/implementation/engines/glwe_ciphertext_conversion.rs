@@ -82,7 +82,7 @@ impl GlweCiphertextConversionEngine<GlweCiphertext32, NttFourierGlweCiphertext32
             input.polynomial_size(),
             input.glwe_dimension().to_glwe_size(),
         );
-        output.fill_with_forward_fourier(&input.0, ntt);
+        output.fill_with_forward_ntt(&input.0, ntt);
         NttFourierGlweCiphertext32(output)
     }
 }
@@ -155,7 +155,7 @@ impl GlweCiphertextConversionEngine<GlweCiphertext64, NttFourierGlweCiphertext64
             input.polynomial_size(),
             input.glwe_dimension().to_glwe_size(),
         );
-        output.fill_with_forward_fourier(&input.0, ntt);
+        output.fill_with_forward_ntt(&input.0, ntt);
         NttFourierGlweCiphertext64(output)
     }
 }
@@ -249,7 +249,7 @@ impl GlweCiphertextConversionEngine<NttFourierGlweCiphertext32, GlweCiphertext32
             input.polynomial_size(),
             input.glwe_dimension().to_glwe_size(),
         );
-        input_.fill_with_backward_fourier(&mut output, &mut buffers.ntt);
+        input_.fill_with_backward_ntt(&mut output, &mut buffers.ntt);
         GlweCiphertext32(output)
     }
 }
@@ -326,7 +326,7 @@ impl GlweCiphertextConversionEngine<NttFourierGlweCiphertext64, GlweCiphertext64
             input.polynomial_size(),
             input.glwe_dimension().to_glwe_size(),
         );
-        input_.fill_with_backward_fourier(&mut output, &mut buffers.ntt);
+        input_.fill_with_backward_ntt(&mut output, &mut buffers.ntt);
         GlweCiphertext64(output)
     }
 }
