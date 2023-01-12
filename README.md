@@ -29,6 +29,11 @@
   </a>
 </p>
 
+> **Warning**
+>
+> Maintenance of Concrete Core is being phased out. For those seeking a low-level
+> TFHE library in Rust, we recommend switching to the [TFHE-rs](https://github.com/zama-ai/tfhe-rs) library.
+
 The `Concrete-core` library is a crate that implements Zama's variant of
 [TFHE](https://eprint.iacr.org/2018/421.pdf). In a nutshell,
 [fully homomorphic encryption (FHE)](https://en.wikipedia.org/wiki/Homomorphic_encryption), allows
