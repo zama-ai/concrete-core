@@ -76,19 +76,19 @@ const fn get_parameters_for_raw_precision<Precision: IntegerPrecision>(
                 // Offline evaluation 2.0f64.powf(-120.) is
                 // 0.000000000000000000000000000000000000752316384526264
                 noise: Variance(0.000000000000000000000000000000000000752316384526264f64),
-                lwe_dimension: LweDimension(10),
+                lwe_dimension: LweDimension(679),
                 glwe_dimension: GlweDimension(1),
-                polynomial_size: PolynomialSize(512),
-                decomp_level_count_bsk: DecompositionLevelCount(9),
-                decomp_base_log_bsk: DecompositionBaseLog(4),
-                decomp_level_count_ksk: DecompositionLevelCount(9),
-                decomp_base_log_ksk: DecompositionBaseLog(4),
-                decomp_level_count_pfpksk: DecompositionLevelCount(9),
-                decomp_base_log_pfpksk: DecompositionBaseLog(4),
-                decomp_level_count_cbs: DecompositionLevelCount(4),
-                decomp_base_log_cbs: DecompositionBaseLog(6),
-                message_bits_count: MessageBitsCount(9),
-                delta_log: DeltaLog(53),
+                polynomial_size: PolynomialSize(2048),
+                decomp_level_count_bsk: DecompositionLevelCount(4),
+                decomp_base_log_bsk: DecompositionBaseLog(9),
+                decomp_level_count_ksk: DecompositionLevelCount(7),
+                decomp_base_log_ksk: DecompositionBaseLog(2),
+                decomp_level_count_pfpksk: DecompositionLevelCount(2),
+                decomp_base_log_pfpksk: DecompositionBaseLog(17),
+                decomp_level_count_cbs: DecompositionLevelCount(2),
+                decomp_base_log_cbs: DecompositionBaseLog(9),
+                message_bits_count: MessageBitsCount(3),
+                delta_log: DeltaLog(60),
                 gen_raw_vec_lut_fn: generate_raw_vec_identity_trivial_lut::<Precision>,
             },
         ]
@@ -416,7 +416,7 @@ where
                     parameters.decomp_level_count_cbs,
                     parameters.decomp_base_log_cbs,
                     &cbs_pfpksk,
-                    parameters.message_bits_count,
+                    MessageBitsCount(parameters.message_bits_count.0 + 1),
                 )
         };
 
