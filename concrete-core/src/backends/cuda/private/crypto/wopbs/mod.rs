@@ -1,5 +1,5 @@
 use crate::backends::cuda::private::crypto::bootstrap::CudaBootstrapKey;
-use crate::backends::cuda::private::crypto::keyswitch::CudaLwePrivateFunctionalPackingKeyswitchKeyList;
+use crate::backends::cuda::private::crypto::keyswitch::{CudaLweKeyswitchKey, CudaLwePrivateFunctionalPackingKeyswitchKeyList};
 use crate::backends::cuda::private::crypto::lwe::list::CudaLweList;
 use crate::backends::cuda::private::crypto::plaintext::list::CudaPlaintextList;
 use crate::backends::cuda::private::device::{CudaStream, GpuIndex};
@@ -15,10 +15,7 @@ use crate::commons::math::polynomial::PolynomialList;
 use crate::commons::math::tensor::{AsRefSlice, AsRefTensor};
 use crate::commons::numeric::UnsignedInteger;
 use crate::commons::utils::izip;
-use crate::prelude::{
-    DecompositionBaseLog, DecompositionLevelCount, DeltaLog, GgswCiphertext64,
-    GgswCiphertextEntity, LweCiphertext64, LweDimension, PolynomialCount, SharedMemoryAmount,
-};
+use crate::prelude::{DecompositionBaseLog, DecompositionLevelCount, DeltaLog, ExtractedBitsCount, GgswCiphertext64, GgswCiphertextEntity, LweCiphertext64, LweDimension, MessageBitsCount, PolynomialCount, SharedMemoryAmount};
 use aligned_vec::CACHELINE_ALIGN;
 use concrete_cuda::cuda_bind::{cuda_blind_rotate_and_sample_extraction_64, cuda_cmux_tree_64};
 use concrete_fft::c64;
@@ -338,6 +335,47 @@ pub(crate) unsafe fn execute_circuit_bootstrap_vertical_packing_on_gpu<T: Unsign
         base_log_cbs,
         lwe_array_in.lwe_ciphertext_count,
         lut_number,
+        cuda_shared_memory,
+    );
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) unsafe fn execute_wop_pbs_on_gpu<T: UnsignedInteger>(
+    streams: &[CudaStream],
+    lwe_array_out: &mut CudaLweList<T>,
+    lwe_array_in: &CudaLweList<T>,
+    lut_vector: &CudaPlaintextList<T>,
+    bsk: &CudaBootstrapKey<T>,
+    ksk: &CudaLweKeyswitchKey<T>,
+    cbs_fpksk: &CudaLwePrivateFunctionalPackingKeyswitchKeyList<T>,
+    level_count_cbs: DecompositionLevelCount,
+    base_log_cbs: DecompositionBaseLog,
+    number_of_bits_of_message: MessageBitsCount,
+    cuda_shared_memory: SharedMemoryAmount,
+) {
+    let stream = &streams[0];
+    stream.initialize_twiddles(bsk.polynomial_size);
+    stream.discard_wop_pbs_lwe_ciphertext_vector::<T>(
+        lwe_array_out.d_vecs.get_mut(0).unwrap(),
+        lwe_array_in.d_vecs.get(0).unwrap(),
+        lut_vector.d_vecs.get(0).unwrap(),
+        bsk.d_vecs.get(0).unwrap(),
+        ksk.d_vecs.get(0).unwrap(),
+        cbs_fpksk.d_vecs.get(0).unwrap(),
+        bsk.glwe_dimension,
+        lwe_array_in.lwe_dimension,
+        bsk.polynomial_size,
+        bsk.decomp_base_log,
+        bsk.decomp_level,
+        ksk.decomp_base_log,
+        ksk.decomp_level,
+        cbs_fpksk.decomposition_base_log,
+        cbs_fpksk.decomposition_level_count,
+        base_log_cbs,
+        level_count_cbs,
+        number_of_bits_of_message,
+        ExtractedBitsCount(number_of_bits_of_message.0),
+        lwe_array_in.lwe_ciphertext_count,
         cuda_shared_memory,
     );
 }
