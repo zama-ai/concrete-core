@@ -433,6 +433,9 @@ pub use lwe_ciphertext_discarding_bootstrap_2::*;
 mod lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_vertical_packing;
 pub use lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_vertical_packing::*;
 
+mod lwe_ciphertext_vector_discarding_wop_pbs;
+pub use lwe_ciphertext_vector_discarding_wop_pbs::*;
+
 mod lwe_ciphertext_discarding_bit_extraction;
 pub use lwe_ciphertext_discarding_bit_extraction::*;
 

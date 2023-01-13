@@ -80,6 +80,27 @@ pub fn bench_cuda_lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_ver
         > ::bench_all_parameters(&mut maker, &mut engine, &mut criterion, None);
 }
 
+pub fn bench_cuda_lwe_ciphertext_vector_discarding_wop_pbs_64() {
+    let mut criterion = Criterion::default().configure_from_args();
+    let mut maker = Maker::default();
+    let mut engine = CudaEngine::new(()).unwrap();
+    <LweCiphertextVectorDiscardingWopPbsFixture
+    as BenchmarkFixture<
+        Precision64,
+        (BinaryKeyDistribution, BinaryKeyDistribution),
+        CudaEngine,
+        (
+            CudaFourierLweBootstrapKey64,
+            CudaLweKeyswitchKey64,
+            CudaLweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+            CudaPlaintextVector64,
+            CudaLweCiphertextVector64,
+            CudaLweCiphertextVector64,
+        ),
+    >
+    > ::bench_all_parameters(&mut maker, &mut engine, &mut criterion, None);
+}
+
 macro_rules! bench_amortized {
     (($($key_dist:ident),*), $fixture: ident, $precision: ident, ($($types:ident),+), $maker: ident, $engine: ident, $criterion: ident) => {
         paste!{
