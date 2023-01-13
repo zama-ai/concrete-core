@@ -27,6 +27,8 @@ fn main() {
     fft::bench();
     #[cfg(feature = "backend_fft_parallel")]
     fft::bench_parallel();
+    #[cfg(feature = "backend_fft_parallel")]
+    fft::bench_fft_lwe_ciphertext_vector_discarding_wop_pbs_64();
     #[cfg(feature = "backend_cuda")]
     cuda::bench();
     #[cfg(feature = "backend_cuda")]

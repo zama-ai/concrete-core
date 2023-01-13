@@ -69,3 +69,4 @@ mod lwe_ciphertext_discarding_bit_extraction;
 mod lwe_ciphertext_discarding_bootstrap;
 mod lwe_ciphertext_discarding_circuit_bootstrap_boolean;
 mod lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_vertical_packing;
+mod lwe_ciphertext_discarding_wop_pbs;

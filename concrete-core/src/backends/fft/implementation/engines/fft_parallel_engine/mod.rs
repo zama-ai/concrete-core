@@ -53,3 +53,4 @@ impl AbstractEngine for FftParallelEngine {
 }
 
 mod lwe_ciphertext_vector_discarding_bootstrap;
+mod lwe_ciphertext_vector_discarding_wop_pbs;

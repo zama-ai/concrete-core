@@ -50,19 +50,26 @@ fn generate_raw_vec_identity_trivial_lut<Precision: IntegerPrecision>(
         Precision,
     >,
 ) -> Vec<Precision::Raw> {
-    let mut lut_vec = Vec::with_capacity(1 << parameters.message_bits_count.0);
+    let mut lut_vec = Vec::with_capacity((1 << (parameters.message_bits_count.0 + 1)) * 
+        parameters.input_lwe_count.0);
+    for _ in 0..parameters.input_lwe_count.0 {
+        let mut small_lut_vec = Vec::with_capacity(1 << (parameters.message_bits_count.0 + 1));
 
-    // The Raw from Precision::Raw does not have the std::iter::Step trait available which would
-    // allow to use a range + collect approach (and std::iter::Step is unstable at the moment),
-    // so we'll do a dumb loop instead
-    let mut curr_value = Precision::Raw::zero();
-    let max_value = Precision::Raw::one() << parameters.message_bits_count.0;
+        // The Raw from Precision::Raw does not have the std::iter::Step trait available which would
+        // allow to use a range + collect approach (and std::iter::Step is unstable at the moment),
+        // so we'll do a dumb loop instead
+        let mut curr_value = Precision::Raw::zero();
+        let max_value = Precision::Raw::one() << (parameters.message_bits_count.0 + 1);
 
-    while curr_value < max_value {
-        lut_vec.push(curr_value << parameters.delta_log.0);
-        curr_value += Precision::Raw::one();
+        while curr_value < max_value {
+            small_lut_vec.push(curr_value << parameters.delta_log.0);
+            curr_value += Precision::Raw::one();
+        }
+
+        for elt in small_lut_vec.iter() {
+            lut_vec.push(*elt);
+        }
     }
-
     lut_vec
 }
 

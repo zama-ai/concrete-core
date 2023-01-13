@@ -82,3 +82,25 @@ bench_parallel! {
         LweCiphertextVectorDiscardingBootstrapFixture1, (FftFourierLweBootstrapKey,
         GlweCiphertextVector, LweCiphertextVector, LweCiphertextVector))
 }
+
+pub fn bench_fft_lwe_ciphertext_vector_discarding_wop_pbs_64() {
+    let mut criterion = Criterion::default().configure_from_args();
+    let mut maker = Maker::default();
+    let mut engine = FftParallelEngine::new(()).unwrap();
+    <LweCiphertextVectorDiscardingWopPbsFixture
+    as BenchmarkFixture<
+        Precision64,
+        (BinaryKeyDistribution, BinaryKeyDistribution),
+        FftParallelEngine,
+        (
+            FftFourierLweBootstrapKey64,
+            LweKeyswitchKey64,
+            LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+            PlaintextVector64,
+            LweCiphertextVector64,
+            LweCiphertextVector64,
+        ),
+    >
+    > ::bench_all_parameters(&mut maker, &mut engine, &mut criterion, None);
+}
+
