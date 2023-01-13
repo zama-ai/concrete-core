@@ -33,6 +33,7 @@ pub struct LweCiphertextVectorDiscardingWopPbsParameters<
     pub decomp_level_count_cbs: DecompositionLevelCount,
     pub decomp_base_log_cbs: DecompositionBaseLog,
     pub message_bits_count: MessageBitsCount,
+    pub input_lwe_count: LweCiphertextCount,
     pub delta_log: DeltaLog,
     // Here we take the parameters by values (so we'll clone them) as deriving Debug was not
     // working automatically and required some manual implementations which seemed to be more
@@ -89,6 +90,7 @@ const fn get_parameters_for_raw_precision<Precision: IntegerPrecision>(
                 decomp_base_log_cbs: DecompositionBaseLog(9),
                 message_bits_count: MessageBitsCount(3),
                 delta_log: DeltaLog(60),
+                input_lwe_count: LweCiphertextCount(4),
                 gen_raw_vec_lut_fn: generate_raw_vec_identity_trivial_lut::<Precision>,
             },
         ]
@@ -302,13 +304,29 @@ where
     ) -> Self::SamplePrototypes {
         let number_of_bits = parameters.message_bits_count.0;
 
-        let mut input_cleartext = Precision::Raw::uniform_between(0..1 << number_of_bits);
+        let input_cleartext_vector = Precision::Raw::uniform_between_vec(0..1 << 
+            number_of_bits, parameters.input_lwe_count.0);
 
-        let mut encoded_input_bits_vec = vec![Precision::Raw::zero(); number_of_bits];
+        let mut encoded_input_bits_vec = vec![Precision::Raw::zero(); number_of_bits * parameters
+            .input_lwe_count.0];
 
+        let mut index = parameters.input_lwe_count.0 - 1;
+        let mut new_index = index;
+        let mut id = 0;
+        let mut input_cleartext = input_cleartext_vector[index];
         for bit in encoded_input_bits_vec.iter_mut().rev() {
-            *bit = (input_cleartext & Precision::Raw::one()) << (Precision::Raw::BITS - 1);
+            if index != new_index {
+                index = new_index;
+                input_cleartext = input_cleartext_vector[index];
+            }
+            *bit = (input_cleartext & Precision::Raw::one()) << 
+                (Precision::Raw::BITS - 1);
             input_cleartext >>= 1;
+            id += 1;
+            if id == number_of_bits {
+                new_index -= 1;
+                id = 0;
+            }
         }
 
         let proto_encoded_input_bits_vec =
