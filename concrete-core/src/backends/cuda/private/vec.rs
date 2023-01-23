@@ -18,6 +18,7 @@ use std::marker::PhantomData;
 #[derive(Debug)]
 pub struct CudaVec<T: Numeric> {
     pub(super) ptr: *mut c_void,
+    pub(super) stream: *mut c_void,
     pub(super) idx: u32,
     pub(super) len: usize,
     pub(super) _phantom: PhantomData<T>,
@@ -32,6 +33,10 @@ impl<T: Numeric> CudaVec<T> {
     /// Returns an unsafe mutable pointer to the vector’s buffer.
     pub fn as_mut_c_ptr(&mut self) -> *mut c_void {
         self.ptr
+    }
+
+    pub fn stream_handle(&mut self) -> *mut c_void {
+        self.stream
     }
 
     /// Returns the number of elements in the vector, also referred to as its ‘length’.

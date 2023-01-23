@@ -150,6 +150,7 @@ mod cuda_unit_test_pbs {
                 unsafe {
                     concrete_cuda::cuda_bind::cuda_initialize_twiddles(
                         polynomial_size.0 as u32,
+                        stream.stream_handle().0,
                         gpu_index.0 as u32,
                     );
                     concrete_cuda::cuda_bind::cuda_convert_lwe_bootstrap_key_64(
@@ -398,6 +399,7 @@ mod cuda_unit_test_pbs {
                 unsafe {
                     concrete_cuda::cuda_bind::cuda_initialize_twiddles(
                         polynomial_size.0 as u32,
+                        stream.stream_handle().0,
                         gpu_index.0 as u32,
                     );
                     concrete_cuda::cuda_bind::cuda_convert_lwe_bootstrap_key_64(
