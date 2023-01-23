@@ -9,7 +9,6 @@
 
 #include "cooperative_groups.h"
 
-#include "../include/helper_cuda.h"
 #include "bootstrap.h"
 #include "complex/operations.cuh"
 #include "crypto/gadget.cuh"
@@ -18,10 +17,10 @@
 #include "fft/bnsmfft.cuh"
 #include "fft/smfft.cuh"
 #include "fft/twiddles.cuh"
+#include "helper_cuda.h"
 #include "polynomial/parameters.cuh"
 #include "polynomial/polynomial.cuh"
 #include "polynomial/polynomial_math.cuh"
-#include "utils/memory.cuh"
 #include "utils/timer.cuh"
 
 // Cooperative groups are used in the low latency PBS

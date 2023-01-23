@@ -204,7 +204,6 @@ __host__ void cuda_keyswitch_lwe_ciphertext_vector(
       lwe_array_out, lwe_array_in, ksk, lwe_dimension_in, lwe_dimension_out,
       base_log, level_count, lwe_lower, lwe_upper, cutoff);
   checkCudaErrors(cudaGetLastError());
-
 }
 
 template <typename Torus>
@@ -225,7 +224,6 @@ __host__ void cuda_fp_keyswitch_lwe_to_glwe(
       glwe_array_out, lwe_array_in, fp_ksk_array, lwe_dimension_in,
       glwe_dimension, polynomial_size, base_log, level_count,
       number_of_input_lwe, number_of_keys);
-
 }
 
 #endif

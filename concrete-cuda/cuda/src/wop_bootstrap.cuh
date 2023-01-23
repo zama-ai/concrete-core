@@ -3,12 +3,11 @@
 
 #include "cooperative_groups.h"
 
-#include "../include/helper_cuda.h"
 #include "bit_extraction.cuh"
 #include "bootstrap.h"
 #include "circuit_bootstrap.cuh"
+#include "helper_cuda.h"
 #include "utils/kernel_dimensions.cuh"
-#include "utils/memory.cuh"
 #include "utils/timer.cuh"
 #include "vertical_packing.cuh"
 
