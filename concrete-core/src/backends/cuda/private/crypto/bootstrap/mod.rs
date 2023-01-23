@@ -236,5 +236,5 @@ pub(crate) unsafe fn execute_lwe_ciphertext_vector_extract_bits_on_gpu<T: Unsign
         level_count_ksk,
         num_samples,
         cuda_shared_memory,
-    )
+    );
 }

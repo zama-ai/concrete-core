@@ -12,6 +12,9 @@ extern "C" {
     /// Allocate `size` memory on GPU `gpu_index`
     pub fn cuda_malloc(size: u64, gpu_index: u32) -> *mut c_void;
 
+    /// Allocate `size` memory on GPU `gpu_index` asynchronously
+    pub fn cuda_malloc_async(size: u64, v_stream: *mut c_void, gpu_index: u32) -> *mut c_void;
+
     /// Check whether `size` memory is available on GPU `gpu_index`
     pub fn cuda_check_valid_malloc(size: u64, gpu_index: u32) -> i32;
 
@@ -41,16 +44,23 @@ extern "C" {
     /// Synchronize all streams on GPU `gpu_index`
     pub fn cuda_synchronize_device(gpu_index: u32) -> i32;
 
+    /// Synchronize Cuda stream
+    pub fn cuda_synchronize_stream(v_stream: *mut c_void) -> i32;
+
     /// Free memory for pointer `ptr` on GPU `gpu_index`
     pub fn cuda_drop(ptr: *mut c_void, gpu_index: u32) -> i32;
+
+    /// Free memory for pointer `ptr` on GPU `gpu_index` asynchronously, using stream `v_stream`
+    pub fn cuda_drop_async(ptr: *mut c_void, v_stream: *mut c_void, gpu_index: u32) -> i32;
 
     /// Get the maximum amount of shared memory on GPU `gpu_index`
     pub fn cuda_get_max_shared_memory(gpu_index: u32) -> i32;
 
-    /// Initialize the twiddles values for `polynomial_size` on GPU `gpu_index`.
-    /// This is necessary before calling any function that relies on the FFT (bootstrap, circuit
-    /// bootstrap, bit extraction, vertical packing, wop PBS).
-    pub fn cuda_initialize_twiddles(polynomial_size: u32, gpu_index: u32);
+    /// Initialize the twiddles values for `polynomial_size` on GPU `gpu_index`, using the Cuda
+    /// stream `_v_stream` passed as a void pointer.
+    /// Calling this function is necessary before calling any function that relies on the FFT
+    /// (bootstrap, circuit bootstrap, bit extraction, vertical packing, wop PBS).
+    pub fn cuda_initialize_twiddles(polynomial_size: u32, v_stream: *const c_void, gpu_index: u32);
 
     /// Copy a bootstrap key `src` represented with 32 bits in the standard domain from the CPU to
     /// the GPU `gpu_index` using the stream `v_stream`, and convert it to the Fourier domain on the
@@ -343,6 +353,7 @@ extern "C" {
     /// See the equivalent function on 64 bit inputs for more details.
     pub fn cuda_fp_keyswitch_lwe_to_glwe_32(
         v_stream: *const c_void,
+        gpu_index: u32,
         glwe_array_out: *mut c_void,
         lwe_array_in: *const c_void,
         fp_ksk_array: *const c_void,
@@ -374,6 +385,7 @@ extern "C" {
     /// keyswitch.
     pub fn cuda_fp_keyswitch_lwe_to_glwe_64(
         v_stream: *const c_void,
+        gpu_index: u32,
         glwe_array_out: *mut c_void,
         lwe_array_in: *const c_void,
         fp_ksk_array: *const c_void,

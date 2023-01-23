@@ -31,7 +31,8 @@ use concrete_csprng::generators::SoftwareRandomGenerator;
 use concrete_csprng::seeders::UnixSeeder;
 use concrete_cuda::cuda_bind::{
     cuda_circuit_bootstrap_64, cuda_cmux_tree_64, cuda_convert_lwe_bootstrap_key_64,
-    cuda_extract_bits_64, cuda_initialize_twiddles, cuda_synchronize_device, cuda_wop_pbs_64,
+    cuda_extract_bits_64, cuda_initialize_twiddles, cuda_synchronize_device,
+    cuda_synchronize_stream, cuda_wop_pbs_64,
 };
 use concrete_fft::c64;
 use dyn_stack::{DynStack, GlobalMemBuffer};
@@ -117,11 +118,6 @@ pub fn test_cuda_cmux_tree() {
         let gpu_index = GpuIndex(0);
         let stream = CudaStream::new(gpu_index).unwrap();
 
-        let mut d_concatenated_luts = stream.malloc::<u64>(h_concatenated_luts.len() as u32);
-        unsafe {
-            stream.copy_to_gpu::<u64>(&mut d_concatenated_luts, h_concatenated_luts.as_slice());
-        }
-
         // Instantiate the GGSW m^tree ciphertexts
         // We need r GGSW ciphertexts
         // Bit decomposition of the value from MSB to LSB
@@ -152,18 +148,25 @@ pub fn test_cuda_cmux_tree() {
             let ggsw_slice = ggsw.as_tensor().as_slice();
             h_concatenated_ggsw.append(&mut ggsw_slice.to_vec());
         }
+        let mut h_results = vec![49u64; tau * glwe_size];
 
         assert_eq!(h_concatenated_ggsw.len(), (r as usize) * ggsw_size);
         println!("We have {} ggsw", r);
 
         // Copy to Device
-        let mut d_concatenated_mtree = stream.malloc::<u64>(h_concatenated_ggsw.len() as u32);
         unsafe {
-            stream.copy_to_gpu::<u64>(&mut d_concatenated_mtree, h_concatenated_ggsw.as_slice());
-        }
+            cuda_initialize_twiddles(
+                polynomial_size.0 as u32,
+                stream.stream_handle().0,
+                gpu_index.0 as u32,
+            );
+            let mut d_concatenated_luts = stream.malloc::<u64>(h_concatenated_luts.len() as u32);
+            stream.copy_to_gpu::<u64>(&mut d_concatenated_luts, h_concatenated_luts.as_slice());
 
-        let mut d_results = stream.malloc::<u64>((tau * glwe_size) as u32);
-        unsafe {
+            let mut d_concatenated_mtree = stream.malloc::<u64>(h_concatenated_ggsw.len() as u32);
+            stream.copy_to_gpu::<u64>(&mut d_concatenated_mtree, h_concatenated_ggsw.as_slice());
+
+            let mut d_results = stream.malloc::<u64>((tau * glwe_size) as u32);
             cuda_cmux_tree_64(
                 stream.stream_handle().0,
                 gpu_index.0 as u32,
@@ -178,12 +181,10 @@ pub fn test_cuda_cmux_tree() {
                 tau as u32,
                 stream.get_max_shared_memory().unwrap() as u32,
             );
-        }
-
-        let mut h_results = vec![49u64; tau * glwe_size];
-        unsafe {
+            cuda_synchronize_device(gpu_index.0 as u32);
             stream.copy_to_cpu::<u64>(&mut h_results, &d_results);
         }
+
         assert_eq!(h_results.len(), tau * glwe_size);
 
         for (i, h_result) in h_results.chunks(glwe_size).enumerate() {
@@ -295,7 +296,12 @@ pub fn test_cuda_extract_bits() {
     let mut d_bsk_fourier = stream.malloc::<f64>(bsk_size as u32);
     //decomp_size.0 * (output_size.0 + 1) * input_size.0
     unsafe {
-        cuda_initialize_twiddles(polynomial_size.0 as u32, gpu_index.0 as u32);
+        cuda_initialize_twiddles(
+            polynomial_size.0 as u32,
+            stream.stream_handle().0,
+            gpu_index.0 as u32,
+        );
+        cuda_synchronize_stream(stream.stream_handle().0);
         cuda_convert_lwe_bootstrap_key_64(
             d_bsk_fourier.as_mut_c_ptr(),
             h_coef_bsk.as_ptr() as *mut c_void,
@@ -306,6 +312,7 @@ pub fn test_cuda_extract_bits() {
             level_bsk.0 as u32,
             polynomial_size.0 as u32,
         );
+        cuda_synchronize_stream(stream.stream_handle().0);
         stream.copy_to_gpu::<u32>(&mut d_lut_vector_indexes, &mut h_lut_vector_indexes);
     }
     //let mut buffers = FourierBuffers::new(fourier_bsk.polynomial_size(),
@@ -403,6 +410,7 @@ pub fn test_cuda_extract_bits() {
                 nos,
                 stream.get_max_shared_memory().unwrap() as u32,
             );
+            cuda_synchronize_stream(stream.stream_handle().0);
             elapsed += now.elapsed();
             println!("elapsed: {:?}", elapsed);
 
@@ -462,9 +470,6 @@ pub fn test_extract_bit_circuit_bootstrapping_cuda_vertical_packing() {
     let level_cbs = DecompositionLevelCount(4);
     let base_log_cbs = DecompositionBaseLog(6);
     //decomp_size.0 * (output_size.0 + 1) * input_size.0
-    unsafe {
-        cuda_initialize_twiddles(polynomial_size.0 as u32, 0u32);
-    }
 
     // Value was 0.000_000_000_000_000_221_486_881_160_055_68_513645324585951
     // But rust indicates it gets truncated anyways to
@@ -719,6 +724,7 @@ pub fn test_extract_bit_circuit_bootstrapping_cuda_vertical_packing() {
 
 #[test]
 pub fn test_extract_bit_cuda_circuit_bootstrapping_vertical_packing() {
+    let mut cuda_engine = CudaEngine::new(()).unwrap();
     // define settings
     let glwe_dimension = GlweDimension(1);
     let lwe_dimension = LweDimension(481);
@@ -764,7 +770,24 @@ pub fn test_extract_bit_cuda_circuit_bootstrapping_vertical_packing() {
             println!("\npolynomial_size: {}", polynomial_size.0);
 
             unsafe {
-                cuda_initialize_twiddles(polynomial_size.0 as u32, 0u32);
+                cuda_initialize_twiddles(
+                    polynomial_size.0 as u32,
+                    cuda_engine
+                        .get_cuda_streams()
+                        .get(0)
+                        .unwrap()
+                        .stream_handle()
+                        .0,
+                    0u32,
+                );
+                cuda_synchronize_stream(
+                    cuda_engine
+                        .get_cuda_streams()
+                        .get(0)
+                        .unwrap()
+                        .stream_handle()
+                        .0,
+                );
             }
             //create GLWE and LWE secret key
             let glwe_sk: GlweSecretKey<_, Vec<u64>> = GlweSecretKey::generate_binary(
@@ -818,7 +841,6 @@ pub fn test_extract_bit_cuda_circuit_bootstrapping_vertical_packing() {
                 fft,
                 DynStack::new(&mut mem),
             );
-            let mut cuda_engine = CudaEngine::new(()).unwrap();
             let d_fourier_bsk = cuda_engine
                 .convert_lwe_bootstrap_key(&LweBootstrapKey64(coef_bsk))
                 .unwrap();
@@ -1066,8 +1088,27 @@ pub fn test_cuda_wop_pbs() {
     let level_cbs = DecompositionLevelCount(4);
     let base_log_cbs = DecompositionBaseLog(6);
     //decomp_size.0 * (output_size.0 + 1) * input_size.0
+
+    let mut cuda_engine = CudaEngine::new(()).unwrap();
     unsafe {
-        cuda_initialize_twiddles(polynomial_size.0 as u32, 0u32);
+        cuda_initialize_twiddles(
+            polynomial_size.0 as u32,
+            cuda_engine
+                .get_cuda_streams()
+                .get(0)
+                .unwrap()
+                .stream_handle()
+                .0,
+            0u32,
+        );
+        cuda_synchronize_stream(
+            cuda_engine
+                .get_cuda_streams()
+                .get(0)
+                .unwrap()
+                .stream_handle()
+                .0,
+        );
     }
 
     // Value was 0.000_000_000_000_000_221_486_881_160_055_68_513645324585951
@@ -1134,7 +1175,6 @@ pub fn test_cuda_wop_pbs() {
         fft,
         DynStack::new(&mut mem),
     );
-    let mut cuda_engine = CudaEngine::new(()).unwrap();
     let d_fourier_bsk = cuda_engine
         .convert_lwe_bootstrap_key(&LweBootstrapKey64(coef_bsk))
         .unwrap();
@@ -1299,6 +1339,14 @@ pub fn test_cuda_wop_pbs() {
                 1,
                 cuda_engine.get_cuda_shared_memory().0 as u32,
             );
+            cuda_synchronize_stream(
+                cuda_engine
+                    .get_cuda_streams()
+                    .get(0)
+                    .unwrap()
+                    .stream_handle()
+                    .0,
+            );
         }
         let vertical_packing_lwe_list_out = cuda_engine
             .convert_lwe_ciphertext_vector(&d_lwe_array_out)
@@ -1409,7 +1457,12 @@ fn test_cuda_circuit_bootstrapping_binary() {
     h_coef_bsk.append(&mut std_bsk.tensor.as_slice().to_vec());
     // convert bsk coefficients to fourier on device
     unsafe {
-        cuda_initialize_twiddles(polynomial_size.0 as u32, gpu_index.0 as u32);
+        cuda_initialize_twiddles(
+            polynomial_size.0 as u32,
+            stream.stream_handle().0,
+            gpu_index.0 as u32,
+        );
+        cuda_synchronize_stream(stream.stream_handle().0);
         cuda_convert_lwe_bootstrap_key_64(
             d_bsk_fourier.as_mut_c_ptr(),
             h_coef_bsk.as_ptr() as *mut c_void,
@@ -1420,6 +1473,7 @@ fn test_cuda_circuit_bootstrapping_binary() {
             level_bsk.0 as u32,
             polynomial_size.0 as u32,
         );
+        cuda_synchronize_stream(stream.stream_handle().0);
     }
 
     let fft = Fft::new(polynomial_size);
@@ -1580,6 +1634,7 @@ fn test_cuda_circuit_bootstrapping_binary() {
             nos,
             stream.get_max_shared_memory().unwrap() as u32,
         );
+        cuda_synchronize_device(0);
     }
     let mut cuda_engine = CudaEngine::new(()).unwrap();
     let d_ciphertext: CudaGgswCiphertext64 = CudaGgswCiphertext64(CudaGgswCiphertext {
