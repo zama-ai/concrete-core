@@ -48,7 +48,6 @@ host_cleartext_multiplication(void *v_stream, uint32_t gpu_index, T *output,
       output, lwe_input, cleartext_input, input_lwe_dimension, num_entries);
   checkCudaErrors(cudaGetLastError());
 
-  cudaStreamSynchronize(*stream);
 }
 
 #endif // CUDA_MULT_H

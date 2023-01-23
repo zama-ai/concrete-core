@@ -60,7 +60,6 @@ __host__ void host_addition(void *v_stream, uint32_t gpu_index, T *output,
   addition<<<grid, thds, 0, *stream>>>(output, input_1, input_2, num_entries);
   checkCudaErrors(cudaGetLastError());
 
-  cudaStreamSynchronize(*stream);
 }
 
 template <typename T>
@@ -87,6 +86,5 @@ __host__ void host_addition_plaintext(void *v_stream, uint32_t gpu_index,
       output, lwe_input, plaintext_input, input_lwe_dimension, num_entries);
   checkCudaErrors(cudaGetLastError());
 
-  cudaStreamSynchronize(*stream);
 }
 #endif // CUDA_ADD_H

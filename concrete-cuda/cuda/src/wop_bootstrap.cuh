@@ -40,6 +40,7 @@ __host__ void host_circuit_bootstrap_vertical_packing(
     uint32_t level_count_cbs, uint32_t number_of_inputs, uint32_t tau,
     uint32_t max_shared_memory) {
 
+  cudaSetDevice(gpu_index);
   auto stream = static_cast<cudaStream_t *>(v_stream);
 
   // allocate and initialize device pointers for circuit bootstrap
@@ -140,7 +141,9 @@ __host__ void host_wop_pbs(
     uint32_t number_of_bits_to_extract, uint32_t number_of_inputs,
     uint32_t max_shared_memory) {
 
+  cudaSetDevice(gpu_index);
   auto stream = static_cast<cudaStream_t *>(v_stream);
+  std::cout << "Stream: " << *stream << "\n";
 
   // let mut h_lut_vector_indexes = vec![0 as u32; 1];
   // indexes of lut vectors for bit extract

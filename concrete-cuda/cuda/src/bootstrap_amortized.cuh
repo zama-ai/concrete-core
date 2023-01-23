@@ -284,6 +284,7 @@ __host__ void host_bootstrap_amortized(
     uint32_t input_lwe_ciphertext_count, uint32_t num_lut_vectors,
     uint32_t lwe_idx, uint32_t max_shared_memory) {
 
+  cudaSetDevice(gpu_index);
   int SM_FULL = sizeof(Torus) * polynomial_size + // accumulator mask
                 sizeof(Torus) * polynomial_size + // accumulator body
                 sizeof(Torus) * polynomial_size + // accumulator mask rotated
@@ -356,9 +357,6 @@ __host__ void host_bootstrap_amortized(
   }
   checkCudaErrors(cudaGetLastError());
 
-  // Synchronize the streams before copying the result to lwe_array_out at the
-  // right place
-  cudaStreamSynchronize(*stream);
   cuda_drop_async(d_mem, stream, gpu_index);
 }
 
