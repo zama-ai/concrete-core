@@ -64,9 +64,10 @@ impl CudaStream {
         T: Numeric,
     {
         let size = elements as u64 * std::mem::size_of::<T>() as u64;
-        let ptr = unsafe { cuda_malloc(size, self.gpu_index().0 as u32) };
+        let ptr = unsafe { cuda_malloc_async(size, self.stream.0, self.gpu_index().0 as u32) };
         CudaVec {
             ptr,
+            stream: self.stream.0,
             idx: self.gpu_index.0 as u32,
             len: elements as usize,
             _phantom: PhantomData::default(),
@@ -164,7 +165,13 @@ impl CudaStream {
     /// Initialize twiddles
     #[allow(dead_code)]
     pub fn initialize_twiddles(&self, polynomial_size: PolynomialSize) {
-        unsafe { cuda_initialize_twiddles(polynomial_size.0 as u32, self.gpu_index.0 as u32) };
+        unsafe {
+            cuda_initialize_twiddles(
+                polynomial_size.0 as u32,
+                self.stream.0,
+                self.gpu_index.0 as u32,
+            )
+        };
     }
 
     /// Convert bootstrap key

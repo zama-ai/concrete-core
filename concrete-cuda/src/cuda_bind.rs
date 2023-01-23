@@ -9,6 +9,8 @@ extern "C" {
 
     pub fn cuda_malloc(size: u64, gpu_index: u32) -> *mut c_void;
 
+    pub fn cuda_malloc_async(size: u64, v_stream: *mut c_void, gpu_index: u32) -> *mut c_void;
+
     pub fn cuda_check_valid_malloc(size: u64, gpu_index: u32) -> i32;
 
     pub fn cuda_memcpy_async_to_cpu(
@@ -33,9 +35,11 @@ extern "C" {
 
     pub fn cuda_drop(ptr: *mut c_void, gpu_index: u32) -> i32;
 
+    pub fn cuda_drop_async(ptr: *mut c_void, v_stream: *mut c_void, gpu_index: u32) -> i32;
+
     pub fn cuda_get_max_shared_memory(gpu_index: u32) -> i32;
 
-    pub fn cuda_initialize_twiddles(polynomial_size: u32, gpu_index: u32);
+    pub fn cuda_initialize_twiddles(polynomial_size: u32, v_stream: *const c_void, gpu_index: u32);
 
     pub fn cuda_convert_lwe_bootstrap_key_32(
         dest: *mut c_void,

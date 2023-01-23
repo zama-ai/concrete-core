@@ -1,5 +1,5 @@
 use crate::commons::numeric::Numeric;
-use concrete_cuda::cuda_bind::cuda_drop;
+use concrete_cuda::cuda_bind::{cuda_drop, cuda_drop_async};
 use std::ffi::c_void;
 use std::marker::PhantomData;
 
@@ -18,6 +18,7 @@ use std::marker::PhantomData;
 #[derive(Debug)]
 pub struct CudaVec<T: Numeric> {
     pub(super) ptr: *mut c_void,
+    pub(super) stream: *mut c_void,
     pub(super) idx: u32,
     pub(super) len: usize,
     pub(super) _phantom: PhantomData<T>,
@@ -34,6 +35,10 @@ impl<T: Numeric> CudaVec<T> {
         self.ptr
     }
 
+    pub fn stream_handle(&mut self) -> *mut c_void {
+        self.stream
+    }
+
     /// Returns the number of elements in the vector, also referred to as its ‘length’.
     pub fn len(&self) -> usize {
         self.len
@@ -47,6 +52,6 @@ impl<T: Numeric> CudaVec<T> {
 
 impl<T: Numeric> Drop for CudaVec<T> {
     fn drop(&mut self) {
-        unsafe { cuda_drop(self.ptr, self.idx) };
+        unsafe { cuda_drop_async(self.ptr, self.stream, self.idx) };
     }
 }
