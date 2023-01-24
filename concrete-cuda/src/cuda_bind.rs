@@ -667,6 +667,39 @@ extern "C" {
         max_shared_memory: u32,
     );
 
+    /// This scratch function allocates the necessary amount of data on the GPU for the
+    /// circuit bootstrap and vertical packing, into `cbs_vp_buffer`.
+    /// It also fills the value of delta_log to be used in the circuit bootstrap.
+    pub fn scratch_cuda_circuit_bootstrap_vertical_packing_32(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        cbs_vp_buffer: *mut *mut c_void,
+        cbs_delta_log: *mut u32,
+        glwe_dimension: u32,
+        lwe_dimension: u32,
+        polynomial_size: u32,
+        level_count_cbs: u32,
+        number_of_inputs: u32,
+        lut_number: u32,
+        allocate_gpu_memory: bool,
+    );
+    /// This scratch function allocates the necessary amount of data on the GPU for the
+    /// circuit bootstrap and vertical packing, into `cbs_vp_buffer`.
+    /// It also fills the value of delta_log to be used in the circuit bootstrap.
+    pub fn scratch_cuda_circuit_bootstrap_vertical_packing_64(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        cbs_vp_buffer: *mut *mut c_void,
+        cbs_delta_log: *mut u32,
+        glwe_dimension: u32,
+        lwe_dimension: u32,
+        polynomial_size: u32,
+        level_count_cbs: u32,
+        number_of_inputs: u32,
+        lut_number: u32,
+        allocate_gpu_memory: bool,
+    );
+
     /// Entry point for cuda circuit bootstrap + vertical packing for batches of
     /// input 64 bit LWE ciphertexts.
     ///  - `v_stream` is a void pointer to the Cuda stream to be used in the kernel launch
@@ -677,6 +710,7 @@ extern "C" {
     /// compressed complex key.
     ///  - `cbs_fpksk` list of private functional packing keyswitch keys
     ///  - `lut_vector` list of test vectors
+    ///  - `cbs_vp_buffer` a pre-allocated array to store intermediate results
     ///  - `polynomial_size` size of the test polynomial, supported sizes:
     /// {512, 1024, 2048, 4096, 8192}
     ///  - `glwe_dimension` supported dimensions: {1}
@@ -698,6 +732,8 @@ extern "C" {
         fourier_bsk: *const c_void,
         cbs_fpksk: *const c_void,
         lut_vector: *const c_void,
+        cbs_vp_buffer: *mut c_void,
+        cbs_delta_log: u32,
         polynomial_size: u32,
         glwe_dimension: u32,
         lwe_dimension: u32,
@@ -712,6 +748,62 @@ extern "C" {
         max_shared_memory: u32,
     );
 
+    /// This cleanup function frees the data for the circuit bootstrap and vertical packing on GPU
+    /// contained in cbs_vp_buffer for 32 bits inputs.
+    pub fn cleanup_cuda_circuit_bootstrap_vertical_packing_32(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        cbs_vp_buffer: *mut *mut c_void,
+    );
+
+    /// This cleanup function frees the data for the circuit bootstrap and vertical packing on GPU
+    /// contained in cbs_vp_buffer for 64 bits inputs.
+    pub fn cleanup_cuda_circuit_bootstrap_vertical_packing_64(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        cbs_vp_buffer: *mut *mut c_void,
+    );
+
+    /// Scratch functions allocate the necessary data on the GPU.
+    /// This scratch function allocates the necessary amount of data on the GPU for the wop PBS
+    /// on 32 bits inputs into `wop_pbs_buffer`.
+    /// It also fills the value of delta_log and cbs_delta_log to be used in the bit extract and
+    /// circuit bootstrap.
+    pub fn scratch_cuda_wop_pbs_32(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        wop_pbs_buffer: *mut *mut c_void,
+        delta_log: *mut u32,
+        cbs_delta_log: *mut u32,
+        glwe_dimension: u32,
+        lwe_dimension: u32,
+        polynomial_size: u32,
+        level_count_cbs: u32,
+        number_of_bits_of_message_including_padding: u32,
+        number_of_bits_to_extract: u32,
+        number_of_inputs: u32,
+    );
+
+    /// Scratch functions allocate the necessary data on the GPU.
+    /// This scratch function allocates the necessary amount of data on the GPU for the wop PBS
+    /// on 64 bits inputs into `wop_pbs_buffer`.
+    /// It also fills the value of delta_log and cbs_delta_log to be used in the bit extract and
+    /// circuit bootstrap.
+    pub fn scratch_cuda_wop_pbs_64(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        wop_pbs_buffer: *mut *mut c_void,
+        delta_log: *mut u32,
+        cbs_delta_log: *mut u32,
+        glwe_dimension: u32,
+        lwe_dimension: u32,
+        polynomial_size: u32,
+        level_count_cbs: u32,
+        number_of_bits_of_message_including_padding: u32,
+        number_of_bits_to_extract: u32,
+        number_of_inputs: u32,
+    );
+
     /// Entry point for entire without padding programmable bootstrap on 64 bit input LWE
     /// ciphertexts.
     ///  - `v_stream` is a void pointer to the Cuda stream to be used in the kernel launch
@@ -723,6 +815,7 @@ extern "C" {
     /// compressed complex key.
     ///  - `ksk` keyswitch key to use inside extract bits block
     ///  - `cbs_fpksk` list of fp-keyswitch keys
+    ///  - `wop_pbs_buffer` a pre-allocated array to hold intermediate results
     ///  - `glwe_dimension` supported dimensions: {1}
     ///  - `lwe_dimension` dimension of input lwe ciphertexts
     ///  - `polynomial_size` size of the test polynomial, supported sizes:
@@ -751,6 +844,8 @@ extern "C" {
         fourier_bsk: *const c_void,
         ksk: *const c_void,
         cbs_fpksk: *const c_void,
+        wop_pbs_buffer: *mut c_void,
+        cbs_delta_log: u32,
         glwe_dimension: u32,
         lwe_dimension: u32,
         polynomial_size: u32,
@@ -764,8 +859,25 @@ extern "C" {
         level_count_cbs: u32,
         number_of_bits_of_message_including_padding: u32,
         number_of_bits_to_extract: u32,
+        delta_log: u32,
         number_of_inputs: u32,
         max_shared_memory: u32,
+    );
+
+    /// This cleanup function frees the data for the wop PBS on GPU contained in
+    /// wop_pbs_buffer for 32 bits inputs.
+    pub fn cleanup_cuda_wop_pbs_32(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        wop_pbs_buffer: *mut *mut c_void,
+    );
+
+    /// This cleanup function frees the data for the wop PBS on GPU contained in
+    /// wop_pbs_buffer for 64 bits inputs.
+    pub fn cleanup_cuda_wop_pbs_64(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        wop_pbs_buffer: *mut *mut c_void,
     );
 
     /// Perform the negation of a u32 input LWE ciphertext vector.

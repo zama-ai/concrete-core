@@ -30,8 +30,9 @@ use crate::prelude::*;
 use concrete_csprng::generators::SoftwareRandomGenerator;
 use concrete_csprng::seeders::UnixSeeder;
 use concrete_cuda::cuda_bind::{
-    cuda_circuit_bootstrap_64, cuda_cmux_tree_64, cuda_convert_lwe_bootstrap_key_64,
-    cuda_extract_bits_64, cuda_synchronize_device, cuda_synchronize_stream, cuda_wop_pbs_64,
+    cleanup_cuda_wop_pbs_64, cuda_circuit_bootstrap_64, cuda_cmux_tree_64,
+    cuda_convert_lwe_bootstrap_key_64, cuda_extract_bits_64, cuda_synchronize_device,
+    cuda_synchronize_stream, cuda_wop_pbs_64, scratch_cuda_wop_pbs_64,
 };
 use concrete_fft::c64;
 use dyn_stack::{DynStack, GlobalMemBuffer};
@@ -1258,6 +1259,28 @@ pub fn test_cuda_wop_pbs() {
             .unwrap();
 
         unsafe {
+            let mut wop_pbs_buffer: *mut c_void = std::ptr::null_mut();
+            let mut delta_log: u32 = 0;
+            let mut cbs_delta_log: u32 = 0;
+            scratch_cuda_wop_pbs_64(
+                cuda_engine
+                    .get_cuda_streams()
+                    .get(0)
+                    .unwrap()
+                    .stream_handle()
+                    .0,
+                0,
+                &mut wop_pbs_buffer as *mut *mut c_void,
+                &mut delta_log as *mut u32,
+                &mut cbs_delta_log as *mut u32,
+                glwe_dimension.0 as u32,
+                lwe_dimension.0 as u32,
+                polynomial_size.0 as u32,
+                level_cbs.0 as u32,
+                number_of_bits_in_input_lwe as u32,
+                number_of_bits_in_input_lwe as u32,
+                1u32,
+            );
             cuda_wop_pbs_64(
                 cuda_engine
                     .get_cuda_streams()
@@ -1272,6 +1295,8 @@ pub fn test_cuda_wop_pbs() {
                 d_fourier_bsk.0.d_vecs[0].as_c_ptr(),
                 d_ksk.0.d_vecs[0].as_c_ptr(),
                 d_vec_fpksk.0.d_vecs[0].as_c_ptr(),
+                wop_pbs_buffer,
+                cbs_delta_log,
                 glwe_dimension.0 as u32,
                 lwe_dimension.0 as u32,
                 polynomial_size.0 as u32,
@@ -1285,16 +1310,19 @@ pub fn test_cuda_wop_pbs() {
                 level_cbs.0 as u32,
                 number_of_bits_in_input_lwe as u32,
                 number_of_bits_in_input_lwe as u32,
+                delta_log,
                 1,
                 cuda_engine.get_cuda_shared_memory().0 as u32,
             );
-            cuda_synchronize_stream(
+            cleanup_cuda_wop_pbs_64(
                 cuda_engine
                     .get_cuda_streams()
                     .get(0)
                     .unwrap()
                     .stream_handle()
                     .0,
+                0,
+                &mut wop_pbs_buffer as *mut *mut c_void,
             );
         }
         let vertical_packing_lwe_list_out = cuda_engine
