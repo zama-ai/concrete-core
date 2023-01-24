@@ -114,17 +114,51 @@ void cuda_circuit_bootstrap_vertical_packing_64(
     uint32_t base_log_pksk, uint32_t level_count_cbs, uint32_t base_log_cbs,
     uint32_t number_of_inputs, uint32_t lut_number, uint32_t max_shared_memory);
 
-void cuda_wop_pbs_64(void *v_stream, uint32_t gpu_index, void *lwe_array_out,
-                     void *lwe_array_in, void *lut_vector, void *fourier_bsk,
-                     void *ksk, void *cbs_fpksk, uint32_t glwe_dimension,
-                     uint32_t lwe_dimension, uint32_t polynomial_size,
-                     uint32_t base_log_bsk, uint32_t level_count_bsk,
-                     uint32_t base_log_ksk, uint32_t level_count_ksk,
-                     uint32_t base_log_pksk, uint32_t level_count_pksk,
-                     uint32_t base_log_cbs, uint32_t level_count_cbs,
-                     uint32_t number_of_bits_of_message_including_padding,
-                     uint32_t number_of_bits_to_extract,
-                     uint32_t number_of_inputs, uint32_t max_shared_memory);
+void scratch_cuda_wop_pbs_32(
+    void *v_stream, uint32_t gpu_index, uint32_t *lut_vector_indexes,
+    void *lut_pbs, void *lwe_array_in_buffer, void *lwe_array_in_shifted_buffer,
+    void *lwe_array_out_ks_buffer, void *lwe_array_out_pbs_buffer,
+    void *lwe_array_out_bit_extract, uint32_t *ciphertext_n_bits,
+    uint32_t *delta_log, uint32_t lwe_dimension, uint32_t polynomial_size,
+    uint32_t number_of_bits_of_message_including_padding);
+
+void scratch_cuda_wop_pbs_64(
+    void *v_stream, uint32_t gpu_index, uint32_t *lut_vector_indexes,
+    void *lut_pbs, void *lwe_array_in_buffer, void *lwe_array_in_shifted_buffer,
+    void *lwe_array_out_ks_buffer, void *lwe_array_out_pbs_buffer,
+    void *lwe_array_out_bit_extract, uint32_t *ciphertext_n_bits,
+    uint32_t *delta_log, uint32_t lwe_dimension, uint32_t polynomial_size,
+    uint32_t number_of_bits_of_message_including_padding);
+
+void cuda_wop_pbs_64(
+    void *v_stream, uint32_t gpu_index, void *lwe_array_out, void *lwe_array_in,
+    void *lut_vector, void *fourier_bsk, void *ksk, void *cbs_fpksk,
+    uint32_t *lut_vector_indexes, void *lut_pbs, void *lwe_array_in_buffer,
+    void *lwe_array_in_shifted_buffer, void *lwe_array_out_ks_buffer,
+    void *lwe_array_out_pbs_buffer, void *lwe_array_out_bit_extract,
+    uint32_t glwe_dimension, uint32_t lwe_dimension, uint32_t polynomial_size,
+    uint32_t base_log_bsk, uint32_t level_count_bsk, uint32_t base_log_ksk,
+    uint32_t level_count_ksk, uint32_t base_log_pksk, uint32_t level_count_pksk,
+    uint32_t base_log_cbs, uint32_t level_count_cbs,
+    uint32_t number_of_bits_of_message_including_padding,
+    uint32_t number_of_bits_to_extract, uint32_t delta_log,
+    uint32_t number_of_inputs, uint32_t max_shared_memory);
+
+void cleanup_cuda_wop_pbs_32(void *v_stream, uint32_t gpu_index,
+                             uint32_t *lut_vector_indexes, void *lut_pbs,
+                             void *lwe_array_in_buffer,
+                             void *lwe_array_in_shifted_buffer,
+                             void *lwe_array_out_ks_buffer,
+                             void *lwe_array_out_pbs_buffer,
+                             void *lwe_array_out_bit_extract);
+
+void cleanup_cuda_wop_pbs_64(void *v_stream, uint32_t gpu_index,
+                             uint32_t *lut_vector_indexes, void *lut_pbs,
+                             void *lwe_array_in_buffer,
+                             void *lwe_array_in_shifted_buffer,
+                             void *lwe_array_out_ks_buffer,
+                             void *lwe_array_out_pbs_buffer,
+                             void *lwe_array_out_bit_extract);
 }
 
 #ifdef __CUDACC__

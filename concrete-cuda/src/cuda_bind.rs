@@ -360,6 +360,22 @@ extern "C" {
         max_shared_memory: u32,
     );
 
+    pub fn scratch_cuda_wop_pbs_64(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        lut_vector_indexes: *mut u32,
+        lut_pbs: *mut c_void,
+        lwe_array_in_buffer: *mut c_void,
+        lwe_array_in_shifted_buffer: *mut c_void,
+        lwe_array_out_ks_buffer: *mut c_void,
+        lwe_array_out_pbs_buffer: *mut c_void,
+        lwe_array_out_bit_extract: *mut c_void,
+        delta_log: *mut u32,
+        lwe_dimension: u32,
+        polynomial_size: u32,
+        number_of_bits_of_message_including_padding: u32,
+    );
+
     pub fn cuda_wop_pbs_64(
         v_stream: *const c_void,
         gpu_index: u32,
@@ -369,6 +385,13 @@ extern "C" {
         fourier_bsk: *const c_void,
         ksk: *const c_void,
         cbs_fpksk: *const c_void,
+        lut_vector_indexes: *mut u32,
+        lut_pbs: *mut c_void,
+        lwe_array_in_buffer: *mut c_void,
+        lwe_array_in_shifted_buffer: *mut c_void,
+        lwe_array_out_ks_buffer: *mut c_void,
+        lwe_array_out_pbs_buffer: *mut c_void,
+        lwe_array_out_bit_extract: *mut c_void,
         glwe_dimension: u32,
         lwe_dimension: u32,
         polynomial_size: u32,
@@ -382,8 +405,21 @@ extern "C" {
         level_count_cbs: u32,
         number_of_bits_of_message_including_padding: u32,
         number_of_bits_to_extract: u32,
+        delta_log: u32,
         number_of_inputs: u32,
         max_shared_memory: u32,
+    );
+
+    pub fn cleanup_cuda_wop_pbs_64(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        lut_vector_indexes: *mut u32,
+        lut_pbs: *mut c_void,
+        lwe_array_in_buffer: *mut c_void,
+        lwe_array_in_shifted_buffer: *mut c_void,
+        lwe_array_out_ks_buffer: *mut c_void,
+        lwe_array_out_pbs_buffer: *mut c_void,
+        lwe_array_out_bit_extract: *mut c_void,
     );
 
     pub fn cuda_negate_lwe_ciphertext_vector_32(

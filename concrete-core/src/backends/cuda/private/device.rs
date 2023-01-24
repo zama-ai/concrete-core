@@ -775,6 +775,29 @@ impl CudaStream {
         if T::BITS == 32 {
             unimplemented!()
         } else if T::BITS == 64 {
+            let lut_vector_indexes: *mut u32 = std::ptr::null_mut();
+            let lut_pbs: *mut c_void = std::ptr::null_mut();
+            let lwe_array_in_buffer: *mut c_void = std::ptr::null_mut();
+            let lwe_array_in_shifted_buffer: *mut c_void = std::ptr::null_mut();
+            let lwe_array_out_ks_buffer: *mut c_void = std::ptr::null_mut();
+            let lwe_array_out_pbs_buffer: *mut c_void = std::ptr::null_mut();
+            let lwe_array_out_bit_extract: *mut c_void = std::ptr::null_mut();
+            let delta_log: *mut u32 = std::ptr::null_mut();
+            scratch_cuda_wop_pbs_64(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                lut_vector_indexes,
+                lut_pbs,
+                lwe_array_in_buffer,
+                lwe_array_in_shifted_buffer,
+                lwe_array_out_ks_buffer,
+                lwe_array_out_pbs_buffer,
+                lwe_array_out_bit_extract,
+                delta_log,
+                lwe_dimension.0 as u32,
+                polynomial_size.0 as u32,
+                number_of_bits_of_message_including_padding.0 as u32,
+            );
             cuda_wop_pbs_64(
                 self.stream.0,
                 self.gpu_index.0 as u32,
@@ -784,6 +807,13 @@ impl CudaStream {
                 fourier_bsk.as_c_ptr(),
                 ksk.as_c_ptr(),
                 cbs_fpksk.as_c_ptr(),
+                lut_vector_indexes,
+                lut_pbs,
+                lwe_array_in_buffer,
+                lwe_array_in_shifted_buffer,
+                lwe_array_out_ks_buffer,
+                lwe_array_out_pbs_buffer,
+                lwe_array_out_bit_extract,
                 glwe_dimension.0 as u32,
                 lwe_dimension.0 as u32,
                 polynomial_size.0 as u32,
@@ -797,8 +827,20 @@ impl CudaStream {
                 level_count_cbs.0 as u32,
                 number_of_bits_of_message_including_padding.0 as u32,
                 number_of_bits_to_extract.0 as u32,
+                *delta_log,
                 number_of_inputs.0 as u32,
                 max_shared_memory.0 as u32,
+            );
+            cleanup_cuda_wop_pbs_64(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                lut_vector_indexes,
+                lut_pbs,
+                lwe_array_in_buffer,
+                lwe_array_in_shifted_buffer,
+                lwe_array_out_ks_buffer,
+                lwe_array_out_pbs_buffer,
+                lwe_array_out_bit_extract,
             );
         }
     }

@@ -128,46 +128,76 @@ __host__ void host_circuit_bootstrap_vertical_packing(
   cuda_drop_async(ggsw_out, stream, gpu_index);
 }
 
+template <typename Torus>
+__host__ void
+scratch_wop_pbs(void *v_stream, uint32_t gpu_index,
+                uint32_t *lut_vector_indexes, Torus *lut_pbs,
+                Torus *lwe_array_in_buffer, Torus *lwe_array_in_shifted_buffer,
+                Torus *lwe_array_out_ks_buffer, Torus *lwe_array_out_pbs_buffer,
+                Torus *lwe_array_out_bit_extract, uint32_t *delta_log,
+                uint32_t lwe_dimension, uint32_t polynomial_size,
+                uint32_t number_of_bits_of_message_including_padding) {
+  auto stream = static_cast<cudaStream_t *>(v_stream);
+  // let mut h_lut_vector_indexes = vec![0 as u32; 1];
+  // indexes of lut vectors for bit extract
+  uint32_t h_lut_vector_indexes = 0;
+  lut_vector_indexes =
+      (uint32_t *)cuda_malloc_async(sizeof(uint32_t), stream, gpu_index);
+  cuda_memcpy_async_to_gpu(lut_vector_indexes, &h_lut_vector_indexes,
+                           sizeof(uint32_t), stream, gpu_index);
+  checkCudaErrors(cudaGetLastError());
+  lut_pbs = (Torus *)cuda_malloc_async((2 * polynomial_size) * sizeof(Torus),
+                                       stream, gpu_index);
+  lwe_array_in_buffer = (Torus *)cuda_malloc_async(
+      (polynomial_size + 1) * sizeof(Torus), stream, gpu_index);
+  lwe_array_in_shifted_buffer = (Torus *)cuda_malloc_async(
+      (polynomial_size + 1) * sizeof(Torus), stream, gpu_index);
+  lwe_array_out_ks_buffer = (Torus *)cuda_malloc_async(
+      (lwe_dimension + 1) * sizeof(Torus), stream, gpu_index);
+  lwe_array_out_pbs_buffer = (Torus *)cuda_malloc_async(
+      (polynomial_size + 1) * sizeof(Torus), stream, gpu_index);
+  lwe_array_out_bit_extract = (Torus *)cuda_malloc_async(
+      (lwe_dimension + 1) * (number_of_bits_of_message_including_padding) *
+          sizeof(Torus),
+      stream, gpu_index);
+  uint32_t ciphertext_total_bits_count = sizeof(Torus) * 8;
+  *delta_log =
+      ciphertext_total_bits_count - number_of_bits_of_message_including_padding;
+}
+
+template <typename Torus>
+__host__ void
+cleanup_wop_pbs(void *v_stream, uint32_t gpu_index,
+                uint32_t *lut_vector_indexes, Torus *lut_pbs,
+                Torus *lwe_array_in_buffer, Torus *lwe_array_in_shifted_buffer,
+                Torus *lwe_array_out_ks_buffer, Torus *lwe_array_out_pbs_buffer,
+                Torus *lwe_array_out_bit_extract) {
+  auto stream = static_cast<cudaStream_t *>(v_stream);
+  cuda_drop_async(lut_vector_indexes, stream, gpu_index);
+  cuda_drop_async(lut_pbs, stream, gpu_index);
+  cuda_drop_async(lwe_array_in_buffer, stream, gpu_index);
+  cuda_drop_async(lwe_array_in_shifted_buffer, stream, gpu_index);
+  cuda_drop_async(lwe_array_out_ks_buffer, stream, gpu_index);
+  cuda_drop_async(lwe_array_out_pbs_buffer, stream, gpu_index);
+  cuda_drop_async(lwe_array_out_bit_extract, stream, gpu_index);
+}
+
 template <typename Torus, typename STorus, class params>
 __host__ void host_wop_pbs(
     void *v_stream, uint32_t gpu_index, Torus *lwe_array_out,
     Torus *lwe_array_in, Torus *lut_vector, double2 *fourier_bsk, Torus *ksk,
-    Torus *cbs_fpksk, uint32_t glwe_dimension, uint32_t lwe_dimension,
-    uint32_t polynomial_size, uint32_t base_log_bsk, uint32_t level_count_bsk,
-    uint32_t base_log_ksk, uint32_t level_count_ksk, uint32_t base_log_pksk,
-    uint32_t level_count_pksk, uint32_t base_log_cbs, uint32_t level_count_cbs,
+    Torus *cbs_fpksk, uint32_t *lut_vector_indexes, Torus *lut_pbs,
+    Torus *lwe_array_in_buffer, Torus *lwe_array_in_shifted_buffer,
+    Torus *lwe_array_out_ks_buffer, Torus *lwe_array_out_pbs_buffer,
+    Torus *lwe_array_out_bit_extract, uint32_t glwe_dimension,
+    uint32_t lwe_dimension, uint32_t polynomial_size, uint32_t base_log_bsk,
+    uint32_t level_count_bsk, uint32_t base_log_ksk, uint32_t level_count_ksk,
+    uint32_t base_log_pksk, uint32_t level_count_pksk, uint32_t base_log_cbs,
+    uint32_t level_count_cbs,
     uint32_t number_of_bits_of_message_including_padding,
-    uint32_t number_of_bits_to_extract, uint32_t number_of_inputs,
-    uint32_t max_shared_memory) {
+    uint32_t number_of_bits_to_extract, uint32_t delta_log,
+    uint32_t number_of_inputs, uint32_t max_shared_memory) {
 
-  auto stream = static_cast<cudaStream_t *>(v_stream);
-
-  // let mut h_lut_vector_indexes = vec![0 as u32; 1];
-  // indexes of lut vectors for bit extract
-  uint32_t *h_lut_vector_indexes = (uint32_t *)malloc(sizeof(uint32_t));
-  h_lut_vector_indexes[0] = 0;
-  uint32_t *lut_vector_indexes =
-      (uint32_t *)cuda_malloc_async(sizeof(uint32_t), stream, gpu_index);
-  cuda_memcpy_async_to_gpu(lut_vector_indexes, h_lut_vector_indexes,
-                           sizeof(uint32_t), stream, gpu_index);
-  checkCudaErrors(cudaGetLastError());
-  Torus *lut_pbs = (Torus *)cuda_malloc_async(
-      (2 * polynomial_size) * sizeof(Torus), stream, gpu_index);
-  Torus *lwe_array_in_buffer = (Torus *)cuda_malloc_async(
-      (polynomial_size + 1) * sizeof(Torus), stream, gpu_index);
-  Torus *lwe_array_in_shifted_buffer = (Torus *)cuda_malloc_async(
-      (polynomial_size + 1) * sizeof(Torus), stream, gpu_index);
-  Torus *lwe_array_out_ks_buffer = (Torus *)cuda_malloc_async(
-      (lwe_dimension + 1) * sizeof(Torus), stream, gpu_index);
-  Torus *lwe_array_out_pbs_buffer = (Torus *)cuda_malloc_async(
-      (polynomial_size + 1) * sizeof(Torus), stream, gpu_index);
-  Torus *lwe_array_out_bit_extract = (Torus *)cuda_malloc_async(
-      (lwe_dimension + 1) * (number_of_bits_of_message_including_padding) *
-          sizeof(Torus),
-      stream, gpu_index);
-  uint32_t ciphertext_n_bits = sizeof(Torus) * 8;
-  uint32_t delta_log =
-      ciphertext_n_bits - number_of_bits_of_message_including_padding;
   host_extract_bits<Torus, params>(
       v_stream, gpu_index, lwe_array_out_bit_extract, lwe_array_in,
       lwe_array_in_buffer, lwe_array_in_shifted_buffer, lwe_array_out_ks_buffer,
@@ -176,12 +206,6 @@ __host__ void host_wop_pbs(
       base_log_bsk, level_count_bsk, base_log_ksk, level_count_ksk,
       number_of_inputs, max_shared_memory);
   checkCudaErrors(cudaGetLastError());
-  cuda_drop_async(lut_pbs, stream, gpu_index);
-  cuda_drop_async(lut_vector_indexes, stream, gpu_index);
-  cuda_drop_async(lwe_array_in_buffer, stream, gpu_index);
-  cuda_drop_async(lwe_array_in_shifted_buffer, stream, gpu_index);
-  cuda_drop_async(lwe_array_out_ks_buffer, stream, gpu_index);
-  cuda_drop_async(lwe_array_out_pbs_buffer, stream, gpu_index);
 
   host_circuit_bootstrap_vertical_packing<Torus, STorus, params>(
       v_stream, gpu_index, lwe_array_out, lwe_array_out_bit_extract, lut_vector,
@@ -190,8 +214,6 @@ __host__ void host_wop_pbs(
       base_log_cbs, level_count_cbs,
       number_of_inputs * number_of_bits_to_extract, number_of_inputs,
       max_shared_memory);
-
   checkCudaErrors(cudaGetLastError());
-  cuda_drop_async(lwe_array_out_bit_extract, stream, gpu_index);
 }
 #endif // WOP_PBS_H
