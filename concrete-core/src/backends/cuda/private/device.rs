@@ -731,6 +731,21 @@ impl CudaStream {
         if T::BITS == 32 {
             unimplemented!()
         } else if T::BITS == 64 {
+            let mut cbs_vp_buffer: *mut c_void = std::ptr::null_mut();
+            let mut cbs_delta_log: u32 = 0;
+            scratch_cuda_circuit_bootstrap_vertical_packing_64(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                &mut cbs_vp_buffer as *mut *mut c_void,
+                &mut cbs_delta_log as *mut u32,
+                glwe_dimension.0 as u32,
+                lwe_dimension.0 as u32,
+                polynomial_size.0 as u32,
+                level_count_cbs.0 as u32,
+                number_of_inputs.0 as u32,
+                lut_number as u32,
+                true,
+            );
             cuda_circuit_bootstrap_vertical_packing_64(
                 self.stream.0,
                 self.gpu_index.0 as u32,
@@ -739,6 +754,8 @@ impl CudaStream {
                 fourier_bsk.as_c_ptr(),
                 cbs_fpksk.as_c_ptr(),
                 lut_vector.as_c_ptr(),
+                cbs_vp_buffer,
+                cbs_delta_log,
                 polynomial_size.0 as u32,
                 glwe_dimension.0 as u32,
                 lwe_dimension.0 as u32,
@@ -751,6 +768,11 @@ impl CudaStream {
                 number_of_inputs.0 as u32,
                 lut_number as u32,
                 max_shared_memory.0 as u32,
+            );
+            cleanup_cuda_circuit_bootstrap_vertical_packing_64(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                &mut cbs_vp_buffer as *mut *mut c_void,
             );
         }
         cuda_synchronize_stream(self.stream.0);
@@ -785,6 +807,23 @@ impl CudaStream {
         if T::BITS == 32 {
             unimplemented!()
         } else if T::BITS == 64 {
+            let mut wop_pbs_buffer: *mut c_void = std::ptr::null_mut();
+            let mut delta_log: u32 = 0;
+            let mut cbs_delta_log: u32 = 0;
+            scratch_cuda_wop_pbs_64(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                &mut wop_pbs_buffer as *mut *mut c_void,
+                &mut delta_log as *mut u32,
+                &mut cbs_delta_log as *mut u32,
+                glwe_dimension.0 as u32,
+                lwe_dimension.0 as u32,
+                polynomial_size.0 as u32,
+                level_count_cbs.0 as u32,
+                number_of_bits_of_message_including_padding.0 as u32,
+                number_of_bits_to_extract.0 as u32,
+                number_of_inputs.0 as u32,
+            );
             cuda_wop_pbs_64(
                 self.stream.0,
                 self.gpu_index.0 as u32,
@@ -794,6 +833,8 @@ impl CudaStream {
                 fourier_bsk.as_c_ptr(),
                 ksk.as_c_ptr(),
                 cbs_fpksk.as_c_ptr(),
+                wop_pbs_buffer,
+                cbs_delta_log,
                 glwe_dimension.0 as u32,
                 lwe_dimension.0 as u32,
                 polynomial_size.0 as u32,
@@ -807,8 +848,14 @@ impl CudaStream {
                 level_count_cbs.0 as u32,
                 number_of_bits_of_message_including_padding.0 as u32,
                 number_of_bits_to_extract.0 as u32,
+                delta_log,
                 number_of_inputs.0 as u32,
                 max_shared_memory.0 as u32,
+            );
+            cleanup_cuda_wop_pbs_64(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                &mut wop_pbs_buffer as *mut *mut c_void,
             );
         }
         cuda_synchronize_stream(self.stream.0);
