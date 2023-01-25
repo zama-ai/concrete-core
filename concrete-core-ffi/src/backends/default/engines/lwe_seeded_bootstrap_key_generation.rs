@@ -5,20 +5,20 @@ use crate::utils::*;
 use concrete_core::prelude::*;
 use std::os::raw::c_int;
 
-/// Generate a new `LweSeededBootstrapKey64` with a `DefaultEngine`.
+/// Generate a new `LweSeededBootstrapKey32` with a `DefaultEngine`.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_generate_new_lwe_seeded_bootstrap_key_u64(
+pub unsafe extern "C" fn default_engine_generate_new_lwe_seeded_bootstrap_key_u32(
     engine: *mut DefaultEngine,
-    input_key: *const LweSecretKey64,
-    output_key: *const GlweSecretKey64,
+    input_key: *const LweSecretKey32,
+    output_key: *const GlweSecretKey32,
     decomposition_base_log: usize,
     decomposition_level_count: usize,
     noise: f64,
-    result: *mut *mut LweSeededBootstrapKey64,
+    result: *mut *mut LweSeededBootstrapKey32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(result).unwrap();
@@ -50,16 +50,16 @@ pub unsafe extern "C" fn default_engine_generate_new_lwe_seeded_bootstrap_key_u6
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_engine_generate_new_lwe_seeded_bootstrap_key_u64`]
+/// [`default_engine_generate_new_lwe_seeded_bootstrap_key_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_generate_new_lwe_seeded_bootstrap_key_unchecked_u64(
+pub unsafe extern "C" fn default_engine_generate_new_lwe_seeded_bootstrap_key_unchecked_u32(
     engine: *mut DefaultEngine,
-    input_key: *const LweSecretKey64,
-    output_key: *const GlweSecretKey64,
+    input_key: *const LweSecretKey32,
+    output_key: *const GlweSecretKey32,
     decomposition_base_log: usize,
     decomposition_level_count: usize,
     noise: f64,
-    result: *mut *mut LweSeededBootstrapKey64,
+    result: *mut *mut LweSeededBootstrapKey32,
 ) -> c_int {
     catch_panic(|| {
         // First fill the result with a null ptr so that if we fail and the return code is not
@@ -83,21 +83,21 @@ pub unsafe extern "C" fn default_engine_generate_new_lwe_seeded_bootstrap_key_un
     })
 }
 
-/// Generate a new an `LweSeededBootstrapKey64` with a `DefaultParallelEngine`.
+/// Generate a new an `LweSeededBootstrapKey32` with a `DefaultParallelEngine`.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
 #[cfg(feature = "backend_default_parallel")]
-pub unsafe extern "C" fn default_parallel_engine_generate_new_lwe_seeded_bootstrap_key_u64(
+pub unsafe extern "C" fn default_parallel_engine_generate_new_lwe_seeded_bootstrap_key_u32(
     engine: *mut DefaultParallelEngine,
-    input_key: *const LweSecretKey64,
-    output_key: *const GlweSecretKey64,
+    input_key: *const LweSecretKey32,
+    output_key: *const GlweSecretKey32,
     decomposition_base_log: usize,
     decomposition_level_count: usize,
     noise: f64,
-    result: *mut *mut LweSeededBootstrapKey64,
+    result: *mut *mut LweSeededBootstrapKey32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(result).unwrap();
@@ -129,17 +129,17 @@ pub unsafe extern "C" fn default_parallel_engine_generate_new_lwe_seeded_bootstr
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_parallel_engine_generate_new_lwe_seeded_bootstrap_key_u64`]
+/// [`default_parallel_engine_generate_new_lwe_seeded_bootstrap_key_u32`]
 #[no_mangle]
 #[cfg(feature = "backend_default_parallel")]
-pub unsafe extern "C" fn default_parallel_engine_generate_new_lwe_seeded_bootstrap_key_unchecked_u64(
+pub unsafe extern "C" fn default_parallel_engine_generate_new_lwe_seeded_bootstrap_key_unchecked_u32(
     engine: *mut DefaultParallelEngine,
-    input_key: *const LweSecretKey64,
-    output_key: *const GlweSecretKey64,
+    input_key: *const LweSecretKey32,
+    output_key: *const GlweSecretKey32,
     decomposition_base_log: usize,
     decomposition_level_count: usize,
     noise: f64,
-    result: *mut *mut LweSeededBootstrapKey64,
+    result: *mut *mut LweSeededBootstrapKey32,
 ) -> c_int {
     catch_panic(|| {
         // First fill the result with a null ptr so that if we fail and the return code is not

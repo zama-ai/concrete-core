@@ -4,7 +4,7 @@
 
 SeederBuilder *get_best_seeder() {
   SeederBuilder *builder = NULL;
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_32__) || defined(_M_X32)
   bool rdseed_seeder_available = false;
   int rdseed_seeder_available_ok = rdseed_seeder_is_available(&rdseed_seeder_available);
   assert(rdseed_seeder_available_ok == 0);
@@ -38,9 +38,9 @@ SeederBuilder *get_best_seeder() {
   if (unix_seeder_available) {
     // DANGER DANGER DANGER DANGER DANGER DANGER
     // HIGHLY UNSAFE ONLY FOR TESTING PURPOSES
-    uint64_t secret_high_64 = 0;
-    uint64_t secret_low_64 = 0;
-    int get_builder_ok = get_unix_seeder_builder(secret_high_64, secret_low_64, &builder);
+    uint32_t secret_high_32 = 0;
+    uint32_t secret_low_32 = 0;
+    int get_builder_ok = get_unix_seeder_builder(secret_high_32, secret_low_32, &builder);
     assert(get_builder_ok == 0);
     printf("Using Unix seeder.\n");
     return builder;
@@ -52,7 +52,7 @@ SeederBuilder *get_best_seeder() {
 
 SeederBuilder *get_best_seeder_unchecked() {
   SeederBuilder *builder = NULL;
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_32__) || defined(_M_X32)
   bool rdseed_seeder_available = false;
   int rdseed_seeder_available_ok = rdseed_seeder_is_available_unchecked(&rdseed_seeder_available);
   assert(rdseed_seeder_available_ok == 0);
@@ -86,9 +86,9 @@ SeederBuilder *get_best_seeder_unchecked() {
   if (unix_seeder_available) {
     // DANGER DANGER DANGER DANGER DANGER DANGER
     // HIGHLY UNSAFE ONLY FOR TESTING PURPOSES
-    uint64_t secret_high_64 = 0;
-    uint64_t secret_low_64 = 0;
-    int get_builder_ok = get_unix_seeder_builder_unchecked(secret_high_64, secret_low_64, &builder);
+    uint32_t secret_high_32 = 0;
+    uint32_t secret_low_32 = 0;
+    int get_builder_ok = get_unix_seeder_builder_unchecked(secret_high_32, secret_low_32, &builder);
     assert(get_builder_ok == 0);
     printf("Using Unix seeder.\n");
     return builder;
@@ -99,17 +99,17 @@ SeederBuilder *get_best_seeder_unchecked() {
 }
 
 // This is not part of the C FFI but rather is a C util exposed for convenience in tests.
-int clone_transform_lwe_secret_key_to_glwe_secret_key_u64(DefaultEngine *default_engine,
-                                                          LweSecretKey64 *input_lwe_sk,
+int clone_transform_lwe_secret_key_to_glwe_secret_key_u32(DefaultEngine *default_engine,
+                                                          LweSecretKey32 *input_lwe_sk,
                                                           size_t poly_size,
-                                                          GlweSecretKey64 **output_glwe_sk) {
-  LweSecretKey64 *input_lwe_sk_clone = NULL;
-  int lwe_in_sk_clone_ok = clone_lwe_secret_key_u64(input_lwe_sk, &input_lwe_sk_clone);
+                                                          GlweSecretKey32 **output_glwe_sk) {
+  LweSecretKey32 *input_lwe_sk_clone = NULL;
+  int lwe_in_sk_clone_ok = clone_lwe_secret_key_u32(input_lwe_sk, &input_lwe_sk_clone);
   if (lwe_in_sk_clone_ok != 0) {
     return 1;
   }
 
-  int glwe_sk_ok = default_engine_transform_lwe_secret_key_to_glwe_secret_key_u64(
+  int glwe_sk_ok = default_engine_transform_lwe_secret_key_to_glwe_secret_key_u32(
       default_engine, &input_lwe_sk_clone, poly_size, output_glwe_sk);
   if (glwe_sk_ok != 0) {
     return 1;
@@ -123,16 +123,16 @@ int clone_transform_lwe_secret_key_to_glwe_secret_key_u64(DefaultEngine *default
 }
 
 // This is not part of the C FFI but rather is a C util exposed for convenience in tests.
-int clone_transform_lwe_secret_key_to_glwe_secret_key_unchecked_u64(
-    DefaultEngine *default_engine, LweSecretKey64 *input_lwe_sk, size_t poly_size,
-    GlweSecretKey64 **output_glwe_sk) {
-  LweSecretKey64 *input_lwe_sk_clone = NULL;
-  int lwe_in_sk_clone_ok = clone_lwe_secret_key_unchecked_u64(input_lwe_sk, &input_lwe_sk_clone);
+int clone_transform_lwe_secret_key_to_glwe_secret_key_unchecked_u32(
+    DefaultEngine *default_engine, LweSecretKey32 *input_lwe_sk, size_t poly_size,
+    GlweSecretKey32 **output_glwe_sk) {
+  LweSecretKey32 *input_lwe_sk_clone = NULL;
+  int lwe_in_sk_clone_ok = clone_lwe_secret_key_unchecked_u32(input_lwe_sk, &input_lwe_sk_clone);
   if (lwe_in_sk_clone_ok != 0) {
     return 1;
   }
 
-  int glwe_sk_ok = default_engine_transform_lwe_secret_key_to_glwe_secret_key_unchecked_u64(
+  int glwe_sk_ok = default_engine_transform_lwe_secret_key_to_glwe_secret_key_unchecked_u32(
       default_engine, &input_lwe_sk_clone, poly_size, output_glwe_sk);
   if (glwe_sk_ok != 0) {
     return 1;
@@ -146,16 +146,16 @@ int clone_transform_lwe_secret_key_to_glwe_secret_key_unchecked_u64(
 }
 
 // This is not part of the C FFI but rather is a C util exposed for convenience in tests.
-int clone_transform_glwe_secret_key_to_lwe_secret_key_u64(DefaultEngine *default_engine,
-                                                          GlweSecretKey64 *input_glwe_sk,
-                                                          LweSecretKey64 **output_lwe_sk) {
-  GlweSecretKey64 *input_glwe_sk_clone = NULL;
-  int glwe_in_sk_clone_ok = clone_glwe_secret_key_u64(input_glwe_sk, &input_glwe_sk_clone);
+int clone_transform_glwe_secret_key_to_lwe_secret_key_u32(DefaultEngine *default_engine,
+                                                          GlweSecretKey32 *input_glwe_sk,
+                                                          LweSecretKey32 **output_lwe_sk) {
+  GlweSecretKey32 *input_glwe_sk_clone = NULL;
+  int glwe_in_sk_clone_ok = clone_glwe_secret_key_u32(input_glwe_sk, &input_glwe_sk_clone);
   if (glwe_in_sk_clone_ok != 0) {
     return 1;
   }
 
-  int lwe_sk_ok = default_engine_transform_glwe_secret_key_to_lwe_secret_key_u64(
+  int lwe_sk_ok = default_engine_transform_glwe_secret_key_to_lwe_secret_key_u32(
       default_engine, &input_glwe_sk_clone, output_lwe_sk);
   if (lwe_sk_ok != 0) {
     return 1;
@@ -169,16 +169,16 @@ int clone_transform_glwe_secret_key_to_lwe_secret_key_u64(DefaultEngine *default
 }
 
 // This is not part of the C FFI but rather is a C util exposed for convenience in tests.
-int clone_transform_glwe_secret_key_to_lwe_secret_key_unchecked_u64(
-    DefaultEngine *default_engine, GlweSecretKey64 *input_glwe_sk, LweSecretKey64 **output_lwe_sk) {
-  GlweSecretKey64 *input_glwe_sk_clone = NULL;
+int clone_transform_glwe_secret_key_to_lwe_secret_key_unchecked_u32(
+    DefaultEngine *default_engine, GlweSecretKey32 *input_glwe_sk, LweSecretKey32 **output_lwe_sk) {
+  GlweSecretKey32 *input_glwe_sk_clone = NULL;
   int glwe_in_sk_clone_ok =
-      clone_glwe_secret_key_unchecked_u64(input_glwe_sk, &input_glwe_sk_clone);
+      clone_glwe_secret_key_unchecked_u32(input_glwe_sk, &input_glwe_sk_clone);
   if (glwe_in_sk_clone_ok != 0) {
     return 1;
   }
 
-  int lwe_sk_ok = default_engine_transform_glwe_secret_key_to_lwe_secret_key_unchecked_u64(
+  int lwe_sk_ok = default_engine_transform_glwe_secret_key_to_lwe_secret_key_unchecked_u32(
       default_engine, &input_glwe_sk_clone, output_lwe_sk);
   if (lwe_sk_ok != 0) {
     return 1;
@@ -191,21 +191,21 @@ int clone_transform_glwe_secret_key_to_lwe_secret_key_unchecked_u64(
   return 0;
 }
 
-uint64_t closest_representable(uint64_t input, uint64_t level_count, uint64_t base_log) {
+uint32_t closest_representable(uint32_t input, uint32_t level_count, uint32_t base_log) {
   // The closest number representable by the decomposition can be computed by performing
   // the rounding at the appropriate bit.
 
   // We compute the number of least significant bits which can not be represented by the
   // decomposition
-  uint64_t non_rep_bit_count = (uint64_t)64 - (level_count * base_log);
+  uint32_t non_rep_bit_count = (uint32_t)32 - (level_count * base_log);
   // We generate a mask which captures the non representable bits
-  uint64_t non_rep_mask = (uint64_t)1 << (non_rep_bit_count - 1);
+  uint32_t non_rep_mask = (uint32_t)1 << (non_rep_bit_count - 1);
   // We retrieve the non representable bits
-  uint64_t non_rep_bits = input & non_rep_mask;
+  uint32_t non_rep_bits = input & non_rep_mask;
   // We extract the msb of the  non representable bits to perform the rounding
-  uint64_t non_rep_msb = non_rep_bits >> (non_rep_bit_count - (uint64_t)1);
+  uint32_t non_rep_msb = non_rep_bits >> (non_rep_bit_count - (uint32_t)1);
   // We remove the non-representable bits and perform the rounding
-  uint64_t res = input >> non_rep_bit_count;
+  uint32_t res = input >> non_rep_bit_count;
   res = res + non_rep_msb;
   return res << non_rep_bit_count;
 }

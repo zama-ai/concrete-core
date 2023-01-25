@@ -5,19 +5,19 @@ use crate::utils::*;
 use concrete_core::prelude::*;
 use std::os::raw::c_int;
 
-/// Transform a `GlweSecretKey64` into an `LweSecretKey64`.
+/// Transform a `GlweSecretKey32` into an `LweSecretKey32`.
 ///
-/// The passed `GlweSecretKey64` is consumed and cannot be accessed afterwards, the passed input
+/// The passed `GlweSecretKey32` is consumed and cannot be accessed afterwards, the passed input
 /// pointer is set to NULL by this function.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_transform_glwe_secret_key_to_lwe_secret_key_u64(
+pub unsafe extern "C" fn default_engine_transform_glwe_secret_key_to_lwe_secret_key_u32(
     engine: *mut DefaultEngine,
-    glwe_secret_key: *mut *mut GlweSecretKey64,
-    result: *mut *mut LweSecretKey64,
+    glwe_secret_key: *mut *mut GlweSecretKey32,
+    result: *mut *mut LweSecretKey32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(result).unwrap();
@@ -50,12 +50,12 @@ pub unsafe extern "C" fn default_engine_transform_glwe_secret_key_to_lwe_secret_
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_engine_transform_glwe_secret_key_to_lwe_secret_key_u64`]
+/// [`default_engine_transform_glwe_secret_key_to_lwe_secret_key_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_transform_glwe_secret_key_to_lwe_secret_key_unchecked_u64(
+pub unsafe extern "C" fn default_engine_transform_glwe_secret_key_to_lwe_secret_key_unchecked_u32(
     engine: *mut DefaultEngine,
-    glwe_secret_key: *mut *mut GlweSecretKey64,
-    result: *mut *mut LweSecretKey64,
+    glwe_secret_key: *mut *mut GlweSecretKey32,
+    result: *mut *mut LweSecretKey32,
 ) -> c_int {
     catch_panic(|| {
         // First fill the result with a null ptr so that if we fail and the return code is not

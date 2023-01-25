@@ -5,13 +5,13 @@ use crate::utils::*;
 use concrete_core::prelude::*;
 use std::os::raw::c_int;
 
-/// Fill result with a clone of the input `GlweSecretKey64`.
+/// Fill result with a clone of the input `GlweSecretKey32`.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn clone_glwe_secret_key_u64(
-    glwe_secret_key: *const GlweSecretKey64,
-    result: *mut *mut GlweSecretKey64,
+pub unsafe extern "C" fn clone_glwe_secret_key_u32(
+    glwe_secret_key: *const GlweSecretKey32,
+    result: *mut *mut GlweSecretKey32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(result).unwrap();
@@ -29,11 +29,11 @@ pub unsafe extern "C" fn clone_glwe_secret_key_u64(
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`clone_glwe_secret_key_u64`]
+/// [`clone_glwe_secret_key_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn clone_glwe_secret_key_unchecked_u64(
-    glwe_secret_key: *const GlweSecretKey64,
-    result: *mut *mut GlweSecretKey64,
+pub unsafe extern "C" fn clone_glwe_secret_key_unchecked_u32(
+    glwe_secret_key: *const GlweSecretKey32,
+    result: *mut *mut GlweSecretKey32,
 ) -> c_int {
     catch_panic(|| {
         // First fill the result with a null ptr so that if we fail and the return code is not

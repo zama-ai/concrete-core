@@ -5,20 +5,20 @@ use crate::utils::*;
 use concrete_core::prelude::*;
 use std::os::raw::c_int;
 
-/// Generate a new `LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64`.
+/// Generate a new `LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32`.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u64(
+pub unsafe extern "C" fn default_engine_generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u32(
     engine: *mut DefaultEngine,
-    input_lwe_key: *const LweSecretKey64,
-    output_glwe_key: *const GlweSecretKey64,
+    input_lwe_key: *const LweSecretKey32,
+    output_glwe_key: *const GlweSecretKey32,
     cbs_pfpksk_decomposition_base_log: usize,
     cbs_pfpksk_decomposition_level_count: usize,
     noise: f64,
-    result: *mut *mut LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+    result: *mut *mut LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(result).unwrap();
@@ -49,16 +49,16 @@ pub unsafe extern "C" fn default_engine_generate_new_lwe_circuit_bootstrap_priva
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_engine_generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u64`]
+/// [`default_engine_generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_unchecked_u64(
+pub unsafe extern "C" fn default_engine_generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_unchecked_u32(
     engine: *mut DefaultEngine,
-    input_lwe_key: *const LweSecretKey64,
-    output_glwe_key: *const GlweSecretKey64,
+    input_lwe_key: *const LweSecretKey32,
+    output_glwe_key: *const GlweSecretKey32,
     cbs_pfpksk_decomposition_base_log: usize,
     cbs_pfpksk_decomposition_level_count: usize,
     noise: f64,
-    result: *mut *mut LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+    result: *mut *mut LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32,
 ) -> c_int {
     catch_panic(|| {
         // First fill the result with a null ptr so that if we fail and the return code is not
@@ -84,20 +84,20 @@ pub unsafe extern "C" fn default_engine_generate_new_lwe_circuit_bootstrap_priva
     })
 }
 
-/// Generate a new `LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64`.
+/// Generate a new `LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32`.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_parallel_engine_generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u64(
+pub unsafe extern "C" fn default_parallel_engine_generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u32(
     engine: *mut DefaultParallelEngine,
-    input_lwe_key: *const LweSecretKey64,
-    output_glwe_key: *const GlweSecretKey64,
+    input_lwe_key: *const LweSecretKey32,
+    output_glwe_key: *const GlweSecretKey32,
     cbs_pfpksk_decomposition_base_log: usize,
     cbs_pfpksk_decomposition_level_count: usize,
     noise: f64,
-    result: *mut *mut LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+    result: *mut *mut LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(result).unwrap();
@@ -128,16 +128,16 @@ pub unsafe extern "C" fn default_parallel_engine_generate_new_lwe_circuit_bootst
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_parallel_engine_generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u64`]
+/// [`default_parallel_engine_generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn default_parallel_engine_generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_unchecked_u64(
+pub unsafe extern "C" fn default_parallel_engine_generate_new_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_unchecked_u32(
     engine: *mut DefaultParallelEngine,
-    input_lwe_key: *const LweSecretKey64,
-    output_glwe_key: *const GlweSecretKey64,
+    input_lwe_key: *const LweSecretKey32,
+    output_glwe_key: *const GlweSecretKey32,
     cbs_pfpksk_decomposition_base_log: usize,
     cbs_pfpksk_decomposition_level_count: usize,
     noise: f64,
-    result: *mut *mut LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+    result: *mut *mut LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32,
 ) -> c_int {
     catch_panic(|| {
         // First fill the result with a null ptr so that if we fail and the return code is not

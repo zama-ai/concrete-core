@@ -5,16 +5,16 @@ use crate::utils::*;
 use concrete_core::prelude::*;
 use std::os::raw::c_int;
 
-/// Converts an `LweKeyswitchKey64` into an `LweKeyswitchKeyMutView64`. View buffer variant.
+/// Converts an `LweKeyswitchKey32` into an `LweKeyswitchKeyMutView32`. View buffer variant.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_discard_convert_lwe_keyswitch_key_to_lwe_keyswitch_key_mut_view_u64_view_buffers(
+pub unsafe extern "C" fn default_engine_discard_convert_lwe_keyswitch_key_to_lwe_keyswitch_key_mut_view_u32_view_buffers(
     engine: *mut DefaultEngine,
-    input: *const LweKeyswitchKey64,
-    output: *mut LweKeyswitchKeyMutView64,
+    input: *const LweKeyswitchKey32,
+    output: *mut LweKeyswitchKeyMutView32,
 ) -> c_int {
     catch_panic(|| {
         let engine = get_mut_checked(engine).unwrap();
@@ -30,12 +30,12 @@ pub unsafe extern "C" fn default_engine_discard_convert_lwe_keyswitch_key_to_lwe
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_engine_discard_convert_lwe_keyswitch_key_to_lwe_keyswitch_key_mut_view_u64_view_buffers`]
+/// [`default_engine_discard_convert_lwe_keyswitch_key_to_lwe_keyswitch_key_mut_view_u32_view_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_discard_convert_lwe_keyswitch_key_to_lwe_keyswitch_key_mut_view_unchecked_u64_view_buffers(
+pub unsafe extern "C" fn default_engine_discard_convert_lwe_keyswitch_key_to_lwe_keyswitch_key_mut_view_unchecked_u32_view_buffers(
     engine: *mut DefaultEngine,
-    input: *const LweKeyswitchKey64,
-    output: *mut LweKeyswitchKeyMutView64,
+    input: *const LweKeyswitchKey32,
+    output: *mut LweKeyswitchKeyMutView32,
 ) -> c_int {
     catch_panic(|| {
         let engine = &mut *engine;
@@ -48,12 +48,12 @@ pub unsafe extern "C" fn default_engine_discard_convert_lwe_keyswitch_key_to_lwe
 }
 
 /// Raw pointer buffer variant of
-/// [`default_engine_discard_convert_lwe_keyswitch_key_to_lwe_keyswitch_key_mut_view_u64_view_buffers`]
+/// [`default_engine_discard_convert_lwe_keyswitch_key_to_lwe_keyswitch_key_mut_view_u32_view_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_discard_convert_lwe_keyswitch_key_to_lwe_keyswitch_key_mut_view_u64_raw_ptr_buffers(
+pub unsafe extern "C" fn default_engine_discard_convert_lwe_keyswitch_key_to_lwe_keyswitch_key_mut_view_u32_raw_ptr_buffers(
     engine: *mut DefaultEngine,
-    input: *const LweKeyswitchKey64,
-    output: *mut u64,
+    input: *const LweKeyswitchKey32,
+    output: *mut u32,
 ) -> c_int {
     catch_panic(|| {
         let engine = get_mut_checked(engine).unwrap();
@@ -90,12 +90,12 @@ pub unsafe extern "C" fn default_engine_discard_convert_lwe_keyswitch_key_to_lwe
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_engine_discard_convert_lwe_keyswitch_key_to_lwe_keyswitch_key_mut_view_u64_raw_ptr_buffers`]
+/// [`default_engine_discard_convert_lwe_keyswitch_key_to_lwe_keyswitch_key_mut_view_u32_raw_ptr_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_discard_convert_lwe_keyswitch_key_to_lwe_keyswitch_key_mut_view_unchecked_u64_raw_ptr_buffers(
+pub unsafe extern "C" fn default_engine_discard_convert_lwe_keyswitch_key_to_lwe_keyswitch_key_mut_view_unchecked_u32_raw_ptr_buffers(
     engine: *mut DefaultEngine,
-    input: *const LweKeyswitchKey64,
-    output: *mut u64,
+    input: *const LweKeyswitchKey32,
+    output: *mut u32,
 ) -> c_int {
     catch_panic(|| {
         let engine = &mut *engine;

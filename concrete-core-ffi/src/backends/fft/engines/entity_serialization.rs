@@ -4,19 +4,19 @@ use crate::utils::{
     get_mut_checked, get_ref_checked,
 };
 use concrete_core::prelude::{
-    EntitySerializationEngine, FftFourierLweBootstrapKey64, FftSerializationEngine,
+    EntitySerializationEngine, FftFourierLweBootstrapKey32, FftSerializationEngine,
 };
 use std::os::raw::c_int;
 
-/// Serializes a `FftFourierLweBootstrapKey64`.
+/// Serializes a `FftFourierLweBootstrapKey32`.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn fft_serialization_engine_serialize_fft_fourier_lwe_bootstrap_key_u64(
+pub unsafe extern "C" fn fft_serialization_engine_serialize_fft_fourier_lwe_bootstrap_key_u32(
     engine: *mut FftSerializationEngine,
-    bootstrap_key: *const FftFourierLweBootstrapKey64,
+    bootstrap_key: *const FftFourierLweBootstrapKey32,
     result: *mut Buffer,
 ) -> c_int {
     catch_panic(|| {
@@ -36,11 +36,11 @@ pub unsafe extern "C" fn fft_serialization_engine_serialize_fft_fourier_lwe_boot
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`fft_serialization_engine_serialize_fft_fourier_lwe_bootstrap_key_u64`]
+/// [`fft_serialization_engine_serialize_fft_fourier_lwe_bootstrap_key_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn fft_serialization_engine_serialize_fft_fourier_lwe_bootstrap_key_unchecked_u64(
+pub unsafe extern "C" fn fft_serialization_engine_serialize_fft_fourier_lwe_bootstrap_key_unchecked_u32(
     engine: *mut FftSerializationEngine,
-    bootstrap_key: *const FftFourierLweBootstrapKey64,
+    bootstrap_key: *const FftFourierLweBootstrapKey32,
     result: *mut Buffer,
 ) -> c_int {
     catch_panic(|| {

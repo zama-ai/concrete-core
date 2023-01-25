@@ -5,20 +5,20 @@ use crate::utils::*;
 use concrete_core::prelude::*;
 use std::os::raw::c_int;
 
-/// Generate a new `LweSeededKeyswitchKey64`.
+/// Generate a new `LweSeededKeyswitchKey32`.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_generate_new_lwe_seeded_keyswitch_key_u64(
+pub unsafe extern "C" fn default_engine_generate_new_lwe_seeded_keyswitch_key_u32(
     engine: *mut DefaultEngine,
-    input_key: *const LweSecretKey64,
-    output_key: *const LweSecretKey64,
+    input_key: *const LweSecretKey32,
+    output_key: *const LweSecretKey32,
     decomp_level_count: usize,
     decomp_base_log: usize,
     noise: f64,
-    result: *mut *mut LweSeededKeyswitchKey64,
+    result: *mut *mut LweSeededKeyswitchKey32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(result).unwrap();
@@ -50,16 +50,16 @@ pub unsafe extern "C" fn default_engine_generate_new_lwe_seeded_keyswitch_key_u6
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_engine_generate_new_lwe_seeded_keyswitch_key_u64`]
+/// [`default_engine_generate_new_lwe_seeded_keyswitch_key_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_generate_new_lwe_seeded_keyswitch_key_unchecked_u64(
+pub unsafe extern "C" fn default_engine_generate_new_lwe_seeded_keyswitch_key_unchecked_u32(
     engine: *mut DefaultEngine,
-    input_key: *const LweSecretKey64,
-    output_key: *const LweSecretKey64,
+    input_key: *const LweSecretKey32,
+    output_key: *const LweSecretKey32,
     decomp_level_count: usize,
     decomp_base_log: usize,
     noise: f64,
-    result: *mut *mut LweSeededKeyswitchKey64,
+    result: *mut *mut LweSeededKeyswitchKey32,
 ) -> c_int {
     catch_panic(|| {
         // First fill the result with a null ptr so that if we fail and the return code is not

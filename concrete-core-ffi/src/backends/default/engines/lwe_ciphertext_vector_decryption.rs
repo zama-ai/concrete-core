@@ -5,18 +5,18 @@ use crate::utils::*;
 use concrete_core::prelude::*;
 use std::os::raw::c_int;
 
-/// Decrypt an `LweCiphertextVectorView64`. The plaintext is also retrieved as a `u64` array
+/// Decrypt an `LweCiphertextVectorView32`. The plaintext is also retrieved as a `u32` array
 /// directly. View buffer variant.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_decrypt_lwe_ciphertext_vector_u64_view_buffers(
+pub unsafe extern "C" fn default_engine_decrypt_lwe_ciphertext_vector_u32_view_buffers(
     engine: *mut DefaultEngine,
-    secret_key: *const LweSecretKey64,
-    input: *const LweCiphertextVectorView64,
-    result: *mut u64,
+    secret_key: *const LweSecretKey32,
+    input: *const LweCiphertextVectorView32,
+    result: *mut u32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(result).unwrap();
@@ -45,13 +45,13 @@ pub unsafe extern "C" fn default_engine_decrypt_lwe_ciphertext_vector_u64_view_b
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_engine_decrypt_lwe_ciphertext_vector_u64_view_buffers`]
+/// [`default_engine_decrypt_lwe_ciphertext_vector_u32_view_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_decrypt_lwe_ciphertext_vector_unchecked_u64_view_buffers(
+pub unsafe extern "C" fn default_engine_decrypt_lwe_ciphertext_vector_unchecked_u32_view_buffers(
     engine: *mut DefaultEngine,
-    secret_key: *const LweSecretKey64,
-    input: *const LweCiphertextVectorView64,
-    result: *mut u64,
+    secret_key: *const LweSecretKey32,
+    input: *const LweCiphertextVectorView32,
+    result: *mut u32,
 ) -> c_int {
     catch_panic(|| {
         let engine = &mut (*engine);
@@ -73,13 +73,13 @@ pub unsafe extern "C" fn default_engine_decrypt_lwe_ciphertext_vector_unchecked_
 }
 
 /// Raw pointer buffer variant of
-/// [`default_engine_decrypt_lwe_ciphertext_vector_u64_view_buffers`]
+/// [`default_engine_decrypt_lwe_ciphertext_vector_u32_view_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_decrypt_lwe_ciphertext_vector_u64_raw_ptr_buffers(
+pub unsafe extern "C" fn default_engine_decrypt_lwe_ciphertext_vector_u32_raw_ptr_buffers(
     engine: *mut DefaultEngine,
-    secret_key: *const LweSecretKey64,
-    input: *const u64,
-    result: *mut u64,
+    secret_key: *const LweSecretKey32,
+    input: *const u32,
+    result: *mut u32,
     lwe_count: usize,
 ) -> c_int {
     catch_panic(|| {
@@ -114,13 +114,13 @@ pub unsafe extern "C" fn default_engine_decrypt_lwe_ciphertext_vector_u64_raw_pt
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_engine_decrypt_lwe_ciphertext_vector_u64_raw_ptr_buffers`]
+/// [`default_engine_decrypt_lwe_ciphertext_vector_u32_raw_ptr_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_decrypt_lwe_ciphertext_vector_unchecked_u64_raw_ptr_buffers(
+pub unsafe extern "C" fn default_engine_decrypt_lwe_ciphertext_vector_unchecked_u32_raw_ptr_buffers(
     engine: *mut DefaultEngine,
-    secret_key: *const LweSecretKey64,
-    input: *const u64,
-    result: *mut u64,
+    secret_key: *const LweSecretKey32,
+    input: *const u32,
+    result: *mut u32,
     lwe_count: usize,
 ) -> c_int {
     catch_panic(|| {

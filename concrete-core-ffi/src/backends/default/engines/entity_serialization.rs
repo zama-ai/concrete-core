@@ -6,15 +6,15 @@ use crate::utils::{
 use concrete_core::prelude::*;
 use std::os::raw::c_int;
 
-/// Serializes an `LweSecretKey64`.
+/// Serializes an `LweSecretKey32`.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_secret_key_u64(
+pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_secret_key_u32(
     engine: *mut DefaultSerializationEngine,
-    secret_key: *const LweSecretKey64,
+    secret_key: *const LweSecretKey32,
     result: *mut Buffer,
 ) -> c_int {
     catch_panic(|| {
@@ -34,11 +34,11 @@ pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_secret_key_u
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_serialization_engine_serialize_lwe_secret_key_u64`]
+/// [`default_serialization_engine_serialize_lwe_secret_key_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_secret_key_unchecked_u64(
+pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_secret_key_unchecked_u32(
     engine: *mut DefaultSerializationEngine,
-    secret_key: *const LweSecretKey64,
+    secret_key: *const LweSecretKey32,
     result: *mut Buffer,
 ) -> c_int {
     catch_panic(|| {
@@ -51,15 +51,15 @@ pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_secret_key_u
     })
 }
 
-/// Serializes a `LweKeyswitchKey64`.
+/// Serializes a `LweKeyswitchKey32`.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_keyswitch_key_u64(
+pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_keyswitch_key_u32(
     engine: *mut DefaultSerializationEngine,
-    keyswitch_key: *const LweKeyswitchKey64,
+    keyswitch_key: *const LweKeyswitchKey32,
     result: *mut Buffer,
 ) -> c_int {
     catch_panic(|| {
@@ -79,11 +79,11 @@ pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_keyswitch_ke
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_serialization_engine_serialize_lwe_keyswitch_key_u64`]
+/// [`default_serialization_engine_serialize_lwe_keyswitch_key_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_keyswitch_key_unchecked_u64(
+pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_keyswitch_key_unchecked_u32(
     engine: *mut DefaultSerializationEngine,
-    keyswitch_key: *const LweKeyswitchKey64,
+    keyswitch_key: *const LweKeyswitchKey32,
     result: *mut Buffer,
 ) -> c_int {
     catch_panic(|| {
@@ -96,15 +96,15 @@ pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_keyswitch_ke
     })
 }
 
-/// Serializes a `LweSeededKeyswitchKey64`.
+/// Serializes a `LweSeededKeyswitchKey32`.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_seeded_keyswitch_key_u64(
+pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_seeded_keyswitch_key_u32(
     engine: *mut DefaultSerializationEngine,
-    seeded_keyswitch_key: *const LweSeededKeyswitchKey64,
+    seeded_keyswitch_key: *const LweSeededKeyswitchKey32,
     result: *mut Buffer,
 ) -> c_int {
     catch_panic(|| {
@@ -124,11 +124,11 @@ pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_seeded_keysw
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_serialization_engine_serialize_lwe_seeded_keyswitch_key_u64`]
+/// [`default_serialization_engine_serialize_lwe_seeded_keyswitch_key_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_seeded_keyswitch_key_unchecked_u64(
+pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_seeded_keyswitch_key_unchecked_u32(
     engine: *mut DefaultSerializationEngine,
-    seeded_keyswitch_key: *const LweSeededKeyswitchKey64,
+    seeded_keyswitch_key: *const LweSeededKeyswitchKey32,
     result: *mut Buffer,
 ) -> c_int {
     catch_panic(|| {
@@ -141,15 +141,15 @@ pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_seeded_keysw
     })
 }
 
-/// Serializes a `LweSeededBootstrapKey64`.
+/// Serializes a `LweSeededBootstrapKey32`.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_seeded_bootstrap_key_u64(
+pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_seeded_bootstrap_key_u32(
     engine: *mut DefaultSerializationEngine,
-    seeded_bootstrap_key: *const LweSeededBootstrapKey64,
+    seeded_bootstrap_key: *const LweSeededBootstrapKey32,
     result: *mut Buffer,
 ) -> c_int {
     catch_panic(|| {
@@ -170,11 +170,11 @@ pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_seeded_boots
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_serialization_engine_serialize_lwe_seeded_bootstrap_key_u64`]
+/// [`default_serialization_engine_serialize_lwe_seeded_bootstrap_key_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_seeded_bootstrap_key_unchecked_u64(
+pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_seeded_bootstrap_key_unchecked_u32(
     engine: *mut DefaultSerializationEngine,
-    seeded_bootstrap_key: *const LweSeededBootstrapKey64,
+    seeded_bootstrap_key: *const LweSeededBootstrapKey32,
     result: *mut Buffer,
 ) -> c_int {
     catch_panic(|| {
@@ -188,15 +188,15 @@ pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_seeded_boots
     })
 }
 
-/// Serializes a `LweBootstrapKey64`.
+/// Serializes a `LweBootstrapKey32`.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_bootstrap_key_u64(
+pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_bootstrap_key_u32(
     engine: *mut DefaultSerializationEngine,
-    bootstrap_key: *const LweBootstrapKey64,
+    bootstrap_key: *const LweBootstrapKey32,
     result: *mut Buffer,
 ) -> c_int {
     catch_panic(|| {
@@ -217,11 +217,11 @@ pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_bootstrap_ke
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_serialization_engine_serialize_lwe_bootstrap_key_u64`]
+/// [`default_serialization_engine_serialize_lwe_bootstrap_key_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_bootstrap_key_unchecked_u64(
+pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_bootstrap_key_unchecked_u32(
     engine: *mut DefaultSerializationEngine,
-    bootstrap_key: *const LweBootstrapKey64,
+    bootstrap_key: *const LweBootstrapKey32,
     result: *mut Buffer,
 ) -> c_int {
     catch_panic(|| {
@@ -235,15 +235,15 @@ pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_bootstrap_ke
     })
 }
 
-/// Serializes a `LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64`.
+/// Serializes a `LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32`.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u64(
+pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u32(
     engine: *mut DefaultSerializationEngine,
-    cbs_pfpksk: *const LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+    cbs_pfpksk: *const LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32,
     result: *mut Buffer,
 ) -> c_int {
     catch_panic(|| {
@@ -264,11 +264,11 @@ pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_circuit_boot
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_serialization_engine_serialize_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u64`]
+/// [`default_serialization_engine_serialize_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_unchecked_u64(
+pub unsafe extern "C" fn default_serialization_engine_serialize_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_unchecked_u32(
     engine: *mut DefaultSerializationEngine,
-    cbs_pfpksk: *const LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+    cbs_pfpksk: *const LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32,
     result: *mut Buffer,
 ) -> c_int {
     catch_panic(|| {

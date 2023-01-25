@@ -6,16 +6,16 @@ use crate::utils::{
 use concrete_core::prelude::*;
 use std::os::raw::c_int;
 
-/// Deserializes a `LweSecretKey64`.
+/// Deserializes a `LweSecretKey32`.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_secret_key_u64(
+pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_secret_key_u32(
     engine: *mut DefaultSerializationEngine,
     buffer: BufferView,
-    result: *mut *mut LweSecretKey64,
+    result: *mut *mut LweSecretKey32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(result).unwrap();
@@ -26,7 +26,7 @@ pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_secret_key
 
         let engine = get_mut_checked(engine).unwrap();
 
-        let secret_key: LweSecretKey64 = engine
+        let secret_key: LweSecretKey32 = engine
             .deserialize(buffer.into())
             .or_else(engine_error_as_readable_string)
             .unwrap();
@@ -36,12 +36,12 @@ pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_secret_key
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_serialization_engine_deserialize_lwe_secret_key_u64`]
+/// [`default_serialization_engine_deserialize_lwe_secret_key_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_secret_key_unchecked_u64(
+pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_secret_key_unchecked_u32(
     engine: *mut DefaultSerializationEngine,
     buffer: BufferView,
-    result: *mut *mut LweSecretKey64,
+    result: *mut *mut LweSecretKey32,
 ) -> c_int {
     catch_panic(|| {
         // First fill the result with a null ptr so that if we fail and the return code is not
@@ -49,22 +49,22 @@ pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_secret_key
         *result = std::ptr::null_mut();
 
         let engine = &mut (*engine);
-        let secret_key: LweSecretKey64 = engine.deserialize_unchecked(buffer.into());
+        let secret_key: LweSecretKey32 = engine.deserialize_unchecked(buffer.into());
 
         *result = Box::into_raw(Box::new(secret_key));
     })
 }
 
-/// Deserializes a `LweKeyswitchKey64`.
+/// Deserializes a `LweKeyswitchKey32`.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_keyswitch_key_u64(
+pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_keyswitch_key_u32(
     engine: *mut DefaultSerializationEngine,
     buffer: BufferView,
-    result: *mut *mut LweKeyswitchKey64,
+    result: *mut *mut LweKeyswitchKey32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(result).unwrap();
@@ -75,7 +75,7 @@ pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_keyswitch_
 
         let engine = get_mut_checked(engine).unwrap();
 
-        let keyswitch_key: LweKeyswitchKey64 = engine
+        let keyswitch_key: LweKeyswitchKey32 = engine
             .deserialize(buffer.into())
             .or_else(engine_error_as_readable_string)
             .unwrap();
@@ -85,12 +85,12 @@ pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_keyswitch_
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_serialization_engine_deserialize_lwe_keyswitch_key_u64`]
+/// [`default_serialization_engine_deserialize_lwe_keyswitch_key_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_keyswitch_key_unchecked_u64(
+pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_keyswitch_key_unchecked_u32(
     engine: *mut DefaultSerializationEngine,
     buffer: BufferView,
-    result: *mut *mut LweKeyswitchKey64,
+    result: *mut *mut LweKeyswitchKey32,
 ) -> c_int {
     catch_panic(|| {
         // First fill the result with a null ptr so that if we fail and the return code is not
@@ -99,22 +99,22 @@ pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_keyswitch_
 
         let engine = &mut (*engine);
 
-        let keyswitch_key: LweKeyswitchKey64 = engine.deserialize_unchecked(buffer.into());
+        let keyswitch_key: LweKeyswitchKey32 = engine.deserialize_unchecked(buffer.into());
 
         *result = Box::into_raw(Box::new(keyswitch_key));
     })
 }
 
-/// Deserializes a `LweSeededKeyswitchKey64`.
+/// Deserializes a `LweSeededKeyswitchKey32`.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_seeded_keyswitch_key_u64(
+pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_seeded_keyswitch_key_u32(
     engine: *mut DefaultSerializationEngine,
     buffer: BufferView,
-    result: *mut *mut LweSeededKeyswitchKey64,
+    result: *mut *mut LweSeededKeyswitchKey32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(result).unwrap();
@@ -125,7 +125,7 @@ pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_seeded_key
 
         let engine = get_mut_checked(engine).unwrap();
 
-        let keyswitch_key: LweSeededKeyswitchKey64 = engine
+        let keyswitch_key: LweSeededKeyswitchKey32 = engine
             .deserialize(buffer.into())
             .or_else(engine_error_as_readable_string)
             .unwrap();
@@ -135,12 +135,12 @@ pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_seeded_key
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_serialization_engine_deserialize_lwe_seeded_keyswitch_key_u64`]
+/// [`default_serialization_engine_deserialize_lwe_seeded_keyswitch_key_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_seeded_keyswitch_key_unchecked_u64(
+pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_seeded_keyswitch_key_unchecked_u32(
     engine: *mut DefaultSerializationEngine,
     buffer: BufferView,
-    result: *mut *mut LweSeededKeyswitchKey64,
+    result: *mut *mut LweSeededKeyswitchKey32,
 ) -> c_int {
     catch_panic(|| {
         // First fill the result with a null ptr so that if we fail and the return code is not
@@ -149,23 +149,23 @@ pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_seeded_key
 
         let engine = &mut (*engine);
 
-        let seeded_keyswitch_key: LweSeededKeyswitchKey64 =
+        let seeded_keyswitch_key: LweSeededKeyswitchKey32 =
             engine.deserialize_unchecked(buffer.into());
 
         *result = Box::into_raw(Box::new(seeded_keyswitch_key));
     })
 }
 
-/// Deserializes a `LweSeededBootstrapKey64`.
+/// Deserializes a `LweSeededBootstrapKey32`.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_seeded_bootstrap_key_u64(
+pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_seeded_bootstrap_key_u32(
     engine: *mut DefaultSerializationEngine,
     buffer: BufferView,
-    result: *mut *mut LweSeededBootstrapKey64,
+    result: *mut *mut LweSeededBootstrapKey32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(result).unwrap();
@@ -176,7 +176,7 @@ pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_seeded_boo
 
         let engine = get_mut_checked(engine).unwrap();
 
-        let seeded_bootstrap_key: LweSeededBootstrapKey64 = engine
+        let seeded_bootstrap_key: LweSeededBootstrapKey32 = engine
             .deserialize(buffer.into())
             .or_else(engine_error_as_readable_string)
             .unwrap();
@@ -186,12 +186,12 @@ pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_seeded_boo
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_serialization_engine_deserialize_lwe_seeded_bootstrap_key_u64`]
+/// [`default_serialization_engine_deserialize_lwe_seeded_bootstrap_key_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_seeded_bootstrap_key_unchecked_u64(
+pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_seeded_bootstrap_key_unchecked_u32(
     engine: *mut DefaultSerializationEngine,
     buffer: BufferView,
-    result: *mut *mut LweSeededBootstrapKey64,
+    result: *mut *mut LweSeededBootstrapKey32,
 ) -> c_int {
     catch_panic(|| {
         // First fill the result with a null ptr so that if we fail and the return code is not
@@ -200,23 +200,23 @@ pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_seeded_boo
 
         let engine = &mut (*engine);
 
-        let seeded_bootstrap_key: LweSeededBootstrapKey64 =
+        let seeded_bootstrap_key: LweSeededBootstrapKey32 =
             engine.deserialize_unchecked(buffer.into());
 
         *result = Box::into_raw(Box::new(seeded_bootstrap_key));
     })
 }
 
-/// Deserializes a `LweBootstrapKey64`.
+/// Deserializes a `LweBootstrapKey32`.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_bootstrap_key_u64(
+pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_bootstrap_key_u32(
     engine: *mut DefaultSerializationEngine,
     buffer: BufferView,
-    result: *mut *mut LweBootstrapKey64,
+    result: *mut *mut LweBootstrapKey32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(result).unwrap();
@@ -227,7 +227,7 @@ pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_bootstrap_
 
         let engine = get_mut_checked(engine).unwrap();
 
-        let bootstrap_key: LweBootstrapKey64 = engine
+        let bootstrap_key: LweBootstrapKey32 = engine
             .deserialize(buffer.into())
             .or_else(engine_error_as_readable_string)
             .unwrap();
@@ -237,12 +237,12 @@ pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_bootstrap_
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_serialization_engine_deserialize_lwe_bootstrap_key_u64`]
+/// [`default_serialization_engine_deserialize_lwe_bootstrap_key_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_bootstrap_key_unchecked_u64(
+pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_bootstrap_key_unchecked_u32(
     engine: *mut DefaultSerializationEngine,
     buffer: BufferView,
-    result: *mut *mut LweBootstrapKey64,
+    result: *mut *mut LweBootstrapKey32,
 ) -> c_int {
     catch_panic(|| {
         // First fill the result with a null ptr so that if we fail and the return code is not
@@ -251,22 +251,22 @@ pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_bootstrap_
 
         let engine = &mut (*engine);
 
-        let seeded_bootstrap_key: LweBootstrapKey64 = engine.deserialize_unchecked(buffer.into());
+        let seeded_bootstrap_key: LweBootstrapKey32 = engine.deserialize_unchecked(buffer.into());
 
         *result = Box::into_raw(Box::new(seeded_bootstrap_key));
     })
 }
 
-/// Deserializes a `LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64`.
+/// Deserializes a `LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32`.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u64(
+pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u32(
     engine: *mut DefaultSerializationEngine,
     buffer: BufferView,
-    result: *mut *mut LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+    result: *mut *mut LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(result).unwrap();
@@ -277,7 +277,7 @@ pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_circuit_bo
 
         let engine = get_mut_checked(engine).unwrap();
 
-        let cbs_pfpksk: LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64 = engine
+        let cbs_pfpksk: LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32 = engine
             .deserialize(buffer.into())
             .or_else(engine_error_as_readable_string)
             .unwrap();
@@ -287,12 +287,12 @@ pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_circuit_bo
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_serialization_engine_deserialize_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u64`]
+/// [`default_serialization_engine_deserialize_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_unchecked_u64(
+pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_unchecked_u32(
     engine: *mut DefaultSerializationEngine,
     buffer: BufferView,
-    result: *mut *mut LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+    result: *mut *mut LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32,
 ) -> c_int {
     catch_panic(|| {
         // First fill the result with a null ptr so that if we fail and the return code is not
@@ -301,7 +301,7 @@ pub unsafe extern "C" fn default_serialization_engine_deserialize_lwe_circuit_bo
 
         let engine = &mut (*engine);
 
-        let cbs_pfpksk: LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64 =
+        let cbs_pfpksk: LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32 =
             engine.deserialize_unchecked(buffer.into());
 
         *result = Box::into_raw(Box::new(cbs_pfpksk));

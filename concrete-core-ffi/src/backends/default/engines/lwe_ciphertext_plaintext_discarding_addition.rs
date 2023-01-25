@@ -5,18 +5,18 @@ use crate::utils::*;
 use concrete_core::prelude::*;
 use std::os::raw::c_int;
 
-/// Add a plaintext to an `LweCiphertextView64` into an `LweCiphertextMutView64`. View buffer
+/// Add a plaintext to an `LweCiphertextView32` into an `LweCiphertextMutView32`. View buffer
 /// variant.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_discard_add_lwe_ciphertext_plaintext_u64_view_buffers(
+pub unsafe extern "C" fn default_engine_discard_add_lwe_ciphertext_plaintext_u32_view_buffers(
     engine: *mut DefaultEngine,
-    output: *mut LweCiphertextMutView64,
-    input: *const LweCiphertextView64,
-    adder: u64,
+    output: *mut LweCiphertextMutView32,
+    input: *const LweCiphertextView32,
+    adder: u32,
 ) -> c_int {
     catch_panic(|| {
         let engine = get_mut_checked(engine).unwrap();
@@ -37,13 +37,13 @@ pub unsafe extern "C" fn default_engine_discard_add_lwe_ciphertext_plaintext_u64
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_engine_discard_add_lwe_ciphertext_plaintext_u64_view_buffers`]
+/// [`default_engine_discard_add_lwe_ciphertext_plaintext_u32_view_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_discard_add_lwe_ciphertext_plaintext_unchecked_u64_view_buffers(
+pub unsafe extern "C" fn default_engine_discard_add_lwe_ciphertext_plaintext_unchecked_u32_view_buffers(
     engine: *mut DefaultEngine,
-    output: *mut LweCiphertextMutView64,
-    input: *const LweCiphertextView64,
-    adder: u64,
+    output: *mut LweCiphertextMutView32,
+    input: *const LweCiphertextView32,
+    adder: u32,
 ) -> c_int {
     catch_panic(|| {
         let engine = &mut (*engine);
@@ -58,14 +58,14 @@ pub unsafe extern "C" fn default_engine_discard_add_lwe_ciphertext_plaintext_unc
 }
 
 /// Raw pointer buffer variant of
-/// [`default_engine_discard_add_lwe_ciphertext_plaintext_u64_view_buffers`]
+/// [`default_engine_discard_add_lwe_ciphertext_plaintext_u32_view_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_discard_add_lwe_ciphertext_plaintext_u64_raw_ptr_buffers(
+pub unsafe extern "C" fn default_engine_discard_add_lwe_ciphertext_plaintext_u32_raw_ptr_buffers(
     engine: *mut DefaultEngine,
-    output: *mut u64,
-    input: *const u64,
+    output: *mut u32,
+    input: *const u32,
     lwe_dimension: usize,
-    adder: u64,
+    adder: u32,
 ) -> c_int {
     catch_panic(|| {
         let engine = get_mut_checked(engine).unwrap();
@@ -100,14 +100,14 @@ pub unsafe extern "C" fn default_engine_discard_add_lwe_ciphertext_plaintext_u64
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_engine_discard_add_lwe_ciphertext_plaintext_u64_raw_ptr_buffers`]
+/// [`default_engine_discard_add_lwe_ciphertext_plaintext_u32_raw_ptr_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_discard_add_lwe_ciphertext_plaintext_unchecked_u64_raw_ptr_buffers(
+pub unsafe extern "C" fn default_engine_discard_add_lwe_ciphertext_plaintext_unchecked_u32_raw_ptr_buffers(
     engine: *mut DefaultEngine,
-    output: *mut u64,
-    input: *const u64,
+    output: *mut u32,
+    input: *const u32,
     lwe_dimension: usize,
-    adder: u64,
+    adder: u32,
 ) -> c_int {
     catch_panic(|| {
         let engine = get_mut_checked(engine).unwrap();

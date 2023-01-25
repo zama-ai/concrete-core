@@ -4,12 +4,12 @@ use crate::utils::*;
 use concrete_core::prelude::*;
 use std::os::raw::c_int;
 
-/// Destroy a `GlweCiphertextView64`.
+/// Destroy a `GlweCiphertextView32`.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn destroy_glwe_ciphertext_view_u64(
-    glwe_ciphertext_view: *mut GlweCiphertextView64,
+pub unsafe extern "C" fn destroy_glwe_ciphertext_view_u32(
+    glwe_ciphertext_view: *mut GlweCiphertextView32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(glwe_ciphertext_view).unwrap();
@@ -20,10 +20,10 @@ pub unsafe extern "C" fn destroy_glwe_ciphertext_view_u64(
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`destroy_glwe_ciphertext_view_u64`]
+/// [`destroy_glwe_ciphertext_view_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn destroy_glwe_ciphertext_view_unchecked_u64(
-    glwe_ciphertext_view: *mut GlweCiphertextView64,
+pub unsafe extern "C" fn destroy_glwe_ciphertext_view_unchecked_u32(
+    glwe_ciphertext_view: *mut GlweCiphertextView32,
 ) -> c_int {
     catch_panic(|| {
         // Reconstruct the box and drop it
@@ -31,12 +31,12 @@ pub unsafe extern "C" fn destroy_glwe_ciphertext_view_unchecked_u64(
     })
 }
 
-/// Destroy a `GlweCiphertextMutView64`.
+/// Destroy a `GlweCiphertextMutView32`.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn destroy_glwe_ciphertext_mut_view_u64(
-    glwe_ciphertext_mut_view: *mut GlweCiphertextMutView64,
+pub unsafe extern "C" fn destroy_glwe_ciphertext_mut_view_u32(
+    glwe_ciphertext_mut_view: *mut GlweCiphertextMutView32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(glwe_ciphertext_mut_view).unwrap();
@@ -47,10 +47,10 @@ pub unsafe extern "C" fn destroy_glwe_ciphertext_mut_view_u64(
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`destroy_glwe_ciphertext_mut_view_u64`]
+/// [`destroy_glwe_ciphertext_mut_view_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn destroy_glwe_ciphertext_mut_view_unchecked_u64(
-    glwe_ciphertext_mut_view: *mut GlweCiphertextMutView64,
+pub unsafe extern "C" fn destroy_glwe_ciphertext_mut_view_unchecked_u32(
+    glwe_ciphertext_mut_view: *mut GlweCiphertextMutView32,
 ) -> c_int {
     catch_panic(|| {
         // Reconstruct the box and drop it
@@ -58,12 +58,12 @@ pub unsafe extern "C" fn destroy_glwe_ciphertext_mut_view_unchecked_u64(
     })
 }
 
-/// Destroy an `LweCiphertextView64`.
+/// Destroy an `LweCiphertextView32`.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_ciphertext_view_u64(
-    lwe_ciphertext_view: *mut LweCiphertextView64,
+pub unsafe extern "C" fn destroy_lwe_ciphertext_view_u32(
+    lwe_ciphertext_view: *mut LweCiphertextView32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(lwe_ciphertext_view).unwrap();
@@ -74,10 +74,10 @@ pub unsafe extern "C" fn destroy_lwe_ciphertext_view_u64(
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`destroy_lwe_ciphertext_view_u64`]
+/// [`destroy_lwe_ciphertext_view_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_ciphertext_view_unchecked_u64(
-    lwe_ciphertext_view: *mut LweCiphertextView64,
+pub unsafe extern "C" fn destroy_lwe_ciphertext_view_unchecked_u32(
+    lwe_ciphertext_view: *mut LweCiphertextView32,
 ) -> c_int {
     catch_panic(|| {
         // Reconstruct the box and drop it
@@ -85,12 +85,12 @@ pub unsafe extern "C" fn destroy_lwe_ciphertext_view_unchecked_u64(
     })
 }
 
-/// Destroy an `LweCiphertextMutView64`.
+/// Destroy an `LweCiphertextMutView32`.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_ciphertext_mut_view_u64(
-    lwe_ciphertext_mut_view: *mut LweCiphertextMutView64,
+pub unsafe extern "C" fn destroy_lwe_ciphertext_mut_view_u32(
+    lwe_ciphertext_mut_view: *mut LweCiphertextMutView32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(lwe_ciphertext_mut_view).unwrap();
@@ -101,10 +101,10 @@ pub unsafe extern "C" fn destroy_lwe_ciphertext_mut_view_u64(
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`destroy_lwe_ciphertext_mut_view_u64`]
+/// [`destroy_lwe_ciphertext_mut_view_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_ciphertext_mut_view_unchecked_u64(
-    lwe_ciphertext_mut_view: *mut LweCiphertextMutView64,
+pub unsafe extern "C" fn destroy_lwe_ciphertext_mut_view_unchecked_u32(
+    lwe_ciphertext_mut_view: *mut LweCiphertextMutView32,
 ) -> c_int {
     catch_panic(|| {
         // Reconstruct the box and drop it
@@ -112,12 +112,12 @@ pub unsafe extern "C" fn destroy_lwe_ciphertext_mut_view_unchecked_u64(
     })
 }
 
-/// Destroy an `LweCiphertextVectorView64`.
+/// Destroy an `LweCiphertextVectorView32`.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_ciphertext_vector_view_u64(
-    lwe_ciphertext_vector_view: *mut LweCiphertextVectorView64,
+pub unsafe extern "C" fn destroy_lwe_ciphertext_vector_view_u32(
+    lwe_ciphertext_vector_view: *mut LweCiphertextVectorView32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(lwe_ciphertext_vector_view).unwrap();
@@ -128,10 +128,10 @@ pub unsafe extern "C" fn destroy_lwe_ciphertext_vector_view_u64(
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`destroy_lwe_ciphertext_vector_view_u64`]
+/// [`destroy_lwe_ciphertext_vector_view_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_ciphertext_vector_view_unchecked_u64(
-    lwe_ciphertext_vector_view: *mut LweCiphertextVectorView64,
+pub unsafe extern "C" fn destroy_lwe_ciphertext_vector_view_unchecked_u32(
+    lwe_ciphertext_vector_view: *mut LweCiphertextVectorView32,
 ) -> c_int {
     catch_panic(|| {
         // Reconstruct the box and drop it
@@ -139,12 +139,12 @@ pub unsafe extern "C" fn destroy_lwe_ciphertext_vector_view_unchecked_u64(
     })
 }
 
-/// Destroy an `LweCiphertextVectorMutView64`.
+/// Destroy an `LweCiphertextVectorMutView32`.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_ciphertext_vector_mut_view_u64(
-    lwe_ciphertext_vector_mut_view: *mut LweCiphertextVectorMutView64,
+pub unsafe extern "C" fn destroy_lwe_ciphertext_vector_mut_view_u32(
+    lwe_ciphertext_vector_mut_view: *mut LweCiphertextVectorMutView32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(lwe_ciphertext_vector_mut_view).unwrap();
@@ -155,10 +155,10 @@ pub unsafe extern "C" fn destroy_lwe_ciphertext_vector_mut_view_u64(
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`destroy_lwe_ciphertext_vector_mut_view_u64`]
+/// [`destroy_lwe_ciphertext_vector_mut_view_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_ciphertext_vector_mut_view_unchecked_u64(
-    lwe_ciphertext_vector_mut_view: *mut LweCiphertextVectorMutView64,
+pub unsafe extern "C" fn destroy_lwe_ciphertext_vector_mut_view_unchecked_u32(
+    lwe_ciphertext_vector_mut_view: *mut LweCiphertextVectorMutView32,
 ) -> c_int {
     catch_panic(|| {
         // Reconstruct the box and drop it
@@ -166,12 +166,12 @@ pub unsafe extern "C" fn destroy_lwe_ciphertext_vector_mut_view_unchecked_u64(
     })
 }
 
-/// Destroy an `LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64`.
+/// Destroy an `LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32`.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u64(
-    cbs_pfpksk: *mut LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+pub unsafe extern "C" fn destroy_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u32(
+    cbs_pfpksk: *mut LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(cbs_pfpksk).unwrap();
@@ -182,10 +182,10 @@ pub unsafe extern "C" fn destroy_lwe_circuit_bootstrap_private_functional_packin
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`destroy_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u64`]
+/// [`destroy_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_unchecked_u64(
-    cbs_pfpksk: *mut LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+pub unsafe extern "C" fn destroy_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_unchecked_u32(
+    cbs_pfpksk: *mut LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32,
 ) -> c_int {
     catch_panic(|| {
         // Reconstruct the box and drop it
@@ -193,11 +193,11 @@ pub unsafe extern "C" fn destroy_lwe_circuit_bootstrap_private_functional_packin
     })
 }
 
-/// Destroy an `LweSecretKey64`.
+/// Destroy an `LweSecretKey32`.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_secret_key_u64(lwe_secret_key: *mut LweSecretKey64) -> c_int {
+pub unsafe extern "C" fn destroy_lwe_secret_key_u32(lwe_secret_key: *mut LweSecretKey32) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(lwe_secret_key).unwrap();
 
@@ -207,10 +207,10 @@ pub unsafe extern "C" fn destroy_lwe_secret_key_u64(lwe_secret_key: *mut LweSecr
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`destroy_lwe_secret_key_u64`]
+/// [`destroy_lwe_secret_key_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_secret_key_unchecked_u64(
-    lwe_secret_key: *mut LweSecretKey64,
+pub unsafe extern "C" fn destroy_lwe_secret_key_unchecked_u32(
+    lwe_secret_key: *mut LweSecretKey32,
 ) -> c_int {
     catch_panic(|| {
         // Reconstruct the box and drop it
@@ -218,12 +218,12 @@ pub unsafe extern "C" fn destroy_lwe_secret_key_unchecked_u64(
     })
 }
 
-/// Destroy a `GlweSecretKey64`.
+/// Destroy a `GlweSecretKey32`.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn destroy_glwe_secret_key_u64(
-    glwe_secret_key: *mut GlweSecretKey64,
+pub unsafe extern "C" fn destroy_glwe_secret_key_u32(
+    glwe_secret_key: *mut GlweSecretKey32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(glwe_secret_key).unwrap();
@@ -234,10 +234,10 @@ pub unsafe extern "C" fn destroy_glwe_secret_key_u64(
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`destroy_glwe_secret_key_u64`]
+/// [`destroy_glwe_secret_key_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn destroy_glwe_secret_key_unchecked_u64(
-    glwe_secret_key: *mut GlweSecretKey64,
+pub unsafe extern "C" fn destroy_glwe_secret_key_unchecked_u32(
+    glwe_secret_key: *mut GlweSecretKey32,
 ) -> c_int {
     catch_panic(|| {
         // Reconstruct the box and drop it
@@ -245,12 +245,12 @@ pub unsafe extern "C" fn destroy_glwe_secret_key_unchecked_u64(
     })
 }
 
-/// Destroy an `LweKeyswitchKey64`.
+/// Destroy an `LweKeyswitchKey32`.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_keyswitch_key_u64(
-    keyswitch_key: *mut LweKeyswitchKey64,
+pub unsafe extern "C" fn destroy_lwe_keyswitch_key_u32(
+    keyswitch_key: *mut LweKeyswitchKey32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(keyswitch_key).unwrap();
@@ -260,10 +260,10 @@ pub unsafe extern "C" fn destroy_lwe_keyswitch_key_u64(
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`destroy_lwe_keyswitch_key_u64`]
+/// [`destroy_lwe_keyswitch_key_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_keyswitch_key_unchecked_u64(
-    keyswitch_key: *mut LweKeyswitchKey64,
+pub unsafe extern "C" fn destroy_lwe_keyswitch_key_unchecked_u32(
+    keyswitch_key: *mut LweKeyswitchKey32,
 ) -> c_int {
     catch_panic(|| {
         // Reconstruct the box and drop it
@@ -271,12 +271,12 @@ pub unsafe extern "C" fn destroy_lwe_keyswitch_key_unchecked_u64(
     })
 }
 
-/// Destroy an `LweKeyswitchKeyMutView64`.
+/// Destroy an `LweKeyswitchKeyMutView32`.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_keyswitch_key_mut_view_u64(
-    keyswitch_key_mut_view: *mut LweKeyswitchKeyMutView64,
+pub unsafe extern "C" fn destroy_lwe_keyswitch_key_mut_view_u32(
+    keyswitch_key_mut_view: *mut LweKeyswitchKeyMutView32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(keyswitch_key_mut_view).unwrap();
@@ -286,10 +286,10 @@ pub unsafe extern "C" fn destroy_lwe_keyswitch_key_mut_view_u64(
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`destroy_lwe_keyswitch_key_mut_view_u64`]
+/// [`destroy_lwe_keyswitch_key_mut_view_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_keyswitch_key_mut_view_unchecked_u64(
-    keyswitch_key_mut_view: *mut LweKeyswitchKeyMutView64,
+pub unsafe extern "C" fn destroy_lwe_keyswitch_key_mut_view_unchecked_u32(
+    keyswitch_key_mut_view: *mut LweKeyswitchKeyMutView32,
 ) -> c_int {
     catch_panic(|| {
         // Reconstruct the box and drop it
@@ -297,12 +297,12 @@ pub unsafe extern "C" fn destroy_lwe_keyswitch_key_mut_view_unchecked_u64(
     })
 }
 
-/// Destroy an `LweSeededKeyswitchKey64`.
+/// Destroy an `LweSeededKeyswitchKey32`.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_seeded_keyswitch_key_u64(
-    seeded_keyswitch_key: *mut LweSeededKeyswitchKey64,
+pub unsafe extern "C" fn destroy_lwe_seeded_keyswitch_key_u32(
+    seeded_keyswitch_key: *mut LweSeededKeyswitchKey32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(seeded_keyswitch_key).unwrap();
@@ -313,10 +313,10 @@ pub unsafe extern "C" fn destroy_lwe_seeded_keyswitch_key_u64(
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`destroy_lwe_seeded_keyswitch_key_u64`]
+/// [`destroy_lwe_seeded_keyswitch_key_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_seeded_keyswitch_key_unchecked_u64(
-    seeded_keyswitch_key: *mut LweSeededKeyswitchKey64,
+pub unsafe extern "C" fn destroy_lwe_seeded_keyswitch_key_unchecked_u32(
+    seeded_keyswitch_key: *mut LweSeededKeyswitchKey32,
 ) -> c_int {
     catch_panic(|| {
         // Reconstruct the box and drop it
@@ -324,12 +324,12 @@ pub unsafe extern "C" fn destroy_lwe_seeded_keyswitch_key_unchecked_u64(
     })
 }
 
-/// Destroy an `LweBootstrapKey64`.
+/// Destroy an `LweBootstrapKey32`.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_bootstrap_key_u64(
-    bootstrap_key: *mut LweBootstrapKey64,
+pub unsafe extern "C" fn destroy_lwe_bootstrap_key_u32(
+    bootstrap_key: *mut LweBootstrapKey32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(bootstrap_key).unwrap();
@@ -339,10 +339,10 @@ pub unsafe extern "C" fn destroy_lwe_bootstrap_key_u64(
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`destroy_lwe_bootstrap_key_u64`]
+/// [`destroy_lwe_bootstrap_key_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_bootstrap_key_unchecked_u64(
-    bootstrap_key: *mut LweBootstrapKey64,
+pub unsafe extern "C" fn destroy_lwe_bootstrap_key_unchecked_u32(
+    bootstrap_key: *mut LweBootstrapKey32,
 ) -> c_int {
     catch_panic(|| {
         // Reconstruct the box and drop it
@@ -350,12 +350,12 @@ pub unsafe extern "C" fn destroy_lwe_bootstrap_key_unchecked_u64(
     })
 }
 
-/// Destroy an `LweBootstrapKeyMutView64`.
+/// Destroy an `LweBootstrapKeyMutView32`.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_bootstrap_key_mut_view_u64(
-    bootstrap_key_mut_view: *mut LweBootstrapKeyMutView64,
+pub unsafe extern "C" fn destroy_lwe_bootstrap_key_mut_view_u32(
+    bootstrap_key_mut_view: *mut LweBootstrapKeyMutView32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(bootstrap_key_mut_view).unwrap();
@@ -365,10 +365,10 @@ pub unsafe extern "C" fn destroy_lwe_bootstrap_key_mut_view_u64(
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`destroy_lwe_bootstrap_key_mut_view_u64`]
+/// [`destroy_lwe_bootstrap_key_mut_view_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_bootstrap_key_mut_view_unchecked_u64(
-    bootstrap_key_mut_view: *mut LweBootstrapKeyMutView64,
+pub unsafe extern "C" fn destroy_lwe_bootstrap_key_mut_view_unchecked_u32(
+    bootstrap_key_mut_view: *mut LweBootstrapKeyMutView32,
 ) -> c_int {
     catch_panic(|| {
         // Reconstruct the box and drop it
@@ -376,12 +376,12 @@ pub unsafe extern "C" fn destroy_lwe_bootstrap_key_mut_view_unchecked_u64(
     })
 }
 
-/// Destroy an `LweSeededBootstrapKey64`.
+/// Destroy an `LweSeededBootstrapKey32`.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_seeded_bootstrap_key_u64(
-    seeded_bootstrap_key: *mut LweSeededBootstrapKey64,
+pub unsafe extern "C" fn destroy_lwe_seeded_bootstrap_key_u32(
+    seeded_bootstrap_key: *mut LweSeededBootstrapKey32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(seeded_bootstrap_key).unwrap();
@@ -391,10 +391,10 @@ pub unsafe extern "C" fn destroy_lwe_seeded_bootstrap_key_u64(
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`destroy_lwe_seeded_bootstrap_key_u64`]
+/// [`destroy_lwe_seeded_bootstrap_key_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn destroy_lwe_seeded_bootstrap_key_unchecked_u64(
-    seeded_bootstrap_key: *mut LweSeededBootstrapKey64,
+pub unsafe extern "C" fn destroy_lwe_seeded_bootstrap_key_unchecked_u32(
+    seeded_bootstrap_key: *mut LweSeededBootstrapKey32,
 ) -> c_int {
     catch_panic(|| {
         // Reconstruct the box and drop it

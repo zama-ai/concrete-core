@@ -5,17 +5,17 @@ use crate::utils::*;
 use concrete_core::prelude::*;
 use std::os::raw::c_int;
 
-/// Keyswitch an `LweCiphertextView64` into an `LweCiphertextMutView64`. View buffer variant.
+/// Keyswitch an `LweCiphertextView32` into an `LweCiphertextMutView32`. View buffer variant.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_discard_keyswitch_lwe_ciphertext_u64_view_buffers(
+pub unsafe extern "C" fn default_engine_discard_keyswitch_lwe_ciphertext_u32_view_buffers(
     engine: *mut DefaultEngine,
-    keyswitch_key: *const LweKeyswitchKey64,
-    output: *mut LweCiphertextMutView64,
-    input: *const LweCiphertextView64,
+    keyswitch_key: *const LweKeyswitchKey32,
+    output: *mut LweCiphertextMutView32,
+    input: *const LweCiphertextView32,
 ) -> c_int {
     catch_panic(|| {
         let engine = get_mut_checked(engine).unwrap();
@@ -33,13 +33,13 @@ pub unsafe extern "C" fn default_engine_discard_keyswitch_lwe_ciphertext_u64_vie
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_engine_discard_keyswitch_lwe_ciphertext_u64_view_buffers`]
+/// [`default_engine_discard_keyswitch_lwe_ciphertext_u32_view_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_discard_keyswitch_lwe_ciphertext_unchecked_u64_view_buffers(
+pub unsafe extern "C" fn default_engine_discard_keyswitch_lwe_ciphertext_unchecked_u32_view_buffers(
     engine: *mut DefaultEngine,
-    keyswitch_key: *const LweKeyswitchKey64,
-    output: *mut LweCiphertextMutView64,
-    input: *const LweCiphertextView64,
+    keyswitch_key: *const LweKeyswitchKey32,
+    output: *mut LweCiphertextMutView32,
+    input: *const LweCiphertextView32,
 ) -> c_int {
     catch_panic(|| {
         let engine = &mut (*engine);
@@ -53,13 +53,13 @@ pub unsafe extern "C" fn default_engine_discard_keyswitch_lwe_ciphertext_uncheck
     })
 }
 
-/// Raw pointer variant of [`default_engine_discard_keyswitch_lwe_ciphertext_u64_view_buffers`]
+/// Raw pointer variant of [`default_engine_discard_keyswitch_lwe_ciphertext_u32_view_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_discard_keyswitch_lwe_ciphertext_u64_raw_ptr_buffers(
+pub unsafe extern "C" fn default_engine_discard_keyswitch_lwe_ciphertext_u32_raw_ptr_buffers(
     engine: *mut DefaultEngine,
-    keyswitch_key: *const LweKeyswitchKey64,
-    output: *mut u64,
-    input: *const u64,
+    keyswitch_key: *const LweKeyswitchKey32,
+    output: *mut u32,
+    input: *const u32,
 ) -> c_int {
     catch_panic(|| {
         let engine = get_mut_checked(engine).unwrap();
@@ -91,13 +91,13 @@ pub unsafe extern "C" fn default_engine_discard_keyswitch_lwe_ciphertext_u64_raw
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_engine_discard_keyswitch_lwe_ciphertext_u64_raw_ptr_buffers`]
+/// [`default_engine_discard_keyswitch_lwe_ciphertext_u32_raw_ptr_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_discard_keyswitch_lwe_ciphertext_unchecked_u64_raw_ptr_buffers(
+pub unsafe extern "C" fn default_engine_discard_keyswitch_lwe_ciphertext_unchecked_u32_raw_ptr_buffers(
     engine: *mut DefaultEngine,
-    keyswitch_key: *const LweKeyswitchKey64,
-    output: *mut u64,
-    input: *const u64,
+    keyswitch_key: *const LweKeyswitchKey32,
+    output: *mut u32,
+    input: *const u32,
 ) -> c_int {
     catch_panic(|| {
         let engine = &mut (*engine);

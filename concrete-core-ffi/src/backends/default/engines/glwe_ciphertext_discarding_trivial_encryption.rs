@@ -5,19 +5,19 @@ use crate::utils::*;
 use concrete_core::prelude::*;
 use std::os::raw::c_int;
 
-/// Trivially encrypt the `input` plaintext vector into a `GlweCiphertextMutView64`. View buffer
+/// Trivially encrypt the `input` plaintext vector into a `GlweCiphertextMutView32`. View buffer
 /// variant.
 ///
-/// This function creates a temporary copy of the input buffer in a `PlaintextVector64`.
+/// This function creates a temporary copy of the input buffer in a `PlaintextVector32`.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_discard_trivially_encrypt_glwe_ciphertext_u64_view_buffers(
+pub unsafe extern "C" fn default_engine_discard_trivially_encrypt_glwe_ciphertext_u32_view_buffers(
     engine: *mut DefaultEngine,
-    output: *mut GlweCiphertextMutView64,
-    input: *const u64,
+    output: *mut GlweCiphertextMutView32,
+    input: *const u32,
     polynomial_size: usize,
 ) -> c_int {
     catch_panic(|| {
@@ -41,12 +41,12 @@ pub unsafe extern "C" fn default_engine_discard_trivially_encrypt_glwe_ciphertex
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_engine_discard_trivially_encrypt_glwe_ciphertext_u64_view_buffers`]
+/// [`default_engine_discard_trivially_encrypt_glwe_ciphertext_u32_view_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_discard_trivially_encrypt_glwe_ciphertext_unchecked_u64_view_buffers(
+pub unsafe extern "C" fn default_engine_discard_trivially_encrypt_glwe_ciphertext_unchecked_u32_view_buffers(
     engine: *mut DefaultEngine,
-    output: *mut GlweCiphertextMutView64,
-    input: *const u64,
+    output: *mut GlweCiphertextMutView32,
+    input: *const u32,
     polynomial_size: usize,
 ) -> c_int {
     catch_panic(|| {
@@ -63,13 +63,13 @@ pub unsafe extern "C" fn default_engine_discard_trivially_encrypt_glwe_ciphertex
 }
 
 /// Raw pointer buffer variant of
-/// [`default_engine_discard_trivially_encrypt_glwe_ciphertext_u64_view_buffers`]
+/// [`default_engine_discard_trivially_encrypt_glwe_ciphertext_u32_view_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_discard_trivially_encrypt_glwe_ciphertext_u64_raw_ptr_buffers(
+pub unsafe extern "C" fn default_engine_discard_trivially_encrypt_glwe_ciphertext_u32_raw_ptr_buffers(
     engine: *mut DefaultEngine,
-    output: *mut u64,
+    output: *mut u32,
     output_buffer_size: usize,
-    input: *const u64,
+    input: *const u32,
     polynomial_size: usize,
 ) -> c_int {
     catch_panic(|| {
@@ -98,13 +98,13 @@ pub unsafe extern "C" fn default_engine_discard_trivially_encrypt_glwe_ciphertex
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_engine_discard_trivially_encrypt_glwe_ciphertext_u64_raw_ptr_buffers`]
+/// [`default_engine_discard_trivially_encrypt_glwe_ciphertext_u32_raw_ptr_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_discard_trivially_encrypt_glwe_ciphertext_unchecked_u64_raw_ptr_buffers(
+pub unsafe extern "C" fn default_engine_discard_trivially_encrypt_glwe_ciphertext_unchecked_u32_raw_ptr_buffers(
     engine: *mut DefaultEngine,
-    output: *mut u64,
+    output: *mut u32,
     output_buffer_size: usize,
-    input: *const u64,
+    input: *const u32,
     polynomial_size: usize,
 ) -> c_int {
     catch_panic(|| {

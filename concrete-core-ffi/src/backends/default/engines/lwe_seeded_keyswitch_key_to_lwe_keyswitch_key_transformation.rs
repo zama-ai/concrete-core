@@ -5,19 +5,19 @@ use crate::utils::*;
 use concrete_core::prelude::*;
 use std::os::raw::c_int;
 
-/// Transform an `LweSeededKeyswitchKey64` into a `LweKeyswitchKey64`.
+/// Transform an `LweSeededKeyswitchKey32` into a `LweKeyswitchKey32`.
 ///
-/// The passed `LweSeededKeyswitchKey64` is consumed and cannot be accessed afterwards, the passed
+/// The passed `LweSeededKeyswitchKey32` is consumed and cannot be accessed afterwards, the passed
 /// input pointer is set to NULL by this function.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_transform_lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_u64(
+pub unsafe extern "C" fn default_engine_transform_lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_u32(
     engine: *mut DefaultEngine,
-    lwe_seeded_keyswitch_key: *mut *mut LweSeededKeyswitchKey64,
-    result: *mut *mut LweKeyswitchKey64,
+    lwe_seeded_keyswitch_key: *mut *mut LweSeededKeyswitchKey32,
+    result: *mut *mut LweKeyswitchKey32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(result).unwrap();
@@ -52,12 +52,12 @@ pub unsafe extern "C" fn default_engine_transform_lwe_seeded_keyswitch_key_to_lw
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_engine_transform_lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_u64`]
+/// [`default_engine_transform_lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_transform_lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_unchecked_u64(
+pub unsafe extern "C" fn default_engine_transform_lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_unchecked_u32(
     engine: *mut DefaultEngine,
-    lwe_seeded_keyswitch_key: *mut *mut LweSeededKeyswitchKey64,
-    result: *mut *mut LweKeyswitchKey64,
+    lwe_seeded_keyswitch_key: *mut *mut LweSeededKeyswitchKey32,
+    result: *mut *mut LweKeyswitchKey32,
 ) -> c_int {
     catch_panic(|| {
         // First fill the result with a null ptr so that if we fail and the return code is not

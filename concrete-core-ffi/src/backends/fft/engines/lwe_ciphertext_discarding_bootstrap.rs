@@ -11,12 +11,12 @@ use std::os::raw::c_int;
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn fft_engine_lwe_ciphertext_discarding_bootstrap_u64_view_buffers(
+pub unsafe extern "C" fn fft_engine_lwe_ciphertext_discarding_bootstrap_u32_view_buffers(
     engine: *mut FftEngine,
-    bootstrap_key: *const FftFourierLweBootstrapKey64,
-    output: *mut LweCiphertextMutView64,
-    input: *const LweCiphertextView64,
-    accumulator: *const GlweCiphertextView64,
+    bootstrap_key: *const FftFourierLweBootstrapKey32,
+    output: *mut LweCiphertextMutView32,
+    input: *const LweCiphertextView32,
+    accumulator: *const GlweCiphertextView32,
 ) -> c_int {
     catch_panic(|| {
         let engine = get_mut_checked(engine).unwrap();
@@ -36,14 +36,14 @@ pub unsafe extern "C" fn fft_engine_lwe_ciphertext_discarding_bootstrap_u64_view
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`fft_engine_lwe_ciphertext_discarding_bootstrap_u64_view_buffers`]
+/// [`fft_engine_lwe_ciphertext_discarding_bootstrap_u32_view_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn fft_engine_lwe_ciphertext_discarding_bootstrap_unchecked_u64_view_buffers(
+pub unsafe extern "C" fn fft_engine_lwe_ciphertext_discarding_bootstrap_unchecked_u32_view_buffers(
     engine: *mut FftEngine,
-    bootstrap_key: *const FftFourierLweBootstrapKey64,
-    output: *mut LweCiphertextMutView64,
-    input: *const LweCiphertextView64,
-    accumulator: *const GlweCiphertextView64,
+    bootstrap_key: *const FftFourierLweBootstrapKey32,
+    output: *mut LweCiphertextMutView32,
+    input: *const LweCiphertextView32,
+    accumulator: *const GlweCiphertextView32,
 ) -> c_int {
     catch_panic(|| {
         let engine = &mut (*engine);
@@ -65,15 +65,15 @@ pub unsafe extern "C" fn fft_engine_lwe_ciphertext_discarding_bootstrap_unchecke
 }
 
 /// Raw pointer buffer variant of
-/// [`fft_engine_lwe_ciphertext_discarding_bootstrap_u64_view_buffers`]
+/// [`fft_engine_lwe_ciphertext_discarding_bootstrap_u32_view_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn fft_engine_lwe_ciphertext_discarding_bootstrap_u64_raw_ptr_buffers(
+pub unsafe extern "C" fn fft_engine_lwe_ciphertext_discarding_bootstrap_u32_raw_ptr_buffers(
     fft_engine: *mut FftEngine,
     default_engine: *mut DefaultEngine,
-    bootstrap_key: *const FftFourierLweBootstrapKey64,
-    output: *mut u64,
-    input: *const u64,
-    accumulator: *const u64,
+    bootstrap_key: *const FftFourierLweBootstrapKey32,
+    output: *mut u32,
+    input: *const u32,
+    accumulator: *const u32,
 ) -> c_int {
     catch_panic(|| {
         let fft_engine = get_mut_checked(fft_engine).unwrap();
@@ -117,15 +117,15 @@ pub unsafe extern "C" fn fft_engine_lwe_ciphertext_discarding_bootstrap_u64_raw_
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`fft_engine_lwe_ciphertext_discarding_bootstrap_u64_raw_ptr_buffers`]
+/// [`fft_engine_lwe_ciphertext_discarding_bootstrap_u32_raw_ptr_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn fft_engine_lwe_ciphertext_discarding_bootstrap_unchecked_u64_raw_ptr_buffers(
+pub unsafe extern "C" fn fft_engine_lwe_ciphertext_discarding_bootstrap_unchecked_u32_raw_ptr_buffers(
     fft_engine: *mut FftEngine,
     default_engine: *mut DefaultEngine,
-    bootstrap_key: *const FftFourierLweBootstrapKey64,
-    output: *mut u64,
-    input: *const u64,
-    accumulator: *const u64,
+    bootstrap_key: *const FftFourierLweBootstrapKey32,
+    output: *mut u32,
+    input: *const u32,
+    accumulator: *const u32,
 ) -> c_int {
     catch_panic(|| {
         let fft_engine = &mut (*fft_engine);

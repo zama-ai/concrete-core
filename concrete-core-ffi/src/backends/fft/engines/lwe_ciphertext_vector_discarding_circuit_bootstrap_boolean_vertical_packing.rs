@@ -12,17 +12,17 @@ use std::os::raw::c_int;
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn fft_engine_lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_vertical_packing_u64_view_buffers(
+pub unsafe extern "C" fn fft_engine_lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_vertical_packing_u32_view_buffers(
     fft_engine: *mut FftEngine,
     default_engine: *mut DefaultEngine,
-    bootstrap_key: *const FftFourierLweBootstrapKey64,
-    output: *mut LweCiphertextVectorMutView64,
-    input: *const LweCiphertextVectorView64,
-    luts: *const u64,
+    bootstrap_key: *const FftFourierLweBootstrapKey32,
+    output: *mut LweCiphertextVectorMutView32,
+    input: *const LweCiphertextVectorView32,
+    luts: *const u32,
     lut_length: usize,
     cbs_level_count: usize,
     cbs_base_log: usize,
-    cbs_pfpksk: *const LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+    cbs_pfpksk: *const LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32,
 ) -> c_int {
     catch_panic(|| {
         let fft_engine = get_mut_checked(fft_engine).unwrap();
@@ -61,19 +61,19 @@ pub unsafe extern "C" fn fft_engine_lwe_ciphertext_vector_discarding_circuit_boo
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`fft_engine_lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_vertical_packing_u64_view_buffers`]
+/// [`fft_engine_lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_vertical_packing_u32_view_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn fft_engine_lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_vertical_packing_unchecked_u64_view_buffers(
+pub unsafe extern "C" fn fft_engine_lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_vertical_packing_unchecked_u32_view_buffers(
     fft_engine: *mut FftEngine,
     default_engine: *mut DefaultEngine,
-    bootstrap_key: *const FftFourierLweBootstrapKey64,
-    output: *mut LweCiphertextVectorMutView64,
-    input: *const LweCiphertextVectorView64,
-    luts: *const u64,
+    bootstrap_key: *const FftFourierLweBootstrapKey32,
+    output: *mut LweCiphertextVectorMutView32,
+    input: *const LweCiphertextVectorView32,
+    luts: *const u32,
     lut_length: usize,
     cbs_level_count: usize,
     cbs_base_log: usize,
-    cbs_pfpksk: *const LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+    cbs_pfpksk: *const LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32,
 ) -> c_int {
     catch_panic(|| {
         let fft_engine = &mut (*fft_engine);
@@ -107,23 +107,23 @@ pub unsafe extern "C" fn fft_engine_lwe_ciphertext_vector_discarding_circuit_boo
 }
 
 /// Raw pointer buffer variant of
-/// [`fft_engine_lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_vertical_packing_u64_view_buffers`]
+/// [`fft_engine_lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_vertical_packing_u32_view_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn fft_engine_lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_vertical_packing_u64_raw_ptr_buffers(
+pub unsafe extern "C" fn fft_engine_lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_vertical_packing_u32_raw_ptr_buffers(
     fft_engine: *mut FftEngine,
     default_engine: *mut DefaultEngine,
-    bootstrap_key: *const FftFourierLweBootstrapKey64,
-    output: *mut u64,
+    bootstrap_key: *const FftFourierLweBootstrapKey32,
+    output: *mut u32,
     output_lwe_size: usize,
     output_ciphertext_count: usize,
-    input: *const u64,
+    input: *const u32,
     input_lwe_size: usize,
     input_ciphertext_count: usize,
-    luts: *const u64,
+    luts: *const u32,
     luts_length: usize,
     cbs_level_count: usize,
     cbs_base_log: usize,
-    cbs_pfpksk: *const LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+    cbs_pfpksk: *const LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32,
 ) -> c_int {
     catch_panic(|| {
         let fft_engine = get_mut_checked(fft_engine).unwrap();
@@ -178,23 +178,23 @@ pub unsafe extern "C" fn fft_engine_lwe_ciphertext_vector_discarding_circuit_boo
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`fft_engine_lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_vertical_packing_u64_raw_ptr_buffers`]
+/// [`fft_engine_lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_vertical_packing_u32_raw_ptr_buffers`]
 #[no_mangle]
-pub unsafe extern "C" fn fft_engine_lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_vertical_packing_unchecked_u64_raw_ptr_buffers(
+pub unsafe extern "C" fn fft_engine_lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_vertical_packing_unchecked_u32_raw_ptr_buffers(
     fft_engine: *mut FftEngine,
     default_engine: *mut DefaultEngine,
-    bootstrap_key: *const FftFourierLweBootstrapKey64,
-    output: *mut u64,
+    bootstrap_key: *const FftFourierLweBootstrapKey32,
+    output: *mut u32,
     output_lwe_size: usize,
     output_ciphertext_count: usize,
-    input: *const u64,
+    input: *const u32,
     input_lwe_size: usize,
     input_ciphertext_count: usize,
-    luts: *const u64,
+    luts: *const u32,
     luts_length: usize,
     cbs_level_count: usize,
     cbs_base_log: usize,
-    cbs_pfpksk: *const LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
+    cbs_pfpksk: *const LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys32,
 ) -> c_int {
     catch_panic(|| {
         let fft_engine = &mut (*fft_engine);

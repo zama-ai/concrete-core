@@ -5,20 +5,20 @@ use crate::utils::*;
 use concrete_core::prelude::*;
 use std::os::raw::c_int;
 
-/// Create an `LweKeyswitchKeyMutView64` from a raw pointer.
+/// Create an `LweKeyswitchKeyMutView32` from a raw pointer.
 ///
 /// Refer to `concrete-core` implementation for detailed documentation.
 ///
 /// This function is [checked](crate#safety-checked-and-unchecked-functions).
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_create_lwe_keyswitch_key_mut_view_from_u64(
+pub unsafe extern "C" fn default_engine_create_lwe_keyswitch_key_mut_view_from_u32(
     engine: *mut DefaultEngine,
-    input: *mut u64,
+    input: *mut u32,
     input_lwe_dimension: usize,
     output_lwe_dimension: usize,
     decomposition_base_log: usize,
     decomposition_level_count: usize,
-    result: *mut *mut LweKeyswitchKeyMutView64,
+    result: *mut *mut LweKeyswitchKeyMutView32,
 ) -> c_int {
     catch_panic(|| {
         check_ptr_is_non_null_and_aligned(result).unwrap();
@@ -54,16 +54,16 @@ pub unsafe extern "C" fn default_engine_create_lwe_keyswitch_key_mut_view_from_u
 }
 
 /// [Unchecked](crate#safety-checked-and-unchecked-functions) version of
-/// [`default_engine_create_lwe_keyswitch_key_mut_view_from_u64`]
+/// [`default_engine_create_lwe_keyswitch_key_mut_view_from_u32`]
 #[no_mangle]
-pub unsafe extern "C" fn default_engine_create_lwe_keyswitch_key_mut_view_from_unchecked_u64(
+pub unsafe extern "C" fn default_engine_create_lwe_keyswitch_key_mut_view_from_unchecked_u32(
     engine: *mut DefaultEngine,
-    input: *mut u64,
+    input: *mut u32,
     input_lwe_dimension: usize,
     output_lwe_dimension: usize,
     decomposition_base_log: usize,
     decomposition_level_count: usize,
-    result: *mut *mut LweKeyswitchKeyMutView64,
+    result: *mut *mut LweKeyswitchKeyMutView32,
 ) -> c_int {
     catch_panic(|| {
         // First fill the result with a null ptr so that if we fail and the return code is not
