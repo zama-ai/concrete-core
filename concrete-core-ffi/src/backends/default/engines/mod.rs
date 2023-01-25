@@ -248,6 +248,8 @@ pub mod lwe_seeded_bootstrap_key_generation;
 pub mod lwe_seeded_bootstrap_key_to_lwe_bootstrap_key_transformation;
 pub mod lwe_seeded_keyswitch_key_generation;
 pub mod lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_transformation;
+pub mod lwe_ciphertext_vector_discarding_encryption;
+pub mod lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_discarding_conversion;
 
 pub use destroy::*;
 #[cfg(feature = "backend_default_serialization")]
@@ -281,3 +283,5 @@ pub use lwe_seeded_bootstrap_key_generation::*;
 pub use lwe_seeded_bootstrap_key_to_lwe_bootstrap_key_transformation::*;
 pub use lwe_seeded_keyswitch_key_generation::*;
 pub use lwe_seeded_keyswitch_key_to_lwe_keyswitch_key_transformation::*;
+pub use lwe_ciphertext_vector_discarding_encryption::*;
+pub use lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_discarding_conversion::*;
