@@ -56,12 +56,6 @@ extern "C" {
     /// Get the maximum amount of shared memory on GPU `gpu_index`
     pub fn cuda_get_max_shared_memory(gpu_index: u32) -> i32;
 
-    /// Initialize the twiddles values for `polynomial_size` on GPU `gpu_index`, using the Cuda
-    /// stream `_v_stream` passed as a void pointer.
-    /// Calling this function is necessary before calling any function that relies on the FFT
-    /// (bootstrap, circuit bootstrap, bit extraction, vertical packing, wop PBS).
-    pub fn cuda_initialize_twiddles(polynomial_size: u32, v_stream: *const c_void, gpu_index: u32);
-
     /// Copy a bootstrap key `src` represented with 32 bits in the standard domain from the CPU to
     /// the GPU `gpu_index` using the stream `v_stream`, and convert it to the Fourier domain on the
     /// GPU. The resulting bootstrap key `dest` on the GPU is an array of f64 values.

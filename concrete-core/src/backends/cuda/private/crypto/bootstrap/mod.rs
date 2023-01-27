@@ -60,7 +60,6 @@ where
     for stream in streams.iter() {
         let mut d_vec = stream.malloc::<f64>(alloc_size as u32);
         let input_slice = input.as_tensor().as_slice();
-        stream.initialize_twiddles(input.polynomial_size());
         stream.convert_lwe_bootstrap_key::<T>(
             &mut d_vec,
             input_slice,
@@ -107,7 +106,6 @@ pub(crate) unsafe fn execute_lwe_ciphertext_vector_low_latency_bootstrap_on_gpu<
         let mut d_test_vector_indexes = stream.malloc::<u32>(samples.0 as u32);
         stream.copy_to_gpu(&mut d_test_vector_indexes, &test_vector_indexes);
 
-        stream.initialize_twiddles(bsk.polynomial_size);
         stream.discard_bootstrap_low_latency_lwe_ciphertext_vector::<T>(
             output.d_vecs.get_mut(gpu_index).unwrap(),
             acc.d_vecs.get(gpu_index).unwrap(),
@@ -159,7 +157,6 @@ pub(crate) unsafe fn execute_lwe_ciphertext_vector_amortized_bootstrap_on_gpu<
         let mut d_test_vector_indexes = stream.malloc::<u32>(samples.0 as u32);
         stream.copy_to_gpu(&mut d_test_vector_indexes, &test_vector_indexes);
 
-        stream.initialize_twiddles(bsk.polynomial_size);
         stream.discard_bootstrap_amortized_lwe_ciphertext_vector::<T>(
             output.d_vecs.get_mut(gpu_index).unwrap(),
             acc.d_vecs.get(gpu_index).unwrap(),
@@ -213,7 +210,6 @@ pub(crate) unsafe fn execute_lwe_ciphertext_vector_extract_bits_on_gpu<T: Unsign
     let mut lwe_array_out_pbs_buffer =
         stream.malloc::<T>((num_samples.0 * (polynomial_size.0 + 1)) as u32);
 
-    stream.initialize_twiddles(polynomial_size);
     stream.discard_extract_bits_lwe_ciphertext_vector::<T>(
         lwe_array_out,
         lwe_array_in,
