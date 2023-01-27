@@ -71,28 +71,10 @@ test! {
         (CudaFourierLweBootstrapKey, CudaLweKeyswitchKey, CudaLweCiphertext,
             CudaLweCiphertextVector)),
     ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorGlweCiphertextDiscardingPrivateFunctionalPackingKeyswitchFixture,
-        (CudaLweCiphertextVector, CudaLwePrivateFunctionalPackingKeyswitchKey, CudaGlweCiphertext))
-}
-
-#[test]
-fn test_cuda_lwe_ciphertext_vector_discarding_circuit_bootstrap_boolean_vertical_packing_fixture_precision64(
-) {
-    let mut maker = Maker::default();
-    let mut engine = CudaEngine::new(()).unwrap();
-    let test_result =
-        <LweCiphertextVectorDiscardingCircuitBootstrapBooleanVerticalPackingFixture as Fixture<
-            Precision64,
-            (BinaryKeyDistribution, BinaryKeyDistribution),
-            CudaEngine,
-            (
-                CudaFourierLweBootstrapKey64,
-                CudaLweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64,
-                CudaPlaintextVector64,
-                CudaLweCiphertextVector64,
-                CudaLweCiphertextVector64,
-            ),
-        >>::stress_all_parameters(&mut maker, &mut engine, Repetitions(1), SampleSize(10));
-    assert!(test_result);
+        (CudaLweCiphertextVector, CudaLwePrivateFunctionalPackingKeyswitchKey, CudaGlweCiphertext)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingCircuitBootstrapBooleanVerticalPackingFixture,
+        (CudaFourierLweBootstrapKey, CudaLweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys,
+        CudaPlaintextVector, CudaLweCiphertextVector, CudaLweCiphertextVector))
 }
 
 macro_rules! test_amortized {
