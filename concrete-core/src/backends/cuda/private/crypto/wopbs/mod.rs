@@ -20,9 +20,7 @@ use crate::prelude::{
     GgswCiphertextEntity, LweCiphertext64, LweDimension, PolynomialCount, SharedMemoryAmount,
 };
 use aligned_vec::CACHELINE_ALIGN;
-use concrete_cuda::cuda_bind::{
-    cuda_blind_rotate_and_sample_extraction_64, cuda_cmux_tree_64, cuda_initialize_twiddles,
-};
+use concrete_cuda::cuda_bind::{cuda_blind_rotate_and_sample_extraction_64, cuda_cmux_tree_64};
 use concrete_fft::c64;
 use dyn_stack::{DynStack, ReborrowMut};
 
@@ -45,10 +43,6 @@ pub fn cuda_vertical_packing(
 
     let gpu_index = GpuIndex(0);
     let stream = CudaStream::new(gpu_index).unwrap();
-    unsafe {
-        cuda_initialize_twiddles(polynomial_size.0 as u32, stream.stream_handle().0, 0u32);
-    }
-
     // LUTs
     let mut h_concatenated_luts_glwe = vec![];
     for h_lut in tree_lut.iter() {
@@ -325,7 +319,6 @@ pub(crate) unsafe fn execute_circuit_bootstrap_vertical_packing_on_gpu<T: Unsign
 ) {
     let stream = &streams[0];
     let lut_number = lwe_array_out.lwe_ciphertext_count.0;
-    stream.initialize_twiddles(bsk.polynomial_size);
     stream.discard_circuit_bootstrap_boolean_vertical_packing_lwe_ciphertext_vector::<T>(
         lwe_array_out.d_vecs.get_mut(0).unwrap(),
         lwe_array_in.d_vecs.get(0).unwrap(),

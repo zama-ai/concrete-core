@@ -163,19 +163,6 @@ impl CudaStream {
         }
     }
 
-    /// Initialize twiddles
-    #[allow(dead_code)]
-    pub fn initialize_twiddles(&self, polynomial_size: PolynomialSize) {
-        unsafe {
-            cuda_initialize_twiddles(
-                polynomial_size.0 as u32,
-                self.stream.0,
-                self.gpu_index.0 as u32,
-            );
-            cuda_synchronize_stream(self.stream.0);
-        }
-    }
-
     /// Convert bootstrap key
     #[allow(dead_code)]
     pub unsafe fn convert_lwe_bootstrap_key<T: UnsignedInteger>(

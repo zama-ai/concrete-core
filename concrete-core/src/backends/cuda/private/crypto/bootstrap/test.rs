@@ -148,11 +148,6 @@ mod cuda_unit_test_pbs {
                 let mut d_bsk_fourier = stream.malloc::<f64>(bsk_size as u32);
 
                 unsafe {
-                    concrete_cuda::cuda_bind::cuda_initialize_twiddles(
-                        polynomial_size.0 as u32,
-                        stream.stream_handle().0,
-                        gpu_index.0 as u32,
-                    );
                     concrete_cuda::cuda_bind::cuda_convert_lwe_bootstrap_key_64(
                         d_bsk_fourier.as_mut_c_ptr(),
                         h_coef_bsk.as_ptr() as *mut std::os::raw::c_void,
@@ -397,11 +392,6 @@ mod cuda_unit_test_pbs {
                 let mut d_bsk_fourier = stream.malloc::<f64>(bsk_size as u32);
 
                 unsafe {
-                    concrete_cuda::cuda_bind::cuda_initialize_twiddles(
-                        polynomial_size.0 as u32,
-                        stream.stream_handle().0,
-                        gpu_index.0 as u32,
-                    );
                     concrete_cuda::cuda_bind::cuda_convert_lwe_bootstrap_key_64(
                         d_bsk_fourier.as_mut_c_ptr(),
                         h_coef_bsk.as_ptr() as *mut std::os::raw::c_void,
