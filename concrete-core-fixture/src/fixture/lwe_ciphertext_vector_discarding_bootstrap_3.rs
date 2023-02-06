@@ -12,14 +12,14 @@ use concrete_core::prelude::{
     DecompositionBaseLog, DecompositionLevelCount, DispersionParameter, GlweCiphertextCount,
     GlweCiphertextVectorEntity, GlweDimension, LogStandardDev, LweBootstrapKeyEntity,
     LweCiphertextCount, LweCiphertextVectorDiscardingBootstrapEngine, LweCiphertextVectorEntity,
-    LweDimension, PolynomialSize, StandardDev, Variance,
+    LweDimension, PolynomialSize, Variance,
 };
 
 /// A fixture for the types implementing the `LweCiphertextVectorDiscardingBootstrapEngine` trait.
-pub struct LweCiphertextVectorDiscardingBootstrapFixture2;
+pub struct LweCiphertextVectorDiscardingBootstrapFixture3;
 
 #[derive(Debug)]
-pub struct LweCiphertextVectorDiscardingBootstrapParameters2 {
+pub struct LweCiphertextVectorDiscardingBootstrapParameters3 {
     pub noise: Variance,
     pub lwe_dimension: LweDimension,
     pub glwe_dimension: GlweDimension,
@@ -50,7 +50,7 @@ impl<
             InputCiphertextVector,
             OutputCiphertextVector,
         ),
-    > for LweCiphertextVectorDiscardingBootstrapFixture2
+    > for LweCiphertextVectorDiscardingBootstrapFixture3
 where
     Precision: IntegerPrecision,
     InputKeyDistribution: KeyDistributionMarker,
@@ -74,7 +74,7 @@ where
         + SynthesizesLweCiphertextVector<Precision, InputKeyDistribution, InputCiphertextVector>
         + SynthesizesLweCiphertextVector<Precision, OutputKeyDistribution, OutputCiphertextVector>,
 {
-    type Parameters = LweCiphertextVectorDiscardingBootstrapParameters2;
+    type Parameters = LweCiphertextVectorDiscardingBootstrapParameters3;
     type RepetitionPrototypes = (
         <Maker as PrototypesGlweCiphertextVector<Precision, OutputKeyDistribution>>::GlweCiphertextVectorProto,
         <Maker as PrototypesLweSecretKey<Precision, InputKeyDistribution>>::LweSecretKeyProto,
@@ -108,44 +108,25 @@ where
     type Outcome = (Vec<Precision::Raw>, Vec<Precision::Raw>);
 
     fn generate_parameters_iterator() -> Box<dyn Iterator<Item = Self::Parameters>> {
-        let mut params = vec![
-            LweCiphertextVectorDiscardingBootstrapParameters2 {
-                noise: Variance(LogStandardDev::from_log_standard_dev(-29.).get_variance()),
-                lwe_dimension: LweDimension(630),
-                glwe_dimension: GlweDimension(1),
-                poly_size: PolynomialSize(1024),
-                decomp_level_count: DecompositionLevelCount(3),
-                decomp_base_log: DecompositionBaseLog(7),
-                lwe_ciphertext_count: LweCiphertextCount(2),
-            },
-            LweCiphertextVectorDiscardingBootstrapParameters2 {
-                noise: Variance(LogStandardDev::from_log_standard_dev(-29.).get_variance()),
-                lwe_dimension: LweDimension(630),
-                glwe_dimension: GlweDimension(1),
-                poly_size: PolynomialSize(2048),
-                decomp_level_count: DecompositionLevelCount(3),
-                decomp_base_log: DecompositionBaseLog(7),
-                lwe_ciphertext_count: LweCiphertextCount(1),
-            },
-        ];
+        let mut params = vec![LweCiphertextVectorDiscardingBootstrapParameters3 {
+            noise: Variance(LogStandardDev::from_log_standard_dev(-29.).get_variance()),
+            lwe_dimension: LweDimension(630),
+            glwe_dimension: GlweDimension(2),
+            poly_size: PolynomialSize(512),
+            decomp_level_count: DecompositionLevelCount(3),
+            decomp_base_log: DecompositionBaseLog(7),
+            lwe_ciphertext_count: LweCiphertextCount(10),
+        }];
+
         if Precision::Raw::BITS == 64 {
-            params.push(LweCiphertextVectorDiscardingBootstrapParameters2 {
-                noise: Variance(StandardDev(0.00000000000000029403601535432533).get_variance()),
-                lwe_dimension: LweDimension(526),
-                glwe_dimension: GlweDimension(1),
-                poly_size: PolynomialSize(4096),
-                decomp_level_count: DecompositionLevelCount(1),
-                decomp_base_log: DecompositionBaseLog(23),
-                lwe_ciphertext_count: LweCiphertextCount(1),
-            });
-            params.push(LweCiphertextVectorDiscardingBootstrapParameters2 {
-                noise: Variance(StandardDev(0.00000000000000029403601535432533).get_variance()),
-                lwe_dimension: LweDimension(578),
-                glwe_dimension: GlweDimension(1),
-                poly_size: PolynomialSize(8192),
-                decomp_level_count: DecompositionLevelCount(1),
-                decomp_base_log: DecompositionBaseLog(23),
-                lwe_ciphertext_count: LweCiphertextCount(1),
+            params.push(LweCiphertextVectorDiscardingBootstrapParameters3 {
+                noise: Variance(LogStandardDev::from_log_standard_dev(-29.).get_variance()),
+                lwe_dimension: LweDimension(792),
+                glwe_dimension: GlweDimension(3),
+                poly_size: PolynomialSize(2048),
+                decomp_level_count: DecompositionLevelCount(4),
+                decomp_base_log: DecompositionBaseLog(9),
+                lwe_ciphertext_count: LweCiphertextCount(5),
             });
         }
         Box::new(params.into_iter())
