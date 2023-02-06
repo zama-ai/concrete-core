@@ -130,5 +130,9 @@ test_amortized! {
         CudaLweCiphertextVector, CudaLweCiphertextVector)),
     ((BinaryKeyDistribution, BinaryKeyDistribution), LweCiphertextVectorDiscardingBootstrapFixture2, (CudaFourierLweBootstrapKey,
         CudaGlweCiphertextVector,
+        CudaLweCiphertextVector, CudaLweCiphertextVector)),
+    ((BinaryKeyDistribution, BinaryKeyDistribution),
+        LweCiphertextVectorDiscardingBootstrapFixture3, (CudaFourierLweBootstrapKey,
+        CudaGlweCiphertextVector,
         CudaLweCiphertextVector, CudaLweCiphertextVector))
 }

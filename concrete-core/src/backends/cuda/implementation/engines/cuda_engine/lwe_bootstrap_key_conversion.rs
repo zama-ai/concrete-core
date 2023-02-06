@@ -1,5 +1,5 @@
 use crate::backends::cuda::engines::CudaError;
-use crate::backends::cuda::implementation::engines::{check_glwe_dim, CudaEngine};
+use crate::backends::cuda::implementation::engines::CudaEngine;
 use crate::backends::cuda::implementation::entities::{
     CudaFourierLweBootstrapKey32, CudaFourierLweBootstrapKey64,
 };
@@ -70,8 +70,6 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey32, CudaFourierLweBootstrapK
     ) -> Result<CudaFourierLweBootstrapKey32, LweBootstrapKeyConversionError<CudaError>> {
         let poly_size = input.0.polynomial_size();
         check_poly_size!(poly_size);
-        let glwe_dim = input.0.glwe_size().to_glwe_dimension();
-        check_glwe_dim!(glwe_dim);
         let data_per_gpu = input.glwe_dimension().to_glwe_size().0
             * input.glwe_dimension().to_glwe_size().0
             * input.input_lwe_dimension().0
@@ -156,8 +154,6 @@ impl LweBootstrapKeyConversionEngine<LweBootstrapKey64, CudaFourierLweBootstrapK
     ) -> Result<CudaFourierLweBootstrapKey64, LweBootstrapKeyConversionError<CudaError>> {
         let poly_size = input.0.polynomial_size();
         check_poly_size!(poly_size);
-        let glwe_dim = input.0.glwe_size().to_glwe_dimension();
-        check_glwe_dim!(glwe_dim);
         let data_per_gpu = input.glwe_dimension().to_glwe_size().0
             * input.glwe_dimension().to_glwe_size().0
             * input.input_lwe_dimension().0
