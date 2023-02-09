@@ -7,7 +7,7 @@ use concrete_csprng::generators::NeonAesRandomGenerator as ActivatedRandomGenera
 #[cfg(all(
     not(feature = "generator_x86_64_aesni"),
     not(feature = "generator_aarch64_aes"),
-    feature = "generator_soft"
+    feature = "generator_fallback"
 ))]
 use concrete_csprng::generators::SoftwareRandomGenerator as ActivatedRandomGenerator;
 

@@ -18,7 +18,7 @@ kolmogorov_smirnov = "1.1.0"
 criterion = "0.3"
 
 [dependencies]
-concrete-csprng = { version = "0.2.1", path = "../concrete-csprng" }
+concrete-csprng = { version = "0.3.0", path = "../concrete-csprng" }
 concrete-cuda = { version = "0.1.1", path = "../concrete-cuda", optional = true }
 serde = { version = "1.0", optional = true }
 lazy_static = "1.4.0"
@@ -41,7 +41,7 @@ harness = false
 default = ["backend_default", "seeder_unix"]
 
 # A pure-rust backend. Included by default in the build.
-backend_default = ["concrete-csprng/generator_soft"]
+backend_default = ["concrete-csprng/generator_fallback"]
 
 # An accelerated backend, using the `concrete-fft` library.
 backend_fft = ["concrete-fft"]

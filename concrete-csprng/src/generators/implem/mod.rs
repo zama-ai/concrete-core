@@ -8,7 +8,7 @@ mod aarch64;
 #[cfg(feature = "generator_aarch64_aes")]
 pub use aarch64::*;
 
-#[cfg(feature = "generator_soft")]
+#[cfg(feature = "generator_fallback")]
 mod soft;
-#[cfg(feature = "generator_soft")]
+#[cfg(feature = "generator_fallback")]
 pub use soft::*;
