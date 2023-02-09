@@ -1,5 +1,5 @@
 use crate::backends::cuda::engines::CudaError;
-use crate::backends::cuda::implementation::engines::{check_glwe_dim, CudaEngine};
+use crate::backends::cuda::implementation::engines::CudaEngine;
 use crate::backends::cuda::implementation::entities::{
     CudaFourierLweBootstrapKey32, CudaFourierLweBootstrapKey64, CudaGlweCiphertext32,
     CudaGlweCiphertext64, CudaLweCiphertext32, CudaLweCiphertext64,
@@ -119,8 +119,6 @@ impl
         LweCiphertextDiscardingBootstrapError::perform_generic_checks(output, input, acc, bsk)?;
         let poly_size = bsk.polynomial_size();
         check_poly_size!(poly_size);
-        let glwe_dim = bsk.glwe_dimension();
-        check_glwe_dim!(glwe_dim);
         unsafe { self.discard_bootstrap_lwe_ciphertext_unchecked(output, input, acc, bsk) };
         Ok(())
     }
@@ -256,8 +254,6 @@ impl
         LweCiphertextDiscardingBootstrapError::perform_generic_checks(output, input, acc, bsk)?;
         let poly_size = bsk.polynomial_size();
         check_poly_size!(poly_size);
-        let glwe_dim = bsk.glwe_dimension();
-        check_glwe_dim!(glwe_dim);
         unsafe { self.discard_bootstrap_lwe_ciphertext_unchecked(output, input, acc, bsk) };
         Ok(())
     }

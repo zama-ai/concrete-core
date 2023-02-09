@@ -76,13 +76,3 @@ impl From<CudaError> for LweCiphertextVectorDiscardingBootstrapError<CudaError> 
         Self::Engine(err)
     }
 }
-
-macro_rules! check_glwe_dim {
-    ($glwe_dimension: ident) => {
-        if $glwe_dimension.0 != 1 {
-            return Err(CudaError::GlweDimensionNotSupported.into());
-        }
-    };
-}
-
-pub(crate) use check_glwe_dim;
