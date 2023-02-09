@@ -1,5 +1,8 @@
 #![deny(rustdoc::broken_intra_doc_links)]
-#![cfg_attr(target_arch = "aarch64", feature(stdsimd))]
+#![cfg_attr(
+    all(feature = "generator_aarch64_aes", target_arch = "aarch64"),
+    feature(stdsimd)
+)]
 //! Cryptographically secure pseudo random number generator.
 //!
 //! Welcome to the `concrete-csprng` documentation.

@@ -11,7 +11,7 @@ concrete-core = { path = "../concrete-core", features = [
 ] }
 concrete-csprng = { path = "../concrete-csprng", features = [
     "seeder_unix",
-    "generator_soft",
+    "generator_fallback",
 ] }
 concrete-npe = { path = "../concrete-npe" }
 concrete-cuda = { path = "../concrete-cuda", optional = true }
