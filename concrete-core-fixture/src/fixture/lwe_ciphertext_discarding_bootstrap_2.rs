@@ -90,28 +90,35 @@ where
     type Outcome = (Precision::Raw, Precision::Raw);
 
     fn generate_parameters_iterator() -> Box<dyn Iterator<Item = Self::Parameters>> {
-        Box::new(
-            vec![
-                LweCiphertextDiscardingBootstrapParameters2 {
-                    noise: Variance(LogStandardDev::from_log_standard_dev(-29.).get_variance()),
-                    lwe_dimension: LweDimension(630),
-                    glwe_dimension: GlweDimension(1),
-                    poly_size: PolynomialSize(1024),
-                    decomp_level_count: DecompositionLevelCount(4),
-                    decomp_base_log: DecompositionBaseLog(6),
-                },
-                #[cfg(not(feature = "backend_cuda"))]
-                LweCiphertextDiscardingBootstrapParameters2 {
-                    noise: Variance(LogStandardDev::from_log_standard_dev(-29.).get_variance()),
-                    lwe_dimension: LweDimension(630),
-                    glwe_dimension: GlweDimension(2),
-                    poly_size: PolynomialSize(1024),
-                    decomp_level_count: DecompositionLevelCount(3),
-                    decomp_base_log: DecompositionBaseLog(7),
-                },
-            ]
-            .into_iter(),
-        )
+        let mut params = vec![
+            LweCiphertextDiscardingBootstrapParameters2 {
+                noise: Variance(LogStandardDev::from_log_standard_dev(-29.).get_variance()),
+                lwe_dimension: LweDimension(630),
+                glwe_dimension: GlweDimension(1),
+                poly_size: PolynomialSize(1024),
+                decomp_level_count: DecompositionLevelCount(4),
+                decomp_base_log: DecompositionBaseLog(6),
+            },
+            LweCiphertextDiscardingBootstrapParameters2 {
+                noise: Variance(LogStandardDev::from_log_standard_dev(-29.).get_variance()),
+                lwe_dimension: LweDimension(630),
+                glwe_dimension: GlweDimension(2),
+                poly_size: PolynomialSize(1024),
+                decomp_level_count: DecompositionLevelCount(3),
+                decomp_base_log: DecompositionBaseLog(7),
+            },
+        ];
+        if Precision::Raw::BITS == 64 {
+            params.push(LweCiphertextDiscardingBootstrapParameters2 {
+                noise: Variance(LogStandardDev::from_log_standard_dev(-29.).get_variance()),
+                lwe_dimension: LweDimension(792),
+                glwe_dimension: GlweDimension(3),
+                poly_size: PolynomialSize(2048),
+                decomp_level_count: DecompositionLevelCount(4),
+                decomp_base_log: DecompositionBaseLog(9),
+            });
+        }
+        Box::new(params.into_iter())
     }
 
     fn generate_random_repetition_prototypes(

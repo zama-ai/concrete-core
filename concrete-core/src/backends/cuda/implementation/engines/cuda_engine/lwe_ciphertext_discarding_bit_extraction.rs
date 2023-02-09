@@ -1,4 +1,3 @@
-use crate::backends::cuda::implementation::engines::check_glwe_dim;
 use crate::backends::cuda::private::crypto::bootstrap::execute_lwe_ciphertext_vector_extract_bits_on_gpu;
 use crate::prelude::{
     CiphertextModulusLog, CudaEngine, CudaError, CudaFourierLweBootstrapKey32,
@@ -36,8 +35,6 @@ impl
     ) -> Result<(), LweCiphertextDiscardingBitExtractError<Self::EngineError>> {
         let poly_size = bsk.polynomial_size();
         check_poly_size!(poly_size);
-        let glwe_dim = bsk.glwe_dimension();
-        check_glwe_dim!(glwe_dim);
         LweCiphertextDiscardingBitExtractError::perform_generic_checks(
             output,
             input,
@@ -111,8 +108,6 @@ impl
     ) -> Result<(), LweCiphertextDiscardingBitExtractError<Self::EngineError>> {
         let poly_size = bsk.polynomial_size();
         check_poly_size!(poly_size);
-        let glwe_dim = bsk.glwe_dimension();
-        check_glwe_dim!(glwe_dim);
         LweCiphertextDiscardingBitExtractError::perform_generic_checks(
             output,
             input,

@@ -1,4 +1,4 @@
-use crate::backends::cuda::implementation::engines::{check_glwe_dim, CudaEngine};
+use crate::backends::cuda::implementation::engines::CudaEngine;
 use crate::backends::cuda::private::crypto::wopbs::execute_circuit_bootstrap_vertical_packing_on_gpu;
 use crate::prelude::{
     CudaError, CudaFourierLweBootstrapKey64, CudaLweCiphertextVector64,
@@ -40,8 +40,6 @@ impl
     > {
         let poly_size = bsk.polynomial_size();
         check_poly_size!(poly_size);
-        let glwe_dim = bsk.glwe_dimension();
-        check_glwe_dim!(glwe_dim);
         LweCiphertextVectorDiscardingCircuitBootstrapBooleanVerticalPackingError::
         perform_generic_checks(
             input,
