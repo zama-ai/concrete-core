@@ -266,7 +266,7 @@ impl
         bsk: &CudaFourierLweBootstrapKey64,
     ) {
         let stream = self.streams.first().unwrap();
-        let mut test_vector_indexes = stream.malloc::<u32>(1);
+        let mut test_vector_indexes = stream.malloc::<u64>(1);
         stream.copy_to_gpu(&mut test_vector_indexes, &[0]);
 
         stream.discard_bootstrap_low_latency_lwe_ciphertext_vector::<u64>(

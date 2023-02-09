@@ -5,9 +5,10 @@ use crate::backends::cuda::private::crypto::lwe::list::CudaLweList;
 use crate::backends::cuda::private::device::{CudaStream, GpuIndex, NumberOfGpus};
 use crate::backends::cuda::private::vec::CudaVec;
 use crate::backends::cuda::private::{compute_number_of_samples_on_gpu, number_of_active_gpus};
+use crate::commons;
 use crate::commons::crypto::bootstrap::StandardBootstrapKey;
 use crate::commons::math::tensor::{AsRefSlice, AsRefTensor};
-use crate::commons::numeric::UnsignedInteger;
+use crate::commons::numeric::{CastInto, UnsignedInteger};
 use crate::prelude::{
     CiphertextCount, DecompositionBaseLog, DecompositionLevelCount, DeltaLog, ExtractedBitsCount,
     GlweDimension, LweCiphertextCount, LweCiphertextIndex, LweDimension, PolynomialSize,
@@ -74,7 +75,7 @@ where
 }
 
 pub(crate) unsafe fn execute_lwe_ciphertext_vector_low_latency_bootstrap_on_gpu<
-    T: UnsignedInteger,
+    T: UnsignedInteger + commons::numeric::CastFrom<usize>,
 >(
     streams: &[CudaStream],
     output: &mut CudaLweList<T>,
@@ -102,8 +103,11 @@ pub(crate) unsafe fn execute_lwe_ciphertext_vector_low_latency_bootstrap_on_gpu<
         );
         // FIXME this is hard set at the moment because concrete-core does not support a more
         //   general API for the bootstrap
-        let test_vector_indexes = (0..samples.0 as u32).collect::<Vec<u32>>();
-        let mut d_test_vector_indexes = stream.malloc::<u32>(samples.0 as u32);
+        let mut test_vector_indexes: Vec<T> = Vec::with_capacity(samples.0);
+        for (i, ind) in test_vector_indexes.iter_mut().enumerate() {
+            *ind = <usize as CastInto<T>>::cast_into(i);
+        }
+        let mut d_test_vector_indexes = stream.malloc::<T>(samples.0 as u32);
         stream.copy_to_gpu(&mut d_test_vector_indexes, &test_vector_indexes);
 
         stream.discard_bootstrap_low_latency_lwe_ciphertext_vector::<T>(
@@ -125,7 +129,7 @@ pub(crate) unsafe fn execute_lwe_ciphertext_vector_low_latency_bootstrap_on_gpu<
 }
 
 pub(crate) unsafe fn execute_lwe_ciphertext_vector_amortized_bootstrap_on_gpu<
-    T: UnsignedInteger,
+    T: UnsignedInteger + commons::numeric::CastFrom<usize>,
 >(
     streams: &[CudaStream],
     output: &mut CudaLweList<T>,
@@ -153,8 +157,11 @@ pub(crate) unsafe fn execute_lwe_ciphertext_vector_amortized_bootstrap_on_gpu<
         );
         // FIXME this is hard set at the moment because concrete-core does not support a more
         //   general API for the bootstrap
-        let test_vector_indexes = (0..samples.0 as u32).collect::<Vec<u32>>();
-        let mut d_test_vector_indexes = stream.malloc::<u32>(samples.0 as u32);
+        let mut test_vector_indexes: Vec<T> = Vec::with_capacity(samples.0);
+        for (i, ind) in test_vector_indexes.iter_mut().enumerate() {
+            *ind = <usize as CastInto<T>>::cast_into(i);
+        }
+        let mut d_test_vector_indexes = stream.malloc::<T>(samples.0 as u32);
         stream.copy_to_gpu(&mut d_test_vector_indexes, &test_vector_indexes);
 
         stream.discard_bootstrap_amortized_lwe_ciphertext_vector::<T>(
