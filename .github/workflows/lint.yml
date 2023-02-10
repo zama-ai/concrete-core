@@ -49,6 +49,9 @@ jobs:
       - name: Install Rust for tasks
         run: |
           make install_tasks_rust_toolchain
+      - name: Set up Clang
+        run: |
+          sudo apt-get install clang-format-11
       - name: Format concrete-cuda
         run: |
           cargo xtask chore_format

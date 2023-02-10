@@ -5,10 +5,10 @@ use std::io::Error;
 pub fn format() -> Result<(), Error> {
     cmd!(&format!(
         "cargo {} fmt &&
-                  clang-format -i concrete-cuda/cuda/include/* &&
-                  clang-format -i concrete-cuda/cuda/src/*.cu &&
-                  clang-format -i concrete-cuda/cuda/src/*.cuh &&
-                  clang-format -i concrete-cuda/cuda/src/*/*.*",
+                  clang-format-11 -i concrete-cuda/cuda/include/* &&
+                  clang-format-11 -i concrete-cuda/cuda/src/*.cu &&
+                  clang-format-11 -i concrete-cuda/cuda/src/*.cuh &&
+                  clang-format-11 -i concrete-cuda/cuda/src/*/*.*",
         get_nightly_toolchain()?
     ))
 }
