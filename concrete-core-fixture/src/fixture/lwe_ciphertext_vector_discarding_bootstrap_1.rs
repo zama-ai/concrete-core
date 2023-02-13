@@ -112,7 +112,6 @@ where
     fn generate_parameters_iterator() -> Box<dyn Iterator<Item = Self::Parameters>> {
         Box::new(
             vec![
-                #[cfg(not(feature = "backend_cuda"))]
                 LweCiphertextVectorDiscardingBootstrapParameters1 {
                     noise: Variance(LogStandardDev::from_log_standard_dev(-29.).get_variance()),
                     lwe_dimension: LweDimension(630),

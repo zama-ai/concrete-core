@@ -111,6 +111,15 @@ where
         let mut params = vec![
             LweCiphertextVectorDiscardingBootstrapParameters2 {
                 noise: Variance(LogStandardDev::from_log_standard_dev(-29.).get_variance()),
+                lwe_dimension: LweDimension(567),
+                glwe_dimension: GlweDimension(5),
+                poly_size: PolynomialSize(256),
+                decomp_level_count: DecompositionLevelCount(3),
+                decomp_base_log: DecompositionBaseLog(7),
+                lwe_ciphertext_count: LweCiphertextCount(10),
+            },
+            LweCiphertextVectorDiscardingBootstrapParameters2 {
+                noise: Variance(LogStandardDev::from_log_standard_dev(-29.).get_variance()),
                 lwe_dimension: LweDimension(630),
                 glwe_dimension: GlweDimension(1),
                 poly_size: PolynomialSize(1024),
