@@ -101,6 +101,14 @@ where
             },
             LweCiphertextDiscardingBootstrapParameters2 {
                 noise: Variance(LogStandardDev::from_log_standard_dev(-29.).get_variance()),
+                lwe_dimension: LweDimension(567),
+                glwe_dimension: GlweDimension(5),
+                poly_size: PolynomialSize(256),
+                decomp_level_count: DecompositionLevelCount(4),
+                decomp_base_log: DecompositionBaseLog(6),
+            },
+            LweCiphertextDiscardingBootstrapParameters2 {
+                noise: Variance(LogStandardDev::from_log_standard_dev(-29.).get_variance()),
                 lwe_dimension: LweDimension(630),
                 glwe_dimension: GlweDimension(2),
                 poly_size: PolynomialSize(1024),

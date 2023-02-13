@@ -62,7 +62,8 @@ impl CudaEngine {
 
 macro_rules! check_poly_size {
     ($poly_size: ident) => {
-        if $poly_size.0 != 512
+        if $poly_size.0 != 256
+            && $poly_size.0 != 512
             && $poly_size.0 != 1024
             && $poly_size.0 != 2048
             && $poly_size.0 != 4096
