@@ -30,7 +30,7 @@ use crate::prelude::*;
 use concrete_csprng::generators::SoftwareRandomGenerator;
 use concrete_csprng::seeders::UnixSeeder;
 use concrete_cuda::cuda_bind::{
-    cleanup_cuda_wop_pbs_64, cuda_circuit_bootstrap_64, cuda_cmux_tree_64,
+    cleanup_cuda_wop_pbs, cuda_circuit_bootstrap_64, cuda_cmux_tree_64,
     cuda_convert_lwe_bootstrap_key_64, cuda_extract_bits_64, cuda_synchronize_device,
     cuda_synchronize_stream, cuda_wop_pbs_64, scratch_cuda_wop_pbs_64,
 };
@@ -951,8 +951,8 @@ pub fn test_extract_bit_cuda_circuit_bootstrapping_vertical_packing() {
                     .unwrap();
 
                 // LUT creation
-                let mut lut_size = polynomial_size.0;
-                let mut lut_num = tau << (tau * p - polynomial_size.log2().0); // r
+                let lut_size = polynomial_size.0;
+                let lut_num = tau << (tau * p - polynomial_size.log2().0); // r
 
                 println!("lut_num: {}", lut_num);
 
@@ -1259,7 +1259,7 @@ pub fn test_cuda_wop_pbs() {
             .unwrap();
 
         unsafe {
-            let mut wop_pbs_buffer: *mut c_void = std::ptr::null_mut();
+            let mut wop_pbs_buffer: *mut i8 = std::ptr::null_mut();
             let mut delta_log: u32 = 0;
             let mut cbs_delta_log: u32 = 0;
             scratch_cuda_wop_pbs_64(
@@ -1270,7 +1270,7 @@ pub fn test_cuda_wop_pbs() {
                     .stream_handle()
                     .0,
                 0,
-                &mut wop_pbs_buffer as *mut *mut c_void,
+                &mut wop_pbs_buffer as *mut *mut i8,
                 &mut delta_log as *mut u32,
                 &mut cbs_delta_log as *mut u32,
                 glwe_dimension.0 as u32,
@@ -1280,6 +1280,7 @@ pub fn test_cuda_wop_pbs() {
                 number_of_bits_in_input_lwe as u32,
                 number_of_bits_in_input_lwe as u32,
                 1u32,
+                cuda_engine.get_cuda_shared_memory().0 as u32,
             );
             cuda_wop_pbs_64(
                 cuda_engine
@@ -1314,7 +1315,7 @@ pub fn test_cuda_wop_pbs() {
                 1,
                 cuda_engine.get_cuda_shared_memory().0 as u32,
             );
-            cleanup_cuda_wop_pbs_64(
+            cleanup_cuda_wop_pbs(
                 cuda_engine
                     .get_cuda_streams()
                     .get(0)
@@ -1322,7 +1323,7 @@ pub fn test_cuda_wop_pbs() {
                     .stream_handle()
                     .0,
                 0,
-                &mut wop_pbs_buffer as *mut *mut c_void,
+                &mut wop_pbs_buffer as *mut *mut i8,
             );
         }
         let vertical_packing_lwe_list_out = cuda_engine
@@ -1561,17 +1562,14 @@ fn test_cuda_circuit_bootstrapping_binary() {
 
     let mut h_fp_ksk_array: Vec<u64> = vec![];
 
-    let mut cnt = 0;
-    let mut vec_cnt = 0;
     for iter in vec_pfksk.fpksk_iter_mut() {
-        vec_cnt += 1;
         for iter2 in iter.bit_decomp_iter() {
             for iter3 in iter2.tensor.iter() {
                 h_fp_ksk_array.push(*iter3 as u64);
-                cnt += 1;
             }
         }
     }
+
     unsafe {
         // fill device lwe input with same ciphertext
         stream.copy_to_gpu::<u64>(&mut d_lwe_array_in, &mut lwe_in.tensor.as_slice());
