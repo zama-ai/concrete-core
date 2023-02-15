@@ -490,6 +490,38 @@ extern "C" {
         cmux_tree_buffer: *mut *mut i8,
     );
 
+    /// This scratch function allocates the necessary amount of data on the GPU for
+    /// the blind rotation and sample extraction on 32 bits inputs, into `br_se_buffer`. It also
+    /// configures SM options on the GPU in case FULLSM mode is going to be used.
+    pub fn scratch_cuda_blind_rotation_sample_extraction_32(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        br_se_buffer: *mut *mut i8,
+        glwe_dimension: u32,
+        polynomial_size: u32,
+        level_count: u32,
+        mbr_size: u32,
+        tau: u32,
+        max_shared_memory: u32,
+        allocate_gpu_memory: bool,
+    );
+
+    /// This scratch function allocates the necessary amount of data on the GPU for
+    /// the blind rotation and sample extraction on 64 bits inputs, into `br_se_buffer`.
+    /// It also configures SM options on the GPU in case FULLSM mode is going to be used.
+    pub fn scratch_cuda_blind_rotation_sample_extraction_64(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        br_se_buffer: *mut *mut i8,
+        glwe_dimension: u32,
+        polynomial_size: u32,
+        level_count: u32,
+        mbr_size: u32,
+        tau: u32,
+        max_shared_memory: u32,
+        allocate_gpu_memory: bool,
+    );
+
     /// Performs blind rotation on batch of 64-bit input GGSW ciphertexts.
     /// - `v_stream` is a void pointer to the Cuda stream to be used in the kernel launch
     /// - `gpu_index` is the index of the GPU to be used in the kernel launch
@@ -503,7 +535,7 @@ extern "C" {
     ///  - `polynomial_size` size of test polynomial supported sizes: {512, 1024,
     ///  2048, 4096, 8192}
     ///  - `base_log` base log parameter
-    ///  - `l_gadget` decomposition level
+    ///  - `level_count` decomposition level
     ///  - `max_shared_memory` maximum number of shared memory to be used in
     /// device functions (kernels).
     ///
@@ -516,13 +548,22 @@ extern "C" {
         lwe_out: *mut c_void,
         ggsw_in: *const c_void,
         lut_vector: *const c_void,
+        br_se_buffer: *mut i8,
         mbr_size: u32,
         tau: u32,
         glwe_dimension: u32,
         polynomial_size: u32,
         base_log: u32,
-        l_gadget: u32,
+        level_count: u32,
         max_shared_memory: u32,
+    );
+
+    /// This cleanup function frees the data for the blind rotation and sample extraction on GPU
+    /// contained in br_se_buffer for 32 or 64 bits inputs.
+    pub fn cleanup_cuda_blind_rotation_sample_extraction(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        br_se_buffer: *mut *mut i8,
     );
 
     /// Perform bit extract on a batch of 32 bit LWE ciphertexts.

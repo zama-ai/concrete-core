@@ -21,8 +21,9 @@ use crate::prelude::{
 };
 use aligned_vec::CACHELINE_ALIGN;
 use concrete_cuda::cuda_bind::{
-    cleanup_cuda_cmux_tree, cuda_blind_rotate_and_sample_extraction_64, cuda_cmux_tree_64,
-    scratch_cuda_cmux_tree_64,
+    cleanup_cuda_blind_rotation_sample_extraction, cleanup_cuda_cmux_tree,
+    cuda_blind_rotate_and_sample_extraction_64, cuda_cmux_tree_64,
+    scratch_cuda_blind_rotation_sample_extraction_64, scratch_cuda_cmux_tree_64,
 };
 use concrete_fft::c64;
 use dyn_stack::{DynStack, ReborrowMut};
@@ -137,12 +138,26 @@ pub fn cuda_vertical_packing(
         }
         // Blind rotation + sample extraction
         unsafe {
+            let mut br_se_buffer: *mut i8 = std::ptr::null_mut();
+            scratch_cuda_blind_rotation_sample_extraction_64(
+                stream.stream_handle().0,
+                0,
+                &mut br_se_buffer as *mut *mut i8,
+                glwe_dimension.0 as u32,
+                polynomial_size.0 as u32,
+                level.0 as u32,
+                br_ggsw.len() as u32,
+                1u32, // tau
+                stream.get_max_shared_memory().unwrap() as u32,
+                true,
+            );
             cuda_blind_rotate_and_sample_extraction_64(
                 stream.stream_handle().0,
                 gpu_index.0 as u32,
                 d_result_br.as_mut_c_ptr(),
                 d_concatenated_br_ggsw.as_c_ptr(),
                 d_result_cmux.as_c_ptr(),
+                br_se_buffer,
                 br_ggsw.len() as u32,
                 1u32, // tau
                 glwe_dimension.0 as u32,
@@ -150,6 +165,11 @@ pub fn cuda_vertical_packing(
                 base_log.0 as u32,
                 level.0 as u32,
                 stream.get_max_shared_memory().unwrap() as u32,
+            );
+            cleanup_cuda_blind_rotation_sample_extraction(
+                stream.stream_handle().0,
+                0,
+                &mut br_se_buffer as *mut *mut i8,
             );
         }
     } else {
@@ -169,12 +189,26 @@ pub fn cuda_vertical_packing(
 
         // Blind rotation + sample extraction
         unsafe {
+            let mut br_se_buffer: *mut i8 = std::ptr::null_mut();
+            scratch_cuda_blind_rotation_sample_extraction_64(
+                stream.stream_handle().0,
+                0,
+                &mut br_se_buffer as *mut *mut i8,
+                glwe_dimension.0 as u32,
+                polynomial_size.0 as u32,
+                level.0 as u32,
+                vec_ggsw.len() as u32,
+                tree_lut.len() as u32, // tau
+                stream.get_max_shared_memory().unwrap() as u32,
+                true,
+            );
             cuda_blind_rotate_and_sample_extraction_64(
                 stream.stream_handle().0,
                 gpu_index.0 as u32,
                 d_result_br.as_mut_c_ptr(),
                 d_concatenated_br_ggsw.as_c_ptr(),
                 d_concatenated_luts_glwe.as_c_ptr(),
+                br_se_buffer,
                 vec_ggsw.len() as u32,
                 tree_lut.len() as u32, // tau
                 glwe_dimension.0 as u32,
@@ -182,6 +216,11 @@ pub fn cuda_vertical_packing(
                 base_log.0 as u32,
                 level.0 as u32,
                 stream.get_max_shared_memory().unwrap() as u32,
+            );
+            cleanup_cuda_blind_rotation_sample_extraction(
+                stream.stream_handle().0,
+                0,
+                &mut br_se_buffer as *mut *mut i8,
             );
         }
     }
