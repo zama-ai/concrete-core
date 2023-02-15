@@ -392,6 +392,38 @@ extern "C" {
         number_of_keys: u32,
     );
 
+    /// This scratch function allocates the necessary amount of data on the GPU for
+    /// the Cmux tree on 32 bits inputs, into `cmux_tree_buffer`. It also configures SM options on
+    /// the GPU in case FULLSM mode is going to be used.
+    pub fn scratch_cuda_cmux_tree_32(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        cmux_tree_buffer: *mut *mut i8,
+        glwe_dimension: u32,
+        polynomial_size: u32,
+        level_count: u32,
+        r: u32,
+        tau: u32,
+        max_shared_memory: u32,
+        allocate_gpu_memory: bool,
+    );
+
+    /// This scratch function allocates the necessary amount of data on the GPU for
+    /// the Cmux tree on 64 bits inputs, into `cmux_tree_buffer`. It also configures SM options on
+    /// the GPU in case FULLSM mode is going to be used.
+    pub fn scratch_cuda_cmux_tree_64(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        cmux_tree_buffer: *mut *mut i8,
+        glwe_dimension: u32,
+        polynomial_size: u32,
+        level_count: u32,
+        r: u32,
+        tau: u32,
+        max_shared_memory: u32,
+        allocate_gpu_memory: bool,
+    );
+
     /// Perform cmux tree on a batch of 32-bit input GGSW ciphertexts.
     /// Check the equivalent function for 64-bit inputs for more details.
     pub fn cuda_cmux_tree_32(
@@ -400,6 +432,7 @@ extern "C" {
         glwe_array_out: *mut c_void,
         ggsw_in: *const c_void,
         lut_vector: *const c_void,
+        cmux_tree_buffer: *mut i8,
         glwe_dimension: u32,
         polynomial_size: u32,
         base_log: u32,
@@ -439,6 +472,7 @@ extern "C" {
         glwe_array_out: *mut c_void,
         ggsw_in: *const c_void,
         lut_vector: *const c_void,
+        cmux_tree_buffer: *mut i8,
         glwe_dimension: u32,
         polynomial_size: u32,
         base_log: u32,
@@ -446,6 +480,14 @@ extern "C" {
         r: u32,
         tau: u32,
         max_shared_memory: u32,
+    );
+
+    /// This cleanup function frees the data for the Cmux tree on GPU
+    /// contained in cmux_tree_buffer for 32 or 64 bits inputs.
+    pub fn cleanup_cuda_cmux_tree(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        cmux_tree_buffer: *mut *mut i8,
     );
 
     /// Performs blind rotation on batch of 64-bit input GGSW ciphertexts.

@@ -20,7 +20,10 @@ use crate::prelude::{
     GgswCiphertextEntity, LweCiphertext64, LweDimension, PolynomialCount, SharedMemoryAmount,
 };
 use aligned_vec::CACHELINE_ALIGN;
-use concrete_cuda::cuda_bind::{cuda_blind_rotate_and_sample_extraction_64, cuda_cmux_tree_64};
+use concrete_cuda::cuda_bind::{
+    cleanup_cuda_cmux_tree, cuda_blind_rotate_and_sample_extraction_64, cuda_cmux_tree_64,
+    scratch_cuda_cmux_tree_64,
+};
 use concrete_fft::c64;
 use dyn_stack::{DynStack, ReborrowMut};
 
@@ -98,12 +101,26 @@ pub fn cuda_vertical_packing(
 
         // CMUX Tree
         unsafe {
+            let mut cmux_tree_buffer: *mut i8 = std::ptr::null_mut();
+            scratch_cuda_cmux_tree_64(
+                stream.stream_handle().0,
+                0,
+                &mut cmux_tree_buffer as *mut *mut i8,
+                glwe_dimension.0 as u32,
+                polynomial_size.0 as u32,
+                level.0 as u32,
+                cmux_ggsw.len() as u32,
+                1,
+                stream.get_max_shared_memory().unwrap() as u32,
+                true,
+            );
             cuda_cmux_tree_64(
                 stream.stream_handle().0,
                 gpu_index.0 as u32,
                 d_result_cmux.as_mut_c_ptr(),
                 d_concatenated_cmux_ggsw.as_c_ptr(),
                 d_concatenated_luts_glwe.as_c_ptr(),
+                cmux_tree_buffer,
                 glwe_dimension.0 as u32,
                 polynomial_size.0 as u32,
                 base_log.0 as u32,
@@ -111,6 +128,11 @@ pub fn cuda_vertical_packing(
                 cmux_ggsw.len() as u32,
                 1,
                 stream.get_max_shared_memory().unwrap() as u32,
+            );
+            cleanup_cuda_cmux_tree(
+                stream.stream_handle().0,
+                0,
+                &mut cmux_tree_buffer as *mut *mut i8,
             );
         }
         // Blind rotation + sample extraction
