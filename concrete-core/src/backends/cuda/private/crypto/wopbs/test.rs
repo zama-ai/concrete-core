@@ -30,9 +30,9 @@ use crate::prelude::*;
 use concrete_csprng::generators::SoftwareRandomGenerator;
 use concrete_csprng::seeders::UnixSeeder;
 use concrete_cuda::cuda_bind::{
-    cleanup_cuda_wop_pbs, cuda_circuit_bootstrap_64, cuda_cmux_tree_64,
+    cleanup_cuda_cmux_tree, cleanup_cuda_wop_pbs, cuda_circuit_bootstrap_64, cuda_cmux_tree_64,
     cuda_convert_lwe_bootstrap_key_64, cuda_extract_bits_64, cuda_synchronize_device,
-    cuda_synchronize_stream, cuda_wop_pbs_64, scratch_cuda_wop_pbs_64,
+    cuda_synchronize_stream, cuda_wop_pbs_64, scratch_cuda_cmux_tree_64, scratch_cuda_wop_pbs_64,
 };
 use concrete_fft::c64;
 use dyn_stack::{DynStack, GlobalMemBuffer};
@@ -60,7 +60,7 @@ pub fn test_cuda_cmux_tree() {
         );
 
         let r = 10; // Depth of the tree
-        let tau = 10; // Quantity of trees
+        let tau = 6; // Quantity of trees
         let num_lut = 1 << r;
 
         // Size of a GGSW ciphertext
@@ -162,12 +162,26 @@ pub fn test_cuda_cmux_tree() {
             stream.copy_to_gpu::<u64>(&mut d_concatenated_mtree, h_concatenated_ggsw.as_slice());
 
             let mut d_results = stream.malloc::<u64>((tau * glwe_size) as u32);
+            let mut cmux_tree_buffer: *mut i8 = std::ptr::null_mut();
+            scratch_cuda_cmux_tree_64(
+                stream.stream_handle().0,
+                0,
+                &mut cmux_tree_buffer as *mut *mut i8,
+                glwe_dimension.0 as u32,
+                polynomial_size.0 as u32,
+                level.0 as u32,
+                r as u32,
+                tau as u32,
+                stream.get_max_shared_memory().unwrap() as u32,
+                true,
+            );
             cuda_cmux_tree_64(
                 stream.stream_handle().0,
                 gpu_index.0 as u32,
                 d_results.as_mut_c_ptr(),
                 d_concatenated_mtree.as_c_ptr(),
                 d_concatenated_luts.as_c_ptr(),
+                cmux_tree_buffer,
                 glwe_dimension.0 as u32,
                 polynomial_size.0 as u32,
                 base_log.0 as u32,
@@ -175,6 +189,11 @@ pub fn test_cuda_cmux_tree() {
                 r as u32,
                 tau as u32,
                 stream.get_max_shared_memory().unwrap() as u32,
+            );
+            cleanup_cuda_cmux_tree(
+                stream.stream_handle().0,
+                0,
+                &mut cmux_tree_buffer as *mut *mut i8,
             );
             cuda_synchronize_device(gpu_index.0 as u32);
             stream.copy_to_cpu::<u64>(&mut h_results, &d_results);
