@@ -30,9 +30,10 @@ use crate::prelude::*;
 use concrete_csprng::generators::SoftwareRandomGenerator;
 use concrete_csprng::seeders::UnixSeeder;
 use concrete_cuda::cuda_bind::{
-    cleanup_cuda_cmux_tree, cleanup_cuda_wop_pbs, cuda_circuit_bootstrap_64, cuda_cmux_tree_64,
-    cuda_convert_lwe_bootstrap_key_64, cuda_extract_bits_64, cuda_synchronize_device,
-    cuda_synchronize_stream, cuda_wop_pbs_64, scratch_cuda_cmux_tree_64, scratch_cuda_wop_pbs_64,
+    cleanup_cuda_circuit_bootstrap, cleanup_cuda_cmux_tree, cleanup_cuda_wop_pbs,
+    cuda_circuit_bootstrap_64, cuda_cmux_tree_64, cuda_convert_lwe_bootstrap_key_64,
+    cuda_extract_bits_64, cuda_synchronize_device, cuda_synchronize_stream, cuda_wop_pbs_64,
+    scratch_cuda_circuit_bootstrap_64, scratch_cuda_cmux_tree_64, scratch_cuda_wop_pbs_64,
 };
 use concrete_fft::c64;
 use dyn_stack::{DynStack, GlobalMemBuffer};
@@ -1536,12 +1537,6 @@ fn test_cuda_circuit_bootstrapping_binary() {
         stack,
     );
 
-    let mut h_lut_vector_indexes: Vec<u32> = vec![0 as u32; nos as usize * level_count_cbs.0];
-
-    for index in 0..nos as usize * level_count_cbs.0 {
-        h_lut_vector_indexes[index] = index as u32 % level_count_cbs.0 as u32;
-    }
-
     // allocate and initialize device pointers for circuit bootstrap
     // output glwe array for fp-ks
     let mut d_ggsw_out = stream.malloc::<u64>(
@@ -1550,26 +1545,16 @@ fn test_cuda_circuit_bootstrapping_binary() {
             * (glwe_dimension.0 as u32 + 1)
             * polynomial_size.0 as u32,
     );
-    // input lwe array for fp-ks
-    let mut d_lwe_array_in_fp_ks_buffer = stream.malloc::<u64>(
-        nos * level_count_cbs.0 as u32
-            * (glwe_dimension.0 as u32 + 1)
-            * (polynomial_size.0 + 1) as u32,
-    );
-    // buffer for pbs output
-    let mut d_lwe_array_out_pbs_buffer =
-        stream.malloc::<u64>(nos * level_count_cbs.0 as u32 * (polynomial_size.0 + 1) as u32);
+    let mut h_lut_vector_indexes: Vec<u64> = vec![0_u64; nos as usize * level_count_cbs.0];
+
+    for index in 0..nos as usize * level_count_cbs.0 {
+        h_lut_vector_indexes[index] = index as u64 % level_count_cbs.0 as u64;
+    }
     // vector for input of lwe ciphertexts
     let mut d_lwe_array_in = stream.malloc::<u64>(nos * (lwe_dimension.0 + 1) as u32);
-    // vector for shifted lwe input
-    let mut d_lwe_array_in_shifted_buffer =
-        stream.malloc::<u64>(nos * level_count_cbs.0 as u32 * (lwe_dimension.0 + 1) as u32);
-    // lut vector for pbs
-    let mut d_lut_vector = stream.malloc::<u64>(
-        level_count_cbs.0 as u32 * (glwe_dimension.0 as u32 + 1) * polynomial_size.0 as u32,
-    );
+
     // indexes of lut vectors
-    let mut d_lut_vector_indexes = stream.malloc::<u32>(nos * level_count_cbs.0 as u32);
+    let mut d_lut_vector_indexes = stream.malloc::<u64>(nos * level_count_cbs.0 as u32);
 
     let mut d_fp_ksk_array = stream.malloc::<u64>(
         (polynomial_size.0 as u32 + 1)
@@ -1592,11 +1577,24 @@ fn test_cuda_circuit_bootstrapping_binary() {
     unsafe {
         // fill device lwe input with same ciphertext
         stream.copy_to_gpu::<u64>(&mut d_lwe_array_in, &mut lwe_in.tensor.as_slice());
-        stream.copy_to_gpu::<u32>(&mut d_lut_vector_indexes, &mut h_lut_vector_indexes);
+        stream.copy_to_gpu::<u64>(&mut d_lut_vector_indexes, &mut h_lut_vector_indexes);
         stream.copy_to_gpu::<u64>(&mut d_fp_ksk_array, &mut h_fp_ksk_array);
     }
 
     unsafe {
+        let mut cbs_buffer: *mut i8 = std::ptr::null_mut();
+        scratch_cuda_circuit_bootstrap_64(
+            stream.stream_handle().0,
+            0 as u32,
+            &mut cbs_buffer as *mut *mut i8,
+            glwe_dimension.0 as u32,
+            lwe_dimension.0 as u32,
+            polynomial_size.0 as u32,
+            level_count_cbs.0 as u32,
+            nos,
+            stream.get_max_shared_memory().unwrap() as u32,
+            true,
+        );
         cuda_circuit_bootstrap_64(
             stream.stream_handle().0,
             0 as u32,
@@ -1604,11 +1602,8 @@ fn test_cuda_circuit_bootstrapping_binary() {
             d_lwe_array_in.as_c_ptr(),
             d_bsk_fourier.as_c_ptr(),
             d_fp_ksk_array.as_mut_c_ptr(),
-            d_lwe_array_in_shifted_buffer.as_mut_c_ptr(),
-            d_lut_vector.as_mut_c_ptr(),
             d_lut_vector_indexes.as_c_ptr(),
-            d_lwe_array_out_pbs_buffer.as_mut_c_ptr(),
-            d_lwe_array_in_fp_ks_buffer.as_mut_c_ptr(),
+            cbs_buffer,
             delta_log.0 as u32,
             polynomial_size.0 as u32,
             glwe_dimension.0 as u32,
@@ -1621,6 +1616,11 @@ fn test_cuda_circuit_bootstrapping_binary() {
             base_log_cbs.0 as u32,
             nos,
             stream.get_max_shared_memory().unwrap() as u32,
+        );
+        cleanup_cuda_circuit_bootstrap(
+            stream.stream_handle().0,
+            0 as u32,
+            &mut cbs_buffer as *mut *mut i8,
         );
         cuda_synchronize_device(0);
     }

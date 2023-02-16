@@ -3,6 +3,9 @@ mod cuda_unit_test_pbs {
     use crate::commons::math::tensor::AsRefSlice;
     use crate::commons::test_tools::new_random_generator;
     use crate::prelude::*;
+    use concrete_cuda::cuda_bind::{
+        cleanup_cuda_bootstrap_amortized, scratch_cuda_bootstrap_amortized_64,
+    };
     use std::error::Error;
 
     fn generate_accumulator_with_engine<F>(
@@ -63,6 +66,8 @@ mod cuda_unit_test_pbs {
         let lwe_dimension = LweDimension(500);
         let glwe_dimension = GlweDimension(1);
         let polynomial_sizes = vec![
+            PolynomialSize(256),
+            PolynomialSize(512),
             PolynomialSize(1024),
             PolynomialSize(2048),
             PolynomialSize(4096),
@@ -97,6 +102,7 @@ mod cuda_unit_test_pbs {
 
         let mut generator = new_random_generator();
         for &polynomial_size in polynomial_sizes.iter() {
+            println!("N = {}\n", polynomial_size.0);
             for _ in 0..repetitions {
                 // Generate client-side keys
 
@@ -204,6 +210,17 @@ mod cuda_unit_test_pbs {
                     }
 
                     unsafe {
+                        let mut pbs_buffer: *mut i8 = std::ptr::null_mut();
+                        scratch_cuda_bootstrap_amortized_64(
+                            stream.stream_handle().0,
+                            gpu_index.0 as u32,
+                            &mut pbs_buffer as *mut *mut i8,
+                            glwe_dimension.0 as u32,
+                            polynomial_size.0 as u32,
+                            1,
+                            stream.get_max_shared_memory().unwrap() as u32,
+                            true,
+                        );
                         concrete_cuda::cuda_bind::cuda_bootstrap_amortized_lwe_ciphertext_vector_64(
                             stream.stream_handle().0,
                             gpu_index.0 as u32,
@@ -212,6 +229,7 @@ mod cuda_unit_test_pbs {
                             d_lut_vector_indexes.as_c_ptr(),
                             d_lwe_in.as_c_ptr(),
                             d_bsk_fourier.as_c_ptr(),
+                            pbs_buffer,
                             lwe_dimension.0 as u32,
                             glwe_dimension.0 as u32,
                             polynomial_size.0 as u32,
@@ -221,6 +239,11 @@ mod cuda_unit_test_pbs {
                             1,
                             0,
                             stream.get_max_shared_memory().unwrap() as u32,
+                        );
+                        cleanup_cuda_bootstrap_amortized(
+                            stream.stream_handle().0,
+                            gpu_index.0 as u32,
+                            &mut pbs_buffer as *mut *mut i8,
                         );
                     }
                     //println!("h_test_vector: {:?}", accumulator.0.get_body().tensor);

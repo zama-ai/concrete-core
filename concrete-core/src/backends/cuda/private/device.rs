@@ -219,6 +219,17 @@ impl CudaStream {
         max_shared_memory: SharedMemoryAmount,
     ) {
         if T::BITS == 32 {
+            let mut pbs_buffer: *mut i8 = std::ptr::null_mut();
+            scratch_cuda_bootstrap_amortized_32(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                &mut pbs_buffer as *mut *mut i8,
+                glwe_dimension.0 as u32,
+                polynomial_size.0 as u32,
+                num_samples.0 as u32,
+                max_shared_memory.0 as u32,
+                true,
+            );
             cuda_bootstrap_amortized_lwe_ciphertext_vector_32(
                 self.stream.0,
                 self.gpu_index.0 as u32,
@@ -227,6 +238,7 @@ impl CudaStream {
                 test_vector_indexes.as_c_ptr(),
                 lwe_array_in.as_c_ptr(),
                 bootstrapping_key.as_c_ptr(),
+                pbs_buffer,
                 lwe_dimension.0 as u32,
                 glwe_dimension.0 as u32,
                 polynomial_size.0 as u32,
@@ -237,7 +249,23 @@ impl CudaStream {
                 lwe_idx.0 as u32,
                 max_shared_memory.0 as u32,
             );
+            cleanup_cuda_bootstrap_amortized(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                &mut pbs_buffer as *mut *mut i8,
+            );
         } else if T::BITS == 64 {
+            let mut pbs_buffer: *mut i8 = std::ptr::null_mut();
+            scratch_cuda_bootstrap_amortized_64(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                &mut pbs_buffer as *mut *mut i8,
+                glwe_dimension.0 as u32,
+                polynomial_size.0 as u32,
+                num_samples.0 as u32,
+                max_shared_memory.0 as u32,
+                true,
+            );
             cuda_bootstrap_amortized_lwe_ciphertext_vector_64(
                 self.stream.0,
                 self.gpu_index.0 as u32,
@@ -246,6 +274,7 @@ impl CudaStream {
                 test_vector_indexes.as_c_ptr(),
                 lwe_array_in.as_c_ptr(),
                 bootstrapping_key.as_c_ptr(),
+                pbs_buffer,
                 lwe_dimension.0 as u32,
                 glwe_dimension.0 as u32,
                 polynomial_size.0 as u32,
@@ -255,6 +284,11 @@ impl CudaStream {
                 num_samples.0 as u32,
                 lwe_idx.0 as u32,
                 max_shared_memory.0 as u32,
+            );
+            cleanup_cuda_bootstrap_amortized(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                &mut pbs_buffer as *mut *mut i8,
             );
         }
         cuda_synchronize_stream(self.stream.0);
@@ -630,11 +664,7 @@ impl CudaStream {
         lwe_array_in: &CudaVec<T>,
         fourier_bsk: &CudaVec<f64>,
         fp_ksk_array: &CudaVec<T>,
-        lwe_array_in_shifted_buffer: &mut CudaVec<T>,
-        lut_vector: &mut CudaVec<T>,
         lut_vector_indexes: &CudaVec<T>,
-        lwe_array_out_pbs_buffer: &mut CudaVec<T>,
-        lwe_array_in_fp_ks_buffer: &mut CudaVec<T>,
         delta_log: DeltaLog,
         polynomial_size: PolynomialSize,
         glwe_dimension: GlweDimension,
@@ -649,6 +679,19 @@ impl CudaStream {
         max_shared_memory: SharedMemoryAmount,
     ) {
         if T::BITS == 32 {
+            let mut cbs_buffer: *mut i8 = std::ptr::null_mut();
+            scratch_cuda_circuit_bootstrap_32(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                &mut cbs_buffer as *mut *mut i8,
+                glwe_dimension.0 as u32,
+                lwe_dimension.0 as u32,
+                polynomial_size.0 as u32,
+                level_count_cbs.0 as u32,
+                number_of_samples.0 as u32,
+                max_shared_memory.0 as u32,
+                true,
+            );
             cuda_circuit_bootstrap_32(
                 self.stream.0,
                 self.gpu_index.0 as u32,
@@ -656,11 +699,8 @@ impl CudaStream {
                 lwe_array_in.as_c_ptr(),
                 fourier_bsk.as_c_ptr(),
                 fp_ksk_array.as_c_ptr(),
-                lwe_array_in_shifted_buffer.as_mut_c_ptr(),
-                lut_vector.as_mut_c_ptr(),
                 lut_vector_indexes.as_c_ptr(),
-                lwe_array_out_pbs_buffer.as_mut_c_ptr(),
-                lwe_array_in_fp_ks_buffer.as_mut_c_ptr(),
+                cbs_buffer,
                 delta_log.0 as u32,
                 polynomial_size.0 as u32,
                 glwe_dimension.0 as u32,
@@ -674,7 +714,25 @@ impl CudaStream {
                 number_of_samples.0 as u32,
                 max_shared_memory.0 as u32,
             );
+            cleanup_cuda_circuit_bootstrap(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                &mut cbs_buffer as *mut *mut i8,
+            );
         } else if T::BITS == 64 {
+            let mut cbs_buffer: *mut i8 = std::ptr::null_mut();
+            scratch_cuda_circuit_bootstrap_64(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                &mut cbs_buffer as *mut *mut i8,
+                glwe_dimension.0 as u32,
+                lwe_dimension.0 as u32,
+                polynomial_size.0 as u32,
+                level_count_cbs.0 as u32,
+                number_of_samples.0 as u32,
+                max_shared_memory.0 as u32,
+                true,
+            );
             cuda_circuit_bootstrap_64(
                 self.stream.0,
                 self.gpu_index.0 as u32,
@@ -682,11 +740,8 @@ impl CudaStream {
                 lwe_array_in.as_c_ptr(),
                 fourier_bsk.as_c_ptr(),
                 fp_ksk_array.as_c_ptr(),
-                lwe_array_in_shifted_buffer.as_mut_c_ptr(),
-                lut_vector.as_mut_c_ptr(),
                 lut_vector_indexes.as_c_ptr(),
-                lwe_array_out_pbs_buffer.as_mut_c_ptr(),
-                lwe_array_in_fp_ks_buffer.as_mut_c_ptr(),
+                cbs_buffer,
                 delta_log.0 as u32,
                 polynomial_size.0 as u32,
                 glwe_dimension.0 as u32,
@@ -699,6 +754,11 @@ impl CudaStream {
                 base_log_cbs.0 as u32,
                 number_of_samples.0 as u32,
                 max_shared_memory.0 as u32,
+            );
+            cleanup_cuda_circuit_bootstrap(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                &mut cbs_buffer as *mut *mut i8,
             );
         }
         cuda_synchronize_stream(self.stream.0);
