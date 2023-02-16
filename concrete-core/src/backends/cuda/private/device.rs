@@ -107,7 +107,7 @@ impl CudaStream {
     where
         T: Numeric,
     {
-        self.copy_to_gpu_async(dest, src);
+        self.copy_to_gpu_async::<T>(dest, src);
         self.synchronize_device();
     }
 
@@ -143,7 +143,7 @@ impl CudaStream {
     where
         T: Numeric,
     {
-        self.copy_to_cpu_async(dest, src);
+        self.copy_to_cpu_async::<T>(dest, src);
         self.synchronize_device();
     }
 
@@ -313,6 +313,18 @@ impl CudaStream {
         max_shared_memory: SharedMemoryAmount,
     ) {
         if T::BITS == 32 {
+            let mut pbs_buffer: *mut i8 = std::ptr::null_mut();
+            scratch_cuda_bootstrap_low_latency_32(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                &mut pbs_buffer as *mut *mut i8,
+                glwe_dimension.0 as u32,
+                polynomial_size.0 as u32,
+                level.0 as u32,
+                num_samples.0 as u32,
+                max_shared_memory.0 as u32,
+                true,
+            );
             cuda_bootstrap_low_latency_lwe_ciphertext_vector_32(
                 self.stream.0,
                 self.gpu_index.0 as u32,
@@ -321,6 +333,7 @@ impl CudaStream {
                 test_vector_indexes.as_c_ptr(),
                 lwe_array_in.as_c_ptr(),
                 bootstrapping_key.as_c_ptr(),
+                pbs_buffer,
                 lwe_dimension.0 as u32,
                 glwe_dimension.0 as u32,
                 polynomial_size.0 as u32,
@@ -331,7 +344,24 @@ impl CudaStream {
                 lwe_idx.0 as u32,
                 max_shared_memory.0 as u32,
             );
+            cleanup_cuda_bootstrap_low_latency(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                &mut pbs_buffer as *mut *mut i8,
+            );
         } else if T::BITS == 64 {
+            let mut pbs_buffer: *mut i8 = std::ptr::null_mut();
+            scratch_cuda_bootstrap_low_latency_64(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                &mut pbs_buffer as *mut *mut i8,
+                glwe_dimension.0 as u32,
+                polynomial_size.0 as u32,
+                level.0 as u32,
+                num_samples.0 as u32,
+                max_shared_memory.0 as u32,
+                true,
+            );
             cuda_bootstrap_low_latency_lwe_ciphertext_vector_64(
                 self.stream.0,
                 self.gpu_index.0 as u32,
@@ -340,6 +370,7 @@ impl CudaStream {
                 test_vector_indexes.as_c_ptr(),
                 lwe_array_in.as_c_ptr(),
                 bootstrapping_key.as_c_ptr(),
+                pbs_buffer,
                 lwe_dimension.0 as u32,
                 glwe_dimension.0 as u32,
                 polynomial_size.0 as u32,
@@ -349,6 +380,11 @@ impl CudaStream {
                 num_samples.0 as u32,
                 lwe_idx.0 as u32,
                 max_shared_memory.0 as u32,
+            );
+            cleanup_cuda_bootstrap_low_latency(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                &mut pbs_buffer as *mut *mut i8,
             );
         }
         cuda_synchronize_stream(self.stream.0);
@@ -580,12 +616,6 @@ impl CudaStream {
         &self,
         lwe_array_out: &mut CudaVec<T>,
         lwe_array_in: &CudaVec<T>,
-        lwe_array_in_buffer: &mut CudaVec<T>,
-        lwe_array_in_shifted_buffer: &mut CudaVec<T>,
-        lwe_array_out_ks_buffer: &mut CudaVec<T>,
-        lwe_array_out_pbs_buffer: &mut CudaVec<T>,
-        lut_pbs: &mut CudaVec<T>,
-        lut_vector_indexes: &CudaVec<T>,
         keyswitch_key: &CudaVec<T>,
         fourier_bsk: &CudaVec<f64>,
         number_of_bits: ExtractedBitsCount,
@@ -593,6 +623,7 @@ impl CudaStream {
         input_lwe_dimension: LweDimension,
         output_lwe_dimension: LweDimension,
         glwe_dimension: GlweDimension,
+        polynomial_size: PolynomialSize,
         base_log_bsk: DecompositionBaseLog,
         level_count_bsk: DecompositionLevelCount,
         base_log_ksk: DecompositionBaseLog,
@@ -601,17 +632,25 @@ impl CudaStream {
         max_shared_memory: SharedMemoryAmount,
     ) {
         if T::BITS == 32 {
+            let mut bit_extract_buffer: *mut i8 = std::ptr::null_mut();
+            scratch_cuda_extract_bits_32(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                &mut bit_extract_buffer as *mut *mut i8,
+                glwe_dimension.0 as u32,
+                output_lwe_dimension.0 as u32,
+                polynomial_size.0 as u32,
+                level_count_bsk.0 as u32,
+                num_samples.0 as u32,
+                max_shared_memory.0 as u32,
+                true,
+            );
             cuda_extract_bits_32(
                 self.stream.0,
                 self.gpu_index.0 as u32,
                 lwe_array_out.as_mut_c_ptr(),
                 lwe_array_in.as_c_ptr(),
-                lwe_array_in_buffer.as_mut_c_ptr(),
-                lwe_array_in_shifted_buffer.as_mut_c_ptr(),
-                lwe_array_out_ks_buffer.as_mut_c_ptr(),
-                lwe_array_out_pbs_buffer.as_mut_c_ptr(),
-                lut_pbs.as_mut_c_ptr(),
-                lut_vector_indexes.as_c_ptr(),
+                bit_extract_buffer,
                 keyswitch_key.as_c_ptr(),
                 fourier_bsk.as_c_ptr(),
                 number_of_bits.0 as u32,
@@ -619,6 +658,7 @@ impl CudaStream {
                 input_lwe_dimension.0 as u32,
                 output_lwe_dimension.0 as u32,
                 glwe_dimension.0 as u32,
+                polynomial_size.0 as u32,
                 base_log_bsk.0 as u32,
                 level_count_bsk.0 as u32,
                 base_log_ksk.0 as u32,
@@ -626,18 +666,31 @@ impl CudaStream {
                 num_samples.0 as u32,
                 max_shared_memory.0 as u32,
             );
+            cleanup_cuda_extract_bits(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                &mut bit_extract_buffer as *mut *mut i8,
+            );
         } else if T::BITS == 64 {
+            let mut bit_extract_buffer: *mut i8 = std::ptr::null_mut();
+            scratch_cuda_extract_bits_64(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                &mut bit_extract_buffer as *mut *mut i8,
+                glwe_dimension.0 as u32,
+                output_lwe_dimension.0 as u32,
+                polynomial_size.0 as u32,
+                level_count_bsk.0 as u32,
+                num_samples.0 as u32,
+                max_shared_memory.0 as u32,
+                true,
+            );
             cuda_extract_bits_64(
                 self.stream.0,
                 self.gpu_index.0 as u32,
                 lwe_array_out.as_mut_c_ptr(),
                 lwe_array_in.as_c_ptr(),
-                lwe_array_in_buffer.as_mut_c_ptr(),
-                lwe_array_in_shifted_buffer.as_mut_c_ptr(),
-                lwe_array_out_ks_buffer.as_mut_c_ptr(),
-                lwe_array_out_pbs_buffer.as_mut_c_ptr(),
-                lut_pbs.as_mut_c_ptr(),
-                lut_vector_indexes.as_c_ptr(),
+                bit_extract_buffer,
                 keyswitch_key.as_c_ptr(),
                 fourier_bsk.as_c_ptr(),
                 number_of_bits.0 as u32,
@@ -645,12 +698,18 @@ impl CudaStream {
                 input_lwe_dimension.0 as u32,
                 output_lwe_dimension.0 as u32,
                 glwe_dimension.0 as u32,
+                polynomial_size.0 as u32,
                 base_log_bsk.0 as u32,
                 level_count_bsk.0 as u32,
                 base_log_ksk.0 as u32,
                 level_count_ksk.0 as u32,
                 num_samples.0 as u32,
                 max_shared_memory.0 as u32,
+            );
+            cleanup_cuda_extract_bits(
+                self.stream.0,
+                self.gpu_index.0 as u32,
+                &mut bit_extract_buffer as *mut *mut i8,
             );
         }
         cuda_synchronize_stream(self.stream.0);
@@ -881,10 +940,12 @@ impl CudaStream {
                 lwe_dimension.0 as u32,
                 polynomial_size.0 as u32,
                 level_count_cbs.0 as u32,
+                level_count_bsk.0 as u32,
                 number_of_bits_of_message_including_padding.0 as u32,
                 number_of_bits_to_extract.0 as u32,
                 number_of_inputs.0 as u32,
                 max_shared_memory.0 as u32,
+                true,
             );
             cuda_wop_pbs_64(
                 self.stream.0,

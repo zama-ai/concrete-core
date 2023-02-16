@@ -222,6 +222,36 @@ extern "C" {
         pbs_buffer: *mut *mut i8,
     );
 
+    /// This scratch function allocates the necessary amount of data on the GPU for
+    /// the low latency PBS on 32 bits inputs, into `pbs_buffer`. It also configures SM
+    /// options on the GPU in case FULLSM or PARTIALSM mode are going to be used.
+    pub fn scratch_cuda_bootstrap_low_latency_32(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        pbs_buffer: *mut *mut i8,
+        glwe_dimension: u32,
+        polynomial_size: u32,
+        level_count: u32,
+        input_lwe_ciphertext_count: u32,
+        max_shared_memory: u32,
+        allocate_gpu_memory: bool,
+    );
+
+    /// This scratch function allocates the necessary amount of data on the GPU for
+    /// the low latency PBS on 64 bits inputs, into `pbs_buffer`. It also configures SM
+    /// options on the GPU in case FULLSM or PARTIALSM mode are going to be used.
+    pub fn scratch_cuda_bootstrap_low_latency_64(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        pbs_buffer: *mut *mut i8,
+        glwe_dimension: u32,
+        polynomial_size: u32,
+        level_count: u32,
+        input_lwe_ciphertext_count: u32,
+        max_shared_memory: u32,
+        allocate_gpu_memory: bool,
+    );
+
     /// Perform bootstrapping on a batch of input u32 LWE ciphertexts.
     /// This function performs best for small numbers of inputs. Beyond a certain number of inputs
     /// (the exact number depends on the cryptographic parameters), the kernel cannot be launched
@@ -235,6 +265,7 @@ extern "C" {
         lut_vector_indexes: *const c_void,
         lwe_array_in: *const c_void,
         bootstrapping_key: *const c_void,
+        pbs_buffer: *mut i8,
         lwe_dimension: u32,
         glwe_dimension: u32,
         polynomial_size: u32,
@@ -275,6 +306,7 @@ extern "C" {
     /// GLWE. The polynomial size for GLWE and the test vector
     /// are the same because they have to be in the same ring
     /// to be multiplied.
+    /// - `pbs_buffer`: a preallocated buffer to store temporary results
     /// - `lwe_dimension`: size of the Torus vector used to encrypt the input
     /// LWE ciphertexts - referred to as n above (~ 600)
     /// - `glwe_dimension`: size of the polynomial vector used to encrypt the LUT
@@ -325,6 +357,7 @@ extern "C" {
         lut_vector_indexes: *const c_void,
         lwe_array_in: *const c_void,
         bootstrapping_key: *const c_void,
+        pbs_buffer: *mut i8,
         lwe_dimension: u32,
         glwe_dimension: u32,
         polynomial_size: u32,
@@ -334,6 +367,14 @@ extern "C" {
         num_lut_vectors: u32,
         lwe_idx: u32,
         max_shared_memory: u32,
+    );
+
+    /// This cleanup function frees the data for the low latency PBS on GPU
+    /// contained in pbs_buffer for 32 or 64 bits inputs.
+    pub fn cleanup_cuda_bootstrap_low_latency(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        pbs_buffer: *mut *mut i8,
     );
 
     /// Perform keyswitch on a batch of 32 bits input LWE ciphertexts.
@@ -604,6 +645,40 @@ extern "C" {
         br_se_buffer: *mut *mut i8,
     );
 
+    /// This scratch function allocates the necessary amount of data on the GPU for
+    /// the bit extraction on 32 bits inputs, into `bit_extract_buffer`.
+    /// It also configures SM options on the GPU in case FULLSM or PARTIALSM mode is going to be
+    /// used in the PBS.
+    pub fn scratch_cuda_extract_bits_32(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        bit_extract_buffer: *mut *mut i8,
+        glwe_dimension: u32,
+        lwe_dimension: u32,
+        polynomial_size: u32,
+        level_count: u32,
+        number_of_inputs: u32,
+        max_shared_memory: u32,
+        allocate_gpu_memory: bool,
+    );
+
+    /// This scratch function allocates the necessary amount of data on the GPU for
+    /// the bit extraction on 64 bits inputs, into `bit_extract_buffer`.
+    /// It also configures SM options on the GPU in case FULLSM or PARTIALSM mode is going to be
+    /// used in the PBS.
+    pub fn scratch_cuda_extract_bits_64(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        bit_extract_buffer: *mut *mut i8,
+        glwe_dimension: u32,
+        lwe_dimension: u32,
+        polynomial_size: u32,
+        level_count: u32,
+        number_of_inputs: u32,
+        max_shared_memory: u32,
+        allocate_gpu_memory: bool,
+    );
+
     /// Perform bit extract on a batch of 32 bit LWE ciphertexts.
     /// See the corresponding function on 64 bit LWE ciphertexts for more details.
     pub fn cuda_extract_bits_32(
@@ -611,12 +686,7 @@ extern "C" {
         gpu_index: u32,
         list_lwe_array_out: *mut c_void,
         lwe_array_in: *const c_void,
-        lwe_array_in_buffer: *mut c_void,
-        lwe_array_in_shifted_buffer: *mut c_void,
-        lwe_array_out_ks_buffer: *mut c_void,
-        lwe_array_out_pbs_buffer: *mut c_void,
-        lut_pbs: *mut c_void,
-        lut_vector_indexes: *const c_void,
+        bit_extract_buffer: *mut i8,
         ksk: *const c_void,
         fourier_bsk: *const c_void,
         number_of_bits: u32,
@@ -624,6 +694,7 @@ extern "C" {
         lwe_dimension_in: u32,
         lwe_dimension_out: u32,
         glwe_dimension: u32,
+        polynomial_size: u32,
         base_log_bsk: u32,
         level_count_bsk: u32,
         base_log_ksk: u32,
@@ -644,20 +715,8 @@ extern "C" {
     /// input ciphertext
     /// - `lwe_array_in` batch of input LWE ciphertexts, with size -
     /// (`lwe_dimension_in` + 1) * number_of_samples * sizeof(u64)
-    /// The following 5 parameters are used during calculations, they are not actual
-    /// inputs of the function they are just allocated memory for calculation
-    /// process, like this, memory can be allocated once and can be used as much
-    /// as needed for different calls of extract_bit function.
-    /// - `lwe_array_in_buffer` same size as `lwe_array_in`
-    /// - `lwe_array_in_shifted_buffer` same size as `lwe_array_in`
-    /// - `lwe_array_out_ks_buffer`  with size:
-    /// (`lwe_dimension_out` + 1) * number_of_samples * sizeof(u64)
-    /// - `lwe_array_out_pbs_buffer` same size as `lwe_array_in`
-    /// - `lut_pbs` with size:
-    /// (glwe_dimension + 1) * (lwe_dimension_in + 1) * sizeof(u64)
-    /// The other inputs are:
-    /// - `lut_vector_indexes` stores the index corresponding to which test
-    /// vector to use
+    /// - `bit_extract_buffer`: some preallocated data used for storage of intermediate values
+    /// during the computation
     /// - `ksk` keyswitch key
     /// - `fourier_bsk`  complex compressed bsk in fourier domain
     /// - `lwe_dimension_in` input LWE ciphertext dimension, supported input
@@ -680,12 +739,7 @@ extern "C" {
         gpu_index: u32,
         list_lwe_array_out: *mut c_void,
         lwe_array_in: *const c_void,
-        lwe_array_in_buffer: *mut c_void,
-        lwe_array_in_shifted_buffer: *mut c_void,
-        lwe_array_out_ks_buffer: *mut c_void,
-        lwe_array_out_pbs_buffer: *mut c_void,
-        lut_pbs: *mut c_void,
-        lut_vector_indexes: *const c_void,
+        bit_extract_buffer: *mut i8,
         ksk: *const c_void,
         fourier_bsk: *const c_void,
         number_of_bits: u32,
@@ -693,12 +747,21 @@ extern "C" {
         lwe_dimension_in: u32,
         lwe_dimension_out: u32,
         glwe_dimension: u32,
+        polynomial_size: u32,
         base_log_bsk: u32,
         level_count_bsk: u32,
         base_log_ksk: u32,
         level_count_ksk: u32,
         number_of_samples: u32,
         max_shared_memory: u32,
+    );
+
+    /// This cleanup function frees the data for the bit extraction on GPU
+    /// contained in bit_extract_buffer for 32 or 64 bits inputs.
+    pub fn cleanup_cuda_extract_bits(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        bit_extract_buffer: *mut *mut i8,
     );
 
     /// This scratch function allocates the necessary amount of data on the GPU for
@@ -817,7 +880,7 @@ extern "C" {
     );
 
     /// This cleanup function frees the data for the circuit bootstrap on GPU
-    /// contained in cbs_vp_buffer for 32 or 64 bits inputs.
+    /// contained in cbs_buffer for 32 or 64 bits inputs.
     pub fn cleanup_cuda_circuit_bootstrap(
         v_stream: *const c_void,
         gpu_index: u32,
@@ -930,10 +993,12 @@ extern "C" {
         lwe_dimension: u32,
         polynomial_size: u32,
         level_count_cbs: u32,
+        level_count_bsk: u32,
         number_of_bits_of_message_including_padding: u32,
         number_of_bits_to_extract: u32,
         number_of_inputs: u32,
         max_shared_memory: u32,
+        allocate_gpu_memory: bool,
     );
 
     /// Scratch functions allocate the necessary data on the GPU.
@@ -951,10 +1016,12 @@ extern "C" {
         lwe_dimension: u32,
         polynomial_size: u32,
         level_count_cbs: u32,
+        level_count_bsk: u32,
         number_of_bits_of_message_including_padding: u32,
         number_of_bits_to_extract: u32,
         number_of_inputs: u32,
         max_shared_memory: u32,
+        allocate_gpu_memory: bool,
     );
 
     /// Entry point for entire without padding programmable bootstrap on 64 bit input LWE

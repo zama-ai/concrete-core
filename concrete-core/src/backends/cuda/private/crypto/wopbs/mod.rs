@@ -3,6 +3,7 @@ use crate::backends::cuda::private::crypto::keyswitch::CudaLwePrivateFunctionalP
 use crate::backends::cuda::private::crypto::lwe::list::CudaLweList;
 use crate::backends::cuda::private::crypto::plaintext::list::CudaPlaintextList;
 use crate::backends::cuda::private::device::{CudaStream, GpuIndex};
+use crate::backends::cuda::private::vec::CudaVec;
 use crate::backends::fft::private::crypto::bootstrap::FourierLweBootstrapKeyView;
 use crate::backends::fft::private::crypto::wop_pbs::{
     circuit_bootstrap_boolean, FourierGgswCiphertextListMutView,
@@ -16,8 +17,9 @@ use crate::commons::math::tensor::{AsRefSlice, AsRefTensor};
 use crate::commons::numeric::UnsignedInteger;
 use crate::commons::utils::izip;
 use crate::prelude::{
-    DecompositionBaseLog, DecompositionLevelCount, DeltaLog, GgswCiphertext64,
-    GgswCiphertextEntity, LweCiphertext64, LweDimension, PolynomialCount, SharedMemoryAmount,
+    DecompositionBaseLog, DecompositionLevelCount, DeltaLog, ExtractedBitsCount, GgswCiphertext64,
+    GgswCiphertextEntity, GlweDimension, LweCiphertext64, LweCiphertextCount, LweDimension,
+    PolynomialCount, PolynomialSize, SharedMemoryAmount,
 };
 use aligned_vec::CACHELINE_ALIGN;
 use concrete_cuda::cuda_bind::{
@@ -397,6 +399,48 @@ pub(crate) unsafe fn execute_circuit_bootstrap_vertical_packing_on_gpu<T: Unsign
         base_log_cbs,
         lwe_array_in.lwe_ciphertext_count,
         lut_number,
+        cuda_shared_memory,
+    );
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) unsafe fn execute_lwe_ciphertext_vector_extract_bits_on_gpu<T: UnsignedInteger>(
+    streams: &[CudaStream],
+    lwe_array_out: &mut CudaVec<T>,
+    lwe_array_in: &CudaVec<T>,
+    keyswitch_key: &CudaVec<T>,
+    fourier_bsk: &CudaVec<f64>,
+    number_of_bits: ExtractedBitsCount,
+    delta_log: DeltaLog,
+    input_lwe_dimension: LweDimension,
+    output_lwe_dimension: LweDimension,
+    glwe_dimension: GlweDimension,
+    polynomial_size: PolynomialSize,
+    base_log_bsk: DecompositionBaseLog,
+    level_count_bsk: DecompositionLevelCount,
+    base_log_ksk: DecompositionBaseLog,
+    level_count_ksk: DecompositionLevelCount,
+    num_samples: LweCiphertextCount,
+    cuda_shared_memory: SharedMemoryAmount,
+) {
+    let stream = &streams[0];
+
+    stream.discard_extract_bits_lwe_ciphertext_vector::<T>(
+        lwe_array_out,
+        lwe_array_in,
+        keyswitch_key,
+        fourier_bsk,
+        number_of_bits,
+        delta_log,
+        input_lwe_dimension,
+        output_lwe_dimension,
+        glwe_dimension,
+        polynomial_size,
+        base_log_bsk,
+        level_count_bsk,
+        base_log_ksk,
+        level_count_ksk,
+        num_samples,
         cuda_shared_memory,
     );
 }

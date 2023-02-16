@@ -1,4 +1,4 @@
-use crate::backends::cuda::private::crypto::bootstrap::execute_lwe_ciphertext_vector_extract_bits_on_gpu;
+use crate::backends::cuda::private::crypto::wopbs::execute_lwe_ciphertext_vector_extract_bits_on_gpu;
 use crate::prelude::{
     CiphertextModulusLog, CudaEngine, CudaError, CudaFourierLweBootstrapKey32,
     CudaFourierLweBootstrapKey64, CudaLweCiphertext32, CudaLweCiphertext64,
