@@ -84,6 +84,34 @@ extern "C" {
         polynomial_size: u32,
     );
 
+    /// This scratch function allocates the necessary amount of data on the GPU for
+    /// the amortized PBS on 32 bits inputs, into `pbs_buffer`. It also configures SM
+    /// options on the GPU in case FULLSM or PARTIALSM mode are going to be used.
+    pub fn scratch_cuda_bootstrap_amortized_32(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        pbs_buffer: *mut *mut i8,
+        glwe_dimension: u32,
+        polynomial_size: u32,
+        input_lwe_ciphertext_count: u32,
+        max_shared_memory: u32,
+        allocate_gpu_memory: bool,
+    );
+
+    /// This scratch function allocates the necessary amount of data on the GPU for
+    /// the amortized PBS on 64 bits inputs, into `pbs_buffer`. It also configures SM
+    /// options on the GPU in case FULLSM or PARTIALSM mode are going to be used.
+    pub fn scratch_cuda_bootstrap_amortized_64(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        pbs_buffer: *mut *mut i8,
+        glwe_dimension: u32,
+        polynomial_size: u32,
+        input_lwe_ciphertext_count: u32,
+        max_shared_memory: u32,
+        allocate_gpu_memory: bool,
+    );
+
     /// Perform the programmable bootstrapping on a batch of input u32 LWE ciphertexts.
     /// See the corresponding operation on 64 bits for more details.
     pub fn cuda_bootstrap_amortized_lwe_ciphertext_vector_32(
@@ -94,6 +122,7 @@ extern "C" {
         test_vector_indexes: *const c_void,
         lwe_array_in: *const c_void,
         bootstrapping_key: *const c_void,
+        pbs_buffer: *mut i8,
         lwe_dimension: u32,
         glwe_dimension: u32,
         polynomial_size: u32,
@@ -173,6 +202,7 @@ extern "C" {
         test_vector_indexes: *const c_void,
         lwe_array_in: *const c_void,
         bootstrapping_key: *const c_void,
+        pbs_buffer: *mut i8,
         lwe_dimension: u32,
         glwe_dimension: u32,
         polynomial_size: u32,
@@ -182,6 +212,14 @@ extern "C" {
         num_test_vectors: u32,
         lwe_idx: u32,
         max_shared_memory: u32,
+    );
+
+    /// This cleanup function frees the data for the amortized PBS on GPU
+    /// contained in pbs_buffer for 32 or 64 bits inputs.
+    pub fn cleanup_cuda_bootstrap_amortized(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        pbs_buffer: *mut *mut i8,
     );
 
     /// Perform bootstrapping on a batch of input u32 LWE ciphertexts.
@@ -663,6 +701,40 @@ extern "C" {
         max_shared_memory: u32,
     );
 
+    /// This scratch function allocates the necessary amount of data on the GPU for
+    /// the circuit bootstrap on 32 bits inputs, into `circuit_bootstrap_buffer`.
+    /// It also configures SM options on the GPU in case FULLSM or PARTIALSM mode is going to be
+    /// used in the PBS.
+    pub fn scratch_cuda_circuit_bootstrap_32(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        cbs_buffer: *mut *mut i8,
+        glwe_dimension: u32,
+        lwe_dimension: u32,
+        polynomial_size: u32,
+        level_count: u32,
+        number_of_inputs: u32,
+        max_shared_memory: u32,
+        allocate_gpu_memory: bool,
+    );
+
+    /// This scratch function allocates the necessary amount of data on the GPU for
+    /// the circuit bootstrap on 64 bits inputs, into `circuit_bootstrap_buffer`.
+    /// It also configures SM options on the GPU in case FULLSM or PARTIALSM mode is going to be
+    /// used in the PBS.
+    pub fn scratch_cuda_circuit_bootstrap_64(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        cbs_buffer: *mut *mut i8,
+        glwe_dimension: u32,
+        lwe_dimension: u32,
+        polynomial_size: u32,
+        level_count: u32,
+        number_of_inputs: u32,
+        max_shared_memory: u32,
+        allocate_gpu_memory: bool,
+    );
+
     /// Perform circuit bootstrapping for the batch of 32 bit LWE ciphertexts.
     /// Head out to the equivalent operation on 64 bits for more details.
     pub fn cuda_circuit_bootstrap_32(
@@ -672,11 +744,8 @@ extern "C" {
         lwe_array_in: *const c_void,
         fourier_bsk: *const c_void,
         fp_ksk_array: *const c_void,
-        lwe_array_in_shifted_buffer: *mut c_void,
-        lut_vector: *mut c_void,
         lut_vector_indexes: *const c_void,
-        lwe_array_out_pbs_buffer: *mut c_void,
-        lwe_array_in_fp_ks_buffer: *mut c_void,
+        cbs_buffer: *mut i8,
         delta_log: u32,
         polynomial_size: u32,
         glwe_dimension: u32,
@@ -731,11 +800,8 @@ extern "C" {
         lwe_array_in: *const c_void,
         fourier_bsk: *const c_void,
         fp_ksk_array: *const c_void,
-        lwe_array_in_shifted_buffer: *mut c_void,
-        lut_vector: *mut c_void,
         lut_vector_indexes: *const c_void,
-        lwe_array_out_pbs_buffer: *mut c_void,
-        lwe_array_in_fp_ks_buffer: *mut c_void,
+        cbs_buffer: *mut i8,
         delta_log: u32,
         polynomial_size: u32,
         glwe_dimension: u32,
@@ -748,6 +814,14 @@ extern "C" {
         base_log_cbs: u32,
         number_of_samples: u32,
         max_shared_memory: u32,
+    );
+
+    /// This cleanup function frees the data for the circuit bootstrap on GPU
+    /// contained in cbs_vp_buffer for 32 or 64 bits inputs.
+    pub fn cleanup_cuda_circuit_bootstrap(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        cbs_buffer: *mut *mut i8,
     );
 
     /// This scratch function allocates the necessary amount of data on the GPU for the
