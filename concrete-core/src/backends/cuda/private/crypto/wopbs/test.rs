@@ -1536,10 +1536,10 @@ fn test_cuda_circuit_bootstrapping_binary() {
         stack,
     );
 
-    let mut h_lut_vector_indexes: Vec<u32> = vec![0 as u32; nos as usize * level_count_cbs.0];
+    let mut h_lut_vector_indexes: Vec<u64> = vec![0 as u64; nos as usize * level_count_cbs.0];
 
     for index in 0..nos as usize * level_count_cbs.0 {
-        h_lut_vector_indexes[index] = index as u32 % level_count_cbs.0 as u32;
+        h_lut_vector_indexes[index] = index as u64 % level_count_cbs.0 as u64;
     }
 
     // allocate and initialize device pointers for circuit bootstrap
@@ -1569,7 +1569,7 @@ fn test_cuda_circuit_bootstrapping_binary() {
         level_count_cbs.0 as u32 * (glwe_dimension.0 as u32 + 1) * polynomial_size.0 as u32,
     );
     // indexes of lut vectors
-    let mut d_lut_vector_indexes = stream.malloc::<u32>(nos * level_count_cbs.0 as u32);
+    let mut d_lut_vector_indexes = stream.malloc::<u64>(nos * level_count_cbs.0 as u32);
 
     let mut d_fp_ksk_array = stream.malloc::<u64>(
         (polynomial_size.0 as u32 + 1)
@@ -1592,7 +1592,7 @@ fn test_cuda_circuit_bootstrapping_binary() {
     unsafe {
         // fill device lwe input with same ciphertext
         stream.copy_to_gpu::<u64>(&mut d_lwe_array_in, &mut lwe_in.tensor.as_slice());
-        stream.copy_to_gpu::<u32>(&mut d_lut_vector_indexes, &mut h_lut_vector_indexes);
+        stream.copy_to_gpu::<u64>(&mut d_lut_vector_indexes, &mut h_lut_vector_indexes);
         stream.copy_to_gpu::<u64>(&mut d_fp_ksk_array, &mut h_fp_ksk_array);
     }
 
