@@ -364,6 +364,7 @@ mod cuda_unit_test_pbs {
 
         let mut generator = new_random_generator();
         for &polynomial_size in polynomial_sizes.iter() {
+            println!("N = {}\n", polynomial_size.0);
             for _ in 0..repetitions {
                 // Generate client-side keys
 
@@ -471,6 +472,19 @@ mod cuda_unit_test_pbs {
                     }
 
                     unsafe {
+                        let mut pbs_buffer: *mut i8 = std::ptr::null_mut();
+                        concrete_cuda::cuda_bind::scratch_cuda_bootstrap_low_latency_64(
+                            stream.stream_handle().0,
+                            gpu_index.0 as u32,
+                            &mut pbs_buffer as *mut *mut i8,
+                            glwe_dimension.0 as u32,
+                            polynomial_size.0 as u32,
+                            pbs_level.0 as u32,
+                            1,
+                            stream.get_max_shared_memory().unwrap() as u32,
+                            true,
+                        );
+
                         concrete_cuda::cuda_bind::cuda_bootstrap_low_latency_lwe_ciphertext_vector_64(
                             stream.stream_handle().0,
                             gpu_index.0 as u32,
@@ -479,6 +493,7 @@ mod cuda_unit_test_pbs {
                             d_lut_vector_indexes.as_c_ptr(),
                             d_lwe_in.as_c_ptr(),
                             d_bsk_fourier.as_c_ptr(),
+                            pbs_buffer,
                             lwe_dimension.0 as u32,
                             glwe_dimension.0 as u32,
                             polynomial_size.0 as u32,
@@ -488,6 +503,11 @@ mod cuda_unit_test_pbs {
                             1,
                             0,
                             stream.get_max_shared_memory().unwrap() as u32,
+                        );
+                        concrete_cuda::cuda_bind::cleanup_cuda_bootstrap_low_latency(
+                            stream.stream_handle().0,
+                            gpu_index.0 as u32,
+                            &mut pbs_buffer as *mut *mut i8,
                         );
                     }
                     //println!("h_test_vector: {:?}", accumulator.0.get_body().tensor);

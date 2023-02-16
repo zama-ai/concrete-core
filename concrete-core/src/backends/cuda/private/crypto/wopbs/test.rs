@@ -30,10 +30,11 @@ use crate::prelude::*;
 use concrete_csprng::generators::SoftwareRandomGenerator;
 use concrete_csprng::seeders::UnixSeeder;
 use concrete_cuda::cuda_bind::{
-    cleanup_cuda_circuit_bootstrap, cleanup_cuda_cmux_tree, cleanup_cuda_wop_pbs,
-    cuda_circuit_bootstrap_64, cuda_cmux_tree_64, cuda_convert_lwe_bootstrap_key_64,
-    cuda_extract_bits_64, cuda_synchronize_device, cuda_synchronize_stream, cuda_wop_pbs_64,
-    scratch_cuda_circuit_bootstrap_64, scratch_cuda_cmux_tree_64, scratch_cuda_wop_pbs_64,
+    cleanup_cuda_circuit_bootstrap, cleanup_cuda_cmux_tree, cleanup_cuda_extract_bits,
+    cleanup_cuda_wop_pbs, cuda_circuit_bootstrap_64, cuda_cmux_tree_64,
+    cuda_convert_lwe_bootstrap_key_64, cuda_extract_bits_64, cuda_synchronize_device,
+    cuda_synchronize_stream, cuda_wop_pbs_64, scratch_cuda_circuit_bootstrap_64,
+    scratch_cuda_cmux_tree_64, scratch_cuda_extract_bits_64, scratch_cuda_wop_pbs_64,
 };
 use concrete_fft::c64;
 use dyn_stack::{DynStack, GlobalMemBuffer};
@@ -294,19 +295,10 @@ pub fn test_cuda_extract_bits() {
         * lwe_dimension.0;
     let ksksize = level_ksk.0 * polynomial_size.0 * (lwe_dimension.0 + 1);
 
-    let mut h_lut_vector_indexes = vec![0 as u32; 1];
-
     let mut d_lwe_array_out = stream.malloc::<u64>(
         nos * (lwe_dimension.0 as u32 + 1) * (number_of_bits_of_message_including_padding) as u32,
     );
     let mut d_lwe_array_in = stream.malloc::<u64>(nos * (polynomial_size.0 + 1) as u32);
-    let mut d_lwe_array_in_buffer = stream.malloc::<u64>(nos * (polynomial_size.0 + 1) as u32);
-    let mut d_lwe_array_in_shifted_buffer =
-        stream.malloc::<u64>(nos * (polynomial_size.0 + 1) as u32);
-    let mut d_lwe_array_out_ks_buffer = stream.malloc::<u64>(nos * (lwe_dimension.0 + 1) as u32);
-    let mut d_lwe_array_out_pbs_buffer = stream.malloc::<u64>(nos * (polynomial_size.0 + 1) as u32);
-    let mut d_lut_pbs = stream.malloc::<u64>((2 * polynomial_size.0) as u32);
-    let mut d_lut_vector_indexes = stream.malloc::<u32>(1);
     let mut d_ksk = stream.malloc::<u64>(ksksize as u32);
     let mut d_bsk_fourier = stream.malloc::<f64>(bsk_size as u32);
     //decomp_size.0 * (output_size.0 + 1) * input_size.0
@@ -323,10 +315,7 @@ pub fn test_cuda_extract_bits() {
             polynomial_size.0 as u32,
         );
         cuda_synchronize_stream(stream.stream_handle().0);
-        stream.copy_to_gpu::<u32>(&mut d_lut_vector_indexes, &mut h_lut_vector_indexes);
     }
-    //let mut buffers = FourierBuffers::new(fourier_bsk.polynomial_size(),
-    // fourier_bsk.glwe_size()); fourier_bsk.fill_with_forward_fourier(&coef_bsk, &mut buffers);
 
     let lwe_big_sk = LweSecretKey::binary_from_container(rlwe_sk.as_tensor().as_slice());
     let mut ksk_lwe_big_to_small = LweKeyswitchKey::allocate(
@@ -395,17 +384,25 @@ pub fn test_cuda_extract_bits() {
             stream.copy_to_gpu::<u64>(&mut d_lwe_array_in, &mut lwe_array_in.tensor.as_slice());
 
             now = Instant::now();
+            let mut bit_extract_buffer: *mut i8 = std::ptr::null_mut();
+            scratch_cuda_extract_bits_64(
+                stream.stream_handle().0,
+                gpu_index.0 as u32,
+                &mut bit_extract_buffer as *mut *mut i8,
+                glwe_dimension.0 as u32,
+                lwe_dimension.0 as u32,
+                polynomial_size.0 as u32,
+                level_bsk.0 as u32,
+                nos,
+                stream.get_max_shared_memory().unwrap() as u32,
+                true,
+            );
             cuda_extract_bits_64(
                 stream.stream_handle().0,
                 gpu_index.0 as u32,
                 d_lwe_array_out.as_mut_c_ptr(),
                 d_lwe_array_in.as_c_ptr(),
-                d_lwe_array_in_buffer.as_mut_c_ptr(),
-                d_lwe_array_in_shifted_buffer.as_mut_c_ptr(),
-                d_lwe_array_out_ks_buffer.as_mut_c_ptr(),
-                d_lwe_array_out_pbs_buffer.as_mut_c_ptr(),
-                d_lut_pbs.as_mut_c_ptr(),
-                d_lut_vector_indexes.as_mut_c_ptr(),
+                bit_extract_buffer,
                 d_ksk.as_c_ptr(),
                 d_bsk_fourier.as_c_ptr(),
                 number_values_to_extract.0 as u32,
@@ -413,12 +410,18 @@ pub fn test_cuda_extract_bits() {
                 polynomial_size.0 as u32,
                 lwe_dimension.0 as u32,
                 glwe_dimension.0 as u32,
+                polynomial_size.0 as u32,
                 base_log_bsk.0 as u32,
                 level_bsk.0 as u32,
                 base_log_ksk.0 as u32,
                 level_ksk.0 as u32,
                 nos,
                 stream.get_max_shared_memory().unwrap() as u32,
+            );
+            cleanup_cuda_extract_bits(
+                stream.stream_handle().0,
+                gpu_index.0 as u32,
+                &mut bit_extract_buffer as *mut *mut i8,
             );
             cuda_synchronize_stream(stream.stream_handle().0);
             elapsed += now.elapsed();
@@ -1297,10 +1300,12 @@ pub fn test_cuda_wop_pbs() {
                 lwe_dimension.0 as u32,
                 polynomial_size.0 as u32,
                 level_cbs.0 as u32,
+                level_bsk.0 as u32,
                 number_of_bits_in_input_lwe as u32,
                 number_of_bits_in_input_lwe as u32,
                 1u32,
                 cuda_engine.get_cuda_shared_memory().0 as u32,
+                true,
             );
             cuda_wop_pbs_64(
                 cuda_engine
