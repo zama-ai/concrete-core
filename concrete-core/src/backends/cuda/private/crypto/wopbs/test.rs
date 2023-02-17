@@ -294,7 +294,7 @@ pub fn test_cuda_extract_bits() {
         * lwe_dimension.0;
     let ksksize = level_ksk.0 * polynomial_size.0 * (lwe_dimension.0 + 1);
 
-    let mut h_lut_vector_indexes = vec![0 as u32; 1];
+    let mut h_lut_vector_indexes = vec![0_u64; 1];
 
     let mut d_lwe_array_out = stream.malloc::<u64>(
         nos * (lwe_dimension.0 as u32 + 1) * (number_of_bits_of_message_including_padding) as u32,
@@ -306,7 +306,7 @@ pub fn test_cuda_extract_bits() {
     let mut d_lwe_array_out_ks_buffer = stream.malloc::<u64>(nos * (lwe_dimension.0 + 1) as u32);
     let mut d_lwe_array_out_pbs_buffer = stream.malloc::<u64>(nos * (polynomial_size.0 + 1) as u32);
     let mut d_lut_pbs = stream.malloc::<u64>((2 * polynomial_size.0) as u32);
-    let mut d_lut_vector_indexes = stream.malloc::<u32>(1);
+    let mut d_lut_vector_indexes = stream.malloc::<u64>(1);
     let mut d_ksk = stream.malloc::<u64>(ksksize as u32);
     let mut d_bsk_fourier = stream.malloc::<f64>(bsk_size as u32);
     //decomp_size.0 * (output_size.0 + 1) * input_size.0
@@ -323,7 +323,7 @@ pub fn test_cuda_extract_bits() {
             polynomial_size.0 as u32,
         );
         cuda_synchronize_stream(stream.stream_handle().0);
-        stream.copy_to_gpu::<u32>(&mut d_lut_vector_indexes, &mut h_lut_vector_indexes);
+        stream.copy_to_gpu::<u64>(&mut d_lut_vector_indexes, &mut h_lut_vector_indexes);
     }
     //let mut buffers = FourierBuffers::new(fourier_bsk.polynomial_size(),
     // fourier_bsk.glwe_size()); fourier_bsk.fill_with_forward_fourier(&coef_bsk, &mut buffers);
