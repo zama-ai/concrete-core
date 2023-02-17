@@ -197,7 +197,7 @@ get_buffer_size_wop_pbs(uint32_t glwe_dimension, uint32_t lwe_dimension,
                         uint32_t number_of_bits_to_extract,
                         uint32_t number_of_inputs) {
 
-  return sizeof(Torus) // lut_vector_indexes
+  return sizeof(Torus) * number_of_inputs // lut_vector_indexes
          + ((glwe_dimension + 1) * polynomial_size) * sizeof(Torus) // lut_pbs
          + (polynomial_size + 1) * sizeof(Torus) // lwe_array_in_buffer
          + (polynomial_size + 1) * sizeof(Torus) // lwe_array_in_shifted_buffer
@@ -219,6 +219,9 @@ scratch_wop_pbs(void *v_stream, uint32_t gpu_index, int8_t **wop_pbs_buffer,
 
   cudaSetDevice(gpu_index);
   auto stream = static_cast<cudaStream_t *>(v_stream);
+  // Allocate lut vector indexes on the CPU first to avoid blocking the stream
+  Torus *h_lut_vector_indexes =
+      (Torus *)malloc(number_of_inputs * sizeof(Torus));
 
   int wop_pbs_buffer_size = get_buffer_size_wop_pbs<Torus>(
       glwe_dimension, lwe_dimension, polynomial_size, level_count_cbs,
@@ -249,10 +252,14 @@ scratch_wop_pbs(void *v_stream, uint32_t gpu_index, int8_t **wop_pbs_buffer,
   *wop_pbs_buffer = (int8_t *)cuda_malloc_async(buffer_size, stream, gpu_index);
 
   // indexes of lut vectors for bit extract
-  Torus h_lut_vector_indexes = 0;
+  for (uint index = 0; index < number_of_inputs; index++) {
+    h_lut_vector_indexes[index] = 0;
+  }
   // lut_vector_indexes is the first array in the wop_pbs buffer
   cuda_memcpy_async_to_gpu(*wop_pbs_buffer, (int8_t *)&h_lut_vector_indexes,
-                           sizeof(Torus), stream, gpu_index);
+                           number_of_inputs * sizeof(Torus), stream, gpu_index);
+  check_cuda_error(cudaStreamSynchronize(*stream));
+  free(h_lut_vector_indexes);
   check_cuda_error(cudaGetLastError());
   uint32_t ciphertext_total_bits_count = sizeof(Torus) * 8;
   *delta_log =
@@ -292,7 +299,7 @@ __host__ void host_wop_pbs(
 
   // lut_vector_indexes is the first array in the wop_pbs buffer
   Torus *lut_vector_indexes = (Torus *)wop_pbs_buffer;
-  Torus *lut_pbs = (Torus *)lut_vector_indexes + (ptrdiff_t)(1);
+  Torus *lut_pbs = (Torus *)lut_vector_indexes + (ptrdiff_t)(number_of_inputs);
   Torus *lwe_array_in_buffer =
       (Torus *)lut_pbs + (ptrdiff_t)((glwe_dimension + 1) * polynomial_size);
   Torus *lwe_array_in_shifted_buffer =

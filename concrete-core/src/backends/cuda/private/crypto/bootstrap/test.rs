@@ -139,8 +139,8 @@ mod cuda_unit_test_pbs {
                 let stream =
                     crate::backends::cuda::private::device::CudaStream::new(gpu_index).unwrap();
 
-                let mut h_lut_vector_indexes = vec![0 as u32; 1];
-                let mut d_lut_vector_indexes = stream.malloc::<u32>(1);
+                let mut h_lut_vector_indexes = vec![0 as u64; 1];
+                let mut d_lut_vector_indexes = stream.malloc::<u64>(1);
                 let mut d_lut_pbs = stream.malloc::<u64>((2 * polynomial_size.0) as u32);
                 let mut d_lwe_in = stream.malloc::<u64>((lwe_dimension.0 + 1) as u32);
                 let mut d_lwe_out = stream.malloc::<u64>((polynomial_size.0 + 1) as u32);
@@ -164,7 +164,7 @@ mod cuda_unit_test_pbs {
                         pbs_level.0 as u32,
                         polynomial_size.0 as u32,
                     );
-                    stream.copy_to_gpu::<u32>(&mut d_lut_vector_indexes, &mut h_lut_vector_indexes);
+                    stream.copy_to_gpu::<u64>(&mut d_lut_vector_indexes, &mut h_lut_vector_indexes);
                 }
 
                 let fourier_bsk: FftFourierLweBootstrapKey64 =
@@ -400,8 +400,8 @@ mod cuda_unit_test_pbs {
                 let stream =
                     crate::backends::cuda::private::device::CudaStream::new(gpu_index).unwrap();
 
-                let mut h_lut_vector_indexes = vec![0 as u32; 1];
-                let mut d_lut_vector_indexes = stream.malloc::<u32>(1);
+                let mut h_lut_vector_indexes = vec![0 as u64; 1];
+                let mut d_lut_vector_indexes = stream.malloc::<u64>(1);
                 let mut d_lut_pbs = stream.malloc::<u64>((2 * polynomial_size.0) as u32);
                 let mut d_lwe_in = stream.malloc::<u64>((lwe_dimension.0 + 1) as u32);
                 let mut d_lwe_out = stream.malloc::<u64>((polynomial_size.0 + 1) as u32);
@@ -425,7 +425,7 @@ mod cuda_unit_test_pbs {
                         pbs_level.0 as u32,
                         polynomial_size.0 as u32,
                     );
-                    stream.copy_to_gpu::<u32>(&mut d_lut_vector_indexes, &mut h_lut_vector_indexes);
+                    stream.copy_to_gpu::<u64>(&mut d_lut_vector_indexes, &mut h_lut_vector_indexes);
                 }
 
                 let fourier_bsk: FftFourierLweBootstrapKey64 =

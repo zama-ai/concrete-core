@@ -131,7 +131,7 @@ template <typename Torus, class params, sharedMemDegree SMD>
  * Each y-block computes one element of the lwe_array_out.
  */
 __global__ void device_bootstrap_low_latency(
-    Torus *lwe_array_out, Torus *lut_vector, Torus *lwe_array_in,
+    Torus *lwe_array_out, Torus *lut_vector, Torus *lut_vector_indexes, Torus *lwe_array_in,
     double2 *bootstrapping_key, double2 *join_buffer, uint32_t lwe_dimension,
     uint32_t polynomial_size, uint32_t base_log, uint32_t level_count,
     int8_t *device_mem, int device_memory_size_per_block) {
@@ -165,8 +165,8 @@ __global__ void device_bootstrap_low_latency(
   // this block is operating, in the case of batch bootstraps
   auto block_lwe_array_in = &lwe_array_in[blockIdx.z * (lwe_dimension + 1)];
 
-  auto block_lut_vector =
-      &lut_vector[blockIdx.z * params::degree * (glwe_dimension + 1)];
+  Torus *block_lut_vector =
+      &lut_vector[lut_vector_indexes[blockIdx.z] * params::degree * (glwe_dimension + 1)];
 
   auto block_join_buffer =
       &join_buffer[blockIdx.z * level_count * (glwe_dimension + 1) *
@@ -280,20 +280,21 @@ __host__ void host_bootstrap_low_latency(
   int thds = polynomial_size / params::opt;
   dim3 grid(level_count, glwe_dimension + 1, input_lwe_ciphertext_count);
 
-  void *kernel_args[11];
+  void *kernel_args[12];
   kernel_args[0] = &lwe_array_out;
   kernel_args[1] = &lut_vector;
-  kernel_args[2] = &lwe_array_in;
-  kernel_args[3] = &bootstrapping_key;
-  kernel_args[4] = &buffer_fft;
-  kernel_args[5] = &lwe_dimension;
-  kernel_args[6] = &polynomial_size;
-  kernel_args[7] = &base_log;
-  kernel_args[8] = &level_count;
-  kernel_args[9] = &d_mem;
+  kernel_args[2] = &lut_vector_indexes;
+  kernel_args[3] = &lwe_array_in;
+  kernel_args[4] = &bootstrapping_key;
+  kernel_args[5] = &buffer_fft;
+  kernel_args[6] = &lwe_dimension;
+  kernel_args[7] = &polynomial_size;
+  kernel_args[8] = &base_log;
+  kernel_args[9] = &level_count;
+  kernel_args[10] = &d_mem;
 
   if (max_shared_memory < SM_PART) {
-    kernel_args[10] = &DM_FULL;
+    kernel_args[11] = &DM_FULL;
     check_cuda_error(cudaGetLastError());
     d_mem = (int8_t *)cuda_malloc_async(DM_FULL * input_lwe_ciphertext_count *
                                             level_count * (glwe_dimension + 1),
@@ -303,7 +304,7 @@ __host__ void host_bootstrap_low_latency(
         (void *)device_bootstrap_low_latency<Torus, params, NOSM>, grid, thds,
         (void **)kernel_args, 0, *stream));
   } else if (max_shared_memory < SM_FULL) {
-    kernel_args[10] = &DM_PART;
+    kernel_args[11] = &DM_PART;
     d_mem = (int8_t *)cuda_malloc_async(DM_PART * input_lwe_ciphertext_count *
                                             level_count * (glwe_dimension + 1),
                                         stream, gpu_index);
@@ -320,7 +321,7 @@ __host__ void host_bootstrap_low_latency(
 
   } else {
     int DM_NONE = 0;
-    kernel_args[10] = &DM_NONE;
+    kernel_args[11] = &DM_NONE;
     d_mem = (int8_t *)cuda_malloc_async(0, stream, gpu_index);
     check_cuda_error(cudaFuncSetAttribute(
         device_bootstrap_low_latency<Torus, params, FULLSM>,
