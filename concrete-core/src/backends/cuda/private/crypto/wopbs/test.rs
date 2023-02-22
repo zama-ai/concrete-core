@@ -43,6 +43,7 @@ use std::os::raw::c_void;
 #[test]
 pub fn test_cuda_cmux_tree() {
     let polynomial_sizes = vec![
+        PolynomialSize(256),
         PolynomialSize(512),
         PolynomialSize(1024),
         PolynomialSize(2048),
@@ -230,7 +231,7 @@ pub fn test_cuda_cmux_tree() {
 #[test]
 pub fn test_cuda_extract_bits() {
     // Define settings for an insecure toy example
-    let polynomial_size = PolynomialSize(1024);
+    let polynomial_size = PolynomialSize(256);
     let glwe_dimension = GlweDimension(1);
     let lwe_dimension = LweDimension(585);
 
@@ -1065,7 +1066,7 @@ pub fn test_extract_bit_cuda_circuit_bootstrapping_vertical_packing() {
 #[test]
 pub fn test_cuda_wop_pbs() {
     // define settings
-    let polynomial_size = PolynomialSize(1024);
+    let polynomial_size = PolynomialSize(512);
     let glwe_dimension = GlweDimension(1);
     let lwe_dimension = LweDimension(481);
 
@@ -1385,7 +1386,7 @@ pub fn test_cuda_wop_pbs() {
 #[test]
 fn test_cuda_circuit_bootstrapping_binary() {
     // Define settings for an insecure toy example
-    let polynomial_size = PolynomialSize(512);
+    let polynomial_size = PolynomialSize(256);
     let glwe_dimension = GlweDimension(1);
     let lwe_dimension = LweDimension(10);
 
