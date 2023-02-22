@@ -232,7 +232,7 @@ pub fn test_cuda_cmux_tree() {
 pub fn test_cuda_extract_bits() {
     // Define settings for an insecure toy example
     let polynomial_size = PolynomialSize(256);
-    let glwe_dimension = GlweDimension(1);
+    let glwe_dimension = GlweDimension(2);
     let lwe_dimension = LweDimension(585);
 
     let level_bsk = DecompositionLevelCount(2);
@@ -294,12 +294,13 @@ pub fn test_cuda_extract_bits() {
         * polynomial_size.0
         * level_bsk.0
         * lwe_dimension.0;
-    let ksksize = level_ksk.0 * polynomial_size.0 * (lwe_dimension.0 + 1);
+    let ksksize = level_ksk.0 * (glwe_dimension.0 * polynomial_size.0) * (lwe_dimension.0 + 1);
 
     let mut d_lwe_array_out = stream.malloc::<u64>(
         nos * (lwe_dimension.0 as u32 + 1) * (number_of_bits_of_message_including_padding) as u32,
     );
-    let mut d_lwe_array_in = stream.malloc::<u64>(nos * (polynomial_size.0 + 1) as u32);
+    let mut d_lwe_array_in =
+        stream.malloc::<u64>(nos * (glwe_dimension.0 * polynomial_size.0 + 1) as u32);
     let mut d_ksk = stream.malloc::<u64>(ksksize as u32);
     let mut d_bsk_fourier = stream.malloc::<f64>(bsk_size as u32);
     //decomp_size.0 * (output_size.0 + 1) * input_size.0
@@ -340,6 +341,8 @@ pub fn test_cuda_extract_bits() {
 
     h_ksk.clone_from(&ksk_lwe_big_to_small.into_container());
 
+    println!("h_ksk: {}, ksksize: {}", h_ksk.len(), ksksize);
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     use std::time::Instant;
@@ -355,7 +358,8 @@ pub fn test_cuda_extract_bits() {
         // Encryption
         let message = Plaintext(val << delta_log.0);
         println!("{:?}", message);
-        let mut lwe_array_in = LweCiphertext::allocate(0u64, LweSize(polynomial_size.0 + 1));
+        let mut lwe_array_in =
+            LweCiphertext::allocate(0u64, LweSize(glwe_dimension.0 * polynomial_size.0 + 1));
         lwe_big_sk.encrypt_lwe(&mut lwe_array_in, &message, std, &mut encryption_generator);
 
         // Bit extraction
@@ -408,7 +412,7 @@ pub fn test_cuda_extract_bits() {
                 d_bsk_fourier.as_c_ptr(),
                 number_values_to_extract.0 as u32,
                 delta_log.0 as u32,
-                polynomial_size.0 as u32,
+                (glwe_dimension.0 * polynomial_size.0) as u32,
                 lwe_dimension.0 as u32,
                 glwe_dimension.0 as u32,
                 polynomial_size.0 as u32,
