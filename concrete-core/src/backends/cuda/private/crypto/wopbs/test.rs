@@ -49,7 +49,7 @@ pub fn test_cuda_cmux_tree() {
         PolynomialSize(2048),
         PolynomialSize(4096),
     ];
-    let glwe_dimension = GlweDimension(1);
+    let glwe_dimension = GlweDimension(2);
     let level = DecompositionLevelCount(3);
     let base_log = DecompositionBaseLog(6);
     let delta_log = 60;
