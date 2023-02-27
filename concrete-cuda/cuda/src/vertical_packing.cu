@@ -235,6 +235,7 @@ void cuda_cmux_tree_64(void *v_stream, uint32_t gpu_index, void *glwe_array_out,
 void cleanup_cuda_cmux_tree(void *v_stream, uint32_t gpu_index,
                             int8_t **cmux_tree_buffer) {
   auto stream = static_cast<cudaStream_t *>(v_stream);
+  check_cuda_error(cudaStreamSynchronize(*stream));
   // Free memory
   cuda_drop_async(*cmux_tree_buffer, stream, gpu_index);
 }
@@ -394,6 +395,7 @@ void cleanup_cuda_blind_rotation_sample_extraction(void *v_stream,
                                                    uint32_t gpu_index,
                                                    int8_t **br_se_buffer) {
   auto stream = static_cast<cudaStream_t *>(v_stream);
+  check_cuda_error(cudaStreamSynchronize(*stream));
   // Free memory
   cuda_drop_async(*br_se_buffer, stream, gpu_index);
 }

@@ -360,6 +360,7 @@ void cuda_bootstrap_low_latency_lwe_ciphertext_vector_64(
 void cleanup_cuda_bootstrap_low_latency(void *v_stream, uint32_t gpu_index,
                                         int8_t **pbs_buffer) {
   auto stream = static_cast<cudaStream_t *>(v_stream);
+  check_cuda_error(cudaStreamSynchronize(*stream));
   // Free memory
   cuda_drop_async(*pbs_buffer, stream, gpu_index);
 }

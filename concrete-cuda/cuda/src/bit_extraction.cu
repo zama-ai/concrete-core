@@ -315,6 +315,7 @@ void cuda_extract_bits_64(void *v_stream, uint32_t gpu_index,
 void cleanup_cuda_extract_bits(void *v_stream, uint32_t gpu_index,
                                int8_t **bit_extract_buffer) {
   auto stream = static_cast<cudaStream_t *>(v_stream);
+  check_cuda_error(cudaStreamSynchronize(*stream));
   // Free memory
   cuda_drop_async(*bit_extract_buffer, stream, gpu_index);
 }

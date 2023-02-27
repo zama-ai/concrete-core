@@ -282,6 +282,7 @@ void cuda_circuit_bootstrap_64(
 void cleanup_cuda_circuit_bootstrap(void *v_stream, uint32_t gpu_index,
                                     int8_t **cbs_buffer) {
   auto stream = static_cast<cudaStream_t *>(v_stream);
+  check_cuda_error(cudaStreamSynchronize(*stream));
   // Free memory
   cuda_drop_async(*cbs_buffer, stream, gpu_index);
 }
