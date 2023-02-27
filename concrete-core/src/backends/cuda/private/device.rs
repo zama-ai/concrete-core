@@ -75,6 +75,23 @@ impl CudaStream {
         }
     }
 
+    /// Allocates `elements` on the GPU asynchronously
+    pub(crate) fn malloc_async<T>(&self, elements: u32) -> CudaVec<T>
+    where
+        T: Numeric,
+    {
+        let size = elements as u64 * std::mem::size_of::<T>() as u64;
+        let ptr = unsafe { cuda_malloc_async(size, self.stream.0, self.gpu_index().0 as u32) };
+        self.synchronize_stream();
+        CudaVec {
+            ptr,
+            stream: self.stream.0,
+            idx: self.gpu_index.0 as u32,
+            len: elements as usize,
+            _phantom: PhantomData::default(),
+        }
+    }
+
     /// Copies data from slice into GPU pointer
     ///
     /// # Safety
@@ -103,6 +120,7 @@ impl CudaStream {
     ///
     /// - `dest` __must__ be a valid pointer
     /// - [CudaStream::cuda_synchronize_device] __must__ have been called before
+    #[allow(dead_code)]
     pub(crate) unsafe fn copy_to_gpu<T>(&self, dest: &mut CudaVec<T>, src: &[T])
     where
         T: Numeric,
@@ -139,12 +157,18 @@ impl CudaStream {
     ///
     /// - `dest` __must__ be a valid pointer
     /// - [CudaStream::cuda_synchronize_device] __must__ have been called before
+    #[allow(dead_code)]
     pub(crate) unsafe fn copy_to_cpu<T>(&self, dest: &mut [T], src: &CudaVec<T>)
     where
         T: Numeric,
     {
         self.copy_to_cpu_async::<T>(dest, src);
         self.synchronize_device();
+    }
+
+    /// Synchronizes the stream
+    pub(crate) fn synchronize_stream(&self) {
+        unsafe { cuda_synchronize_stream(self.stream.0) };
     }
 
     /// Synchronizes the device
@@ -164,7 +188,6 @@ impl CudaStream {
     }
 
     /// Convert bootstrap key
-    #[allow(dead_code)]
     pub unsafe fn convert_lwe_bootstrap_key<T: UnsignedInteger>(
         &self,
         dest: &mut CudaVec<f64>,
@@ -201,7 +224,7 @@ impl CudaStream {
     }
 
     /// Discarding bootstrap on a vector of LWE ciphertexts
-    #[allow(dead_code, clippy::too_many_arguments)]
+    #[allow(clippy::too_many_arguments)]
     pub unsafe fn discard_bootstrap_amortized_lwe_ciphertext_vector<T: UnsignedInteger>(
         &self,
         lwe_array_out: &mut CudaVec<T>,
@@ -295,7 +318,7 @@ impl CudaStream {
     }
 
     /// Discarding bootstrap on a vector of LWE ciphertexts
-    #[allow(dead_code, clippy::too_many_arguments)]
+    #[allow(clippy::too_many_arguments)]
     pub unsafe fn discard_bootstrap_low_latency_lwe_ciphertext_vector<T: UnsignedInteger>(
         &self,
         lwe_array_out: &mut CudaVec<T>,

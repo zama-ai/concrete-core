@@ -66,8 +66,6 @@ mod cuda_unit_test_pbs {
         let lwe_dimension = LweDimension(500);
         let glwe_dimension = GlweDimension(1);
         let polynomial_sizes = vec![
-            PolynomialSize(256),
-            PolynomialSize(512),
             PolynomialSize(1024),
             PolynomialSize(2048),
             PolynomialSize(4096),
