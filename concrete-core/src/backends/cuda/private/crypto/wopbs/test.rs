@@ -156,10 +156,14 @@ pub fn test_cuda_woppbs_cmux_tree() {
         // Copy to Device
         unsafe {
             let mut d_concatenated_luts = stream.malloc::<u64>(h_concatenated_luts.len() as u32);
-            stream.copy_to_gpu::<u64>(&mut d_concatenated_luts, h_concatenated_luts.as_slice());
+            stream
+                .copy_to_gpu_async::<u64>(&mut d_concatenated_luts, h_concatenated_luts.as_slice());
 
             let mut d_concatenated_mtree = stream.malloc::<u64>(h_concatenated_ggsw.len() as u32);
-            stream.copy_to_gpu::<u64>(&mut d_concatenated_mtree, h_concatenated_ggsw.as_slice());
+            stream.copy_to_gpu_async::<u64>(
+                &mut d_concatenated_mtree,
+                h_concatenated_ggsw.as_slice(),
+            );
 
             let mut d_results = stream.malloc::<u64>((tau * glwe_size) as u32);
             let mut cmux_tree_buffer: *mut i8 = std::ptr::null_mut();
@@ -196,7 +200,7 @@ pub fn test_cuda_woppbs_cmux_tree() {
                 &mut cmux_tree_buffer as *mut *mut i8,
             );
             cuda_synchronize_device(gpu_index.0 as u32);
-            stream.copy_to_cpu::<u64>(&mut h_results, &d_results);
+            stream.copy_to_cpu_async::<u64>(&mut h_results, &d_results);
         }
 
         assert_eq!(h_results.len(), tau * glwe_size);
@@ -381,9 +385,10 @@ pub fn test_cuda_woppbs_extract_bits() {
         */
 
         unsafe {
-            stream.copy_to_gpu::<u64>(&mut d_ksk, &mut h_ksk);
+            stream.copy_to_gpu_async::<u64>(&mut d_ksk, &mut h_ksk);
             //println!("rust_lwe_array_in: {:?}", lwe_array_in);
-            stream.copy_to_gpu::<u64>(&mut d_lwe_array_in, &mut lwe_array_in.tensor.as_slice());
+            stream
+                .copy_to_gpu_async::<u64>(&mut d_lwe_array_in, &mut lwe_array_in.tensor.as_slice());
 
             now = Instant::now();
             let mut bit_extract_buffer: *mut i8 = std::ptr::null_mut();
@@ -430,7 +435,7 @@ pub fn test_cuda_woppbs_extract_bits() {
             println!("elapsed: {:?}", elapsed);
 
             let mut h_result = vec![0u64; (lwe_dimension.0 + 1) * number_values_to_extract.0];
-            stream.copy_to_cpu::<u64>(&mut h_result, &d_lwe_array_out);
+            stream.copy_to_cpu_async::<u64>(&mut h_result, &d_lwe_array_out);
 
             cuda_synchronize_device(gpu_index.0 as u32);
 
@@ -1316,9 +1321,9 @@ fn test_cuda_woppbs_circuit_bootstrapping_binary() {
 
     unsafe {
         // fill device lwe input with same ciphertext
-        stream.copy_to_gpu::<u64>(&mut d_lwe_array_in, &mut lwe_in.tensor.as_slice());
-        stream.copy_to_gpu::<u64>(&mut d_lut_vector_indexes, &mut h_lut_vector_indexes);
-        stream.copy_to_gpu::<u64>(&mut d_fp_ksk_array, &mut h_fp_ksk_array);
+        stream.copy_to_gpu_async::<u64>(&mut d_lwe_array_in, &mut lwe_in.tensor.as_slice());
+        stream.copy_to_gpu_async::<u64>(&mut d_lut_vector_indexes, &mut h_lut_vector_indexes);
+        stream.copy_to_gpu_async::<u64>(&mut d_fp_ksk_array, &mut h_fp_ksk_array);
     }
 
     unsafe {

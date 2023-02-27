@@ -59,8 +59,8 @@ where
         input.key_size().0 * input.glwe_size().0 * input.glwe_size().0 * input.level_count().0;
     let alloc_size = total_polynomials * input.polynomial_size().0;
     for stream in streams.iter() {
-        let mut d_vec = stream.malloc::<f64>(alloc_size as u32);
         let input_slice = input.as_tensor().as_slice();
+        let mut d_vec = stream.malloc::<f64>(alloc_size as u32);
         stream.convert_lwe_bootstrap_key::<T>(
             &mut d_vec,
             input_slice,
@@ -107,8 +107,8 @@ pub(crate) unsafe fn execute_lwe_ciphertext_vector_low_latency_bootstrap_on_gpu<
         for (i, ind) in test_vector_indexes.iter_mut().enumerate() {
             *ind = <usize as CastInto<T>>::cast_into(i);
         }
-        let mut d_test_vector_indexes = stream.malloc::<T>(samples.0 as u32);
-        stream.copy_to_gpu(&mut d_test_vector_indexes, &test_vector_indexes);
+        let mut d_test_vector_indexes = stream.malloc_async::<T>(samples.0 as u32);
+        stream.copy_to_gpu_async::<T>(&mut d_test_vector_indexes, &test_vector_indexes);
 
         stream.discard_bootstrap_low_latency_lwe_ciphertext_vector::<T>(
             output.d_vecs.get_mut(gpu_index).unwrap(),
@@ -161,8 +161,8 @@ pub(crate) unsafe fn execute_lwe_ciphertext_vector_amortized_bootstrap_on_gpu<
         for (i, ind) in test_vector_indexes.iter_mut().enumerate() {
             *ind = <usize as CastInto<T>>::cast_into(i);
         }
-        let mut d_test_vector_indexes = stream.malloc::<T>(samples.0 as u32);
-        stream.copy_to_gpu(&mut d_test_vector_indexes, &test_vector_indexes);
+        let mut d_test_vector_indexes = stream.malloc_async::<T>(samples.0 as u32);
+        stream.copy_to_gpu_async::<T>(&mut d_test_vector_indexes, &test_vector_indexes);
 
         stream.discard_bootstrap_amortized_lwe_ciphertext_vector::<T>(
             output.d_vecs.get_mut(gpu_index).unwrap(),
