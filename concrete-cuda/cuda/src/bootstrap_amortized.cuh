@@ -217,8 +217,9 @@ get_buffer_size_full_sm_bootstrap_amortized(uint32_t polynomial_size,
                                             uint32_t glwe_dimension) {
   return sizeof(Torus) * polynomial_size * (glwe_dimension + 1) + // accumulator
          sizeof(Torus) * polynomial_size *
-             (glwe_dimension + 1) +              // accumulator rotated
-         sizeof(double2) * polynomial_size / 2 + // accumulator fft
+             (glwe_dimension + 1) + // accumulator rotated
+         sizeof(double2) * polynomial_size / 2 *
+             (glwe_dimension + 1) + // accumulator fft
          sizeof(double2) * polynomial_size / 2 *
              (glwe_dimension + 1); // calculate buffer fft
 }
@@ -227,7 +228,8 @@ template <typename Torus>
 __host__ __device__ int
 get_buffer_size_partial_sm_bootstrap_amortized(uint32_t polynomial_size,
                                                uint32_t glwe_dimension) {
-  return sizeof(double2) * polynomial_size / 2; // calculate buffer fft
+  return sizeof(double2) * polynomial_size / 2 *
+         (glwe_dimension + 1); // calculate buffer fft
 }
 
 template <typename Torus>
