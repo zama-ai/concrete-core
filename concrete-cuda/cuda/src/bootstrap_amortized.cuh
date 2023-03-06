@@ -273,6 +273,20 @@ __global__ void device_bootstrap_amortized(
   // For the mask it's more complicated
   sample_extract_mask<Torus, params>(block_lwe_array_out, accumulator_mask);
   sample_extract_body<Torus, params>(block_lwe_array_out, accumulator_body);
+
+  __syncthreads();
+  if (blockIdx.x == 0 && threadIdx.x == 0) {
+    for (int i = 0; i < (params::degree + 1) * gridDim.x; i++) {
+      if (i % (params::degree + 1) == 0) {
+        printf("\n cuda_after_pbs%u: ", i / (params::degree + 1));
+      }
+      printf("%u, ", lwe_array_out[i]);
+    }
+    printf("\n");
+
+  }
+  __syncthreads();
+
 }
 
 template <typename Torus, class params>

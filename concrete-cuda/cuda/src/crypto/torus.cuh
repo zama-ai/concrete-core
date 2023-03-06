@@ -41,6 +41,10 @@ __device__ inline T round_to_closest_multiple(T x, uint32_t base_log,
 template <typename T>
 __device__ __forceinline__ void rescale_torus_element(T element, T &output,
                                                       uint32_t log_shift) {
+  __syncthreads();
+  if (threadIdx.x == 0 && blockIdx.x == 0)
+    printf("#1");
+  __syncthreads();
   output =
       round((double)element / (double(std::numeric_limits<T>::max()) + 1.0) *
             (double)log_shift);
@@ -51,6 +55,10 @@ template <>
 __device__ __forceinline__ void
 rescale_torus_element<uint32_t>(uint32_t element, uint32_t &output,
                                 uint32_t log_shift) {
+  __syncthreads();
+  if (threadIdx.x == 0 && blockIdx.x == 0)
+    printf("#2");
+  __syncthreads();
   output =
       round(__uint2double_rn(element) /
             (__uint2double_rn(std::numeric_limits<uint32_t>::max()) + 1.0) *
@@ -61,6 +69,10 @@ template <>
 __device__ __forceinline__ void
 rescale_torus_element<uint64_t>(uint64_t element, uint64_t &output,
                                 uint32_t log_shift) {
+  __syncthreads();
+  if (threadIdx.x == 0 && blockIdx.x == 0)
+    printf("#3");
+  __syncthreads();
   output = round(__ull2double_rn(element) /
                  (__ull2double_rn(std::numeric_limits<uint64_t>::max()) + 1.0) *
                  __uint2double_rn(log_shift));

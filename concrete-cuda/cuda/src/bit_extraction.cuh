@@ -76,6 +76,19 @@ __global__ void copy_small_lwe(Torus *dst, Torus *src, uint32_t small_lwe_size,
 template <typename Torus>
 __global__ void add_to_body(Torus *lwe, size_t lwe_dimension, Torus value) {
   lwe[blockIdx.x * (lwe_dimension + 1) + lwe_dimension] += value;
+
+  __syncthreads();
+  if (blockIdx.x == 0 && threadIdx.x == 0) {
+    for (int i = 0; i < (lwe_dimension + 1) * gridDim.x; i++) {
+      if (i % (lwe_dimension + 1) == 0) {
+        printf("\n cuda_after_shift_add%u: ", i / (lwe_dimension + 1));
+      }
+      printf("%u, ", lwe[i]);
+    }
+    printf("\n");
+
+  }
+  __syncthreads();
 }
 
 /*

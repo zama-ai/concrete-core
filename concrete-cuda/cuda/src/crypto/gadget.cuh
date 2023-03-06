@@ -20,7 +20,7 @@ public:
   __device__ GadgetMatrix(uint32_t base_log, uint32_t level_count, T *state)
       : base_log(base_log), level_count(level_count), state(state) {
 
-    mask_mod_b = (1ll << base_log) - 1ll;
+    mask_mod_b = (1 << base_log) - 1;
     current_level = level_count;
     int tid = threadIdx.x;
     for (int i = 0; i < params::opt; i++) {
@@ -38,8 +38,8 @@ public:
       T res_im = state[tid * 2 + 1] & mask_mod_b;
       state[tid * 2] >>= base_log;
       state[tid * 2 + 1] >>= base_log;
-      T carry_re = ((res_re - 1ll) | state[tid * 2]) & res_re;
-      T carry_im = ((res_im - 1ll) | state[tid * 2 + 1]) & res_im;
+      T carry_re = ((res_re - 1) | state[tid * 2]) & res_re;
+      T carry_im = ((res_im - 1) | state[tid * 2 + 1]) & res_im;
       carry_re >>= (base_log - 1);
       carry_im >>= (base_log - 1);
       state[tid * 2] += carry_re;
@@ -76,7 +76,7 @@ public:
     this->mask = bg - 1;
     T temp = 0;
     for (int i = 0; i < this->level_count; i++) {
-      temp += 1ULL << (sizeof(T) * 8 - (i + 1) * this->base_log);
+      temp += 1u << (sizeof(T) * 8 - (i + 1) * this->base_log);
     }
     this->offset = temp * this->halfbg;
   }

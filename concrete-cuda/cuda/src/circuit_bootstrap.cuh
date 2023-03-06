@@ -18,7 +18,16 @@
 template <typename Torus, class params>
 __global__ void shift_lwe_cbs(Torus *dst_shift, Torus *src, Torus value,
                               size_t lwe_size) {
-
+  __syncthreads();
+  if (blockIdx.x == 0 && threadIdx.x == 0) {
+    for (int i = 0; i < (lwe_size) * gridDim.y; i++) {
+      if (i % (lwe_size) == 0) {
+        printf("\n input_lwe%u: ", i / (lwe_size));
+      }
+      printf("%u ", src[i]);
+    }
+  }
+  __syncthreads();
   size_t blockId = blockIdx.y * gridDim.x + blockIdx.x;
   size_t threads_per_block = blockDim.x;
   size_t opt = lwe_size / threads_per_block;
@@ -35,6 +44,20 @@ __global__ void shift_lwe_cbs(Torus *dst_shift, Torus *src, Torus value,
 
   if (threadIdx.x < rem)
     cur_dst[tid] = cur_src[tid] * value;
+
+
+  __syncthreads();
+  if (blockIdx.x == 0 && threadIdx.x == 0) {
+    for (int i = 0; i < (lwe_size) * gridDim.y * gridDim.x; i++) {
+      if (i % (lwe_size) == 0) {
+        printf("\n shifted_lwe%u: ", i / (lwe_size));
+      }
+      printf("%u, ", dst_shift[i]);
+    }
+    printf("\n");
+  }
+  __syncthreads();
+
 }
 
 /*
@@ -60,6 +83,20 @@ __global__ void fill_lut_body_for_cbs(Torus *lut, uint32_t ciphertext_n_bits,
         (1ll << (ciphertext_n_bits - 1 - base_log_cbs * (blockIdx.x + 1)));
     tid += params::degree / params::opt;
   }
+
+  __syncthreads();
+  if (blockIdx.x == 0 && threadIdx.x == 0) {
+    for (int i = 0; i < (2 * params::degree) * gridDim.x; i++) {
+      if (i % (2 * params::degree) == 0) {
+        printf("\n cuda_lut%u: ", i / (2 * params::degree));
+      }
+      printf("%u, ", lut[i]);
+    }
+    printf("\n");
+
+  }
+  __syncthreads();
+
 }
 
 /*
@@ -91,10 +128,24 @@ __global__ void copy_add_lwe_cbs(Torus *lwe_dst, Torus *lwe_src,
     cur_dst[tid] = cur_src[tid];
     tid += params::degree / params::opt;
   }
-  Torus val = 1ll << (ciphertext_n_bits - 1 - base_log_cbs * cur_cbs_level);
+  Torus val = 1u << (ciphertext_n_bits - 1 - base_log_cbs * cur_cbs_level);
   if (threadIdx.x == 0) {
     cur_dst[params::degree] = cur_src[params::degree] + val;
   }
+
+  __syncthreads();
+  if (blockIdx.x == 0 && threadIdx.x == 0) {
+    for (int i = 0; i < (params::degree + 1) * gridDim.x; i++) {
+      if (i % (params::degree + 1) == 0) {
+        printf("\n cuda_fp_input%u: ", i / (params::degree + 1));
+      }
+      printf("%u, ", lwe_dst[i]);
+    }
+    printf("\n");
+
+  }
+  __syncthreads();
+
 }
 
 /*
@@ -113,7 +164,12 @@ __host__ void host_circuit_bootstrap(
     uint32_t level_bsk, uint32_t base_log_bsk, uint32_t level_pksk,
     uint32_t base_log_pksk, uint32_t level_cbs, uint32_t base_log_cbs,
     uint32_t number_of_samples, uint32_t max_shared_memory) {
+
+
+  printf("host_circuit_bootstrap:\n");
+  printf("number_of_samples: %u:\n", number_of_samples);
   auto stream = static_cast<cudaStream_t *>(v_stream);
+
 
   uint32_t ciphertext_n_bits = sizeof(Torus) * 8;
   uint32_t lwe_size = lwe_dimension + 1;
@@ -126,7 +182,7 @@ __host__ void host_circuit_bootstrap(
   // with only 1 bit of information
   shift_lwe_cbs<Torus, params><<<blocks, threads, 0, *stream>>>(
       lwe_array_in_shifted_buffer, lwe_array_in,
-      1LL << (ciphertext_n_bits - delta_log - 1), lwe_size);
+      1ll << (ciphertext_n_bits - delta_log - 1), lwe_size);
 
   // Add q/4 to center the error while computing a negacyclic LUT
   add_to_body<Torus>

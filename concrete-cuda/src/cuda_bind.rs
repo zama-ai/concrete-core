@@ -661,6 +661,54 @@ extern "C" {
         max_shared_memory: u32,
     );
 
+
+    /// Entry point for cuda circuit bootstrap + vertical packing for batches of
+    /// input 32 bit LWE ciphertexts.
+    ///  - `v_stream` is a void pointer to the Cuda stream to be used in the kernel launch
+    ///  - `gpu_index` is the index of the GPU to be used in the kernel launch
+    ///  - `lwe_array_out` list of output lwe ciphertexts
+    ///  - `lwe_array_in` list of input lwe_ciphertexts
+    ///  - `fourier_bsk` bootstrapping key in fourier domain, expected half size
+    /// compressed complex key.
+    ///  - `cbs_fpksk` list of private functional packing keyswitch keys
+    ///  - `lut_vector` list of test vectors
+    ///  - `polynomial_size` size of the test polynomial, supported sizes:
+    /// {512, 1024, 2048, 4096, 8192}
+    ///  - `glwe_dimension` supported dimensions: {1}
+    ///  - `lwe_dimension` dimension of input LWE ciphertexts
+    ///  - `level_count_bsk` decomposition level for bootstrapping
+    ///  - `base_log_bsk`  base log parameter for bootstrapping
+    ///  - `level_count_pksk` decomposition level for fp-keyswitch
+    ///  - `base_log_pksk` base log parameter for fp-keyswitch
+    ///  - `level_count_cbs` level of circuit bootstrap
+    ///  - `base_log_cbs` base log parameter for circuit bootstrap
+    ///  - `number_of_inputs` number of input LWE ciphertexts
+    ///  - `max_shared_memory` maximum shared memory amount to be used in
+    ///  the kernels.
+    pub fn cuda_circuit_bootstrap_vertical_packing_32(
+        v_stream: *const c_void,
+        gpu_index: u32,
+        lwe_array_out: *mut c_void,
+        lwe_array_in: *const c_void,
+        fourier_bsk: *const c_void,
+        cbs_fpksk: *const c_void,
+        lut_vector: *const c_void,
+        polynomial_size: u32,
+        glwe_dimension: u32,
+        lwe_dimension: u32,
+        level_count_bsk: u32,
+        base_log_bsk: u32,
+        level_count_pksk: u32,
+        base_log_pksk: u32,
+        level_count_cbs: u32,
+        base_log_cbs: u32,
+        number_of_inputs: u32,
+        lut_number: u32,
+        max_shared_memory: u32,
+    );
+
+
+
     /// Entry point for cuda circuit bootstrap + vertical packing for batches of
     /// input 64 bit LWE ciphertexts.
     ///  - `v_stream` is a void pointer to the Cuda stream to be used in the kernel launch

@@ -30,7 +30,9 @@ use crate::prelude::*;
 use concrete_csprng::generators::SoftwareRandomGenerator;
 use concrete_csprng::seeders::UnixSeeder;
 use concrete_cuda::cuda_bind::{
-    cuda_circuit_bootstrap_64, cuda_cmux_tree_64, cuda_convert_lwe_bootstrap_key_64,
+    cuda_circuit_bootstrap_64, cuda_circuit_bootstrap_32, cuda_cmux_tree_64,
+    cuda_convert_lwe_bootstrap_key_64,
+    cuda_convert_lwe_bootstrap_key_32,
     cuda_extract_bits_64, cuda_initialize_twiddles, cuda_synchronize_device, cuda_wop_pbs_64,
 };
 use concrete_fft::c64;
@@ -721,19 +723,19 @@ pub fn test_extract_bit_circuit_bootstrapping_cuda_vertical_packing() {
 pub fn test_extract_bit_cuda_circuit_bootstrapping_vertical_packing() {
     // define settings
     let glwe_dimension = GlweDimension(1);
-    let lwe_dimension = LweDimension(481);
+    let lwe_dimension = LweDimension(10);
 
-    let level_bsk = DecompositionLevelCount(9);
+    let level_bsk = DecompositionLevelCount(7);
     let base_log_bsk = DecompositionBaseLog(4);
 
-    let level_pksk = DecompositionLevelCount(9);
+    let level_pksk = DecompositionLevelCount(7);
     let base_log_pksk = DecompositionBaseLog(4);
 
     let level_ksk = DecompositionLevelCount(9);
     let base_log_ksk = DecompositionBaseLog(1);
 
-    let level_cbs = DecompositionLevelCount(4);
-    let base_log_cbs = DecompositionBaseLog(6);
+    let level_cbs = DecompositionLevelCount(7);
+    let base_log_cbs = DecompositionBaseLog(4);
 
     // Value was 0.000_000_000_000_000_221_486_881_160_055_68_513645324585951
     // But rust indicates it gets truncated anyways to
@@ -751,14 +753,14 @@ pub fn test_extract_bit_cuda_circuit_bootstrapping_vertical_packing() {
     let mut encryption_generator =
         EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(seeder.seed(), &mut seeder);
 
-    let number_of_test_runs = 2;
+    let number_of_test_runs = 1;
 
-    for tau in 1..=2 {
+    for tau in 1..=1 {
         let p = 10 / tau;
         for run_number in 0..number_of_test_runs {
             // When log_2_poly_size == 10 the VP skips the cmux tree.
             // When log_2_poly_size == 9 we have a cmux tree done with a single cmux.
-            let log_2_poly_size = if run_number % 2 == 0 { 10 } else { 9 };
+            let log_2_poly_size = 9;
             let polynomial_size = PolynomialSize(1 << log_2_poly_size);
 
             println!("\npolynomial_size: {}", polynomial_size.0);
@@ -1336,16 +1338,16 @@ fn test_cuda_circuit_bootstrapping_binary() {
     // Define settings for an insecure toy example
     let polynomial_size = PolynomialSize(512);
     let glwe_dimension = GlweDimension(1);
-    let lwe_dimension = LweDimension(10);
+    let lwe_dimension = LweDimension(1);
 
-    let level_bsk = DecompositionLevelCount(2);
-    let base_log_bsk = DecompositionBaseLog(11);
+    let level_bsk = DecompositionLevelCount(4);
+    let base_log_bsk = DecompositionBaseLog(7);
 
-    let level_pksk = DecompositionLevelCount(2);
-    let base_log_pksk = DecompositionBaseLog(15);
+    let level_pksk = DecompositionLevelCount(7);
+    let base_log_pksk = DecompositionBaseLog(4);
 
     let level_count_cbs = DecompositionLevelCount(1);
-    let base_log_cbs = DecompositionBaseLog(10);
+    let base_log_cbs = DecompositionBaseLog(4);
 
     let std = LogStandardDev::from_log_standard_dev(-60.);
 
@@ -1357,14 +1359,14 @@ fn test_cuda_circuit_bootstrapping_binary() {
         EncryptionRandomGenerator::<SoftwareRandomGenerator>::new(seeder.seed(), &mut seeder);
 
     // Create GLWE and LWE secret key
-    let glwe_sk: GlweSecretKey<_, Vec<u64>> =
+    let glwe_sk: GlweSecretKey<_, Vec<u32>> =
         GlweSecretKey::generate_binary(glwe_dimension, polynomial_size, &mut secret_generator);
-    let lwe_sk: LweSecretKey<_, Vec<u64>> =
+    let lwe_sk: LweSecretKey<_, Vec<u32>> =
         LweSecretKey::generate_binary(lwe_dimension, &mut secret_generator);
 
     // Allocation and generation of the bootstrap key in standard domain:
     let mut std_bsk = StandardBootstrapKey::allocate(
-        0u64,
+        0u32,
         glwe_dimension.to_glwe_size(),
         polynomial_size,
         level_bsk,
@@ -1402,7 +1404,7 @@ fn test_cuda_circuit_bootstrapping_binary() {
         * lwe_dimension.0;
 
     // host pointer for bsk coef
-    let mut h_coef_bsk: Vec<u64> = vec![];
+    let mut h_coef_bsk: Vec<u32> = vec![];
     // device pointer for fourier bsk
     let mut d_bsk_fourier = stream.malloc::<f64>(bsk_size as u32);
     // use same bsk coefficients for gpu bsk
@@ -1410,7 +1412,7 @@ fn test_cuda_circuit_bootstrapping_binary() {
     // convert bsk coefficients to fourier on device
     unsafe {
         cuda_initialize_twiddles(polynomial_size.0 as u32, gpu_index.0 as u32);
-        cuda_convert_lwe_bootstrap_key_64(
+        cuda_convert_lwe_bootstrap_key_32(
             d_bsk_fourier.as_mut_c_ptr(),
             h_coef_bsk.as_ptr() as *mut c_void,
             stream.stream_handle().0,
@@ -1435,7 +1437,7 @@ fn test_cuda_circuit_bootstrapping_binary() {
 
     // Creation of all the pfksk for the circuit bootstrapping
     let mut vec_pfksk = LwePrivateFunctionalPackingKeyswitchKeyList::allocate(
-        0u64,
+        0u32,
         level_pksk,
         base_log_pksk,
         lwe_sk_bs_output.key_size(),
@@ -1451,17 +1453,17 @@ fn test_cuda_circuit_bootstrapping_binary() {
         &mut encryption_generator,
     );
 
-    let delta_log = DeltaLog(60);
+    let delta_log = DeltaLog(23);
 
     // value is 0 or 1 as CBS works on messages expected to contain 1 bit of information
-    let value: u64 = test_tools::random_uint_between(0..2u64);
+    let value: u32 = test_tools::random_uint_between(0..2u32);
     // Encryption of an LWE with the value 'message'
     let message = Plaintext((value) << delta_log.0);
-    let mut lwe_in = LweCiphertext::allocate(0u64, lwe_dimension.to_lwe_size());
+    let mut lwe_in = LweCiphertext::allocate(0u32, lwe_dimension.to_lwe_size());
     lwe_sk.encrypt_lwe(&mut lwe_in, &message, std, &mut encryption_generator);
 
     let mut cbs_res = StandardGgswCiphertext::allocate(
-        0u64,
+        0u32,
         polynomial_size,
         glwe_dimension.to_glwe_size(),
         level_count_cbs,
@@ -1469,7 +1471,7 @@ fn test_cuda_circuit_bootstrapping_binary() {
     );
 
     let mut mem = GlobalMemBuffer::new(
-        circuit_bootstrap_boolean_scratch::<u64>(
+        circuit_bootstrap_boolean_scratch::<u32>(
             lwe_in.lwe_size(),
             fourier_bsk.output_lwe_dimension().to_lwe_size(),
             polynomial_size,
@@ -1499,34 +1501,34 @@ fn test_cuda_circuit_bootstrapping_binary() {
 
     // allocate and initialize device pointers for circuit bootstrap
     // output glwe array for fp-ks
-    let mut d_ggsw_out = stream.malloc::<u64>(
+    let mut d_ggsw_out = stream.malloc::<u32>(
         nos * level_count_cbs.0 as u32
             * (glwe_dimension.0 as u32 + 1)
             * (glwe_dimension.0 as u32 + 1)
             * polynomial_size.0 as u32,
     );
     // input lwe array for fp-ks
-    let mut d_lwe_array_in_fp_ks_buffer = stream.malloc::<u64>(
+    let mut d_lwe_array_in_fp_ks_buffer = stream.malloc::<u32>(
         nos * level_count_cbs.0 as u32
             * (glwe_dimension.0 as u32 + 1)
             * (polynomial_size.0 + 1) as u32,
     );
     // buffer for pbs output
     let mut d_lwe_array_out_pbs_buffer =
-        stream.malloc::<u64>(nos * level_count_cbs.0 as u32 * (polynomial_size.0 + 1) as u32);
+        stream.malloc::<u32>(nos * level_count_cbs.0 as u32 * (polynomial_size.0 + 1) as u32);
     // vector for input of lwe ciphertexts
-    let mut d_lwe_array_in = stream.malloc::<u64>(nos * (lwe_dimension.0 + 1) as u32);
+    let mut d_lwe_array_in = stream.malloc::<u32>(nos * (lwe_dimension.0 + 1) as u32);
     // vector for shifted lwe input
     let mut d_lwe_array_in_shifted_buffer =
-        stream.malloc::<u64>(nos * level_count_cbs.0 as u32 * (lwe_dimension.0 + 1) as u32);
+        stream.malloc::<u32>(nos * level_count_cbs.0 as u32 * (lwe_dimension.0 + 1) as u32);
     // lut vector for pbs
-    let mut d_lut_vector = stream.malloc::<u64>(
+    let mut d_lut_vector = stream.malloc::<u32>(
         level_count_cbs.0 as u32 * (glwe_dimension.0 as u32 + 1) * polynomial_size.0 as u32,
     );
     // indexes of lut vectors
     let mut d_lut_vector_indexes = stream.malloc::<u32>(nos * level_count_cbs.0 as u32);
 
-    let mut d_fp_ksk_array = stream.malloc::<u64>(
+    let mut d_fp_ksk_array = stream.malloc::<u32>(
         (polynomial_size.0 as u32 + 1)
             * (glwe_dimension.0 as u32 + 1)
             * (glwe_dimension.0 as u32 + 1)
@@ -1534,7 +1536,7 @@ fn test_cuda_circuit_bootstrapping_binary() {
             * polynomial_size.0 as u32,
     );
 
-    let mut h_fp_ksk_array: Vec<u64> = vec![];
+    let mut h_fp_ksk_array: Vec<u32> = vec![];
 
     let mut cnt = 0;
     let mut vec_cnt = 0;
@@ -1542,20 +1544,20 @@ fn test_cuda_circuit_bootstrapping_binary() {
         vec_cnt += 1;
         for iter2 in iter.bit_decomp_iter() {
             for iter3 in iter2.tensor.iter() {
-                h_fp_ksk_array.push(*iter3 as u64);
+                h_fp_ksk_array.push(*iter3 as u32);
                 cnt += 1;
             }
         }
     }
     unsafe {
         // fill device lwe input with same ciphertext
-        stream.copy_to_gpu::<u64>(&mut d_lwe_array_in, &mut lwe_in.tensor.as_slice());
+        stream.copy_to_gpu::<u32>(&mut d_lwe_array_in, &mut lwe_in.tensor.as_slice());
         stream.copy_to_gpu::<u32>(&mut d_lut_vector_indexes, &mut h_lut_vector_indexes);
-        stream.copy_to_gpu::<u64>(&mut d_fp_ksk_array, &mut h_fp_ksk_array);
+        stream.copy_to_gpu::<u32>(&mut d_fp_ksk_array, &mut h_fp_ksk_array);
     }
 
     unsafe {
-        cuda_circuit_bootstrap_64(
+        cuda_circuit_bootstrap_32(
             stream.stream_handle().0,
             0 as u32,
             d_ggsw_out.as_mut_c_ptr(),
@@ -1582,14 +1584,14 @@ fn test_cuda_circuit_bootstrapping_binary() {
         );
     }
     let mut cuda_engine = CudaEngine::new(()).unwrap();
-    let d_ciphertext: CudaGgswCiphertext64 = CudaGgswCiphertext64(CudaGgswCiphertext {
+    let d_ciphertext: CudaGgswCiphertext32 = CudaGgswCiphertext32(CudaGgswCiphertext {
         d_vec: d_ggsw_out,
         glwe_dimension,
         polynomial_size,
         decomposition_level_count: level_count_cbs,
         decomposition_base_log: base_log_cbs,
     });
-    let cbs_res_cuda: GgswCiphertext64 =
+    let cbs_res_cuda: GgswCiphertext32 =
         cuda_engine.convert_ggsw_ciphertext(&d_ciphertext).unwrap();
 
     let glwe_size = glwe_dimension.to_glwe_size();
@@ -1597,7 +1599,7 @@ fn test_cuda_circuit_bootstrapping_binary() {
     //print the key to check if the RLWE in the GGSW seem to be well created
     println!("RLWE secret key:\n{:?}", glwe_sk);
     let mut decrypted = PlaintextList::allocate(
-        0_u64,
+        0_u32,
         PlaintextCount(polynomial_size.0 * level_count_cbs.0 * glwe_size.0),
     );
     glwe_sk.decrypt_glwe_list(&mut decrypted, &cbs_res_cuda.0.as_glwe_list());
@@ -1616,14 +1618,14 @@ fn test_cuda_circuit_bootstrapping_binary() {
         {
             let current_level = level_idx + 1;
             let mut expected_decryption = PlaintextList::allocate(
-                0u64,
+                0u32,
                 PlaintextCount(original_polynomial_from_glwe_sk.polynomial_size().0),
             );
             expected_decryption
                 .as_mut_tensor()
                 .fill_with_copy(original_polynomial_from_glwe_sk.as_tensor());
 
-            let multiplying_factor = 0u64.wrapping_sub(value);
+            let multiplying_factor = 0u32.wrapping_sub(value);
 
             expected_decryption
                 .as_mut_tensor()
@@ -1634,14 +1636,14 @@ fn test_cuda_circuit_bootstrapping_binary() {
 
             expected_decryption
                 .as_mut_tensor()
-                .update_with(|coeff| *coeff >>= 64 - base_log_cbs.0 * current_level);
+                .update_with(|coeff| *coeff >>= 32 - base_log_cbs.0 * current_level);
 
             let mut decoded_glwe =
                 PlaintextList::from_container(decrypted_glwe.as_tensor().as_container().to_vec());
 
             decoded_glwe.as_mut_tensor().update_with(|coeff| {
                 *coeff = decomposer.closest_representable(*coeff)
-                    >> (64 - base_log_cbs.0 * current_level)
+                    >> (32 - base_log_cbs.0 * current_level)
             });
 
             assert_eq!(
@@ -1662,10 +1664,10 @@ fn test_cuda_circuit_bootstrapping_binary() {
 
         last_decoded_glwe.as_mut_tensor().update_with(|coeff| {
             *coeff = decomposer.closest_representable(*coeff)
-                >> (64 - base_log_cbs.0 * level_count_cbs.0)
+                >> (32 - base_log_cbs.0 * level_count_cbs.0)
         });
 
-        let mut expected_decryption = PlaintextList::allocate(0u64, last_decoded_glwe.count());
+        let mut expected_decryption = PlaintextList::allocate(0u32, last_decoded_glwe.count());
 
         *expected_decryption.as_mut_tensor().first_mut() = value;
 

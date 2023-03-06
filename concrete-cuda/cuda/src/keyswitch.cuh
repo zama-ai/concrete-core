@@ -17,6 +17,23 @@ __device__ Torus *get_ith_block(Torus *ksk, int i, int level,
   return ptr;
 }
 
+template <typename Torus>
+__global__ void dev_print(Torus *src, int polynomial_size) {
+  __syncthreads();
+  if (blockIdx.x == 0 && threadIdx.x == 0) {
+    for (int i = 0; i < (2 * polynomial_size ) * gridDim.x; i++) {
+      if (i % (2 * polynomial_size) == 0) {
+        printf("\n cuda_after_fp%u: ", i / (2 * polynomial_size));
+      }
+      printf("%u, ", src[i]);
+    }
+    printf("\n");
+
+  }
+  __syncthreads();
+
+}
+
 // blockIdx.y represents single lwe ciphertext
 // blockIdx.x represents chunk of lwe ciphertext,
 // chunk_count = glwe_size * polynomial_size / threads.
@@ -84,6 +101,8 @@ fp_keyswitch(Torus *glwe_array_out, Torus *lwe_array_in, Torus *fp_ksk_array,
     }
   }
   cur_glwe_chunk[tid] = local_glwe_chunk[tid];
+
+
 }
 
 /*
@@ -224,6 +243,7 @@ __host__ void cuda_fp_keyswitch_lwe_to_glwe(
       glwe_dimension, polynomial_size, base_log, level_count,
       number_of_input_lwe, number_of_keys);
 
+  dev_print<<<number_of_input_lwe, 1, 0, *stream>>>(glwe_array_out, polynomial_size);
   cudaStreamSynchronize(*stream);
 }
 

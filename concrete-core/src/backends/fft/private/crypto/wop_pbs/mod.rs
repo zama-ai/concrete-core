@@ -1,5 +1,7 @@
 #![allow(clippy::too_many_arguments)]
 
+use std::fs::File;
+use std::io::Write;
 use aligned_vec::CACHELINE_ALIGN;
 use dyn_stack::{DynStack, ReborrowMut, SizeOverflow, StackReq};
 
@@ -308,7 +310,9 @@ pub fn circuit_bootstrap_boolean<Scalar: UnsignedTorus + CastInto<usize>>(
 
         for pfksk in fpksk_list.fpksk_iter() {
             let mut glwe_out = out_pfksk_buffer_iter.next().unwrap();
+            println!("rust_fp_input: {:?}", lwe_out_bs_buffer);
             pfksk.private_functional_keyswitch_ciphertext(&mut glwe_out, &lwe_out_bs_buffer);
+            println!("rust_after_fp: {:?}", glwe_out);
         }
     }
 }
@@ -366,6 +370,7 @@ pub fn homomorphic_shift_boolean<Scalar: UnsignedTorus + CastInto<usize>>(
         .0
         .wrapping_add(Scalar::ONE << (ciphertext_n_bits - 2));
 
+    //println!("rust_shifted_add: {:?}", lwe_left_shift_buffer);
     let (mut pbs_accumulator_data, stack) = stack.make_aligned_with(
         polynomial_size.0 * fourier_bsk.glwe_size().0,
         CACHELINE_ALIGN,
@@ -385,6 +390,7 @@ pub fn homomorphic_shift_boolean<Scalar: UnsignedTorus + CastInto<usize>>(
             Scalar::ONE << (ciphertext_n_bits - 1 - base_log_cbs.0 * level_count_cbs.0),
         ));
 
+    //println!("rust_pbs_accumulator: {:?}", pbs_accumulator);
     // Applying a negacyclic LUT on a ciphertext with one bit of message in the MSB and no bit
     // of padding
     fourier_bsk.bootstrap(
@@ -395,6 +401,7 @@ pub fn homomorphic_shift_boolean<Scalar: UnsignedTorus + CastInto<usize>>(
         stack,
     );
 
+    //println!("rust_after_pbs: {:?}", lwe_out);
     // Add alpha where alpha = 2^{log(q) - 1 - base_log * level}
     // To end up with an encryption of 0 if the message bit was 0 and 1 in the other case
     let out_body = lwe_out.get_mut_body();
