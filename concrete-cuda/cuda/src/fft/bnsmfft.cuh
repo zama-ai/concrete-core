@@ -306,7 +306,7 @@ template <class params> __device__ void NSMFFT_direct(double2 *A) {
       i1 = 2 * (params::degree / 8192) * twid_id +
            (tid & (params::degree / 8192 - 1));
       i2 = i1 + params::degree / 8192;
-      w = negtwiddles[twid_id + 4096];
+      w = negtwiddles13[twid_id];
       u = A[i1];
       v.x = A[i2].x * w.x - A[i2].y * w.y;
       v.y = A[i2].y * w.x + A[i2].x * w.y;
@@ -364,7 +364,7 @@ template <class params> __device__ void NSMFFT_inverse(double2 *A) {
       i1 = 2 * (params::degree / 8192) * twid_id +
            (tid & (params::degree / 8192 - 1));
       i2 = i1 + params::degree / 8192;
-      w = negtwiddles[twid_id + 4096];
+      w = negtwiddles13[twid_id];
       u.x = A[i1].x - A[i2].x;
       u.y = A[i1].y - A[i2].y;
       A[i1].x += A[i2].x;
