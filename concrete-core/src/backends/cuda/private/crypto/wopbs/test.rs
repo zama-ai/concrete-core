@@ -474,7 +474,7 @@ pub fn test_cuda_woppbs_extract_bits() {
 pub fn test_cuda_woppbs_extract_bit_cuda_circuit_bootstrapping_vertical_packing() {
     let mut cuda_engine = CudaEngine::new(()).unwrap();
     // define settings
-    let glwe_dimension = GlweDimension(2);
+    let glwe_dimension = GlweDimension(1);
     let lwe_dimension = LweDimension(481);
 
     let level_bsk = DecompositionLevelCount(9);
@@ -507,292 +507,287 @@ pub fn test_cuda_woppbs_extract_bit_cuda_circuit_bootstrapping_vertical_packing(
 
     let number_of_test_runs = 2;
 
-    for tau in 1..=2 {
-        let p = 10 / tau;
-        for run_number in 0..number_of_test_runs {
-            // When log_2_poly_size == 10 the VP skips the cmux tree.
-            // When log_2_poly_size == 9 we have a cmux tree done with a single cmux.
-            let log_2_poly_size = if run_number % 2 == 0 { 10 } else { 9 };
-            let polynomial_size = PolynomialSize(1 << log_2_poly_size);
+    let tau = 1;
+    let p = 10;
+    for run_number in 0..number_of_test_runs {
+        // When log_2_poly_size == 10 the VP skips the cmux tree.
+        // When log_2_poly_size == 9 we have a cmux tree done with a single cmux.
+        let log_2_poly_size = if run_number % 2 == 0 { 10 } else { 9 };
+        let polynomial_size = PolynomialSize(1 << log_2_poly_size);
 
-            println!("\npolynomial_size: {}", polynomial_size.0);
+        println!("\npolynomial_size: {}", polynomial_size.0);
 
-            //create GLWE and LWE secret key
-            let glwe_sk: GlweSecretKey<_, Vec<u64>> = GlweSecretKey::generate_binary(
-                glwe_dimension,
-                polynomial_size,
-                &mut secret_generator,
-            );
-            let lwe_small_sk: LweSecretKey<_, Vec<u64>> =
-                LweSecretKey::generate_binary(lwe_dimension, &mut secret_generator);
+        //create GLWE and LWE secret key
+        let glwe_sk: GlweSecretKey<_, Vec<u64>> =
+            GlweSecretKey::generate_binary(glwe_dimension, polynomial_size, &mut secret_generator);
+        let lwe_small_sk: LweSecretKey<_, Vec<u64>> =
+            LweSecretKey::generate_binary(lwe_dimension, &mut secret_generator);
 
-            let lwe_big_sk = LweSecretKey::binary_from_container(glwe_sk.as_tensor().as_slice());
+        let lwe_big_sk = LweSecretKey::binary_from_container(glwe_sk.as_tensor().as_slice());
 
-            // allocation and generation of the key in coef domain:
-            let mut coef_bsk = StandardBootstrapKey::allocate(
+        // allocation and generation of the key in coef domain:
+        let mut coef_bsk = StandardBootstrapKey::allocate(
+            0u64,
+            glwe_dimension.to_glwe_size(),
+            polynomial_size,
+            level_bsk,
+            base_log_bsk,
+            lwe_dimension,
+        );
+        coef_bsk.fill_with_new_key(
+            &lwe_small_sk,
+            &glwe_sk,
+            Variance(std_small.get_variance()),
+            &mut encryption_generator,
+        );
+
+        // allocation for the bootstrapping key
+        let mut fourier_bsk = FourierLweBootstrapKey::new(
+            vec![
+                c64::default();
+                lwe_dimension.0 * polynomial_size.0 / 2
+                    * level_bsk.0
+                    * glwe_dimension.to_glwe_size().0
+                    * glwe_dimension.to_glwe_size().0
+            ],
+            lwe_dimension,
+            polynomial_size,
+            glwe_dimension.to_glwe_size(),
+            base_log_bsk,
+            level_bsk,
+        );
+
+        let fft = Fft::new(polynomial_size);
+        let fft = fft.as_view();
+
+        let mut mem = GlobalMemBuffer::new(fill_with_forward_fourier_scratch(fft).unwrap());
+        fourier_bsk.as_mut_view().fill_with_forward_fourier(
+            coef_bsk.as_view(),
+            fft,
+            DynStack::new(&mut mem),
+        );
+        let d_fourier_bsk = cuda_engine
+            .convert_lwe_bootstrap_key(&LweBootstrapKey64(coef_bsk))
+            .unwrap();
+
+        let mut ksk_lwe_big_to_small = LweKeyswitchKey::allocate(
+            0u64,
+            level_ksk,
+            base_log_ksk,
+            lwe_big_sk.key_size(),
+            lwe_small_sk.key_size(),
+        );
+        ksk_lwe_big_to_small.fill_with_keyswitch_key(
+            &lwe_big_sk,
+            &lwe_small_sk,
+            Variance(std_big.get_variance()),
+            &mut encryption_generator,
+        );
+
+        // Creation of all the pfksk for the circuit bootstrapping
+        let mut vec_fpksk = LwePrivateFunctionalPackingKeyswitchKeyList::allocate(
+            0u64,
+            level_pksk,
+            base_log_pksk,
+            lwe_big_sk.key_size(),
+            glwe_sk.key_size(),
+            glwe_sk.polynomial_size(),
+            FunctionalPackingKeyswitchKeyCount(glwe_dimension.to_glwe_size().0),
+        );
+
+        vec_fpksk.par_fill_with_fpksk_for_circuit_bootstrap(
+            &lwe_big_sk,
+            &glwe_sk,
+            std_small,
+            &mut encryption_generator,
+        );
+        let d_vec_fpksk = cuda_engine
+            .convert_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys(
+                &LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64(vec_fpksk.clone()),
+            )
+            .unwrap();
+
+        // Here even thought the deltas have the same value, they can differ between ciphertexts
+        // and lut so keeping both separate
+        let number_of_values_to_extract = ExtractedBitsCount(p as usize);
+        let delta_log = DeltaLog(64 - number_of_values_to_extract.0);
+        let delta_lut = DeltaLog(64 - number_of_values_to_extract.0);
+        let number_of_cleartext_runs = 5;
+
+        for _cleartext_number in 0..number_of_cleartext_runs {
+            let mut vec_cleartext = vec![];
+            let mut vec_cleartext_delta_log = vec![];
+            for _i in 0..tau {
+                let x = test_tools::random_uint_between(0..2u64.pow(p as u32));
+                // let x = 42u64;
+                vec_cleartext.push(x);
+                vec_cleartext_delta_log.push(x << delta_log.0);
+            }
+
+            println!("{:?}", vec_cleartext);
+
+            let message = PlaintextList::from_container(vec_cleartext_delta_log);
+            let mut lwe_in_list = LweList::allocate(
                 0u64,
-                glwe_dimension.to_glwe_size(),
-                polynomial_size,
-                level_bsk,
-                base_log_bsk,
-                lwe_dimension,
+                LweSize(glwe_dimension.0 * polynomial_size.0 + 1),
+                CiphertextCount(tau),
             );
-            coef_bsk.fill_with_new_key(
-                &lwe_small_sk,
-                &glwe_sk,
-                Variance(std_small.get_variance()),
-                &mut encryption_generator,
-            );
-
-            // allocation for the bootstrapping key
-            let mut fourier_bsk = FourierLweBootstrapKey::new(
-                vec![
-                    c64::default();
-                    lwe_dimension.0 * polynomial_size.0 / 2
-                        * level_bsk.0
-                        * glwe_dimension.to_glwe_size().0
-                        * glwe_dimension.to_glwe_size().0
-                ],
-                lwe_dimension,
-                polynomial_size,
-                glwe_dimension.to_glwe_size(),
-                base_log_bsk,
-                level_bsk,
-            );
-
-            let fft = Fft::new(polynomial_size);
-            let fft = fft.as_view();
-
-            let mut mem = GlobalMemBuffer::new(fill_with_forward_fourier_scratch(fft).unwrap());
-            fourier_bsk.as_mut_view().fill_with_forward_fourier(
-                coef_bsk.as_view(),
-                fft,
-                DynStack::new(&mut mem),
-            );
-            let d_fourier_bsk = cuda_engine
-                .convert_lwe_bootstrap_key(&LweBootstrapKey64(coef_bsk))
-                .unwrap();
-
-            let mut ksk_lwe_big_to_small = LweKeyswitchKey::allocate(
-                0u64,
-                level_ksk,
-                base_log_ksk,
-                lwe_big_sk.key_size(),
-                lwe_small_sk.key_size(),
-            );
-            ksk_lwe_big_to_small.fill_with_keyswitch_key(
-                &lwe_big_sk,
-                &lwe_small_sk,
+            lwe_big_sk.encrypt_lwe_list(
+                &mut lwe_in_list,
+                &message,
                 Variance(std_big.get_variance()),
                 &mut encryption_generator,
             );
-
-            // Creation of all the pfksk for the circuit bootstrapping
-            let mut vec_fpksk = LwePrivateFunctionalPackingKeyswitchKeyList::allocate(
+            let mut extracted_bits_lwe_list = LweList::allocate(
                 0u64,
-                level_pksk,
-                base_log_pksk,
-                lwe_big_sk.key_size(),
-                glwe_sk.key_size(),
-                glwe_sk.polynomial_size(),
-                FunctionalPackingKeyswitchKeyCount(glwe_dimension.to_glwe_size().0),
+                ksk_lwe_big_to_small.lwe_size(),
+                CiphertextCount(tau * number_of_values_to_extract.0),
             );
 
-            vec_fpksk.par_fill_with_fpksk_for_circuit_bootstrap(
-                &lwe_big_sk,
-                &glwe_sk,
-                std_small,
-                &mut encryption_generator,
+            let decomposer =
+                SignedDecomposer::new(DecompositionBaseLog(10), DecompositionLevelCount(1));
+
+            let mut mem = GlobalMemBuffer::new(
+                extract_bits_scratch::<u64>(
+                    lwe_dimension,
+                    ksk_lwe_big_to_small.after_key_size(),
+                    fourier_bsk.glwe_size(),
+                    polynomial_size,
+                    fft,
+                )
+                .unwrap(),
             );
-            let d_vec_fpksk = cuda_engine
-                .convert_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys(
-                    &LweCircuitBootstrapPrivateFunctionalPackingKeyswitchKeys64(vec_fpksk.clone()),
+            for (lwe_out, lwe_in) in izip!(
+                extracted_bits_lwe_list
+                    .as_mut_view()
+                    .sublist_iter_mut(CiphertextCount(number_of_values_to_extract.0)),
+                lwe_in_list.as_view().ciphertext_iter()
+            ) {
+                extract_bits(
+                    lwe_out,
+                    lwe_in,
+                    ksk_lwe_big_to_small.as_view(),
+                    fourier_bsk.as_view(),
+                    delta_log,
+                    number_of_values_to_extract,
+                    fft,
+                    DynStack::new(&mut mem),
+                );
+            }
+
+            // Decrypt all extracted bit for checking purposes in case of problems
+            for (i, ct) in extracted_bits_lwe_list.ciphertext_iter().enumerate() {
+                let message: u64 = vec_cleartext[i / number_of_values_to_extract.0];
+                let bit_idx: u64 = (number_of_values_to_extract.0
+                    - (i % number_of_values_to_extract.0)
+                    - 1) as u64;
+                let mut decrypted_message = Plaintext(0u64);
+                lwe_small_sk.decrypt_lwe(&mut decrypted_message, &ct);
+                let extract_bit_result =
+                    (((decrypted_message.0 as f64) / (1u64 << (63)) as f64).round()) as u64;
+                println!(
+                    "{}) Extracted: {:?}, Expected: {:?}",
+                    i,
+                    extract_bit_result % 2,
+                    (message >> bit_idx) & 1
+                );
+            }
+
+            println!(
+                "number_of_values_to_extract (p): {}",
+                number_of_values_to_extract.0
+            );
+            println!("tau * p: {}", extracted_bits_lwe_list.count().0);
+
+            let d_lwe_array = cuda_engine
+                .convert_lwe_ciphertext_vector(&LweCiphertextVector64(
+                    extracted_bits_lwe_list.clone(),
+                ))
+                .unwrap();
+
+            // LUT creation
+            let lut_size = polynomial_size.0;
+            let lut_num = tau << (tau * p - polynomial_size.log2().0); // r
+
+            println!("lut_num: {}", lut_num);
+
+            let mut big_lut = Vec::with_capacity(lut_num * lut_size);
+            for i in (0..tau).rev() {
+                let mut small_lut = Vec::with_capacity(lut_size);
+                for value in 0..(1 << (tau * p)) {
+                    let nbits = i * p;
+                    let x = (value >> nbits) & ((1 << p) - 1);
+                    small_lut.push((x as u64 % (1 << (64 - delta_log.0))) << delta_lut.0);
+                }
+                big_lut.extend(small_lut);
+            }
+            // big_lut.truncate(lut_num * lut_size);
+            println!("lut num: {}, lut size: {}", lut_num, lut_size);
+            assert_eq!(big_lut.len(), lut_num * lut_size);
+            let lut_poly_list = PolynomialList::from_container(big_lut, PolynomialSize(lut_size));
+            println!(
+                "lut_poly_list length (2^p): {}",
+                lut_poly_list.polynomial_count().0
+            );
+            const UNSAFE_SECRET: u128 = 0;
+            let mut default_engine =
+                DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET))).unwrap();
+            let lut_vector = default_engine
+                .create_plaintext_vector_from(&lut_poly_list.into_container())
+                .unwrap();
+            let d_lut_vector = cuda_engine.convert_plaintext_vector(&lut_vector).unwrap();
+
+            // We need as many output ciphertexts as we have input luts
+            let vertical_packing_lwe_list_out = LweList::allocate(
+                0u64,
+                LweDimension(polynomial_size.0 * glwe_dimension.0).to_lwe_size(),
+                CiphertextCount(tau),
+            );
+            let mut d_lwe_array_out = cuda_engine
+                .convert_lwe_ciphertext_vector(
+                    &(LweCiphertextVector64(vertical_packing_lwe_list_out)),
                 )
                 .unwrap();
 
-            // Here even thought the deltas have the same value, they can differ between ciphertexts
-            // and lut so keeping both separate
-            let number_of_values_to_extract = ExtractedBitsCount(p as usize);
-            let delta_log = DeltaLog(64 - number_of_values_to_extract.0);
-            let delta_lut = DeltaLog(64 - number_of_values_to_extract.0);
-            let number_of_cleartext_runs = 10;
-
-            for _cleartext_number in 0..number_of_cleartext_runs {
-                let mut vec_cleartext = vec![];
-                let mut vec_cleartext_delta_log = vec![];
-                for _i in 0..tau {
-                    let x = test_tools::random_uint_between(0..2u64.pow(p as u32));
-                    // let x = 42u64;
-                    vec_cleartext.push(x);
-                    vec_cleartext_delta_log.push(x << delta_log.0);
-                }
-
-                println!("{:?}", vec_cleartext);
-
-                let message = PlaintextList::from_container(vec_cleartext_delta_log);
-                let mut lwe_in_list = LweList::allocate(
-                    0u64,
-                    LweSize(glwe_dimension.0 * polynomial_size.0 + 1),
-                    CiphertextCount(tau),
+            unsafe {
+                execute_circuit_bootstrap_vertical_packing_on_gpu::<u64>(
+                    cuda_engine.get_cuda_streams(),
+                    &mut d_lwe_array_out.0,
+                    &d_lwe_array.0,
+                    &d_lut_vector.0,
+                    &d_fourier_bsk.0,
+                    &d_vec_fpksk.0,
+                    level_cbs,
+                    base_log_cbs,
+                    cuda_engine.get_cuda_shared_memory(),
                 );
-                lwe_big_sk.encrypt_lwe_list(
-                    &mut lwe_in_list,
-                    &message,
-                    Variance(std_big.get_variance()),
-                    &mut encryption_generator,
-                );
-                let mut extracted_bits_lwe_list = LweList::allocate(
-                    0u64,
-                    ksk_lwe_big_to_small.lwe_size(),
-                    CiphertextCount(tau * number_of_values_to_extract.0),
-                );
-
-                let decomposer =
-                    SignedDecomposer::new(DecompositionBaseLog(10), DecompositionLevelCount(1));
-
-                let mut mem = GlobalMemBuffer::new(
-                    extract_bits_scratch::<u64>(
-                        lwe_dimension,
-                        ksk_lwe_big_to_small.after_key_size(),
-                        fourier_bsk.glwe_size(),
-                        polynomial_size,
-                        fft,
-                    )
-                    .unwrap(),
-                );
-                for (lwe_out, lwe_in) in izip!(
-                    extracted_bits_lwe_list
-                        .as_mut_view()
-                        .sublist_iter_mut(CiphertextCount(number_of_values_to_extract.0)),
-                    lwe_in_list.as_view().ciphertext_iter()
-                ) {
-                    extract_bits(
-                        lwe_out,
-                        lwe_in,
-                        ksk_lwe_big_to_small.as_view(),
-                        fourier_bsk.as_view(),
-                        delta_log,
-                        number_of_values_to_extract,
-                        fft,
-                        DynStack::new(&mut mem),
-                    );
-                }
-
-                // Decrypt all extracted bit for checking purposes in case of problems
-                for (i, ct) in extracted_bits_lwe_list.ciphertext_iter().enumerate() {
-                    let message: u64 = vec_cleartext[i / number_of_values_to_extract.0];
-                    let bit_idx: u64 = (number_of_values_to_extract.0
-                        - (i % number_of_values_to_extract.0)
-                        - 1) as u64;
-                    let mut decrypted_message = Plaintext(0u64);
-                    lwe_small_sk.decrypt_lwe(&mut decrypted_message, &ct);
-                    let extract_bit_result =
-                        (((decrypted_message.0 as f64) / (1u64 << (63)) as f64).round()) as u64;
-                    println!(
-                        "{}) Extracted: {:?}, Expected: {:?}",
-                        i,
-                        extract_bit_result % 2,
-                        (message >> bit_idx) & 1
-                    );
-                }
-
-                println!(
-                    "number_of_values_to_extract (p): {}",
-                    number_of_values_to_extract.0
-                );
-                println!("tau * p: {}", extracted_bits_lwe_list.count().0);
-
-                let d_lwe_array = cuda_engine
-                    .convert_lwe_ciphertext_vector(&LweCiphertextVector64(
-                        extracted_bits_lwe_list.clone(),
-                    ))
-                    .unwrap();
-
-                // LUT creation
-                let lut_size = polynomial_size.0;
-                let lut_num = tau << (tau * p - polynomial_size.log2().0); // r
-
-                println!("lut_num: {}", lut_num);
-
-                let mut big_lut = Vec::with_capacity(lut_num * lut_size);
-                for i in (0..tau).rev() {
-                    let mut small_lut = Vec::with_capacity(lut_size);
-                    for value in 0..(1 << (tau * p)) {
-                        let nbits = i * p;
-                        let x = (value >> nbits) & ((1 << p) - 1);
-                        small_lut.push((x as u64 % (1 << (64 - delta_log.0))) << delta_lut.0);
-                    }
-                    big_lut.extend(small_lut);
-                }
-                // big_lut.truncate(lut_num * lut_size);
-                assert_eq!(big_lut.len(), lut_num * lut_size);
-                let lut_poly_list =
-                    PolynomialList::from_container(big_lut, PolynomialSize(lut_size));
-                println!(
-                    "lut_poly_list length (2^p): {}",
-                    lut_poly_list.polynomial_count().0
-                );
-                const UNSAFE_SECRET: u128 = 0;
-                let mut default_engine =
-                    DefaultEngine::new(Box::new(UnixSeeder::new(UNSAFE_SECRET))).unwrap();
-                let lut_vector = default_engine
-                    .create_plaintext_vector_from(&lut_poly_list.into_container())
-                    .unwrap();
-                let d_lut_vector = cuda_engine.convert_plaintext_vector(&lut_vector).unwrap();
-
-                // We need as many output ciphertexts as we have input luts
-                let vertical_packing_lwe_list_out = LweList::allocate(
-                    0u64,
-                    LweDimension(polynomial_size.0 * glwe_dimension.0).to_lwe_size(),
-                    CiphertextCount(tau),
-                );
-                let mut d_lwe_array_out = cuda_engine
-                    .convert_lwe_ciphertext_vector(
-                        &(LweCiphertextVector64(vertical_packing_lwe_list_out)),
-                    )
-                    .unwrap();
-
-                unsafe {
-                    execute_circuit_bootstrap_vertical_packing_on_gpu::<u64>(
-                        cuda_engine.get_cuda_streams(),
-                        &mut d_lwe_array_out.0,
-                        &d_lwe_array.0,
-                        &d_lut_vector.0,
-                        &d_fourier_bsk.0,
-                        &d_vec_fpksk.0,
-                        level_cbs,
-                        base_log_cbs,
-                        cuda_engine.get_cuda_shared_memory(),
-                    );
-                }
-
-                let vertical_packing_lwe_list_out = cuda_engine
-                    .convert_lwe_ciphertext_vector(&d_lwe_array_out)
-                    .unwrap()
-                    .0;
-
-                // decrypt result
-                let mut decrypted_messages = PlaintextList::allocate(0u64, PlaintextCount(tau));
-                let lwe_sk = LweSecretKey::binary_from_container(glwe_sk.as_tensor().as_slice());
-                lwe_sk.decrypt_lwe_list(&mut decrypted_messages, &vertical_packing_lwe_list_out);
-                let mut decoded_messages = vec![];
-
-                for message in decrypted_messages.plaintext_iter() {
-                    let decoded_message =
-                        decomposer.closest_representable(message.0) >> delta_log.0;
-                    decoded_messages.push(decoded_message);
-                }
-
-                // print information if the result is wrong
-                if decoded_messages != vec_cleartext {
-                    panic!(
-                        "decoded_message ({:?}) != cleartext ({:?})\n\
-                        decrypted_message: {:?}, decoded_message: {:?}",
-                        decoded_messages, vec_cleartext, decrypted_messages, decoded_messages
-                    );
-                }
-                println!("{:?}\n", decoded_messages);
             }
+
+            let vertical_packing_lwe_list_out = cuda_engine
+                .convert_lwe_ciphertext_vector(&d_lwe_array_out)
+                .unwrap()
+                .0;
+
+            // decrypt result
+            let mut decrypted_messages = PlaintextList::allocate(0u64, PlaintextCount(tau));
+            let lwe_sk = LweSecretKey::binary_from_container(glwe_sk.as_tensor().as_slice());
+            lwe_sk.decrypt_lwe_list(&mut decrypted_messages, &vertical_packing_lwe_list_out);
+            let mut decoded_messages = vec![];
+
+            for message in decrypted_messages.plaintext_iter() {
+                let decoded_message = decomposer.closest_representable(message.0) >> delta_log.0;
+                decoded_messages.push(decoded_message);
+            }
+
+            // print information if the result is wrong
+            if decoded_messages != vec_cleartext {
+                panic!(
+                    "decoded_message ({:?}) != cleartext ({:?})\n\
+                        decrypted_message: {:?}, decoded_message: {:?}",
+                    decoded_messages, vec_cleartext, decrypted_messages, decoded_messages
+                );
+            }
+            println!("{:?}\n", decoded_messages);
         }
     }
 }
@@ -801,7 +796,7 @@ pub fn test_cuda_woppbs_extract_bit_cuda_circuit_bootstrapping_vertical_packing(
 pub fn test_cuda_woppbs_woppbs() {
     // define settings
     let polynomial_size = PolynomialSize(1024);
-    let glwe_dimension = GlweDimension(2);
+    let glwe_dimension = GlweDimension(1);
     let lwe_dimension = LweDimension(481);
 
     let level_bsk = DecompositionLevelCount(9);
