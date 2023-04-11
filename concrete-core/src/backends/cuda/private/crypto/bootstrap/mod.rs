@@ -149,25 +149,32 @@ pub(crate) unsafe fn execute_lwe_ciphertext_vector_amortized_bootstrap_on_gpu<
         GpuIndex(0),
     );
 
+    let mut d_test_vector_indexes_vec = Vec::with_capacity(number_of_gpus.0);
+    for stream in streams.iter() {
+        // FIXME this is hard set at the moment because concrete-core does not support a more
+        //   general API for the bootstrap
+        let mut test_vector_indexes: Vec<T> = Vec::with_capacity(input.lwe_ciphertext_count.0);
+        for (i, ind) in test_vector_indexes.iter_mut().enumerate() {
+            *ind = <usize as CastInto<T>>::cast_into(i);
+        }
+        let mut d_test_vector_indexes =
+            stream.malloc_async::<T>(input.lwe_ciphertext_count.0 as u32);
+        stream.copy_to_gpu_async::<T>(&mut d_test_vector_indexes, &test_vector_indexes);
+        stream.synchronize_stream();
+        d_test_vector_indexes_vec.push(d_test_vector_indexes);
+    }
+
     for (gpu_index, stream) in streams.iter().enumerate().take(number_of_gpus.0) {
         let samples = compute_number_of_samples_on_gpu(
             number_of_gpus,
             CiphertextCount(input.lwe_ciphertext_count.0),
             GpuIndex(gpu_index),
         );
-        // FIXME this is hard set at the moment because concrete-core does not support a more
-        //   general API for the bootstrap
-        let mut test_vector_indexes: Vec<T> = Vec::with_capacity(samples.0);
-        for (i, ind) in test_vector_indexes.iter_mut().enumerate() {
-            *ind = <usize as CastInto<T>>::cast_into(i);
-        }
-        let mut d_test_vector_indexes = stream.malloc_async::<T>(samples.0 as u32);
-        stream.copy_to_gpu_async::<T>(&mut d_test_vector_indexes, &test_vector_indexes);
 
         stream.discard_bootstrap_amortized_lwe_ciphertext_vector::<T>(
             output.d_vecs.get_mut(gpu_index).unwrap(),
             acc.d_vecs.get(gpu_index).unwrap(),
-            &d_test_vector_indexes,
+            d_test_vector_indexes_vec.get(gpu_index).unwrap(),
             input.d_vecs.get(gpu_index).unwrap(),
             bsk.d_vecs.get(gpu_index).unwrap(),
             input.lwe_dimension,
