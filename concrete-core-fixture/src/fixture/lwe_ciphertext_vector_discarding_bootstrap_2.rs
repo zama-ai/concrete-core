@@ -118,61 +118,115 @@ where
                 decomp_base_log: DecompositionBaseLog(7),
                 lwe_ciphertext_count: LweCiphertextCount(10),
             },
-            LweCiphertextVectorDiscardingBootstrapParameters2 {
-                noise: Variance(LogStandardDev::from_log_standard_dev(-29.).get_variance()),
-                lwe_dimension: LweDimension(630),
-                glwe_dimension: GlweDimension(1),
-                poly_size: PolynomialSize(1024),
-                decomp_level_count: DecompositionLevelCount(3),
-                decomp_base_log: DecompositionBaseLog(7),
-                lwe_ciphertext_count: LweCiphertextCount(2),
-            },
-            LweCiphertextVectorDiscardingBootstrapParameters2 {
-                noise: Variance(LogStandardDev::from_log_standard_dev(-29.).get_variance()),
-                lwe_dimension: LweDimension(630),
-                glwe_dimension: GlweDimension(1),
-                poly_size: PolynomialSize(2048),
-                decomp_level_count: DecompositionLevelCount(3),
-                decomp_base_log: DecompositionBaseLog(7),
-                lwe_ciphertext_count: LweCiphertextCount(1),
-            },
-            LweCiphertextVectorDiscardingBootstrapParameters2 {
-                noise: Variance(LogStandardDev::from_log_standard_dev(-29.).get_variance()),
-                lwe_dimension: LweDimension(630),
-                glwe_dimension: GlweDimension(2),
-                poly_size: PolynomialSize(512),
-                decomp_level_count: DecompositionLevelCount(3),
-                decomp_base_log: DecompositionBaseLog(7),
-                lwe_ciphertext_count: LweCiphertextCount(10),
-            },
         ];
         if Precision::Raw::BITS == 64 {
             params.push(LweCiphertextVectorDiscardingBootstrapParameters2 {
                 noise: Variance(StandardDev(0.00000000000000029403601535432533).get_variance()),
-                lwe_dimension: LweDimension(526),
-                glwe_dimension: GlweDimension(1),
-                poly_size: PolynomialSize(4096),
+                lwe_dimension: LweDimension(777),
+                glwe_dimension: GlweDimension(3),
+                poly_size: PolynomialSize(512),
                 decomp_level_count: DecompositionLevelCount(1),
-                decomp_base_log: DecompositionBaseLog(23),
+                decomp_base_log: DecompositionBaseLog(18),
                 lwe_ciphertext_count: LweCiphertextCount(1),
             });
             params.push(LweCiphertextVectorDiscardingBootstrapParameters2 {
                 noise: Variance(StandardDev(0.00000000000000029403601535432533).get_variance()),
-                lwe_dimension: LweDimension(578),
-                glwe_dimension: GlweDimension(1),
-                poly_size: PolynomialSize(8192),
+                lwe_dimension: LweDimension(777),
+                glwe_dimension: GlweDimension(3),
+                poly_size: PolynomialSize(512),
                 decomp_level_count: DecompositionLevelCount(1),
-                decomp_base_log: DecompositionBaseLog(23),
-                lwe_ciphertext_count: LweCiphertextCount(1),
+                decomp_base_log: DecompositionBaseLog(18),
+                lwe_ciphertext_count: LweCiphertextCount(16),
             });
             params.push(LweCiphertextVectorDiscardingBootstrapParameters2 {
-                noise: Variance(LogStandardDev::from_log_standard_dev(-29.).get_variance()),
-                lwe_dimension: LweDimension(792),
+                noise: Variance(StandardDev(0.00000000000000029403601535432533).get_variance()),
+                lwe_dimension: LweDimension(777),
                 glwe_dimension: GlweDimension(3),
-                poly_size: PolynomialSize(2048),
-                decomp_level_count: DecompositionLevelCount(4),
-                decomp_base_log: DecompositionBaseLog(9),
-                lwe_ciphertext_count: LweCiphertextCount(5),
+                poly_size: PolynomialSize(512),
+                decomp_level_count: DecompositionLevelCount(1),
+                decomp_base_log: DecompositionBaseLog(18),
+                lwe_ciphertext_count: LweCiphertextCount(32),
+            });
+            params.push(LweCiphertextVectorDiscardingBootstrapParameters2 {
+                noise: Variance(StandardDev(0.00000000000000029403601535432533).get_variance()),
+                lwe_dimension: LweDimension(777),
+                glwe_dimension: GlweDimension(3),
+                poly_size: PolynomialSize(512),
+                decomp_level_count: DecompositionLevelCount(1),
+                decomp_base_log: DecompositionBaseLog(18),
+                lwe_ciphertext_count: LweCiphertextCount(64),
+            });
+            params.push(LweCiphertextVectorDiscardingBootstrapParameters2 {
+                noise: Variance(StandardDev(0.00000000000000029403601535432533).get_variance()),
+                lwe_dimension: LweDimension(777),
+                glwe_dimension: GlweDimension(3),
+                poly_size: PolynomialSize(512),
+                decomp_level_count: DecompositionLevelCount(1),
+                decomp_base_log: DecompositionBaseLog(18),
+                lwe_ciphertext_count: LweCiphertextCount(128),
+            });
+            params.push(LweCiphertextVectorDiscardingBootstrapParameters2 {
+                noise: Variance(StandardDev(0.00000000000000029403601535432533).get_variance()),
+                lwe_dimension: LweDimension(777),
+                glwe_dimension: GlweDimension(3),
+                poly_size: PolynomialSize(512),
+                decomp_level_count: DecompositionLevelCount(1),
+                decomp_base_log: DecompositionBaseLog(18),
+                lwe_ciphertext_count: LweCiphertextCount(256),
+            });
+            params.push(LweCiphertextVectorDiscardingBootstrapParameters2 {
+                noise: Variance(StandardDev(0.00000000000000029403601535432533).get_variance()),
+                lwe_dimension: LweDimension(777),
+                glwe_dimension: GlweDimension(3),
+                poly_size: PolynomialSize(512),
+                decomp_level_count: DecompositionLevelCount(1),
+                decomp_base_log: DecompositionBaseLog(18),
+                lwe_ciphertext_count: LweCiphertextCount(512),
+            });
+            params.push(LweCiphertextVectorDiscardingBootstrapParameters2 {
+                noise: Variance(StandardDev(0.00000000000000029403601535432533).get_variance()),
+                lwe_dimension: LweDimension(777),
+                glwe_dimension: GlweDimension(3),
+                poly_size: PolynomialSize(512),
+                decomp_level_count: DecompositionLevelCount(1),
+                decomp_base_log: DecompositionBaseLog(18),
+                lwe_ciphertext_count: LweCiphertextCount(1024),
+            });
+            params.push(LweCiphertextVectorDiscardingBootstrapParameters2 {
+                noise: Variance(StandardDev(0.00000000000000029403601535432533).get_variance()),
+                lwe_dimension: LweDimension(777),
+                glwe_dimension: GlweDimension(3),
+                poly_size: PolynomialSize(512),
+                decomp_level_count: DecompositionLevelCount(1),
+                decomp_base_log: DecompositionBaseLog(18),
+                lwe_ciphertext_count: LweCiphertextCount(2048),
+            });
+            params.push(LweCiphertextVectorDiscardingBootstrapParameters2 {
+                noise: Variance(StandardDev(0.00000000000000029403601535432533).get_variance()),
+                lwe_dimension: LweDimension(777),
+                glwe_dimension: GlweDimension(3),
+                poly_size: PolynomialSize(512),
+                decomp_level_count: DecompositionLevelCount(1),
+                decomp_base_log: DecompositionBaseLog(18),
+                lwe_ciphertext_count: LweCiphertextCount(4096),
+            });
+            params.push(LweCiphertextVectorDiscardingBootstrapParameters2 {
+                noise: Variance(StandardDev(0.00000000000000029403601535432533).get_variance()),
+                lwe_dimension: LweDimension(777),
+                glwe_dimension: GlweDimension(3),
+                poly_size: PolynomialSize(512),
+                decomp_level_count: DecompositionLevelCount(1),
+                decomp_base_log: DecompositionBaseLog(18),
+                lwe_ciphertext_count: LweCiphertextCount(8192),
+            });
+            params.push(LweCiphertextVectorDiscardingBootstrapParameters2 {
+                noise: Variance(StandardDev(0.00000000000000029403601535432533).get_variance()),
+                lwe_dimension: LweDimension(777),
+                glwe_dimension: GlweDimension(3),
+                poly_size: PolynomialSize(512),
+                decomp_level_count: DecompositionLevelCount(1),
+                decomp_base_log: DecompositionBaseLog(18),
+                lwe_ciphertext_count: LweCiphertextCount(16384),
             });
         }
         Box::new(params.into_iter())

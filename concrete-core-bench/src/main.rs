@@ -23,8 +23,6 @@ fn main() {
     default::bench();
     #[cfg(all(feature = "backend_default", feature = "backend_default_parallel"))]
     default::bench_parallel();
-    #[cfg(feature = "backend_fft")]
-    fft::bench();
     #[cfg(feature = "backend_fft_parallel")]
     fft::bench_parallel();
     #[cfg(feature = "backend_cuda")]

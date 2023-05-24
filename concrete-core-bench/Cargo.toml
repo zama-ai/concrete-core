@@ -51,6 +51,8 @@ x86_64 = [
     "backend_default",
     "backend_default_parallel",
     "backend_fft",
+    "backend_fft_nightly_avx512",
+    "backend_fft_parallel",
     "backend_default_generator_x86_64_aesni",
     "optimized_benches_for_x86_64",
 ]
