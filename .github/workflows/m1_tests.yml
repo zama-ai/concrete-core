@@ -5,12 +5,12 @@ on:
   workflow_dispatch:
   pull_request:
     types: [ labeled ]
-  # Have a nightly build for M1 tests
-  schedule:
-    # * is a special character in YAML so you have to quote this string
-    # At 22:00 every day
-    # Timezone is UTC, so Paris time is +2 during the summer and +1 during winter
-    - cron: '0 22 * * *'
+  # # Have a nightly build for M1 tests
+  # schedule:
+  #   # * is a special character in YAML so you have to quote this string
+  #   # At 22:00 every day
+  #   # Timezone is UTC, so Paris time is +2 during the summer and +1 during winter
+  #   - cron: '0 22 * * *'
 
 env:
   CARGO_TERM_COLOR: always
