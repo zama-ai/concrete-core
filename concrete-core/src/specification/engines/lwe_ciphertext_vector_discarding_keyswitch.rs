@@ -15,7 +15,7 @@ engine_error! {
 impl<EngineError: std::error::Error> LweCiphertextVectorDiscardingKeyswitchError<EngineError> {
     /// Validates the inputs
     pub fn perform_generic_checks<KeyswitchKey, InputCiphertextVector, OutputCiphertextVector>(
-        output: &mut OutputCiphertextVector,
+        output: &OutputCiphertextVector,
         input: &InputCiphertextVector,
         ksk: &KeyswitchKey,
     ) -> Result<(), Self>

@@ -21,7 +21,7 @@ impl<EngineError: std::error::Error>
 {
     /// Validates the inputs
     pub fn perform_generic_checks<LwePackingKeyswitchKey, InputCiphertextVector, OutputCiphertext>(
-        output: &mut OutputCiphertext,
+        output: &OutputCiphertext,
         input: &InputCiphertextVector,
         ksk: &LwePackingKeyswitchKey,
     ) -> Result<(), Self>

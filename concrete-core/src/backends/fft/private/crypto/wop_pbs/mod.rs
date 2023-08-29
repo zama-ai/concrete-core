@@ -361,7 +361,7 @@ pub fn homomorphic_shift_boolean<Scalar: UnsignedTorus + CastInto<usize>>(
     );
 
     // Add q/4 to center the error while computing a negacyclic LUT
-    let mut shift_buffer_body = lwe_left_shift_buffer.get_mut_body();
+    let shift_buffer_body = lwe_left_shift_buffer.get_mut_body();
     shift_buffer_body.0 = shift_buffer_body
         .0
         .wrapping_add(Scalar::ONE << (ciphertext_n_bits - 2));

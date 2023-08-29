@@ -67,9 +67,7 @@ pub fn get_nightly_toolchain() -> Result<String, Error> {
 
 pub fn get_build_toolchain() -> Result<String, Error> {
     // aarch64 currently requires nightly feature stdsimd for some operators
-    if cfg!(target_arch = "aarch64") {
-        get_nightly_toolchain()
-    } else if cfg!(target_arch = "x86_64") {
+    if cfg!(target_arch = "aarch64") || cfg!(target_arch = "x86_64") {
         Ok("+stable".to_string())
     } else {
         // For other arch by default we use the nightly toolchain as it has a better chance of

@@ -986,7 +986,7 @@ where
         ck_dim_eq!(self.key_size() => encrypted.lwe_size().to_lwe_dimension());
         // We fill the gsw with trivial lwe encryptions of zero:
         for mut lwe in encrypted.as_mut_lwe_list().ciphertext_iter_mut() {
-            let (mut body, mut mask) = lwe.get_mut_body_and_mask();
+            let (body, mut mask) = lwe.get_mut_body_and_mask();
             mask.as_mut_tensor().fill_with_element(Scalar::ZERO);
             body.0 = generator.random_noise(noise_parameters);
         }

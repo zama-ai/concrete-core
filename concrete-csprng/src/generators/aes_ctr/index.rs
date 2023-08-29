@@ -150,16 +150,16 @@ impl PartialEq<Self> for TableIndex {
 
 impl PartialOrd<Self> for TableIndex {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        match self.aes_index.partial_cmp(&other.aes_index) {
-            Some(Ordering::Equal) => self.byte_index.partial_cmp(&other.byte_index),
-            other => other,
-        }
+        Some(self.cmp(other))
     }
 }
 
 impl Ord for TableIndex {
     fn cmp(&self, other: &Self) -> Ordering {
-        self.partial_cmp(other).unwrap()
+        match self.aes_index.cmp(&other.aes_index) {
+            Ordering::Equal => self.byte_index.cmp(&other.byte_index),
+            other => other,
+        }
     }
 }
 

@@ -175,13 +175,13 @@ pub fn criterion_benchmark(c: &mut Criterion) {
             let base_log_cbs = DecompositionBaseLog(6);
 
             //create GLWE and LWE secret key
-            let glwe_sk: GlweSecretKey<_, Vec<u64>> = GlweSecretKey::binary_from_container(
-                vec![0_u64; polynomial_size.0 * glwe_dimension.0],
+            let glwe_sk: GlweSecretKey<_, Vec<Scalar>> = GlweSecretKey::binary_from_container(
+                vec![Scalar::ZERO; polynomial_size.0 * glwe_dimension.0],
                 polynomial_size,
             );
 
-            let lwe_small_sk: LweSecretKey<_, Vec<u64>> =
-                LweSecretKey::binary_from_container(vec![0_u64; lwe_dimension.0]);
+            let lwe_small_sk: LweSecretKey<_, Vec<Scalar>> =
+                LweSecretKey::binary_from_container(vec![Scalar::ZERO; lwe_dimension.0]);
 
             let lwe_big_sk = LweSecretKey::binary_from_container(glwe_sk.as_tensor().as_slice());
 
@@ -205,7 +205,7 @@ pub fn criterion_benchmark(c: &mut Criterion) {
             let fft = fft.as_view();
 
             let ksk_lwe_big_to_small = LweKeyswitchKey::allocate(
-                0u64,
+                Scalar::ZERO,
                 level_ksk,
                 base_log_ksk,
                 lwe_big_sk.key_size(),
@@ -214,7 +214,7 @@ pub fn criterion_benchmark(c: &mut Criterion) {
 
             // Creation of all the pfksk for the circuit bootstrapping
             let vec_fpksk = LwePrivateFunctionalPackingKeyswitchKeyList::allocate(
-                0u64,
+                Scalar::ZERO,
                 level_pksk,
                 base_log_pksk,
                 lwe_big_sk.key_size(),
@@ -228,18 +228,20 @@ pub fn criterion_benchmark(c: &mut Criterion) {
 
             // Here even thought the deltas have the same value, they can differ between ciphertexts
             // and lut so keeping both separate
-            let delta_log = DeltaLog(64 - number_of_values_to_extract.0);
+            let delta_log = DeltaLog(Scalar::BITS - number_of_values_to_extract.0);
 
-            let lwe_in =
-                LweCiphertext::allocate(0u64, LweSize(glwe_dimension.0 * polynomial_size.0 + 1));
+            let lwe_in = LweCiphertext::allocate(
+                Scalar::ZERO,
+                LweSize(glwe_dimension.0 * polynomial_size.0 + 1),
+            );
             let mut extracted_bits_lwe_list = LweList::allocate(
-                0u64,
+                Scalar::ZERO,
                 ksk_lwe_big_to_small.lwe_size(),
                 CiphertextCount(number_of_values_to_extract.0),
             );
 
             let mut mem = GlobalMemBuffer::new(
-                extract_bits_scratch::<u64>(
+                extract_bits_scratch::<Scalar>(
                     lwe_dimension,
                     ksk_lwe_big_to_small.after_key_size(),
                     fourier_bsk.glwe_size(),
@@ -261,7 +263,7 @@ pub fn criterion_benchmark(c: &mut Criterion) {
 
             // Decrypt all extracted bit for checking purposes in case of problems
             for ct in extracted_bits_lwe_list.ciphertext_iter() {
-                let mut decrypted_message = Plaintext(0u64);
+                let mut decrypted_message = Plaintext(Scalar::ZERO);
                 lwe_small_sk.decrypt_lwe(&mut decrypted_message, &ct);
             }
 
@@ -270,21 +272,21 @@ pub fn criterion_benchmark(c: &mut Criterion) {
 
             // Test with a big lut, triggering an actual cmux tree
             let lut_poly_list = PolynomialList::allocate(
-                0u64,
+                Scalar::ZERO,
                 PolynomialCount(1 << number_of_bits_in_input_lwe),
                 polynomial_size,
             );
 
             // We need as many output ciphertexts as we have input luts
             let mut vertical_packing_lwe_list_out = LweList::allocate(
-                0u64,
+                Scalar::ZERO,
                 LweDimension(polynomial_size.0 * glwe_dimension.0).to_lwe_size(),
                 CiphertextCount(number_of_luts_and_output_vp_ciphertexts),
             );
 
             // Perform circuit bootstrap + vertical packing
             let mut mem = GlobalMemBuffer::new(
-                circuit_bootstrap_boolean_vertical_packing_scratch::<u64>(
+                circuit_bootstrap_boolean_vertical_packing_scratch::<Scalar>(
                     extracted_bits_lwe_list.count(),
                     vertical_packing_lwe_list_out.count(),
                     extracted_bits_lwe_list.lwe_size(),
@@ -340,7 +342,7 @@ pub fn criterion_benchmark(c: &mut Criterion) {
 
         let polynomial_sizes = [512, 1024, 2048, 4096];
         for n in polynomial_sizes {
-            c.bench_function(&format!("fft-wop-pbs-u64-{n}"), |b| {
+            c.bench_function(&format!("fft-wop-pbs-u32-{n}"), |b| {
                 wop_pbs_bench::<u32>(n, b);
             });
         }

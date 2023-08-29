@@ -292,7 +292,7 @@ where
     }
 }
 
-#[cfg(all(test))]
+#[cfg(test)]
 mod test {
     #![allow(clippy::float_cmp)]
 

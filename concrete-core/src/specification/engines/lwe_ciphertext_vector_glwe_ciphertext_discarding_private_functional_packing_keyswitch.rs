@@ -26,7 +26,7 @@ impl<EngineError: std::error::Error>
         InputCiphertextVector,
         OutputCiphertext,
     >(
-        output: &mut OutputCiphertext,
+        output: &OutputCiphertext,
         input: &InputCiphertextVector,
         ksk: &LwePrivateFunctionalPackingKeyswitchKey,
     ) -> Result<(), Self>
