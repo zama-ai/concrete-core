@@ -21,7 +21,7 @@ pub unsafe extern "C" fn concrete_cpu_add_lwe_ciphertext_u64(
     }
 
     let lwe_size = LweDimension(lwe_dimension).to_lwe_size().0;
-    pulp::Arch::new().dispatch(|| {
+    pulp::Arch::new().dispatch(|| unsafe {
         implementation(
             slice::from_raw_parts_mut(ct_out, lwe_size),
             slice::from_raw_parts(ct_in0, lwe_size),
@@ -49,7 +49,7 @@ pub unsafe extern "C" fn concrete_cpu_add_plaintext_lwe_ciphertext_u64(
     }
 
     let lwe_size = LweDimension(lwe_dimension).to_lwe_size().0;
-    pulp::Arch::new().dispatch(|| {
+    pulp::Arch::new().dispatch(|| unsafe {
         implementation(
             slice::from_raw_parts_mut(ct_out, lwe_size),
             slice::from_raw_parts(ct_in, lwe_size),
@@ -77,7 +77,7 @@ pub unsafe extern "C" fn concrete_cpu_mul_cleartext_lwe_ciphertext_u64(
     }
 
     let lwe_size = LweDimension(lwe_dimension).to_lwe_size().0;
-    pulp::Arch::new().dispatch(|| {
+    pulp::Arch::new().dispatch(|| unsafe {
         implementation(
             slice::from_raw_parts_mut(ct_out, lwe_size),
             slice::from_raw_parts(ct_in, lwe_size),
@@ -105,7 +105,7 @@ pub unsafe extern "C" fn concrete_cpu_negate_lwe_ciphertext_u64(
 
     let lwe_size = LweDimension(lwe_dimension).to_lwe_size().0;
 
-    pulp::Arch::new().dispatch(|| {
+    pulp::Arch::new().dispatch(|| unsafe {
         implementation(
             slice::from_raw_parts_mut(ct_out, lwe_size),
             slice::from_raw_parts(ct_in, lwe_size),
