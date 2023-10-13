@@ -342,6 +342,7 @@ void cuda_circuit_bootstrap_vertical_packing_64(
 
   switch (polynomial_size) {
   case 256:
+    assert(("Error (GPU WOP PBS): r is negative", number_of_inputs > 8);
     host_circuit_bootstrap_vertical_packing<uint64_t, int64_t, Degree<256>>(
         v_stream, gpu_index, (uint64_t *)lwe_array_out,
         (uint64_t *)lwe_array_in, (uint64_t *)lut_vector,
@@ -352,6 +353,7 @@ void cuda_circuit_bootstrap_vertical_packing_64(
         max_shared_memory);
     break;
   case 512:
+    assert(("Error (GPU WOP PBS): r is negative", number_of_inputs > 9);
     host_circuit_bootstrap_vertical_packing<uint64_t, int64_t, Degree<512>>(
         v_stream, gpu_index, (uint64_t *)lwe_array_out,
         (uint64_t *)lwe_array_in, (uint64_t *)lut_vector,
@@ -362,6 +364,7 @@ void cuda_circuit_bootstrap_vertical_packing_64(
         max_shared_memory);
     break;
   case 1024:
+    assert(("Error (GPU WOP PBS): r is negative", number_of_inputs > 10);
     host_circuit_bootstrap_vertical_packing<uint64_t, int64_t, Degree<1024>>(
         v_stream, gpu_index, (uint64_t *)lwe_array_out,
         (uint64_t *)lwe_array_in, (uint64_t *)lut_vector,
@@ -372,6 +375,7 @@ void cuda_circuit_bootstrap_vertical_packing_64(
         max_shared_memory);
     break;
   case 2048:
+    assert(("Error (GPU WOP PBS): r is negative", number_of_inputs > 11);
     host_circuit_bootstrap_vertical_packing<uint64_t, int64_t, Degree<2048>>(
         v_stream, gpu_index, (uint64_t *)lwe_array_out,
         (uint64_t *)lwe_array_in, (uint64_t *)lut_vector,
@@ -382,6 +386,7 @@ void cuda_circuit_bootstrap_vertical_packing_64(
         max_shared_memory);
     break;
   case 4096:
+    assert(("Error (GPU WOP PBS): r is negative", number_of_inputs > 12);
     host_circuit_bootstrap_vertical_packing<uint64_t, int64_t, Degree<4096>>(
         v_stream, gpu_index, (uint64_t *)lwe_array_out,
         (uint64_t *)lwe_array_in, (uint64_t *)lut_vector,
@@ -392,6 +397,7 @@ void cuda_circuit_bootstrap_vertical_packing_64(
         max_shared_memory);
     break;
   case 8192:
+    assert(("Error (GPU WOP PBS): r is negative", number_of_inputs > 13);
     host_circuit_bootstrap_vertical_packing<uint64_t, int64_t, Degree<8192>>(
         v_stream, gpu_index, (uint64_t *)lwe_array_out,
         (uint64_t *)lwe_array_in, (uint64_t *)lut_vector,
@@ -456,6 +462,7 @@ void cuda_wop_pbs_64(void *v_stream, uint32_t gpu_index, void *lwe_array_out,
   checks_wop_pbs(polynomial_size, level_count_bsk, number_of_inputs);
   switch (polynomial_size) {
   case 256:
+    assert(("Error (GPU WOP PBS): r is negative", number_of_inputs * number_of_bits_to_extract > 8);
     host_wop_pbs<uint64_t, int64_t, Degree<256>>(
         v_stream, gpu_index, (uint64_t *)lwe_array_out,
         (uint64_t *)lwe_array_in, (uint64_t *)lut_vector,
@@ -468,6 +475,7 @@ void cuda_wop_pbs_64(void *v_stream, uint32_t gpu_index, void *lwe_array_out,
         max_shared_memory);
     break;
   case 512:
+    assert(("Error (GPU WOP PBS): r is negative", number_of_inputs * number_of_bits_to_extract > 9);
     host_wop_pbs<uint64_t, int64_t, Degree<512>>(
         v_stream, gpu_index, (uint64_t *)lwe_array_out,
         (uint64_t *)lwe_array_in, (uint64_t *)lut_vector,
@@ -480,6 +488,8 @@ void cuda_wop_pbs_64(void *v_stream, uint32_t gpu_index, void *lwe_array_out,
         max_shared_memory);
     break;
   case 1024:
+    assert(("Error (GPU WOP PBS): r is negative", number_of_inputs * number_of_bits_to_extract > 
+    10);
     host_wop_pbs<uint64_t, int64_t, Degree<1024>>(
         v_stream, gpu_index, (uint64_t *)lwe_array_out,
         (uint64_t *)lwe_array_in, (uint64_t *)lut_vector,
@@ -492,6 +502,8 @@ void cuda_wop_pbs_64(void *v_stream, uint32_t gpu_index, void *lwe_array_out,
         max_shared_memory);
     break;
   case 2048:
+    assert(("Error (GPU WOP PBS): r is negative", number_of_inputs * number_of_bits_to_extract >
+                                                  11);
     host_wop_pbs<uint64_t, int64_t, Degree<2048>>(
         v_stream, gpu_index, (uint64_t *)lwe_array_out,
         (uint64_t *)lwe_array_in, (uint64_t *)lut_vector,
@@ -504,6 +516,8 @@ void cuda_wop_pbs_64(void *v_stream, uint32_t gpu_index, void *lwe_array_out,
         max_shared_memory);
     break;
   case 4096:
+    assert(("Error (GPU WOP PBS): r is negative", number_of_inputs * number_of_bits_to_extract >
+                                                  12);
     host_wop_pbs<uint64_t, int64_t, Degree<4096>>(
         v_stream, gpu_index, (uint64_t *)lwe_array_out,
         (uint64_t *)lwe_array_in, (uint64_t *)lut_vector,
@@ -516,6 +530,8 @@ void cuda_wop_pbs_64(void *v_stream, uint32_t gpu_index, void *lwe_array_out,
         max_shared_memory);
     break;
   case 8192:
+    assert(("Error (GPU WOP PBS): r is negative", number_of_inputs * number_of_bits_to_extract >
+                                                  13);
     host_wop_pbs<uint64_t, int64_t, Degree<8192>>(
         v_stream, gpu_index, (uint64_t *)lwe_array_out,
         (uint64_t *)lwe_array_in, (uint64_t *)lut_vector,
